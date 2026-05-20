@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype Hub — James D'Arcy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal-700: #0B6E8A;
+      --teal-600: #0E84A4;
+      --teal-50:  #E6F2F6;
+      --stone-900: #1C1917;
+      --stone-700: #44403C;
+      --stone-500: #78716C;
+      --stone-300: #D6D3D1;
+      --stone-100: #F5F5F4;
+      --stone-50:  #FAFAF9;
+      --radius: 8px;
+      --s-1: 8px;
+      --s-2: 16px;
+      --s-3: 24px;
+      --s-4: 32px;
+      --s-5: 40px;
+      --s-6: 48px;
+      --s-8: 64px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--stone-900);
+      background: var(--stone-50);
+      -webkit-font-smoothing: antialiased;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: var(--s-8) var(--s-3);
+    }
+    header { margin-bottom: var(--s-6); }
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0 0 var(--s-1) 0;
+      color: var(--stone-900);
+    }
+    .subtitle {
+      font-size: 16px;
+      color: var(--stone-500);
+      margin: 0;
+    }
+    section { margin-bottom: var(--s-5); }
+    h2 {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--stone-500);
+      margin: 0 0 var(--s-2) 0;
+    }
+    .list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border: 1px solid var(--stone-300);
+      border-radius: var(--radius);
+      background: white;
+      overflow: hidden;
+    }
+    .list li + li { border-top: 1px solid var(--stone-300); }
+    .list a {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--s-2);
+      padding: var(--s-2) var(--s-3);
+      text-decoration: none;
+      color: var(--stone-900);
+      transition: background 0.12s ease;
+    }
+    .list a:hover { background: var(--teal-50); }
+    .list .name { font-weight: 500; color: var(--teal-700); }
+    .list .desc { color: var(--stone-500); font-size: 14px; text-align: right; }
+    .empty {
+      padding: var(--s-2) var(--s-3);
+      color: var(--stone-500);
+      font-style: italic;
+      font-size: 14px;
+    }
+    footer {
+      margin-top: var(--s-8);
+      padding-top: var(--s-3);
+      border-top: 1px solid var(--stone-300);
+      font-size: 13px;
+      color: var(--stone-500);
+    }
+    footer a { color: var(--teal-700); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Prototype Hub</h1>
+      <p class="subtitle">HTML prototypes, widgets, reskins, and design system documentation.</p>
+    </header>
+
+    <section>
+      <h2>Design System</h2>
+      <ul class="list">
+        <li>
+          <a href="design-system/">
+            <span class="name">Scale</span>
+            <span class="desc">Tokens, components, patterns</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Prototypes</h2>
+      <ul class="list">
+        <li class="empty">No prototypes yet.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Widgets</h2>
+      <ul class="list">
+        <li class="empty">No widgets yet.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Reskins</h2>
+      <ul class="list">
+        <li class="empty">No reskins yet.</li>
+      </ul>
+    </section>
+
+    <footer>
+      Maintained by James D'Arcy · <a href="https://github.com/sd-jamesd/prototypes">Source on GitHub</a>
+    </footer>
+  </div>
+</body>
+</html>
