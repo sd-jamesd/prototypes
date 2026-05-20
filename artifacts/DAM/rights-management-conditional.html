@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rights Management — Conditional behaviour by License Type</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Scale tokens — dark side panel context */
+    --color-stone-50: #fefcfc;
+    --color-stone-100: #f5f5f4;
+    --color-stone-200: #e7e5e4;
+    --color-stone-300: #d6d3d1;
+    --color-stone-400: #978985;
+    --color-stone-500: #6b615e;
+    --color-stone-600: #57534e;
+    --color-stone-700: #44403c;
+    --color-stone-800: #292524;
+    --color-stone-900: #1c1917;
+
+    --accent-9: #0B6E8A;
+    --accent-10: #005F7B;
+    --accent-11: #197592;
+
+    --color-red-500: #e54d2e;
+    --color-amber-500: #f5a524;
+    --color-green-500: #29a383;
+
+    --primary-default: var(--accent-9);
+    --primary-hover: var(--accent-10);
+    --primary-subtle: rgba(11,110,138,0.25);
+
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-7: 32px;
+
+    --radius-1: 3px;
+    --radius-2: 4px;
+    --radius-3: 6px;
+    --radius-4: 8px;
+
+    --font-text: 'Inter', system-ui, sans-serif;
+    --font-size-1: 12px;
+    --font-size-2: 13px;
+    --font-size-3: 14px;
+    --font-size-4: 16px;
+
+    /* Dark side panel context */
+    --panel-bg: var(--color-stone-900);
+    --panel-section-bg: var(--color-stone-800);
+    --panel-text: #fafafa;
+    --panel-text-subtle: rgba(255,255,255,0.6);
+    --panel-text-muted: rgba(255,255,255,0.4);
+    --panel-border: rgba(255,255,255,0.08);
+    --panel-input-bg: rgba(255,255,255,0.04);
+    --panel-input-border: rgba(255,255,255,0.15);
+    --panel-input-border-disabled: rgba(255,255,255,0.06);
+    --checkbox-border: rgba(255,255,255,0.4);
+    --required-color: #f87171;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-text);
+    background: #f5f5f4;
+    color: var(--color-stone-800);
+    font-size: var(--font-size-2);
+    line-height: 1.5;
+    padding: var(--spacing-7);
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .page-header {
+    margin-bottom: var(--spacing-6);
+  }
+
+  .page-header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: var(--spacing-2);
+  }
+
+  .page-header p {
+    color: var(--color-stone-600);
+    font-size: var(--font-size-3);
+    max-width: 70ch;
+  }
+
+  /* License type switcher (above panel) */
+  .switcher {
+    background: white;
+    border: 1px solid var(--color-stone-200);
+    border-radius: var(--radius-4);
+    padding: var(--spacing-4);
+    margin-bottom: var(--spacing-5);
+    display: flex;
+    gap: var(--spacing-3);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .switcher-label {
+    font-size: var(--font-size-2);
+    font-weight: 500;
+    color: var(--color-stone-700);
+    margin-right: var(--spacing-2);
+  }
+
+  .switcher-btn {
+    appearance: none;
+    background: white;
+    border: 1px solid var(--color-stone-300);
+    color: var(--color-stone-700);
+    font-family: inherit;
+    font-size: var(--font-size-2);
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: var(--radius-2);
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+
+  .switcher-btn:hover {
+    border-color: var(--color-stone-500);
+  }
+
+  .switcher-btn.active {
+    background: var(--accent-9);
+    border-color: var(--accent-9);
+    color: white;
+  }
+
+  /* Two-column layout */
+  .workspace {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: var(--spacing-5);
+    align-items: start;
+  }
+
+  /* Dark side panel — mimics screenshots */
+  .panel {
+    background: var(--panel-bg);
+    color: var(--panel-text);
+    border-radius: var(--radius-4);
+    overflow: hidden;
+    border: 1px solid var(--panel-border);
+  }
+
+  .panel-header {
+    padding: var(--spacing-4) var(--spacing-5);
+    border-bottom: 1px solid var(--panel-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .panel-title {
+    font-size: var(--font-size-3);
+    font-weight: 600;
+  }
+
+  .panel-asset {
+    font-size: var(--font-size-1);
+    color: var(--panel-text-subtle);
+    margin-top: 2px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .accordion {
+    border-bottom: 1px solid var(--panel-border);
+  }
+
+  .accordion-header {
+    padding: var(--spacing-3) var(--spacing-5);
+    background: var(--panel-section-bg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: var(--font-size-2);
+    font-weight: 600;
+    transition: background 0.12s;
+  }
+
+  .accordion-header:hover { background: rgba(255,255,255,0.04); }
+
+  .accordion-header.collapsed { background: transparent; }
+
+  .accordion-body {
+    padding: var(--spacing-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-5);
+  }
+
+  .accordion.collapsed .accordion-body { display: none; }
+
+  .accordion .chevron {
+    transition: transform 0.2s;
+    color: var(--panel-text-subtle);
+  }
+
+  .accordion.collapsed .chevron { transform: rotate(-90deg); }
+
+  /* Form structure */
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+
+  .field-label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    font-size: var(--font-size-2);
+    font-weight: 500;
+    color: var(--panel-text);
+  }
+
+  .field-label.disabled { color: var(--panel-text-muted); }
+
+  .req-asterisk {
+    color: var(--required-color);
+    font-weight: 600;
+  }
+
+  .field-hint {
+    font-size: var(--font-size-1);
+    color: var(--panel-text-subtle);
+  }
+
+  .field-hint.disabled { color: var(--panel-text-muted); font-style: italic; }
+
+  /* Inputs (dark context) */
+  .input,
+  .select {
+    appearance: none;
+    width: 100%;
+    background: var(--panel-input-bg);
+    border: 1px solid var(--panel-input-border);
+    color: var(--panel-text);
+    font-family: inherit;
+    font-size: var(--font-size-2);
+    padding: 8px 12px;
+    border-radius: var(--radius-2);
+    height: 36px;
+    transition: border-color 0.12s;
+  }
+
+  .input:focus, .select:focus {
+    outline: none;
+    border-color: var(--accent-9);
+    box-shadow: 0 0 0 2px var(--primary-subtle);
+  }
+
+  .input:disabled, .select:disabled {
+    background: transparent;
+    border-color: var(--panel-input-border-disabled);
+    color: var(--panel-text-muted);
+    cursor: not-allowed;
+  }
+
+  .input::placeholder { color: var(--panel-text-muted); }
+
+  .select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ffffff80' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    padding-right: 36px;
+  }
+
+  /* Checkbox groups */
+  .checkbox-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    max-height: 240px;
+    overflow-y: auto;
+    padding: var(--spacing-2) 0;
+  }
+
+  .checkbox-list.scroll-shadow {
+    border-top: 1px solid var(--panel-border);
+    border-bottom: 1px solid var(--panel-border);
+    padding: var(--spacing-3) 0;
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: var(--font-size-2);
+    cursor: pointer;
+    user-select: none;
+    color: var(--panel-text);
+  }
+
+  .checkbox-row.disabled {
+    cursor: not-allowed;
+    color: var(--panel-text-muted);
+  }
+
+  .checkbox-row.blocked {
+    cursor: not-allowed;
+    color: var(--panel-text-muted);
+    text-decoration: line-through;
+    text-decoration-color: var(--required-color);
+    text-decoration-thickness: 1px;
+  }
+
+  .checkbox {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid var(--checkbox-border);
+    border-radius: var(--radius-1);
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.12s;
+  }
+
+  .checkbox:checked {
+    background: var(--accent-9);
+    border-color: var(--accent-9);
+  }
+
+  .checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .checkbox:disabled {
+    border-color: rgba(255,255,255,0.15);
+    cursor: not-allowed;
+  }
+
+  .checkbox:disabled:checked {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  /* Radio buttons */
+  .radio-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: var(--font-size-2);
+    cursor: pointer;
+    color: var(--panel-text);
+  }
+
+  .radio {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid var(--checkbox-border);
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .radio:checked {
+    border-color: var(--accent-9);
+    border-width: 5px;
+  }
+
+  /* Section divider — the "this licence permits use:" line */
+  .permits-divider {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    margin-top: var(--spacing-3);
+    margin-bottom: -8px;
+  }
+
+  .permits-divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--panel-border);
+  }
+
+  .permits-divider-text {
+    font-size: var(--font-size-1);
+    font-weight: 500;
+    color: var(--panel-text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* Hidden field state */
+  .field-hidden {
+    display: none;
+  }
+
+  /* Field state indicators */
+  .field-state-pill {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 2px 6px;
+    border-radius: var(--radius-1);
+    line-height: 1;
+  }
+
+  .pill-required {
+    background: rgba(248,113,113,0.15);
+    color: #fca5a5;
+  }
+
+  .pill-optional {
+    background: rgba(255,255,255,0.08);
+    color: var(--panel-text-subtle);
+  }
+
+  .pill-fixed {
+    background: rgba(11,110,138,0.25);
+    color: #7dd3fc;
+  }
+
+  .pill-disabled {
+    background: rgba(255,255,255,0.04);
+    color: var(--panel-text-muted);
+  }
+
+  /* Inline notice — appears when a field is constrained by license type */
+  .inline-notice {
+    display: flex;
+    gap: 8px;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.04);
+    border-left: 2px solid var(--accent-11);
+    border-radius: 2px;
+    font-size: var(--font-size-1);
+    color: var(--panel-text-subtle);
+    line-height: 1.45;
+  }
+
+  .inline-notice.warn {
+    border-left-color: var(--color-amber-500);
+  }
+
+  .inline-notice-icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Annotations panel — the explanation column */
+  .annotations {
+    background: white;
+    border: 1px solid var(--color-stone-200);
+    border-radius: var(--radius-4);
+    padding: var(--spacing-5);
+    position: sticky;
+    top: var(--spacing-7);
+  }
+
+  .annotations h2 {
+    font-size: var(--font-size-3);
+    font-weight: 600;
+    margin-bottom: var(--spacing-4);
+    padding-bottom: var(--spacing-3);
+    border-bottom: 1px solid var(--color-stone-200);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+
+  .annotations h2 .lic-badge {
+    background: var(--accent-9);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: var(--radius-1);
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .ann-row {
+    display: grid;
+    grid-template-columns: 130px 80px 1fr;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) 0;
+    border-bottom: 1px solid var(--color-stone-100);
+    font-size: var(--font-size-2);
+    align-items: start;
+  }
+
+  .ann-row:last-child { border-bottom: none; }
+
+  .ann-field {
+    font-weight: 500;
+    color: var(--color-stone-800);
+  }
+
+  .ann-state {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 2px 6px;
+    border-radius: var(--radius-1);
+    line-height: 1.4;
+    width: fit-content;
+    height: fit-content;
+  }
+
+  .ann-state.required { background: #fecaca; color: #991b1b; }
+  .ann-state.optional { background: var(--color-stone-200); color: var(--color-stone-700); }
+  .ann-state.recommended { background: #fef3c7; color: #92400e; }
+  .ann-state.fixed { background: #bae6fd; color: #075985; }
+  .ann-state.hidden { background: var(--color-stone-100); color: var(--color-stone-500); }
+
+  .ann-note {
+    color: var(--color-stone-600);
+    font-size: var(--font-size-1);
+    line-height: 1.5;
+  }
+
+  .ann-intro {
+    font-size: var(--font-size-2);
+    color: var(--color-stone-700);
+    margin-bottom: var(--spacing-3);
+    padding: var(--spacing-3);
+    background: var(--color-stone-100);
+    border-radius: var(--radius-2);
+    line-height: 1.55;
+  }
+
+  .ann-intro strong { color: var(--color-stone-900); }
+
+  /* Footer note */
+  .footer-note {
+    margin-top: var(--spacing-6);
+    padding: var(--spacing-4);
+    background: white;
+    border: 1px solid var(--color-stone-200);
+    border-radius: var(--radius-4);
+    font-size: var(--font-size-2);
+    color: var(--color-stone-600);
+    line-height: 1.6;
+  }
+
+  .footer-note strong { color: var(--color-stone-900); }
+
+  @media (max-width: 1024px) {
+    .workspace { grid-template-columns: 1fr; }
+    .annotations { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="page-header">
+    <h1>Rights Management — Conditional behaviour by Licence Type</h1>
+    <p>Demonstrates how the form responds when Licence Type changes. Territory, Channels, Audience, and dates are facets of one licence; their <em>required / optional / hidden / fixed</em> state cascades from the Licence Type selection.</p>
+  </div>
+
+  <div class="switcher">
+    <span class="switcher-label">Licence Type:</span>
+    <button class="switcher-btn" data-license="owned">Owned</button>
+    <button class="switcher-btn" data-license="royalty-free">Royalty-Free</button>
+    <button class="switcher-btn active" data-license="rights-managed">Rights-Managed</button>
+    <button class="switcher-btn" data-license="editorial">Editorial Only</button>
+    <button class="switcher-btn" data-license="internal">Internal Only</button>
+  </div>
+
+  <div class="workspace">
+
+    <!-- Dark side panel — mimics the actual UI -->
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Rights Management</div>
+          <div class="panel-asset">F21_license-editorial-only_USA.svg</div>
+        </div>
+      </div>
+
+      <!-- Licensing Rights accordion -->
+      <div class="accordion" id="licensing-accordion">
+        <div class="accordion-header">
+          <span>Licensing Rights</span>
+          <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+        <div class="accordion-body">
+
+          <!-- License Type (always shown) -->
+          <div class="field-group">
+            <label class="field-label">Licence Type</label>
+            <select class="select" id="license-select">
+              <option value="owned">Owned</option>
+              <option value="royalty-free">Royalty-Free</option>
+              <option value="rights-managed" selected>Rights-Managed</option>
+              <option value="editorial">Editorial Only</option>
+              <option value="internal">Internal Only</option>
+            </select>
+          </div>
+
+          <!-- License Owner -->
+          <div class="field-group">
+            <label class="field-label">Licence Owner</label>
+            <input class="input" placeholder="e.g. Getty Images" value="">
+          </div>
+
+          <!-- License Documentation -->
+          <div class="field-group">
+            <label class="field-label">Licence Documentation</label>
+            <input class="input" type="file">
+          </div>
+
+          <!-- Permits divider -->
+          <div class="permits-divider">
+            <div class="permits-divider-line"></div>
+            <div class="permits-divider-text">This licence permits use:</div>
+            <div class="permits-divider-line"></div>
+          </div>
+
+          <!-- Territory -->
+          <div class="field-group" id="field-territory">
+            <div class="field-label">
+              <span>In territories</span>
+              <span class="req-asterisk" id="territory-req">*</span>
+              <span class="field-state-pill pill-required" id="territory-pill" style="margin-left:auto;">Required</span>
+            </div>
+            <div class="field-hint" id="territory-hint">Select where this asset may be used in market.</div>
+            <select class="select" id="territory-scope">
+              <option>Country-specific</option>
+              <option>Region</option>
+              <option>Global</option>
+            </select>
+            <div class="checkbox-list scroll-shadow" id="territory-list">
+              <label class="checkbox-row"><input type="checkbox" class="checkbox"> Australia</label>
+              <label class="checkbox-row"><input type="checkbox" class="checkbox"> Canada</label>
+              <label class="checkbox-row"><input type="checkbox" class="checkbox"> France</label>
+              <label class="checkbox-row"><input type="checkbox" class="checkbox"> Germany</label>
+              <label class="checkbox-row"><input type="checkbox" class="checkbox"> Japan</label>
+              <label class="checkbox-row"><input type="checkbox" class="checkbox"> UK</label>
+              <label class="checkbox-row"><input type="checkbox" class="checkbox" checked> USA</label>
+            </div>
+          </div>
+
+          <!-- Channels -->
+          <div class="field-group" id="field-channels">
+            <div class="field-label">
+              <span>On channels</span>
+              <span class="req-asterisk" id="channels-req">*</span>
+              <span class="field-state-pill pill-required" id="channels-pill" style="margin-left:auto;">Required</span>
+            </div>
+            <div class="field-hint" id="channels-hint">Select the channels this asset is cleared for.</div>
+            <div class="inline-notice field-hidden" id="channels-notice">
+              <svg class="inline-notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              <span id="channels-notice-text">Editorial Only blocks commercial channels.</span>
+            </div>
+            <div class="checkbox-list" id="channels-list">
+              <label class="checkbox-row"><input type="checkbox" class="checkbox" checked> Social (Organic)</label>
+              <label class="checkbox-row" data-commercial="true"><input type="checkbox" class="checkbox"> Social (Paid)</label>
+              <label class="checkbox-row"><input type="checkbox" class="checkbox"> Web</label>
+              <label class="checkbox-row" data-commercial="true"><input type="checkbox" class="checkbox"> Print</label>
+              <label class="checkbox-row" data-commercial="true"><input type="checkbox" class="checkbox"> OOH</label>
+              <label class="checkbox-row" data-commercial="true"><input type="checkbox" class="checkbox"> TV / Broadcast</label>
+              <label class="checkbox-row"><input type="checkbox" class="checkbox"> Internal Comms</label>
+              <label class="checkbox-row"><input type="checkbox" class="checkbox"> Email / CRM</label>
+            </div>
+          </div>
+
+          <!-- Audience -->
+          <div class="field-group" id="field-audience">
+            <div class="field-label">
+              <span>For audiences</span>
+              <span class="req-asterisk" id="audience-req">*</span>
+              <span class="field-state-pill pill-required" id="audience-pill" style="margin-left:auto;">Required</span>
+            </div>
+            <div class="field-hint" id="audience-hint">Who is this asset legally licensed to be consumed by?</div>
+            <div class="inline-notice field-hidden" id="audience-notice">
+              <svg class="inline-notice-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              <span id="audience-notice-text">Internal Only — audience is fixed.</span>
+            </div>
+            <div class="checkbox-list" id="audience-list">
+              <label class="checkbox-row"><input type="checkbox" class="checkbox" checked> Internal</label>
+              <label class="checkbox-row"><input type="checkbox" class="checkbox"> External / Public</label>
+              <label class="checkbox-row"><input type="checkbox" class="checkbox"> Partner Only</label>
+              <label class="checkbox-row"><input type="checkbox" class="checkbox"> Agency Only</label>
+              <label class="checkbox-row"><input type="checkbox" class="checkbox"> Press / Editorial</label>
+            </div>
+          </div>
+
+          <!-- Usage notes -->
+          <div class="field-group">
+            <label class="field-label">Usage notes</label>
+            <input class="input" placeholder="Optional context, restrictions, contract refs">
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Time-Based Rights accordion -->
+      <div class="accordion" id="time-accordion">
+        <div class="accordion-header">
+          <span>Time-Based Rights</span>
+          <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+        <div class="accordion-body">
+
+          <div class="field-group" id="field-embargo">
+            <div class="field-label">
+              <span>Embargo Date (Go-Live)</span>
+              <span class="req-asterisk field-hidden" id="embargo-req">*</span>
+              <span class="field-state-pill pill-optional" id="embargo-pill" style="margin-left:auto;">Optional</span>
+            </div>
+            <input class="input" type="date">
+          </div>
+
+          <div class="field-group" id="field-expiry">
+            <div class="field-label">
+              <span>Expiration Date</span>
+              <span class="req-asterisk" id="expiry-req">*</span>
+              <span class="field-state-pill pill-required" id="expiry-pill" style="margin-left:auto;">Required</span>
+            </div>
+            <input class="input" type="date">
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Annotations panel — explains the conditional logic -->
+    <div class="annotations">
+      <h2>
+        <span>Behaviour for</span>
+        <span class="lic-badge" id="annotation-badge">Rights-Managed</span>
+      </h2>
+
+      <div class="ann-intro" id="annotation-intro">
+        <strong>Rights-Managed</strong> assets have strict contractual terms. Every dimension of usage must be defined — system blocks save until all required fields are completed.
+      </div>
+
+      <div class="ann-row">
+        <span class="ann-field">Territory</span>
+        <span class="ann-state required" id="ann-territory-state">Required</span>
+        <span class="ann-note" id="ann-territory-note">User must pick country-specific, region, or global. Save blocked otherwise.</span>
+      </div>
+
+      <div class="ann-row">
+        <span class="ann-field">Channels</span>
+        <span class="ann-state required" id="ann-channels-state">Required</span>
+        <span class="ann-note" id="ann-channels-note">At least one channel must be selected.</span>
+      </div>
+
+      <div class="ann-row">
+        <span class="ann-field">Audience</span>
+        <span class="ann-state required" id="ann-audience-state">Required</span>
+        <span class="ann-note" id="ann-audience-note">At least one audience must be selected.</span>
+      </div>
+
+      <div class="ann-row">
+        <span class="ann-field">Embargo Date</span>
+        <span class="ann-state optional" id="ann-embargo-state">Optional</span>
+        <span class="ann-note" id="ann-embargo-note">Set if asset is not yet live.</span>
+      </div>
+
+      <div class="ann-row">
+        <span class="ann-field">Expiry Date</span>
+        <span class="ann-state required" id="ann-expiry-state">Required</span>
+        <span class="ann-note" id="ann-expiry-note">Rights-Managed assets must have an end of licence date.</span>
+      </div>
+
+      <div class="ann-row">
+        <span class="ann-field">Public sharing</span>
+        <span class="ann-state optional" id="ann-sharing-state">Optional</span>
+        <span class="ann-note" id="ann-sharing-note">Allowed, but share links must respect territory and channel.</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-note">
+    <strong>Note on the model:</strong> Changing Licence Type does not wipe Territory / Channels / Audience selections — it changes which of them are required, optional, hidden, fixed, or constrained. The cascade is on the rules, not the data. The "This licence permits use:" divider exists so the dev / user reads everything below it as terms of the single licence above, not as five independent settings.
+  </div>
+
+</div>
+
+<script>
+  // Licence behaviour table — single source of truth
+  const licenseRules = {
+    'owned': {
+      label: 'Owned',
+      intro: '<strong>Owned</strong> assets are unrestricted by default. All usage fields are optional — set them only if internal policy demands narrower scope.',
+      territory: { state: 'optional', note: 'No regional restriction by default. Selecting countries narrows scope.' },
+      channels:  { state: 'optional', note: 'All channels allowed by default.' },
+      audience:  { state: 'optional', note: 'Internal + Partner + Public by default.' },
+      embargo:   { state: 'optional', note: 'Set only if asset is not yet live.' },
+      expiry:    { state: 'optional', note: 'Most owned assets have no expiry.' },
+      sharing:   { state: 'optional', note: 'Public sharing allowed by default.' },
+      channelsBlocked: false,
+      audienceFixed: null
+    },
+    'royalty-free': {
+      label: 'Royalty-Free',
+      intro: '<strong>Royalty-Free</strong> assets can be used broadly but may carry channel or territory limits depending on the provider terms.',
+      territory: { state: 'optional', note: 'Optional — recommended if licence has regional scope.' },
+      channels:  { state: 'optional', note: 'Optional — recommended if licence excludes channels (e.g. no broadcast).' },
+      audience:  { state: 'required', note: 'Pick at least one — provider terms usually specify intended consumer.' },
+      embargo:   { state: 'optional', note: 'Rarely embargoed.' },
+      expiry:    { state: 'optional', note: 'Some royalty-free licences do expire — set if applicable.' },
+      sharing:   { state: 'optional', note: 'Allowed within audience scope.' },
+      channelsBlocked: false,
+      audienceFixed: null
+    },
+    'rights-managed': {
+      label: 'Rights-Managed',
+      intro: '<strong>Rights-Managed</strong> assets have strict contractual terms. Every dimension of usage must be defined — system blocks save until all required fields are completed.',
+      territory: { state: 'required', note: 'User must pick country-specific, region, or global. Save blocked otherwise.' },
+      channels:  { state: 'required', note: 'At least one channel must be selected.' },
+      audience:  { state: 'required', note: 'At least one audience must be selected.' },
+      embargo:   { state: 'optional', note: 'Set if asset is not yet live.' },
+      expiry:    { state: 'required', note: 'Rights-Managed assets must have an end of licence date.' },
+      sharing:   { state: 'optional', note: 'Allowed, but share links must respect territory and channel.' },
+      channelsBlocked: false,
+      audienceFixed: null
+    },
+    'editorial': {
+      label: 'Editorial Only',
+      intro: '<strong>Editorial Only</strong> assets are licensed for non-commercial editorial / press use. Commercial channels (Paid Social, Print, OOH, TV/Broadcast) are blocked at the source.',
+      territory: { state: 'optional', note: 'Optional — set only if editorial use is restricted geographically.' },
+      channels:  { state: 'required', note: 'Pick at least one non-commercial channel. Commercial options are disabled.' },
+      audience:  { state: 'required', note: 'Press / Editorial + Internal by default. Public allowed if licence permits.' },
+      embargo:   { state: 'optional', note: 'Press embargoes are common — set if applicable.' },
+      expiry:    { state: 'recommended', note: 'Editorial licences usually expire — recommended.' },
+      sharing:   { state: 'optional', note: 'Allowed for editorial audiences only.' },
+      channelsBlocked: true,
+      audienceFixed: null
+    },
+    'internal': {
+      label: 'Internal Only',
+      intro: '<strong>Internal Only</strong> assets cannot leave the organisation. Audience is fixed to Internal. Public sharing and CDN delivery are disabled.',
+      territory: { state: 'optional', note: 'Internal use is rarely territory-restricted.' },
+      channels:  { state: 'optional', note: 'Most internal-only assets default to Internal Comms.' },
+      audience:  { state: 'fixed',    note: 'Locked to Internal. Cannot be changed without changing licence type.' },
+      embargo:   { state: 'optional', note: 'Set if asset is staged for an internal launch.' },
+      expiry:    { state: 'optional', note: 'Optional — recommended if asset relates to a time-bound campaign.' },
+      sharing:   { state: 'hidden',   note: 'Public sharing disabled at licence level — not shown in form.' },
+      channelsBlocked: false,
+      audienceFixed: 'Internal'
+    }
+  };
+
+  const stateLabels = {
+    required: 'Required',
+    optional: 'Optional',
+    recommended: 'Recommended',
+    fixed: 'Fixed',
+    hidden: 'Hidden'
+  };
+
+  const pillClassMap = {
+    required: 'pill-required',
+    optional: 'pill-optional',
+    recommended: 'pill-required',
+    fixed: 'pill-fixed',
+    hidden: 'pill-disabled'
+  };
+
+  function setPill(el, state) {
+    const cls = pillClassMap[state] || 'pill-optional';
+    el.className = 'field-state-pill ' + cls;
+    el.style.marginLeft = 'auto';
+    el.textContent = stateLabels[state];
+  }
+
+  function setReqAsterisk(el, state) {
+    if (state === 'required' || state === 'recommended') {
+      el.classList.remove('field-hidden');
+      el.textContent = state === 'recommended' ? '†' : '*';
+      el.style.color = state === 'recommended' ? 'var(--color-amber-500)' : 'var(--required-color)';
+    } else {
+      el.classList.add('field-hidden');
+    }
+  }
+
+  function applyLicense(licenseKey) {
+    const r = licenseRules[licenseKey];
+
+    // Update switcher buttons
+    document.querySelectorAll('.switcher-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.license === licenseKey);
+    });
+
+    // Update license-select dropdown value
+    document.getElementById('license-select').value = licenseKey;
+
+    // Update annotation panel
+    document.getElementById('annotation-badge').textContent = r.label;
+    document.getElementById('annotation-intro').innerHTML = r.intro;
+
+    // Map fields and update state in form + annotations
+    const fields = ['territory','channels','audience','embargo','expiry','sharing'];
+    fields.forEach(f => {
+      const rule = r[f];
+      const annState = document.getElementById('ann-' + f + '-state');
+      const annNote  = document.getElementById('ann-' + f + '-note');
+      annState.textContent = stateLabels[rule.state];
+      annState.className = 'ann-state ' + rule.state;
+      annNote.textContent = rule.note;
+
+      // Update form-side pills + asterisks (skip sharing — it's annotation-only)
+      const pill = document.getElementById(f + '-pill');
+      const req  = document.getElementById(f + '-req');
+      if (pill) setPill(pill, rule.state);
+      if (req)  setReqAsterisk(req, rule.state);
+
+      // Show/hide entire field group when state is 'hidden'
+      const fg = document.getElementById('field-' + f);
+      if (fg) {
+        fg.style.display = (rule.state === 'hidden') ? 'none' : '';
+        fg.style.opacity = (rule.state === 'fixed' || rule.state === 'hidden') ? '' : '';
+      }
+    });
+
+    // Channel blocking (Editorial Only)
+    const channelRows = document.querySelectorAll('#channels-list .checkbox-row');
+    channelRows.forEach(row => {
+      const isCommercial = row.dataset.commercial === 'true';
+      const cb = row.querySelector('input');
+      if (r.channelsBlocked && isCommercial) {
+        row.classList.add('blocked');
+        cb.disabled = true;
+        cb.checked = false;
+      } else {
+        row.classList.remove('blocked');
+        cb.disabled = false;
+      }
+    });
+
+    // Channels notice
+    const chNotice = document.getElementById('channels-notice');
+    const chNoticeText = document.getElementById('channels-notice-text');
+    if (r.channelsBlocked) {
+      chNotice.classList.remove('field-hidden');
+      chNoticeText.textContent = 'Editorial Only blocks commercial channels — Paid Social, Print, OOH, TV/Broadcast disabled.';
+    } else {
+      chNotice.classList.add('field-hidden');
+    }
+
+    // Audience locking (Internal Only)
+    const audRows = document.querySelectorAll('#audience-list .checkbox-row');
+    audRows.forEach(row => {
+      const cb = row.querySelector('input');
+      const labelText = row.textContent.trim();
+      if (r.audienceFixed) {
+        cb.disabled = true;
+        cb.checked = (labelText === r.audienceFixed);
+        if (cb.checked) {
+          row.classList.remove('blocked');
+          row.classList.add('disabled');
+        } else {
+          row.classList.add('disabled');
+        }
+      } else {
+        cb.disabled = false;
+        row.classList.remove('disabled');
+        row.classList.remove('blocked');
+      }
+    });
+
+    // Audience notice
+    const audNotice = document.getElementById('audience-notice');
+    const audNoticeText = document.getElementById('audience-notice-text');
+    if (r.audienceFixed) {
+      audNotice.classList.remove('field-hidden');
+      audNoticeText.textContent = 'Audience is fixed to ' + r.audienceFixed + ' by the licence type and cannot be edited.';
+    } else {
+      audNotice.classList.add('field-hidden');
+    }
+  }
+
+  // Wire up the switcher buttons
+  document.querySelectorAll('.switcher-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyLicense(btn.dataset.license));
+  });
+
+  // Wire up the in-panel select too
+  document.getElementById('license-select').addEventListener('change', e => {
+    applyLicense(e.target.value);
+  });
+
+  // Wire up accordion expand/collapse
+  document.querySelectorAll('.accordion-header').forEach(h => {
+    h.addEventListener('click', () => {
+      h.parentElement.classList.toggle('collapsed');
+      h.classList.toggle('collapsed');
+    });
+  });
+
+  // Initial state
+  applyLicense('rights-managed');
+</script>
+
+</body>
+</html>
