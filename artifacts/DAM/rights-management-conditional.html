@@ -556,6 +556,33 @@
 
   .ann-intro strong { color: var(--color-stone-900); }
 
+  /* Time-Based as top-level section (Option C) */
+  .time-based-section {
+    padding: var(--spacing-5);
+    border-bottom: 1px solid var(--panel-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    background: var(--panel-bg);
+  }
+
+  .time-based-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: var(--font-size-1);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--panel-text-subtle);
+  }
+
+  .time-based-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-3);
+  }
+
   /* Footer note */
   .footer-note {
     margin-top: var(--spacing-6);
@@ -582,7 +609,7 @@
 
   <div class="page-header">
     <h1>Rights Management — Conditional behaviour by Licence Type</h1>
-    <p>Demonstrates how the form responds when Licence Type changes. Territory, Channels, Audience, and dates are facets of one licence; their <em>required / optional / hidden / fixed</em> state cascades from the Licence Type selection.</p>
+    <p>Demonstrates how the form responds when Licence Type changes. Territory, Channels, Audience are facets of one licence and cascade by type. Embargo and Expiration sit above as always-visible top-level fields — they apply to every licence type and are the most common rights field used in practice.</p>
   </div>
 
   <div class="switcher">
@@ -602,6 +629,36 @@
         <div>
           <div class="panel-title">Rights Management</div>
           <div class="panel-asset">F21_license-editorial-only_USA.svg</div>
+        </div>
+      </div>
+
+      <!-- Time-Based Rights — always visible, top-level (Option C) -->
+      <div class="time-based-section">
+        <div class="time-based-header">
+          <span>Time-Based Rights</span>
+        </div>
+        <div class="time-based-grid">
+
+          <div class="field-group" id="field-embargo">
+            <div class="field-label">
+              <span>Embargo Date</span>
+              <span class="req-asterisk field-hidden" id="embargo-req">*</span>
+              <span class="field-state-pill pill-optional" id="embargo-pill" style="margin-left:auto;">Optional</span>
+            </div>
+            <input class="input" type="date">
+            <div class="field-hint">Asset unusable before this date.</div>
+          </div>
+
+          <div class="field-group" id="field-expiry">
+            <div class="field-label">
+              <span>Expiration Date</span>
+              <span class="req-asterisk" id="expiry-req">*</span>
+              <span class="field-state-pill pill-required" id="expiry-pill" style="margin-left:auto;">Required</span>
+            </div>
+            <input class="input" type="date">
+            <div class="field-hint">Asset unusable after this date.</div>
+          </div>
+
         </div>
       </div>
 
@@ -722,35 +779,6 @@
         </div>
       </div>
 
-      <!-- Time-Based Rights accordion -->
-      <div class="accordion" id="time-accordion">
-        <div class="accordion-header">
-          <span>Time-Based Rights</span>
-          <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-        </div>
-        <div class="accordion-body">
-
-          <div class="field-group" id="field-embargo">
-            <div class="field-label">
-              <span>Embargo Date (Go-Live)</span>
-              <span class="req-asterisk field-hidden" id="embargo-req">*</span>
-              <span class="field-state-pill pill-optional" id="embargo-pill" style="margin-left:auto;">Optional</span>
-            </div>
-            <input class="input" type="date">
-          </div>
-
-          <div class="field-group" id="field-expiry">
-            <div class="field-label">
-              <span>Expiration Date</span>
-              <span class="req-asterisk" id="expiry-req">*</span>
-              <span class="field-state-pill pill-required" id="expiry-pill" style="margin-left:auto;">Required</span>
-            </div>
-            <input class="input" type="date">
-          </div>
-
-        </div>
-      </div>
-
     </div>
 
     <!-- Annotations panel — explains the conditional logic -->
@@ -804,7 +832,9 @@
   </div>
 
   <div class="footer-note">
-    <strong>Note on the model:</strong> Changing Licence Type does not wipe Territory / Channels / Audience selections — it changes which of them are required, optional, hidden, fixed, or constrained. The cascade is on the rules, not the data. The "This licence permits use:" divider exists so the dev / user reads everything below it as terms of the single licence above, not as five independent settings.
+    <strong>Structural note:</strong> Embargo and Expiration are surfaced as always-visible top-level fields rather than buried in an accordion. Rationale: time-based rights are the most common configuration in practice (e.g. an Owned asset with just an expiry date — no other rights set). Progressive disclosure would optimise for the wrong case. Every other rights field cascades from Licence Type and remains in the Licensing Rights accordion below.
+    <br><br>
+    <strong>Try the lightweight case:</strong> select Licence Type = Owned, set only an expiration date, and notice the form is complete — no other fields required. That's the common configuration for a client who needs time-bound expiry on owned content and nothing else.
   </div>
 
 </div>
