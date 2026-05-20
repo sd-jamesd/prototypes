@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rights Management — QA Reference Guide</title>
+<style>
+  :root {
+    --color-stone-50: #f8f7f4;
+    --color-stone-100: #f2f1ee;
+    --color-stone-200: #e7e6e1;
+    --color-stone-300: #d4d2cb;
+    --color-stone-400: #a8a59b;
+    --color-stone-500: #7d7a6f;
+    --color-stone-600: #525049;
+    --color-stone-800: #2a2a26;
+    --color-stone-900: #1c1c19;
+    --color-red-100: #feebe7; --color-red-500: #e54d2e; --color-red-700: #582C29;
+    --color-amber-100: #ffefd5; --color-amber-500: #f5a524; --color-amber-700: #4E350D;
+    --color-green-100: #e6f7ed; --color-green-500: #29a383; --color-green-700: #1E442D;
+    --color-primary-50: #e8f1f5; --color-primary-500: #0B6E8A; --color-primary-700: #1a3a46;
+
+    --surface-default: #ffffff;
+    --surface-subtle: var(--color-stone-50);
+    --text-default: var(--color-stone-900);
+    --text-subtle: var(--color-stone-500);
+    --text-hint: var(--color-stone-400);
+    --border-default: var(--color-stone-200);
+    --border-strong: var(--color-stone-300);
+    --primary-default: var(--color-primary-500);
+    --primary-subtle: var(--color-primary-50);
+
+    --spacing-1: 4px; --spacing-2: 8px; --spacing-3: 12px; --spacing-4: 16px;
+    --spacing-5: 20px; --spacing-6: 24px; --spacing-7: 32px; --spacing-8: 40px;
+    --radius-2: 4px; --radius-3: 6px; --radius-4: 8px;
+
+    --font-family-text: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-family-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --font-size-1: 12px; --font-size-2: 13px; --font-size-3: 14px; --font-size-4: 16px; --font-size-5: 18px;
+    --font-weight-medium: 500; --font-weight-semibold: 600;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: var(--font-family-text);
+    color: var(--text-default);
+    background: var(--color-stone-100);
+    font-size: var(--font-size-3);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page { max-width: 820px; margin: 0 auto; padding: var(--spacing-8) var(--spacing-6); }
+
+  /* Header */
+  .doc-header {
+    margin-bottom: var(--spacing-8);
+    padding-bottom: var(--spacing-6);
+    border-bottom: 1px solid var(--border-default);
+  }
+  .doc-header h1 {
+    margin: 0 0 var(--spacing-2);
+    font-size: 24px;
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: -0.02em;
+    color: var(--text-default);
+  }
+  .doc-header .subtitle {
+    margin: 0 0 var(--spacing-4);
+    color: var(--text-subtle);
+    font-size: var(--font-size-4);
+  }
+  .doc-header .meta {
+    display: flex;
+    gap: var(--spacing-4);
+    font-size: var(--font-size-1);
+    color: var(--text-hint);
+    font-family: var(--font-family-mono);
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    padding: var(--spacing-5);
+    margin-bottom: var(--spacing-8);
+  }
+  .toc-title {
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: var(--spacing-3);
+  }
+  .toc a {
+    display: block;
+    padding: 4px 0;
+    color: var(--primary-default);
+    text-decoration: none;
+    font-size: var(--font-size-2);
+  }
+  .toc a:hover { text-decoration: underline; }
+
+  /* Section */
+  .section {
+    margin-bottom: var(--spacing-8);
+  }
+  .section-anchor { scroll-margin-top: var(--spacing-6); }
+  h2 {
+    font-size: var(--font-size-5);
+    font-weight: var(--font-weight-semibold);
+    margin: 0 0 var(--spacing-4);
+    letter-spacing: -0.01em;
+    padding-bottom: var(--spacing-3);
+    border-bottom: 1px solid var(--border-default);
+  }
+  h3 {
+    font-size: var(--font-size-4);
+    font-weight: var(--font-weight-medium);
+    margin: var(--spacing-6) 0 var(--spacing-3);
+    color: var(--text-default);
+  }
+
+  p { margin: 0 0 var(--spacing-4); }
+
+  /* Card */
+  .card {
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    padding: var(--spacing-5);
+    margin-bottom: var(--spacing-4);
+  }
+  .card-label {
+    font-size: 10px;
+    font-weight: var(--font-weight-medium);
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: var(--spacing-2);
+  }
+
+  /* Table */
+  .ref-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    overflow: hidden;
+    font-size: var(--font-size-2);
+    margin-bottom: var(--spacing-4);
+  }
+  .ref-table th, .ref-table td {
+    padding: var(--spacing-3) var(--spacing-4);
+    text-align: left;
+    border-bottom: 1px solid var(--border-default);
+    vertical-align: top;
+  }
+  .ref-table th {
+    background: var(--surface-subtle);
+    font-weight: var(--font-weight-medium);
+    font-size: 11px;
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .ref-table tr:last-child td { border-bottom: none; }
+  .ref-table code {
+    font-family: var(--font-family-mono);
+    font-size: 11px;
+    background: var(--surface-subtle);
+    padding: 1px 4px;
+    border-radius: var(--radius-2);
+  }
+
+  /* Callout */
+  .callout {
+    display: flex;
+    gap: 10px;
+    padding: var(--spacing-3) var(--spacing-4);
+    border-radius: var(--radius-3);
+    font-size: var(--font-size-2);
+    border: 1px solid;
+    margin-bottom: var(--spacing-4);
+    line-height: 1.5;
+  }
+  .callout b { font-weight: var(--font-weight-medium); }
+  .callout-info { background: var(--primary-subtle); border-color: var(--primary-default); color: var(--color-primary-700); }
+  .callout-warn { background: var(--color-amber-100); border-color: var(--color-amber-500); color: var(--color-amber-700); }
+  .callout-rule { background: var(--surface-subtle); border-color: var(--border-strong); color: var(--text-default); }
+
+  /* Decision tree */
+  .tree { margin: var(--spacing-4) 0; }
+  .tree-step {
+    display: flex;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) 0;
+    border-left: 2px solid var(--border-default);
+    margin-left: 10px;
+    padding-left: var(--spacing-4);
+    position: relative;
+  }
+  .tree-step::before {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: 18px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--surface-default);
+    border: 2px solid var(--border-strong);
+  }
+  .tree-step.match::before { background: var(--color-green-100); border-color: var(--color-green-500); }
+  .tree-step.block::before { background: var(--color-red-100); border-color: var(--color-red-500); }
+  .tree-step:last-child { border-left-color: transparent; }
+  .tree-num {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-default);
+    color: var(--text-subtle);
+    font-size: 11px;
+    font-weight: var(--font-weight-medium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-family-mono);
+  }
+  .tree-body { flex: 1; }
+  .tree-title { font-weight: var(--font-weight-medium); margin-bottom: 2px; }
+  .tree-detail { font-size: var(--font-size-1); color: var(--text-subtle); }
+
+  /* Pill */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: var(--font-weight-medium);
+    border: 1px solid;
+  }
+  .pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .pill-full { background: var(--color-green-100); border-color: var(--color-green-500); color: var(--color-green-700); }
+  .pill-restricted { background: var(--color-amber-100); border-color: var(--color-amber-500); color: var(--color-amber-700); }
+  .pill-nomatch { background: var(--surface-subtle); border-color: var(--border-strong); color: var(--text-default); }
+  .pill-blocked { background: var(--color-red-100); border-color: var(--color-red-500); color: var(--color-red-700); }
+
+  /* Download option example */
+  .dl-option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) var(--spacing-4);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    margin-bottom: var(--spacing-2);
+    font-size: var(--font-size-2);
+  }
+  .dl-option.disabled { opacity: 0.4; }
+  .dl-radio {
+    width: 14px; height: 14px;
+    border: 1.5px solid var(--color-stone-400);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dl-option-body { flex: 1; }
+  .dl-option-title { font-weight: var(--font-weight-medium); }
+  .dl-option-desc { font-size: var(--font-size-1); color: var(--text-subtle); }
+  .dl-option-specs { font-size: var(--font-size-1); color: var(--text-subtle); font-family: var(--font-family-mono); text-align: right; flex-shrink: 0; }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: var(--spacing-8);
+    padding: var(--spacing-3) var(--spacing-4);
+    background: var(--primary-default);
+    color: white;
+    border-radius: var(--radius-2);
+    text-decoration: none;
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+  }
+  .back-link:hover { opacity: 0.9; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="doc-header">
+    <h1>Rights Management — QA Reference Guide</h1>
+    <p class="subtitle">How rights work, what they control, and what QA should verify at every surface.</p>
+    <div class="meta">
+      <span>Screendragon DAM</span>
+      <span>·</span>
+      <span>Companion to Download QA Tester</span>
+      <span>·</span>
+      <span>May 2026</span>
+    </div>
+  </div>
+
+  <nav class="toc">
+    <div class="toc-title">Contents</div>
+    <a href="#overview">1. What is rights management?</a>
+    <a href="#decision-tree">2. The decision tree — how access is computed</a>
+    <a href="#access-levels">3. Access levels — what the user gets</a>
+    <a href="#dimensions">4. Dimensional scoring — territory, audience, channel</a>
+    <a href="#time-blocks">5. Time-based blocks — embargo, expiry, usage windows</a>
+    <a href="#approval">6. Approval workflow — Request Access</a>
+    <a href="#superadmin">7. Superadmin bypass</a>
+    <a href="#license-warnings">8. License warnings — stock, editorial, agency</a>
+    <a href="#download-modal">9. The download modal — what users see</a>
+    <a href="#ui-rules">10. UI rules — banners, buttons, copy</a>
+    <a href="#glossary">11. Glossary</a>
+  </nav>
+
+  <!-- ============================================================
+       1. OVERVIEW
+       ============================================================ -->
+  <div class="section" id="overview">
+    <h2 class="section-anchor">1. What is rights management?</h2>
+
+    <p>Rights management controls <b>who can download what, and in what quality</b>. It exists to prevent assets from being used outside of their licensing terms — wrong country, wrong audience, wrong time window, wrong channel.</p>
+
+    <p>Every rights-managed asset in the DAM has metadata defining where, when, and by whom it can be used. When a user tries to download an asset, the system evaluates their profile against the asset's rights metadata and returns one of four outcomes:</p>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--spacing-3);margin:var(--spacing-4) 0;">
+      <div class="card" style="text-align:center;">
+        <span class="pill pill-full">FULL</span>
+        <p style="margin:var(--spacing-2) 0 0;font-size:var(--font-size-1);">All download options available.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <span class="pill pill-restricted">RESTRICTED</span>
+        <p style="margin:var(--spacing-2) 0 0;font-size:var(--font-size-1);">Preview + Watermarked only. Original disabled.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <span class="pill pill-nomatch">NOMATCH</span>
+        <p style="margin:var(--spacing-2) 0 0;font-size:var(--font-size-1);">No download. May see Request Access.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <span class="pill pill-blocked">BLOCKED</span>
+        <p style="margin:var(--spacing-2) 0 0;font-size:var(--font-size-1);">Time-based block. No download at all.</p>
+      </div>
+    </div>
+
+    <p>Assets that are <b>not rights-managed</b> (no licensing metadata set) skip all of this — any user with basic DAM access gets full download.</p>
+
+    <div class="callout callout-rule">
+      <b>Key principle:</b>&nbsp;Rights affect <em>download quality</em>, not visibility. Users can always see and preview a rights-managed asset in the DAM. They just can't always download the original.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       2. DECISION TREE
+       ============================================================ -->
+  <div class="section" id="decision-tree">
+    <h2 class="section-anchor">2. The decision tree</h2>
+
+    <p>When a user requests a download, the system evaluates access in <b>strict priority order</b>. The first matching condition determines the outcome — everything below it is skipped.</p>
+
+    <div class="tree">
+      <div class="tree-step match">
+        <div class="tree-num">1</div>
+        <div class="tree-body">
+          <div class="tree-title">File NOT rights-managed?</div>
+          <div class="tree-detail">If the asset has no rights metadata (UsageChannels is empty), skip everything → <span class="pill pill-full">FULL</span></div>
+        </div>
+      </div>
+      <div class="tree-step match">
+        <div class="tree-num">2</div>
+        <div class="tree-body">
+          <div class="tree-title">Superadmin?</div>
+          <div class="tree-detail">JWT claim <code>superadmin = true</code> bypasses all rights logic → <span class="pill pill-full">FULL</span></div>
+        </div>
+      </div>
+      <div class="tree-step match">
+        <div class="tree-num">3</div>
+        <div class="tree-body">
+          <div class="tree-title">Approved via sd$fileAccess?</div>
+          <div class="tree-detail">If an <code>approved</code> record exists for this user + file in <code>sd$fileAccess</code> → <span class="pill pill-full">FULL</span> (but time blocks still apply — see step 4)</div>
+        </div>
+      </div>
+      <div class="tree-step block">
+        <div class="tree-num">4</div>
+        <div class="tree-body">
+          <div class="tree-title">Time-based block?</div>
+          <div class="tree-detail">CDN blocked, UserAccess soft, expiry, embargo, usage window — checked in priority order. First match → <span class="pill pill-blocked">BLOCKED</span></div>
+        </div>
+      </div>
+      <div class="tree-step">
+        <div class="tree-num">5</div>
+        <div class="tree-body">
+          <div class="tree-title">EditComm = "editorial"?</div>
+          <div class="tree-detail">Editorial assets are restricted regardless of dimensional match → <span class="pill pill-restricted">RESTRICTED</span></div>
+        </div>
+      </div>
+      <div class="tree-step">
+        <div class="tree-num">6</div>
+        <div class="tree-body">
+          <div class="tree-title">RequireExplicitApproval = true?</div>
+          <div class="tree-detail">Asset requires owner approval before download. Pending and rejected records are ignored (only <code>approved</code> counts, and that's checked at step 3) → <span class="pill pill-nomatch">NOMATCH</span> + Request Access button</div>
+        </div>
+      </div>
+      <div class="tree-step">
+        <div class="tree-num">7</div>
+        <div class="tree-body">
+          <div class="tree-title">No user profile?</div>
+          <div class="tree-detail">User has no row in <code>sd$standardUserData</code> → <span class="pill pill-nomatch">NOMATCH</span></div>
+        </div>
+      </div>
+      <div class="tree-step">
+        <div class="tree-num">8</div>
+        <div class="tree-body">
+          <div class="tree-title">No dimensions defined on file?</div>
+          <div class="tree-detail">File has null territory, audiences, and channels — no criteria to score against → <span class="pill pill-nomatch">NOMATCH</span></div>
+        </div>
+      </div>
+      <div class="tree-step">
+        <div class="tree-num">9</div>
+        <div class="tree-body">
+          <div class="tree-title">Dimensional scoring</div>
+          <div class="tree-detail">Compare user profile (territory, audiences, channels) against file metadata. Result depends on how many dimensions pass — see Section 4.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-warn">
+      <b>Order matters.</b>&nbsp;A superadmin (step 2) bypasses everything including time blocks. But an sd$fileAccess approved user (step 3) is still blocked by time checks (step 4). This is intentional — time blocks are legal constraints, not permission issues.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       3. ACCESS LEVELS
+       ============================================================ -->
+  <div class="section" id="access-levels">
+    <h2 class="section-anchor">3. Access levels — what the user gets</h2>
+
+    <table class="ref-table">
+      <thead>
+        <tr>
+          <th style="width:18%;">Access level</th>
+          <th style="width:35%;">What user can download</th>
+          <th style="width:22%;">Original file</th>
+          <th style="width:25%;">UI state</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="pill pill-full">FULL</span></td>
+          <td>Preview, Watermarked version, Original file</td>
+          <td>Enabled</td>
+          <td>Download button active, all options in modal</td>
+        </tr>
+        <tr>
+          <td><span class="pill pill-restricted">RESTRICTED</span></td>
+          <td>Preview, Watermarked version only</td>
+          <td>Visible but disabled with tooltip</td>
+          <td>Download button active, Original greyed out inside modal</td>
+        </tr>
+        <tr>
+          <td><span class="pill pill-nomatch">NOMATCH</span></td>
+          <td>None (unless RequireExplicitApproval = true, in which case Request Access button shown)</td>
+          <td>Disabled</td>
+          <td>Download button disabled with reason. Request Access may appear.</td>
+        </tr>
+        <tr>
+          <td><span class="pill pill-blocked">BLOCKED</span></td>
+          <td>Nothing — time-based restriction</td>
+          <td>Disabled</td>
+          <td>Download button disabled. Rights banner explains the block.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Download quality levels — terminology</h3>
+
+    <p>The system uses three user-facing labels for download variants. QA should verify these exact strings appear in the UI — the backend uses different internal names.</p>
+
+    <table class="ref-table">
+      <thead>
+        <tr>
+          <th>User-facing label</th>
+          <th>Backend key</th>
+          <th>Typical specs (images)</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>Preview</b></td>
+          <td><code>lowres</code></td>
+          <td>1200px max · 75% compression · sRGB</td>
+          <td>Layout mockups, presentations, internal review</td>
+        </tr>
+        <tr>
+          <td><b>Watermarked version</b></td>
+          <td><code>lowres-watermark</code></td>
+          <td>2000px max · 85% · diagonal watermark overlay</td>
+          <td>Internal sharing, partner review before approval</td>
+        </tr>
+        <tr>
+          <td><b>Original file</b></td>
+          <td><code>original</code></td>
+          <td>Full resolution · no compression · no watermark</td>
+          <td>Print, publishing, broadcast — final approved use</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-info">
+      <b>Terminology check:</b>&nbsp;If the UI says "Low Res" or "lowres" instead of "Preview", that's a bug. Same for "watermark" instead of "Watermarked version". The backend keys are internal only.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       4. DIMENSIONAL SCORING
+       ============================================================ -->
+  <div class="section" id="dimensions">
+    <h2 class="section-anchor">4. Dimensional scoring</h2>
+
+    <p>When the decision tree reaches step 9, the system compares the user's profile against the file's rights metadata across three dimensions: <b>territory</b>, <b>audience</b>, and <b>channel</b>.</p>
+
+    <p>Each dimension is evaluated independently — either the user's value intersects with the file's allowed values (pass), or it doesn't (fail). The file may define all three dimensions, or only one or two. Only defined dimensions are scored.</p>
+
+    <h3>Scoring rules</h3>
+
+    <table class="ref-table">
+      <thead>
+        <tr>
+          <th>Condition</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>All defined dimensions pass, none fail</td>
+          <td><span class="pill pill-full">FULL</span></td>
+        </tr>
+        <tr>
+          <td>At least one passes, at least one fails</td>
+          <td><span class="pill pill-restricted">RESTRICTED</span></td>
+        </tr>
+        <tr>
+          <td>Zero dimensions pass</td>
+          <td><span class="pill pill-nomatch">NOMATCH</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>All-three-defined example</h3>
+    <p>File: Territory=["USA"], Audiences=["Marketing"], Channels=["Digital"]</p>
+
+    <table class="ref-table">
+      <thead>
+        <tr><th>User territory</th><th>User audience</th><th>User channel</th><th>Passed</th><th>Failed</th><th>Result</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>USA ✓</td><td>Marketing ✓</td><td>Digital ✓</td><td>3</td><td>0</td><td><span class="pill pill-full">FULL</span></td></tr>
+        <tr><td>USA ✓</td><td>Editorial ✗</td><td>Digital ✓</td><td>2</td><td>1</td><td><span class="pill pill-restricted">RESTRICTED</span></td></tr>
+        <tr><td>USA ✓</td><td>Broadcast ✗</td><td>Print ✗</td><td>1</td><td>2</td><td><span class="pill pill-restricted">RESTRICTED</span></td></tr>
+        <tr><td>Australia ✗</td><td>Broadcast ✗</td><td>Outdoor ✗</td><td>0</td><td>3</td><td><span class="pill pill-nomatch">NOMATCH</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Partial dimensions</h3>
+    <p>When a file only defines some dimensions (e.g. Territory only, no Audiences or Channels), the rule still applies but over fewer dimensions.</p>
+
+    <table class="ref-table">
+      <thead>
+        <tr><th>Dimensions defined</th><th>User matches</th><th>Result</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Territory only (1/3)</td><td>Territory ✓ (1/1)</td><td><span class="pill pill-full">FULL</span></td></tr>
+        <tr><td>Territory + Audiences (2/3)</td><td>Territory ✓, Audiences ✗ (1/2)</td><td><span class="pill pill-restricted">RESTRICTED</span></td></tr>
+        <tr><td>All null (0/3)</td><td>Nothing to score</td><td><span class="pill pill-nomatch">NOMATCH</span> — step 8 catches this</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-warn">
+      <b>Empty profile gotcha:</b>&nbsp;If a user has a profile row but all fields are blank (U16 in the test plan), they fail every dimension — this is NOMATCH, not an error state. QA should verify this user sees the same UI as a zero-match user.
+    </div>
+
+    <h3>What each dimension represents</h3>
+
+    <div class="card">
+      <div class="card-label">Territory</div>
+      <p style="margin:0;">Where the asset may be used geographically. The user's assigned territory (from their profile in <code>sd$standardUserData</code>) is compared against the file's <code>Territory</code> array. Matching is case-insensitive. A user may have multiple territories (e.g., "USA, Canada").</p>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Audience</div>
+      <p style="margin:0;">Who the asset is intended for. Defines the target audience group — Marketing, Editorial, Broadcast, Events, Design, Agency, etc. This is a usage constraint, not a role. A "Marketing" audience means the asset is licensed for marketing use, not that only marketers can see it.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Channel</div>
+      <p style="margin:0;">How the asset may be distributed. Digital, Print, Social, Broadcast, OOH, etc. Since the DAM has no syndication tools, channel is enforced at download as an access gate — the system cannot control what happens post-download, but it can restrict who gets the original file.</p>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       5. TIME BLOCKS
+       ============================================================ -->
+  <div class="section" id="time-blocks">
+    <h2 class="section-anchor">5. Time-based blocks</h2>
+
+    <p>Time blocks are checked <b>before</b> dimensional scoring (step 4 in the decision tree). They represent legal or contractual time constraints. Even a user with full dimensional match gets blocked if a time condition is active.</p>
+
+    <div class="callout callout-warn">
+      <b>Critical:</b>&nbsp;Time blocks override sd$fileAccess approvals. Even U13 (Broadcaster Partner) with an approved record cannot bypass an embargo. The only exception is superadmin (step 2 fires before step 4).
+    </div>
+
+    <p>Time blocks are evaluated in priority order — the first match returns a 403 and the rest are skipped:</p>
+
+    <table class="ref-table">
+      <thead>
+        <tr><th style="width:5%;">#</th><th style="width:25%;">Condition</th><th style="width:20%;">Fires when</th><th style="width:30%;">User-facing message</th><th style="width:20%;">Banner colour</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td><code>CdnAccess = "blocked"</code></td><td>Always (flag-based)</td><td>Asset is CDN-restricted.</td><td>Red (hard block)</td></tr>
+        <tr><td>2</td><td><code>UserAccess = "soft"</code></td><td>Always (flag-based)</td><td>Download not permitted for your region.</td><td>Red (hard block)</td></tr>
+        <tr><td>3</td><td><code>ExpirationDate &lt; now</code></td><td>Expiry in the past</td><td>Asset rights have expired.</td><td>Red (expired)</td></tr>
+        <tr><td>4</td><td><code>EmbargoDate &gt; now</code></td><td>Embargo in the future</td><td>Asset is under embargo.</td><td>Amber (pending)</td></tr>
+        <tr><td>5</td><td><code>UsageStartDate &gt; now</code></td><td>Start date in the future</td><td>Asset licensing has not yet started.</td><td>Amber (pending)</td></tr>
+        <tr><td>6</td><td><code>UsageWindowStartDate &gt; now</code></td><td>Window not yet open</td><td>Asset is not yet within its usage window.</td><td>Amber (pending)</td></tr>
+        <tr><td>7</td><td><code>UsageWindowEndDate &lt; now</code></td><td>Window has closed</td><td>Asset usage window has ended.</td><td>Red (expired)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Embargo vs Expiry — the difference</h3>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-4);">
+      <div class="card">
+        <div class="card-label">Embargoed</div>
+        <p style="margin:0 0 var(--spacing-2);">The asset is <b>not yet allowed</b> to be used. Campaign not live, press release under embargo, sponsorship imagery restricted until a launch date.</p>
+        <p style="margin:0;font-size:var(--font-size-1);color:var(--text-subtle);">The embargo lifts automatically when the date passes. No manual action needed — the system re-evaluates on next download attempt.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Expired</div>
+        <p style="margin:0 0 var(--spacing-2);">The asset is <b>no longer allowed</b> to be used. License ended, model release expired, campaign period closed.</p>
+        <p style="margin:0;font-size:var(--font-size-1);color:var(--text-subtle);">Expired assets remain visible in search (users still need them for reference and to avoid re-uploading). Full download is hard-blocked.</p>
+      </div>
+    </div>
+
+    <h3>AutoArchive</h3>
+    <p>When <code>AutoArchive = true</code> and the expiration date is past, the file is removed from search results for non-admin users. Superadmins can still see and download it. This is a separate visibility control, not a rights state — it fires before the download modal is even reachable.</p>
+  </div>
+
+  <!-- ============================================================
+       6. APPROVAL WORKFLOW
+       ============================================================ -->
+  <div class="section" id="approval">
+    <h2 class="section-anchor">6. Approval workflow — Request Access</h2>
+
+    <p>Some assets require explicit approval before any download is permitted. This is set per-file via <code>RequireExplicitApproval = true</code>.</p>
+
+    <h3>How it works</h3>
+
+    <p>When a user encounters a file with <code>RequireExplicitApproval</code>, the decision tree reaches step 6. At this point, the system checks <code>sd$fileAccess</code> for an approved record matching this user + file combination. Only <b>approved</b> status counts — pending and rejected records are ignored.</p>
+
+    <table class="ref-table">
+      <thead>
+        <tr><th>sd$fileAccess status</th><th>Effect</th><th>What user sees</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>No record exists</td><td>NOMATCH</td><td>Request Access button</td></tr>
+        <tr><td><code>pending</code></td><td>Ignored → NOMATCH</td><td>Request Access button (pending doesn't grant access)</td></tr>
+        <tr><td><code>rejected</code></td><td>Ignored → NOMATCH</td><td>Request Access button (user can re-request)</td></tr>
+        <tr><td><code>approved</code></td><td>Bypass → proceeds to step 4 (time blocks)</td><td>Full download options (unless time-blocked)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-info">
+      <b>Approved + time block:</b>&nbsp;If U13 has an approved sd$fileAccess record for F15, but F15 also has an active embargo, the time block (step 4) wins and the user sees BLOCKED. Approval bypasses dimensional scoring (step 9) but not time-based legal constraints.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       7. SUPERADMIN
+       ============================================================ -->
+  <div class="section" id="superadmin">
+    <h2 class="section-anchor">7. Superadmin bypass</h2>
+
+    <p>Superadmin is a JWT claim, not a database role. If the <code>superadmin</code> flag is present in the authentication token, <b>all rights logic is bypassed</b> — including time blocks, dimensional scoring, and approval requirements.</p>
+
+    <div class="callout callout-warn">
+      <b>QA note:</b>&nbsp;When testing superadmin scenarios, verify the UI shows a <b>superadmin bypass indicator</b>. This prevents admins from accidentally downloading restricted files thinking they're unrestricted. The indicator should be visible in the download modal and on the asset detail page banner.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       8. LICENSE WARNINGS
+       ============================================================ -->
+  <div class="section" id="license-warnings">
+    <h2 class="section-anchor">8. License warnings</h2>
+
+    <p>Some assets carry license metadata that generates a <b>warning but does not block download</b>. These are informational — the user is told to verify their intended use, but the download proceeds normally.</p>
+
+    <table class="ref-table">
+      <thead>
+        <tr><th>Condition</th><th>Warning message</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>ownershipSource</code> = "Stock Provider" or "Agency"</td><td>Stock or agency licensed asset — verify usage rights before downloading.</td></tr>
+        <tr><td><code>licenseType</code> = "Third-party Stock"</td><td>Same as above</td></tr>
+        <tr><td><code>licenseType</code> = "Rights-Managed"</td><td>Restricted licence — confirm permitted use before downloading.</td></tr>
+        <tr><td><code>licenseType</code> = "Editorial Only"</td><td>Editorial use only — commercial use not permitted.</td></tr>
+        <tr><td><code>licenseType</code> = "Commercial" or null</td><td>No warning</td></tr>
+      </tbody>
+    </table>
+
+    <p>Warnings appear as an amber banner inside the download modal. They do not affect the access level or disable any options. The user can acknowledge and proceed.</p>
+
+    <div class="callout callout-rule">
+      <b>Warning ≠ block.</b>&nbsp;If QA sees a license warning preventing download or disabling options, that's a bug. Warnings are passive and informational only.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       9. DOWNLOAD MODAL
+       ============================================================ -->
+  <div class="section" id="download-modal">
+    <h2 class="section-anchor">9. The download modal</h2>
+
+    <p>The download modal is the primary surface where rights enforcement becomes visible to the user. It shows three download options, a rights banner (if applicable), and a footer with the download CTA.</p>
+
+    <h3>Download options</h3>
+
+    <div class="dl-option">
+      <div class="dl-radio"></div>
+      <div class="dl-option-body">
+        <div class="dl-option-title">Preview</div>
+        <div class="dl-option-desc">For review and layout only</div>
+      </div>
+      <div class="dl-option-specs">1200px · ~1.2 MB</div>
+    </div>
+    <div class="dl-option">
+      <div class="dl-radio"></div>
+      <div class="dl-option-body">
+        <div class="dl-option-title">Watermarked version</div>
+        <div class="dl-option-desc">For internal sharing and review</div>
+      </div>
+      <div class="dl-option-specs">2000px · ~3.8 MB</div>
+    </div>
+    <div class="dl-option disabled">
+      <div class="dl-radio"></div>
+      <div class="dl-option-body">
+        <div class="dl-option-title">Original file</div>
+        <div class="dl-option-desc">Full resolution for approved external use</div>
+        <div class="dl-option-desc" style="font-style:italic;margin-top:2px;">Not available due to usage restrictions</div>
+      </div>
+      <div class="dl-option-specs">6000×4000 · 24.1 MB</div>
+    </div>
+
+    <p style="margin-top:var(--spacing-4);">The disabled Original option (shown above) is the RESTRICTED state. QA should verify that the disabled option is still visible, tab-focusable for keyboard users, and has the tooltip text readable by screen readers via <code>aria-describedby</code>.</p>
+
+    <h3>Rules for when to show what</h3>
+
+    <table class="ref-table">
+      <thead>
+        <tr><th>Access level</th><th>Preview</th><th>Watermarked</th><th>Original</th><th>Request Access</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="pill pill-full">FULL</span></td><td>Enabled</td><td>Enabled</td><td>Enabled</td><td>Hidden</td></tr>
+        <tr><td><span class="pill pill-restricted">RESTRICTED</span></td><td>Enabled</td><td>Enabled</td><td>Disabled + tooltip</td><td>Shown (secondary)</td></tr>
+        <tr><td><span class="pill pill-nomatch">NOMATCH</span> (no approval)</td><td>—</td><td>—</td><td>—</td><td>Shown (primary)</td></tr>
+        <tr><td><span class="pill pill-nomatch">NOMATCH</span> + approval</td><td>—</td><td>—</td><td>—</td><td>Shown (primary)</td></tr>
+        <tr><td><span class="pill pill-blocked">BLOCKED</span></td><td>—</td><td>—</td><td>—</td><td>Hidden</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-rule">
+      <b>Disable, don't hide.</b>&nbsp;This is a core design principle for the DAM. When Original is not available, it stays visible as a disabled option with a reason. Hiding it breaks the user's mental model and makes restricted state look like a broken page.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       10. UI RULES
+       ============================================================ -->
+  <div class="section" id="ui-rules">
+    <h2 class="section-anchor">10. UI rules — banners, buttons, copy</h2>
+
+    <h3>Rights banners</h3>
+    <p>A rights banner appears on the asset detail page and inside the download modal whenever the asset has a non-standard rights state. Banners use Scale's inline banner component (§4.5).</p>
+
+    <table class="ref-table">
+      <thead>
+        <tr><th>State</th><th>Banner colour</th><th>Scale tokens</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Expired / window ended / CDN block</td><td>Red</td><td><code>--color-red-100</code> bg · <code>--color-red-500</code> border · <code>--color-red-700</code> text</td></tr>
+        <tr><td>Embargo / not yet started / licence warning</td><td>Amber</td><td><code>--color-amber-100</code> · <code>--color-amber-500</code> · <code>--color-amber-700</code></td></tr>
+        <tr><td>Restricted / nomatch / profile mismatch</td><td>Neutral grey</td><td><code>--surface-subtle</code> · <code>--border-strong</code> · <code>--text-default</code></td></tr>
+        <tr><td>Expiring soon (advisory, non-blocking)</td><td>Blue (primary)</td><td><code>--primary-subtle</code> · <code>--primary-default</code> · <code>--primary-default</code></td></tr>
+        <tr><td>Approved via sd$fileAccess</td><td>Green</td><td><code>--color-green-100</code> · <code>--color-green-500</code> · <code>--color-green-700</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Copy tone</h3>
+    <p>Rights messaging follows a specific tone. QA should flag any instance of these patterns:</p>
+
+    <table class="ref-table">
+      <thead>
+        <tr><th>Avoid (never use)</th><th>Use instead</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>"You do not have permission"</td><td>"Not available under your current profile"</td></tr>
+        <tr><td>"Access denied"</td><td>"Not available due to usage restrictions"</td></tr>
+        <tr><td>"Forbidden"</td><td>"This asset is licensed for…"</td></tr>
+        <tr><td>"Error 403"</td><td>(Never show HTTP codes to users)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Button tier rules</h3>
+
+    <table class="ref-table">
+      <thead>
+        <tr><th>Button</th><th>Scale tier</th><th>Rationale</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Download (confirm)</td><td>Primary</td><td>State-changing action (triggers file generation, creates audit entry)</td></tr>
+        <tr><td>Request Access</td><td>Secondary (in modal with Download) or Primary (standalone)</td><td>Raises a request but doesn't create the access itself</td></tr>
+        <tr><td>Cancel / Close</td><td>Ghost</td><td>Non-destructive exit</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============================================================
+       11. GLOSSARY
+       ============================================================ -->
+  <div class="section" id="glossary">
+    <h2 class="section-anchor">11. Glossary</h2>
+
+    <table class="ref-table">
+      <thead>
+        <tr><th style="width:30%;">Term</th><th>Definition</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><b>Rights-managed</b></td><td>An asset with licensing metadata (UsageChannels is non-empty). Triggers the full decision tree evaluation at download time.</td></tr>
+        <tr><td><b>Dimensional scoring</b></td><td>The comparison of user profile values (territory, audience, channel) against file rights metadata. Produces FULL, RESTRICTED, or NOMATCH.</td></tr>
+        <tr><td><b>sd$standardUserData</b></td><td>The database table storing each user's rights profile: territory, audiences, channels. Used for dimensional scoring.</td></tr>
+        <tr><td><b>sd$fileAccess</b></td><td>The database table storing explicit per-user, per-file access records. Status can be approved, pending, or rejected. Only approved records grant access.</td></tr>
+        <tr><td><b>RequireExplicitApproval</b></td><td>A per-file flag. When true, the asset cannot be downloaded unless an approved sd$fileAccess record exists for the requesting user.</td></tr>
+        <tr><td><b>EditComm</b></td><td>Editorial commercial flag. When set to "editorial", the asset is restricted to low-res/watermark regardless of dimensional match.</td></tr>
+        <tr><td><b>AutoArchive</b></td><td>When true and the asset is expired, it's removed from search results for non-admin users. Superadmins can still see it.</td></tr>
+        <tr><td><b>Time block</b></td><td>Any of the 7 time-based conditions (CDN, UserAccess, expiry, embargo, usage start, window start, window end) that block download before dimensional scoring is reached.</td></tr>
+        <tr><td><b>LCD rule (bulk)</b></td><td>Lowest Common Denominator. In bulk downloads, only options valid for ALL selected files are shown. If one file restricts Original, Original is removed from the bulk modal.</td></tr>
+        <tr><td><b>Superadmin</b></td><td>A JWT claim (not a database role) that bypasses all rights logic including time blocks.</td></tr>
+        <tr><td><b>Preview</b></td><td>User-facing label for the low-resolution download variant. 1200px, 75% compression, no watermark. Backend key: <code>lowres</code>.</td></tr>
+        <tr><td><b>Watermarked version</b></td><td>User-facing label for the watermarked download variant. 2000px, 85% compression, diagonal watermark. Backend key: <code>lowres-watermark</code>.</td></tr>
+        <tr><td><b>Original file</b></td><td>User-facing label for the full-resolution master. No compression, no watermark. Backend key: <code>original</code>.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <a class="back-link" href="download-qa-tester.html">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    Open the interactive QA tester
+  </a>
+
+</div>
+</body>
+</html>
