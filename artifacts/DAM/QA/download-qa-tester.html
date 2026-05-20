@@ -1,0 +1,1652 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8">
+<title data-id="th-modified">Download QA Tester — Rights Management</title>
+<style>
+  :root {
+    --color-stone-50: #f8f7f4;
+    --color-stone-100: #f2f1ee;
+    --color-stone-200: #e7e6e1;
+    --color-stone-300: #d4d2cb;
+    --color-stone-400: #a8a59b;
+    --color-stone-500: #7d7a6f;
+    --color-stone-600: #525049;
+    --color-stone-800: #2a2a26;
+    --color-stone-900: #1c1c19;
+
+    --color-red-100: #feebe7;
+    --color-red-500: #e54d2e;
+    --color-red-600: #d13415;
+    --color-red-700: #582C29;
+
+    --color-amber-100: #ffefd5;
+    --color-amber-500: #f5a524;
+    --color-amber-600: #985b00;
+    --color-amber-700: #4E350D;
+
+    --color-green-100: #e6f7ed;
+    --color-green-500: #29a383;
+    --color-green-600: #208368;
+    --color-green-700: #1E442D;
+
+    --color-primary-50: #e8f1f5;
+    --color-primary-100: #d1e3ec;
+    --color-primary-500: #0B6E8A;
+    --color-primary-600: #0a5d75;
+    --color-primary-700: #1a3a46;
+
+    --surface-default: #ffffff;
+    --surface-subtle: var(--color-stone-50);
+    --surface-muted: var(--color-stone-100);
+    --text-default: var(--color-stone-900);
+    --text-subtle: var(--color-stone-500);
+    --text-hint: var(--color-stone-400);
+    --border-default: var(--color-stone-200);
+    --border-strong: var(--color-stone-300);
+    --primary-default: var(--color-primary-500);
+    --primary-hover: var(--color-primary-600);
+    --primary-subtle: var(--color-primary-50);
+    --primary-muted: var(--color-primary-100);
+
+    --spacing-1: 4px; --spacing-2: 8px; --spacing-3: 12px; --spacing-4: 16px;
+    --spacing-5: 20px; --spacing-6: 24px; --spacing-7: 32px; --spacing-8: 40px;
+
+    --radius-1: 3px; --radius-2: 4px; --radius-3: 6px; --radius-4: 8px;
+
+    --font-family-text: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-family-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --font-size-1: 12px; --font-size-2: 13px; --font-size-3: 14px; --font-size-4: 16px; --font-size-5: 18px;
+    --font-weight-medium: 500; --font-weight-semibold: 600;
+
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-lg: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: var(--font-family-text);
+    color: var(--text-default);
+    background: var(--surface-muted);
+    font-size: var(--font-size-3);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    min-height: 100vh;
+  }
+
+  /* ============================================================
+     LEFT: CONTROL PANEL
+     ============================================================ */
+  .control-panel {
+    background: var(--surface-default);
+    border-right: 1px solid var(--border-default);
+    padding: var(--spacing-6);
+    overflow-y: auto;
+    max-height: 100vh;
+    position: sticky;
+    top: 0;
+  }
+
+  .panel-header {
+    margin-bottom: var(--spacing-6);
+    padding-bottom: var(--spacing-4);
+    border-bottom: 1px solid var(--border-default);
+  }
+  .panel-header h1 {
+    margin: 0 0 var(--spacing-1);
+    font-size: var(--font-size-5);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: -0.01em;
+  }
+  .panel-header p {
+    margin: 0;
+    color: var(--text-subtle);
+    font-size: var(--font-size-2);
+  }
+
+  .control-section {
+    margin-bottom: var(--spacing-6);
+  }
+  .control-label {
+    display: block;
+    font-size: 11px;
+    font-weight: var(--font-weight-medium);
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: var(--spacing-2);
+  }
+
+  select {
+    width: 100%;
+    height: 36px;
+    padding: 0 var(--spacing-3);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-2);
+    background: var(--surface-default);
+    font-family: inherit;
+    font-size: var(--font-size-2);
+    color: var(--text-default);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23868E96' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 32px;
+  }
+  select:focus {
+    outline: none;
+    border-color: var(--primary-default);
+    box-shadow: 0 0 0 3px var(--primary-subtle);
+  }
+
+  .scenario-btn {
+    width: 100%;
+    text-align: left;
+    padding: var(--spacing-3);
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+    font-family: inherit;
+    font-size: var(--font-size-2);
+    color: var(--text-default);
+    cursor: pointer;
+    margin-bottom: var(--spacing-2);
+    transition: all 0.1s;
+  }
+  .scenario-btn:hover {
+    border-color: var(--primary-default);
+    background: var(--primary-subtle);
+  }
+  .scenario-btn.active {
+    border-color: var(--primary-default);
+    background: var(--primary-subtle);
+    color: var(--primary-default);
+    font-weight: var(--font-weight-medium);
+  }
+  .scenario-btn-label {
+    font-family: var(--font-family-mono);
+    font-size: 11px;
+    color: var(--text-subtle);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .scenario-btn.active .scenario-btn-label {
+    color: var(--primary-default);
+  }
+  .scenario-btn.has-issue {
+    border-left: 3px solid var(--color-amber-500);
+  }
+
+  .profile-card {
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+    padding: var(--spacing-3);
+    margin-top: var(--spacing-2);
+    font-size: var(--font-size-1);
+  }
+  .profile-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+  }
+  .profile-row .k {
+    color: var(--text-subtle);
+    font-weight: var(--font-weight-medium);
+  }
+  .profile-row .v {
+    color: var(--text-default);
+    font-family: var(--font-family-mono);
+    font-size: 11px;
+    text-align: right;
+  }
+
+  .scenario-filter {
+    display: flex;
+    gap: var(--spacing-1);
+    flex-wrap: wrap;
+    margin-bottom: var(--spacing-3);
+  }
+  .filter-chip {
+    padding: 3px 8px;
+    font-size: 11px;
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-default);
+    border-radius: 999px;
+    cursor: pointer;
+    color: var(--text-subtle);
+    font-family: inherit;
+  }
+  .filter-chip.active {
+    background: var(--primary-default);
+    color: white;
+    border-color: var(--primary-default);
+  }
+
+  .scenario-list {
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  /* ============================================================
+     RIGHT: MAIN STAGE
+     ============================================================ */
+  .stage {
+    padding: var(--spacing-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-6);
+  }
+
+  /* Outcome summary card */
+  .outcome-summary {
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    padding: var(--spacing-5);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: var(--spacing-4);
+  }
+  .outcome-field {
+    border-right: 1px solid var(--border-default);
+    padding-right: var(--spacing-4);
+  }
+  .outcome-field:last-child { border-right: none; }
+  .outcome-field .label {
+    font-size: 10px;
+    font-weight: var(--font-weight-medium);
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: var(--spacing-1);
+  }
+  .outcome-field .val {
+    font-size: var(--font-size-3);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-default);
+    font-family: var(--font-family-mono);
+  }
+
+  .outcome-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: var(--font-size-1);
+    font-weight: var(--font-weight-medium);
+    border: 1px solid;
+    font-family: inherit;
+  }
+  .outcome-pill::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .pill-full { background: var(--color-green-100); border-color: var(--color-green-500); color: var(--color-green-700); }
+  .pill-restricted { background: var(--color-amber-100); border-color: var(--color-amber-500); color: var(--color-amber-700); }
+  .pill-nomatch { background: var(--surface-subtle); border-color: var(--border-strong); color: var(--text-default); }
+  .pill-blocked { background: var(--color-red-100); border-color: var(--color-red-500); color: var(--color-red-700); }
+  .pill-superadmin { background: var(--primary-subtle); border-color: var(--primary-default); color: var(--primary-default); }
+
+  /* Decision trace */
+  .decision-trace {
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    padding: var(--spacing-5);
+  }
+  .trace-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-subtle);
+    margin-bottom: var(--spacing-3);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .trace-title .ref {
+    font-family: var(--font-family-mono);
+    font-size: 11px;
+    padding: 2px 8px;
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-1);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .trace-step {
+    display: flex;
+    gap: var(--spacing-3);
+    padding: var(--spacing-2) 0;
+    font-size: var(--font-size-2);
+    border-bottom: 1px dashed var(--border-default);
+  }
+  .trace-step:last-child { border-bottom: none; }
+  .trace-step-num {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-default);
+    color: var(--text-subtle);
+    font-size: 11px;
+    font-weight: var(--font-weight-medium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-family-mono);
+  }
+  .trace-step.pass .trace-step-num {
+    background: var(--color-green-100);
+    border-color: var(--color-green-500);
+    color: var(--color-green-700);
+  }
+  .trace-step.fail .trace-step-num {
+    background: var(--color-red-100);
+    border-color: var(--color-red-500);
+    color: var(--color-red-700);
+  }
+  .trace-step.skip .trace-step-num {
+    opacity: 0.35;
+  }
+  .trace-step.match .trace-step-num {
+    background: var(--primary-subtle);
+    border-color: var(--primary-default);
+    color: var(--primary-default);
+    font-weight: var(--font-weight-semibold);
+  }
+  .trace-step-body {
+    flex: 1;
+  }
+  .trace-step-title {
+    font-weight: var(--font-weight-medium);
+  }
+  .trace-step.skip .trace-step-title {
+    color: var(--text-hint);
+  }
+  .trace-step-detail {
+    font-size: var(--font-size-1);
+    color: var(--text-subtle);
+    margin-top: 2px;
+  }
+
+  /* ============================================================
+     DOWNLOAD MODAL
+     ============================================================ */
+  .modal-wrap {
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    padding: var(--spacing-6);
+  }
+  .modal-frame-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-subtle);
+    margin-bottom: var(--spacing-4);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .modal-backdrop {
+    background: rgba(0,0,0,0.45);
+    padding: var(--spacing-6);
+    border-radius: var(--radius-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal {
+    width: 100%;
+    max-width: 560px;
+    background: var(--surface-default);
+    border-radius: var(--radius-4);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+
+  .modal-header {
+    padding: var(--spacing-5) var(--spacing-5) var(--spacing-3);
+    border-bottom: 1px solid var(--border-default);
+  }
+  .modal-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-1);
+  }
+  .modal-title {
+    font-size: var(--font-size-5);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-default);
+    letter-spacing: -0.01em;
+  }
+  .modal-close {
+    width: 28px; height: 28px;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-subtle);
+  }
+  .modal-close:hover { background: var(--surface-subtle); }
+
+  .asset-summary {
+    display: flex;
+    gap: var(--spacing-3);
+    align-items: center;
+  }
+  .asset-thumb {
+    width: 48px; height: 48px;
+    border-radius: var(--radius-2);
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: var(--font-weight-semibold);
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .asset-thumb.vid { background: linear-gradient(135deg, #9333ea, #6b21a8); }
+  .asset-thumb.doc { background: linear-gradient(135deg, #dc2626, #991b1b); }
+  .asset-meta {
+    flex: 1;
+    min-width: 0;
+  }
+  .asset-name {
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-default);
+    margin: 0 0 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .asset-specs {
+    font-size: var(--font-size-1);
+    color: var(--text-subtle);
+    font-family: var(--font-family-mono);
+  }
+
+  .modal-body {
+    padding: var(--spacing-5);
+  }
+
+  /* Rights banner */
+  .banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: var(--spacing-3) var(--spacing-4);
+    border-radius: var(--radius-3);
+    font-size: var(--font-size-2);
+    border: 1px solid;
+    line-height: 1.45;
+    margin-bottom: var(--spacing-4);
+  }
+  .banner svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+    width: 18px;
+    height: 18px;
+  }
+  .banner-body { flex: 1; min-width: 0; }
+  .banner-title { font-weight: var(--font-weight-medium); margin-bottom: 2px; }
+  .banner-subtext { font-size: var(--font-size-1); opacity: 0.9; }
+  .banner-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-1) var(--spacing-4);
+    margin-top: var(--spacing-2);
+    font-size: var(--font-size-1);
+    font-family: var(--font-family-mono);
+  }
+  .banner-meta b { font-weight: var(--font-weight-medium); }
+
+  .banner-expired { background: var(--color-red-100); border-color: var(--color-red-500); color: var(--color-red-700); }
+  .banner-embargo { background: var(--color-amber-100); border-color: var(--color-amber-500); color: var(--color-amber-700); }
+  .banner-restricted { background: var(--surface-subtle); border-color: var(--border-strong); color: var(--text-default); }
+  .banner-warning { background: var(--color-amber-100); border-color: var(--color-amber-500); color: var(--color-amber-700); }
+  .banner-approved { background: var(--color-green-100); border-color: var(--color-green-500); color: var(--color-green-700); }
+  .banner-superadmin { background: var(--primary-subtle); border-color: var(--primary-default); color: var(--primary-default); }
+
+  /* Download options */
+  .options-label {
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-default);
+    margin-bottom: var(--spacing-3);
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) var(--spacing-4);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    margin-bottom: var(--spacing-2);
+    cursor: pointer;
+    transition: all 0.1s;
+    position: relative;
+  }
+  .option:hover:not(.disabled) {
+    border-color: var(--primary-default);
+    background: var(--primary-subtle);
+  }
+  .option.selected {
+    border-color: var(--primary-default);
+    background: var(--primary-subtle);
+  }
+  .option.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .option-radio {
+    width: 16px; height: 16px;
+    border: 1.5px solid var(--color-stone-400);
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
+    background: var(--surface-default);
+  }
+  .option.selected .option-radio {
+    border-color: var(--primary-default);
+    border-width: 5px;
+  }
+  .option-content { flex: 1; }
+  .option-title {
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-default);
+    margin-bottom: 2px;
+  }
+  .option-desc {
+    font-size: var(--font-size-1);
+    color: var(--text-subtle);
+  }
+  .option-specs {
+    font-size: var(--font-size-1);
+    color: var(--text-subtle);
+    font-family: var(--font-family-mono);
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .disabled-reason {
+    font-size: var(--font-size-1);
+    color: var(--text-subtle);
+    margin-top: 2px;
+    font-style: italic;
+  }
+
+  .no-options {
+    padding: var(--spacing-6);
+    text-align: center;
+    background: var(--surface-subtle);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-3);
+    color: var(--text-subtle);
+    font-size: var(--font-size-2);
+  }
+
+  .modal-footer {
+    padding: var(--spacing-4) var(--spacing-5);
+    border-top: 1px solid var(--border-default);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-2);
+    background: var(--surface-subtle);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    height: 36px;
+    padding: 0 var(--spacing-4);
+    border-radius: var(--radius-2);
+    font-family: inherit;
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    border: 1px solid transparent;
+    line-height: 1;
+    transition: all 0.1s;
+  }
+  .btn-primary { background: var(--primary-default); color: #fff; }
+  .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+  .btn-primary:disabled {
+    background: var(--color-stone-200);
+    color: var(--color-stone-400);
+    cursor: not-allowed;
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--primary-default);
+    border-color: var(--primary-default);
+  }
+  .btn-secondary:hover { background: var(--primary-subtle); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-subtle);
+  }
+  .btn-ghost:hover { background: var(--surface-subtle); color: var(--text-default); }
+
+  /* Request access inline panel */
+  .request-panel {
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    padding: var(--spacing-4);
+    margin-top: var(--spacing-3);
+  }
+  .request-panel textarea {
+    width: 100%;
+    min-height: 72px;
+    padding: var(--spacing-2) var(--spacing-3);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-2);
+    font-family: inherit;
+    font-size: var(--font-size-2);
+    resize: vertical;
+    margin-bottom: var(--spacing-3);
+  }
+  .request-panel textarea:focus {
+    outline: none;
+    border-color: var(--primary-default);
+    box-shadow: 0 0 0 3px var(--primary-subtle);
+  }
+  .request-actions {
+    display: flex;
+    gap: var(--spacing-2);
+    justify-content: flex-end;
+  }
+
+  /* QA checklist panel */
+  .qa-panel {
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    padding: var(--spacing-5);
+  }
+  .qa-title {
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: var(--spacing-3);
+  }
+  .qa-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-3);
+    font-size: var(--font-size-2);
+  }
+  .qa-item {
+    display: flex;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-2);
+    border: 1px solid var(--border-default);
+  }
+  .qa-item.pass { border-color: var(--color-green-500); background: var(--color-green-100); }
+  .qa-item.fail { border-color: var(--color-red-500); background: var(--color-red-100); }
+  .qa-item-icon {
+    flex-shrink: 0;
+    width: 16px; height: 16px;
+    margin-top: 1px;
+  }
+  .qa-item-label {
+    font-size: var(--font-size-1);
+    line-height: 1.4;
+  }
+  .qa-item-label b { font-weight: var(--font-weight-medium); }
+
+  /* Utility */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
+<meta property="og:title" content="Download QA Tester — Rights Management" data-id="th-modified"><meta name="description" content="download-qa-tester" data-id="th-modified"><meta property="og:description" content="download-qa-tester" data-id="th-modified"><meta property="og:image" content="https://tiiny.host/assets/logo-purple-bg.png" data-id="th-modified"><meta property="og:image:width" content="1501" data-id="th-modified"><meta property="og:image:height" content="1501" data-id="th-modified"><meta property="og:image:type" content="image/png" data-id="th-modified"><meta property="og:url" content="https://qa-tester.tiiny.site/" data-id="th-modified"><meta property="og:type" content="website" data-id="th-modified"><script defer="" data-domain="qa-tester.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><script type="text/javascript" src="https://tiiny.host/ad-script.js"></script></head>
+<body>
+<h2 class="sr-only">Interactive download modal tester for DAM rights management QA</h2>
+
+<div class="layout">
+
+  <!-- ============================================================
+       LEFT: CONTROL PANEL
+       ============================================================ -->
+  <aside class="control-panel">
+    <div class="panel-header">
+      <h1>Download QA tester</h1>
+      <p>Pick a scenario or build your own. Shows computed access level, decision trace, and the actual download modal as the user would see it.</p>
+    </div>
+
+    <div class="control-section">
+      <label class="control-label" for="scenario-select">Preset scenarios</label>
+      <div class="scenario-filter" id="scenario-filter">
+        <button class="filter-chip active" data-filter="all">All</button>
+        <button class="filter-chip" data-filter="issues" style="color:var(--color-red-600);">⚠ Plan issues</button>
+        <button class="filter-chip" data-filter="table1">Table 1</button>
+        <button class="filter-chip" data-filter="table2">Dim. Matrix</button>
+        <button class="filter-chip" data-filter="table3">Time blocks</button>
+        <button class="filter-chip" data-filter="table5">Approval</button>
+        <button class="filter-chip" data-filter="table6">Superadmin</button>
+        <button class="filter-chip" data-filter="table9">Warnings</button>
+        <button class="filter-chip" data-filter="table10">Edge</button>
+      </div>
+      <div class="scenario-list" id="scenario-list"></div>
+    </div>
+
+    <div class="control-section">
+      <label class="control-label" for="user-select">Custom · User</label>
+      <select id="user-select"></select>
+      <div class="profile-card" id="user-profile"></div>
+    </div>
+
+    <div class="control-section">
+      <label class="control-label" for="file-select">Custom · File</label>
+      <select id="file-select"></select>
+      <div class="profile-card" id="file-profile"></div>
+    </div>
+  </aside>
+
+  <!-- ============================================================
+       RIGHT: MAIN STAGE
+       ============================================================ -->
+  <main class="stage">
+
+    <!-- Outcome summary -->
+    <div class="outcome-summary" id="outcome-summary"></div>
+
+    <!-- Decision trace -->
+    <div class="decision-trace">
+      <div class="trace-title">
+        <span>Decision trace</span>
+        <span class="ref" id="trace-ref">—</span>
+      </div>
+      <div id="trace-steps"></div>
+    </div>
+
+    <!-- Download modal preview -->
+    <div class="modal-wrap">
+      <div class="modal-frame-label">
+        <span>Download modal — as user sees it</span>
+        <span style="font-family:var(--font-family-mono);font-size:11px;color:var(--text-hint);">Live preview</span>
+      </div>
+      <div class="modal-backdrop">
+        <div class="modal" id="modal"></div>
+      </div>
+    </div>
+
+    <!-- QA checklist -->
+    <div class="qa-panel">
+      <div class="qa-title">QA expectations · pass / fail against live UI above</div>
+      <div class="qa-grid" id="qa-grid"></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ============================================================
+// DATA — from test plan Part 1 & Part 2
+// ============================================================
+
+const USERS = {
+  U01: { ref: 'U01', name: 'Test Superadmin', superadmin: true, territory: null, audiences: null, channels: null, note: 'Bypasses all rights via JWT claim' },
+  U02: { ref: 'U02', name: 'UK Brand Manager', territory: ['UK'], audiences: ['Marketing'], channels: ['Print','Digital'] },
+  U03: { ref: 'U03', name: 'USA Marketing Manager', territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'] },
+  U04: { ref: 'U04', name: 'UK Designer', territory: ['UK'], audiences: ['Design'], channels: ['Print'] },
+  U05: { ref: 'U05', name: 'France Social Manager', territory: ['France'], audiences: ['Marketing'], channels: ['Social'] },
+  U06: { ref: 'U06', name: 'Agency Designer', territory: ['External'], audiences: ['Agency'], channels: ['Digital'] },
+  U07: { ref: 'U07', name: 'USA Regional Manager', territory: ['USA'], audiences: ['Marketing'], channels: ['Digital','Print'] },
+  U08: { ref: 'U08', name: 'Event Marketing Manager', territory: ['USA','UK'], audiences: ['Events'], channels: ['Digital','Social'] },
+  U09: { ref: 'U09', name: 'Content Editor', territory: ['UK'], audiences: ['Editorial'], channels: ['Print'] },
+  U10: { ref: 'U10', name: 'Junior Designer', territory: ['UK'], audiences: ['Design'], channels: ['Digital'] },
+  U11: { ref: 'U11', name: 'Approval Reviewer', territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'] },
+  U12: { ref: 'U12', name: 'Multi-Region Manager', territory: ['USA','Canada'], audiences: ['Marketing'], channels: ['Digital','Print'] },
+  U13: { ref: 'U13', name: 'Broadcaster Partner', territory: ['UK'], audiences: ['Broadcast'], channels: ['Broadcast'] },
+  U14: { ref: 'U14', name: 'Campaign Manager', territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'] },
+  U15: { ref: 'U15', name: 'No Profile User', noProfile: true },
+  U16: { ref: 'U16', name: 'Empty Profile User', territory: [], audiences: [], channels: [] },
+  U17: { ref: 'U17', name: 'Full Match User', territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'] },
+  U18: { ref: 'U18', name: 'Partial Match (2/3)', territory: ['USA'], audiences: ['Editorial'], channels: ['Digital'] },
+  U19: { ref: 'U19', name: 'Partial Match (1/3)', territory: ['USA'], audiences: ['Broadcast'], channels: ['Print'] },
+  U20: { ref: 'U20', name: 'Zero Match User', territory: ['Australia'], audiences: ['Broadcast'], channels: ['Outdoor'] }
+};
+
+// sd$fileAccess approvals from Part 1.3
+const FILE_ACCESS = {
+  'U13:F15': 'approved',
+  'U11:F06': 'pending',
+  'U10:F06': 'rejected'
+};
+
+const FILES = {
+  F01: { ref: 'F01', name: 'FIFA_WC2026_Campaign_Hero_US.jpg', type: 'JPG', specs: '6000×4000 · 24.1 MB', rightsManaged: true, territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'] },
+  F02: { ref: 'F02', name: 'FIFA_WC2026_Logo_Primary_RGB.svg', type: 'SVG', specs: 'Vector · 128 KB', rightsManaged: true, territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'], embargoDate: '2026-06-01' },
+  F03: { ref: 'F03', name: 'FIFA_Qatar22_Retrospective_Hero.jpg', type: 'JPG', specs: '5472×3648 · 18.7 MB', rightsManaged: true, territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'], expirationDate: '2026-01-01' },
+  F04: { ref: 'F04', name: 'FIFA_WC2026_Broadcast_Bug_EU.png', type: 'PNG', specs: '1920×1080 · 4.8 MB', rightsManaged: true, territory: ['Europe'], audiences: ['Marketing'], channels: ['Digital'] },
+  F05: { ref: 'F05', name: 'FIFA_WC2026_Editorial_Press_Pack_03.jpg', type: 'JPG', specs: '4500×3000 · 11.2 MB', rightsManaged: true, territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'], editComm: 'editorial' },
+  F06: { ref: 'F06', name: 'FIFA_WC2026_KV_Master_Layered.psd', type: 'PSD', specs: '7680×4320 · 412 MB', rightsManaged: true, territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'], requireExplicitApproval: true },
+  F07: { ref: 'F07', name: 'FIFA_WC2026_Campaign_Hero_60s.mp4', type: 'MP4', specs: '1920×1080 · 184 MB', rightsManaged: true, territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'], usageStartDate: '2026-06-01', kind: 'vid' },
+  F08: { ref: 'F08', name: 'Internal_Team_Photo_2026.jpg', type: 'JPG', specs: '3000×2000 · 6.2 MB', rightsManaged: false },
+  F09: { ref: 'F09', name: 'Stock_Stadium_Crowd_Getty.jpg', type: 'JPG', specs: '5000×3333 · 14.8 MB', rightsManaged: true, territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'], licenseType: 'Third-party Stock' },
+  F10: { ref: 'F10', name: 'FIFA_WC2026_Broadcast_Master_UK.mov', type: 'MOV', specs: '3840×2160 · 2.1 GB', rightsManaged: true, territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'], cdnAccess: 'blocked', kind: 'vid' },
+  F11: { ref: 'F11', name: 'FIFA_WC2026_Stadium_Drone_APAC.jpg', type: 'JPG', specs: '6048×4032 · 26.4 MB', rightsManaged: true, territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'], userAccess: 'soft' },
+  F12: { ref: 'F12', name: 'FIFA_WC2026_Opening_Ceremony_Teaser.mp4', type: 'MP4', specs: '1920×1080 · 96 MB', rightsManaged: true, territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'], usageWindowStartDate: '2026-06-01', kind: 'vid' },
+  F13: { ref: 'F13', name: 'FIFA_WC2026_PreTournament_Promo.jpg', type: 'JPG', specs: '4800×3200 · 16.8 MB', rightsManaged: true, territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'], usageWindowEndDate: '2026-01-01' },
+  F14: { ref: 'F14', name: 'FIFA_WC2018_Legacy_Archive.jpg', type: 'JPG', specs: '5472×3648 · 17.2 MB', rightsManaged: true, territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'], expirationDate: '2025-12-01', autoArchive: true },
+  F15: { ref: 'F15', name: 'FIFA_WC2026_Broadcast_Feed_UK.mov', type: 'MOV', specs: '3840×2160 · 4.8 GB', rightsManaged: true, territory: ['UK'], audiences: ['Broadcast'], channels: ['Broadcast'], requireExplicitApproval: true, kind: 'vid' },
+  F16: { ref: 'F16', name: 'FIFA_WC2026_Territory_Only_USA.jpg', type: 'JPG', specs: '4500×3000 · 11.2 MB', rightsManaged: true, territory: ['USA'], audiences: null, channels: null },
+  F17: { ref: 'F17', name: 'FIFA_WC2026_Partial_Dims_Config.jpg', type: 'JPG', specs: '4800×3200 · 14.1 MB', rightsManaged: true, territory: ['USA'], audiences: ['Marketing'], channels: null },
+  F18: { ref: 'F18', name: 'FIFA_WC2026_No_Dimensions_Set.jpg', type: 'JPG', specs: '4500×3000 · 11.8 MB', rightsManaged: true, territory: null, audiences: null, channels: null },
+  F19: { ref: 'F19', name: 'FIFA_WC2026_Agency_Commissioned_Shot.jpg', type: 'JPG', specs: '6000×4000 · 22.2 MB', rightsManaged: true, territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'], ownershipSource: 'Agency' },
+  F20: { ref: 'F20', name: 'FIFA_WC2026_Sponsor_Restricted_Use.jpg', type: 'JPG', specs: '5000×3333 · 14.4 MB', rightsManaged: true, territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'], licenseType: 'Rights-Managed' },
+  F21: { ref: 'F21', name: 'FIFA_WC2026_Editorial_Only_Press.jpg', type: 'JPG', specs: '4500×3000 · 10.8 MB', rightsManaged: true, territory: ['USA'], audiences: ['Marketing'], channels: ['Digital'], licenseType: 'Editorial Only' }
+};
+
+// Test scenarios — each maps a user to a file with expected outcome
+const SCENARIOS = [
+  // Table 1
+  { id: 'R1', table: 'table1', ref: 'Row 1', user: 'U02', file: 'F02', label: 'Embargo block', expected: 'blocked' },
+  { id: 'R2', table: 'table1', ref: 'Row 2', user: 'U03', file: 'F03', label: 'Expiry block', expected: 'blocked' },
+  { id: 'R3', table: 'table1', ref: 'Row 3', user: 'U04', file: 'F04', label: 'Territory mismatch · NOMATCH', expected: 'nomatch' },
+  { id: 'R4', table: 'table1', ref: 'Row 4', user: 'U05', file: 'F01', label: 'Channel mismatch · Social vs Digital', expected: 'nomatch', planInconsistency: 'Row 4 expects NOMATCH but user-coverage map says RESTRICTED. Dimensional rule (Audience passes, 1/3) = RESTRICTED. Plan needs correction.' },
+  { id: 'R5', table: 'table1', ref: 'Row 5', user: 'U06', file: 'F01', label: 'Agency · RESTRICTED lowres only', expected: 'restricted' },
+  { id: 'R6', table: 'table1', ref: 'Row 6', user: 'U07', file: 'F04', label: 'US vs Europe · NOMATCH', expected: 'nomatch', planInconsistency: 'U07 passes Audience + Channel (2/3) = RESTRICTED per dimensional rule. Plan expects NOMATCH. Territory-only block would require different logic.' },
+  { id: 'R7', table: 'table1', ref: 'Row 7', user: 'U08', file: 'F14', label: 'Archived · not visible', expected: 'archived' },
+  { id: 'R8', table: 'table1', ref: 'Row 8', user: 'U09', file: 'F05', label: 'Editorial gate · RESTRICTED', expected: 'restricted' },
+  { id: 'R9', table: 'table1', ref: 'Row 9', user: 'U02', file: 'F03', label: 'Seasonal expiry', expected: 'blocked' },
+  { id: 'R10', table: 'table1', ref: 'Row 10', user: 'U10', file: 'F01', label: 'External sharing disabled · download OK', expected: 'full', planInconsistency: 'U10 (UK/Design/Digital) fails Territory + Audience vs F01 (USA/Marketing/Digital). Should be RESTRICTED, not FULL. Row tests share gating, but backend rights rules still block.' },
+  { id: 'R11', table: 'table1', ref: 'Row 11', user: 'U11', file: 'F06', label: 'NOMATCH · Request Access', expected: 'request' },
+  { id: 'R12', table: 'table1', ref: 'Row 12', user: 'U03', file: 'F09', label: 'Stock license · warning only', expected: 'full-warning' },
+  { id: 'R13', table: 'table1', ref: 'Row 13', user: 'U12', file: 'F04', label: 'Multi-territory mismatch', expected: 'nomatch', planInconsistency: 'U12 passes Audience + Channel vs F04 (2/3) = RESTRICTED. Plan expects NOMATCH. Same issue as R6 — territory-only blocking needs different rule.' },
+  { id: 'R14', table: 'table1', ref: 'Row 14', user: 'U13', file: 'F15', label: 'Broadcaster · approved bypass', expected: 'approved' },
+  { id: 'R15', table: 'table1', ref: 'Row 15', user: 'U14', file: 'F07', label: 'UsageStartDate future', expected: 'blocked' },
+
+  // Table 2 dimensional matrix
+  { id: 'D1', table: 'table2', ref: 'D1', user: 'U17', file: 'F01', label: 'All 3 pass · FULL', expected: 'full' },
+  { id: 'D2', table: 'table2', ref: 'D2', user: 'U18', file: 'F01', label: '2/3 pass · RESTRICTED', expected: 'restricted' },
+  { id: 'D3', table: 'table2', ref: 'D3', user: 'U19', file: 'F01', label: '1/3 pass · RESTRICTED', expected: 'restricted' },
+  { id: 'D4', table: 'table2', ref: 'D4', user: 'U20', file: 'F01', label: '0/3 pass · NOMATCH', expected: 'nomatch' },
+  { id: 'D6', table: 'table2', ref: 'D6', user: 'U15', file: 'F01', label: 'No profile · NOMATCH', expected: 'nomatch' },
+  { id: 'D7', table: 'table2', ref: 'D7', user: 'U16', file: 'F01', label: 'Empty profile · NOMATCH', expected: 'nomatch' },
+
+  // Table 3 time blocks
+  { id: 'T1', table: 'table3', ref: 'T1', user: 'U17', file: 'F10', label: 'CDN blocked', expected: 'blocked' },
+  { id: 'T2', table: 'table3', ref: 'T2', user: 'U17', file: 'F11', label: 'UserAccess soft block', expected: 'blocked' },
+  { id: 'T3', table: 'table3', ref: 'T3', user: 'U17', file: 'F03', label: 'ExpirationDate past', expected: 'blocked' },
+  { id: 'T4', table: 'table3', ref: 'T4', user: 'U17', file: 'F02', label: 'EmbargoDate future', expected: 'blocked' },
+  { id: 'T5', table: 'table3', ref: 'T5', user: 'U17', file: 'F07', label: 'UsageStartDate future', expected: 'blocked' },
+  { id: 'T6', table: 'table3', ref: 'T6', user: 'U17', file: 'F12', label: 'Usage window not open', expected: 'blocked' },
+  { id: 'T7', table: 'table3', ref: 'T7', user: 'U17', file: 'F13', label: 'Usage window ended', expected: 'blocked' },
+  { id: 'T8', table: 'table3', ref: 'T8', user: 'U17', file: 'F01', label: 'No time block · falls through', expected: 'full' },
+
+  // Table 5 approval
+  { id: 'A1', table: 'table5', ref: 'A1', user: 'U11', file: 'F06', label: 'No record · Request Access', expected: 'request' },
+  { id: 'A2', table: 'table5', ref: 'A2', user: 'U11', file: 'F06', label: 'Pending · ignored', expected: 'request' },
+  { id: 'A3', table: 'table5', ref: 'A3', user: 'U10', file: 'F06', label: 'Rejected · Request Access', expected: 'request' },
+  { id: 'A4', table: 'table5', ref: 'A4', user: 'U13', file: 'F15', label: 'Approved · bypass all', expected: 'approved' },
+
+  // Table 6 superadmin
+  { id: 'S1', table: 'table6', ref: 'S1', user: 'U01', file: 'F08', label: 'Superadmin · not rights-managed', expected: 'superadmin', planInconsistency: 'Non-rights-managed step fires before superadmin check in decision tree. Outcome is FULL (via step 1), not via superadmin bypass. Labelling only — outcome is correct.' },
+  { id: 'S2', table: 'table6', ref: 'S2', user: 'U01', file: 'F01', label: 'Superadmin · bypass dimensions', expected: 'superadmin' },
+  { id: 'S3', table: 'table6', ref: 'S3', user: 'U01', file: 'F06', label: 'Superadmin · bypass approval', expected: 'superadmin' },
+  { id: 'S4', table: 'table6', ref: 'S4', user: 'U01', file: 'F02', label: 'Superadmin · bypass embargo', expected: 'superadmin' },
+
+  // Table 9 warnings
+  { id: 'L1', table: 'table9', ref: 'L1', user: 'U03', file: 'F09', label: 'Stock provider warning', expected: 'full-warning' },
+  { id: 'L2', table: 'table9', ref: 'L2', user: 'U17', file: 'F19', label: 'Agency ownership warning', expected: 'full-warning' },
+  { id: 'L3', table: 'table9', ref: 'L3', user: 'U17', file: 'F20', label: 'Rights-Managed warning', expected: 'full-warning' },
+  { id: 'L5', table: 'table9', ref: 'L5', user: 'U09', file: 'F21', label: 'Editorial Only warning', expected: 'full-warning', planInconsistency: 'U09 (UK/Editorial/Print) fails all 3 dimensions vs F21 (USA/Marketing/Digital). Dimensional NOMATCH fires before the licence warning. Pick a user whose profile matches F21 to actually test the warning.' },
+  { id: 'L6', table: 'table9', ref: 'L6', user: 'U17', file: 'F01', label: 'Commercial · no warning', expected: 'full' },
+  { id: 'L7', table: 'table9', ref: 'L7', user: 'U17', file: 'F08', label: 'No rights · no warning', expected: 'full' },
+
+  // Table 10 edge
+  { id: 'E5', table: 'table10', ref: 'E5', user: 'U17', file: 'F16', label: '1/1 dimension · FULL', expected: 'full' },
+  { id: 'E6', table: 'table10', ref: 'E6', user: 'U18', file: 'F17', label: '1/2 dimension · RESTRICTED', expected: 'restricted' },
+  { id: 'E7', table: 'table10', ref: 'E7', user: 'U17', file: 'F18', label: '0 dimensions defined · NOMATCH', expected: 'nomatch' }
+];
+
+const NOW = new Date('2026-04-16');
+
+// ============================================================
+// DECISION ENGINE — mirrors the test plan's decision tree
+// ============================================================
+
+function normalize(arr) {
+  if (!arr) return [];
+  return arr.map(x => String(x).trim().toLowerCase()).filter(Boolean);
+}
+
+function intersects(a, b) {
+  const sa = new Set(normalize(a));
+  return normalize(b).some(x => sa.has(x));
+}
+
+function computeAccess(user, file) {
+  const trace = [];
+  let outcome;
+  let stopAt = -1;
+
+  const step = (num, title, detail, status) => ({ num, title, detail, status });
+
+  // 1. File NOT rights-managed
+  if (!file.rightsManaged) {
+    trace.push(step(1, 'File NOT rights-managed', 'No rights configuration on file', 'match'));
+    outcome = 'full';
+    stopAt = 1;
+  }
+  // 2. Superadmin
+  else if (user.superadmin) {
+    trace.push(step(1, 'File NOT rights-managed', 'RightsManaged = true', 'fail'));
+    trace.push(step(2, 'Superadmin bypass', 'JWT claim superadmin = true', 'match'));
+    outcome = 'superadmin';
+    stopAt = 2;
+  }
+  // 3. Explicit sd$fileAccess approval
+  else if (FILE_ACCESS[`${user.ref}:${file.ref}`] === 'approved') {
+    trace.push(step(1, 'File NOT rights-managed', 'RightsManaged = true', 'fail'));
+    trace.push(step(2, 'Superadmin bypass', 'Regular user', 'fail'));
+    trace.push(step(3, 'Explicit sd$fileAccess approval', `Approved record for ${user.ref}:${file.ref}`, 'match'));
+
+    // But time block still wins per plan note
+    const timeBlock = evaluateTimeBlock(file);
+    if (timeBlock) {
+      trace.push(step('4', 'Time-based block check', timeBlock.reason, 'match'));
+      outcome = 'blocked';
+      outcome_detail = timeBlock;
+      stopAt = 4;
+      return { outcome, trace, timeBlock, user, file };
+    }
+    outcome = 'approved';
+    stopAt = 3;
+  }
+  // 4. Time-based blocks
+  else {
+    trace.push(step(1, 'File NOT rights-managed', 'RightsManaged = true', 'fail'));
+    trace.push(step(2, 'Superadmin bypass', 'Regular user', 'fail'));
+    trace.push(step(3, 'Explicit sd$fileAccess approval', 'No approved record', 'fail'));
+
+    const timeBlock = evaluateTimeBlock(file);
+    if (timeBlock) {
+      trace.push(step(4, 'Time-based block check', timeBlock.reason, 'match'));
+      outcome = 'blocked';
+      stopAt = 4;
+      return { outcome, trace, timeBlock, user, file };
+    }
+    trace.push(step(4, 'Time-based block check', 'All date fields pass', 'fail'));
+
+    // 5. EditComm editorial
+    if (file.editComm && file.editComm.toLowerCase() === 'editorial') {
+      trace.push(step(5, 'Editorial gate', 'EditComm = editorial', 'match'));
+      outcome = 'restricted';
+      stopAt = 5;
+    }
+    // 6. RequireExplicitApproval
+    else if (file.requireExplicitApproval) {
+      trace.push(step(5, 'Editorial gate', 'EditComm not set', 'fail'));
+      const rec = FILE_ACCESS[`${user.ref}:${file.ref}`];
+      const recNote = rec ? `Record exists but status = ${rec} (ignored)` : 'No sd$fileAccess record';
+      trace.push(step(6, 'RequireExplicitApproval = true', recNote, 'match'));
+      outcome = 'request';
+      stopAt = 6;
+    }
+    // 7. No user profile
+    else if (user.noProfile) {
+      trace.push(step(5, 'Editorial gate', 'EditComm not set', 'fail'));
+      trace.push(step(6, 'RequireExplicitApproval', 'Not set', 'fail'));
+      trace.push(step(7, 'No user profile in sd$standardUserData', 'User has no profile row', 'match'));
+      outcome = 'nomatch';
+      stopAt = 7;
+    }
+    // 8. No dimensions defined on file
+    else if (!file.territory && !file.audiences && !file.channels) {
+      trace.push(step(5, 'Editorial gate', 'EditComm not set', 'fail'));
+      trace.push(step(6, 'RequireExplicitApproval', 'Not set', 'fail'));
+      trace.push(step(7, 'No user profile', 'Profile exists', 'fail'));
+      trace.push(step(8, 'No dimensions defined on file', 'Territory, Audiences, Channels all null', 'match'));
+      outcome = 'nomatch';
+      stopAt = 8;
+    }
+    // 9. Dimensional scoring
+    else {
+      trace.push(step(5, 'Editorial gate', 'EditComm not set', 'fail'));
+      trace.push(step(6, 'RequireExplicitApproval', 'Not set', 'fail'));
+      trace.push(step(7, 'No user profile', 'Profile exists', 'fail'));
+      trace.push(step(8, 'No dimensions defined', 'At least one dimension defined on file', 'fail'));
+
+      const dims = evaluateDimensions(user, file);
+      trace.push(step(9, 'Dimensional scoring', dims.detail, dims.score === 'full' ? 'match' : dims.score === 'restricted' ? 'match' : 'match'));
+      outcome = dims.score;
+      stopAt = 9;
+    }
+  }
+
+  return { outcome, trace, user, file };
+}
+
+function evaluateTimeBlock(file) {
+  if (file.cdnAccess === 'blocked') return { reason: 'CdnAccess = "blocked"', message: 'Asset is CDN-restricted.' };
+  if (file.userAccess === 'soft') return { reason: 'UserAccess = "soft"', message: 'Download not permitted for your region.' };
+  if (file.expirationDate && new Date(file.expirationDate) < NOW) return { reason: `ExpirationDate ${file.expirationDate} in past`, message: 'Asset rights have expired.' };
+  if (file.embargoDate && new Date(file.embargoDate) > NOW) return { reason: `EmbargoDate ${file.embargoDate} in future`, message: 'Asset is under embargo and not yet available.' };
+  if (file.usageStartDate && new Date(file.usageStartDate) > NOW) return { reason: `UsageStartDate ${file.usageStartDate} in future`, message: 'Asset licensing has not yet started.' };
+  if (file.usageWindowStartDate && new Date(file.usageWindowStartDate) > NOW) return { reason: `UsageWindowStartDate ${file.usageWindowStartDate} in future`, message: 'Asset is not yet within its usage window.' };
+  if (file.usageWindowEndDate && new Date(file.usageWindowEndDate) < NOW) return { reason: `UsageWindowEndDate ${file.usageWindowEndDate} in past`, message: 'Asset usage window has ended.' };
+  if (file.autoArchive && file.expirationDate && new Date(file.expirationDate) < NOW) return { reason: 'AutoArchive active', message: 'Asset has been archived.' };
+  return null;
+}
+
+function evaluateDimensions(user, file) {
+  const defined = [];
+  const passed = [];
+  const failed = [];
+
+  if (file.territory && file.territory.length > 0) {
+    defined.push('Territory');
+    const pass = intersects(user.territory, file.territory);
+    (pass ? passed : failed).push(`Territory ${pass ? '✓' : '✗'}`);
+  }
+  if (file.audiences && file.audiences.length > 0) {
+    defined.push('Audiences');
+    const pass = intersects(user.audiences, file.audiences);
+    (pass ? passed : failed).push(`Audience ${pass ? '✓' : '✗'}`);
+  }
+  if (file.channels && file.channels.length > 0) {
+    defined.push('Channels');
+    const pass = intersects(user.channels, file.channels);
+    (pass ? passed : failed).push(`Channel ${pass ? '✓' : '✗'}`);
+  }
+
+  const detail = `${passed.length}/${defined.length} passed · ${[...passed, ...failed].join(', ')}`;
+
+  if (defined.length === 0) return { score: 'nomatch', detail: 'No dimensions defined', passed: 0, failed: 0 };
+  if (passed.length === defined.length) return { score: 'full', detail, passed: passed.length, failed: failed.length };
+  if (passed.length >= 1) return { score: 'restricted', detail, passed: passed.length, failed: failed.length };
+  return { score: 'nomatch', detail, passed: 0, failed: failed.length };
+}
+
+function getLicenseWarnings(file) {
+  const warnings = [];
+  if (file.ownershipSource === 'Stock Provider' || file.licenseType === 'Third-party Stock' || file.ownershipSource === 'Agency') {
+    warnings.push({ type: 'stock', message: 'Stock or agency licensed asset — verify usage rights before downloading.' });
+  }
+  if (file.licenseType === 'Rights-Managed') {
+    warnings.push({ type: 'restricted', message: 'Restricted licence — confirm permitted use before downloading.' });
+  }
+  if (file.licenseType === 'Editorial Only') {
+    warnings.push({ type: 'editorial', message: 'Editorial use only — commercial use not permitted.' });
+  }
+  return warnings;
+}
+
+// ============================================================
+// RENDERING
+// ============================================================
+
+function renderOutcomeSummary(result) {
+  const { outcome, user, file, timeBlock } = result;
+
+  const pillMap = {
+    'full': { class: 'pill-full', label: 'FULL' },
+    'restricted': { class: 'pill-restricted', label: 'RESTRICTED' },
+    'nomatch': { class: 'pill-nomatch', label: 'NOMATCH' },
+    'blocked': { class: 'pill-blocked', label: 'BLOCKED' },
+    'request': { class: 'pill-nomatch', label: 'REQUEST ACCESS' },
+    'approved': { class: 'pill-full', label: 'APPROVED (fileAccess)' },
+    'superadmin': { class: 'pill-superadmin', label: 'SUPERADMIN' },
+    'archived': { class: 'pill-blocked', label: 'ARCHIVED' }
+  };
+  const pill = pillMap[outcome] || pillMap.nomatch;
+
+  document.getElementById('outcome-summary').innerHTML = `
+    <div class="outcome-field">
+      <div class="label">User</div>
+      <div class="val">${user.ref} · ${user.name}</div>
+    </div>
+    <div class="outcome-field">
+      <div class="label">File</div>
+      <div class="val">${file.ref} · ${file.name.length > 28 ? file.name.slice(0,28) + '…' : file.name}</div>
+    </div>
+    <div class="outcome-field">
+      <div class="label">Access level</div>
+      <div class="val"><span class="outcome-pill ${pill.class}">${pill.label}</span></div>
+    </div>
+    <div class="outcome-field">
+      <div class="label">Frontend state</div>
+      <div class="val">${getFrontendState(outcome)}</div>
+    </div>
+  `;
+}
+
+function getFrontendState(outcome) {
+  const map = {
+    'full': 'original',
+    'approved': 'original',
+    'superadmin': 'original',
+    'restricted': 'watermark',
+    'request': 'preview',
+    'nomatch': 'preview',
+    'blocked': 'blocked',
+    'archived': 'not visible'
+  };
+  return map[outcome] || 'preview';
+}
+
+function renderTrace(result) {
+  const { trace } = result;
+  document.getElementById('trace-ref').textContent = result.ref || `${result.user.ref} → ${result.file.ref}`;
+  document.getElementById('trace-steps').innerHTML = trace.map(s => `
+    <div class="trace-step ${s.status}">
+      <div class="trace-step-num">${s.num}</div>
+      <div class="trace-step-body">
+        <div class="trace-step-title">${s.title}</div>
+        <div class="trace-step-detail">${s.detail}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderModal(result) {
+  const { outcome, user, file, timeBlock } = result;
+  const warnings = getLicenseWarnings(file);
+  const fileKind = file.kind === 'vid' ? 'vid' : (file.type === 'PDF' ? 'doc' : '');
+
+  const thumbLabel = fileKind === 'vid' ? 'VID' : (file.type === 'PDF' ? 'DOC' : 'IMG');
+
+  // Archived — special case, modal shouldn't even open
+  if (outcome === 'archived') {
+    document.getElementById('modal').innerHTML = `
+      <div class="modal-body">
+        <div class="no-options">
+          This asset is archived and not visible to this user in search or direct navigation.
+          <br><br>
+          <span style="font-size:11px;font-family:var(--font-family-mono);">Modal would not open — link unreachable.</span>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  let banner = '';
+  if (outcome === 'blocked' && timeBlock) {
+    banner = renderBanner('banner-expired', 'lock', 'Download blocked', timeBlock.message, null);
+  } else if (outcome === 'restricted') {
+    banner = renderBanner('banner-restricted', 'info', 'Original file restricted by licence',
+      'Your profile matches some of the licensing criteria. Preview and watermarked versions are available.',
+      file);
+  } else if (outcome === 'nomatch') {
+    banner = renderBanner('banner-restricted', 'block', 'Not available under your current profile',
+      'Your profile does not match this asset\'s licensing criteria.',
+      file);
+  } else if (outcome === 'request') {
+    banner = renderBanner('banner-restricted', 'user', 'This asset requires approval to download',
+      'Request access from the asset owner. You\'ll be notified when your request is reviewed.',
+      null);
+  } else if (outcome === 'approved') {
+    banner = renderBanner('banner-approved', 'check', 'Access granted by asset owner',
+      'You have been approved to download this asset at full resolution.',
+      null);
+  } else if (outcome === 'superadmin') {
+    banner = renderBanner('banner-superadmin', 'shield', 'Superadmin bypass active',
+      'Standard rights rules do not apply to your account.',
+      null);
+  }
+
+  // License warnings stack on top of restriction banner (don't block)
+  if (warnings.length > 0 && (outcome === 'full' || outcome === 'superadmin' || outcome === 'approved')) {
+    const w = warnings[0];
+    banner += renderBanner('banner-warning', 'warn', w.message, '', null);
+  }
+
+  // Options
+  const options = renderOptions(result);
+  const footer = renderFooter(result);
+
+  document.getElementById('modal').innerHTML = `
+    <div class="modal-header">
+      <div class="modal-title-row">
+        <div class="modal-title">Download asset</div>
+        <button class="modal-close" aria-label="Close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="asset-summary">
+        <div class="asset-thumb ${fileKind}">${thumbLabel}</div>
+        <div class="asset-meta">
+          <div class="asset-name">${file.name}</div>
+          <div class="asset-specs">${file.type} · ${file.specs}</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-body">
+      ${banner}
+      ${options}
+    </div>
+    ${footer}
+  `;
+}
+
+function renderBanner(cls, icon, title, subtext, file) {
+  const icons = {
+    lock: '<path d="M19 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2z"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+    info: '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+    block: '<circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>',
+    user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+    check: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>',
+    shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+    warn: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>'
+  };
+
+  let meta = '';
+  if (file && (file.territory || file.audiences || file.channels)) {
+    const parts = [];
+    if (file.territory && file.territory.length) parts.push(`<span><b>Territory:</b> ${file.territory.join(', ')}</span>`);
+    if (file.audiences && file.audiences.length) parts.push(`<span><b>Audience:</b> ${file.audiences.join(', ')}</span>`);
+    if (file.channels && file.channels.length) parts.push(`<span><b>Channels:</b> ${file.channels.join(', ')}</span>`);
+    if (parts.length) meta = `<div class="banner-meta">${parts.join('')}</div>`;
+  }
+
+  return `
+    <div class="banner ${cls}" role="status">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${icons[icon]}</svg>
+      <div class="banner-body">
+        <div class="banner-title">${title}</div>
+        ${subtext ? `<div class="banner-subtext">${subtext}</div>` : ''}
+        ${meta}
+      </div>
+    </div>
+  `;
+}
+
+function renderOptions(result) {
+  const { outcome } = result;
+
+  if (outcome === 'blocked') {
+    return `<div class="no-options">No download options available — this asset is blocked.</div>`;
+  }
+
+  if (outcome === 'request') {
+    return `
+      <div class="options-label">Access required</div>
+      <div class="no-options" style="text-align:left;padding:var(--spacing-4);">
+        This asset cannot be downloaded without explicit approval from the asset owner.
+        Use <b>Request access</b> below to submit a request with a reason.
+      </div>
+    `;
+  }
+
+  const showOriginal = ['full', 'approved', 'superadmin'].includes(outcome);
+  const originalDisabled = !showOriginal;
+
+  return `
+    <div class="options-label">Choose file version</div>
+
+    <label class="option">
+      <span class="option-radio"></span>
+      <div class="option-content">
+        <div class="option-title">Preview</div>
+        <div class="option-desc">For review and layout only</div>
+      </div>
+      <div class="option-specs">1200px · ~1.2 MB</div>
+    </label>
+
+    <label class="option selected">
+      <span class="option-radio"></span>
+      <div class="option-content">
+        <div class="option-title">Watermarked version</div>
+        <div class="option-desc">For internal sharing and review</div>
+      </div>
+      <div class="option-specs">2000px · ~3.8 MB</div>
+    </label>
+
+    <label class="option ${originalDisabled ? 'disabled' : ''}">
+      <span class="option-radio"></span>
+      <div class="option-content">
+        <div class="option-title">Original file</div>
+        <div class="option-desc">Full resolution for approved external use</div>
+        ${originalDisabled ? '<div class="disabled-reason">Not available due to usage restrictions</div>' : ''}
+      </div>
+      <div class="option-specs">${result.file.specs}</div>
+    </label>
+  `;
+}
+
+function renderFooter(result) {
+  const { outcome } = result;
+
+  if (outcome === 'blocked' || outcome === 'archived') {
+    return `
+      <div class="modal-footer">
+        <button class="btn btn-ghost">Close</button>
+      </div>
+    `;
+  }
+
+  if (outcome === 'request') {
+    return `
+      <div class="modal-footer">
+        <button class="btn btn-ghost">Cancel</button>
+        <button class="btn btn-primary">Request access</button>
+      </div>
+    `;
+  }
+
+  if (outcome === 'nomatch' || outcome === 'restricted') {
+    return `
+      <div class="modal-footer">
+        <button class="btn btn-ghost">Cancel</button>
+        <button class="btn btn-secondary">Request access</button>
+        <button class="btn btn-primary">Download</button>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="modal-footer">
+      <button class="btn btn-ghost">Cancel</button>
+      <button class="btn btn-primary">Download</button>
+    </div>
+  `;
+}
+
+function renderQAChecklist(result) {
+  const { outcome, user, file } = result;
+  const expected = result.scenarioExpected;
+  const items = [];
+
+  // Plan inconsistency — flagged first, most important for QA
+  if (result.planInconsistency) {
+    items.push({
+      pass: false,
+      label: `<b>⚠ Test plan inconsistency:</b> ${result.planInconsistency}`
+    });
+  }
+
+  // Expected vs actual
+  if (expected) {
+    const passed = expected === outcome || (expected === 'full-warning' && outcome === 'full');
+    items.push({
+      pass: passed,
+      label: `<b>Outcome</b>: expected <code>${expected}</code>, engine returned <code>${outcome}</code>`
+    });
+  }
+
+  // Banner presence
+  const shouldHaveBanner = outcome !== 'full' || getLicenseWarnings(file).length > 0;
+  items.push({
+    pass: null,
+    label: shouldHaveBanner
+      ? `Rights banner <b>must render</b> above download options`
+      : `No rights banner expected for this state`
+  });
+
+  // Original option availability
+  const showOriginal = ['full', 'approved', 'superadmin'].includes(outcome);
+  items.push({
+    pass: null,
+    label: showOriginal
+      ? `Original option <b>enabled</b> and selectable`
+      : `Original option <b>disabled with tooltip</b>: "Not available due to usage restrictions"`
+  });
+
+  // Preview + Watermarked always available (unless blocked)
+  if (outcome !== 'blocked' && outcome !== 'archived' && outcome !== 'request') {
+    items.push({
+      pass: null,
+      label: `Preview and Watermarked options <b>enabled</b>`
+    });
+  }
+
+  // Request Access button
+  if (outcome === 'request') {
+    items.push({
+      pass: null,
+      label: `<b>Request access</b> button renders · opens reason textarea inline`
+    });
+  }
+
+  // Warnings
+  const warnings = getLicenseWarnings(file);
+  if (warnings.length > 0 && outcome !== 'blocked' && outcome !== 'archived') {
+    items.push({
+      pass: null,
+      label: `Licence warning banner: "${warnings[0].message}" · <b>does not block download</b>`
+    });
+  }
+
+  // Archived
+  if (outcome === 'archived') {
+    items.push({
+      pass: null,
+      label: `Asset <b>must not appear</b> in search results for this user`
+    });
+    items.push({
+      pass: null,
+      label: `If deep-linked, asset detail page returns <b>not found</b>`
+    });
+  }
+
+  // Superadmin indicator
+  if (outcome === 'superadmin') {
+    items.push({
+      pass: null,
+      label: `<b>Superadmin bypass</b> indicator visible to prevent accidental misuse`
+    });
+  }
+
+  document.getElementById('qa-grid').innerHTML = items.map(item => {
+    const cls = item.pass === true ? 'pass' : item.pass === false ? 'fail' : '';
+    const icon = item.pass === true
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
+      : item.pass === false
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+    return `
+      <div class="qa-item ${cls}">
+        <div class="qa-item-icon">${icon}</div>
+        <div class="qa-item-label">${item.label}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============================================================
+// CONTROL PANEL WIRING
+// ============================================================
+
+function renderUserProfile(user) {
+  if (user.noProfile) {
+    document.getElementById('user-profile').innerHTML = `
+      <div class="profile-row"><span class="k">Profile</span><span class="v" style="color:var(--color-red-600);">No row in sd$standardUserData</span></div>
+    `;
+    return;
+  }
+  if (user.superadmin) {
+    document.getElementById('user-profile').innerHTML = `
+      <div class="profile-row"><span class="k">Role</span><span class="v" style="color:var(--primary-default);">Superadmin (JWT)</span></div>
+      <div class="profile-row"><span class="k">Bypass</span><span class="v">All rights rules</span></div>
+    `;
+    return;
+  }
+  const fmt = a => (a && a.length) ? a.join(', ') : '<span style="color:var(--color-amber-600);">empty</span>';
+  document.getElementById('user-profile').innerHTML = `
+    <div class="profile-row"><span class="k">Territory</span><span class="v">${fmt(user.territory)}</span></div>
+    <div class="profile-row"><span class="k">Audiences</span><span class="v">${fmt(user.audiences)}</span></div>
+    <div class="profile-row"><span class="k">Channels</span><span class="v">${fmt(user.channels)}</span></div>
+  `;
+}
+
+function renderFileProfile(file) {
+  const rows = [];
+  rows.push(`<div class="profile-row"><span class="k">Rights-managed</span><span class="v">${file.rightsManaged ? 'Yes' : 'No'}</span></div>`);
+  if (file.territory) rows.push(`<div class="profile-row"><span class="k">Territory</span><span class="v">${file.territory.join(', ') || 'null'}</span></div>`);
+  if (file.audiences) rows.push(`<div class="profile-row"><span class="k">Audiences</span><span class="v">${file.audiences.join(', ') || 'null'}</span></div>`);
+  if (file.channels) rows.push(`<div class="profile-row"><span class="k">Channels</span><span class="v">${file.channels.join(', ') || 'null'}</span></div>`);
+  if (file.embargoDate) rows.push(`<div class="profile-row"><span class="k">Embargo</span><span class="v">${file.embargoDate}</span></div>`);
+  if (file.expirationDate) rows.push(`<div class="profile-row"><span class="k">Expiry</span><span class="v">${file.expirationDate}</span></div>`);
+  if (file.usageStartDate) rows.push(`<div class="profile-row"><span class="k">Usage start</span><span class="v">${file.usageStartDate}</span></div>`);
+  if (file.usageWindowStartDate) rows.push(`<div class="profile-row"><span class="k">Window start</span><span class="v">${file.usageWindowStartDate}</span></div>`);
+  if (file.usageWindowEndDate) rows.push(`<div class="profile-row"><span class="k">Window end</span><span class="v">${file.usageWindowEndDate}</span></div>`);
+  if (file.cdnAccess) rows.push(`<div class="profile-row"><span class="k">CDN access</span><span class="v">${file.cdnAccess}</span></div>`);
+  if (file.userAccess) rows.push(`<div class="profile-row"><span class="k">User access</span><span class="v">${file.userAccess}</span></div>`);
+  if (file.editComm) rows.push(`<div class="profile-row"><span class="k">EditComm</span><span class="v">${file.editComm}</span></div>`);
+  if (file.requireExplicitApproval) rows.push(`<div class="profile-row"><span class="k">Approval req.</span><span class="v">Yes</span></div>`);
+  if (file.licenseType) rows.push(`<div class="profile-row"><span class="k">Licence type</span><span class="v">${file.licenseType}</span></div>`);
+  if (file.ownershipSource) rows.push(`<div class="profile-row"><span class="k">Ownership</span><span class="v">${file.ownershipSource}</span></div>`);
+  if (file.autoArchive) rows.push(`<div class="profile-row"><span class="k">Archived</span><span class="v">Yes</span></div>`);
+  document.getElementById('file-profile').innerHTML = rows.join('');
+}
+
+function run(userRef, fileRef, scenarioMeta) {
+  const user = USERS[userRef];
+  const file = FILES[fileRef];
+  renderUserProfile(user);
+  renderFileProfile(file);
+
+  // Force archived outcome for F14 + non-admin (Row 7 / S6)
+  let result;
+  if (file.autoArchive && !user.superadmin) {
+    result = {
+      outcome: 'archived',
+      user, file,
+      trace: [{ num: 1, title: 'AutoArchive check', detail: 'File archived + user is not superadmin → not visible in search results', status: 'match' }]
+    };
+  } else {
+    result = computeAccess(user, file);
+  }
+
+  if (scenarioMeta) {
+    result.ref = scenarioMeta.ref;
+    result.scenarioExpected = scenarioMeta.expected;
+    result.planInconsistency = scenarioMeta.planInconsistency;
+  } else {
+    result.ref = `${user.ref} → ${file.ref}`;
+    result.scenarioExpected = null;
+  }
+
+  renderOutcomeSummary(result);
+  renderTrace(result);
+  renderModal(result);
+  renderQAChecklist(result);
+}
+
+function populateSelects() {
+  const userSel = document.getElementById('user-select');
+  const fileSel = document.getElementById('file-select');
+  Object.values(USERS).forEach(u => {
+    const opt = document.createElement('option');
+    opt.value = u.ref;
+    opt.textContent = `${u.ref} · ${u.name}`;
+    userSel.appendChild(opt);
+  });
+  Object.values(FILES).forEach(f => {
+    const opt = document.createElement('option');
+    opt.value = f.ref;
+    opt.textContent = `${f.ref} · ${f.name.length > 32 ? f.name.slice(0,32) + '…' : f.name}`;
+    fileSel.appendChild(opt);
+  });
+}
+
+function populateScenarios(filter) {
+  const list = document.getElementById('scenario-list');
+  let filtered;
+  if (filter === 'all') filtered = SCENARIOS;
+  else if (filter === 'issues') filtered = SCENARIOS.filter(s => s.planInconsistency);
+  else filtered = SCENARIOS.filter(s => s.table === filter);
+
+  list.innerHTML = filtered.map(s => `
+    <button class="scenario-btn ${s.planInconsistency ? 'has-issue' : ''}" data-id="${s.id}">
+      <span class="scenario-btn-label">${s.ref} · ${s.user} → ${s.file}${s.planInconsistency ? ' · ⚠' : ''}</span>
+      ${s.label}
+    </button>
+  `).join('');
+
+  list.querySelectorAll('.scenario-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      list.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const scenario = SCENARIOS.find(s => s.id === btn.dataset.id);
+      document.getElementById('user-select').value = scenario.user;
+      document.getElementById('file-select').value = scenario.file;
+      run(scenario.user, scenario.file, scenario);
+    });
+  });
+}
+
+// Initialize
+populateSelects();
+populateScenarios('all');
+
+// Filter chips
+document.querySelectorAll('.filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    populateScenarios(chip.dataset.filter);
+  });
+});
+
+// Custom user/file selectors
+document.getElementById('user-select').addEventListener('change', e => {
+  document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+  run(e.target.value, document.getElementById('file-select').value, null);
+});
+document.getElementById('file-select').addEventListener('change', e => {
+  document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+  run(document.getElementById('user-select').value, e.target.value, null);
+});
+
+// Start with D1 — the most illustrative scenario
+document.getElementById('user-select').value = 'U17';
+document.getElementById('file-select').value = 'F01';
+const d1 = SCENARIOS.find(s => s.id === 'D1');
+setTimeout(() => {
+  const btn = document.querySelector('.scenario-btn[data-id="D1"]');
+  if (btn) btn.classList.add('active');
+  run('U17', 'F01', d1);
+}, 0);
+</script>
+
+
+</body></html>
