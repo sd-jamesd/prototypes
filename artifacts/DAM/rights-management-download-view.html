@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rights Management — Library / Download view by Licence Type & User</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Scale tokens */
+    --color-stone-50: #fefcfc;
+    --color-stone-100: #f5f5f4;
+    --color-stone-200: #e7e5e4;
+    --color-stone-300: #d6d3d1;
+    --color-stone-400: #978985;
+    --color-stone-500: #6b615e;
+    --color-stone-600: #57534e;
+    --color-stone-700: #44403c;
+    --color-stone-800: #292524;
+    --color-stone-900: #1c1917;
+
+    --accent-9: #0B6E8A;
+    --accent-10: #005F7B;
+    --accent-11: #197592;
+
+    --color-red-50: #fef2f1;
+    --color-red-100: #feebe7;
+    --color-red-500: #e54d2e;
+    --color-red-600: #d13415;
+    --color-red-700: #582C29;
+
+    --color-amber-50: #fff8eb;
+    --color-amber-100: #ffefd5;
+    --color-amber-500: #f5a524;
+    --color-amber-600: #985b00;
+    --color-amber-700: #4E350D;
+
+    --color-green-50: #ebf9f0;
+    --color-green-100: #e6f7ed;
+    --color-green-500: #29a383;
+    --color-green-600: #208368;
+    --color-green-700: #1E442D;
+
+    --primary-default: var(--accent-9);
+    --primary-hover: var(--accent-10);
+    --primary-subtle: rgba(11,110,138,0.12);
+
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-7: 32px;
+    --spacing-8: 40px;
+
+    --radius-1: 3px;
+    --radius-2: 4px;
+    --radius-3: 6px;
+    --radius-4: 8px;
+
+    --font-text: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-size-1: 12px;
+    --font-size-2: 13px;
+    --font-size-3: 14px;
+    --font-size-4: 16px;
+    --font-size-5: 18px;
+
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-text);
+    background: var(--color-stone-100);
+    color: var(--color-stone-800);
+    font-size: var(--font-size-2);
+    line-height: 1.5;
+    padding: var(--spacing-7);
+    min-height: 100vh;
+  }
+
+  .container { max-width: 1480px; margin: 0 auto; }
+
+  .page-header { margin-bottom: var(--spacing-6); }
+  .page-header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: var(--spacing-2);
+  }
+  .page-header p {
+    color: var(--color-stone-600);
+    font-size: var(--font-size-3);
+    max-width: 80ch;
+  }
+
+  /* Two-row switcher */
+  .controls {
+    background: white;
+    border: 1px solid var(--color-stone-200);
+    border-radius: var(--radius-4);
+    padding: var(--spacing-4);
+    margin-bottom: var(--spacing-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+
+  .control-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    flex-wrap: wrap;
+  }
+
+  .control-label {
+    font-size: var(--font-size-2);
+    font-weight: 500;
+    color: var(--color-stone-700);
+    margin-right: var(--spacing-2);
+    min-width: 110px;
+  }
+
+  .switcher-btn {
+    appearance: none;
+    background: white;
+    border: 1px solid var(--color-stone-300);
+    color: var(--color-stone-700);
+    font-family: inherit;
+    font-size: var(--font-size-2);
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: var(--radius-2);
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .switcher-btn:hover { border-color: var(--color-stone-500); }
+  .switcher-btn.active {
+    background: var(--accent-9);
+    border-color: var(--accent-9);
+    color: white;
+  }
+  .switcher-btn.state-btn.active { background: var(--color-stone-800); border-color: var(--color-stone-800); }
+
+  /* Asset header strip — context for the whole page */
+  .asset-header {
+    background: white;
+    border: 1px solid var(--color-stone-200);
+    border-radius: var(--radius-4);
+    padding: var(--spacing-5);
+    margin-bottom: var(--spacing-5);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-5);
+  }
+
+  .asset-thumb {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-3);
+    background: linear-gradient(135deg, #f97316 0%, #dc2626 50%, #7c3aed 100%);
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .asset-thumb::after {
+    content: 'FIFA';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(255,255,255,0.95);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+  }
+
+  .asset-info { flex: 1; }
+  .asset-name {
+    font-size: var(--font-size-4);
+    font-weight: 600;
+    font-family: var(--font-mono);
+    margin-bottom: 4px;
+    color: var(--color-stone-900);
+  }
+  .asset-meta {
+    display: flex;
+    gap: var(--spacing-4);
+    font-size: var(--font-size-2);
+    color: var(--color-stone-500);
+  }
+  .asset-meta span strong { color: var(--color-stone-700); font-weight: 500; }
+
+  .asset-rights-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+    min-width: 240px;
+  }
+
+  /* Rights badges — separate namespace from Scale's workflow status */
+  .rights-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--font-size-1);
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: var(--radius-1);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+    border: 1px solid;
+  }
+  .rights-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+  }
+  .rights-badge.cleared    { background: var(--color-green-50);  color: var(--color-green-700); border-color: var(--color-green-100); }
+  .rights-badge.cleared::before  { background: var(--color-green-500); }
+  .rights-badge.restricted { background: var(--color-amber-50);  color: var(--color-amber-700); border-color: var(--color-amber-100); }
+  .rights-badge.restricted::before { background: var(--color-amber-500); }
+  .rights-badge.embargoed  { background: var(--color-amber-50);  color: var(--color-amber-700); border-color: var(--color-amber-100); }
+  .rights-badge.embargoed::before  { background: var(--color-amber-500); }
+  .rights-badge.expired    { background: var(--color-red-50);    color: var(--color-red-700);   border-color: var(--color-red-100); }
+  .rights-badge.expired::before    { background: var(--color-red-500); }
+  .rights-badge.internal   { background: var(--color-stone-100); color: var(--color-stone-700); border-color: var(--color-stone-200); }
+  .rights-badge.internal::before   { background: var(--color-stone-500); }
+
+  .rights-summary-line {
+    font-size: var(--font-size-1);
+    color: var(--color-stone-500);
+    font-family: var(--font-mono);
+  }
+
+  /* Grid of 4 user context cards */
+  .user-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-4);
+  }
+
+  .user-card {
+    background: white;
+    border: 1px solid var(--color-stone-200);
+    border-radius: var(--radius-4);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .user-card-header {
+    padding: var(--spacing-3) var(--spacing-4);
+    background: var(--color-stone-50);
+    border-bottom: 1px solid var(--color-stone-200);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+  }
+
+  .user-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--color-stone-300);
+    color: var(--color-stone-700);
+    font-size: var(--font-size-2);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .user-avatar.internal  { background: #cde4f0; color: var(--accent-10); }
+  .user-avatar.us-market { background: #dcecf2; color: var(--accent-10); }
+  .user-avatar.partner   { background: #f0e7d8; color: var(--color-amber-700); }
+  .user-avatar.public    { background: var(--color-stone-200); color: var(--color-stone-700); }
+
+  .user-name {
+    font-weight: 600;
+    font-size: var(--font-size-2);
+    color: var(--color-stone-900);
+    line-height: 1.2;
+  }
+  .user-role {
+    font-size: var(--font-size-1);
+    color: var(--color-stone-500);
+    line-height: 1.3;
+  }
+
+  .user-card-body {
+    padding: var(--spacing-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    flex: 1;
+  }
+
+  /* Library row preview (mimics asset row in library) */
+  .library-preview {
+    background: var(--color-stone-50);
+    border: 1px solid var(--color-stone-200);
+    border-radius: var(--radius-3);
+    padding: var(--spacing-3);
+  }
+
+  .library-preview-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--color-stone-500);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: var(--spacing-2);
+  }
+
+  .lib-action-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-2);
+  }
+
+  /* Buttons */
+  .btn {
+    appearance: none;
+    font-family: inherit;
+    font-size: var(--font-size-2);
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: var(--radius-2);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.12s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.2;
+    height: 36px;
+  }
+  .btn-primary {
+    background: var(--accent-9);
+    color: white;
+    border-color: var(--accent-9);
+  }
+  .btn-primary:hover { background: var(--accent-10); border-color: var(--accent-10); }
+
+  .btn-secondary {
+    background: white;
+    color: var(--accent-9);
+    border-color: var(--accent-9);
+  }
+  .btn-secondary:hover { background: var(--primary-subtle); }
+
+  .btn-disabled {
+    background: var(--color-stone-100);
+    color: var(--color-stone-500);
+    border-color: var(--color-stone-200);
+    cursor: not-allowed;
+  }
+  .btn-disabled:hover { background: var(--color-stone-100); }
+
+  .btn-watermark {
+    background: var(--color-amber-50);
+    color: var(--color-amber-700);
+    border-color: var(--color-amber-100);
+  }
+  .btn-watermark:hover { background: var(--color-amber-100); }
+
+  .btn-icon { width: 14px; height: 14px; }
+
+  .btn-tiny-action {
+    background: transparent;
+    border: 1px solid var(--color-stone-200);
+    color: var(--color-stone-500);
+    padding: 4px 8px;
+    border-radius: var(--radius-1);
+    font-size: var(--font-size-1);
+    cursor: pointer;
+  }
+  .btn-tiny-action:hover { color: var(--accent-9); border-color: var(--accent-9); }
+
+  /* Outcome card */
+  .outcome {
+    border-radius: var(--radius-3);
+    padding: var(--spacing-3);
+    border: 1px solid;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .outcome.cleared    { background: var(--color-green-50);  border-color: var(--color-green-100); }
+  .outcome.watermark  { background: var(--color-amber-50);  border-color: var(--color-amber-100); }
+  .outcome.blocked    { background: var(--color-red-50);    border-color: var(--color-red-100); }
+  .outcome.request    { background: var(--color-stone-100); border-color: var(--color-stone-200); }
+
+  .outcome-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .outcome.cleared   .outcome-label { color: var(--color-green-700); }
+  .outcome.watermark .outcome-label { color: var(--color-amber-700); }
+  .outcome.blocked   .outcome-label { color: var(--color-red-700); }
+  .outcome.request   .outcome-label { color: var(--color-stone-700); }
+
+  .outcome-reason {
+    font-size: var(--font-size-2);
+    color: var(--color-stone-800);
+    line-height: 1.45;
+  }
+
+  /* Audit log line */
+  .audit-line {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-stone-500);
+    background: var(--color-stone-900);
+    color: #d4d4d4;
+    padding: 8px 10px;
+    border-radius: var(--radius-2);
+    line-height: 1.5;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .audit-line .ts { color: var(--color-stone-400); }
+  .audit-line .lvl-ok { color: #86efac; }
+  .audit-line .lvl-warn { color: #fbbf24; }
+  .audit-line .lvl-block { color: #fca5a5; }
+
+  /* Click-to-reveal disabled-button reason */
+  .reason-panel {
+    background: var(--color-stone-50);
+    border: 1px dashed var(--color-stone-300);
+    border-radius: var(--radius-2);
+    padding: 10px;
+    font-size: var(--font-size-1);
+    color: var(--color-stone-600);
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    line-height: 1.45;
+  }
+  .reason-panel-icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Modal preview */
+  .modal-preview {
+    background: white;
+    border: 1px solid var(--color-stone-300);
+    border-radius: var(--radius-3);
+    padding: var(--spacing-3);
+    box-shadow: var(--shadow-md);
+    margin-top: 4px;
+  }
+  .modal-title {
+    font-size: var(--font-size-2);
+    font-weight: 600;
+    color: var(--color-stone-900);
+    margin-bottom: 4px;
+  }
+  .modal-body {
+    font-size: var(--font-size-1);
+    color: var(--color-stone-600);
+    margin-bottom: 8px;
+    line-height: 1.45;
+  }
+  .modal-footer {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+  }
+  .modal-footer .btn {
+    height: 28px;
+    padding: 4px 10px;
+    font-size: var(--font-size-1);
+  }
+
+  /* Legend / notes */
+  .legend {
+    margin-top: var(--spacing-6);
+    background: white;
+    border: 1px solid var(--color-stone-200);
+    border-radius: var(--radius-4);
+    padding: var(--spacing-5);
+  }
+  .legend h3 {
+    font-size: var(--font-size-3);
+    font-weight: 600;
+    margin-bottom: var(--spacing-3);
+  }
+  .legend-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-4);
+  }
+  .legend-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .legend-item-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--font-size-2);
+    font-weight: 600;
+  }
+  .legend-item-desc {
+    font-size: var(--font-size-1);
+    color: var(--color-stone-600);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 1280px) {
+    .user-grid { grid-template-columns: repeat(2, 1fr); }
+    .legend-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .user-grid { grid-template-columns: 1fr; }
+    .legend-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="page-header">
+    <h1>Rights Management — Library / Download view by Licence Type &amp; User Context</h1>
+    <p>For each combination of Licence Type and asset state, see what the download interaction looks like for four different user contexts. No intent prompt — the system infers the appropriate file based on user attributes, rights metadata, and time-based state. The download button itself reflects what the user is entitled to before they click.</p>
+  </div>
+
+  <div class="controls">
+    <div class="control-row">
+      <span class="control-label">Licence Type:</span>
+      <button class="switcher-btn" data-license="owned">Owned</button>
+      <button class="switcher-btn" data-license="royalty-free">Royalty-Free</button>
+      <button class="switcher-btn active" data-license="rights-managed">Rights-Managed</button>
+      <button class="switcher-btn" data-license="editorial">Editorial Only</button>
+      <button class="switcher-btn" data-license="internal">Internal Only</button>
+    </div>
+    <div class="control-row">
+      <span class="control-label">Asset State:</span>
+      <button class="switcher-btn state-btn active" data-state="active">Active</button>
+      <button class="switcher-btn state-btn" data-state="embargoed">Embargoed (Go-live 15 Jun 2026)</button>
+      <button class="switcher-btn state-btn" data-state="expired">Expired (31 Dec 2025)</button>
+    </div>
+  </div>
+
+  <!-- Asset header — context for the whole page -->
+  <div class="asset-header">
+    <div class="asset-thumb"></div>
+    <div class="asset-info">
+      <div class="asset-name" id="asset-name">FIFA_WC2026_Hero_Marketing_USA.jpg</div>
+      <div class="asset-meta">
+        <span><strong>Type:</strong> JPG</span>
+        <span><strong>Size:</strong> 4.2 MB</span>
+        <span><strong>Dimensions:</strong> 3840×2160</span>
+        <span><strong>Uploaded:</strong> 12 Mar 2026</span>
+      </div>
+    </div>
+    <div class="asset-rights-summary">
+      <span class="rights-badge cleared" id="asset-badge">● Cleared</span>
+      <div class="rights-summary-line" id="asset-rights-line">Rights-Managed · USA · Digital · Internal · until 31 Dec 2026</div>
+    </div>
+  </div>
+
+  <!-- Four-user grid -->
+  <div class="user-grid" id="user-grid">
+
+    <!-- User 1: Internal UK Designer -->
+    <div class="user-card" data-user="internal-uk">
+      <div class="user-card-header">
+        <div class="user-avatar internal">EW</div>
+        <div>
+          <div class="user-name">Emma Walsh</div>
+          <div class="user-role">Internal Designer · UK</div>
+        </div>
+      </div>
+      <div class="user-card-body" id="body-internal-uk"></div>
+    </div>
+
+    <!-- User 2: US Marketing Manager -->
+    <div class="user-card" data-user="us-marketing">
+      <div class="user-card-header">
+        <div class="user-avatar us-market">MR</div>
+        <div>
+          <div class="user-name">Marcus Reyes</div>
+          <div class="user-role">Marketing Manager · USA</div>
+        </div>
+      </div>
+      <div class="user-card-body" id="body-us-marketing"></div>
+    </div>
+
+    <!-- User 3: Agency Partner UK -->
+    <div class="user-card" data-user="agency-uk">
+      <div class="user-card-header">
+        <div class="user-avatar partner">SJ</div>
+        <div>
+          <div class="user-name">Sarah Jensen</div>
+          <div class="user-role">Agency Partner · UK</div>
+        </div>
+      </div>
+      <div class="user-card-body" id="body-agency-uk"></div>
+    </div>
+
+    <!-- User 4: Public via share link -->
+    <div class="user-card" data-user="public-share">
+      <div class="user-card-header">
+        <div class="user-avatar public">?</div>
+        <div>
+          <div class="user-name">Anonymous</div>
+          <div class="user-role">Public · Share Link</div>
+        </div>
+      </div>
+      <div class="user-card-body" id="body-public-share"></div>
+    </div>
+
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <h3>Outcome types</h3>
+    <div class="legend-grid">
+      <div class="legend-item">
+        <div class="legend-item-header"><span class="rights-badge cleared">● Cleared</span></div>
+        <div class="legend-item-desc">Full-res original delivered. All rights checks passed for this user. Standard primary download button.</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-item-header"><span class="rights-badge restricted">● Watermarked</span></div>
+        <div class="legend-item-desc">Rights mismatch but user is internal. Watermarked working copy delivered with visible "Not cleared for use" overlay. Logged.</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-item-header"><span class="rights-badge expired">● Blocked</span></div>
+        <div class="legend-item-desc">Hard mismatch — expired, wrong audience, or external user with no entitlement. Download disabled with click-to-reveal reason.</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-item-header"><span class="rights-badge internal">● Request Access</span></div>
+        <div class="legend-item-desc">Blocked but recoverable. User can submit a request that goes to the rights owner for approval. Only path to a higher entitlement.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ========================================================================
+  // DECISION ENGINE
+  // ========================================================================
+  // Inputs: licenceType, assetState, userType
+  // Output: { outcome, button, reason, modal?, audit, badge, rightsLine, assetNameOverride? }
+  //
+  // Outcome types:
+  //   cleared   → full-res delivered, primary button
+  //   watermark → watermarked copy, secondary amber button
+  //   blocked   → no file, disabled button with reason
+  //   request   → blocked but offer Request Access path
+  // ========================================================================
+
+  const assetNamesByLicence = {
+    'owned':          'FIFA_WC2026_Hero_Marketing_USA.jpg',
+    'royalty-free':   'GettyStock_Stadium_Crowd_RF_2026.jpg',
+    'rights-managed': 'FIFA_WC2026_Hero_Marketing_USA.jpg',
+    'editorial':      'F21_license-editorial-only_USA.svg',
+    'internal':       'FIFA_Internal_Briefing_2026_v3.pptx'
+  };
+
+  const rightsLineByLicence = {
+    'owned':          'Owned · No usage restrictions',
+    'royalty-free':   'Royalty-Free · Global · All channels · Internal + Public',
+    'rights-managed': 'Rights-Managed · USA · Digital · Internal',
+    'editorial':      'Editorial Only · USA · Press / Editorial only',
+    'internal':       'Internal Only · Locked to internal audience'
+  };
+
+  // Per-licence-type, per-user outcome map — Active state
+  const outcomes = {
+    'owned': {
+      'internal-uk':  { o:'cleared',  reason:'Asset is Owned by the organisation. No usage restrictions apply.' },
+      'us-marketing': { o:'cleared',  reason:'Asset is Owned. No usage restrictions apply.' },
+      'agency-uk':    { o:'cleared',  reason:'Asset is Owned and shareable with partners. No restrictions apply.' },
+      'public-share': { o:'cleared',  reason:'Asset is Owned and configured as publicly shareable. Watermarking optional at link level.' }
+    },
+    'royalty-free': {
+      'internal-uk':  { o:'cleared',  reason:'Royalty-Free licence covers internal use globally. Full-res delivered.' },
+      'us-marketing': { o:'cleared',  reason:'Royalty-Free licence covers all internal use. Full-res delivered.' },
+      'agency-uk':    { o:'cleared',  reason:'Agencies are within the licensed audience. Full-res delivered with attribution note.' },
+      'public-share': { o:'watermark',reason:'Public delivery permitted by licence but tenant policy enforces watermark on external share links.' }
+    },
+    'rights-managed': {
+      'internal-uk':  { o:'watermark',reason:'Territory mismatch: asset cleared for USA, user is UK. Watermarked working copy delivered for internal review.' },
+      'us-marketing': { o:'cleared',  reason:'All checks passed: USA territory ✓ · Digital channel ✓ · Internal audience ✓ · Within date range ✓' },
+      'agency-uk':    { o:'request',  reason:'External user outside licensed audience. No automatic entitlement — Request Access flow routes to rights owner.' },
+      'public-share': { o:'blocked',  reason:'Rights-Managed assets cannot be delivered via public share links. Hard block at CDN level.' }
+    },
+    'editorial': {
+      'internal-uk':  { o:'watermark',reason:'Internal designer outside Press/Editorial audience. Watermarked copy for reference only — not cleared for commercial use.' },
+      'us-marketing': { o:'blocked',  reason:'Editorial Only licence blocks marketing use. Marketing intent inferred from user role — commercial channels not licensed.' },
+      'agency-uk':    { o:'blocked',  reason:'Editorial Only — external agencies have no entitlement. Asset cannot be downloaded.' },
+      'public-share': { o:'blocked',  reason:'Editorial Only assets are not publicly shareable. Share link returns 410.' }
+    },
+    'internal': {
+      'internal-uk':  { o:'cleared',  reason:'Internal user, internal asset. Full-res delivered.' },
+      'us-marketing': { o:'cleared',  reason:'Internal user, internal asset. Full-res delivered.' },
+      'agency-uk':    { o:'blocked',  reason:'Internal Only asset — external users have no entitlement and cannot request access.' },
+      'public-share': { o:'blocked',  reason:'Internal Only assets are not exposed to public share links. Hard block at CDN level.' }
+    }
+  };
+
+  // State overrides — embargoed and expired short-circuit the licence logic
+  function applyStateOverride(baseOutcome, state, user) {
+    if (state === 'active') return baseOutcome;
+
+    if (state === 'embargoed') {
+      // Embargo blocks final usage for everyone except internal (working copy ok for production)
+      if (user === 'internal-uk' || user === 'us-marketing') {
+        return {
+          o: 'watermark',
+          reason: 'Asset is embargoed until 15 Jun 2026. Watermarked working copy released for pre-launch production. Final usage blocked.'
+        };
+      }
+      return {
+        o: 'blocked',
+        reason: 'Asset is embargoed until 15 Jun 2026 and not yet available to external users.'
+      };
+    }
+
+    if (state === 'expired') {
+      // Expired = hard block for everyone except admin (not modelled here)
+      return {
+        o: 'blocked',
+        reason: 'Licence expired on 31 Dec 2025. Asset retained for audit but cannot be downloaded.'
+      };
+    }
+    return baseOutcome;
+  }
+
+  // ========================================================================
+  // RENDER FUNCTIONS
+  // ========================================================================
+
+  function renderUserCard(licence, state, user) {
+    const base = outcomes[licence][user];
+    const final = applyStateOverride(base, state, user);
+    const body = document.getElementById('body-' + user);
+    body.innerHTML = renderOutcome(final, user, licence, state);
+  }
+
+  function renderOutcome(out, user, licence, state) {
+    const o = out.o;
+    let buttonHtml = '';
+    let modalHtml = '';
+    let reasonPanelHtml = '';
+    let outcomeLabel = '';
+    let auditHtml = '';
+
+    if (o === 'cleared') {
+      buttonHtml = `
+        <button class="btn btn-primary">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </button>`;
+      outcomeLabel = '✓ Cleared — Full-res original';
+      auditHtml = auditLine('ok', user, licence, state, 'OK', 'full-res delivered');
+
+    } else if (o === 'watermark') {
+      buttonHtml = `
+        <button class="btn btn-watermark">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          Download watermarked
+        </button>`;
+      modalHtml = `
+        <div class="modal-preview">
+          <div class="modal-title">⚠ Watermarked download</div>
+          <div class="modal-body">This file will be marked "NOT CLEARED FOR USE" and is for internal review only. Final-use distribution is not licensed.</div>
+          <div class="modal-footer">
+            <button class="btn btn-ghost">Cancel</button>
+            <button class="btn btn-primary">Continue</button>
+          </div>
+        </div>`;
+      outcomeLabel = '⚠ Watermarked working copy';
+      auditHtml = auditLine('warn', user, licence, state, 'WATERMARK', 'rights mismatch — degraded delivery');
+
+    } else if (o === 'blocked') {
+      buttonHtml = `
+        <button class="btn btn-disabled" disabled>
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Download unavailable
+        </button>`;
+      reasonPanelHtml = `
+        <div class="reason-panel">
+          <svg class="reason-panel-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <span>${out.reason}</span>
+        </div>`;
+      outcomeLabel = '✕ Blocked — No file delivered';
+      auditHtml = auditLine('block', user, licence, state, 'BLOCK', shortBlockReason(out.reason));
+
+    } else if (o === 'request') {
+      buttonHtml = `
+        <div style="display:flex; gap:6px;">
+          <button class="btn btn-disabled" disabled>
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Download
+          </button>
+          <button class="btn btn-secondary">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Request access
+          </button>
+        </div>`;
+      reasonPanelHtml = `
+        <div class="reason-panel">
+          <svg class="reason-panel-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <span>${out.reason}</span>
+        </div>`;
+      outcomeLabel = '⏵ Request Access available';
+      auditHtml = auditLine('warn', user, licence, state, 'NO_ENTITLEMENT', 'request flow offered');
+    }
+
+    const outcomeClass = (o === 'request') ? 'request' : o;
+
+    return `
+      <div class="library-preview">
+        <div class="library-preview-label">Library row · Download action</div>
+        <div class="lib-action-row">
+          ${buttonHtml}
+          <button class="btn-tiny-action">View details</button>
+        </div>
+        ${reasonPanelHtml}
+      </div>
+      <div class="outcome ${outcomeClass}">
+        <div class="outcome-label">${outcomeLabel}</div>
+        <div class="outcome-reason">${out.reason}</div>
+      </div>
+      ${modalHtml}
+      ${auditHtml ? `<div class="audit-line">${auditHtml}</div>` : ''}
+    `;
+  }
+
+  function auditLine(level, user, licence, state, code, detail) {
+    const ts = `<span class="ts">[2026-05-21 14:32:08]</span>`;
+    const cls = level === 'ok' ? 'lvl-ok' : (level === 'warn' ? 'lvl-warn' : 'lvl-block');
+    return `${ts} user=${user} licence=${licence} state=${state} <span class="${cls}">${code}</span> ${detail}`;
+  }
+
+  function shortBlockReason(text) {
+    const reasons = [
+      [/territor/i, 'territory mismatch'],
+      [/expired/i, 'licence expired'],
+      [/embargo/i, 'embargoed'],
+      [/CDN/i, 'CDN block — no public delivery'],
+      [/agency|external/i, 'no external entitlement'],
+      [/editorial/i, 'editorial-only — commercial blocked'],
+      [/internal only/i, 'internal-only — no external access']
+    ];
+    for (const [rx, lbl] of reasons) { if (rx.test(text)) return lbl; }
+    return 'rights mismatch';
+  }
+
+  // Asset header (top of page)
+  function renderAssetHeader(licence, state) {
+    document.getElementById('asset-name').textContent = assetNamesByLicence[licence];
+    const badge = document.getElementById('asset-badge');
+    const line  = document.getElementById('asset-rights-line');
+
+    if (state === 'expired') {
+      badge.className = 'rights-badge expired';
+      badge.textContent = '● Expired';
+      line.textContent = rightsLineByLicence[licence] + ' · expired 31 Dec 2025';
+    } else if (state === 'embargoed') {
+      badge.className = 'rights-badge embargoed';
+      badge.textContent = '● Embargoed';
+      line.textContent = rightsLineByLicence[licence] + ' · embargoed until 15 Jun 2026';
+    } else {
+      // Active — badge depends on licence
+      if (licence === 'rights-managed' || licence === 'editorial') {
+        badge.className = 'rights-badge restricted';
+        badge.textContent = '● Restricted';
+      } else if (licence === 'internal') {
+        badge.className = 'rights-badge internal';
+        badge.textContent = '● Internal Only';
+      } else {
+        badge.className = 'rights-badge cleared';
+        badge.textContent = '● Cleared';
+      }
+      line.textContent = rightsLineByLicence[licence];
+    }
+  }
+
+  // Master render
+  let currentLicence = 'rights-managed';
+  let currentState   = 'active';
+
+  function render() {
+    renderAssetHeader(currentLicence, currentState);
+    ['internal-uk','us-marketing','agency-uk','public-share'].forEach(u => {
+      renderUserCard(currentLicence, currentState, u);
+    });
+  }
+
+  // Wire up switchers
+  document.querySelectorAll('[data-license]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-license]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentLicence = btn.dataset.license;
+      render();
+    });
+  });
+
+  document.querySelectorAll('[data-state]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-state]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentState = btn.dataset.state;
+      render();
+    });
+  });
+
+  // Initial
+  render();
+</script>
+
+</body>
+</html>
