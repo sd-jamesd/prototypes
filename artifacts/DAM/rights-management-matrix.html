@@ -1092,27 +1092,56 @@
           <div class="tooltip-reason">${reason}</div>
           <div class="tooltip-rule">${rule}</div>
         `;
-        positionTooltip(e, tt);
+        // Make tooltip measurable but invisible while we position it
+        tt.style.visibility = 'hidden';
         tt.classList.add('visible');
+        // Wait one frame so the browser computes the new height with new content
+        requestAnimationFrame(() => {
+          positionTooltip(cell, tt);
+          tt.style.visibility = '';
+        });
       });
-      cell.addEventListener('mousemove', (e) => positionTooltip(e, tt));
-      cell.addEventListener('mouseleave', () => tt.classList.remove('visible'));
+      cell.addEventListener('mouseleave', () => {
+        tt.classList.remove('visible');
+        tt.style.visibility = '';
+      });
     });
   }
 
-  function positionTooltip(e, tt) {
-    const padding = 14;
-    const rect = tt.getBoundingClientRect();
-    let x = e.clientX + padding;
-    let y = e.clientY + padding;
-    if (x + rect.width > window.innerWidth - 12) {
-      x = e.clientX - rect.width - padding;
+  // Position tooltip relative to the hovered cell, not the cursor.
+  // This is more stable: stays put while user moves around inside the cell,
+  // and the tooltip dimensions used for boundary checks are current.
+  function positionTooltip(cell, tt) {
+    const cellRect = cell.getBoundingClientRect();
+    const ttRect   = tt.getBoundingClientRect();
+    const margin   = 8;
+    const viewportW = window.innerWidth;
+    const viewportH = window.innerHeight;
+
+    // Default position: below the cell, horizontally centred on it
+    let x = cellRect.left + (cellRect.width / 2) - (ttRect.width / 2);
+    let y = cellRect.bottom + margin;
+
+    // If it would overflow the right edge, pull left
+    if (x + ttRect.width > viewportW - margin) {
+      x = viewportW - ttRect.width - margin;
     }
-    if (y + rect.height > window.innerHeight - 12) {
-      y = e.clientY - rect.height - padding;
+    // If it would overflow the left edge, push right
+    if (x < margin) {
+      x = margin;
     }
-    tt.style.left = x + 'px';
-    tt.style.top  = y + 'px';
+    // If it would overflow the bottom edge, place above the cell instead
+    if (y + ttRect.height > viewportH - margin) {
+      y = cellRect.top - ttRect.height - margin;
+    }
+    // If even that overflows the top, clamp to top of viewport
+    if (y < margin) {
+      y = margin;
+    }
+
+    // Account for page scroll — we're using fixed-style positioning relative to viewport
+    tt.style.left = (x + window.scrollX) + 'px';
+    tt.style.top  = (y + window.scrollY) + 'px';
   }
 
   renderMatrices();
