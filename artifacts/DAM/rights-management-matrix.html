@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rights Management — Outcome Matrix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-stone-50: #fefcfc;
+    --color-stone-100: #f5f5f4;
+    --color-stone-200: #e7e5e4;
+    --color-stone-300: #d6d3d1;
+    --color-stone-400: #978985;
+    --color-stone-500: #6b615e;
+    --color-stone-600: #57534e;
+    --color-stone-700: #44403c;
+    --color-stone-800: #292524;
+    --color-stone-900: #1c1917;
+
+    --accent-9: #0B6E8A;
+    --accent-10: #005F7B;
+    --accent-11: #197592;
+
+    --color-red-50: #fef2f1;
+    --color-red-100: #feebe7;
+    --color-red-200: #fdc6bc;
+    --color-red-500: #e54d2e;
+    --color-red-600: #d13415;
+    --color-red-700: #582C29;
+
+    --color-amber-50: #fff8eb;
+    --color-amber-100: #ffefd5;
+    --color-amber-200: #ffe0a8;
+    --color-amber-500: #f5a524;
+    --color-amber-600: #985b00;
+    --color-amber-700: #4E350D;
+
+    --color-green-50: #ebf9f0;
+    --color-green-100: #e6f7ed;
+    --color-green-200: #c1ecd1;
+    --color-green-500: #29a383;
+    --color-green-600: #208368;
+    --color-green-700: #1E442D;
+
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-7: 32px;
+
+    --radius-1: 3px;
+    --radius-2: 4px;
+    --radius-3: 6px;
+    --radius-4: 8px;
+
+    --font-text: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-size-1: 12px;
+    --font-size-2: 13px;
+    --font-size-3: 14px;
+    --font-size-4: 16px;
+
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-lg: 0 8px 20px -4px rgba(0,0,0,0.18), 0 4px 8px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-text);
+    background: var(--color-stone-100);
+    color: var(--color-stone-800);
+    font-size: var(--font-size-2);
+    line-height: 1.5;
+    padding: var(--spacing-7);
+    min-height: 100vh;
+  }
+
+  .container { max-width: 1480px; margin: 0 auto; }
+
+  .page-header { margin-bottom: var(--spacing-6); }
+  .page-header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: var(--spacing-2);
+  }
+  .page-header p {
+    color: var(--color-stone-600);
+    font-size: var(--font-size-3);
+    max-width: 85ch;
+  }
+
+  /* Legend */
+  .legend {
+    background: white;
+    border: 1px solid var(--color-stone-200);
+    border-radius: var(--radius-4);
+    padding: var(--spacing-4);
+    margin-bottom: var(--spacing-5);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-5);
+    flex-wrap: wrap;
+  }
+
+  .legend-label {
+    font-size: var(--font-size-2);
+    font-weight: 600;
+    color: var(--color-stone-700);
+  }
+
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--font-size-2);
+    color: var(--color-stone-700);
+  }
+
+  .legend-swatch {
+    width: 14px; height: 14px;
+    border-radius: var(--radius-1);
+    border: 1px solid;
+  }
+  .legend-swatch.cleared   { background: var(--color-green-100); border-color: var(--color-green-200); }
+  .legend-swatch.watermark { background: var(--color-amber-100); border-color: var(--color-amber-200); }
+  .legend-swatch.blocked   { background: var(--color-red-100);   border-color: var(--color-red-200); }
+  .legend-swatch.request   { background: var(--color-stone-200); border-color: var(--color-stone-300); }
+  .legend-swatch.override  { background: #e0e7ff; border-color: #c7d2fe; }
+
+  .legend-hint {
+    margin-left: auto;
+    font-size: var(--font-size-1);
+    color: var(--color-stone-500);
+    font-style: italic;
+  }
+
+  /* Matrix block */
+  .matrix-block {
+    background: white;
+    border: 1px solid var(--color-stone-200);
+    border-radius: var(--radius-4);
+    padding: var(--spacing-5);
+    margin-bottom: var(--spacing-5);
+  }
+
+  .matrix-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    margin-bottom: var(--spacing-4);
+    padding-bottom: var(--spacing-3);
+    border-bottom: 1px solid var(--color-stone-200);
+  }
+
+  .matrix-state-pill {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 4px 10px;
+    border-radius: var(--radius-1);
+    border: 1px solid;
+  }
+  .state-active    { background: var(--color-green-50); color: var(--color-green-700); border-color: var(--color-green-200); }
+  .state-embargoed { background: var(--color-amber-50); color: var(--color-amber-700); border-color: var(--color-amber-200); }
+  .state-expired   { background: var(--color-red-50);   color: var(--color-red-700);   border-color: var(--color-red-200); }
+
+  .matrix-title {
+    font-size: var(--font-size-4);
+    font-weight: 600;
+    color: var(--color-stone-900);
+  }
+
+  .matrix-subtitle {
+    font-size: var(--font-size-2);
+    color: var(--color-stone-500);
+    margin-left: auto;
+  }
+
+  /* The actual matrix table */
+  .matrix-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 4px;
+    table-layout: fixed;
+  }
+
+  .matrix-table th, .matrix-table td {
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  /* Top-left corner */
+  .corner-cell {
+    background: transparent;
+    font-size: var(--font-size-1);
+    color: var(--color-stone-500);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 8px;
+    width: 200px;
+  }
+
+  /* Column headers (users) */
+  .user-header {
+    background: var(--color-stone-50);
+    border: 1px solid var(--color-stone-200);
+    border-radius: var(--radius-2);
+    padding: 10px 12px;
+    line-height: 1.3;
+  }
+
+  .user-header .u-ref {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent-10);
+    background: var(--color-stone-100);
+    border: 1px solid var(--color-stone-200);
+    padding: 2px 6px;
+    border-radius: var(--radius-1);
+    margin-bottom: 4px;
+    letter-spacing: 0.04em;
+  }
+
+  .user-header .u-name {
+    font-size: var(--font-size-2);
+    font-weight: 600;
+    color: var(--color-stone-900);
+    margin-bottom: 6px;
+  }
+
+  .user-header .u-attrs {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-top: 6px;
+    border-top: 1px solid var(--color-stone-200);
+    margin-top: 4px;
+  }
+
+  .user-header .u-attr {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 4px;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .user-header .u-attr-key {
+    color: var(--color-stone-500);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 10px;
+  }
+
+  .user-header .u-attr-val {
+    color: var(--color-stone-800);
+    font-weight: 500;
+  }
+
+  /* Audience is the rights-relevant attribute — highlight subtly */
+  .user-header .u-attr-audience .u-attr-key {
+    color: var(--accent-10);
+  }
+
+  .user-header .u-attr-audience .u-attr-val {
+    color: var(--accent-10);
+    font-weight: 600;
+  }
+
+  .user-header .u-role {
+    font-size: 11px;
+    color: var(--color-stone-500);
+    font-weight: 400;
+  }
+
+  /* Row headers (licence types) */
+  .licence-header {
+    background: var(--color-stone-50);
+    border: 1px solid var(--color-stone-200);
+    border-radius: var(--radius-2);
+    padding: 10px 12px;
+    line-height: 1.3;
+  }
+
+  .licence-header .l-name {
+    font-size: var(--font-size-2);
+    font-weight: 600;
+    color: var(--color-stone-900);
+  }
+
+  .licence-header .l-meta {
+    font-size: 11px;
+    color: var(--color-stone-500);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+
+  /* Outcome cells */
+  .outcome-cell {
+    position: relative;
+    padding: 12px 10px;
+    border-radius: var(--radius-2);
+    border: 1px solid;
+    cursor: help;
+    transition: transform 0.12s, box-shadow 0.12s;
+    text-align: center;
+    min-height: 64px;
+  }
+
+  .outcome-cell:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    z-index: 5;
+  }
+
+  .outcome-cell.cleared    { background: var(--color-green-100); border-color: var(--color-green-200); }
+  .outcome-cell.watermark  { background: var(--color-amber-100); border-color: var(--color-amber-200); }
+  .outcome-cell.blocked    { background: var(--color-red-100);   border-color: var(--color-red-200); }
+  .outcome-cell.request    { background: var(--color-stone-200); border-color: var(--color-stone-300); }
+  .outcome-cell.override   { background: #e0e7ff; border-color: #c7d2fe; }
+
+  .outcome-glyph {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .outcome-cell.cleared   .outcome-glyph { color: var(--color-green-700); }
+  .outcome-cell.watermark .outcome-glyph { color: var(--color-amber-700); }
+  .outcome-cell.blocked   .outcome-glyph { color: var(--color-red-700); }
+  .outcome-cell.request   .outcome-glyph { color: var(--color-stone-700); }
+  .outcome-cell.override  .outcome-glyph { color: #4338ca; }
+
+  .outcome-label {
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .outcome-cell.cleared   .outcome-label { color: var(--color-green-700); }
+  .outcome-cell.watermark .outcome-label { color: var(--color-amber-700); }
+  .outcome-cell.blocked   .outcome-label { color: var(--color-red-700); }
+  .outcome-cell.request   .outcome-label { color: var(--color-stone-700); }
+  .outcome-cell.override  .outcome-label { color: #4338ca; }
+
+  /* Tooltip */
+  .tooltip {
+    position: absolute;
+    background: var(--color-stone-900);
+    color: white;
+    padding: 10px 12px;
+    border-radius: var(--radius-3);
+    font-size: 12px;
+    line-height: 1.5;
+    max-width: 280px;
+    z-index: 100;
+    pointer-events: none;
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.15s, transform 0.15s;
+    text-align: left;
+  }
+
+  .tooltip.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .tooltip-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+    opacity: 0.7;
+  }
+
+  .tooltip-reason {
+    font-size: 12px;
+    line-height: 1.5;
+    color: white;
+  }
+
+  .tooltip-rule {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    font-family: var(--font-mono);
+  }
+
+  /* Section divider for privileged roles */
+  .section-divider {
+    margin: var(--spacing-7) 0 var(--spacing-5) 0;
+    padding-top: var(--spacing-5);
+    border-top: 2px dashed var(--color-stone-300);
+  }
+
+  .section-divider-header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-3);
+    margin-bottom: var(--spacing-2);
+  }
+
+  .section-divider-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-stone-900);
+    letter-spacing: -0.01em;
+  }
+
+  .section-divider-pill {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border-radius: var(--radius-1);
+    background: #e0e7ff;
+    color: #4338ca;
+    border: 1px solid #c7d2fe;
+  }
+
+  .section-divider-desc {
+    font-size: var(--font-size-2);
+    color: var(--color-stone-600);
+    max-width: 85ch;
+    margin-bottom: var(--spacing-4);
+    line-height: 1.55;
+  }
+
+  /* Rule precedence panel */
+  .rules-panel {
+    background: white;
+    border: 1px solid var(--color-stone-200);
+    border-radius: var(--radius-4);
+    padding: var(--spacing-5);
+    margin-top: var(--spacing-6);
+  }
+
+  .rules-panel h2 {
+    font-size: var(--font-size-4);
+    font-weight: 600;
+    margin-bottom: var(--spacing-2);
+    color: var(--color-stone-900);
+  }
+
+  .rules-panel .intro {
+    font-size: var(--font-size-2);
+    color: var(--color-stone-600);
+    margin-bottom: var(--spacing-4);
+    max-width: 80ch;
+  }
+
+  .rules-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+
+  .rule-row {
+    display: grid;
+    grid-template-columns: 40px 200px 1fr 200px;
+    gap: var(--spacing-3);
+    align-items: start;
+    padding: var(--spacing-3);
+    background: var(--color-stone-50);
+    border: 1px solid var(--color-stone-200);
+    border-radius: var(--radius-2);
+  }
+
+  .rule-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent-9);
+    color: white;
+    font-size: var(--font-size-2);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .rule-name {
+    font-size: var(--font-size-2);
+    font-weight: 600;
+    color: var(--color-stone-900);
+  }
+
+  .rule-desc {
+    font-size: var(--font-size-2);
+    color: var(--color-stone-700);
+    line-height: 1.5;
+  }
+
+  .rule-outcome {
+    font-size: var(--font-size-1);
+    color: var(--color-stone-600);
+    font-family: var(--font-mono);
+    line-height: 1.5;
+  }
+
+  .rule-outcome strong {
+    color: var(--color-stone-900);
+    font-weight: 600;
+  }
+
+  /* Contradictions panel */
+  .contradictions {
+    background: var(--color-amber-50);
+    border: 1px solid var(--color-amber-200);
+    border-radius: var(--radius-4);
+    padding: var(--spacing-5);
+    margin-top: var(--spacing-5);
+  }
+
+  .contradictions h2 {
+    font-size: var(--font-size-3);
+    font-weight: 600;
+    color: var(--color-amber-700);
+    margin-bottom: var(--spacing-3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .contradictions ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+
+  .contradictions li {
+    font-size: var(--font-size-2);
+    color: var(--color-stone-800);
+    padding-left: var(--spacing-4);
+    position: relative;
+    line-height: 1.55;
+  }
+
+  .contradictions li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--color-amber-700);
+    font-weight: 700;
+  }
+
+  .contradictions code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: rgba(255,255,255,0.6);
+    padding: 1px 5px;
+    border-radius: var(--radius-1);
+    color: var(--color-amber-700);
+  }
+
+  @media (max-width: 1280px) {
+    .matrix-table { font-size: 11px; }
+    .user-header .u-name { font-size: 12px; }
+    .user-header .u-attr { grid-template-columns: 56px 1fr; font-size: 10px; }
+    .user-header .u-attr-key { font-size: 9px; }
+    .outcome-cell { padding: 8px 6px; min-height: 56px; }
+    .rule-row { grid-template-columns: 32px 160px 1fr; }
+    .rule-outcome { grid-column: 2 / -1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="page-header">
+    <h1>Rights Management — Outcome Matrix</h1>
+    <p>Three matrices, one per asset state. Each cell shows what happens when a user attempts to download an asset of a given licence type. Hover any cell for the reason and the rule that produced it. Use as a single-page reference during build and QA.</p>
+    <p style="margin-top:8px; font-size:13px; color:var(--color-stone-500);">
+      User columns reference the canonical QA test plan personas (U03, U04, U06, U07, U09) so this matrix can be cross-checked against the download QA tester. The Public Share Link column has no QA-tester equivalent — it represents the unauthenticated public-share case.
+    </p>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <span class="legend-label">Outcomes:</span>
+    <span class="legend-item"><span class="legend-swatch cleared"></span> Cleared — Full-res delivered</span>
+    <span class="legend-item"><span class="legend-swatch watermark"></span> Watermarked — Working copy only</span>
+    <span class="legend-item"><span class="legend-swatch blocked"></span> Blocked — No file, no recovery</span>
+    <span class="legend-item"><span class="legend-swatch request"></span> Request Access — Recoverable via approval</span>
+    <span class="legend-item"><span class="legend-swatch override"></span> Privileged Override — Admin / owner bypass</span>
+    <span class="legend-hint">Hover any cell for full reason &amp; rule trigger</span>
+  </div>
+
+  <!-- Matrix container — generated by JS -->
+  <div id="matrices"></div>
+
+  <!-- Rule precedence panel -->
+  <div class="rules-panel">
+    <h2>Rule precedence</h2>
+    <p class="intro">The rights engine evaluates rules in this order. The <em>first</em> rule that fires determines the outcome — subsequent rules don't run. This is why expiry always short-circuits licence-specific logic, and why Internal Only assets never reach the territory check.</p>
+
+    <div class="rules-list">
+      <div class="rule-row">
+        <div class="rule-num" style="background:#4338ca;">0</div>
+        <div class="rule-name">Privileged-role bypass (Pre-Rule)</div>
+        <div class="rule-desc">Before any rights check fires, the system evaluates whether the user holds an override role. <strong>Superadmin</strong> (U01, JWT claim) bypasses unconditionally. <strong>DAM Manager</strong> bypasses for all tenant assets with audit logging. <strong>Asset Owner</strong> bypasses for own assets, with an acknowledgement modal for expired downloads. Override actions are logged with the override reason.</div>
+        <div class="rule-outcome">Role match → <strong>override</strong><br>No role match → proceed to Rule 1</div>
+      </div>
+
+      <div class="rule-row">
+        <div class="rule-num">1</div>
+        <div class="rule-name">Asset state check</div>
+        <div class="rule-desc">If asset is <strong>Expired</strong> → hard block all users (no Request Access). If <strong>Embargoed</strong> → block external users, allow watermarked for internals (production needs it).</div>
+        <div class="rule-outcome"><strong>Short-circuits</strong> all other rules</div>
+      </div>
+
+      <div class="rule-row">
+        <div class="rule-num">2</div>
+        <div class="rule-name">Licence type gate</div>
+        <div class="rule-desc">If <strong>Internal Only</strong> → block all external users immediately (no Request Access path exists for this licence type). If <strong>Owned</strong> → skip rights checks entirely, proceed to delivery.</div>
+        <div class="rule-outcome">Owned → <strong>cleared</strong><br>Internal Only + external → <strong>blocked</strong></div>
+      </div>
+
+      <div class="rule-row">
+        <div class="rule-num">3</div>
+        <div class="rule-name">Audience match</div>
+        <div class="rule-desc">User's <strong>audience</strong> (Internal / Agency / Press / Editorial / Public) must intersect with the licence's allowed audiences. <em>Audience is a property of the user, not of their role.</em> A "Designer" can be Internal or Agency; the audience determines rights eligibility, not the role. Mismatch with no recovery path = hard block. Mismatch where user could plausibly need access = Request Access.</div>
+        <div class="rule-outcome">Match → continue<br>Mismatch + recoverable → <strong>request</strong><br>Mismatch + not recoverable → <strong>blocked</strong></div>
+      </div>
+
+      <div class="rule-row">
+        <div class="rule-num">4</div>
+        <div class="rule-name">Territory match</div>
+        <div class="rule-desc">User's home territory must intersect with the licence's allowed territories. Internal users get a watermarked working copy on territory mismatch (graceful degrade). External users are blocked.</div>
+        <div class="rule-outcome">Internal mismatch → <strong>watermark</strong><br>External mismatch → <strong>blocked</strong></div>
+      </div>
+
+      <div class="rule-row">
+        <div class="rule-num">5</div>
+        <div class="rule-name">Role-inferred intent (channel match)</div>
+        <div class="rule-desc">User's likely channel of use is inferred from <strong>role</strong> (not audience): Marketing role → commercial intent; Editorial role → editorial intent; Design role → reference/production intent. Editorial Only assets block users whose role implies commercial use, <em>even when audience passes</em>. This is where audience and role do distinct work.</div>
+        <div class="rule-outcome">Marketing role + Editorial asset → <strong>blocked</strong><br>Editorial role + Editorial asset → <strong>cleared</strong><br>Design role + Editorial asset → <strong>watermark</strong> (reference only)</div>
+      </div>
+
+      <div class="rule-row">
+        <div class="rule-num">6</div>
+        <div class="rule-name">Tenant policy applied</div>
+        <div class="rule-desc">Tenant configures the global enforcement mode: <strong>Strict</strong> (any mismatch = hard block, no watermark fallback) or <strong>Soft</strong> (watermark fallback enabled for internal users). FIFA = Strict. Lighter clients = Soft. This matrix shows Soft (the more permissive default).</div>
+        <div class="rule-outcome">Strict mode overrides watermark → <strong>blocked</strong></div>
+      </div>
+
+      <div class="rule-row">
+        <div class="rule-num">7</div>
+        <div class="rule-name">Request Access eligibility</div>
+        <div class="rule-desc">Final gate. If user is blocked but the block is approvable (rights owner could grant a one-off pass), show Request Access. Not available for Internal Only assets or Expired assets — there's no human approver who can override these.</div>
+        <div class="rule-outcome">Block + recoverable → <strong>request</strong><br>Block + not recoverable → <strong>blocked</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contradictions / open questions -->
+  <div class="contradictions">
+    <h2>⚠ Open questions surfaced by the matrix</h2>
+    <ul>
+      <li><strong>U04 (UK Designer) + Editorial Only (Active)</strong> currently shows <code>watermark</code> — but this conflicts with the principle that Editorial blocks commercial use entirely. Should this be <code>blocked</code>? Resolution depends on whether internal designers ever have a legitimate reason to reference an editorial asset (e.g. as moodboard input). Recommend: <code>watermark</code> with explicit "reference only — not for use" overlay.</li>
+      <li><strong>Royalty-Free + Public Share Link (Active)</strong> shows <code>watermark</code> as a tenant policy default — but the licence permits public delivery. Whether to watermark on share is a tenant policy choice, not a licence rule. Should this matrix represent the licence rule or the typical tenant config? Currently shows typical tenant config — flag for dev.</li>
+      <li><strong>Rights-Managed + U06 (Agency Designer) (Embargoed)</strong> — RESOLVED. Cell now shows <code>request</code>. Agencies on the production team often need pre-launch access; approval routes to rights owner. If granted, access remains embargoed + watermarked until go-live (no exfiltration risk). Editorial and Internal Only embargoes still block agencies — those licence types have no agency entitlement at any point in the lifecycle.</li>
+      <li><strong>Editorial Only + U09 (Content Editor) (Embargoed)</strong> — Press embargoes are a real use case (announcing a story under embargo to journalists). Current matrix blocks them. Worth a dedicated "embargo allows press" rule? Depends on whether press users carry an embargo-acknowledgement flag in their profile.</li>
+      <li><strong>QA tester user model conflates audience and role</strong> — the existing QA tester (U01–U15) stores values like "Design", "Marketing", "Editorial", "Agency", "Broadcast" in an <code>audiences</code> array on each user. These are <em>roles</em>, not audiences. This matrix reclassifies them correctly (Audience: Internal / Agency / Press / Public; Role: Design / Marketing / Editorial), but the underlying QA test data still needs to be updated so the test plan and the rights engine evaluate against the right user attribute. Worth a focused QA-tester refactor pass.</li>
+      <li><strong>USA Designer persona missing</strong> — every USA persona in the QA set has Marketing role. There's no USA + Internal audience + Design role persona to test "USA internal user with non-commercial intent" cases. U07 (USA Regional Manager, Marketing) currently stands in but produces Editorial Only blocks because of Marketing role — not because of audience. Adding a USA Designer persona would give cleaner test coverage.</li>
+      <li><strong>Asset Owner download on Expired</strong> — RESOLVED. No direct download path. Owner must extend the licence (creating a new rights record) before any download is possible. This forces a fresh rights decision and prevents silent re-use of expired content. Trades convenience for safety. Triggers the licence creation/extension flow described below.</li>
+      <li><strong>DAM Manager scope</strong> — currently modelled as full bypass across all tenant assets. Worth confirming this is correct vs. scoped bypass (e.g. only assets in collections they own). Full bypass is the simpler model and matches industry convention; scoped bypass is more secure but introduces complexity in collection-membership rules.</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- Floating tooltip -->
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+  // ========================================================================
+  // DATA — users, licences, outcomes
+  // ========================================================================
+
+  const users = [
+    { id: 'internal-uk',   ref: 'U04', name: 'UK Designer',           territory: 'UK',       audience: 'Internal',         role: 'Design' },
+    { id: 'internal-us',   ref: 'U07', name: 'USA Regional Manager',  territory: 'USA',      audience: 'Internal',         role: 'Marketing' },
+    { id: 'marketing-us',  ref: 'U03', name: 'USA Marketing Manager', territory: 'USA',      audience: 'Internal',         role: 'Marketing' },
+    { id: 'press',         ref: 'U09', name: 'Content Editor',        territory: 'UK',       audience: 'Press / Editorial', role: 'Editorial' },
+    { id: 'agency-uk',     ref: 'U06', name: 'Agency Designer',       territory: 'External', audience: 'Agency',           role: 'Design' },
+    { id: 'public',        ref: '—',   name: 'Public Share Link',     territory: '—',        audience: 'Public',           role: '—' }
+  ];
+
+  const licences = [
+    { id: 'owned',          name: 'Owned',          meta: 'No restrictions by default' },
+    { id: 'royalty-free',   name: 'Royalty-Free',   meta: 'Global · Audience-bound' },
+    { id: 'rights-managed', name: 'Rights-Managed', meta: 'USA · Digital · Internal' },
+    { id: 'editorial',      name: 'Editorial Only', meta: 'USA · Press/Editorial' },
+    { id: 'internal',       name: 'Internal Only',  meta: 'Locked to internal' }
+  ];
+
+  // Outcome matrix: outcomes[state][licence][user] = { o, reason, rule }
+  // o: 'cleared' | 'watermark' | 'blocked' | 'request'
+  const outcomes = {
+
+    // ============================================
+    // ACTIVE STATE
+    // ============================================
+    active: {
+      owned: {
+        'internal-uk':   { o:'cleared',  reason:'Owned asset — no restrictions apply.', rule:'Rule 2: Licence type gate (Owned skips rights checks)' },
+        'internal-us':   { o:'cleared',  reason:'Owned asset — no restrictions apply.', rule:'Rule 2: Licence type gate (Owned skips rights checks)' },
+        'marketing-us':  { o:'cleared',  reason:'Owned asset — no restrictions apply.', rule:'Rule 2: Licence type gate (Owned skips rights checks)' },
+        'press':         { o:'cleared',  reason:'Owned asset — no restrictions apply.', rule:'Rule 2: Licence type gate (Owned skips rights checks)' },
+        'agency-uk':     { o:'cleared',  reason:'Owned and partner-shareable. No restrictions apply.', rule:'Rule 2: Licence type gate' },
+        'public':        { o:'cleared',  reason:'Owned and configured as publicly shareable.', rule:'Rule 2: Licence type gate' }
+      },
+      'royalty-free': {
+        'internal-uk':   { o:'cleared',  reason:'Audience: Internal ✓ — within Royalty-Free permitted audiences (covers internal use globally).', rule:'Rule 3: Audience match' },
+        'internal-us':   { o:'cleared',  reason:'Audience: Internal ✓ — within Royalty-Free permitted audiences.', rule:'Rule 3: Audience match' },
+        'marketing-us':  { o:'cleared',  reason:'Audience: Internal ✓ — within Royalty-Free permitted audiences (marketing channel covered).', rule:'Rule 3: Audience match' },
+        'press':         { o:'cleared',  reason:'Audience: Press / Editorial ✓ — Royalty-Free typically covers press/editorial use.', rule:'Rule 3: Audience match' },
+        'agency-uk':     { o:'cleared',  reason:'Audience: Agency ✓ — Royalty-Free covers agency use (attribution required per Rule 5).', rule:'Rule 3: Audience match (attribution required)' },
+        'public':        { o:'watermark',reason:'Audience: Public — licence permits public delivery, but tenant policy enforces watermark on external share links (configurable in Soft mode default).', rule:'Rule 6: Tenant policy (Soft mode default)' }
+      },
+      'rights-managed': {
+        'internal-uk':   { o:'watermark',reason:'Audience match (Internal). Territory mismatch: licence covers USA, user in UK. Internal users get a watermarked working copy on territory mismatch (graceful degrade).', rule:'Rule 4: Territory match (internal → watermark)' },
+        'internal-us':   { o:'cleared',  reason:'All checks pass: Audience (Internal) ✓ · Territory (USA) ✓ · Role-inferred channel (Marketing → Digital) ✓ · In date ✓', rule:'All rules passed' },
+        'marketing-us':  { o:'cleared',  reason:'All checks pass: Audience (Internal) ✓ · Territory (USA) ✓ · Role-inferred channel (Marketing → Digital) ✓', rule:'All rules passed' },
+        'press':         { o:'request',  reason:'Audience mismatch: licence covers Internal, user is Press / Editorial (external). Recoverable via Request Access — rights owner may grant editorial access on a one-off basis.', rule:'Rule 3: Audience match → Rule 7: Request eligible' },
+        'agency-uk':     { o:'request',  reason:'Audience mismatch: licence covers Internal, user is Agency (external). Recoverable via Request Access.', rule:'Rule 3: Audience match → Rule 7: Request eligible' },
+        'public':        { o:'blocked',  reason:'Audience: Public. Rights-Managed assets are not delivered via public share links under any tenant policy. Hard block at CDN.', rule:'Rule 6: Tenant policy (no public delivery for RM)' }
+      },
+      editorial: {
+        'internal-uk':   { o:'watermark',reason:'Audience match (Internal is permitted by Editorial licences as secondary audience). But role-inferred intent: Designer ≠ editorial use. Watermarked reference copy only — not cleared for use.', rule:'Rule 5: Role-inferred intent (Design role → reference only)' },
+        'internal-us':   { o:'blocked',  reason:'Audience match (Internal). But role-inferred intent: Marketing → commercial use. Editorial Only blocks commercial channels.', rule:'Rule 5: Role-inferred intent (Marketing → commercial → blocked)' },
+        'marketing-us':  { o:'blocked',  reason:'Audience match (Internal). But role-inferred intent: Marketing → commercial use. Editorial Only blocks commercial channels.', rule:'Rule 5: Role-inferred intent (Marketing → commercial → blocked)' },
+        'press':         { o:'cleared',  reason:'Audience match: Press / Editorial. Role match: Editorial. All clearance dimensions pass.', rule:'All rules passed (audience + role + territory)' },
+        'agency-uk':     { o:'blocked',  reason:'Audience mismatch: Agency is not in the licensed audience set. Not recoverable — no approver can grant agency access to editorial content.', rule:'Rule 3: Audience match (not recoverable)' },
+        'public':        { o:'blocked',  reason:'Audience: Public. Editorial Only is not publicly shareable under any tenant policy.', rule:'Rule 3 + Rule 6: Tenant policy (no public delivery for Editorial)' }
+      },
+      internal: {
+        'internal-uk':   { o:'cleared',  reason:'Audience: Internal ✓ — matches Internal Only licence audience.', rule:'Rule 2: Licence type gate (audience match)' },
+        'internal-us':   { o:'cleared',  reason:'Audience: Internal ✓ — matches Internal Only licence audience.', rule:'Rule 2: Licence type gate (audience match)' },
+        'marketing-us':  { o:'cleared',  reason:'Audience: Internal ✓ — matches Internal Only licence audience.', rule:'Rule 2: Licence type gate (audience match)' },
+        'press':         { o:'blocked',  reason:'Audience: Press / Editorial (external). Internal Only licences have no external entitlement and no Request Access path — no approver can grant external access to internal-only content.', rule:'Rule 2: Licence type gate (external + Internal Only)' },
+        'agency-uk':     { o:'blocked',  reason:'Audience: Agency (external). Internal Only blocks all external access — no Request Access path exists.', rule:'Rule 2: Licence type gate (external + Internal Only)' },
+        'public':        { o:'blocked',  reason:'Audience: Public. Internal Only assets are never exposed via public share links. Hard block at CDN level.', rule:'Rule 2 + Rule 6: Tenant policy' }
+      }
+    },
+
+    // ============================================
+    // EMBARGOED STATE
+    // ============================================
+    embargoed: {
+      owned: {
+        'internal-uk':   { o:'watermark',reason:'Asset embargoed until go-live (15 Jun 2026). Watermarked working copy for internal production. Final usage blocked.', rule:'Rule 1: Asset state (embargo → internal watermark)' },
+        'internal-us':   { o:'watermark',reason:'Asset embargoed until go-live. Watermarked working copy for internal production.', rule:'Rule 1: Asset state (embargo → internal watermark)' },
+        'marketing-us':  { o:'watermark',reason:'Asset embargoed until go-live. Watermarked working copy for internal production.', rule:'Rule 1: Asset state (embargo → internal watermark)' },
+        'press':         { o:'blocked',  reason:'Asset embargoed until 15 Jun 2026. Not available to press until go-live.', rule:'Rule 1: Asset state (embargo blocks external)' },
+        'agency-uk':     { o:'blocked',  reason:'Asset embargoed until 15 Jun 2026. External users blocked until go-live. See open questions: should agencies on production team get pre-launch access?', rule:'Rule 1: Asset state (embargo blocks external)' },
+        'public':        { o:'blocked',  reason:'Asset embargoed. Public share links return 410 until go-live.', rule:'Rule 1: Asset state (embargo blocks external)' }
+      },
+      'royalty-free': {
+        'internal-uk':   { o:'watermark',reason:'Asset embargoed. Watermarked working copy for production.', rule:'Rule 1: Asset state (embargo → internal watermark)' },
+        'internal-us':   { o:'watermark',reason:'Asset embargoed. Watermarked working copy for production.', rule:'Rule 1: Asset state (embargo → internal watermark)' },
+        'marketing-us':  { o:'watermark',reason:'Asset embargoed. Watermarked working copy for production.', rule:'Rule 1: Asset state (embargo → internal watermark)' },
+        'press':         { o:'blocked',  reason:'Embargoed until 15 Jun 2026. Press blocked until go-live.', rule:'Rule 1: Asset state' },
+        'agency-uk':     { o:'blocked',  reason:'Embargoed until 15 Jun 2026. External agencies blocked.', rule:'Rule 1: Asset state' },
+        'public':        { o:'blocked',  reason:'Embargoed. Public share links return 410 until go-live.', rule:'Rule 1: Asset state' }
+      },
+      'rights-managed': {
+        'internal-uk':   { o:'watermark',reason:'Embargoed + territory mismatch. Watermarked working copy delivered — limits compound but watermark is the highest entitlement.', rule:'Rule 1: Asset state (embargo overrides)' },
+        'internal-us':   { o:'watermark',reason:'Embargoed. Watermarked working copy for production despite rights match.', rule:'Rule 1: Asset state (embargo → internal watermark)' },
+        'marketing-us':  { o:'watermark',reason:'Embargoed. Watermarked working copy for production.', rule:'Rule 1: Asset state (embargo → internal watermark)' },
+        'press':         { o:'blocked',  reason:'Embargoed and audience mismatch. Both gates block — not recoverable until go-live.', rule:'Rule 1: Asset state' },
+        'agency-uk':     { o:'request',  reason:'Embargoed asset, external agency. Request Access remains available pre-launch — agencies on the production team often need access before go-live. Approval routes to rights owner; access (if granted) is also embargoed and watermarked until go-live.', rule:'Rule 1: Asset state + Rule 7: Request eligible (pre-launch override)' },
+        'public':        { o:'blocked',  reason:'Embargoed and Rights-Managed. No public delivery under any condition.', rule:'Rule 1 + Rule 6: Both block' }
+      },
+      editorial: {
+        'internal-uk':   { o:'watermark',reason:'Embargoed editorial. Audience: Internal ✓ but role (Design) does not infer editorial intent. Watermarked reference only — embargo also blocks any final use until go-live.', rule:'Rule 1: Asset state (embargo → internal watermark)' },
+        'internal-us':   { o:'blocked',  reason:'Embargoed AND Editorial Only. Audience match (Internal) ✓ but role (Marketing) infers commercial intent — Rule 5 blocks regardless of embargo.', rule:'Rule 1 + Rule 5: Compounded block' },
+        'marketing-us':  { o:'blocked',  reason:'Embargoed AND Editorial Only. Audience match (Internal) ✓ but role (Marketing) infers commercial intent — Rule 5 blocks regardless of embargo.', rule:'Rule 1 + Rule 5: Compounded block' },
+        'press':         { o:'blocked',  reason:'Audience: Press / Editorial — would clear in Active state, but embargo currently blocks. Open question: should press users with editorial role and embargo-acknowledgement flag receive pre-launch embargoed editorial?', rule:'Rule 1: Asset state (see open questions)' },
+        'agency-uk':     { o:'blocked',  reason:'Embargoed + audience (Agency) mismatch + editorial. All gates block.', rule:'Rule 1: Asset state + Rule 3: Audience' },
+        'public':        { o:'blocked',  reason:'Embargoed + public audience + editorial. No public delivery under any condition.', rule:'Rule 1 + Rule 6' }
+      },
+      internal: {
+        'internal-uk':   { o:'watermark',reason:'Embargoed internal asset. Watermarked working copy for pre-launch internal production.', rule:'Rule 1: Asset state (embargo → internal watermark)' },
+        'internal-us':   { o:'watermark',reason:'Embargoed internal asset. Watermarked working copy for pre-launch internal production.', rule:'Rule 1: Asset state (embargo → internal watermark)' },
+        'marketing-us':  { o:'watermark',reason:'Embargoed internal asset. Watermarked working copy for pre-launch production.', rule:'Rule 1: Asset state (embargo → internal watermark)' },
+        'press':         { o:'blocked',  reason:'Internal Only + external user. Blocked regardless of embargo state.', rule:'Rule 2: Licence type gate (external + Internal Only)' },
+        'agency-uk':     { o:'blocked',  reason:'Internal Only + external user. Blocked regardless of embargo state.', rule:'Rule 2: Licence type gate (external + Internal Only)' },
+        'public':        { o:'blocked',  reason:'Internal Only never exposed publicly under any condition.', rule:'Rule 2 + Rule 6' }
+      }
+    },
+
+    // ============================================
+    // EXPIRED STATE
+    // ============================================
+    expired: {
+      owned: {
+        'internal-uk':   { o:'blocked',  reason:'Licence expired 31 Dec 2025. Asset retained for audit but not downloadable. Even Owned assets honour configured expiry.', rule:'Rule 1: Asset state (expired → block all)' },
+        'internal-us':   { o:'blocked',  reason:'Licence expired 31 Dec 2025. Asset retained for audit but not downloadable.', rule:'Rule 1: Asset state (expired → block all)' },
+        'marketing-us':  { o:'blocked',  reason:'Licence expired 31 Dec 2025. Asset retained for audit but not downloadable.', rule:'Rule 1: Asset state (expired → block all)' },
+        'press':         { o:'blocked',  reason:'Licence expired 31 Dec 2025. Asset retained for audit but not downloadable.', rule:'Rule 1: Asset state (expired → block all)' },
+        'agency-uk':     { o:'blocked',  reason:'Licence expired. Asset retained for audit but not downloadable.', rule:'Rule 1: Asset state (expired → block all)' },
+        'public':        { o:'blocked',  reason:'Licence expired. Share link returns 410. No public delivery.', rule:'Rule 1: Asset state' }
+      },
+      'royalty-free': {
+        'internal-uk':   { o:'blocked',  reason:'Licence expired 31 Dec 2025. No download — visible in library for audit.', rule:'Rule 1: Asset state (expired)' },
+        'internal-us':   { o:'blocked',  reason:'Licence expired. No download.', rule:'Rule 1: Asset state' },
+        'marketing-us':  { o:'blocked',  reason:'Licence expired. No download.', rule:'Rule 1: Asset state' },
+        'press':         { o:'blocked',  reason:'Licence expired. No download.', rule:'Rule 1: Asset state' },
+        'agency-uk':     { o:'blocked',  reason:'Licence expired. No download.', rule:'Rule 1: Asset state' },
+        'public':        { o:'blocked',  reason:'Licence expired. Share link returns 410.', rule:'Rule 1: Asset state' }
+      },
+      'rights-managed': {
+        'internal-uk':   { o:'blocked',  reason:'Licence expired 31 Dec 2025. No download regardless of rights match — expiry short-circuits all subsequent rules.', rule:'Rule 1: Asset state (expired)' },
+        'internal-us':   { o:'blocked',  reason:'Licence expired. No download regardless of rights match.', rule:'Rule 1: Asset state (expired)' },
+        'marketing-us':  { o:'blocked',  reason:'Licence expired. No download regardless of rights match.', rule:'Rule 1: Asset state (expired)' },
+        'press':         { o:'blocked',  reason:'Licence expired. No download.', rule:'Rule 1: Asset state' },
+        'agency-uk':     { o:'blocked',  reason:'Licence expired. No Request Access — there is no approver who can grant access to expired content.', rule:'Rule 1: Asset state (no Request path)' },
+        'public':        { o:'blocked',  reason:'Licence expired. Share link returns 410.', rule:'Rule 1: Asset state' }
+      },
+      editorial: {
+        'internal-uk':   { o:'blocked',  reason:'Editorial licence expired. No download.', rule:'Rule 1: Asset state' },
+        'internal-us':   { o:'blocked',  reason:'Editorial licence expired. No download.', rule:'Rule 1: Asset state' },
+        'marketing-us':  { o:'blocked',  reason:'Editorial licence expired. No download.', rule:'Rule 1: Asset state' },
+        'press':         { o:'blocked',  reason:'Editorial licence expired. No download even for press users.', rule:'Rule 1: Asset state' },
+        'agency-uk':     { o:'blocked',  reason:'Editorial licence expired. No download, no Request Access.', rule:'Rule 1: Asset state' },
+        'public':        { o:'blocked',  reason:'Editorial licence expired. Share link returns 410.', rule:'Rule 1: Asset state' }
+      },
+      internal: {
+        'internal-uk':   { o:'blocked',  reason:'Internal asset licence expired. No download even for internal users.', rule:'Rule 1: Asset state (expired)' },
+        'internal-us':   { o:'blocked',  reason:'Internal asset licence expired. No download.', rule:'Rule 1: Asset state' },
+        'marketing-us':  { o:'blocked',  reason:'Internal asset licence expired. No download.', rule:'Rule 1: Asset state' },
+        'press':         { o:'blocked',  reason:'Internal asset licence expired. No download.', rule:'Rule 1: Asset state' },
+        'agency-uk':     { o:'blocked',  reason:'Internal asset, external user, expired. Triple block.', rule:'Rule 1 + Rule 2' },
+        'public':        { o:'blocked',  reason:'Internal asset, expired. Never exposed publicly.', rule:'Rule 1 + Rule 2 + Rule 6' }
+      }
+    }
+  };
+
+  // ========================================================================
+  // RENDER
+  // ========================================================================
+
+  const glyphs = {
+    cleared:   '✓',
+    watermark: '◐',
+    blocked:   '✕',
+    request:   '⟳',
+    override:  '★'
+  };
+
+  const labels = {
+    cleared:   'Cleared',
+    watermark: 'Watermark',
+    blocked:   'Blocked',
+    request:   'Request',
+    override:  'Override'
+  };
+
+  // ========================================================================
+  // PRIVILEGED ROLES — bypass via role permission, not via rights match
+  // ========================================================================
+
+  const privilegedUsers = [
+    { id: 'superadmin',  ref: 'U01', name: 'Test Superadmin', territory: 'All',     audience: 'All',           role: 'Superadmin (JWT bypass)' },
+    { id: 'dam-manager', ref: '—',   name: 'DAM Manager',     territory: 'All',     audience: 'Internal',      role: 'Tenant rights admin' },
+    { id: 'asset-owner', ref: '—',   name: 'Asset Owner',     territory: 'varies',  audience: 'varies',        role: 'Uploader of this asset' }
+  ];
+
+  // privilegedOutcomes[state][licence][user] = { o, reason, rule }
+  const privilegedOutcomes = {
+
+    // ============================================
+    // ACTIVE — privileged roles act normally + have full editorial control
+    // ============================================
+    active: {
+      owned: {
+        'superadmin':  { o:'override',  reason:'Superadmin bypass — full-res delivered regardless of rights state.', rule:'Pre-Rule: Superadmin JWT bypass' },
+        'dam-manager': { o:'cleared',   reason:'Owned asset — no rights to override. DAM Manager downloads normally with audit logging.', rule:'Rule 2: Licence type gate' },
+        'asset-owner': { o:'cleared',   reason:'Owner of an Owned asset — full access by default.', rule:'Rule 2: Licence type gate' }
+      },
+      'royalty-free': {
+        'superadmin':  { o:'override',  reason:'Superadmin bypass — full-res delivered.', rule:'Pre-Rule: Superadmin JWT bypass' },
+        'dam-manager': { o:'cleared',   reason:'DAM Manager has admin entitlement across all licence types.', rule:'Rule 2: Admin role' },
+        'asset-owner': { o:'cleared',   reason:'Asset owner — full access to assets they uploaded.', rule:'Rule 2: Owner role' }
+      },
+      'rights-managed': {
+        'superadmin':  { o:'override',  reason:'Superadmin bypass — full-res delivered regardless of territory/channel/audience mismatch.', rule:'Pre-Rule: Superadmin JWT bypass' },
+        'dam-manager': { o:'override',  reason:'DAM Manager bypass — can download for rights review and audit. Action logged with admin-override flag.', rule:'Pre-Rule: Admin override (logged)' },
+        'asset-owner': { o:'cleared',   reason:'Asset owner — full-res for own asset. Owner is presumed to know the rights they set.', rule:'Rule 2: Owner role' }
+      },
+      editorial: {
+        'superadmin':  { o:'override',  reason:'Superadmin bypass — full-res delivered.', rule:'Pre-Rule: Superadmin JWT bypass' },
+        'dam-manager': { o:'override',  reason:'DAM Manager bypass for audit. Action logged.', rule:'Pre-Rule: Admin override (logged)' },
+        'asset-owner': { o:'cleared',   reason:'Asset owner — full-res for own editorial asset.', rule:'Rule 2: Owner role' }
+      },
+      internal: {
+        'superadmin':  { o:'override',  reason:'Superadmin bypass — full-res delivered.', rule:'Pre-Rule: Superadmin JWT bypass' },
+        'dam-manager': { o:'cleared',   reason:'DAM Manager is internal — standard entitlement applies, no override needed.', rule:'Rule 2: Internal role' },
+        'asset-owner': { o:'cleared',   reason:'Asset owner — full-res for own internal asset.', rule:'Rule 2: Owner role' }
+      }
+    },
+
+    // ============================================
+    // EMBARGOED — superadmin always bypasses; DAM Manager + Owner can manage pre-launch
+    // ============================================
+    embargoed: {
+      owned: {
+        'superadmin':  { o:'override',  reason:'Superadmin bypass — full-res delivered before go-live.', rule:'Pre-Rule: Superadmin JWT bypass' },
+        'dam-manager': { o:'override',  reason:'DAM Manager bypass — can release embargoed assets for pre-launch coordination. Action logged.', rule:'Pre-Rule: Admin override (logged)' },
+        'asset-owner': { o:'override',  reason:'Asset owner can access own embargoed asset for pre-launch checks. Logged with embargo-bypass flag.', rule:'Pre-Rule: Owner override (logged)' }
+      },
+      'royalty-free': {
+        'superadmin':  { o:'override',  reason:'Superadmin bypass — full-res delivered before go-live.', rule:'Pre-Rule: Superadmin JWT bypass' },
+        'dam-manager': { o:'override',  reason:'DAM Manager bypass for pre-launch coordination. Logged.', rule:'Pre-Rule: Admin override' },
+        'asset-owner': { o:'override',  reason:'Asset owner can access own embargoed asset. Logged.', rule:'Pre-Rule: Owner override' }
+      },
+      'rights-managed': {
+        'superadmin':  { o:'override',  reason:'Superadmin bypass — full-res delivered regardless of embargo or rights mismatch.', rule:'Pre-Rule: Superadmin JWT bypass' },
+        'dam-manager': { o:'override',  reason:'DAM Manager bypass for rights review and pre-launch coordination. Logged.', rule:'Pre-Rule: Admin override' },
+        'asset-owner': { o:'override',  reason:'Asset owner can access own embargoed RM asset. Logged with embargo-bypass flag.', rule:'Pre-Rule: Owner override' }
+      },
+      editorial: {
+        'superadmin':  { o:'override',  reason:'Superadmin bypass — full-res delivered.', rule:'Pre-Rule: Superadmin JWT bypass' },
+        'dam-manager': { o:'override',  reason:'DAM Manager bypass for editorial review pre-launch. Logged.', rule:'Pre-Rule: Admin override' },
+        'asset-owner': { o:'override',  reason:'Asset owner can access own embargoed editorial. Logged.', rule:'Pre-Rule: Owner override' }
+      },
+      internal: {
+        'superadmin':  { o:'override',  reason:'Superadmin bypass — full-res delivered.', rule:'Pre-Rule: Superadmin JWT bypass' },
+        'dam-manager': { o:'override',  reason:'DAM Manager bypass for internal pre-launch coordination. Logged.', rule:'Pre-Rule: Admin override' },
+        'asset-owner': { o:'override',  reason:'Asset owner can access own embargoed internal asset. Logged.', rule:'Pre-Rule: Owner override' }
+      }
+    },
+
+    // ============================================
+    // EXPIRED — only privileged roles can access; owner action triggers extension flow
+    // ============================================
+    expired: {
+      owned: {
+        'superadmin':  { o:'override',  reason:'Superadmin bypass — full-res delivered regardless of expiry. For audit and recovery.', rule:'Pre-Rule: Superadmin JWT bypass' },
+        'dam-manager': { o:'override',  reason:'DAM Manager bypass — can download expired assets for audit, re-licensing, or archival. Action logged with expiry-override flag.', rule:'Pre-Rule: Admin override (logged)' },
+        'asset-owner': { o:'request',   reason:'Asset owner cannot download expired content directly. Must extend the licence (create a new rights record with a new expiry) before any download is possible. Forces a fresh rights decision; prevents silent re-use of expired content.', rule:'Rule 1: Asset state → Extension flow required' }
+      },
+      'royalty-free': {
+        'superadmin':  { o:'override',  reason:'Superadmin bypass — full-res delivered for audit.', rule:'Pre-Rule: Superadmin JWT bypass' },
+        'dam-manager': { o:'override',  reason:'DAM Manager bypass for audit and re-licensing. Logged.', rule:'Pre-Rule: Admin override' },
+        'asset-owner': { o:'request',   reason:'Owner must extend the licence before download. For Royalty-Free, extension may require re-purchase/verification of the provider terms — the system surfaces the documentation link to the original licence to support that decision.', rule:'Rule 1: Asset state → Extension flow required' }
+      },
+      'rights-managed': {
+        'superadmin':  { o:'override',  reason:'Superadmin bypass — full-res delivered for audit and recovery.', rule:'Pre-Rule: Superadmin JWT bypass' },
+        'dam-manager': { o:'override',  reason:'DAM Manager bypass — typically used to retrieve assets for re-licensing negotiation. Logged.', rule:'Pre-Rule: Admin override' },
+        'asset-owner': { o:'request',   reason:'Owner must create a new rights record with renewed terms (territory, channels, audience, dates) before download. This is the highest-stakes extension because RM rights are contractual; system may require legal sign-off depending on tenant policy.', rule:'Rule 1: Asset state → Extension flow required' }
+      },
+      editorial: {
+        'superadmin':  { o:'override',  reason:'Superadmin bypass — full-res delivered for audit.', rule:'Pre-Rule: Superadmin JWT bypass' },
+        'dam-manager': { o:'override',  reason:'DAM Manager bypass for audit. Logged.', rule:'Pre-Rule: Admin override' },
+        'asset-owner': { o:'request',   reason:'Owner must extend the editorial licence before download. Re-extension typically requires re-verifying press/editorial terms with the source.', rule:'Rule 1: Asset state → Extension flow required' }
+      },
+      internal: {
+        'superadmin':  { o:'override',  reason:'Superadmin bypass — full-res delivered.', rule:'Pre-Rule: Superadmin JWT bypass' },
+        'dam-manager': { o:'override',  reason:'DAM Manager bypass for audit. Logged.', rule:'Pre-Rule: Admin override' },
+        'asset-owner': { o:'request',   reason:'Owner must extend the internal licence before download. Lowest-friction case (no external dependencies) but still requires explicit extension to prevent silent re-use.', rule:'Rule 1: Asset state → Extension flow required' }
+      }
+    }
+  };
+
+  const states = [
+    { id: 'active',    pillClass: 'state-active',    title: 'Active', subtitle: 'Within licence window, no time-based restrictions' },
+    { id: 'embargoed', pillClass: 'state-embargoed', title: 'Embargoed', subtitle: 'Pre-launch — go-live 15 Jun 2026' },
+    { id: 'expired',   pillClass: 'state-expired',   title: 'Expired', subtitle: 'Past expiry — 31 Dec 2025' }
+  ];
+
+  function renderMatrices() {
+    const container = document.getElementById('matrices');
+    let html = '';
+
+    // ===== Main matrices (standard users) =====
+    states.forEach(state => {
+      html += renderMatrixBlock(state, users, outcomes);
+    });
+
+    // ===== Privileged-roles section divider =====
+    html += `
+      <div class="section-divider">
+        <div class="section-divider-header">
+          <span class="section-divider-title">Privileged roles</span>
+          <span class="section-divider-pill">★ Override path</span>
+        </div>
+        <div class="section-divider-desc">
+          These roles bypass the standard rights checks via role permission rather than rights match. <strong>Superadmin</strong> (U01) bypasses unconditionally via JWT claim. <strong>DAM Manager</strong> and <strong>Asset Owner</strong> have scoped overrides — DAM Manager covers all tenant assets with audit logging; Asset Owner covers only their uploaded assets and triggers a mandatory acknowledgement modal for expired downloads. All override actions are logged with the override reason in the audit trail.
+        </div>
+      </div>
+    `;
+
+    // ===== Privileged-roles matrices (one per state) =====
+    states.forEach(state => {
+      html += renderMatrixBlock(state, privilegedUsers, privilegedOutcomes);
+    });
+
+    container.innerHTML = html;
+    wireTooltips();
+  }
+
+  // Reusable matrix block renderer
+  function renderMatrixBlock(state, userList, outcomeData) {
+    return `
+      <div class="matrix-block">
+        <div class="matrix-header">
+          <span class="matrix-state-pill ${state.pillClass}">${state.title}</span>
+          <span class="matrix-title">Asset state: ${state.title}</span>
+          <span class="matrix-subtitle">${state.subtitle}</span>
+        </div>
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th class="corner-cell">Licence ↓  /  User →</th>
+              ${userList.map(u => `
+                <th class="user-header">
+                  <div class="u-ref">${u.ref}</div>
+                  <div class="u-name">${u.name}</div>
+                  <div class="u-attrs">
+                    <div class="u-attr"><span class="u-attr-key">Territory</span><span class="u-attr-val">${u.territory}</span></div>
+                    <div class="u-attr u-attr-audience"><span class="u-attr-key">Audience</span><span class="u-attr-val">${u.audience}</span></div>
+                    <div class="u-attr"><span class="u-attr-key">Role</span><span class="u-attr-val">${u.role}</span></div>
+                  </div>
+                </th>
+              `).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            ${licences.map(lic => `
+              <tr>
+                <td class="licence-header">
+                  <div class="l-name">${lic.name}</div>
+                  <div class="l-meta">${lic.meta}</div>
+                </td>
+                ${userList.map(u => {
+                  const cell = outcomeData[state.id][lic.id][u.id];
+                  return `
+                    <td>
+                      <div class="outcome-cell ${cell.o}"
+                           data-reason="${escapeAttr(cell.reason)}"
+                           data-rule="${escapeAttr(cell.rule)}"
+                           data-label="${labels[cell.o]}">
+                        <div class="outcome-glyph">${glyphs[cell.o]}</div>
+                        <div class="outcome-label">${labels[cell.o]}</div>
+                      </div>
+                    </td>
+                  `;
+                }).join('')}
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  function escapeAttr(s) {
+    return s.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  // Tooltip wiring
+  function wireTooltips() {
+    const tt = document.getElementById('tooltip');
+    document.querySelectorAll('.outcome-cell').forEach(cell => {
+      cell.addEventListener('mouseenter', (e) => {
+        const label  = cell.dataset.label;
+        const reason = cell.dataset.reason;
+        const rule   = cell.dataset.rule;
+        tt.innerHTML = `
+          <div class="tooltip-label">${label}</div>
+          <div class="tooltip-reason">${reason}</div>
+          <div class="tooltip-rule">${rule}</div>
+        `;
+        positionTooltip(e, tt);
+        tt.classList.add('visible');
+      });
+      cell.addEventListener('mousemove', (e) => positionTooltip(e, tt));
+      cell.addEventListener('mouseleave', () => tt.classList.remove('visible'));
+    });
+  }
+
+  function positionTooltip(e, tt) {
+    const padding = 14;
+    const rect = tt.getBoundingClientRect();
+    let x = e.clientX + padding;
+    let y = e.clientY + padding;
+    if (x + rect.width > window.innerWidth - 12) {
+      x = e.clientX - rect.width - padding;
+    }
+    if (y + rect.height > window.innerHeight - 12) {
+      y = e.clientY - rect.height - padding;
+    }
+    tt.style.left = x + 'px';
+    tt.style.top  = y + 'px';
+  }
+
+  renderMatrices();
+</script>
+
+</body>
+</html>
