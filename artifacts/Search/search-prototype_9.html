@@ -1,0 +1,2574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Screendragon Search — Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Scale tokens (documented set) */
+    --accent-9: #0d9488;          /* Teal/Cerulean primary */
+    --accent-9-hover: #0f766e;
+    --accent-2: #f0fdfa;
+    --accent-3: #ccfbf1;
+
+    --neutral-1: #ffffff;
+    --neutral-2: #fafafa;
+    --neutral-3: #f4f4f5;
+    --neutral-4: #e4e4e7;
+    --neutral-5: #d4d4d8;
+    --neutral-6: #a1a1aa;
+    --neutral-9: #52525b;
+    --neutral-11: #27272a;
+    --neutral-12: #18181b;
+
+    --primary-default: var(--accent-9);
+    --text-default: var(--neutral-12);
+    --text-subtle: var(--neutral-9);
+    --text-muted: var(--neutral-6);
+    --border-default: var(--neutral-4);
+    --border-strong: var(--neutral-5);
+    --surface-default: var(--neutral-1);
+    --surface-subtle: var(--neutral-2);
+    --surface-hover: var(--neutral-3);
+
+    /* Status semantics */
+    --status-info: #2563eb;
+    --status-info-bg: #eff6ff;
+    --status-success: #15803d;
+    --status-success-bg: #f0fdf4;
+    --status-warning: #b45309;
+    --status-warning-bg: #fffbeb;
+    --status-neutral: var(--neutral-9);
+    --status-neutral-bg: var(--neutral-3);
+
+    /* Highlight (match) */
+    --highlight-bg: #fef3c7;
+    --highlight-text: #78350f;
+
+    /* Filetype badges (solid-fill convention) */
+    --filetype-form-bg: #6366f1;
+    --filetype-project-bg: #0891b2;
+    --filetype-task-bg: #059669;
+    --filetype-file-bg: #ea580c;
+
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+
+    --radius-1: 4px;
+    --radius-2: 6px;
+    --radius-3: 8px;
+    --radius-4: 12px;
+
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 16px 48px rgba(0,0,0,0.16), 0 4px 12px rgba(0,0,0,0.08);
+
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    background: linear-gradient(180deg, #064e3b 0%, #134e4a 100%);
+    min-height: 100vh;
+    color: var(--text-default);
+    font-size: 14px;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---- Background app shell (decorative, behind modal) ---- */
+  .app {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+  }
+  .app-header {
+    height: 56px;
+    background: #064e3b;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    color: rgba(255,255,255,0.9);
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+  .app-nav {
+    height: 44px;
+    background: rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 24px;
+    color: rgba(255,255,255,0.7);
+    font-size: 13px;
+  }
+  .app-nav span { cursor: default; }
+  .app-nav span.active { color: white; font-weight: 500; }
+  .app-body {
+    padding: 32px;
+    color: rgba(255,255,255,0.5);
+  }
+  .app-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+    max-width: 520px;
+  }
+  .app-card h3 { margin: 0 0 12px; color: rgba(255,255,255,0.85); font-size: 15px; }
+  .app-card p { margin: 6px 0; font-size: 13px; }
+
+  /* ---- Modal overlay ---- */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 12vh;
+    z-index: 100;
+    animation: fadeIn 120ms ease-out;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    width: 1040px;
+    max-width: calc(100vw - 32px);
+    max-height: 80vh;
+    background: var(--surface-default);
+    border-radius: var(--radius-4);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    animation: slideIn 160ms cubic-bezier(0.2, 0.9, 0.3, 1);
+    transition: width 200ms cubic-bezier(0.2, 0.9, 0.3, 1);
+  }
+  /* Compact state — initial modal on open, before user has interacted */
+  .modal.compact {
+    width: 640px;
+  }
+  @keyframes slideIn { from { transform: translateY(-8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  /* ---- Search input row ---- */
+  .search-input-row {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-4) var(--spacing-5);
+    border-bottom: 1px solid var(--border-default);
+    gap: var(--spacing-3);
+    flex-shrink: 0;
+  }
+  .search-icon {
+    color: var(--text-muted);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+  .search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    font-family: var(--font);
+    color: var(--text-default);
+    background: transparent;
+    padding: var(--spacing-1) 0;
+  }
+  .search-input::placeholder { color: var(--text-muted); }
+
+  .input-action-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-2);
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-subtle);
+    cursor: pointer;
+    transition: background 80ms;
+    position: relative;
+  }
+  .input-action-btn:hover { background: var(--surface-hover); color: var(--text-default); }
+
+  .input-action-btn[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 6px;
+    background: var(--neutral-12);
+    color: white;
+    font-size: 12px;
+    padding: 6px 8px;
+    border-radius: var(--radius-1);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .ai-btn {
+    /* Reserved for future AI affordances */
+  }
+
+  /* ---- Tier 3 NLS hint (appears in input when query qualifies) ---- */
+  .nls-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 8px 3px 7px;
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 16px;
+    border-radius: 12px;
+    background:
+      linear-gradient(var(--surface-default), var(--surface-default)) padding-box,
+      linear-gradient(135deg, #c026d3 0%, #7c3aed 50%, #2563eb 100%) border-box;
+    border: 1px solid transparent;
+    color: #7c3aed;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: transform 80ms;
+    animation: nlsAppear 180ms ease-out;
+  }
+  .nls-hint:hover { transform: scale(1.02); }
+  .nls-hint .nls-kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 14px;
+    height: 14px;
+    padding: 0 3px;
+    background: rgba(124, 58, 237, 0.08);
+    border: 1px solid rgba(124, 58, 237, 0.25);
+    border-radius: 3px;
+    font-family: 'SF Mono', Menlo, monospace;
+    font-size: 9.5px;
+    color: #7c3aed;
+  }
+  @keyframes nlsAppear {
+    from { opacity: 0; transform: translateX(4px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* NLS processing state — input row shows shimmer/loading */
+  .nls-processing {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px 3px 8px;
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 16px;
+    border-radius: 12px;
+    background: linear-gradient(90deg,
+      rgba(192, 38, 211, 0.08) 0%,
+      rgba(124, 58, 237, 0.12) 50%,
+      rgba(37, 99, 235, 0.08) 100%);
+    color: #7c3aed;
+    flex-shrink: 0;
+  }
+  .nls-processing .nls-spinner {
+    width: 11px;
+    height: 11px;
+    border: 1.5px solid rgba(124, 58, 237, 0.25);
+    border-top-color: #7c3aed;
+    border-radius: 50%;
+    animation: spin 600ms linear infinite;
+  }
+
+  /* NLS-resolved indicator on results — REMOVED.
+     Once Claude translates to OpenSearch JSON, results come back like any other query.
+     There is no signal on the return side indicating NLS was used, so no banner is shown. */
+
+  /* NLS prompt CTA — gradient button used in zero state and thin results prompt */
+  .nls-prompt-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background:
+      linear-gradient(var(--surface-default), var(--surface-default)) padding-box,
+      linear-gradient(135deg, #c026d3 0%, #7c3aed 50%, #2563eb 100%) border-box;
+    border: 1px solid transparent;
+    border-radius: var(--radius-2);
+    color: #7c3aed;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: var(--font);
+    cursor: pointer;
+  }
+  .nls-prompt-cta:hover { transform: scale(1.02); }
+
+  /* Thin results prompt — appears below a small result set when query qualifies as Tier 3 */
+  .thin-results-prompt {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-3);
+    padding: var(--spacing-4) var(--spacing-5);
+    background: var(--surface-subtle);
+    border-top: 1px dashed var(--border-default);
+  }
+  .thin-results-prompt .thin-results-text {
+    font-size: 13px;
+    color: var(--text-subtle);
+  }
+
+  /* ---- Body scroll area ---- */
+  .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-2) 0;
+  }
+  .modal-body::-webkit-scrollbar { width: 8px; }
+  .modal-body::-webkit-scrollbar-thumb { background: var(--neutral-4); border-radius: 4px; }
+
+  /* ---- Section header ---- */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-3) var(--spacing-5) var(--spacing-2);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+  .section-header .count {
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  /* ---- List rows (recents + typeahead) ---- */
+  .row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-2) var(--spacing-5);
+    cursor: pointer;
+    border-left: 2px solid transparent;
+  }
+  .row:hover, .row.focused {
+    background: var(--surface-hover);
+    border-left-color: var(--accent-9);
+  }
+  .row .row-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: white;
+    font-weight: 600;
+    font-size: 11px;
+  }
+  .row .row-icon.form { background: var(--filetype-form-bg); }
+  .row .row-icon.project { background: var(--filetype-project-bg); }
+  .row .row-icon.task { background: var(--filetype-task-bg); }
+  .row .row-icon.file { background: var(--filetype-file-bg); }
+  .row .row-icon.recent {
+    background: var(--surface-hover);
+    color: var(--text-muted);
+    border: 1px solid var(--border-default);
+  }
+  .row .row-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .row .row-title {
+    font-size: 14px;
+    color: var(--text-default);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .row .row-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 1px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .row .row-meta .match {
+    color: var(--text-subtle);
+  }
+  .row .row-meta .sep {
+    margin: 0 6px;
+    color: var(--neutral-5);
+  }
+  .row .row-arrow {
+    color: var(--text-muted);
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 80ms;
+  }
+  .row:hover .row-arrow, .row.focused .row-arrow { opacity: 1; }
+
+  mark.match-hl {
+    background: var(--highlight-bg);
+    color: var(--highlight-text);
+    padding: 0 2px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+
+  /* ---- Empty / zero state ---- */
+  .empty {
+    padding: var(--spacing-8) var(--spacing-5);
+    text-align: center;
+    color: var(--text-subtle);
+  }
+  .empty .empty-title {
+    font-size: 14px;
+    color: var(--text-default);
+    font-weight: 500;
+    margin-bottom: var(--spacing-1);
+  }
+  .empty .empty-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  /* ---- Footer ---- */
+  .modal-footer {
+    border-top: 1px solid var(--border-default);
+    padding: var(--spacing-3) var(--spacing-5);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface-subtle);
+    flex-shrink: 0;
+  }
+  .footer-hints {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    font-size: 12px;
+    color: var(--text-subtle);
+  }
+  .footer-hints .hint {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+  }
+  .kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-bottom-width: 2px;
+    border-radius: var(--radius-1);
+    font-family: 'SF Mono', Menlo, monospace;
+    font-size: 10.5px;
+    color: var(--text-subtle);
+  }
+
+  .footer-action {
+    font-size: 13px;
+    color: var(--accent-9);
+    font-weight: 500;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: var(--font);
+  }
+  .footer-action:hover { color: var(--accent-9-hover); }
+
+  /* ---- Results state ---- */
+  .results-tabs {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-5);
+    border-bottom: 1px solid var(--border-default);
+    flex-shrink: 0;
+  }
+  .tabs-left {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+  }
+  .tab {
+    background: none;
+    border: none;
+    padding: var(--spacing-3) var(--spacing-3);
+    font-family: var(--font);
+    font-size: 13px;
+    color: var(--text-subtle);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tab:hover { color: var(--text-default); }
+  .tab.active {
+    color: var(--text-default);
+    border-bottom-color: var(--accent-9);
+    font-weight: 500;
+  }
+  .tab .tab-count {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    background: var(--surface-hover);
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-weight: 500;
+  }
+  .tab.active .tab-count {
+    background: var(--accent-2);
+    color: var(--accent-9);
+  }
+
+  /* ---- Filter button (Tertiary tier) ---- */
+  .filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+    font-family: var(--font);
+    font-size: 13px;
+    color: var(--text-default);
+    cursor: pointer;
+    margin: 8px 0;
+  }
+  .filter-btn:hover { background: var(--surface-subtle); border-color: var(--border-strong); }
+  .filter-btn .filter-count {
+    background: var(--accent-9);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+  }
+
+  /* ---- Active filter chips ---- */
+  .filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-3) var(--spacing-5);
+    border-bottom: 1px solid var(--border-default);
+    background: var(--surface-subtle);
+    flex-shrink: 0;
+  }
+  .filter-chips.empty { display: none; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    padding: 3px 4px 3px 10px;
+    border-radius: 14px;
+    font-size: 12px;
+    color: var(--text-default);
+  }
+  .chip strong { font-weight: 500; color: var(--text-subtle); margin-right: 2px; }
+  .chip button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 2px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .chip button:hover { background: var(--surface-hover); color: var(--text-default); }
+  .clear-all {
+    background: none;
+    border: none;
+    color: var(--text-subtle);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 4px 8px;
+    font-family: var(--font);
+    text-decoration: underline;
+    text-decoration-color: var(--border-default);
+    text-underline-offset: 2px;
+  }
+  .clear-all:hover { color: var(--text-default); }
+
+  /* ---- Filter sidecar (overlay, ClickUp-style) ---- */
+  .filter-trigger-wrap { position: relative; }
+
+  .filter-sidecar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 340px;
+    background: var(--surface-default);
+    border-left: 1px solid var(--border-default);
+    box-shadow: -8px 0 24px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 180ms cubic-bezier(0.2, 0.9, 0.3, 1);
+    z-index: 25;
+    pointer-events: none;
+  }
+  .filter-sidecar.open {
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  .sidecar-header {
+    padding: var(--spacing-4) var(--spacing-4) var(--spacing-3);
+    border-bottom: 1px solid var(--border-default);
+    flex-shrink: 0;
+  }
+  .sidecar-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-3);
+  }
+  .sidecar-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-default);
+  }
+  .sidecar-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-subtle);
+    padding: 4px;
+    border-radius: var(--radius-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sidecar-close:hover { background: var(--surface-hover); color: var(--text-default); }
+
+  .sidecar-search {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: 6px 10px;
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+  }
+  .sidecar-search:focus-within {
+    border-color: var(--accent-9);
+    background: var(--surface-default);
+  }
+  .sidecar-search svg { color: var(--text-muted); flex-shrink: 0; }
+  .sidecar-search input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--font);
+    font-size: 13px;
+    color: var(--text-default);
+  }
+  .sidecar-search input::placeholder { color: var(--text-muted); }
+
+  .sidecar-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-2) 0;
+  }
+  .sidecar-body::-webkit-scrollbar { width: 8px; }
+  .sidecar-body::-webkit-scrollbar-thumb { background: var(--neutral-4); border-radius: 4px; }
+
+  .facet {
+    border-bottom: 1px solid var(--neutral-3);
+  }
+  .facet:last-child { border-bottom: none; }
+  .facet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-3) var(--spacing-4);
+    cursor: pointer;
+    user-select: none;
+  }
+  .facet-header:hover { background: var(--surface-subtle); }
+  .facet-header-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-default);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .facet-applied-count {
+    background: var(--accent-9);
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+  }
+  .facet-chevron {
+    color: var(--text-muted);
+    transition: transform 120ms;
+  }
+  .facet.open .facet-chevron { transform: rotate(180deg); }
+  .facet-content {
+    display: none;
+    padding: 0 var(--spacing-4) var(--spacing-3);
+  }
+  .facet.open .facet-content { display: block; }
+
+  .facet-value-search {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 8px;
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+    margin-bottom: var(--spacing-2);
+  }
+  .facet-value-search svg { color: var(--text-muted); flex-shrink: 0; }
+  .facet-value-search input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--font);
+    font-size: 12.5px;
+    color: var(--text-default);
+  }
+  .facet-value-search input::placeholder { color: var(--text-muted); }
+
+  .facet-options {
+    max-height: 240px;
+    overflow-y: auto;
+    margin: 0 -4px;
+  }
+  .facet-options::-webkit-scrollbar { width: 6px; }
+  .facet-options::-webkit-scrollbar-thumb { background: var(--neutral-4); border-radius: 3px; }
+
+  .facet-checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 4px;
+    cursor: pointer;
+    border-radius: var(--radius-1);
+  }
+  .facet-checkbox-row:hover { background: var(--surface-subtle); }
+  .facet-checkbox-row input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    accent-color: var(--accent-9);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .facet-checkbox-row .facet-value-label {
+    font-size: 13px;
+    color: var(--text-default);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .facet-chip-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .facet-chip-option {
+    padding: 4px 10px;
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+    font-size: 12.5px;
+    cursor: pointer;
+    color: var(--text-default);
+    font-family: var(--font);
+  }
+  .facet-chip-option:hover { background: var(--surface-subtle); }
+  .facet-chip-option.selected {
+    background: var(--accent-2);
+    border-color: var(--accent-9);
+    color: var(--accent-9);
+    font-weight: 500;
+  }
+
+  .facet-date-range {
+    display: flex;
+    gap: var(--spacing-2);
+    margin-top: var(--spacing-2);
+  }
+  .facet-date-range input {
+    flex: 1;
+    padding: 5px 8px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+    font-family: var(--font);
+    font-size: 12px;
+    color: var(--text-default);
+  }
+
+  .facet-empty {
+    padding: var(--spacing-4) var(--spacing-2);
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .sidecar-footer {
+    border-top: 1px solid var(--border-default);
+    padding: var(--spacing-3) var(--spacing-4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface-subtle);
+    flex-shrink: 0;
+  }
+  .sidecar-clear {
+    background: none;
+    border: none;
+    color: var(--text-subtle);
+    font-family: var(--font);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 6px 8px;
+  }
+  .sidecar-clear:hover { color: var(--text-default); }
+  .sidecar-apply {
+    background: var(--accent-9);
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: var(--radius-2);
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .sidecar-apply:hover { background: var(--accent-9-hover); }
+
+  /* ---- Result rows (full results) — column layout ---- */
+  .result-rows-table {
+    width: 100%;
+  }
+  .result-table-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 90px 130px 110px 40px 20px;
+    gap: var(--spacing-3);
+    padding: var(--spacing-2) var(--spacing-5);
+    border-bottom: 1px solid var(--border-default);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: var(--surface-subtle);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+  .result-table-header .sortable {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .result-table-header .sortable:hover { color: var(--text-default); }
+  .result-table-header .sortable svg { opacity: 0.5; }
+  .result-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 90px 130px 110px 40px 20px;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) var(--spacing-5);
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    align-items: start;
+    border-bottom: 1px solid var(--neutral-3);
+  }
+  .result-row:hover, .result-row.focused {
+    background: var(--surface-hover);
+    border-left-color: var(--accent-9);
+  }
+  .result-row .col-title {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-3);
+    min-width: 0;
+  }
+  .result-row .row-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: white;
+    font-weight: 600;
+    font-size: 10px;
+    margin-top: 1px;
+  }
+  .result-row .row-icon.form { background: var(--filetype-form-bg); }
+  .result-row .row-icon.project { background: var(--filetype-project-bg); }
+  .result-row .row-icon.task { background: var(--filetype-task-bg); }
+  .result-row .row-icon.file { background: var(--filetype-file-bg); }
+  .result-row .col-title-text {
+    min-width: 0;
+    flex: 1;
+  }
+  .result-row .title-line {
+    font-size: 14px;
+    color: var(--text-default);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 20px;
+  }
+  /* Path row — system-derived location, between title and meta */
+  .path-row {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 16px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .path-row .path-sep {
+    color: var(--neutral-5);
+    margin: 0 6px;
+  }
+  .path-row .path-ellipsis {
+    color: var(--text-muted);
+    cursor: help;
+    border-bottom: 1px dotted var(--neutral-5);
+    padding-bottom: 0;
+  }
+  /* Floating tooltip element (positioned via JS, escapes overflow contexts) */
+  .path-tooltip {
+    position: fixed;
+    background: var(--neutral-12);
+    color: white;
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: var(--radius-1);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1000;
+    max-width: 640px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity 80ms ease-out, transform 80ms ease-out;
+  }
+  .path-tooltip.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .path-tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-bottom-color: var(--neutral-12);
+  }
+  /* Meta block under title — stacked rows with aligned key column */
+  .meta-block {
+    margin-top: 4px;
+  }
+  .meta-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    height: 18px;
+    line-height: 18px;
+  }
+  .meta-row .meta-key {
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+    width: 88px;
+  }
+  .meta-row .meta-value {
+    font-size: 12px;
+    color: var(--text-subtle);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+  }
+  .meta-row .meta-value.empty { color: var(--text-muted); }
+  .result-row .col-cell {
+    font-size: 13px;
+    color: var(--text-subtle);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    align-self: center;
+  }
+  .result-row .col-by {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    align-self: center;
+  }
+  .result-row .avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--filetype-task-bg);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+    flex-shrink: 0;
+    position: relative;
+    cursor: default;
+  }
+  .result-row .avatar[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--neutral-12);
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 8px;
+    border-radius: var(--radius-1);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 30;
+  }
+  .result-row .avatar[data-tooltip]:hover::before {
+    content: '';
+    position: absolute;
+    top: calc(100% + 1px);
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-bottom-color: var(--neutral-12);
+    pointer-events: none;
+    z-index: 30;
+  }
+  .result-row .col-arrow {
+    color: var(--text-muted);
+    opacity: 0;
+    transition: opacity 80ms;
+    display: flex;
+    justify-content: flex-end;
+    align-self: center;
+  }
+  .result-row:hover .col-arrow, .result-row.focused .col-arrow { opacity: 1; }
+
+  /* ---- Status badges (light-bg/border = status) ---- */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 11.5px;
+    font-weight: 500;
+    border: 1px solid;
+    line-height: 18px;
+  }
+  .status-badge.info { color: var(--status-info); background: var(--status-info-bg); border-color: var(--status-info); }
+  .status-badge.success { color: var(--status-success); background: var(--status-success-bg); border-color: var(--status-success); }
+  .status-badge.warning { color: var(--status-warning); background: var(--status-warning-bg); border-color: var(--status-warning); }
+  .status-badge.neutral { color: var(--status-neutral); background: var(--status-neutral-bg); border-color: var(--border-default); }
+
+  /* ---- State indicator (top right) ---- */
+  .state-indicator {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-family: 'SF Mono', Menlo, monospace;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .state-indicator button {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    font-family: inherit;
+    font-size: 10px;
+    padding: 3px 6px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .state-indicator button:hover { background: rgba(255,255,255,0.25); }
+
+  /* ---- Spinner ---- */
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--neutral-4);
+    border-top-color: var(--accent-9);
+    border-radius: 50%;
+    animation: spin 600ms linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Hide elements */
+  .hidden { display: none !important; }
+
+  /* ---- Skeleton loading state (during debounce after keystroke) ---- */
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .skeleton-bar {
+    background: linear-gradient(90deg,
+      var(--neutral-3) 0%,
+      var(--neutral-4) 50%,
+      var(--neutral-3) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.2s ease-in-out infinite;
+    border-radius: var(--radius-1);
+    display: inline-block;
+    height: 12px;
+  }
+  .skeleton-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 90px 130px 110px 40px 20px;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) var(--spacing-5);
+    border-bottom: 1px solid var(--neutral-3);
+    align-items: center;
+  }
+  .skeleton-row .skeleton-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-2);
+    background: linear-gradient(90deg,
+      var(--neutral-3) 0%,
+      var(--neutral-4) 50%,
+      var(--neutral-3) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  .skeleton-row .col-title {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-3);
+    min-width: 0;
+  }
+  .skeleton-row .skeleton-title-block {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 4px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Background app shell -->
+<div class="app">
+  <div class="app-header">screendragon</div>
+  <div class="app-nav">
+    <span>Home</span>
+    <span class="active">Dashboard</span>
+    <span>Projects</span>
+    <span>Tasks</span>
+    <span>Library</span>
+    <span>Reports</span>
+  </div>
+  <div class="app-body">
+    <div class="app-card">
+      <h3>Welcome back</h3>
+      <p>Press <strong style="color: rgba(255,255,255,0.85)">⌘K</strong> to open search</p>
+    </div>
+    <div class="app-card">
+      <h3>Recent activity</h3>
+      <p>3 forms submitted today</p>
+      <p>5 projects updated this week</p>
+    </div>
+  </div>
+</div>
+
+<!-- State indicator -->
+<div class="state-indicator" id="stateIndicator">
+  <span id="stateIndicatorText">State: compact-empty</span>
+  <button id="stateResetBtn" title="Reset to initial state">Reset</button>
+</div>
+
+<!-- Search modal -->
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal">
+
+    <!-- Input row -->
+    <div class="search-input-row">
+      <span class="search-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      </span>
+      <input type="text" class="search-input" id="searchInput" placeholder="Search forms, projects, tasks, files…" autocomplete="off">
+      <span id="nlsHintSlot"></span>
+      <button class="input-action-btn" id="clearBtn" data-tooltip="Clear" style="display:none">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+
+
+    <!-- Tabs row (only in results state) -->
+    <div class="results-tabs hidden" id="resultsTabs">
+      <div class="tabs-left">
+        <button class="tab active" data-tab="all">All <span class="tab-count">37</span></button>
+        <button class="tab" data-tab="forms">Forms <span class="tab-count">20</span></button>
+        <button class="tab" data-tab="projects">Projects <span class="tab-count">0</span></button>
+        <button class="tab" data-tab="tasks">Tasks <span class="tab-count">17</span></button>
+        <button class="tab" data-tab="files">Files <span class="tab-count">0</span></button>
+      </div>
+      <div class="filter-trigger-wrap">
+        <button class="filter-btn" id="filterBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          Filter
+          <span class="filter-count hidden" id="filterCount">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter sidecar (overlays results) -->
+    <div class="filter-sidecar" id="filterSidecar">
+      <div class="sidecar-header">
+        <div class="sidecar-title-row">
+          <h3 class="sidecar-title">Filters</h3>
+          <button class="sidecar-close" id="sidecarClose" aria-label="Close filters">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="sidecar-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+          <input type="text" id="filterFacetSearch" placeholder="Search filters…">
+        </div>
+      </div>
+      <div class="sidecar-body" id="sidecarBody">
+        <!-- Facets rendered by JS -->
+      </div>
+      <div class="sidecar-footer">
+        <button class="sidecar-clear" id="sidecarClear">Clear all</button>
+        <button class="sidecar-apply" id="sidecarApply">Done</button>
+      </div>
+    </div>
+
+    <!-- Filter chips row (only in results state, when filters applied) -->
+    <div class="filter-chips empty" id="filterChips"></div>
+
+    <!-- Body -->
+    <div class="modal-body" id="modalBody">
+      <!-- Content rendered by JS -->
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+      <div class="footer-hints" id="footerHints">
+        <!-- Rendered by JS based on state -->
+      </div>
+      <button class="footer-action hidden" id="footerAction">Show all 37 results →</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Floating path tooltip (positioned via JS, escapes overflow contexts) -->
+<div class="path-tooltip" id="pathTooltip"></div>
+
+<script>
+// ---- Mock data ----
+const RECENT_ITEMS = [
+  { type: 'form', title: '#2.16.1 Workflow Triggers - Doc Generation', meta: 'Form Submitted · 13 Aug 2025' },
+  { type: 'project', title: 'FIFA WC2026 — Brand Launch', meta: 'In Progress · Updated 2 days ago' },
+  { type: 'task', title: 'Review legal copy for kit launch', meta: 'In Progress · Due 5 May' },
+  { type: 'form', title: 'Brand asset intake — all file types accepted', meta: 'Complete · 11 May 2024' },
+  { type: 'project', title: 'Workflow Triggers — Doc Gen', meta: 'In Progress · Updated 6 Aug 2025' },
+];
+
+let RECENT_SEARCHES = [
+  'Return all form associated to project 156028',
+  'Return all form',
+  'give me all projects',
+  'kit launch 2026',
+  'forms submitted last week',
+];
+
+// Typeahead results — hand-curated to demonstrate match attribution variety
+const TYPEAHEAD_RESULTS_FORMS = [
+  { type: 'form', title: '#2.16.1 Workflow Triggers - Doc Generation - All File Types', meta: 'matched in title', status: 'Form Submitted', date: '13 Aug 2025' },
+  { type: 'form', title: 'Asset upload form — All formats', meta: 'matched in description: "supports all file types"', status: 'Complete', date: '11 May 2024' },
+];
+
+const TYPEAHEAD_RESULTS_PROJECTS = [
+  { type: 'project', title: 'File Type Migration — Legacy assets', meta: 'matched in title', status: 'In Progress', date: '6 Aug 2025' },
+];
+
+const TYPEAHEAD_RESULTS_TASKS = [
+  { type: 'task', title: 'Audit supported file types in upload pipeline', meta: 'matched in description', status: 'In Progress', date: '6 Aug 2025' },
+  { type: 'task', title: '#2.16.1 — Validate all file types render', meta: 'matched in title', status: 'In Progress', date: '6 Aug 2025' },
+];
+
+// Full results (post-Enter)
+// Each result has a `meta` array — these are type-configured at the admin level.
+// Demonstrating power-user 5-field config below; clients with simpler types would have 2-3.
+const FULL_RESULTS = [
+  {
+    type: 'form',
+    title: '#2.16.1 Workflow Triggers - Doc Generation - All File Types - WORK IN PROGRESS',
+    path: ['Projects', 'Workflow Triggers', 'Doc Generation', '2.16.1'],
+    status: 'Form Submitted',
+    date: '13 Aug 2025',
+    by: 'Screendragon Administrator',
+    meta: [
+      { key: 'Form Name', value: 'Dependencies Test Form' },
+      { key: 'Project', value: 'Workflow Triggers — Doc Gen' },
+      { key: 'Submitter', value: 'Steve Beech' },
+      { key: 'Test Notes', value: 'Testing all file types upload — bulk update 2' },
+      { key: 'Reference', value: 'WT-2025-08-156' },
+    ]
+  },
+  {
+    type: 'form',
+    title: '#2.16.1 Workflow triggers - Doc Generation - All File Types',
+    path: ['Projects', 'Workflow Triggers', 'Doc Generation', '2.16.1'],
+    status: 'Workflow',
+    date: '13 Aug 2025',
+    by: 'Screendragon Administrator',
+    meta: [
+      { key: 'Form Name', value: 'Dependencies Test Form' },
+      { key: 'Project', value: 'Workflow Triggers — Doc Gen' },
+      { key: 'Submitter', value: 'KN Test User' },
+      { key: 'Test Notes', value: '' },
+      { key: 'Reference', value: 'WT-2025-08-157' },
+    ]
+  },
+  {
+    type: 'task',
+    title: '#2.16.1 Workflow Triggers - Doc Generation - All File Types - WORK IN PROGRESS',
+    path: ['Projects', 'Workflow Triggers', 'Doc Generation', '2.16.1', 'Subtasks'],
+    status: 'Form Submitted',
+    date: '6 Aug 2025',
+    by: 'Screendragon Administrator',
+    meta: [
+      { key: 'Project', value: 'Workflow Triggers — Doc Gen' },
+      { key: 'Assigned to', value: 'Steve Beech' },
+      { key: 'Due', value: '15 Aug 2025' },
+    ]
+  },
+  {
+    type: 'form',
+    title: 'Universal asset uploader — accepts every format',
+    path: ['Projects', 'Brand Asset Library', 'Intake Forms', '2025', 'August'],
+    status: 'Complete',
+    date: '12 Aug 2025',
+    by: 'Steve Beech',
+    meta: [
+      { key: 'Form Name', value: 'Asset Intake Form' },
+      { key: 'Project', value: 'Brand Asset Library' },
+      { key: 'Submitter', value: 'Steve Beech' },
+      { key: 'Test Notes', value: 'Form configured to accept all upload formats' },
+      { key: 'Reference', value: 'AIF-2025-08-024' },
+    ]
+  },
+  {
+    type: 'form',
+    title: '#2.16.1 Workflow triggers - Doc Generation - All File Types',
+    path: ['FIFA WC2026', 'Brand Operations', 'Asset Workflows', 'Triggers', 'Doc Generation', 'Test Forms', 'August Run'],
+    status: 'Workflow',
+    date: '6 Aug 2025',
+    by: 'Screendragon Administrator',
+    meta: [
+      { key: 'Form Name', value: 'Dependencies Test Form' },
+      { key: 'Project', value: 'Workflow Triggers — Doc Gen' },
+      { key: 'Submitter', value: 'KN Test User' },
+      { key: 'Test Notes', value: 'Bulk update 2 — all file types verified' },
+      { key: 'Reference', value: 'WT-2025-08-158' },
+    ]
+  },
+  {
+    type: 'task',
+    title: 'Asset upload — supports all file types',
+    path: ['Projects', 'Brand Asset Library', 'Tasks'],
+    status: 'In Progress',
+    date: '6 Aug 2025',
+    by: 'Steve Beech',
+    meta: [
+      { key: 'Project', value: 'Brand Asset Library' },
+      { key: 'Assigned to', value: 'Steve Beech' },
+      { key: 'Due', value: '20 Aug 2025' },
+    ]
+  },
+  {
+    type: 'form',
+    title: '#2.16.1 Workflow triggers - Doc Generation - All File Types',
+    path: ['Projects', 'Workflow Triggers', 'Doc Generation', '2.16.1'],
+    status: 'Workflow',
+    date: '6 Aug 2025',
+    by: 'Screendragon Administrator',
+    meta: [
+      { key: 'Form Name', value: 'Dependencies Test Form' },
+      { key: 'Project', value: 'Workflow Triggers — Doc Gen' },
+      { key: 'Submitter', value: 'KN Test User' },
+      { key: 'Test Notes', value: '' },
+      { key: 'Reference', value: 'WT-2025-08-159' },
+    ]
+  },
+  {
+    type: 'task',
+    title: '#2.16.1 Workflow Triggers - Doc Generation - All File Types',
+    path: ['Projects', 'Workflow Triggers', 'Doc Generation', '2.16.1', 'Subtasks'],
+    status: 'Form Submitted',
+    date: '6 Aug 2025',
+    by: 'Screendragon Administrator',
+    meta: [
+      { key: 'Project', value: 'Workflow Triggers — Doc Gen' },
+      { key: 'Assigned to', value: 'Screendragon Administrator' },
+      { key: 'Due', value: '12 Aug 2025' },
+    ]
+  },
+  {
+    type: 'form',
+    title: 'Brand asset intake — all file types accepted',
+    path: ['FIFA WC2026', 'Brand Library', 'Intake', '2024'],
+    status: 'Complete',
+    date: '11 May 2024',
+    by: 'Steve Beech',
+    meta: [
+      { key: 'Form Name', value: 'Brand Asset Intake' },
+      { key: 'Project', value: 'FIFA WC2026 Brand' },
+      { key: 'Submitter', value: 'Steve Beech' },
+      { key: 'Test Notes', value: 'Tagged: file-types, all-formats' },
+      { key: 'Reference', value: 'BAI-2024-05-011' },
+    ]
+  },
+];
+
+// ---- Filter facet schema ----
+// In production this comes from the backend per type config.
+// Mix of widget types (chip, checkbox-list, date) demonstrating dynamic rendering.
+const FILTER_FACETS = [
+  {
+    key: 'status',
+    label: 'Status',
+    widget: 'chip',
+    options: ['Draft', 'In Progress', 'Submitted', 'Workflow', 'Complete']
+  },
+  {
+    key: 'modified',
+    label: 'Modified',
+    widget: 'date',
+    presets: ['Last 7 days', 'Last 30 days', 'Last 3 months']
+  },
+  {
+    key: 'project',
+    label: 'Project',
+    widget: 'checkbox-list',
+    options: [
+      'Workflow Triggers — Doc Gen',
+      'Brand Asset Library',
+      'FIFA WC2026 Brand',
+      'Configmaster Site',
+      'Form Testing — Dependencies',
+      'Resource Manager v2',
+      'Library and Workspace',
+    ]
+  },
+  {
+    key: 'country',
+    label: 'Test Input(s) 1 — Country',
+    widget: 'checkbox-list',
+    options: [
+      'Australia', 'Austria', 'Belgium', 'Brazil', 'Canada', 'China',
+      'Czech Republic', 'Denmark', 'Egypt', 'Finland', 'France', 'Germany',
+      'Greece', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Ireland',
+      'Italy', 'Japan', 'Mexico', 'Netherlands', 'Norway', 'Poland',
+      'Portugal', 'Romania', 'Saudi Arabia', 'Singapore', 'South Africa',
+      'South Korea', 'Spain', 'Sweden', 'Switzerland', 'Turkey',
+      'United Arab Emirates', 'United Kingdom', 'United States', 'Vietnam'
+    ]
+  },
+  {
+    key: 'submitter',
+    label: 'Submitter',
+    widget: 'checkbox-list',
+    options: [
+      'Screendragon Administrator', 'Steve Beech', 'KN Test User',
+      'James D\'Arcy', 'Sarah Brennan', 'Configmaster Bot'
+    ]
+  },
+  {
+    key: 'testNotes',
+    label: 'Test Notes',
+    widget: 'checkbox-list',
+    options: [
+      'Testing Bulk Update 2', 'Bulk update verified', 'All file types verified',
+      'Awaiting QA review'
+    ]
+  },
+];
+
+// ---- State ----
+// 'compact-empty'  : modal just opened, compact width, no interaction yet
+// 'expanded-typing': user has typed, modal is expanded, live Tier 1/2 results
+// 'expanded-empty' : user has cleared back to empty, modal stays expanded, recents shown
+// 'nls-processing' : Tier 3 NLS call in flight (Enter pressed on long query)
+// 'nls-resolved'   : Tier 3 results back, banner showing
+let state = 'compact-empty';
+let hasInteracted = false; // becomes true on first keystroke; modal stays expanded thereafter
+let nlsResolved = false; // true when last results came from Tier 3 NLS
+let lastNlsQuery = '';
+let activeFilters = {}; // populated dynamically: { status: [], modified: [], country: [], ... }
+FILTER_FACETS.forEach(f => activeFilters[f.key] = []);
+let openFacets = new Set(['status', 'modified']); // facets that start open
+let activeTab = 'all';
+let focusedIndex = -1;
+let facetSearchQuery = '';
+
+const modalEl = document.getElementById('modal');
+const inputEl = document.getElementById('searchInput');
+const clearBtn = document.getElementById('clearBtn');
+const resultsTabs = document.getElementById('resultsTabs');
+const filterChips = document.getElementById('filterChips');
+const modalBody = document.getElementById('modalBody');
+const footerHints = document.getElementById('footerHints');
+const footerAction = document.getElementById('footerAction');
+const stateIndicator = document.getElementById('stateIndicator');
+const stateIndicatorText = document.getElementById('stateIndicatorText');
+const stateResetBtn = document.getElementById('stateResetBtn');
+const filterBtn = document.getElementById('filterBtn');
+const filterCount = document.getElementById('filterCount');
+const filterSidecar = document.getElementById('filterSidecar');
+const sidecarBody = document.getElementById('sidecarBody');
+const sidecarClose = document.getElementById('sidecarClose');
+const sidecarClear = document.getElementById('sidecarClear');
+const sidecarApply = document.getElementById('sidecarApply');
+const filterFacetSearch = document.getElementById('filterFacetSearch');
+const nlsHintSlot = document.getElementById('nlsHintSlot');
+
+// ---- Tier 3 NLS qualification heuristic ----
+// In production this would match the routing logic (token count, conversational markers, etc).
+// Lowered to >= 3 words to bias toward discovery — false positives (pill shown for queries
+// that didn't need NLS) are cheaper than false negatives (user trusts wrong keyword results).
+function isTier3Candidate(q) {
+  if (!q) return false;
+  const trimmed = q.trim();
+  if (trimmed.length < 8) return false;
+  const wordCount = trimmed.split(/\s+/).length;
+  const conversationalMarkers = /\b(show me|give me|find|all the|that have|which are|where|who|how many|list|with|without|haven'?t|using|in the)\b/i;
+  return wordCount >= 3 || conversationalMarkers.test(trimmed);
+}
+
+function updateNlsHint(q) {
+  if (state === 'nls-processing') {
+    nlsHintSlot.innerHTML = `
+      <span class="nls-processing">
+        <span class="nls-spinner"></span>
+        Searching with AI…
+      </span>
+    `;
+    return;
+  }
+  if (isTier3Candidate(q) && !nlsResolved) {
+    nlsHintSlot.innerHTML = `
+      <span class="nls-hint" id="nlsHintBtn" title="Press Enter to search with AI">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 L13.5 8.5 L20 10 L13.5 11.5 L12 18 L10.5 11.5 L4 10 L10.5 8.5 Z"/></svg>
+        <span class="nls-kbd">↵</span>
+        Search with AI
+      </span>
+    `;
+    const btn = document.getElementById('nlsHintBtn');
+    if (btn) btn.addEventListener('click', () => triggerNlsSearch(inputEl.value));
+  } else {
+    nlsHintSlot.innerHTML = '';
+  }
+}
+
+// ---- Helpers ----
+function highlightMatch(text, query) {
+  if (!query) return text;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp(`(${escaped})`, 'gi');
+  return text.replace(re, '<mark class="match-hl">$1</mark>');
+}
+
+function iconLabel(type) {
+  return { form: 'F', project: 'P', task: 'T', file: 'D' }[type] || '?';
+}
+
+function renderRow(item, query, opts = {}) {
+  const matchHl = item.match || item.meta || '';
+  return `
+    <div class="row" data-type="${item.type}" tabindex="-1">
+      <div class="row-content">
+        <div class="row-title">${highlightMatch(item.title, query)}</div>
+        <div class="row-meta">
+          ${item.status ? `<span class="status-badge ${statusVariant(item.status)}" style="margin-right:6px">${item.status}</span>` : ''}
+          ${item.match ? `<span class="match">${item.match}</span>` : ''}
+          ${item.date ? `<span class="sep">·</span>${item.date}` : ''}
+          ${item.by ? `<span class="sep">·</span>${item.by}` : ''}
+          ${(!item.match && item.meta) ? item.meta : ''}
+        </div>
+      </div>
+      <span class="row-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </span>
+    </div>
+  `;
+}
+
+function typeLabel(type) {
+  return { form: 'Form', project: 'Project', task: 'Task', file: 'File' }[type] || type;
+}
+
+function avatarInitials(name) {
+  return name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+}
+
+function renderPath(path) {
+  if (!path || path.length === 0) return '';
+
+  const sep = `<span class="path-sep">/</span>`;
+  let segments;
+
+  if (path.length <= 5) {
+    segments = path;
+  } else {
+    // First segment + ellipsis (with full path tooltip) + last 3 segments
+    const fullPath = path.join(' / ');
+    const middleSegments = path.slice(1, path.length - 3).join(' / ');
+    const ellipsisSegment = `<span class="path-ellipsis" data-fullpath="${fullPath}" title="">…</span>`;
+    segments = [path[0], ellipsisSegment, ...path.slice(-3)];
+  }
+
+  return `
+    <div class="path-row">
+      ${segments.map((seg, i) => i === 0 ? seg : `${sep}${seg}`).join('')}
+    </div>
+  `;
+}
+
+function renderResultRow(item, query) {
+  const pathHTML = renderPath(item.path);
+  const metaHTML = (item.meta && item.meta.length > 0) ? `
+    <div class="meta-block">
+      ${item.meta.map(m => `
+        <div class="meta-row">
+          <span class="meta-key">${m.key}</span>
+          <span class="meta-value ${!m.value ? 'empty' : ''}">${m.value ? highlightMatch(m.value, query) : '—'}</span>
+        </div>
+      `).join('')}
+    </div>
+  ` : '';
+
+  return `
+    <div class="result-row" data-type="${item.type}" tabindex="-1">
+      <div class="col-title">
+        <div class="col-title-text">
+          <div class="title-line">
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${highlightMatch(item.title, query)}</span>
+          </div>
+          ${pathHTML}
+          ${metaHTML}
+        </div>
+      </div>
+      <div class="col-cell">${typeLabel(item.type)}</div>
+      <div class="col-cell">
+        ${item.status ? `<span class="status-badge ${statusVariant(item.status)}">${item.status}</span>` : ''}
+      </div>
+      <div class="col-cell">${item.date || ''}</div>
+      <div class="col-cell col-by">
+        ${item.by ? `<div class="avatar" data-tooltip="${item.by}">${avatarInitials(item.by)}</div>` : ''}
+      </div>
+      <div class="col-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+  `;
+}
+
+function statusVariant(status) {
+  const s = status.toLowerCase();
+  if (s.includes('complete') || s.includes('submitted')) return 'success';
+  if (s.includes('progress') || s.includes('workflow')) return 'info';
+  if (s.includes('draft')) return 'neutral';
+  return 'neutral';
+}
+
+// ---- Render functions ----
+
+// Renders the compact resting state — just input + recents.
+// This is the initial state when the modal opens and the user hasn't interacted yet.
+function renderCompactEmpty() {
+  state = 'compact-empty';
+  stateIndicatorText.textContent = 'State: compact-empty (initial)';
+  modalEl.classList.add('compact');
+  resultsTabs.classList.add('hidden');
+  filterChips.classList.add('empty');
+  footerAction.classList.add('hidden');
+  clearBtn.style.display = 'none';
+  nlsHintSlot.innerHTML = '';
+  closeSidecar();
+
+  // Compact state shows fewer recents (3 + 3)
+  modalBody.innerHTML = `
+    <div class="section-header">
+      <span>Recent searches</span>
+    </div>
+    ${RECENT_SEARCHES.slice(0, 3).map(s => `
+      <div class="row" data-recent-search="${s}">
+        <div class="row-icon recent">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+        </div>
+        <div class="row-content">
+          <div class="row-title">${s}</div>
+        </div>
+        <span class="row-arrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </div>
+    `).join('')}
+    <div class="section-header" style="margin-top:8px">
+      <span>Recent items</span>
+    </div>
+    ${RECENT_ITEMS.slice(0, 3).map(item => `
+      <div class="row">
+        <div class="row-content">
+          <div class="row-title">${item.title}</div>
+          <div class="row-meta">${item.meta}</div>
+        </div>
+        <span class="row-arrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </div>
+    `).join('')}
+  `;
+
+  footerHints.innerHTML = `
+    <span class="hint"><span class="kbd">↑</span><span class="kbd">↓</span> Navigate</span>
+    <span class="hint"><span class="kbd">↵</span> Open</span>
+    <span class="hint"><span class="kbd">esc</span> Close</span>
+  `;
+
+  wireRecentSearchClicks();
+}
+
+// Renders the expanded resting state — user cleared their query but modal stays expanded.
+// Shows padded recents (5 + 5) so the larger surface doesn't feel empty.
+// Tabs/filters/sort are hidden because there are no results to organise.
+function renderExpandedEmpty() {
+  state = 'expanded-empty';
+  stateIndicatorText.textContent = 'State: expanded-empty (cleared, modal stays expanded)';
+  modalEl.classList.remove('compact');
+  resultsTabs.classList.add('hidden');
+  filterChips.classList.add('empty');
+  footerAction.classList.add('hidden');
+  clearBtn.style.display = 'none';
+  nlsHintSlot.innerHTML = '';
+  nlsResolved = false;
+  // Clear filters when query is cleared (filters and query are coupled)
+  Object.keys(activeFilters).forEach(k => activeFilters[k] = []);
+  closeSidecar();
+
+  modalBody.innerHTML = `
+    <div class="section-header">
+      <span>Recent searches</span>
+    </div>
+    ${RECENT_SEARCHES.map(s => `
+      <div class="row" data-recent-search="${s}">
+        <div class="row-icon recent">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+        </div>
+        <div class="row-content">
+          <div class="row-title">${s}</div>
+        </div>
+        <span class="row-arrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </div>
+    `).join('')}
+    <div class="section-header" style="margin-top:8px">
+      <span>Recent items</span>
+    </div>
+    ${RECENT_ITEMS.map(item => `
+      <div class="row">
+        <div class="row-content">
+          <div class="row-title">${item.title}</div>
+          <div class="row-meta">${item.meta}</div>
+        </div>
+        <span class="row-arrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </div>
+    `).join('')}
+  `;
+
+  footerHints.innerHTML = `
+    <span class="hint"><span class="kbd">↑</span><span class="kbd">↓</span> Navigate</span>
+    <span class="hint"><span class="kbd">↵</span> Open</span>
+    <span class="hint"><span class="kbd">esc</span> Close</span>
+  `;
+
+  wireRecentSearchClicks();
+}
+
+// Renders the expanded typing state — live Tier 1/2 results with full chrome (tabs, filter, sort).
+// This is the primary "working" state of the modal.
+function renderExpandedTyping(query) {
+  state = 'expanded-typing';
+  stateIndicatorText.textContent = 'State: expanded-typing (live Tier 1/2 results)';
+  modalEl.classList.remove('compact');
+  resultsTabs.classList.remove('hidden');
+  clearBtn.style.display = '';
+  footerAction.classList.add('hidden');
+
+  renderFilterChips();
+  updateNlsHint(query);
+
+  const filtered = applyActiveFilters(FULL_RESULTS);
+  const tabFiltered = activeTab === 'all' ? filtered : filtered.filter(r => r.type === activeTab.replace(/s$/, ''));
+
+  // Zero results — always offer NLS as the off-ramp (renderZeroState handles this internally)
+  if (tabFiltered.length === 0) {
+    modalBody.innerHTML = renderZeroState(query);
+  } else {
+    // Thin results AND query qualifies as Tier 3 → append soft NLS prompt below the rows
+    const showThinPrompt = tabFiltered.length <= 3 && isTier3Candidate(query) && !nlsResolved;
+
+    modalBody.innerHTML = `
+      <div class="result-rows-table">
+        <div class="result-table-header">
+          <span class="sortable">Title <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+          <span class="sortable">Type</span>
+          <span class="sortable">Status</span>
+          <span class="sortable">Modified <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+          <span>By</span>
+          <span></span>
+        </div>
+        ${tabFiltered.map(item => renderResultRow(item, query)).join('')}
+      </div>
+      ${showThinPrompt ? renderThinResultsPrompt(query) : ''}
+    `;
+  }
+
+  updateTabCounts(filtered);
+
+  footerHints.innerHTML = `
+    <span class="hint"><span class="kbd">↑</span><span class="kbd">↓</span> Navigate</span>
+    <span class="hint"><span class="kbd">↵</span> ${isTier3Candidate(query) ? 'Search with AI' : 'Open'}</span>
+    <span class="hint"><span class="kbd">⌘</span><span class="kbd">F</span> Filter</span>
+    <span class="hint"><span class="kbd">esc</span> Close</span>
+  `;
+}
+
+// Renders the Tier 3 NLS processing state — Enter was pressed on a long query.
+// Shows existing results with a processing indicator in the input.
+function renderNlsProcessing(query) {
+  state = 'nls-processing';
+  stateIndicatorText.textContent = 'State: nls-processing (Claude API call in flight)';
+  updateNlsHint(query);
+  footerHints.innerHTML = `
+    <span class="hint"><span class="spinner" style="width:11px;height:11px;border-width:1.5px"></span> Resolving natural language query…</span>
+    <span class="hint"><span class="kbd">esc</span> Cancel</span>
+  `;
+}
+
+// Renders the Tier 3 NLS resolved state — results back from Claude → JSON → OpenSearch.
+// Results are indistinguishable from any other OpenSearch result set; no banner, no interpretation echo.
+// The only NLS-specific UI lives in the input row (hint + processing state), not on results.
+function renderNlsResolved(query) {
+  state = 'nls-resolved';
+  stateIndicatorText.textContent = 'State: nls-resolved (Tier 3 results back)';
+  nlsResolved = true;
+  lastNlsQuery = query;
+  modalEl.classList.remove('compact');
+  resultsTabs.classList.remove('hidden');
+  clearBtn.style.display = '';
+  footerAction.classList.add('hidden');
+  nlsHintSlot.innerHTML = '';
+
+  renderFilterChips();
+
+  const filtered = applyActiveFilters(FULL_RESULTS);
+  const tabFiltered = activeTab === 'all' ? filtered : filtered.filter(r => r.type === activeTab.replace(/s$/, ''));
+
+  if (tabFiltered.length === 0) {
+    modalBody.innerHTML = renderZeroState(query);
+  } else {
+    modalBody.innerHTML = `
+      <div class="result-rows-table">
+        <div class="result-table-header">
+          <span class="sortable">Title <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+          <span class="sortable">Type</span>
+          <span class="sortable">Status</span>
+          <span class="sortable">Modified <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+          <span>By</span>
+          <span></span>
+        </div>
+        ${tabFiltered.map(item => renderResultRow(item, query)).join('')}
+      </div>
+    `;
+  }
+
+  updateTabCounts(filtered);
+
+  footerHints.innerHTML = `
+    <span class="hint"><span class="kbd">↑</span><span class="kbd">↓</span> Navigate</span>
+    <span class="hint"><span class="kbd">↵</span> Open</span>
+    <span class="hint"><span class="kbd">⌘</span><span class="kbd">F</span> Filter</span>
+    <span class="hint"><span class="kbd">esc</span> Close</span>
+  `;
+}
+
+// Renders an inline prompt suggesting the user press Enter for AI search
+// (used when keyword/OpenSearch returns thin results on a Tier 3 candidate query)
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function wireRecentSearchClicks() {
+  modalBody.querySelectorAll('[data-recent-search]').forEach(el => {
+    el.addEventListener('click', () => {
+      inputEl.value = el.dataset.recentSearch;
+      hasInteracted = true;
+      // If the recent search is itself a Tier 3 query, treat clicking it as committing
+      if (isTier3Candidate(inputEl.value)) {
+        triggerNlsSearch(inputEl.value);
+      } else {
+        renderExpandedTyping(inputEl.value);
+      }
+    });
+  });
+}
+
+// Triggers a simulated Tier 3 NLS call (Claude → JSON → OpenSearch)
+function triggerNlsSearch(query) {
+  if (!query || !query.trim()) return;
+  renderNlsProcessing(query);
+  // Simulate latency
+  setTimeout(() => {
+    // Move query to top of recent searches (just-committed query is most recent)
+    RECENT_SEARCHES = [query, ...RECENT_SEARCHES.filter(s => s !== query)].slice(0, 5);
+    renderNlsResolved(query);
+  }, 900);
+}
+
+function renderZeroState(query) {
+  const hasFilters = Object.values(activeFilters).some(arr => arr.length > 0);
+  return `
+    <div class="empty">
+      <div class="empty-title">No results for "${escapeHtml(query)}"${hasFilters ? ' with the active filters' : ''}</div>
+      <div class="empty-sub" style="margin-top: 8px">
+        Try a different search term${hasFilters ? ', remove filters,' : ''} or ask the question differently.
+      </div>
+      <div style="margin-top: 20px">
+        <button class="nls-prompt-cta" onclick="triggerNlsSearch('${escapeHtml(query).replace(/'/g, "\\'")}')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 L13.5 8.5 L20 10 L13.5 11.5 L12 18 L10.5 11.5 L4 10 L10.5 8.5 Z"/></svg>
+          Search with AI <span class="kbd" style="border-color:rgba(124,58,237,0.3);color:#7c3aed;background:rgba(124,58,237,0.08)">↵</span>
+        </button>
+      </div>
+      ${hasFilters ? `
+        <div style="margin-top: 12px">
+          <button class="footer-action" style="font-size:13px" onclick="document.getElementById('clearAllChips').click()">Or clear all filters</button>
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+// Soft prompt appended below thin results (1–3 rows) for Tier 3 candidate queries.
+// Asks "not what you meant?" without disrupting the results that did come back.
+function renderThinResultsPrompt(query) {
+  return `
+    <div class="thin-results-prompt">
+      <div class="thin-results-text">
+        Not what you were looking for?
+      </div>
+      <button class="nls-prompt-cta" style="padding: 6px 12px; font-size: 12.5px" onclick="triggerNlsSearch('${escapeHtml(query).replace(/'/g, "\\'")}')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 L13.5 8.5 L20 10 L13.5 11.5 L12 18 L10.5 11.5 L4 10 L10.5 8.5 Z"/></svg>
+        Search with AI <span class="kbd" style="border-color:rgba(124,58,237,0.3);color:#7c3aed;background:rgba(124,58,237,0.08);font-size:9.5px">↵</span>
+      </button>
+    </div>
+  `;
+}
+
+function renderFilterChips() {
+  const all = [];
+  FILTER_FACETS.forEach(facet => {
+    (activeFilters[facet.key] || []).forEach(v => {
+      all.push({ key: facet.key, value: v, label: facet.label });
+    });
+  });
+
+  if (all.length === 0) {
+    filterChips.classList.add('empty');
+    filterChips.innerHTML = '';
+    filterCount.classList.add('hidden');
+    return;
+  }
+  filterChips.classList.remove('empty');
+  filterCount.classList.remove('hidden');
+  filterCount.textContent = all.length;
+
+  filterChips.innerHTML = all.map(c => `
+    <span class="chip">
+      <strong>${c.label}:</strong> ${c.value}
+      <button data-key="${c.key}" data-value="${c.value}" aria-label="Remove">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </span>
+  `).join('') + `<button class="clear-all" id="clearAllChips">Clear all</button>`;
+
+  filterChips.querySelectorAll('.chip button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const { key, value } = btn.dataset;
+      activeFilters[key] = activeFilters[key].filter(v => v !== value);
+      if (state === 'nls-resolved') renderNlsResolved(inputEl.value);
+      else renderExpandedTyping(inputEl.value);
+      if (filterSidecar.classList.contains('open')) renderSidecar();
+    });
+  });
+
+  document.getElementById('clearAllChips').addEventListener('click', () => {
+    Object.keys(activeFilters).forEach(k => activeFilters[k] = []);
+    if (state === 'nls-resolved') renderNlsResolved(inputEl.value);
+    else renderExpandedTyping(inputEl.value);
+    if (filterSidecar.classList.contains('open')) renderSidecar();
+  });
+}
+
+function applyActiveFilters(items) {
+  return items.filter(item => {
+    // Status (checks item.status)
+    if (activeFilters.status && activeFilters.status.length > 0) {
+      const matchesStatus = activeFilters.status.some(s =>
+        item.status && item.status.toLowerCase().includes(s.toLowerCase())
+      );
+      if (!matchesStatus) return false;
+    }
+    // Project, Submitter, Country, Test Notes — checked against meta fields
+    const metaCheck = (filterKey, fieldName) => {
+      if (!activeFilters[filterKey] || activeFilters[filterKey].length === 0) return true;
+      if (!item.meta) return false;
+      const field = item.meta.find(m => m.key === fieldName);
+      if (!field || !field.value) return false;
+      return activeFilters[filterKey].some(v =>
+        field.value.toLowerCase().includes(v.toLowerCase())
+      );
+    };
+    if (!metaCheck('project', 'Project')) return false;
+    if (!metaCheck('submitter', 'Submitter')) return false;
+    return true;
+  });
+}
+
+function updateTabCounts(items) {
+  const counts = {
+    all: items.length,
+    forms: items.filter(i => i.type === 'form').length,
+    projects: items.filter(i => i.type === 'project').length,
+    tasks: items.filter(i => i.type === 'task').length,
+    files: items.filter(i => i.type === 'file').length,
+  };
+  document.querySelectorAll('.tab').forEach(tab => {
+    const t = tab.dataset.tab;
+    tab.querySelector('.tab-count').textContent = counts[t];
+  });
+}
+
+// ---- Sidecar rendering ----
+function renderSidecar() {
+  const q = facetSearchQuery.toLowerCase().trim();
+
+  // Filter facets by header search query
+  const visibleFacets = q
+    ? FILTER_FACETS.filter(f => f.label.toLowerCase().includes(q))
+    : FILTER_FACETS;
+
+  if (visibleFacets.length === 0) {
+    sidecarBody.innerHTML = `<div class="facet-empty">No filters match "${facetSearchQuery}"</div>`;
+    return;
+  }
+
+  sidecarBody.innerHTML = visibleFacets.map(facet => {
+    const isOpen = openFacets.has(facet.key) || q.length > 0; // auto-expand on filter search
+    const appliedCount = (activeFilters[facet.key] || []).length;
+    return `
+      <div class="facet ${isOpen ? 'open' : ''}" data-facet="${facet.key}">
+        <div class="facet-header" data-facet-toggle="${facet.key}">
+          <span class="facet-header-label">
+            ${facet.label}
+            ${appliedCount > 0 ? `<span class="facet-applied-count">${appliedCount}</span>` : ''}
+          </span>
+          <span class="facet-chevron">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </div>
+        <div class="facet-content">
+          ${renderFacetWidget(facet)}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  wireSidecarInteractions();
+}
+
+function renderFacetWidget(facet) {
+  if (facet.widget === 'chip') {
+    return `
+      <div class="facet-chip-options">
+        ${facet.options.map(opt => `
+          <button class="facet-chip-option ${(activeFilters[facet.key] || []).includes(opt) ? 'selected' : ''}"
+            data-facet-value="${facet.key}|${opt}">${opt}</button>
+        `).join('')}
+      </div>
+    `;
+  }
+  if (facet.widget === 'date') {
+    return `
+      <div class="facet-chip-options">
+        ${facet.presets.map(opt => `
+          <button class="facet-chip-option ${(activeFilters[facet.key] || []).includes(opt) ? 'selected' : ''}"
+            data-facet-value="${facet.key}|${opt}">${opt}</button>
+        `).join('')}
+      </div>
+      <div class="facet-date-range">
+        <input type="text" placeholder="dd/mm/yyyy">
+        <input type="text" placeholder="dd/mm/yyyy">
+      </div>
+    `;
+  }
+  if (facet.widget === 'checkbox-list') {
+    const showSearch = facet.options.length >= 8;
+    const facetValueQuery = (window.__facetValueQueries || {})[facet.key] || '';
+    const filtered = facetValueQuery
+      ? facet.options.filter(o => o.toLowerCase().includes(facetValueQuery.toLowerCase()))
+      : facet.options;
+
+    return `
+      ${showSearch ? `
+        <div class="facet-value-search">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+          <input type="text" placeholder="Search ${facet.label.toLowerCase()}…"
+            data-facet-value-search="${facet.key}"
+            value="${facetValueQuery}">
+        </div>
+      ` : ''}
+      <div class="facet-options">
+        ${filtered.length === 0 ? `<div class="facet-empty">No matches</div>` : filtered.map(opt => `
+          <label class="facet-checkbox-row">
+            <input type="checkbox"
+              data-facet-value="${facet.key}|${opt}"
+              ${(activeFilters[facet.key] || []).includes(opt) ? 'checked' : ''}>
+            <span class="facet-value-label">${opt}</span>
+          </label>
+        `).join('')}
+      </div>
+    `;
+  }
+  return '';
+}
+
+function wireSidecarInteractions() {
+  // Facet header toggle
+  sidecarBody.querySelectorAll('[data-facet-toggle]').forEach(el => {
+    el.addEventListener('click', () => {
+      const key = el.dataset.facetToggle;
+      if (openFacets.has(key)) openFacets.delete(key);
+      else openFacets.add(key);
+      renderSidecar();
+    });
+  });
+
+  // Chip-style facets
+  sidecarBody.querySelectorAll('.facet-chip-option').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const [key, value] = btn.dataset.facetValue.split('|');
+      toggleFilterValue(key, value);
+      renderSidecar();
+      if (state === 'nls-resolved') renderNlsResolved(inputEl.value);
+      else renderExpandedTyping(inputEl.value);
+    });
+  });
+
+  // Checkbox-style facets
+  sidecarBody.querySelectorAll('input[type="checkbox"][data-facet-value]').forEach(cb => {
+    cb.addEventListener('change', (e) => {
+      e.stopPropagation();
+      const [key, value] = cb.dataset.facetValue.split('|');
+      toggleFilterValue(key, value);
+      // Don't fully re-render so the user can keep ticking; just update counts and chips
+      const facetEl = cb.closest('.facet');
+      const appliedCount = (activeFilters[key] || []).length;
+      const countEl = facetEl.querySelector('.facet-applied-count');
+      if (appliedCount > 0) {
+        if (countEl) countEl.textContent = appliedCount;
+        else facetEl.querySelector('.facet-header-label').insertAdjacentHTML('beforeend',
+          `<span class="facet-applied-count">${appliedCount}</span>`);
+      } else if (countEl) {
+        countEl.remove();
+      }
+      if (state === 'nls-resolved') renderNlsResolved(inputEl.value);
+      else renderExpandedTyping(inputEl.value);
+    });
+    // Prevent label click bubbling to header
+    cb.parentElement.addEventListener('click', (e) => e.stopPropagation());
+  });
+
+  // Per-facet value search inputs
+  sidecarBody.querySelectorAll('[data-facet-value-search]').forEach(input => {
+    input.addEventListener('input', (e) => {
+      e.stopPropagation();
+      const key = input.dataset.facetValueSearch;
+      window.__facetValueQueries = window.__facetValueQueries || {};
+      window.__facetValueQueries[key] = input.value;
+      // Re-render only this facet's options
+      const facet = FILTER_FACETS.find(f => f.key === key);
+      const facetEl = sidecarBody.querySelector(`[data-facet="${key}"] .facet-content`);
+      if (facetEl) {
+        facetEl.innerHTML = renderFacetWidget(facet);
+        // Re-focus the search input after re-render
+        const newInput = facetEl.querySelector('[data-facet-value-search]');
+        if (newInput) {
+          newInput.focus();
+          newInput.setSelectionRange(input.value.length, input.value.length);
+        }
+        wireSidecarInteractions();
+      }
+    });
+    input.addEventListener('click', (e) => e.stopPropagation());
+  });
+}
+
+function toggleFilterValue(key, value) {
+  if (!activeFilters[key]) activeFilters[key] = [];
+  if (activeFilters[key].includes(value)) {
+    activeFilters[key] = activeFilters[key].filter(v => v !== value);
+  } else {
+    activeFilters[key].push(value);
+  }
+}
+
+function openSidecar() {
+  filterSidecar.classList.add('open');
+  renderSidecar();
+}
+
+function closeSidecar() {
+  filterSidecar.classList.remove('open');
+}
+
+// ---- Event handlers ----
+
+// Renders a transient skeleton state — shown briefly after each keystroke while
+// debouncing the real result render. Sets up the expanded layout immediately so
+// the modal doesn't pop, but defers the actual result swap by ~180ms.
+function renderSkeleton(query) {
+  state = 'skeleton';
+  stateIndicatorText.textContent = 'State: skeleton (debouncing)';
+  modalEl.classList.remove('compact');
+  resultsTabs.classList.remove('hidden');
+  clearBtn.style.display = '';
+  footerAction.classList.add('hidden');
+  updateNlsHint(query);
+  renderFilterChips();
+
+  // Build 6 skeleton rows with varied title-bar widths so it doesn't look mechanical
+  const widths = [78, 64, 86, 70, 58, 82];
+  modalBody.innerHTML = `
+    <div class="result-rows-table">
+      <div class="result-table-header">
+        <span class="sortable">Title</span>
+        <span class="sortable">Type</span>
+        <span class="sortable">Status</span>
+        <span class="sortable">Modified</span>
+        <span>By</span>
+        <span></span>
+      </div>
+      ${widths.map(w => `
+        <div class="skeleton-row">
+          <div class="col-title">
+            <span class="skeleton-icon"></span>
+            <div class="skeleton-title-block">
+              <span class="skeleton-bar" style="width:${w}%; height:14px"></span>
+              <span class="skeleton-bar" style="width:${Math.max(30, w - 30)}%; height:11px"></span>
+            </div>
+          </div>
+          <span class="skeleton-bar" style="width:60%"></span>
+          <span class="skeleton-bar" style="width:80%"></span>
+          <span class="skeleton-bar" style="width:70%"></span>
+          <span class="skeleton-bar" style="width:22px; height:22px; border-radius:50%"></span>
+          <span></span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  footerHints.innerHTML = `
+    <span class="hint"><span class="kbd">↑</span><span class="kbd">↓</span> Navigate</span>
+    <span class="hint"><span class="kbd">↵</span> ${isTier3Candidate(query) ? 'Search with AI' : 'Open'}</span>
+    <span class="hint"><span class="kbd">⌘</span><span class="kbd">F</span> Filter</span>
+    <span class="hint"><span class="kbd">esc</span> Close</span>
+  `;
+}
+
+// Debounce timer — held at module scope so each keystroke cancels the previous
+let typeaheadDebounce = null;
+const TYPEAHEAD_DEBOUNCE_MS = 220;
+
+function onInput() {
+  const q = inputEl.value.trim();
+
+  // Clear any pending debounce on every input event
+  if (typeaheadDebounce) {
+    clearTimeout(typeaheadDebounce);
+    typeaheadDebounce = null;
+  }
+
+  if (q === '') {
+    // Empty input: pick the right empty state based on whether user has interacted
+    if (hasInteracted) {
+      renderExpandedEmpty();
+    } else {
+      renderCompactEmpty();
+    }
+    return;
+  }
+
+  // First keystroke commits to expanded state for the rest of the session
+  hasInteracted = true;
+  // If we were on resolved NLS results and user edits the query, drop back to typing state
+  if (state === 'nls-resolved' && q !== lastNlsQuery) {
+    nlsResolved = false;
+  }
+
+  // Show skeleton immediately (expands modal if needed), then real results after debounce.
+  // Skipping skeleton if we're already in typing state and have results — feels jarring otherwise.
+  if (state !== 'expanded-typing') {
+    renderSkeleton(q);
+  }
+
+  typeaheadDebounce = setTimeout(() => {
+    renderExpandedTyping(q);
+    typeaheadDebounce = null;
+  }, TYPEAHEAD_DEBOUNCE_MS);
+}
+
+inputEl.addEventListener('input', onInput);
+
+inputEl.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const q = inputEl.value.trim();
+    if (!q) return;
+    // Tier 3 candidate → fire NLS call. Otherwise Enter opens top result (no-op in prototype).
+    if (isTier3Candidate(q) && !nlsResolved) {
+      triggerNlsSearch(q);
+    }
+  } else if (e.key === 'Escape') {
+    if (filterSidecar.classList.contains('open')) {
+      closeSidecar();
+    }
+  }
+});
+
+clearBtn.addEventListener('click', () => {
+  // When user clicks clear: put just-cleared query at top of recent searches for recovery
+  const cleared = inputEl.value.trim();
+  if (cleared) {
+    RECENT_SEARCHES = [cleared, ...RECENT_SEARCHES.filter(s => s !== cleared)].slice(0, 5);
+  }
+  inputEl.value = '';
+  inputEl.focus();
+  onInput();
+});
+
+footerAction.addEventListener('click', () => {
+  renderExpandedTyping(inputEl.value.trim());
+});
+
+// Filter button → toggle sidecar
+filterBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (filterSidecar.classList.contains('open')) closeSidecar();
+  else openSidecar();
+});
+
+sidecarClose.addEventListener('click', closeSidecar);
+sidecarApply.addEventListener('click', closeSidecar);
+sidecarClear.addEventListener('click', () => {
+  Object.keys(activeFilters).forEach(k => activeFilters[k] = []);
+  renderSidecar();
+  if (state === 'nls-resolved') renderNlsResolved(inputEl.value);
+  else renderExpandedTyping(inputEl.value);
+});
+
+// Filter facet search (header)
+filterFacetSearch.addEventListener('input', (e) => {
+  facetSearchQuery = e.target.value;
+  renderSidecar();
+});
+
+// Tabs
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    activeTab = tab.dataset.tab;
+    if (state === 'nls-resolved') renderNlsResolved(inputEl.value);
+    else renderExpandedTyping(inputEl.value);
+  });
+});
+
+// Initial state — open with compact empty
+inputEl.focus();
+renderCompactEmpty();
+
+// Reset button — restore to compact-empty state for easy testing
+stateResetBtn.addEventListener('click', () => {
+  inputEl.value = '';
+  hasInteracted = false;
+  nlsResolved = false;
+  lastNlsQuery = '';
+  activeTab = 'all';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const firstTab = document.querySelector('.tab[data-tab="all"]');
+  if (firstTab) firstTab.classList.add('active');
+  Object.keys(activeFilters).forEach(k => activeFilters[k] = []);
+  renderCompactEmpty();
+  inputEl.focus();
+});
+
+// ---- Path ellipsis tooltip (delegated, escapes overflow via fixed positioning) ----
+const pathTooltip = document.getElementById('pathTooltip');
+
+document.addEventListener('mouseover', (e) => {
+  const ellipsis = e.target.closest('.path-ellipsis');
+  if (!ellipsis) return;
+  const fullPath = ellipsis.dataset.fullpath;
+  if (!fullPath) return;
+
+  pathTooltip.textContent = fullPath;
+  pathTooltip.classList.add('visible');
+
+  // Position centred above the ellipsis
+  const rect = ellipsis.getBoundingClientRect();
+  // Render once invisibly to measure
+  pathTooltip.style.left = '0px';
+  pathTooltip.style.top = '0px';
+  const tipRect = pathTooltip.getBoundingClientRect();
+
+  let left = rect.left + (rect.width / 2) - (tipRect.width / 2);
+  // Clamp to viewport
+  const margin = 8;
+  if (left < margin) left = margin;
+  if (left + tipRect.width > window.innerWidth - margin) {
+    left = window.innerWidth - tipRect.width - margin;
+  }
+  const top = rect.bottom + 6;
+
+  pathTooltip.style.left = `${left}px`;
+  pathTooltip.style.top = `${top}px`;
+});
+
+document.addEventListener('mouseout', (e) => {
+  const ellipsis = e.target.closest('.path-ellipsis');
+  if (!ellipsis) return;
+  pathTooltip.classList.remove('visible');
+});
+
+// Demo: prefill with "all file types" via keyboard shortcut for quick testing
+document.addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    inputEl.focus();
+  }
+  // Demo shortcut: ctrl/cmd + . prefills the demo query
+  if ((e.metaKey || e.ctrlKey) && e.key === '.') {
+    e.preventDefault();
+    inputEl.value = 'all file types';
+    onInput();
+  }
+  // Demo shortcut: ctrl/cmd + / prefills a Tier 3 conversational query
+  if ((e.metaKey || e.ctrlKey) && e.key === '/') {
+    e.preventDefault();
+    inputEl.value = 'show me all completed forms for FIFA WC2026';
+    onInput();
+  }
+});
+</script>
+
+</body>
+</html>
