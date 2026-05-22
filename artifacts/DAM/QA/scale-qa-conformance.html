@@ -1,0 +1,2723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scale QA Conformance — Screendragon</title>
+<style>
+:root {
+  /* Sand neutrals */
+  --sand-1:  #fdfdfc;
+  --sand-2:  #f9f9f8;
+  --sand-3:  #f1f0ef;
+  --sand-4:  #e9e8e6;
+  --sand-5:  #e2e1de;
+  --sand-6:  #dad9d6;
+  --sand-7:  #cfceca;
+  --sand-8:  #bcbbb5;
+  --sand-9:  #8d8d86;
+  --sand-10: #82827c;
+  --sand-11: #63635e;
+  --sand-12: #21201c;
+
+  /* Action / brand */
+  --teal-9:   #0B6E8A;
+  --teal-10:  #005F7B;
+  --teal-3:   #D5EFF9;
+  --teal-6:   #B0D9E9;
+
+  /* Status */
+  --pass-9:  #29A383;
+  --pass-3:  #D3F3DD;
+  --fail-9:  #E54D2E;
+  --fail-3:  #FFDCD7;
+  --skip-9:  #8d8d86;
+  --skip-3:  #f1f0ef;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Layout */
+  --sidebar-w: 280px;
+  --header-h: 56px;
+  --radius-1: 4px;
+  --radius-2: 6px;
+  --radius-3: 8px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0; padding: 0;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--sand-12);
+  background: var(--sand-2);
+  -webkit-font-smoothing: antialiased;
+}
+
+code, pre, .mono { font-family: var(--font-mono); font-size: 12px; }
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.app {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  grid-template-rows: var(--header-h) 1fr;
+  height: 100vh;
+}
+
+header.app-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: var(--sand-1);
+  border-bottom: 1px solid var(--sand-5);
+  z-index: 10;
+}
+
+.brand {
+  display: flex; align-items: center; gap: 12px;
+}
+.brand-mark {
+  width: 24px; height: 24px;
+  border-radius: var(--radius-1);
+  background: linear-gradient(135deg, var(--teal-9), var(--pass-9));
+}
+.brand-name {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.brand-name span {
+  color: var(--sand-9);
+  font-weight: 400;
+  margin-left: 6px;
+}
+
+.header-actions {
+  display: flex; align-items: center; gap: 8px;
+}
+
+aside.sidebar {
+  background: var(--sand-1);
+  border-right: 1px solid var(--sand-5);
+  overflow-y: auto;
+  padding: 16px 12px;
+}
+
+.sb-section {
+  margin-bottom: 24px;
+}
+.sb-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sand-9);
+  padding: 0 8px;
+  margin-bottom: 8px;
+}
+.review-item {
+  padding: 8px 10px;
+  border-radius: var(--radius-1);
+  cursor: pointer;
+  margin-bottom: 2px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px;
+}
+.review-item:hover { background: var(--sand-3); }
+.review-item.active {
+  background: var(--teal-3);
+  color: var(--teal-10);
+  font-weight: 500;
+}
+.review-item-name {
+  flex: 1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-size: 13px;
+}
+.review-item-progress {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--sand-9);
+}
+.review-item.active .review-item-progress { color: var(--teal-10); }
+
+.sb-section-link {
+  display: block;
+  padding: 6px 8px;
+  border-radius: var(--radius-1);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--sand-11);
+  text-decoration: none;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.sb-section-link:hover { background: var(--sand-3); }
+.sb-section-link.active {
+  background: var(--sand-3);
+  color: var(--sand-12);
+  font-weight: 500;
+}
+.sb-count {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--sand-9);
+}
+
+main.workspace {
+  overflow-y: auto;
+  padding: 24px 32px 80px;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: var(--radius-1);
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: background 0.12s, border-color 0.12s;
+  background: transparent;
+  color: var(--sand-12);
+}
+.btn:focus-visible { outline: 2px solid var(--teal-9); outline-offset: 1px; }
+
+.btn-primary { background: var(--teal-9); color: white; }
+.btn-primary:hover { background: var(--teal-10); }
+
+.btn-secondary { background: var(--sand-1); border-color: var(--sand-6); }
+.btn-secondary:hover { background: var(--sand-3); border-color: var(--sand-7); }
+
+.btn-ghost { background: transparent; color: var(--sand-11); }
+.btn-ghost:hover { background: var(--sand-3); color: var(--sand-12); }
+
+.btn-icon {
+  width: 28px; height: 28px;
+  padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--sand-9);
+}
+.btn-icon:hover { background: var(--sand-3); color: var(--sand-12); }
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  color: var(--sand-9);
+  padding: 40px;
+}
+.empty h2 {
+  color: var(--sand-12);
+  font-weight: 600;
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.empty p { max-width: 420px; margin: 0 0 20px; line-height: 1.6; }
+
+/* ============================================================
+   REVIEW HEADER
+   ============================================================ */
+.review-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--sand-5);
+}
+.review-meta { flex: 1; min-width: 0; }
+.review-name {
+  font-size: 22px; font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 6px;
+  display: flex; align-items: center; gap: 10px;
+}
+.review-name input {
+  font: inherit; color: inherit;
+  border: none; background: transparent;
+  padding: 4px 6px; margin: -4px -6px;
+  border-radius: var(--radius-1);
+  width: 100%;
+}
+.review-name input:focus {
+  outline: none;
+  background: var(--sand-3);
+}
+.review-url {
+  color: var(--sand-9);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  margin: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.review-url input {
+  font: inherit; color: inherit;
+  border: none; background: transparent;
+  padding: 3px 6px; margin: -3px -6px;
+  border-radius: var(--radius-1);
+  width: 100%;
+}
+.review-url input:focus {
+  outline: none;
+  background: var(--sand-3);
+}
+
+.progress-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.progress-ring {
+  width: 56px; height: 56px;
+  position: relative;
+}
+.progress-ring svg { transform: rotate(-90deg); }
+.progress-ring-bg { stroke: var(--sand-5); }
+.progress-ring-fg { stroke: var(--teal-9); transition: stroke-dashoffset 0.3s; }
+.progress-ring-text {
+  position: absolute;
+  inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600;
+  font-feature-settings: 'tnum';
+}
+
+.progress-stats {
+  display: flex; flex-direction: column; gap: 2px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+.progress-stats span { color: var(--sand-9); }
+.progress-stats span b { color: var(--sand-12); margin-right: 4px; font-weight: 600; }
+.stat-pass b { color: var(--pass-9); }
+.stat-fail b { color: var(--fail-9); }
+
+/* ============================================================
+   PAGE TYPE TOGGLES
+   ============================================================ */
+.page-types {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-bottom: 28px;
+  padding: 12px 14px;
+  background: var(--sand-1);
+  border: 1px solid var(--sand-5);
+  border-radius: var(--radius-2);
+}
+.page-types-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sand-9);
+  margin-right: 6px;
+  align-self: center;
+}
+.pt-toggle {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--sand-6);
+  background: var(--sand-1);
+  color: var(--sand-11);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.12s;
+}
+.pt-toggle:hover { border-color: var(--sand-8); color: var(--sand-12); }
+.pt-toggle.active {
+  background: var(--teal-3);
+  border-color: var(--teal-9);
+  color: var(--teal-10);
+  font-weight: 500;
+}
+.pt-toggle.always-on {
+  background: var(--sand-12);
+  color: var(--sand-1);
+  border-color: var(--sand-12);
+  cursor: default;
+}
+
+/* ============================================================
+   CHECK SECTIONS
+   ============================================================ */
+.check-section {
+  margin-bottom: 32px;
+  scroll-margin-top: 80px;
+}
+.check-section-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--sand-4);
+}
+.check-section-title {
+  font-size: 16px; font-weight: 600;
+  letter-spacing: -0.005em;
+  margin: 0;
+}
+.check-section-meta {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--sand-9);
+}
+.check-section-desc {
+  color: var(--sand-11);
+  font-size: 13px;
+  margin: 6px 0 14px;
+  max-width: 720px;
+}
+
+/* ============================================================
+   CHECK ROW
+   ============================================================ */
+.check {
+  display: grid;
+  grid-template-columns: 88px 1fr auto;
+  gap: 16px;
+  padding: 14px 14px;
+  border: 1px solid var(--sand-5);
+  border-radius: var(--radius-2);
+  background: var(--sand-1);
+  margin-bottom: 8px;
+  transition: border-color 0.12s, background 0.12s;
+}
+.check:hover { border-color: var(--sand-7); }
+.check.status-pass { background: linear-gradient(to right, var(--pass-3) 0, var(--pass-3) 4px, var(--sand-1) 4px); border-color: var(--sand-5); }
+.check.status-fail { background: linear-gradient(to right, var(--fail-3) 0, var(--fail-3) 4px, var(--sand-1) 4px); border-color: var(--sand-5); }
+.check.status-na   { background: linear-gradient(to right, var(--skip-3) 0, var(--skip-3) 4px, var(--sand-1) 4px); border-color: var(--sand-5); }
+
+.check-status-group {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.status-btn {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: var(--radius-1);
+  border: 1px solid var(--sand-6);
+  background: var(--sand-1);
+  color: var(--sand-9);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+  letter-spacing: 0.04em;
+  transition: all 0.1s;
+}
+.status-btn:hover { border-color: var(--sand-8); color: var(--sand-12); }
+.status-btn[data-active="pass"] { background: var(--pass-9); color: white; border-color: var(--pass-9); }
+.status-btn[data-active="fail"] { background: var(--fail-9); color: white; border-color: var(--fail-9); }
+.status-btn[data-active="na"]   { background: var(--skip-9); color: white; border-color: var(--skip-9); }
+
+.check-body {
+  min-width: 0;
+}
+.check-id {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--sand-9);
+  margin-right: 8px;
+}
+.check-title {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0 0 4px;
+}
+.check-expected {
+  font-size: 13px;
+  color: var(--sand-11);
+  margin: 0 0 6px;
+}
+.check-expected code {
+  background: var(--sand-3);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 11px;
+  color: var(--sand-12);
+}
+.check-how {
+  font-size: 12px;
+  color: var(--sand-9);
+  margin: 0;
+  font-style: italic;
+}
+.check-how::before { content: "↪ "; font-style: normal; color: var(--sand-8); }
+
+.check-notes {
+  margin-top: 10px;
+  width: 100%;
+  font: inherit;
+  font-size: 12px;
+  padding: 6px 8px;
+  border: 1px solid var(--sand-5);
+  border-radius: var(--radius-1);
+  resize: vertical;
+  min-height: 28px;
+  background: var(--sand-1);
+  color: var(--sand-12);
+  font-family: inherit;
+}
+.check-notes:focus { outline: 2px solid var(--teal-9); outline-offset: -1px; border-color: var(--teal-9); }
+.check-notes:placeholder-shown { min-height: 0; height: 32px; }
+
+.check-aside {
+  display: flex; flex-direction: column; gap: 4px;
+  align-items: flex-end;
+  font-size: 11px;
+  color: var(--sand-9);
+  font-family: var(--font-mono);
+}
+.check-token {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 2px 6px;
+  background: var(--sand-3);
+  border-radius: 3px;
+}
+.check-swatch {
+  width: 12px; height: 12px;
+  border-radius: 2px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+/* ============================================================
+   VISUAL AIDS — swatches, compare, example
+   ============================================================ */
+.visual {
+  margin-top: 10px;
+  padding: 12px;
+  background: var(--sand-2);
+  border: 1px solid var(--sand-5);
+  border-radius: var(--radius-1);
+}
+.visual-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sand-9);
+  margin-bottom: 8px;
+}
+
+/* Swatches row */
+.swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.swatch-card {
+  display: flex; flex-direction: column;
+  gap: 4px;
+  min-width: 96px;
+}
+.swatch-card .patch {
+  width: 100%;
+  height: 40px;
+  border-radius: var(--radius-1);
+  border: 1px solid rgba(0,0,0,0.08);
+}
+.swatch-card .patch-label {
+  font-size: 11px;
+  color: var(--sand-12);
+  font-weight: 500;
+}
+.swatch-card .patch-hex {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--sand-9);
+}
+.swatch-card .patch-note {
+  font-size: 10px;
+  color: var(--sand-11);
+  line-height: 1.4;
+}
+
+/* Compare grid (pass vs fail) */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.compare-cell {
+  background: var(--sand-1);
+  border: 1px solid var(--sand-5);
+  border-radius: var(--radius-1);
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.compare-cell.pass { border-top: 3px solid var(--pass-9); }
+.compare-cell.fail { border-top: 3px solid var(--fail-9); }
+.compare-cell::before {
+  content: attr(data-tag);
+  position: absolute;
+  top: 6px; right: 8px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.compare-cell.pass::before { color: var(--pass-9); content: "✓ Pass"; }
+.compare-cell.fail::before { color: var(--fail-9); content: "✗ Fail"; }
+.compare-render {
+  padding: 14px 8px 6px;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.compare-note {
+  font-size: 11px;
+  color: var(--sand-11);
+  border-top: 1px solid var(--sand-4);
+  padding-top: 6px;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+/* Single example (no comparison) */
+.example {
+  background: var(--sand-1);
+  border: 1px solid var(--sand-5);
+  border-radius: var(--radius-1);
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+}
+
+/* ============================================================
+   DEMO PRIMITIVES — reused inside .visual blocks
+   ============================================================
+   These exist so check examples can build mini-UIs without
+   redefining styles every time. */
+.demo-btn {
+  font-family: var(--font-sans);
+  font-size: 12px; font-weight: 500;
+  padding: 6px 12px;
+  border-radius: var(--radius-1);
+  border: 1px solid transparent;
+  cursor: default;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.demo-btn.primary { background: var(--teal-9); color: white; }
+.demo-btn.secondary { background: var(--sand-1); border-color: var(--sand-6); color: var(--sand-12); }
+.demo-btn.ghost { background: transparent; color: var(--sand-11); }
+.demo-btn.destructive { background: var(--fail-9); color: white; }
+.demo-btn.disabled { opacity: 0.5; background: var(--sand-4); color: var(--sand-9); }
+.demo-btn.wrong-secondary { background: var(--teal-9); color: white; } /* used to show "too many primaries" */
+.demo-btn.icon { width: 28px; height: 28px; padding: 0; justify-content: center; }
+.demo-btn.icon svg { width: 14px; height: 14px; }
+
+.demo-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-family: var(--font-sans);
+  background: var(--sand-1);
+}
+.demo-table th {
+  background: var(--sand-3);
+  font-weight: 600;
+  text-align: left;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--sand-5);
+  font-size: 11px;
+  color: var(--sand-12);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.demo-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--sand-4);
+  color: var(--sand-12);
+}
+.demo-table tr:last-child td { border-bottom: none; }
+.demo-table tr.selected { background: var(--teal-3); }
+.demo-table tr.hover { background: var(--sand-2); }
+.demo-table .pill {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 500;
+}
+.demo-table .pill.go { background: var(--pass-3); color: #006a3c; }
+.demo-table .pill.draft { background: var(--sand-3); color: var(--sand-11); }
+.demo-table .pill.warn { background: #FFE5BE; color: #985B00; }
+.demo-table .avatar {
+  display: inline-block;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  font-size: 9px; font-weight: 600;
+  color: white;
+  text-align: center; line-height: 20px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.demo-table.wrong th { background: var(--sand-1); font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--sand-11); }
+.demo-table.wrong tr { background: var(--sand-1); }
+
+/* Wrong-variant for "too heavy" borders */
+.demo-table.heavy td { border-bottom: 2px solid var(--sand-12); }
+
+/* Demo inputs */
+.demo-input {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  padding: 6px 10px;
+  background: var(--sand-1);
+  border: 1px solid var(--sand-6);
+  border-radius: var(--radius-1);
+  color: var(--sand-12);
+  width: 200px;
+}
+.demo-input.focus { outline: 2px solid var(--teal-9); outline-offset: -1px; border-color: var(--teal-9); }
+.demo-input.error { border-color: var(--fail-9); }
+.demo-input.disabled { background: var(--sand-3); color: var(--sand-9); }
+.demo-input.wrong { border-color: #0066ff; outline: 2px solid #0066ff; outline-offset: -1px; } /* browser-default-blue */
+
+.demo-field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--sand-11);
+  margin-bottom: 4px;
+}
+.demo-helper {
+  font-size: 10px;
+  color: var(--sand-9);
+  margin-top: 4px;
+}
+.demo-helper.error { color: var(--fail-9); }
+
+/* Demo charts (CSS bars) */
+.demo-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 60px;
+  padding: 4px;
+}
+.demo-chart .bar {
+  width: 16px;
+  border-radius: 2px 2px 0 0;
+}
+
+/* Demo modal preview */
+.demo-modal {
+  background: var(--sand-1);
+  border-radius: 8px;
+  padding: 12px 14px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  font-size: 11px;
+  width: 220px;
+}
+.demo-modal-footer {
+  display: flex; justify-content: flex-end; gap: 6px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--sand-4);
+}
+
+/* Demo focus ring */
+.demo-focus {
+  display: inline-block;
+  padding: 4px 10px;
+  background: var(--sand-1);
+  border: 1px solid var(--sand-6);
+  border-radius: var(--radius-1);
+  font-size: 12px;
+  outline: 2px solid var(--teal-9);
+  outline-offset: 1px;
+}
+
+/* Demo nav item */
+.demo-nav {
+  display: flex; flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+  background: var(--sand-12);
+  border-radius: var(--radius-1);
+  width: 160px;
+}
+.demo-nav-item {
+  padding: 6px 10px;
+  border-radius: 3px;
+  color: rgba(255,255,255,0.7);
+  font-size: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.demo-nav-item.active {
+  background: rgba(255,255,255,0.1);
+  color: white;
+  border-left: 2px solid #29A383;
+  padding-left: 8px;
+}
+
+/* Hex grid for type/spacing demos */
+.demo-type {
+  display: flex; flex-direction: column;
+  gap: 2px;
+  font-family: var(--font-sans);
+}
+.demo-type .h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.01em; color: var(--sand-12); }
+.demo-type .body { font-size: 14px; color: var(--sand-12); }
+.demo-type .meta { font-size: 12px; color: var(--sand-11); }
+.demo-type .subtle { font-size: 11px; color: var(--sand-9); }
+
+.demo-spacing {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px;
+  color: var(--sand-11);
+  font-family: var(--font-mono);
+}
+.demo-spacing .gap {
+  background: var(--teal-3);
+  border-left: 1px solid var(--teal-9);
+  border-right: 1px solid var(--teal-9);
+  height: 16px;
+}
+
+.demo-radius-row {
+  display: flex; gap: 12px; align-items: flex-end;
+}
+.demo-radius-row .r {
+  width: 48px; height: 48px;
+  background: var(--sand-12);
+  display: flex; align-items: flex-end; justify-content: center;
+  color: white; font-size: 9px;
+  padding-bottom: 4px;
+  font-family: var(--font-mono);
+}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.scrim {
+  position: fixed; inset: 0;
+  background: rgba(33, 32, 28, 0.4);
+  display: none;
+  align-items: center; justify-content: center;
+  z-index: 100;
+}
+.scrim.open { display: flex; }
+.modal {
+  background: var(--sand-1);
+  border-radius: var(--radius-3);
+  width: 100%; max-width: 480px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  padding: 24px;
+}
+.modal h3 { margin: 0 0 16px; font-size: 17px; font-weight: 600; }
+.modal label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--sand-11);
+  margin: 12px 0 4px;
+}
+.modal input[type="text"], .modal textarea {
+  width: 100%;
+  font: inherit;
+  padding: 8px 10px;
+  border: 1px solid var(--sand-6);
+  border-radius: var(--radius-1);
+  background: var(--sand-1);
+  color: var(--sand-12);
+}
+.modal input:focus, .modal textarea:focus {
+  outline: 2px solid var(--teal-9);
+  outline-offset: -1px;
+  border-color: var(--teal-9);
+}
+.modal-actions {
+  display: flex; justify-content: flex-end; gap: 8px;
+  margin-top: 20px;
+}
+
+/* Export modal */
+.export-pre {
+  background: var(--sand-12);
+  color: var(--sand-2);
+  padding: 14px;
+  border-radius: var(--radius-2);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.5;
+  max-height: 400px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ============================================================
+   MISC
+   ============================================================ */
+.bulk-bar {
+  position: sticky;
+  top: 0;
+  background: var(--sand-2);
+  padding: 8px 0;
+  margin-bottom: 8px;
+  display: flex; gap: 6px;
+  z-index: 5;
+  border-bottom: 1px solid var(--sand-4);
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--sand-12);
+  color: var(--sand-1);
+  padding: 10px 16px;
+  border-radius: var(--radius-2);
+  font-size: 13px;
+  z-index: 200;
+  animation: toastIn 0.2s ease-out, toastOut 0.2s ease-in 2.3s forwards;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+@keyframes toastIn { from { opacity: 0; transform: translate(-50%, 8px); } }
+@keyframes toastOut { to { opacity: 0; transform: translate(-50%, 8px); } }
+
+.section-jump {
+  position: sticky;
+  bottom: 16px;
+  margin-left: auto;
+  background: var(--sand-12);
+  color: var(--sand-1);
+  padding: 6px 10px;
+  border-radius: 16px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  width: fit-content;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--sand-5); border-radius: 5px; border: 2px solid var(--sand-2); }
+::-webkit-scrollbar-thumb:hover { background: var(--sand-7); }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div class="brand-name">Scale QA<span>Conformance Review</span></div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" id="btn-export" title="Export findings">Export</button>
+      <button class="btn btn-ghost" id="btn-import" title="Import a saved review">Import</button>
+      <button class="btn btn-primary" id="btn-new-review">+ New review</button>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <div class="sb-section">
+      <div class="sb-label">Reviews</div>
+      <div id="reviews-list"></div>
+    </div>
+    <div class="sb-section" id="sections-nav-wrap" style="display:none;">
+      <div class="sb-label">Jump to section</div>
+      <div id="sections-nav"></div>
+    </div>
+  </aside>
+
+  <main class="workspace" id="workspace">
+    <!-- Filled by JS -->
+  </main>
+</div>
+
+<!-- New review modal -->
+<div class="scrim" id="modal-new-review" role="dialog" aria-labelledby="mnr-title" aria-modal="true">
+  <div class="modal">
+    <h3 id="mnr-title">Start a new review</h3>
+    <label for="mnr-name">Page name</label>
+    <input type="text" id="mnr-name" placeholder="e.g. Projects list, Asset library, Resource Planner">
+    <label for="mnr-url">URL or build reference (optional)</label>
+    <input type="text" id="mnr-url" placeholder="https://app.screendragon.com/projects">
+    <div class="modal-actions">
+      <button class="btn btn-secondary" data-modal-close>Cancel</button>
+      <button class="btn btn-primary" id="mnr-create">Create review</button>
+    </div>
+  </div>
+</div>
+
+<!-- Export modal -->
+<div class="scrim" id="modal-export" role="dialog" aria-labelledby="mex-title" aria-modal="true">
+  <div class="modal" style="max-width: 720px;">
+    <h3 id="mex-title">Export findings</h3>
+    <div style="display:flex; gap:6px; margin-bottom:12px;">
+      <button class="btn btn-secondary" data-export-format="markdown">Markdown</button>
+      <button class="btn btn-secondary" data-export-format="json">JSON</button>
+      <button class="btn btn-secondary" data-export-format="csv">CSV</button>
+    </div>
+    <pre class="export-pre" id="export-output"></pre>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="btn-copy-export">Copy</button>
+      <button class="btn btn-ghost" id="btn-download-export">Download</button>
+      <button class="btn btn-secondary" data-modal-close>Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Import modal -->
+<div class="scrim" id="modal-import" role="dialog" aria-labelledby="mim-title" aria-modal="true">
+  <div class="modal">
+    <h3 id="mim-title">Import review</h3>
+    <p style="margin:0 0 10px;color:var(--sand-11);font-size:13px;">Paste a JSON export from another QA session.</p>
+    <textarea id="mim-input" rows="8" style="font-family:var(--font-mono);font-size:11px;"></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" data-modal-close>Cancel</button>
+      <button class="btn btn-primary" id="btn-do-import">Import</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     CHECK DEFINITIONS
+     ============================================================ -->
+<script id="checks-data" type="application/json">
+{
+  "sections": [
+    {
+      "id": "global",
+      "title": "Global \u2014 applies to every page",
+      "alwaysOn": true,
+      "desc": "Token-level checks that should pass on any product surface. If any of these fail, the issue is likely systemic and should be raised before page-specific review continues.",
+      "checks": [
+        {
+          "id": "G-01",
+          "title": "Primary action colour is Cerulean teal",
+          "expected": "All primary CTAs (Save, Submit, Continue, primary toolbar action) render as #0B6E8A on default state.",
+          "how": "If a primary action is any other shade of teal/blue/green, fail.",
+          "compare": {
+            "pass": "<button class=\"demo-btn primary\">Save changes</button>",
+            "fail": "<button class=\"demo-btn\" style=\"background:#1976d2;color:white;\">Save changes</button>",
+            "passNote": "Cerulean #0B6E8A.",
+            "failNote": "Wrong teal \u2014 Material blue, Bootstrap primary, etc."
+          },
+          "swatches": [
+            {
+              "label": "Cerulean/9",
+              "hex": "#0B6E8A"
+            }
+          ]
+        },
+        {
+          "id": "G-02",
+          "title": "Primary action hover state darkens correctly",
+          "expected": "Hover on a primary button transitions to #005F7B (Cerulean/10).",
+          "how": "Hover the live button below to see the expected dark shift.",
+          "compare": {
+            "pass": "<button class=\"demo-btn\" style=\"background:#005F7B;color:white;\">Save changes (hovered)</button>",
+            "fail": "<button class=\"demo-btn\" style=\"background:#0B6E8A;color:white;opacity:0.85;\">Save changes (hovered)</button>",
+            "passNote": "Hover darkens to Cerulean/10.",
+            "failNote": "Hover uses opacity reduction \u2014 washes out instead of darkening."
+          },
+          "swatches": [
+            {
+              "label": "Default (Cerulean/9)",
+              "hex": "#0B6E8A"
+            },
+            {
+              "label": "Hover (Cerulean/10)",
+              "hex": "#005F7B"
+            }
+          ]
+        },
+        {
+          "id": "G-03",
+          "title": "Page background uses Sand/2",
+          "expected": "Outer page canvas (behind cards/panels) is #f9f9f8 (Sand/2). Not pure white. Not blue-gray.",
+          "how": "If the page background is pure white or has a blue tint, fail.",
+          "compare": {
+            "pass": "<div style=\"background:#f9f9f8;padding:14px;border-radius:4px;width:160px;text-align:center;font-size:11px;color:var(--sand-11);\">Sand/2 #f9f9f8</div>",
+            "fail": "<div style=\"background:#ffffff;padding:14px;border-radius:4px;width:160px;text-align:center;font-size:11px;color:var(--sand-11);border:1px dashed var(--sand-6);\">Pure white #ffffff</div>",
+            "passNote": "Subtle warmth, off-white.",
+            "failNote": "Stark \u2014 no surface depth against cards."
+          },
+          "swatches": [
+            {
+              "label": "Sand/2",
+              "hex": "#f9f9f8"
+            }
+          ]
+        },
+        {
+          "id": "G-04",
+          "title": "Card / panel surfaces use Sand/1",
+          "expected": "Cards, modals, popovers, table containers sit at #fdfdfc (Sand/1) \u2014 slightly above page background.",
+          "how": "Card must read as lifted above the page background.",
+          "example": "<div style=\"background:#f9f9f8;padding:16px;border-radius:4px;width:240px;\"><div style=\"background:#fdfdfc;border:1px solid var(--sand-5);border-radius:6px;padding:12px;font-size:12px;\">Card surface (Sand/1) on page background (Sand/2)</div></div>"
+        },
+        {
+          "id": "G-05",
+          "title": "Primary text colour is Sand/12",
+          "expected": "Body and heading text is #21201c (Sand/12). No pure black (#000) anywhere.",
+          "how": "If text reads as harsh/inky-black on the page, fail.",
+          "compare": {
+            "pass": "<div style=\"color:#21201c;font-size:14px;\">Sand/12 \u2014 warm near-black</div>",
+            "fail": "<div style=\"color:#000000;font-size:14px;\">Pure black #000000</div>",
+            "passNote": "Reads soft, matches warm palette.",
+            "failNote": "Reads cold and harsh."
+          },
+          "swatches": [
+            {
+              "label": "Sand/12",
+              "hex": "#21201c"
+            }
+          ]
+        },
+        {
+          "id": "G-06",
+          "title": "Subtle text colour is Sand/11",
+          "expected": "Metadata, secondary labels, helper text use #63635e (Sand/11).",
+          "how": "Compare metadata text vs body text \u2014 subtle but readable.",
+          "example": "<div><div style=\"color:#21201c;font-size:14px;\">Project name (Sand/12)</div><div style=\"color:#63635e;font-size:12px;margin-top:2px;\">Updated 2 hours ago by James (Sand/11)</div></div>"
+        },
+        {
+          "id": "G-07",
+          "title": "Borders use Sand/5 or Sand/6",
+          "expected": "Default borders (cards, dividers, inputs) are #e2e1de or #dad9d6. No blue-gray, no pure-gray defaults.",
+          "how": "If borders look bluish or pure-gray, fail.",
+          "compare": {
+            "pass": "<div style=\"background:#fdfdfc;border:1px solid #e2e1de;border-radius:4px;padding:12px;width:160px;font-size:12px;\">Sand/5 border</div>",
+            "fail": "<div style=\"background:#fdfdfc;border:1px solid #d1d5db;border-radius:4px;padding:12px;width:160px;font-size:12px;\">Cool gray border (Tailwind default)</div>",
+            "passNote": "Warm neutral, matches palette.",
+            "failNote": "Cool blue-gray \u2014 breaks the system."
+          },
+          "swatches": [
+            {
+              "label": "Sand/5",
+              "hex": "#e2e1de"
+            },
+            {
+              "label": "Sand/6",
+              "hex": "#dad9d6"
+            }
+          ]
+        },
+        {
+          "id": "G-08",
+          "title": "Body typography is Inter",
+          "expected": "font-family resolves to Inter (or Inter fallback chain). No system-ui as primary, no Roboto, no Helvetica.",
+          "how": "Inspect \u2192 Computed \u2192 font-family on a paragraph. Visually: Inter has distinctive single-storey 'a' and tall x-height.",
+          "compare": {
+            "pass": "<div style=\"font-family:Inter,sans-serif;font-size:18px;\">The quick brown fox \u2014 Inter</div>",
+            "fail": "<div style=\"font-family:Arial,sans-serif;font-size:18px;\">The quick brown fox \u2014 Arial</div>",
+            "passNote": "Geometric, tall x-height.",
+            "failNote": "Generic system font \u2014 Arial/Helvetica/system-ui."
+          }
+        },
+        {
+          "id": "G-09",
+          "title": "Spacing follows 8pt grid",
+          "expected": "Padding and margin values resolve to 4 / 8 / 12 / 16 / 24 / 32 / 48 px. Reject 5, 7, 13, 18, 22 etc.",
+          "how": "Inspect padding/margin on cards, sections, list items. Common offenders: form gaps, toolbar padding.",
+          "compare": {
+            "pass": "<div style=\"display:flex;gap:8px;\"><div style=\"background:var(--sand-12);color:white;padding:8px 16px;font-size:11px;border-radius:3px;\">8px gap</div><div style=\"background:var(--sand-12);color:white;padding:8px 16px;font-size:11px;border-radius:3px;\">16px padding</div></div>",
+            "fail": "<div style=\"display:flex;gap:7px;\"><div style=\"background:var(--sand-12);color:white;padding:5px 13px;font-size:11px;border-radius:3px;\">5/13px</div><div style=\"background:var(--sand-12);color:white;padding:5px 13px;font-size:11px;border-radius:3px;\">7px gap</div></div>",
+            "passNote": "Multiples of 4 only.",
+            "failNote": "Off-grid values \u2014 5, 7, 13."
+          }
+        },
+        {
+          "id": "G-10",
+          "title": "Border radius is consistent",
+          "expected": "Buttons, inputs: 4px (radius-1). Cards, modals: 6px (radius-2). Large containers: 8px (radius-3). No 5px, 7px, 10px outliers.",
+          "how": "Compare radii across button + card + modal. Should look like a deliberate scale, not three random values.",
+          "example": "<div class=\"demo-radius-row\"><div class=\"r\" style=\"border-radius:4px;\">4px</div><div class=\"r\" style=\"border-radius:6px;\">6px</div><div class=\"r\" style=\"border-radius:8px;\">8px</div></div>"
+        },
+        {
+          "id": "G-11",
+          "title": "Focus ring is visible and on-brand",
+          "expected": "Tabbing to any interactive element shows a visible 2px Cerulean teal outline against both Sand/1 and Sand/2 backgrounds.",
+          "how": "Tab through the page using keyboard. Check buttons, links, inputs, toggles. If the ring is browser-default blue or invisible, fail.",
+          "compare": {
+            "pass": "<button class=\"demo-btn secondary\" style=\"outline:2px solid #0B6E8A;outline-offset:1px;\">Tabbed button</button>",
+            "fail": "<button class=\"demo-btn secondary\" style=\"outline:none;\">Tabbed button (no ring)</button>",
+            "passNote": "Cerulean ring, 2px, offset 1px.",
+            "failNote": "No visible focus \u2014 keyboard users blocked."
+          }
+        },
+        {
+          "id": "G-12",
+          "title": "No legacy Stone tokens in use",
+          "expected": "No CSS custom property named --color-stone-* or --stone-* in computed styles. All neutrals use Sand naming.",
+          "how": "DevTools \u2192 Sources \u2192 search for 'stone' across loaded CSS. Or inspect any element and search computed styles.",
+          "example": "<div style=\"font-family:var(--font-mono);font-size:11px;background:var(--sand-12);color:#abe0bc;padding:10px;border-radius:4px;width:fit-content;\">&nbsp;\u2713 --color-sand-* &nbsp;&nbsp; \u2717 --color-stone-* / --stone-*&nbsp;</div>"
+        },
+        {
+          "id": "G-13",
+          "title": "Iconography uses single icon library",
+          "expected": "All icons render at expected sizes (16/20/24px). Stroke weight consistent (1.5px stroke for outline icons).",
+          "how": "Compare 3\u20134 icons across the page. Mismatched stroke weights or mixed filled/outline styles in the same toolbar = fail.",
+          "compare": {
+            "pass": "<div style=\"display:flex;gap:10px;align-items:center;color:var(--sand-12);\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><path d=\"M3 12h18M3 6h18M3 18h18\"/></svg><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 7v5l3 3\"/></svg><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><path d=\"M4 6h16M4 12h16M4 18h12\"/></svg></div>",
+            "fail": "<div style=\"display:flex;gap:10px;align-items:center;color:var(--sand-12);\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><path d=\"M3 12h18M3 6h18M3 18h18\"/></svg><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><circle cx=\"12\" cy=\"12\" r=\"9\"/></svg><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\"><path d=\"M4 6h16M4 12h16M4 18h12\"/></svg></div>",
+            "passNote": "Same size, same stroke, same style.",
+            "failNote": "Mixed sizes, mixed strokes, mixed fill/outline."
+          }
+        },
+        {
+          "id": "G-14",
+          "title": "No hardcoded hex values in inline styles",
+          "expected": "Inline style attributes use var(--token-name), not raw hex strings, for any colour value.",
+          "how": "View source / inspect markup. Search style= attributes for hex patterns like #xxxxxx.",
+          "example": "<div style=\"font-family:var(--font-mono);font-size:11px;background:var(--sand-12);color:#abe0bc;padding:10px;border-radius:4px;width:fit-content;line-height:1.6;\">&nbsp;\u2713 style=\"color: var(--text-default);\"<br>&nbsp;\u2717 style=\"color: #21201c;\"&nbsp;</div>"
+        }
+      ]
+    },
+    {
+      "id": "buttons",
+      "title": "Buttons & toolbars",
+      "desc": "Hierarchy enforcement is the most common offender. One primary per toolbar; tier matches action consequence, not perceived importance.",
+      "checks": [
+        {
+          "id": "BT-01",
+          "title": "One primary button per toolbar / view",
+          "expected": "A single Cerulean primary CTA is visible in any toolbar or page header. Multiple primaries in the same scope = fail.",
+          "how": "Count Cerulean fills. >1 in the same toolbar = fail.",
+          "compare": {
+            "pass": "<div style=\"display:flex;gap:6px;padding:8px;background:var(--sand-1);border:1px solid var(--sand-5);border-radius:4px;\"><button class=\"demo-btn primary\">Save</button><button class=\"demo-btn secondary\">Cancel</button><button class=\"demo-btn ghost\">Discard</button></div>",
+            "fail": "<div style=\"display:flex;gap:6px;padding:8px;background:var(--sand-1);border:1px solid var(--sand-5);border-radius:4px;\"><button class=\"demo-btn primary\">Save</button><button class=\"demo-btn primary\">Submit</button><button class=\"demo-btn primary\">Send for review</button></div>",
+            "passNote": "One primary anchor, others recede.",
+            "failNote": "All-primary toolbar \u2014 no hierarchy, eye doesn't know where to land."
+          }
+        },
+        {
+          "id": "BT-02",
+          "title": "Secondary buttons use Sand/1 fill + Sand/6 border",
+          "expected": "Secondary buttons render with white-ish fill and a visible border, not Cerulean.",
+          "how": "Secondary should NOT be a tinted teal.",
+          "compare": {
+            "pass": "<button class=\"demo-btn secondary\">Cancel</button>",
+            "fail": "<button class=\"demo-btn\" style=\"background:#D5EFF9;color:#0B6E8A;border:1px solid #0B6E8A;\">Cancel</button>",
+            "passNote": "Sand/1 fill, Sand/6 border, neutral.",
+            "failNote": "Teal-tinted \u2014 competes with primary."
+          }
+        },
+        {
+          "id": "BT-03",
+          "title": "Tertiary / ghost buttons have no border on rest",
+          "expected": "Ghost buttons show only label colour on rest, hover adds a Sand/3 background.",
+          "how": "If a ghost button has a visible border at rest, fail.",
+          "compare": {
+            "pass": "<div style=\"display:flex;gap:6px;\"><button class=\"demo-btn ghost\">Edit</button><button class=\"demo-btn\" style=\"background:var(--sand-3);color:var(--sand-12);\">Edit (hover)</button></div>",
+            "fail": "<button class=\"demo-btn\" style=\"background:transparent;border:1px solid var(--sand-6);color:var(--sand-11);\">Edit</button>",
+            "passNote": "Borderless at rest, fills on hover.",
+            "failNote": "Bordered ghost reads as secondary."
+          }
+        },
+        {
+          "id": "BT-04",
+          "title": "Destructive buttons use Tomato/9",
+          "expected": "Delete, Remove, Discard actions use #E54D2E (Tomato/9) on primary destructive, or red text on ghost destructive.",
+          "how": "If a destructive action shares the Cerulean primary style, the user can't tell it's irreversible.",
+          "compare": {
+            "pass": "<div style=\"display:flex;gap:6px;\"><button class=\"demo-btn destructive\">Delete</button><button class=\"demo-btn ghost\" style=\"color:#E54D2E;\">Remove</button></div>",
+            "fail": "<button class=\"demo-btn primary\">Delete</button>",
+            "passNote": "Tomato/9 primary or red ghost \u2014 clearly destructive.",
+            "failNote": "Cerulean delete \u2014 looks like 'Save'."
+          },
+          "swatches": [
+            {
+              "label": "Tomato/9",
+              "hex": "#E54D2E"
+            }
+          ]
+        },
+        {
+          "id": "BT-05",
+          "title": "Disabled buttons are not interactive",
+          "expected": "Disabled buttons render at 50% opacity (or use Sand/4 + Sand/9 text) and do not show pointer cursor or hover state.",
+          "how": "If a disabled button still highlights on hover or shows a pointer cursor, fail.",
+          "compare": {
+            "pass": "<button class=\"demo-btn disabled\">Save changes</button>",
+            "fail": "<button class=\"demo-btn primary\" style=\"cursor:pointer;\">Save changes</button>",
+            "passNote": "Visibly muted, no affordance.",
+            "failNote": "Looks active despite being disabled."
+          }
+        },
+        {
+          "id": "BT-06",
+          "title": "Icon buttons are 28x28px or 32x32px",
+          "expected": "Square icon-only buttons sized to a known token, not arbitrary widths.",
+          "how": "Inspect width/height. 24, 30, 36 etc = fail.",
+          "compare": {
+            "pass": "<div style=\"display:flex;gap:6px;\"><button class=\"demo-btn icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><path d=\"M12 5v14M5 12h14\"/></svg></button><button class=\"demo-btn icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><path d=\"M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14\"/></svg></button></div>",
+            "fail": "<div style=\"display:flex;gap:6px;align-items:center;\"><button class=\"demo-btn icon\" style=\"width:24px;height:24px;\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><path d=\"M12 5v14M5 12h14\"/></svg></button><button class=\"demo-btn icon\" style=\"width:36px;height:36px;\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><path d=\"M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14\"/></svg></button></div>",
+            "passNote": "Consistent 28px (or 32px) squares.",
+            "failNote": "Off-token sizes."
+          }
+        },
+        {
+          "id": "BT-07",
+          "title": "Button label is sentence case",
+          "expected": "Buttons read 'Save changes' not 'Save Changes' or 'SAVE CHANGES'.",
+          "how": "Visual scan.",
+          "compare": {
+            "pass": "<button class=\"demo-btn primary\">Save changes</button>",
+            "fail": "<div style=\"display:flex;gap:6px;\"><button class=\"demo-btn primary\" style=\"text-transform:uppercase;letter-spacing:0.05em;\">Save changes</button><button class=\"demo-btn primary\">Save Changes</button></div>",
+            "passNote": "Sentence case \u2014 first word capitalised only.",
+            "failNote": "UPPERCASE or Title Case."
+          }
+        }
+      ]
+    },
+    {
+      "id": "tables",
+      "title": "Tables & data grids",
+      "desc": "The bulk of the platform is tabular data. These checks catch the most common surface-flatness and density issues.",
+      "checks": [
+        {
+          "id": "TB-01",
+          "title": "Header row has tinted background",
+          "expected": "Table header (th) row uses Sand/3 (#f1f0ef) \u2014 not white, not the same colour as body rows.",
+          "how": "If header colour matches body row colour, fail.",
+          "compare": {
+            "pass": "<table class=\"demo-table\"><thead><tr><th>Name</th><th>Status</th><th>Owner</th></tr></thead><tbody><tr><td>Brief 01</td><td>Draft</td><td>JD</td></tr><tr><td>Brief 02</td><td>Active</td><td>RM</td></tr></tbody></table>",
+            "fail": "<table class=\"demo-table wrong\"><thead><tr><th>Name</th><th>Status</th><th>Owner</th></tr></thead><tbody><tr><td>Brief 01</td><td>Draft</td><td>JD</td></tr><tr><td>Brief 02</td><td>Active</td><td>RM</td></tr></tbody></table>",
+            "passNote": "Header in Sand/3, visible separation from body.",
+            "failNote": "Header same colour as body \u2014 no anchor row."
+          },
+          "swatches": [
+            {
+              "label": "Header (Sand/3)",
+              "hex": "#f1f0ef"
+            },
+            {
+              "label": "Body (Sand/1)",
+              "hex": "#fdfdfc"
+            }
+          ]
+        },
+        {
+          "id": "TB-02",
+          "title": "Header text uses uppercase + weight differentiation",
+          "expected": "Header labels are visually distinct from body cells via font-weight: 600 and text-transform: uppercase + font-size: 11px.",
+          "how": "Compare a header label to a body cell \u2014 should read as a clearly different style.",
+          "compare": {
+            "pass": "<table class=\"demo-table\"><thead><tr><th>Name</th><th>Status</th></tr></thead><tbody><tr><td>Brief 01</td><td>Draft</td></tr></tbody></table>",
+            "fail": "<table class=\"demo-table\"><thead><tr><th style=\"text-transform:none;letter-spacing:0;font-size:12px;font-weight:400;\">Name</th><th style=\"text-transform:none;letter-spacing:0;font-size:12px;font-weight:400;\">Status</th></tr></thead><tbody><tr><td>Brief 01</td><td>Draft</td></tr></tbody></table>",
+            "passNote": "Uppercase, 11px, weight 600.",
+            "failNote": "Header reads as a body row."
+          }
+        },
+        {
+          "id": "TB-03",
+          "title": "Row borders use Sand/4 or Sand/5",
+          "expected": "Horizontal row dividers are #e9e8e6 or #e2e1de \u2014 visible but not heavy. No black, no pure gray.",
+          "how": "If borders look like dark lines, fail.",
+          "compare": {
+            "pass": "<table class=\"demo-table\"><thead><tr><th>Name</th><th>Owner</th></tr></thead><tbody><tr><td>Row A</td><td>JD</td></tr><tr><td>Row B</td><td>RM</td></tr><tr><td>Row C</td><td>KT</td></tr></tbody></table>",
+            "fail": "<table class=\"demo-table heavy\"><thead><tr><th>Name</th><th>Owner</th></tr></thead><tbody><tr><td>Row A</td><td>JD</td></tr><tr><td>Row B</td><td>RM</td></tr><tr><td>Row C</td><td>KT</td></tr></tbody></table>",
+            "passNote": "Borders are present but recessive.",
+            "failNote": "Borders dominate over content."
+          },
+          "swatches": [
+            {
+              "label": "Sand/4",
+              "hex": "#e9e8e6"
+            },
+            {
+              "label": "Sand/5",
+              "hex": "#e2e1de"
+            }
+          ]
+        },
+        {
+          "id": "TB-04",
+          "title": "Row hover state shifts background",
+          "expected": "Hovering a row tints it Sand/2 or Sand/3 (subtle but visible). No teal highlight on hover.",
+          "how": "Hover the live row. The middle row below shows the hover state.",
+          "compare": {
+            "pass": "<table class=\"demo-table\"><thead><tr><th>Name</th><th>Status</th></tr></thead><tbody><tr><td>Row A</td><td>Draft</td></tr><tr class=\"hover\"><td>Row B</td><td>Active</td></tr><tr><td>Row C</td><td>Done</td></tr></tbody></table>",
+            "fail": "<table class=\"demo-table\"><thead><tr><th>Name</th><th>Status</th></tr></thead><tbody><tr><td>Row A</td><td>Draft</td></tr><tr style=\"background:var(--teal-3);\"><td>Row B</td><td>Active</td></tr><tr><td>Row C</td><td>Done</td></tr></tbody></table>",
+            "passNote": "Sand/2 tint \u2014 reads as 'hovered'.",
+            "failNote": "Teal tint reads as 'selected'."
+          }
+        },
+        {
+          "id": "TB-05",
+          "title": "Selected row uses Cerulean/3 tint",
+          "expected": "Checkbox-selected rows render with #D5EFF9 background (Cerulean/3). Distinct from hover state.",
+          "how": "Tick a row's checkbox. Should be clearly different from hover.",
+          "compare": {
+            "pass": "<table class=\"demo-table\"><thead><tr><th style=\"width:24px;\"></th><th>Name</th><th>Status</th></tr></thead><tbody><tr><td>\u2610</td><td>Row A</td><td>Draft</td></tr><tr class=\"selected\"><td>\u2611</td><td>Row B</td><td>Active</td></tr><tr><td>\u2610</td><td>Row C</td><td>Done</td></tr></tbody></table>",
+            "fail": "<table class=\"demo-table\"><thead><tr><th style=\"width:24px;\"></th><th>Name</th><th>Status</th></tr></thead><tbody><tr><td>\u2610</td><td>Row A</td><td>Draft</td></tr><tr style=\"background:#FFE5BE;\"><td>\u2611</td><td>Row B</td><td>Active</td></tr><tr><td>\u2610</td><td>Row C</td><td>Done</td></tr></tbody></table>",
+            "passNote": "Cerulean/3 \u2014 on-system selection.",
+            "failNote": "Any non-Cerulean tint."
+          },
+          "swatches": [
+            {
+              "label": "Cerulean/3",
+              "hex": "#D5EFF9"
+            }
+          ]
+        },
+        {
+          "id": "TB-06",
+          "title": "Sort indicator visible on sorted column",
+          "expected": "The column currently used for sorting shows an active arrow icon and bolder header text.",
+          "how": "Click a sortable header, observe indicator.",
+          "compare": {
+            "pass": "<table class=\"demo-table\"><thead><tr><th style=\"color:var(--sand-12);\">Name \u25be</th><th style=\"opacity:0.6;\">Status</th><th style=\"opacity:0.6;\">Owner</th></tr></thead><tbody><tr><td>Row A</td><td>Draft</td><td>JD</td></tr></tbody></table>",
+            "fail": "<table class=\"demo-table\"><thead><tr><th>Name</th><th>Status</th><th>Owner</th></tr></thead><tbody><tr><td>Row A</td><td>Draft</td><td>JD</td></tr></tbody></table>",
+            "passNote": "Active sort column visually emphasised.",
+            "failNote": "No indication of which column drives the order."
+          }
+        },
+        {
+          "id": "TB-07",
+          "title": "Rows include chromatic anchors (avatars, status pills)",
+          "expected": "Rows include at least one chromatic element (avatar, status pill, tag). 100% monochrome rows read as flat.",
+          "how": "Scan a typical row. If everything is gray-on-white, fail.",
+          "compare": {
+            "pass": "<table class=\"demo-table\"><thead><tr><th>Owner</th><th>Project</th><th>Status</th></tr></thead><tbody><tr><td><span class=\"avatar\" style=\"background:#0B6E8A;\">JD</span>James D.</td><td>FIFA brief</td><td><span class=\"pill go\">Active</span></td></tr><tr><td><span class=\"avatar\" style=\"background:#AB4ABA;\">RM</span>Rosa M.</td><td>Resource Plan</td><td><span class=\"pill draft\">Draft</span></td></tr></tbody></table>",
+            "fail": "<table class=\"demo-table\"><thead><tr><th>Owner</th><th>Project</th><th>Status</th></tr></thead><tbody><tr><td>James D.</td><td>FIFA brief</td><td>Active</td></tr><tr><td>Rosa M.</td><td>Resource Plan</td><td>Draft</td></tr></tbody></table>",
+            "passNote": "Colour distributed across the row.",
+            "failNote": "All text, all monochrome \u2014 flat surface."
+          }
+        },
+        {
+          "id": "TB-08",
+          "title": "Empty cells use em-dash, not blank",
+          "expected": "Empty data cells render '\u2014' (em-dash) in Sand/9, not literal blank space.",
+          "how": "Find a cell with no data.",
+          "compare": {
+            "pass": "<table class=\"demo-table\"><thead><tr><th>Name</th><th>Due date</th><th>Owner</th></tr></thead><tbody><tr><td>Brief 01</td><td>Apr 12</td><td>JD</td></tr><tr><td>Brief 02</td><td style=\"color:var(--sand-9);\">\u2014</td><td style=\"color:var(--sand-9);\">\u2014</td></tr></tbody></table>",
+            "fail": "<table class=\"demo-table\"><thead><tr><th>Name</th><th>Due date</th><th>Owner</th></tr></thead><tbody><tr><td>Brief 01</td><td>Apr 12</td><td>JD</td></tr><tr><td>Brief 02</td><td></td><td></td></tr></tbody></table>",
+            "passNote": "Em-dash signals 'intentionally empty'.",
+            "failNote": "Blank cells read as 'data missing'."
+          }
+        },
+        {
+          "id": "TB-09",
+          "title": "Pagination matches Scale styling",
+          "expected": "Page nav uses ghost button styling for inactive pages, primary tint for active page. Page-size selector is a secondary button or inline menu.",
+          "how": "Locate pagination at table footer and inspect.",
+          "compare": {
+            "pass": "<div style=\"display:flex;gap:4px;align-items:center;font-size:12px;\"><button class=\"demo-btn ghost\">\u2039</button><button class=\"demo-btn ghost\">1</button><button class=\"demo-btn\" style=\"background:var(--teal-3);color:var(--teal-10);font-weight:600;\">2</button><button class=\"demo-btn ghost\">3</button><button class=\"demo-btn ghost\">\u203a</button><span style=\"color:var(--sand-9);margin-left:12px;\">25 per page \u25be</span></div>",
+            "fail": "<div style=\"display:flex;gap:4px;align-items:center;font-size:12px;\"><button class=\"demo-btn primary\">1</button><button class=\"demo-btn primary\">2</button><button class=\"demo-btn primary\">3</button></div>",
+            "passNote": "One emphasised page, others ghost.",
+            "failNote": "All pages styled as primary \u2014 no active state."
+          }
+        },
+        {
+          "id": "TB-10",
+          "title": "Bulk-select bar appears on selection",
+          "expected": "Selecting one or more rows reveals a sticky action bar showing count + bulk actions. Bar uses --primary-default background.",
+          "how": "Select a row checkbox.",
+          "example": "<div style=\"background:var(--teal-9);color:white;padding:8px 12px;border-radius:var(--radius-1);font-size:12px;display:flex;align-items:center;gap:12px;width:fit-content;\"><span style=\"font-weight:600;\">2 selected</span><button class=\"demo-btn ghost\" style=\"color:white;\">Archive</button><button class=\"demo-btn ghost\" style=\"color:white;\">Move</button><button class=\"demo-btn ghost\" style=\"color:white;\">Delete</button></div>"
+        },
+        {
+          "id": "TB-11",
+          "title": "Column widths are sensible",
+          "expected": "No column truncates obviously-readable content with ellipsis on default widths. ID/status columns narrow; name/title columns wide.",
+          "how": "Visual scan.",
+          "compare": {
+            "pass": "<table class=\"demo-table\" style=\"table-layout:fixed;width:100%;\"><thead><tr><th style=\"width:40px;\">ID</th><th>Project name</th><th style=\"width:70px;\">Status</th></tr></thead><tbody><tr><td>01</td><td>FIFA World Cup 2026 campaign brief</td><td><span class=\"pill go\">Active</span></td></tr></tbody></table>",
+            "fail": "<table class=\"demo-table\" style=\"table-layout:fixed;width:100%;\"><thead><tr><th>ID</th><th style=\"width:80px;\">Project name</th><th>Status that is also wide for no reason</th></tr></thead><tbody><tr><td>01</td><td style=\"overflow:hidden;text-overflow:ellipsis;white-space:nowrap;\">FIFA World Cup 2026\u2026</td><td><span class=\"pill go\">Active</span></td></tr></tbody></table>",
+            "passNote": "Narrow columns narrow, wide columns wide.",
+            "failNote": "Project name truncated; status column oversized."
+          }
+        },
+        {
+          "id": "TB-12",
+          "title": "Sticky header on scroll",
+          "expected": "Scrolling the table body keeps the header row visible at top of the table.",
+          "how": "Scroll vertically inside the table. Header should not scroll off.",
+          "example": "<div style=\"max-height:80px;overflow-y:auto;border:1px solid var(--sand-5);border-radius:var(--radius-1);\"><table class=\"demo-table\"><thead style=\"position:sticky;top:0;\"><tr><th>Name</th><th>Status</th></tr></thead><tbody><tr><td>Row A</td><td>Draft</td></tr><tr><td>Row B</td><td>Active</td></tr><tr><td>Row C</td><td>Done</td></tr><tr><td>Row D</td><td>Active</td></tr><tr><td>Row E</td><td>Draft</td></tr><tr><td>Row F</td><td>Active</td></tr></tbody></table></div>"
+        }
+      ]
+    },
+    {
+      "id": "forms",
+      "title": "Forms & inputs",
+      "desc": "Form surfaces appear in modals, settings, edit panels, and create flows. Field treatment must be consistent across all of them.",
+      "checks": [
+        {
+          "id": "FM-01",
+          "title": "Input field uses Sand/1 + Sand/6 border on rest",
+          "expected": "Text inputs, selects, textareas: white-ish background, visible 1px Sand/6 border. Not Sand/4 (too pale).",
+          "how": "If the input border is barely visible against the page, fail.",
+          "compare": {
+            "pass": "<input class=\"demo-input\" placeholder=\"Project name\">",
+            "fail": "<input class=\"demo-input\" style=\"border-color:var(--sand-4);\" placeholder=\"Project name\">",
+            "passNote": "Border clearly readable.",
+            "failNote": "Border too pale \u2014 input merges with background."
+          }
+        },
+        {
+          "id": "FM-02",
+          "title": "Input focus state shows teal ring",
+          "expected": "Focused input shows 2px Cerulean outline OR teal-tinted border. Not the browser default blue.",
+          "how": "Click into an input. Should ring in Cerulean.",
+          "compare": {
+            "pass": "<input class=\"demo-input focus\" value=\"Brief 01\">",
+            "fail": "<input class=\"demo-input wrong\" value=\"Brief 01\">",
+            "passNote": "Cerulean ring \u2014 on-brand.",
+            "failNote": "Browser-default blue \u2014 wrong colour family."
+          }
+        },
+        {
+          "id": "FM-03",
+          "title": "Field labels sit above the input",
+          "expected": "Labels stacked above their inputs (not floating, not inline-left). Label uses Sand/11, font-weight 500.",
+          "how": "Labels to the left of fields, floating labels, or labels inside fields all fail.",
+          "compare": {
+            "pass": "<div><label class=\"demo-field-label\">Project name</label><input class=\"demo-input\"></div>",
+            "fail": "<div style=\"display:flex;gap:10px;align-items:center;\"><label style=\"font-size:11px;color:var(--sand-11);\">Project name</label><input class=\"demo-input\"></div>",
+            "passNote": "Stacked, label on top.",
+            "failNote": "Inline-left \u2014 breaks the system."
+          }
+        },
+        {
+          "id": "FM-04",
+          "title": "Required indicator is consistent",
+          "expected": "Required fields use a single convention \u2014 typically asterisk after label, or '(required)' text. Same convention throughout.",
+          "how": "Compare 2+ required fields. Mixed conventions = fail.",
+          "compare": {
+            "pass": "<div style=\"display:flex;flex-direction:column;gap:8px;\"><div><label class=\"demo-field-label\">Project name <span style=\"color:#E54D2E;\">*</span></label><input class=\"demo-input\"></div><div><label class=\"demo-field-label\">Owner <span style=\"color:#E54D2E;\">*</span></label><input class=\"demo-input\"></div></div>",
+            "fail": "<div style=\"display:flex;flex-direction:column;gap:8px;\"><div><label class=\"demo-field-label\">Project name <span style=\"color:#E54D2E;\">*</span></label><input class=\"demo-input\"></div><div><label class=\"demo-field-label\">Owner (required)</label><input class=\"demo-input\"></div></div>",
+            "passNote": "One convention across all required fields.",
+            "failNote": "Asterisk on one, (required) on another."
+          }
+        },
+        {
+          "id": "FM-05",
+          "title": "Error state uses Tomato/9 + helper text",
+          "expected": "Validation errors render with #E54D2E border + a helper line below the input in matching red.",
+          "how": "Trigger a validation error (submit empty required field).",
+          "compare": {
+            "pass": "<div><label class=\"demo-field-label\">Email</label><input class=\"demo-input error\" value=\"not-an-email\"><div class=\"demo-helper error\">Enter a valid email address</div></div>",
+            "fail": "<div><label class=\"demo-field-label\">Email</label><input class=\"demo-input\" value=\"not-an-email\"></div>",
+            "passNote": "Red border + helper text \u2014 error explained.",
+            "failNote": "Silent failure \u2014 user has no idea what's wrong."
+          },
+          "swatches": [
+            {
+              "label": "Tomato/9",
+              "hex": "#E54D2E"
+            }
+          ]
+        },
+        {
+          "id": "FM-06",
+          "title": "Placeholder text uses Sand/9",
+          "expected": "Input placeholder colour is Sand/9 \u2014 readable but clearly distinct from filled-in value (Sand/12).",
+          "how": "Inspect an empty input. Placeholder should be visibly lighter than filled text.",
+          "compare": {
+            "pass": "<div style=\"display:flex;flex-direction:column;gap:6px;\"><input class=\"demo-input\" placeholder=\"Search projects\u2026 (Sand/9)\"><input class=\"demo-input\" value=\"Filled value (Sand/12)\"></div>",
+            "fail": "<div style=\"display:flex;flex-direction:column;gap:6px;\"><input class=\"demo-input\" placeholder=\"Search projects\u2026\" style=\"color:var(--sand-12)::placeholder;\"><input class=\"demo-input\" value=\"Filled value\" style=\"color:var(--sand-9);\"></div>",
+            "passNote": "Placeholder visibly lighter than value.",
+            "failNote": "Placeholder and value indistinguishable."
+          }
+        },
+        {
+          "id": "FM-07",
+          "title": "Disabled inputs are visibly inert",
+          "expected": "Disabled fields use Sand/3 background, Sand/9 text, no caret on click.",
+          "how": "Click a disabled field. If a caret appears or the field highlights, fail.",
+          "compare": {
+            "pass": "<input class=\"demo-input disabled\" value=\"Cannot edit\" disabled>",
+            "fail": "<input class=\"demo-input\" value=\"Cannot edit\" style=\"cursor:text;\">",
+            "passNote": "Visibly inert \u2014 Sand/3 fill, muted text.",
+            "failNote": "Looks editable but isn't."
+          }
+        },
+        {
+          "id": "FM-08",
+          "title": "Helper text appears below input",
+          "expected": "Hint copy renders below the input in Sand/9, smaller font (12px).",
+          "how": "Helper text above the input, or in the same line, fails.",
+          "example": "<div><label class=\"demo-field-label\">Project name</label><input class=\"demo-input\"><div class=\"demo-helper\">Used in URLs and exports \u2014 max 60 characters.</div></div>"
+        },
+        {
+          "id": "FM-09",
+          "title": "Toggle / switch uses Cerulean/9 when on",
+          "expected": "Active toggles render in #0B6E8A. Off state uses Sand/6 track.",
+          "how": "If active toggle is any other colour, fail.",
+          "compare": {
+            "pass": "<div style=\"display:flex;gap:14px;align-items:center;\"><div style=\"width:32px;height:18px;border-radius:9px;background:#0B6E8A;position:relative;\"><div style=\"position:absolute;top:2px;left:16px;width:14px;height:14px;border-radius:50%;background:white;\"></div></div><span style=\"font-size:11px;color:var(--sand-11);\">ON \u2014 Cerulean</span></div>",
+            "fail": "<div style=\"display:flex;gap:14px;align-items:center;\"><div style=\"width:32px;height:18px;border-radius:9px;background:#29A383;position:relative;\"><div style=\"position:absolute;top:2px;left:16px;width:14px;height:14px;border-radius:50%;background:white;\"></div></div><span style=\"font-size:11px;color:var(--sand-11);\">ON \u2014 Jade (wrong)</span></div>",
+            "passNote": "Cerulean active state.",
+            "failNote": "Any non-Cerulean colour."
+          }
+        },
+        {
+          "id": "FM-10",
+          "title": "Checkbox uses Cerulean/9 when checked",
+          "expected": "Checked checkbox: Cerulean fill + white tick. Not OS-default blue.",
+          "how": "Tick a checkbox. Fill should be Cerulean teal.",
+          "compare": {
+            "pass": "<div style=\"display:flex;gap:8px;align-items:center;\"><div style=\"width:16px;height:16px;background:#0B6E8A;border-radius:3px;display:flex;align-items:center;justify-content:center;color:white;font-size:11px;\">\u2713</div><span style=\"font-size:12px;\">Selected</span></div>",
+            "fail": "<div style=\"display:flex;gap:8px;align-items:center;\"><input type=\"checkbox\" checked><span style=\"font-size:12px;\">Selected</span></div>",
+            "passNote": "Cerulean fill.",
+            "failNote": "OS-default blue (Material/system)."
+          }
+        }
+      ]
+    },
+    {
+      "id": "charts",
+      "title": "Charts & data visualisation",
+      "desc": "All AI/dashboard widgets must use the 32-colour data palette in strict tier order. Bar, pie, line, treemap, heatmap.",
+      "checks": [
+        {
+          "id": "CH-01",
+          "title": "First series uses --data-1 (Cerulean/9)",
+          "expected": "Series 1 in any chart renders at #0B6E8A.",
+          "how": "Hover series 1, check tooltip colour swatch or inspect SVG fill.",
+          "compare": {
+            "pass": "<div class=\"demo-chart\"><div class=\"bar\" style=\"height:40px;background:#0B6E8A;\"></div><div class=\"bar\" style=\"height:55px;background:#0B6E8A;\"></div><div class=\"bar\" style=\"height:30px;background:#0B6E8A;\"></div><div class=\"bar\" style=\"height:48px;background:#0B6E8A;\"></div></div>",
+            "fail": "<div class=\"demo-chart\"><div class=\"bar\" style=\"height:40px;background:#1976d2;\"></div><div class=\"bar\" style=\"height:55px;background:#1976d2;\"></div><div class=\"bar\" style=\"height:30px;background:#1976d2;\"></div><div class=\"bar\" style=\"height:48px;background:#1976d2;\"></div></div>",
+            "passNote": "Series 1 = Cerulean/9.",
+            "failNote": "Wrong blue \u2014 Material default."
+          },
+          "swatches": [
+            {
+              "label": "--data-1",
+              "hex": "#0B6E8A"
+            }
+          ]
+        },
+        {
+          "id": "CH-02",
+          "title": "Series 2\u20134 follow tier 1 sequence",
+          "expected": "Series 2 = #29A383 (Jade), Series 3 = #00A2C7 (Cyan), Series 4 = #5B5BD6 (Iris). Strict order.",
+          "how": "Read the legend left-to-right / top-to-bottom and confirm sequence.",
+          "compare": {
+            "pass": "<div class=\"demo-chart\"><div class=\"bar\" style=\"height:40px;background:#0B6E8A;\"></div><div class=\"bar\" style=\"height:55px;background:#29A383;\"></div><div class=\"bar\" style=\"height:30px;background:#00A2C7;\"></div><div class=\"bar\" style=\"height:48px;background:#5B5BD6;\"></div></div>",
+            "fail": "<div class=\"demo-chart\"><div class=\"bar\" style=\"height:40px;background:#0B6E8A;\"></div><div class=\"bar\" style=\"height:55px;background:#5B5BD6;\"></div><div class=\"bar\" style=\"height:30px;background:#29A383;\"></div><div class=\"bar\" style=\"height:48px;background:#00A2C7;\"></div></div>",
+            "passNote": "Cerulean \u2192 Jade \u2192 Cyan \u2192 Iris.",
+            "failNote": "Out of palette order."
+          },
+          "swatches": [
+            {
+              "label": "--data-1 Cerulean",
+              "hex": "#0B6E8A"
+            },
+            {
+              "label": "--data-2 Jade",
+              "hex": "#29A383"
+            },
+            {
+              "label": "--data-3 Cyan",
+              "hex": "#00A2C7"
+            },
+            {
+              "label": "--data-4 Iris",
+              "hex": "#5B5BD6"
+            }
+          ]
+        },
+        {
+          "id": "CH-03",
+          "title": "Series 5+ progress through tier 2 then later tiers",
+          "expected": "Series 5 = Orange, 6 = Tomato, 7 = Blue, 8 = Plum. Then tier 3 lights, tier 4 darks, tier 5 pales.",
+          "how": "Walk the legend in order and confirm.",
+          "swatches": [
+            {
+              "label": "--data-5 Orange",
+              "hex": "#F76B15"
+            },
+            {
+              "label": "--data-6 Tomato",
+              "hex": "#E54D2E"
+            },
+            {
+              "label": "--data-7 Blue",
+              "hex": "#0090FF"
+            },
+            {
+              "label": "--data-8 Plum",
+              "hex": "#AB4ABA"
+            }
+          ],
+          "example": "<div class=\"demo-chart\"><div class=\"bar\" style=\"height:40px;background:#0B6E8A;\"></div><div class=\"bar\" style=\"height:55px;background:#29A383;\"></div><div class=\"bar\" style=\"height:30px;background:#00A2C7;\"></div><div class=\"bar\" style=\"height:48px;background:#5B5BD6;\"></div><div class=\"bar\" style=\"height:42px;background:#F76B15;\"></div><div class=\"bar\" style=\"height:36px;background:#E54D2E;\"></div><div class=\"bar\" style=\"height:50px;background:#0090FF;\"></div><div class=\"bar\" style=\"height:28px;background:#AB4ABA;\"></div></div>"
+        },
+        {
+          "id": "CH-04",
+          "title": "No more than 10\u201312 visible series",
+          "expected": "Charts with >12 categories should group into 'Other' or use hierarchical drill-down. Legibility ceiling is ~10\u201312.",
+          "how": "Count legend entries.",
+          "compare": {
+            "pass": "<div class=\"demo-chart\"><div class=\"bar\" style=\"height:40px;background:#0B6E8A;\"></div><div class=\"bar\" style=\"height:55px;background:#29A383;\"></div><div class=\"bar\" style=\"height:30px;background:#00A2C7;\"></div><div class=\"bar\" style=\"height:48px;background:#5B5BD6;\"></div><div class=\"bar\" style=\"height:42px;background:#F76B15;\"></div><div class=\"bar\" style=\"height:36px;background:#E54D2E;\"></div><div class=\"bar\" style=\"height:50px;background:#0090FF;\"></div><div class=\"bar\" style=\"height:28px;background:#AB4ABA;\"></div><div class=\"bar\" style=\"height:30px;background:#8d8d86;\"></div></div>",
+            "fail": "<div class=\"demo-chart\" style=\"height:50px;\"><div class=\"bar\" style=\"width:6px;height:40px;background:#0B6E8A;\"></div><div class=\"bar\" style=\"width:6px;height:55px;background:#29A383;\"></div><div class=\"bar\" style=\"width:6px;height:30px;background:#00A2C7;\"></div><div class=\"bar\" style=\"width:6px;height:48px;background:#5B5BD6;\"></div><div class=\"bar\" style=\"width:6px;height:42px;background:#F76B15;\"></div><div class=\"bar\" style=\"width:6px;height:36px;background:#E54D2E;\"></div><div class=\"bar\" style=\"width:6px;height:50px;background:#0090FF;\"></div><div class=\"bar\" style=\"width:6px;height:28px;background:#AB4ABA;\"></div><div class=\"bar\" style=\"width:6px;height:35px;background:#B0D9E9;\"></div><div class=\"bar\" style=\"width:6px;height:42px;background:#ABE0BC;\"></div><div class=\"bar\" style=\"width:6px;height:30px;background:#A9DAED;\"></div><div class=\"bar\" style=\"width:6px;height:25px;background:#C4C1FF;\"></div><div class=\"bar\" style=\"width:6px;height:38px;background:#F8C886;\"></div><div class=\"bar\" style=\"width:6px;height:48px;background:#FFB9B2;\"></div><div class=\"bar\" style=\"width:6px;height:30px;background:#96C7F2;\"></div><div class=\"bar\" style=\"width:6px;height:42px;background:#D7A5DF;\"></div><div class=\"bar\" style=\"width:6px;height:35px;background:#197592;\"></div><div class=\"bar\" style=\"width:6px;height:50px;background:#008048;\"></div></div>",
+            "passNote": "8 series + 'Other' bucket \u2014 readable.",
+            "failNote": "18+ series \u2014 unreadable regardless of palette."
+          }
+        },
+        {
+          "id": "CH-05",
+          "title": "Axis labels use Sand/9 / 12px",
+          "expected": "Tick labels and axis titles use #63635e\u2013#8d8d86 range, never Sand/12 (too dominant).",
+          "how": "If axis labels read as 'data', they're too dark.",
+          "compare": {
+            "pass": "<div style=\"display:flex;flex-direction:column;gap:4px;font-family:var(--font-sans);font-size:11px;color:var(--sand-9);\"><div style=\"display:flex;gap:4px;align-items:flex-end;height:50px;\"><div style=\"background:#0B6E8A;width:18px;height:40px;\"></div><div style=\"background:#0B6E8A;width:18px;height:30px;\"></div><div style=\"background:#0B6E8A;width:18px;height:48px;\"></div></div><div style=\"display:flex;gap:4px;\"><span style=\"width:18px;text-align:center;\">Q1</span><span style=\"width:18px;text-align:center;\">Q2</span><span style=\"width:18px;text-align:center;\">Q3</span></div></div>",
+            "fail": "<div style=\"display:flex;flex-direction:column;gap:4px;font-family:var(--font-sans);font-size:14px;color:#000;font-weight:600;\"><div style=\"display:flex;gap:4px;align-items:flex-end;height:50px;\"><div style=\"background:#0B6E8A;width:18px;height:40px;\"></div><div style=\"background:#0B6E8A;width:18px;height:30px;\"></div><div style=\"background:#0B6E8A;width:18px;height:48px;\"></div></div><div style=\"display:flex;gap:4px;\"><span style=\"width:18px;text-align:center;\">Q1</span><span style=\"width:18px;text-align:center;\">Q2</span><span style=\"width:18px;text-align:center;\">Q3</span></div></div>",
+            "passNote": "Labels recede, data leads.",
+            "failNote": "Labels compete with data."
+          }
+        },
+        {
+          "id": "CH-06",
+          "title": "Gridlines are Sand/4",
+          "expected": "Background gridlines (if present) are #e9e8e6 \u2014 visible but recessive. No black, no thick lines.",
+          "how": "If gridlines compete with data lines visually, fail.",
+          "compare": {
+            "pass": "<svg width=\"160\" height=\"60\" viewBox=\"0 0 160 60\"><line x1=\"0\" y1=\"15\" x2=\"160\" y2=\"15\" stroke=\"#e9e8e6\" stroke-width=\"1\"/><line x1=\"0\" y1=\"30\" x2=\"160\" y2=\"30\" stroke=\"#e9e8e6\" stroke-width=\"1\"/><line x1=\"0\" y1=\"45\" x2=\"160\" y2=\"45\" stroke=\"#e9e8e6\" stroke-width=\"1\"/><polyline points=\"10,40 50,20 90,30 130,15 150,25\" stroke=\"#0B6E8A\" stroke-width=\"2\" fill=\"none\"/></svg>",
+            "fail": "<svg width=\"160\" height=\"60\" viewBox=\"0 0 160 60\"><line x1=\"0\" y1=\"15\" x2=\"160\" y2=\"15\" stroke=\"#21201c\" stroke-width=\"1\"/><line x1=\"0\" y1=\"30\" x2=\"160\" y2=\"30\" stroke=\"#21201c\" stroke-width=\"1\"/><line x1=\"0\" y1=\"45\" x2=\"160\" y2=\"45\" stroke=\"#21201c\" stroke-width=\"1\"/><polyline points=\"10,40 50,20 90,30 130,15 150,25\" stroke=\"#0B6E8A\" stroke-width=\"2\" fill=\"none\"/></svg>",
+            "passNote": "Gridlines fade behind data.",
+            "failNote": "Heavy gridlines \u2014 chart looks like a spreadsheet."
+          },
+          "swatches": [
+            {
+              "label": "Sand/4",
+              "hex": "#e9e8e6"
+            }
+          ]
+        },
+        {
+          "id": "CH-07",
+          "title": "Tooltip uses Sand/12 dark surface",
+          "expected": "Hover tooltip is dark (#21201c), white text, Sand/2 colour swatch dot. Not Sand/1 with shadow.",
+          "how": "Hover a data point.",
+          "compare": {
+            "pass": "<div style=\"background:#21201c;color:white;padding:6px 10px;border-radius:4px;font-size:11px;display:inline-flex;align-items:center;gap:6px;\"><span style=\"width:8px;height:8px;background:#0B6E8A;border-radius:2px;\"></span>Q3 \u2014 \u20ac42,500</div>",
+            "fail": "<div style=\"background:white;color:#21201c;padding:6px 10px;border-radius:4px;font-size:11px;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);border:1px solid #ddd;\">Q3 \u2014 \u20ac42,500</div>",
+            "passNote": "Dark surface, instantly readable.",
+            "failNote": "Light tooltip \u2014 lost on light chart bg."
+          }
+        },
+        {
+          "id": "CH-08",
+          "title": "Legend matches series order",
+          "expected": "Legend entries appear in the same order as data series. No alphabetical re-sort that breaks the palette sequence.",
+          "how": "Compare legend order to chart series order.",
+          "compare": {
+            "pass": "<div style=\"display:flex;flex-direction:column;gap:6px;font-size:11px;\"><div style=\"display:flex;gap:6px;align-items:center;\"><span style=\"width:10px;height:10px;background:#0B6E8A;border-radius:2px;\"></span>Series 1 \u2014 Cerulean</div><div style=\"display:flex;gap:6px;align-items:center;\"><span style=\"width:10px;height:10px;background:#29A383;border-radius:2px;\"></span>Series 2 \u2014 Jade</div><div style=\"display:flex;gap:6px;align-items:center;\"><span style=\"width:10px;height:10px;background:#00A2C7;border-radius:2px;\"></span>Series 3 \u2014 Cyan</div></div>",
+            "fail": "<div style=\"display:flex;flex-direction:column;gap:6px;font-size:11px;\"><div style=\"display:flex;gap:6px;align-items:center;\"><span style=\"width:10px;height:10px;background:#00A2C7;border-radius:2px;\"></span>Series 3 \u2014 Cyan</div><div style=\"display:flex;gap:6px;align-items:center;\"><span style=\"width:10px;height:10px;background:#29A383;border-radius:2px;\"></span>Series 2 \u2014 Jade</div><div style=\"display:flex;gap:6px;align-items:center;\"><span style=\"width:10px;height:10px;background:#0B6E8A;border-radius:2px;\"></span>Series 1 \u2014 Cerulean</div></div>",
+            "passNote": "Legend reads in series order.",
+            "failNote": "Alphabetical sort breaks palette sequence."
+          }
+        },
+        {
+          "id": "CH-09",
+          "title": "No raw HSL/opacity tints generated at runtime",
+          "expected": "Lighter / darker variants come from --data-9..32, not opacity: 0.5 or HSL manipulation in JS.",
+          "how": "Inspect a 'lighter' shade \u2014 should resolve to a known --data-* value.",
+          "compare": {
+            "pass": "<div style=\"display:flex;gap:8px;\"><div style=\"width:40px;height:40px;background:#0B6E8A;border-radius:4px;\"></div><div style=\"width:40px;height:40px;background:#B0D9E9;border-radius:4px;\"></div></div>",
+            "fail": "<div style=\"display:flex;gap:8px;\"><div style=\"width:40px;height:40px;background:#0B6E8A;border-radius:4px;\"></div><div style=\"width:40px;height:40px;background:#0B6E8A;border-radius:4px;opacity:0.4;\"></div></div>",
+            "passNote": "Light variant = --data-9 (Cerulean/6).",
+            "failNote": "opacity: 0.4 \u2014 washes out, fails contrast."
+          }
+        },
+        {
+          "id": "CH-10",
+          "title": "Empty / no-data state is on-brand",
+          "expected": "Charts with no data show an icon + Sand/9 message \u2014 not a blank white box and not the chart library's default.",
+          "how": "Find a widget with no data, or filter the data to empty.",
+          "compare": {
+            "pass": "<div style=\"background:var(--sand-1);border:1px solid var(--sand-5);border-radius:6px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:6px;width:160px;\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"var(--sand-9)\" stroke-width=\"1.5\"><path d=\"M3 3v18h18M7 17l4-4 4 4 4-8\"/></svg><div style=\"font-size:11px;color:var(--sand-9);\">No data for this period</div></div>",
+            "fail": "<div style=\"background:white;border:1px solid #ccc;padding:20px;width:160px;height:60px;font-size:11px;color:#999;\">No data</div>",
+            "passNote": "On-brand empty state with icon.",
+            "failNote": "Default library output \u2014 looks broken."
+          }
+        },
+        {
+          "id": "CH-11",
+          "title": "SLA gauges follow RAG band logic",
+          "expected": "Gauge bands: green = Jade/9 (#29A383), amber = Orange/9 (verify hex), red = Tomato/9 (#E54D2E). Needle = Sand/12. Cap = Cerulean/9.",
+          "how": "Inspect any SLA gauge widget.",
+          "swatches": [
+            {
+              "label": "Green (Jade/9)",
+              "hex": "#29A383"
+            },
+            {
+              "label": "Amber (verify)",
+              "hex": "#F5A524"
+            },
+            {
+              "label": "Red (Tomato/9)",
+              "hex": "#E54D2E"
+            },
+            {
+              "label": "Needle (Sand/12)",
+              "hex": "#21201c"
+            },
+            {
+              "label": "Cap (Cerulean/9)",
+              "hex": "#0B6E8A"
+            }
+          ],
+          "example": "<svg width=\"160\" height=\"90\" viewBox=\"0 0 160 90\"><path d=\"M 20 80 A 60 60 0 0 1 60 23\" stroke=\"#29A383\" stroke-width=\"14\" fill=\"none\"/><path d=\"M 60 23 A 60 60 0 0 1 100 23\" stroke=\"#F5A524\" stroke-width=\"14\" fill=\"none\"/><path d=\"M 100 23 A 60 60 0 0 1 140 80\" stroke=\"#E54D2E\" stroke-width=\"14\" fill=\"none\"/><line x1=\"80\" y1=\"80\" x2=\"60\" y2=\"35\" stroke=\"#21201c\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"80\" cy=\"80\" r=\"6\" fill=\"#0B6E8A\"/></svg>"
+        }
+      ]
+    },
+    {
+      "id": "modals",
+      "title": "Modals & overlays",
+      "desc": "Dialog stacking, focus management, dismissal behaviour.",
+      "checks": [
+        {
+          "id": "MD-01",
+          "title": "Scrim is Sand/12 at ~40% opacity",
+          "expected": "Modal backdrop renders at rgba(33, 32, 28, ~0.4). Not pure black, not lower than 30% (too weak).",
+          "how": "Open a modal, inspect the backdrop element.",
+          "compare": {
+            "pass": "<div style=\"background:rgba(33,32,28,0.4);width:200px;height:80px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:white;font-size:11px;\">Scrim \u2014 rgba(33,32,28,0.4)</div>",
+            "fail": "<div style=\"background:rgba(33,32,28,0.1);width:200px;height:80px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:var(--sand-11);font-size:11px;border:1px dashed var(--sand-6);\">Scrim \u2014 too weak (10%)</div>",
+            "passNote": "Background recedes; modal anchors attention.",
+            "failNote": "Scrim invisible \u2014 modal floats with no separation."
+          }
+        },
+        {
+          "id": "MD-02",
+          "title": "Modal surface uses Sand/1 + 8px radius",
+          "expected": "Container background #fdfdfc, border-radius 8px, with soft shadow (not heavy drop shadow).",
+          "how": "Inspect modal container.",
+          "compare": {
+            "pass": "<div class=\"demo-modal\"><div style=\"font-weight:600;margin-bottom:6px;\">Delete project?</div><div style=\"color:var(--sand-11);\">This cannot be undone.</div></div>",
+            "fail": "<div class=\"demo-modal\" style=\"border-radius:14px;box-shadow:0 16px 40px rgba(0,0,0,0.5);\"><div style=\"font-weight:600;margin-bottom:6px;\">Delete project?</div><div style=\"color:var(--sand-11);\">This cannot be undone.</div></div>",
+            "passNote": "8px radius, soft shadow.",
+            "failNote": "Wrong radius, heavy drop shadow."
+          }
+        },
+        {
+          "id": "MD-03",
+          "title": "Focus traps within modal",
+          "expected": "Pressing Tab cycles only through focusable elements inside the modal. Tab does not escape to background.",
+          "how": "Open modal, press Tab repeatedly. Focus must stay inside the dialog.",
+          "example": "<div style=\"background:var(--sand-12);color:white;padding:10px;border-radius:4px;font-size:11px;font-family:var(--font-mono);\">Tab \u2192 input \u2192 toggle \u2192 Cancel \u2192 Confirm \u2192 (loops to input)</div>"
+        },
+        {
+          "id": "MD-04",
+          "title": "Initial focus lands on first input or close button",
+          "expected": "On open, focus moves into the modal \u2014 not left on the trigger. First text input or the cancel/close button.",
+          "how": "Open modal, observe focus ring without clicking.",
+          "compare": {
+            "pass": "<div class=\"demo-modal\"><div style=\"font-weight:600;margin-bottom:6px;\">Rename project</div><input class=\"demo-input focus\" value=\"FIFA brief\" style=\"width:100%;font-size:11px;\"></div>",
+            "fail": "<div class=\"demo-modal\"><div style=\"font-weight:600;margin-bottom:6px;\">Rename project</div><input class=\"demo-input\" value=\"FIFA brief\" style=\"width:100%;font-size:11px;\"></div>",
+            "passNote": "First input focused on open.",
+            "failNote": "No focus moved \u2014 keyboard user has to Tab in."
+          }
+        },
+        {
+          "id": "MD-05",
+          "title": "Esc key dismisses modal",
+          "expected": "Pressing Escape closes the modal (unless it has a non-dismissable confirmation state).",
+          "how": "Open modal, press Esc.",
+          "example": "<div style=\"background:var(--sand-12);color:white;padding:10px;border-radius:4px;font-size:11px;font-family:var(--font-mono);\">[Esc] \u2192 modal closes \u2192 focus returns to trigger</div>"
+        },
+        {
+          "id": "MD-06",
+          "title": "Click outside dismisses (where appropriate)",
+          "expected": "Click on the scrim closes the modal for non-destructive flows. Destructive confirmations may suppress this.",
+          "how": "Open modal, click on the dim background.",
+          "compare": {
+            "pass": "<div style=\"font-size:11px;color:var(--sand-11);line-height:1.5;\">Non-destructive: click scrim \u2192 close<br>Destructive: click scrim \u2192 no-op (require explicit Cancel)</div>",
+            "fail": "<div style=\"font-size:11px;color:var(--sand-11);line-height:1.5;\">All modals: click scrim \u2192 close<br>(including Delete confirmations \u2014 accidental dismissal)</div>",
+            "passNote": "Behaviour matches action consequence.",
+            "failNote": "Destructive modals dismissable by stray click."
+          }
+        },
+        {
+          "id": "MD-07",
+          "title": "Focus returns to trigger on close",
+          "expected": "After dismissal, focus returns to the element that opened the modal.",
+          "how": "Tab to a trigger button, open modal, close it, observe focus.",
+          "example": "<div style=\"background:var(--sand-12);color:white;padding:10px;border-radius:4px;font-size:11px;font-family:var(--font-mono);\">trigger.click() \u2192 modal opens \u2192 close \u2192 trigger.focus()</div>"
+        },
+        {
+          "id": "MD-08",
+          "title": "Modal action order: cancel left, primary right",
+          "expected": "Footer buttons read 'Cancel' on the left, primary action on the right. Destructive uses red primary on the right.",
+          "how": "Visual scan of modal footer.",
+          "compare": {
+            "pass": "<div class=\"demo-modal\"><div style=\"font-weight:600;\">Delete project?</div><div class=\"demo-modal-footer\"><button class=\"demo-btn ghost\">Cancel</button><button class=\"demo-btn destructive\">Delete</button></div></div>",
+            "fail": "<div class=\"demo-modal\"><div style=\"font-weight:600;\">Delete project?</div><div class=\"demo-modal-footer\" style=\"justify-content:flex-start;\"><button class=\"demo-btn destructive\">Delete</button><button class=\"demo-btn ghost\">Cancel</button></div></div>",
+            "passNote": "Cancel left, primary right.",
+            "failNote": "Reversed \u2014 primary trap on the left."
+          }
+        }
+      ]
+    },
+    {
+      "id": "navigation",
+      "title": "Navigation \u2014 sidebar & header",
+      "desc": "Sidebar, top header, breadcrumbs. The sidebar is always-visible and carries a lot of the brand signal.",
+      "checks": [
+        {
+          "id": "NV-01",
+          "title": "Sidebar uses dark surface with brand green accent",
+          "expected": "Sidebar background is dark (Sand/12 or near). Active item or accent uses Screendragon brand green, not Cerulean.",
+          "how": "If the sidebar accent is Cerulean, fail \u2014 Cerulean is for in-page actions, not navigation.",
+          "compare": {
+            "pass": "<div class=\"demo-nav\"><div class=\"demo-nav-item\">Dashboard</div><div class=\"demo-nav-item active\">Projects</div><div class=\"demo-nav-item\">Assets</div></div>",
+            "fail": "<div class=\"demo-nav\"><div class=\"demo-nav-item\">Dashboard</div><div class=\"demo-nav-item\" style=\"background:rgba(11,110,138,0.2);color:white;border-left:2px solid #0B6E8A;padding-left:8px;\">Projects</div><div class=\"demo-nav-item\">Assets</div></div>",
+            "passNote": "Brand green sidebar accent.",
+            "failNote": "Cerulean in sidebar \u2014 competes with in-page actions."
+          }
+        },
+        {
+          "id": "NV-02",
+          "title": "Active nav item is clearly distinguishable",
+          "expected": "Currently active page in the sidebar shows a different background AND a left-border accent or icon highlight.",
+          "how": "On any page, confirm the matching sidebar item is obviously highlighted.",
+          "compare": {
+            "pass": "<div class=\"demo-nav\"><div class=\"demo-nav-item\">Dashboard</div><div class=\"demo-nav-item active\">Projects</div><div class=\"demo-nav-item\">Assets</div></div>",
+            "fail": "<div class=\"demo-nav\"><div class=\"demo-nav-item\">Dashboard</div><div class=\"demo-nav-item\" style=\"color:rgba(255,255,255,0.9);\">Projects</div><div class=\"demo-nav-item\">Assets</div></div>",
+            "passNote": "Two visual cues \u2014 fill + accent border.",
+            "failNote": "Only a slight text-colour shift \u2014 easy to miss."
+          }
+        },
+        {
+          "id": "NV-03",
+          "title": "Hover state on nav items is subtle",
+          "expected": "Sidebar item hover uses a small alpha lift, not a hard colour change. No Cerulean on hover.",
+          "how": "Hover a nav item.",
+          "compare": {
+            "pass": "<div class=\"demo-nav\"><div class=\"demo-nav-item\">Dashboard</div><div class=\"demo-nav-item\" style=\"background:rgba(255,255,255,0.06);color:white;\">Projects (hover)</div><div class=\"demo-nav-item\">Assets</div></div>",
+            "fail": "<div class=\"demo-nav\"><div class=\"demo-nav-item\">Dashboard</div><div class=\"demo-nav-item\" style=\"background:#0B6E8A;color:white;\">Projects (hover)</div><div class=\"demo-nav-item\">Assets</div></div>",
+            "passNote": "Subtle alpha \u2014 feedback without shouting.",
+            "failNote": "Heavy Cerulean fill on hover \u2014 looks 'clicked'."
+          }
+        },
+        {
+          "id": "NV-04",
+          "title": "Nav is flat (no expanding sub-items)",
+          "expected": "Sidebar navigation is single-level. No accordion/sub-tree behaviour.",
+          "how": "Visual scan of full sidebar.",
+          "compare": {
+            "pass": "<div class=\"demo-nav\"><div class=\"demo-nav-item\">Dashboard</div><div class=\"demo-nav-item\">Projects</div><div class=\"demo-nav-item\">Assets</div><div class=\"demo-nav-item\">Reports</div></div>",
+            "fail": "<div class=\"demo-nav\"><div class=\"demo-nav-item\">Dashboard \u25be</div><div class=\"demo-nav-item\" style=\"padding-left:24px;\">Overview</div><div class=\"demo-nav-item\" style=\"padding-left:24px;\">My tasks</div><div class=\"demo-nav-item\">Projects \u25b8</div></div>",
+            "passNote": "Flat, predictable hierarchy.",
+            "failNote": "Accordion sub-items \u2014 increases interaction cost."
+          }
+        },
+        {
+          "id": "NV-05",
+          "title": "Page header shows breadcrumb or page title",
+          "expected": "Top of every content area names the current page. Breadcrumb uses Sand/9 separators and Sand/12 active leaf.",
+          "how": "Visual scan.",
+          "compare": {
+            "pass": "<div style=\"font-size:12px;\"><span style=\"color:var(--sand-9);\">Projects</span><span style=\"color:var(--sand-8);margin:0 6px;\">/</span><span style=\"color:var(--sand-9);\">FIFA 2026</span><span style=\"color:var(--sand-8);margin:0 6px;\">/</span><span style=\"color:var(--sand-12);font-weight:600;\">Brief</span></div>",
+            "fail": "<div style=\"font-size:12px;color:var(--sand-9);\">(no breadcrumb \u2014 user must rely on URL or sidebar)</div>",
+            "passNote": "Active leaf bolded, parents muted.",
+            "failNote": "No location indicator."
+          }
+        },
+        {
+          "id": "NV-06",
+          "title": "Skip-to-content link present",
+          "expected": "Tabbing from page load reveals a skip-to-content link as the first focus stop.",
+          "how": "Reload page, press Tab once. A focused link should appear.",
+          "example": "<a href=\"#main\" style=\"display:inline-block;padding:6px 12px;background:var(--sand-12);color:white;font-size:12px;border-radius:4px;outline:2px solid #0B6E8A;outline-offset:1px;text-decoration:none;\">Skip to main content</a>"
+        },
+        {
+          "id": "NV-07",
+          "title": "Logo is keyboard accessible",
+          "expected": "The brand mark or logo can be focused via keyboard and is a link to home.",
+          "how": "Tab to the brand mark.",
+          "example": "<a href=\"/\" style=\"display:inline-flex;align-items:center;gap:8px;padding:4px 8px;text-decoration:none;color:var(--sand-12);outline:2px solid #0B6E8A;outline-offset:1px;border-radius:4px;\"><div style=\"width:20px;height:20px;border-radius:3px;background:linear-gradient(135deg,#0B6E8A,#29A383);\"></div><span style=\"font-weight:600;font-size:13px;\">Screendragon</span></a>"
+        }
+      ]
+    },
+    {
+      "id": "interaction",
+      "title": "Interaction & accessibility",
+      "desc": "Cross-cutting checks. If global focus rings (G-11) failed, much of this will too.",
+      "checks": [
+        {
+          "id": "IA-01",
+          "title": "All interactive elements have visible focus",
+          "expected": "Buttons, links, inputs, toggles, table rows, menu items: all show a 2px Cerulean outline when focused via keyboard.",
+          "how": "Tab through the page top to bottom. Every focusable element should ring.",
+          "compare": {
+            "pass": "<div style=\"display:flex;gap:8px;align-items:center;\"><button class=\"demo-btn primary\" style=\"outline:2px solid #0B6E8A;outline-offset:1px;\">Save</button><a href=\"#\" style=\"outline:2px solid #0B6E8A;outline-offset:1px;border-radius:2px;padding:1px 4px;color:#0B6E8A;font-size:12px;\">Link</a><input class=\"demo-input focus\" style=\"width:80px;font-size:11px;\" value=\"Input\"></div>",
+            "fail": "<div style=\"display:flex;gap:8px;align-items:center;\"><button class=\"demo-btn primary\">Save</button><a href=\"#\" style=\"color:#0B6E8A;font-size:12px;\">Link</a><input class=\"demo-input\" style=\"width:80px;font-size:11px;\" value=\"Input\"></div>",
+            "passNote": "All elements show focus ring.",
+            "failNote": "No ring \u2014 keyboard users can't see where they are."
+          }
+        },
+        {
+          "id": "IA-02",
+          "title": "Focus order matches visual order",
+          "expected": "Tab order proceeds left-to-right, top-to-bottom in line with how the page reads. No teleporting to footer.",
+          "how": "Tab through and watch focus path.",
+          "compare": {
+            "pass": "<div style=\"font-family:var(--font-mono);font-size:11px;color:var(--sand-11);\">1 \u2192 Search \u00b7 2 \u2192 New \u00b7 3 \u2192 Filter \u00b7 4 \u2192 Sort \u00b7 5 \u2192 Row 1 \u00b7 6 \u2192 Row 2</div>",
+            "fail": "<div style=\"font-family:var(--font-mono);font-size:11px;color:var(--sand-11);\">1 \u2192 Search \u00b7 2 \u2192 Row 1 \u00b7 3 \u2192 Footer link \u00b7 4 \u2192 New \u00b7 5 \u2192 Row 2</div>",
+            "passNote": "Tab order matches reading order.",
+            "failNote": "Jumps around \u2014 keyboard nav unusable."
+          }
+        },
+        {
+          "id": "IA-03",
+          "title": "Hover state present on every clickable",
+          "expected": "Buttons, links, rows, cards-as-links: all show some change on hover (background, border, or text colour).",
+          "how": "Hover sample of each clickable element type.",
+          "compare": {
+            "pass": "<div style=\"display:flex;gap:8px;\"><button class=\"demo-btn ghost\">Rest</button><button class=\"demo-btn\" style=\"background:var(--sand-3);color:var(--sand-12);\">Hover</button></div>",
+            "fail": "<div style=\"display:flex;gap:8px;\"><button class=\"demo-btn ghost\">Rest</button><button class=\"demo-btn ghost\">Hover (no change)</button></div>",
+            "passNote": "Hover provides feedback.",
+            "failNote": "No hover state \u2014 element doesn't feel clickable."
+          }
+        },
+        {
+          "id": "IA-04",
+          "title": "Active / pressed state distinct from hover",
+          "expected": "Mousedown on a button shows a slightly darker or inset state, separate from hover.",
+          "how": "Press and hold on a button.",
+          "compare": {
+            "pass": "<div style=\"display:flex;gap:8px;\"><button class=\"demo-btn primary\">Rest</button><button class=\"demo-btn\" style=\"background:#005F7B;color:white;\">Hover</button><button class=\"demo-btn\" style=\"background:#004556;color:white;box-shadow:inset 0 1px 2px rgba(0,0,0,0.2);\">Pressed</button></div>",
+            "fail": "<div style=\"display:flex;gap:8px;\"><button class=\"demo-btn primary\">Rest</button><button class=\"demo-btn\" style=\"background:#005F7B;color:white;\">Hover & Pressed (same)</button></div>",
+            "passNote": "Three distinct states.",
+            "failNote": "Press indistinguishable from hover."
+          }
+        },
+        {
+          "id": "IA-05",
+          "title": "Cursor is pointer on actionable elements",
+          "expected": "cursor: pointer on every button, link, row-as-link, expandable card.",
+          "how": "Hover and check cursor.",
+          "compare": {
+            "pass": "<div style=\"font-family:var(--font-mono);font-size:11px;color:var(--sand-11);line-height:1.6;\">button { cursor: pointer; }<br>a { cursor: pointer; }<br>.row-as-link { cursor: pointer; }</div>",
+            "fail": "<div style=\"font-family:var(--font-mono);font-size:11px;color:var(--sand-11);line-height:1.6;\">button { cursor: default; }<br>.clickable-row { /* no cursor */ }</div>",
+            "passNote": "Cursor signals clickability.",
+            "failNote": "Default cursor \u2014 element looks inert."
+          }
+        },
+        {
+          "id": "IA-06",
+          "title": "Buttons have accessible names",
+          "expected": "Icon-only buttons have aria-label or visible text via tooltip. No icon button without a name.",
+          "how": "Inspect an icon button; look for aria-label.",
+          "compare": {
+            "pass": "<div style=\"font-family:var(--font-mono);font-size:11px;color:var(--sand-11);\">&lt;button aria-label=\"Delete project\"&gt;<br>&nbsp;&nbsp;&lt;svg ...&gt;&lt;/svg&gt;<br>&lt;/button&gt;</div>",
+            "fail": "<div style=\"font-family:var(--font-mono);font-size:11px;color:var(--sand-11);\">&lt;button&gt;<br>&nbsp;&nbsp;&lt;svg ...&gt;&lt;/svg&gt;<br>&lt;/button&gt;</div>",
+            "passNote": "Screen reader announces 'Delete project'.",
+            "failNote": "Screen reader announces 'button'."
+          }
+        },
+        {
+          "id": "IA-07",
+          "title": "Form inputs have associated labels",
+          "expected": "Every input has a <label for=...> or aria-labelledby pointing to a visible label.",
+          "how": "Inspect input for label association.",
+          "compare": {
+            "pass": "<div style=\"font-family:var(--font-mono);font-size:11px;color:var(--sand-11);line-height:1.6;\">&lt;label for=\"email\"&gt;Email&lt;/label&gt;<br>&lt;input id=\"email\" type=\"email\"&gt;</div>",
+            "fail": "<div style=\"font-family:var(--font-mono);font-size:11px;color:var(--sand-11);line-height:1.6;\">&lt;div&gt;Email&lt;/div&gt;<br>&lt;input type=\"email\"&gt;</div>",
+            "passNote": "Label programmatically linked.",
+            "failNote": "Visual label only \u2014 screen readers can't connect them."
+          }
+        },
+        {
+          "id": "IA-08",
+          "title": "Required fields announce required state",
+          "expected": "Required inputs have aria-required=\"true\" and the visual indicator matches.",
+          "how": "Inspect a required field.",
+          "example": "<div style=\"font-family:var(--font-mono);font-size:11px;color:var(--sand-11);line-height:1.6;\">&lt;input aria-required=\"true\" required ...&gt;</div>"
+        },
+        {
+          "id": "IA-09",
+          "title": "Error messages are programmatically linked",
+          "expected": "Validation error text is connected to its input via aria-describedby.",
+          "how": "Trigger a validation error and inspect aria-describedby.",
+          "example": "<div style=\"font-family:var(--font-mono);font-size:11px;color:var(--sand-11);line-height:1.6;\">&lt;input aria-invalid=\"true\" aria-describedby=\"email-err\"&gt;<br>&lt;div id=\"email-err\"&gt;Enter a valid email&lt;/div&gt;</div>"
+        },
+        {
+          "id": "IA-10",
+          "title": "Modals have role=\"dialog\" + aria-modal",
+          "expected": "Modal containers expose role=\"dialog\" and aria-modal=\"true\", with aria-labelledby pointing to the title.",
+          "how": "Inspect a modal root element.",
+          "example": "<div style=\"font-family:var(--font-mono);font-size:11px;color:var(--sand-11);line-height:1.6;\">&lt;div role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"dlg-title\"&gt;<br>&nbsp;&nbsp;&lt;h2 id=\"dlg-title\"&gt;Delete project?&lt;/h2&gt;<br>&lt;/div&gt;</div>"
+        },
+        {
+          "id": "IA-11",
+          "title": "Status / live regions for async updates",
+          "expected": "Toasts, save confirmations, async loaders use aria-live=\"polite\" or role=\"status\".",
+          "how": "Trigger a save action; inspect the resulting toast element.",
+          "example": "<div style=\"font-family:var(--font-mono);font-size:11px;color:var(--sand-11);line-height:1.6;\">&lt;div role=\"status\" aria-live=\"polite\"&gt;<br>&nbsp;&nbsp;Changes saved<br>&lt;/div&gt;</div>"
+        },
+        {
+          "id": "IA-12",
+          "title": "Page has logical heading hierarchy",
+          "expected": "One h1 per page (page title), h2/h3 nested below. No skipping h1\u2192h3.",
+          "how": "DevTools \u2192 Accessibility \u2192 Document outline. Or inspect heading levels.",
+          "compare": {
+            "pass": "<div style=\"font-family:var(--font-mono);font-size:11px;color:var(--sand-11);line-height:1.6;\">h1 \u2014 FIFA 2026<br>&nbsp;&nbsp;h2 \u2014 Brief<br>&nbsp;&nbsp;&nbsp;&nbsp;h3 \u2014 Deliverables<br>&nbsp;&nbsp;h2 \u2014 Timeline</div>",
+            "fail": "<div style=\"font-family:var(--font-mono);font-size:11px;color:var(--sand-11);line-height:1.6;\">h1 \u2014 FIFA 2026<br>&nbsp;&nbsp;h3 \u2014 Brief (skipped h2)<br>&nbsp;&nbsp;h5 \u2014 Deliverables (skipped h4)</div>",
+            "passNote": "Proper nesting \u2014 screen readers can navigate.",
+            "failNote": "Skipped levels \u2014 outline broken."
+          }
+        },
+        {
+          "id": "IA-13",
+          "title": "Colour is not the only signal for state",
+          "expected": "Status (success, error, warning) is communicated via icon or text in addition to colour. Rows/badges with status are not colour-only.",
+          "how": "Find a status badge. Confirm icon or label, not just fill colour.",
+          "compare": {
+            "pass": "<div style=\"display:flex;gap:6px;\"><span style=\"background:var(--pass-3);color:#006a3c;padding:2px 8px;border-radius:10px;font-size:11px;\">\u2713 Approved</span><span style=\"background:var(--fail-3);color:#9c2410;padding:2px 8px;border-radius:10px;font-size:11px;\">\u2717 Rejected</span></div>",
+            "fail": "<div style=\"display:flex;gap:6px;\"><span style=\"background:var(--pass-9);width:12px;height:12px;border-radius:50%;\"></span><span style=\"background:var(--fail-9);width:12px;height:12px;border-radius:50%;\"></span></div>",
+            "passNote": "Icon + colour + text \u2014 accessible to all.",
+            "failNote": "Colour-only dots \u2014 invisible to colour-blind users."
+          }
+        },
+        {
+          "id": "IA-14",
+          "title": "Text contrast meets 4.5:1 (body)",
+          "expected": "Body text against background passes WCAG AA \u2014 Sand/12 on Sand/1 = pass; Sand/9 on Sand/1 may fail for body and is for metadata only.",
+          "how": "DevTools \u2192 Inspect \u2192 Accessibility \u2192 Contrast ratio.",
+          "compare": {
+            "pass": "<div style=\"background:#fdfdfc;padding:10px;border-radius:4px;color:#21201c;font-size:13px;\">Body text in Sand/12 on Sand/1 \u2014 passes AA</div>",
+            "fail": "<div style=\"background:#fdfdfc;padding:10px;border-radius:4px;color:#bcbbb5;font-size:13px;\">Body text in Sand/8 \u2014 fails AA</div>",
+            "passNote": "Readable for all users.",
+            "failNote": "Insufficient contrast \u2014 low-vision users blocked."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<script>
+// ============================================================
+//  STATE
+// ============================================================
+const CHECKS = JSON.parse(document.getElementById('checks-data').textContent);
+let state = {
+  reviews: [],          // [{id, name, url, pageTypes:[], statuses:{checkId:{status,notes}}, createdAt, updatedAt}]
+  activeReviewId: null
+};
+
+// ============================================================
+//  STORAGE
+// ============================================================
+async function loadState() {
+  try {
+    const idx = await window.storage.get('reviews:index');
+    if (!idx) return;
+    const ids = JSON.parse(idx.value);
+    const reviews = [];
+    for (const id of ids) {
+      try {
+        const r = await window.storage.get(`review:${id}`);
+        if (r) reviews.push(JSON.parse(r.value));
+      } catch (_) {}
+    }
+    state.reviews = reviews.sort((a,b) => b.updatedAt - a.updatedAt);
+    if (state.reviews.length) state.activeReviewId = state.reviews[0].id;
+  } catch (e) {
+    console.warn('Storage load skipped:', e);
+  }
+}
+
+async function saveReview(review) {
+  review.updatedAt = Date.now();
+  try {
+    await window.storage.set(`review:${review.id}`, JSON.stringify(review));
+    const ids = state.reviews.map(r => r.id);
+    await window.storage.set('reviews:index', JSON.stringify(ids));
+  } catch (e) {
+    console.warn('Storage save failed:', e);
+  }
+}
+
+async function deleteReview(id) {
+  state.reviews = state.reviews.filter(r => r.id !== id);
+  if (state.activeReviewId === id) {
+    state.activeReviewId = state.reviews[0]?.id || null;
+  }
+  try {
+    await window.storage.delete(`review:${id}`);
+    await window.storage.set('reviews:index', JSON.stringify(state.reviews.map(r => r.id)));
+  } catch (e) { console.warn(e); }
+}
+
+// ============================================================
+//  HELPERS
+// ============================================================
+function uid() { return 'r_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); }
+
+function getActiveReview() {
+  return state.reviews.find(r => r.id === state.activeReviewId);
+}
+
+function getActiveSections(review) {
+  if (!review) return [];
+  return CHECKS.sections.filter(s => s.alwaysOn || review.pageTypes.includes(s.id));
+}
+
+function totalChecks(review) {
+  return getActiveSections(review).reduce((n, s) => n + s.checks.length, 0);
+}
+
+function statusCounts(review) {
+  const counts = { pass: 0, fail: 0, na: 0, todo: 0 };
+  if (!review) return counts;
+  const sections = getActiveSections(review);
+  for (const s of sections) {
+    for (const c of s.checks) {
+      const st = review.statuses[c.id]?.status;
+      if (st === 'pass') counts.pass++;
+      else if (st === 'fail') counts.fail++;
+      else if (st === 'na') counts.na++;
+      else counts.todo++;
+    }
+  }
+  return counts;
+}
+
+function toast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2500);
+}
+
+// ============================================================
+//  RENDERING
+// ============================================================
+function render() {
+  renderSidebar();
+  renderWorkspace();
+}
+
+function renderSidebar() {
+  const list = document.getElementById('reviews-list');
+  if (!state.reviews.length) {
+    list.innerHTML = '<div style="font-size:12px;color:var(--sand-9);padding:8px;">No reviews yet. Create one to start.</div>';
+    document.getElementById('sections-nav-wrap').style.display = 'none';
+    return;
+  }
+  list.innerHTML = state.reviews.map(r => {
+    const counts = statusCounts(r);
+    const total = totalChecks(r);
+    const done = counts.pass + counts.fail + counts.na;
+    return `
+      <div class="review-item ${r.id === state.activeReviewId ? 'active' : ''}" data-review-id="${r.id}">
+        <span class="review-item-name">${escapeHtml(r.name)}</span>
+        <span class="review-item-progress">${done}/${total}</span>
+      </div>
+    `;
+  }).join('');
+  list.querySelectorAll('.review-item').forEach(el => {
+    el.addEventListener('click', () => {
+      state.activeReviewId = el.dataset.reviewId;
+      render();
+    });
+  });
+
+  const review = getActiveReview();
+  const navWrap = document.getElementById('sections-nav-wrap');
+  const nav = document.getElementById('sections-nav');
+  if (review) {
+    navWrap.style.display = '';
+    const sections = getActiveSections(review);
+    nav.innerHTML = sections.map(s => {
+      const active = s.checks.filter(c => review.statuses[c.id]?.status).length;
+      return `
+        <a class="sb-section-link" data-jump="${s.id}">
+          <span>${escapeHtml(s.title.split(' — ')[0])}</span>
+          <span class="sb-count">${active}/${s.checks.length}</span>
+        </a>
+      `;
+    }).join('');
+    nav.querySelectorAll('.sb-section-link').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        document.getElementById('sec-' + a.dataset.jump)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  } else {
+    navWrap.style.display = 'none';
+  }
+}
+
+function renderWorkspace() {
+  const ws = document.getElementById('workspace');
+  const review = getActiveReview();
+  if (!review) {
+    ws.innerHTML = `
+      <div class="empty">
+        <h2>Start a Scale conformance review</h2>
+        <p>Create a review for a product page you want to inspect. Toggle the page-type sections that apply (table, form, chart, etc.) — Global checks always run. Mark each check as Pass, Fail, or N/A. Findings export to Markdown, JSON, or CSV.</p>
+        <button class="btn btn-primary" onclick="openModal('modal-new-review')">+ Start a review</button>
+      </div>
+    `;
+    return;
+  }
+  ws.innerHTML = renderReview(review);
+  bindReviewEvents();
+}
+
+function renderReview(review) {
+  const counts = statusCounts(review);
+  const total = totalChecks(review);
+  const done = counts.pass + counts.fail + counts.na;
+  const pct = total ? Math.round(done / total * 100) : 0;
+
+  const ringRadius = 22;
+  const circ = 2 * Math.PI * ringRadius;
+  const offset = circ - (pct / 100) * circ;
+
+  const pageTypes = CHECKS.sections.filter(s => !s.alwaysOn);
+
+  const sectionsHtml = getActiveSections(review).map(s => renderSection(review, s)).join('');
+
+  return `
+    <div class="review-header">
+      <div class="review-meta">
+        <h1 class="review-name"><input type="text" id="rh-name" value="${escapeHtml(review.name)}"></h1>
+        <p class="review-url"><input type="text" id="rh-url" value="${escapeHtml(review.url || '')}" placeholder="URL or build reference"></p>
+      </div>
+      <div class="progress-summary">
+        <div class="progress-ring">
+          <svg width="56" height="56">
+            <circle class="progress-ring-bg" cx="28" cy="28" r="${ringRadius}" fill="none" stroke-width="4"></circle>
+            <circle class="progress-ring-fg" cx="28" cy="28" r="${ringRadius}" fill="none" stroke-width="4" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" stroke-linecap="round"></circle>
+          </svg>
+          <div class="progress-ring-text">${pct}%</div>
+        </div>
+        <div class="progress-stats">
+          <span class="stat-pass"><b>${counts.pass}</b>pass</span>
+          <span class="stat-fail"><b>${counts.fail}</b>fail</span>
+          <span><b>${counts.na}</b>n/a</span>
+          <span><b>${counts.todo}</b>open</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-types">
+      <div class="page-types-label">Page types</div>
+      <button class="pt-toggle always-on" disabled>Global (always)</button>
+      ${pageTypes.map(pt => `
+        <button class="pt-toggle ${review.pageTypes.includes(pt.id) ? 'active' : ''}" data-toggle-pt="${pt.id}">
+          ${escapeHtml(pt.title.split(' — ')[0])}
+        </button>
+      `).join('')}
+      <button class="btn btn-ghost" style="margin-left:auto;font-size:12px;color:var(--fail-9);" data-delete-review="${review.id}">Delete review</button>
+    </div>
+
+    ${sectionsHtml}
+  `;
+}
+
+function renderSection(review, section) {
+  const sectionCounts = section.checks.reduce((acc, c) => {
+    const s = review.statuses[c.id]?.status;
+    if (s) acc.done++; else acc.todo++;
+    return acc;
+  }, { done: 0, todo: 0 });
+
+  return `
+    <section class="check-section" id="sec-${section.id}">
+      <div class="check-section-header">
+        <h2 class="check-section-title">${escapeHtml(section.title)}</h2>
+        <span class="check-section-meta">${sectionCounts.done}/${section.checks.length} reviewed</span>
+      </div>
+      ${section.desc ? `<p class="check-section-desc">${escapeHtml(section.desc)}</p>` : ''}
+      <div class="bulk-bar">
+        <button class="btn btn-ghost" data-bulk="${section.id}" data-status="pass" style="font-size:12px;">Mark all pass</button>
+        <button class="btn btn-ghost" data-bulk="${section.id}" data-status="reset" style="font-size:12px;">Reset section</button>
+      </div>
+      ${section.checks.map(c => renderCheck(review, c)).join('')}
+    </section>
+  `;
+}
+
+function renderCheck(review, check) {
+  const result = review.statuses[check.id] || {};
+  const status = result.status;
+  const notes = result.notes || '';
+  const swatch = check.tokenHex
+    ? `<span class="check-swatch" style="background:${check.tokenHex};"></span>`
+    : '';
+  return `
+    <div class="check status-${status || 'todo'}" data-check-id="${check.id}">
+      <div class="check-status-group">
+        <button class="status-btn" data-active="${status === 'pass' ? 'pass' : ''}" data-set-status="${check.id}|pass">Pass</button>
+        <button class="status-btn" data-active="${status === 'fail' ? 'fail' : ''}" data-set-status="${check.id}|fail">Fail</button>
+        <button class="status-btn" data-active="${status === 'na' ? 'na' : ''}" data-set-status="${check.id}|na">N/A</button>
+      </div>
+      <div class="check-body">
+        <h4 class="check-title"><span class="check-id">${check.id}</span>${escapeHtml(check.title)}</h4>
+        <p class="check-expected">${linkifyCode(escapeHtml(check.expected))}</p>
+        ${check.how ? `<p class="check-how">${escapeHtml(check.how)}</p>` : ''}
+        ${renderVisual(check)}
+        <textarea class="check-notes" data-notes="${check.id}" placeholder="Add notes, link to bug ticket, paste screenshot URL…">${escapeHtml(notes)}</textarea>
+      </div>
+      <div class="check-aside">
+        ${check.tokenRef ? `<span class="check-token">${swatch}<span>${escapeHtml(check.tokenRef)}</span></span>` : ''}
+        ${check.tokenHex ? `<span class="mono">${check.tokenHex}</span>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function renderVisual(check) {
+  const parts = [];
+  if (check.swatches) {
+    parts.push(`
+      <div class="visual">
+        <div class="visual-label">Reference colours</div>
+        <div class="swatch-row">
+          ${check.swatches.map(s => `
+            <div class="swatch-card">
+              <div class="patch" style="background:${s.hex};"></div>
+              <div class="patch-label">${escapeHtml(s.label)}</div>
+              <div class="patch-hex">${s.hex}</div>
+              ${s.note ? `<div class="patch-note">${escapeHtml(s.note)}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `);
+  }
+  if (check.compare) {
+    parts.push(`
+      <div class="visual">
+        <div class="visual-label">Pass vs Fail</div>
+        <div class="compare">
+          <div class="compare-cell pass">
+            <div class="compare-render">${check.compare.pass}</div>
+            ${check.compare.passNote ? `<div class="compare-note">${escapeHtml(check.compare.passNote)}</div>` : ''}
+          </div>
+          <div class="compare-cell fail">
+            <div class="compare-render">${check.compare.fail}</div>
+            ${check.compare.failNote ? `<div class="compare-note">${escapeHtml(check.compare.failNote)}</div>` : ''}
+          </div>
+        </div>
+      </div>
+    `);
+  }
+  if (check.example) {
+    parts.push(`
+      <div class="visual">
+        <div class="visual-label">Correct rendering</div>
+        <div class="example">${check.example}</div>
+      </div>
+    `);
+  }
+  return parts.join('');
+}
+
+function bindReviewEvents() {
+  // Page type toggles
+  document.querySelectorAll('[data-toggle-pt]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const review = getActiveReview();
+      const pt = btn.dataset.togglePt;
+      if (review.pageTypes.includes(pt)) {
+        review.pageTypes = review.pageTypes.filter(x => x !== pt);
+      } else {
+        review.pageTypes.push(pt);
+      }
+      saveReview(review);
+      render();
+    });
+  });
+
+  // Status buttons
+  document.querySelectorAll('[data-set-status]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const [checkId, status] = btn.dataset.setStatus.split('|');
+      const review = getActiveReview();
+      if (!review.statuses[checkId]) review.statuses[checkId] = { status: null, notes: '' };
+      review.statuses[checkId].status = (review.statuses[checkId].status === status) ? null : status;
+      saveReview(review);
+      render();
+    });
+  });
+
+  // Notes
+  document.querySelectorAll('[data-notes]').forEach(ta => {
+    let timer;
+    ta.addEventListener('input', () => {
+      const checkId = ta.dataset.notes;
+      const review = getActiveReview();
+      if (!review.statuses[checkId]) review.statuses[checkId] = { status: null, notes: '' };
+      review.statuses[checkId].notes = ta.value;
+      clearTimeout(timer);
+      timer = setTimeout(() => saveReview(review), 400);
+    });
+  });
+
+  // Bulk
+  document.querySelectorAll('[data-bulk]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const sectionId = btn.dataset.bulk;
+      const status = btn.dataset.status;
+      const review = getActiveReview();
+      const section = CHECKS.sections.find(s => s.id === sectionId);
+      for (const c of section.checks) {
+        if (!review.statuses[c.id]) review.statuses[c.id] = { status: null, notes: '' };
+        review.statuses[c.id].status = (status === 'reset') ? null : status;
+      }
+      saveReview(review);
+      render();
+    });
+  });
+
+  // Header inputs
+  const nameInput = document.getElementById('rh-name');
+  const urlInput = document.getElementById('rh-url');
+  if (nameInput) {
+    let t1, t2;
+    nameInput.addEventListener('input', () => {
+      const r = getActiveReview();
+      r.name = nameInput.value;
+      clearTimeout(t1);
+      t1 = setTimeout(() => { saveReview(r); renderSidebar(); }, 400);
+    });
+    urlInput.addEventListener('input', () => {
+      const r = getActiveReview();
+      r.url = urlInput.value;
+      clearTimeout(t2);
+      t2 = setTimeout(() => saveReview(r), 400);
+    });
+  }
+
+  // Delete
+  document.querySelectorAll('[data-delete-review]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Delete this review? This cannot be undone.')) return;
+      await deleteReview(btn.dataset.deleteReview);
+      render();
+    });
+  });
+}
+
+// ============================================================
+//  EXPORT
+// ============================================================
+function exportReview(format) {
+  const review = getActiveReview();
+  if (!review) return '';
+  const sections = getActiveSections(review);
+  const counts = statusCounts(review);
+  const total = totalChecks(review);
+
+  if (format === 'json') {
+    return JSON.stringify(review, null, 2);
+  }
+  if (format === 'csv') {
+    const rows = [['Section', 'Check ID', 'Title', 'Expected', 'Status', 'Notes']];
+    for (const s of sections) {
+      for (const c of s.checks) {
+        const r = review.statuses[c.id] || {};
+        rows.push([
+          s.title.split(' — ')[0],
+          c.id, c.title, c.expected, r.status || '', (r.notes || '').replace(/\n/g, ' ')
+        ]);
+      }
+    }
+    return rows.map(row => row.map(cell =>
+      `"${String(cell).replace(/"/g, '""')}"`
+    ).join(',')).join('\n');
+  }
+  // Markdown
+  let md = `# Scale QA Conformance — ${review.name}\n\n`;
+  if (review.url) md += `**Surface:** ${review.url}\n\n`;
+  md += `**Reviewed:** ${new Date(review.updatedAt).toLocaleString()}\n\n`;
+  md += `**Coverage:** ${counts.pass + counts.fail + counts.na}/${total} checks (${counts.pass} pass · ${counts.fail} fail · ${counts.na} n/a · ${counts.todo} open)\n\n`;
+
+  // Failures first — that's what gets actioned
+  const failures = [];
+  for (const s of sections) {
+    for (const c of s.checks) {
+      const r = review.statuses[c.id];
+      if (r?.status === 'fail') failures.push({ section: s.title.split(' — ')[0], check: c, notes: r.notes });
+    }
+  }
+  if (failures.length) {
+    md += `## Failures (${failures.length})\n\n`;
+    for (const f of failures) {
+      md += `### ${f.check.id} — ${f.check.title}\n`;
+      md += `*${f.section}*\n\n`;
+      md += `**Expected:** ${f.check.expected}\n\n`;
+      if (f.check.how) md += `**How:** ${f.check.how}\n\n`;
+      if (f.notes) md += `**QA notes:** ${f.notes}\n\n`;
+      md += `---\n\n`;
+    }
+  }
+
+  md += `## Full results\n\n`;
+  for (const s of sections) {
+    md += `### ${s.title}\n\n`;
+    md += `| ID | Check | Status | Notes |\n|---|---|---|---|\n`;
+    for (const c of s.checks) {
+      const r = review.statuses[c.id] || {};
+      const statusGlyph = r.status === 'pass' ? '✅ Pass' : r.status === 'fail' ? '❌ Fail' : r.status === 'na' ? '— N/A' : '· Open';
+      const notes = (r.notes || '').replace(/\|/g, '\\|').replace(/\n/g, ' ');
+      md += `| ${c.id} | ${c.title} | ${statusGlyph} | ${notes} |\n`;
+    }
+    md += `\n`;
+  }
+  return md;
+}
+
+function showExport(format) {
+  const out = exportReview(format);
+  document.getElementById('export-output').textContent = out;
+  document.getElementById('modal-export').dataset.format = format;
+  openModal('modal-export');
+}
+
+// ============================================================
+//  MODAL HELPERS
+// ============================================================
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  const firstInput = document.querySelector(`#${id} input, #${id} textarea`);
+  if (firstInput) setTimeout(() => firstInput.focus(), 50);
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+document.querySelectorAll('[data-modal-close]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.closest('.scrim').classList.remove('open');
+  });
+});
+document.querySelectorAll('.scrim').forEach(s => {
+  s.addEventListener('click', e => {
+    if (e.target === s) s.classList.remove('open');
+  });
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.scrim.open').forEach(s => s.classList.remove('open'));
+  }
+});
+
+// ============================================================
+//  TOP-LEVEL HANDLERS
+// ============================================================
+document.getElementById('btn-new-review').addEventListener('click', () => openModal('modal-new-review'));
+document.getElementById('btn-export').addEventListener('click', () => {
+  if (!getActiveReview()) { toast('Create or select a review first'); return; }
+  showExport('markdown');
+});
+document.getElementById('btn-import').addEventListener('click', () => openModal('modal-import'));
+
+document.getElementById('mnr-create').addEventListener('click', async () => {
+  const name = document.getElementById('mnr-name').value.trim();
+  const url = document.getElementById('mnr-url').value.trim();
+  if (!name) { toast('Page name required'); return; }
+  const review = {
+    id: uid(), name, url,
+    pageTypes: [],
+    statuses: {},
+    createdAt: Date.now(),
+    updatedAt: Date.now()
+  };
+  state.reviews.unshift(review);
+  state.activeReviewId = review.id;
+  await saveReview(review);
+  document.getElementById('mnr-name').value = '';
+  document.getElementById('mnr-url').value = '';
+  closeModal('modal-new-review');
+  render();
+});
+
+document.querySelectorAll('[data-export-format]').forEach(btn => {
+  btn.addEventListener('click', () => showExport(btn.dataset.exportFormat));
+});
+
+document.getElementById('btn-copy-export').addEventListener('click', () => {
+  const text = document.getElementById('export-output').textContent;
+  navigator.clipboard.writeText(text).then(() => toast('Copied'));
+});
+document.getElementById('btn-download-export').addEventListener('click', () => {
+  const text = document.getElementById('export-output').textContent;
+  const fmt = document.getElementById('modal-export').dataset.format || 'markdown';
+  const ext = fmt === 'json' ? 'json' : fmt === 'csv' ? 'csv' : 'md';
+  const review = getActiveReview();
+  const fname = (review.name || 'qa-review').replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '.' + ext;
+  const blob = new Blob([text], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = fname;
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+document.getElementById('btn-do-import').addEventListener('click', async () => {
+  const raw = document.getElementById('mim-input').value.trim();
+  if (!raw) return;
+  try {
+    const obj = JSON.parse(raw);
+    if (!obj.id || !obj.name || !obj.statuses) throw new Error('Not a valid review');
+    obj.id = uid(); // re-assign to avoid collision
+    obj.updatedAt = Date.now();
+    state.reviews.unshift(obj);
+    state.activeReviewId = obj.id;
+    await saveReview(obj);
+    document.getElementById('mim-input').value = '';
+    closeModal('modal-import');
+    render();
+    toast('Review imported');
+  } catch (e) {
+    toast('Invalid JSON: ' + e.message);
+  }
+});
+
+// ============================================================
+//  UTIL
+// ============================================================
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function linkifyCode(html) {
+  // wrap sequences that look like tokens or hex codes in <code>
+  return html
+    .replace(/(--[a-z0-9-]+)/g, '<code>$1</code>')
+    .replace(/(#[0-9a-fA-F]{6})/g, '<code>$1</code>');
+}
+
+// ============================================================
+//  BOOT
+// ============================================================
+(async function() {
+  await loadState();
+  render();
+})();
+</script>
+
+</body>
+</html>
