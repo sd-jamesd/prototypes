@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Asset State QA Tester — Card Badges & Status</title>
+<style>
+  :root {
+    --color-stone-50: #f8f7f4;
+    --color-stone-100: #f2f1ee;
+    --color-stone-200: #e7e6e1;
+    --color-stone-300: #d4d2cb;
+    --color-stone-400: #a8a59b;
+    --color-stone-500: #7d7a6f;
+    --color-stone-600: #525049;
+    --color-stone-700: #3a3a35;
+    --color-stone-800: #2a2a26;
+    --color-stone-900: #1c1c19;
+
+    --color-red-100: #feebe7;
+    --color-red-500: #e54d2e;
+    --color-red-600: #d13415;
+    --color-red-700: #582C29;
+
+    --color-amber-100: #ffefd5;
+    --color-amber-500: #f5a524;
+    --color-amber-600: #985b00;
+    --color-amber-700: #4E350D;
+
+    --color-green-100: #e6f7ed;
+    --color-green-500: #29a383;
+    --color-green-600: #208368;
+    --color-green-700: #1E442D;
+
+    --color-purple-100: #f3ebff;
+    --color-purple-500: #8e4ec6;
+    --color-purple-700: #5B21B6;
+
+    --color-teal-100: #d1ece4;
+    --color-navy-100: #d6dafb;
+    --color-violet-100: #ece2fc;
+    --color-gold-100: #fce4b4;
+    --color-mint-100: #d5ebd7;
+
+    --color-primary-50: #e8f1f5;
+    --color-primary-500: #0B6E8A;
+    --color-primary-600: #0a5d75;
+    --color-primary-700: #1a3a46;
+
+    --surface-default: #ffffff;
+    --surface-subtle: var(--color-stone-50);
+    --surface-muted: var(--color-stone-100);
+    --text-default: var(--color-stone-900);
+    --text-subtle: var(--color-stone-500);
+    --text-hint: var(--color-stone-400);
+    --border-default: var(--color-stone-200);
+    --border-strong: var(--color-stone-300);
+    --primary-default: var(--color-primary-500);
+    --primary-hover: var(--color-primary-600);
+
+    /* PROPOSED Scale evolution — rights badge namespace */
+    --rights-embargoed-bg: var(--color-amber-100);
+    --rights-embargoed-border: var(--color-amber-500);
+    --rights-embargoed-fg: var(--color-amber-700);
+    --rights-expired-bg: var(--color-red-100);
+    --rights-expired-border: var(--color-red-500);
+    --rights-expired-fg: var(--color-red-700);
+
+    /* Status namespace (existing in Scale) */
+    --status-draft-bg: var(--color-stone-100);
+    --status-draft-fg: var(--color-stone-600);
+    --status-review-bg: var(--color-purple-100);
+    --status-review-fg: var(--color-purple-700);
+    --status-rejected-bg: var(--color-red-100);
+    --status-rejected-fg: var(--color-red-700);
+
+    /* Filetype namespace */
+    --filetype-image-bg: var(--color-teal-100);
+    --filetype-vector-bg: var(--color-navy-100);
+    --filetype-video-bg: var(--color-violet-100);
+    --filetype-document-bg: var(--color-gold-100);
+
+    --spacing-1: 4px; --spacing-2: 8px; --spacing-3: 12px; --spacing-4: 16px;
+    --spacing-5: 20px; --spacing-6: 24px; --spacing-7: 32px;
+
+    --radius-1: 3px; --radius-2: 4px; --radius-3: 6px; --radius-4: 8px;
+
+    --font-family-text: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-family-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --font-size-1: 12px; --font-size-2: 13px; --font-size-3: 14px;
+    --font-weight-medium: 500; --font-weight-semibold: 600;
+
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: var(--font-family-text);
+    color: var(--text-default);
+    background: var(--surface-muted);
+    font-size: var(--font-size-3);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    min-height: 100vh;
+  }
+
+  /* ============ LEFT: CONTROL PANEL ============ */
+  .control-panel {
+    background: var(--surface-default);
+    border-right: 1px solid var(--border-default);
+    padding: var(--spacing-6);
+    overflow-y: auto;
+    max-height: 100vh;
+    position: sticky;
+    top: 0;
+  }
+
+  .panel-header {
+    margin-bottom: var(--spacing-5);
+    padding-bottom: var(--spacing-4);
+    border-bottom: 1px solid var(--border-default);
+  }
+  .panel-header h1 {
+    font-size: 16px;
+    font-weight: var(--font-weight-semibold);
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+  }
+  .panel-header p {
+    font-size: var(--font-size-1);
+    color: var(--text-subtle);
+    margin: 0;
+  }
+
+  .panel-section {
+    margin-bottom: var(--spacing-5);
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-subtle);
+    margin-bottom: var(--spacing-2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .axis-hint {
+    text-transform: none;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--text-hint);
+    font-size: 11px;
+  }
+
+  .axis-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .axis-option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: 8px 10px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+    cursor: pointer;
+    transition: all 0.12s;
+    background: var(--surface-default);
+    font-size: var(--font-size-2);
+  }
+  .axis-option:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-subtle);
+  }
+  .axis-option.active {
+    border-color: var(--primary-default);
+    background: var(--color-primary-50);
+    color: var(--primary-default);
+    font-weight: var(--font-weight-medium);
+  }
+  .axis-option input { display: none; }
+  .axis-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-stone-300);
+    flex-shrink: 0;
+  }
+  .axis-option.active .axis-dot { background: var(--primary-default); }
+  .axis-label { flex: 1; }
+  .axis-default {
+    font-size: 11px;
+    color: var(--text-hint);
+    font-style: italic;
+  }
+
+  .preset-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: var(--spacing-4);
+  }
+  .preset-btn {
+    font-size: 11px;
+    padding: 4px 10px;
+    border: 1px solid var(--border-default);
+    background: var(--surface-default);
+    border-radius: var(--radius-2);
+    cursor: pointer;
+    color: var(--text-default);
+    font-family: var(--font-family-text);
+  }
+  .preset-btn:hover {
+    border-color: var(--primary-default);
+    color: var(--primary-default);
+  }
+  .preset-btn.is-issue {
+    color: var(--color-red-600);
+    border-color: var(--color-red-100);
+  }
+
+  /* ============ RIGHT: PREVIEW STAGE ============ */
+  .preview-stage {
+    padding: var(--spacing-7);
+    overflow-y: auto;
+    max-height: 100vh;
+  }
+
+  .stage-header {
+    margin-bottom: var(--spacing-6);
+  }
+  .stage-header h2 {
+    font-size: 20px;
+    font-weight: var(--font-weight-semibold);
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .stage-header p {
+    font-size: var(--font-size-2);
+    color: var(--text-subtle);
+    margin: 0;
+  }
+
+  .stage-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-6);
+    align-items: start;
+  }
+
+  .preview-block {
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-4);
+    padding: var(--spacing-5);
+  }
+  .preview-block h3 {
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-semibold);
+    margin: 0 0 var(--spacing-4);
+    color: var(--text-default);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 11px;
+  }
+
+  .card-frame {
+    background: var(--surface-muted);
+    padding: var(--spacing-7);
+    border-radius: var(--radius-3);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--spacing-4);
+    min-height: 280px;
+  }
+  .card-frame-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-hint);
+    text-align: center;
+    margin-bottom: 8px;
+    font-weight: var(--font-weight-medium);
+  }
+  .card-frame-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ============ ASSET CARD (Scale spec) ============ */
+  .asset-card {
+    width: 220px;
+    background: var(--surface-default);
+    border: 2px solid var(--border-default);
+    border-radius: var(--radius-3);
+    overflow: hidden;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+  }
+  .asset-thumb {
+    background: var(--surface-subtle);
+    height: 160px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .asset-thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Filetype badge — bottom-right (matches existing DAM screenshot) */
+  .filetype-badge {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    padding: 3px 8px;
+    border-radius: var(--radius-2);
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: #2196F3;
+    color: white;
+  }
+
+  /* Rights badge — bottom left (proposed --rights-* namespace) */
+  .rights-badge {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: var(--radius-2);
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    border: 1px solid;
+  }
+  .rights-badge.embargoed {
+    background: var(--rights-embargoed-bg);
+    color: var(--rights-embargoed-fg);
+    border-color: var(--rights-embargoed-border);
+  }
+  .rights-badge.expired {
+    background: var(--rights-expired-bg);
+    color: var(--rights-expired-fg);
+    border-color: var(--rights-expired-border);
+  }
+  .rights-badge svg { width: 10px; height: 10px; }
+
+  /* Access — NO card-level signal.
+     Restriction is viewer-relative and surfaced at download/action only.
+     This keeps the model consistent: card shows asset-side facts only;
+     viewer-side gates fire at the action. */
+
+  /* Card slot reminders — show the four committed slots on the thumb */
+  .slot-reminder {
+    position: absolute;
+    font-size: 9px;
+    font-family: var(--font-family-mono);
+    color: var(--text-hint);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    pointer-events: none;
+  }
+
+  /* Asset meta row */
+  .asset-meta {
+    padding: 10px 12px;
+  }
+  .asset-name {
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: 4px;
+    /* Force wrap on long unbroken filenames (underscores, no spaces).
+       Always reserve space for two lines so card height stays fixed. */
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: calc(var(--font-size-2) * 1.4 * 2);
+  }
+  .asset-detail {
+    font-size: 11px;
+    color: var(--text-subtle);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 14px;
+  }
+  .asset-detail .sep { color: var(--color-stone-300); }
+
+  /* Status dots — inline within asset-detail row, fixed left slot.
+     Zero impact on card height. */
+  .status-dots-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-right: 2px;
+  }
+  .status-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--color-stone-200);
+    flex-shrink: 0;
+    cursor: help;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .status-dot.lifecycle-archived {
+    background: var(--color-stone-600);
+    border-color: var(--color-stone-700);
+  }
+  .status-dot.approval-draft {
+    background: var(--color-stone-500);
+    border-color: var(--color-stone-600);
+  }
+  .status-dot.approval-review {
+    background: var(--color-purple-500);
+    border-color: var(--color-purple-700);
+  }
+  .status-dot.approval-rejected {
+    background: var(--color-red-500);
+    border-color: var(--color-red-600);
+  }
+  .status-dot.workflows-on {
+    background: #0B9485;
+    border-color: #086e63;
+  }
+
+  /* Asset card thumbnail content placeholders */
+  .thumb-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #d4d2cb 0%, #e7e6e1 100%);
+    color: var(--text-subtle);
+    font-size: 28px;
+  }
+  .asset-card.is-archived .asset-thumb-img,
+  .asset-card.is-archived .thumb-placeholder {
+    opacity: 0.5;
+    filter: grayscale(0.3);
+  }
+
+  /* ============ STATE SUMMARY ============ */
+  .state-summary {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+  .summary-row {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: var(--spacing-3);
+    align-items: start;
+    padding: var(--spacing-3) 0;
+    border-bottom: 1px solid var(--border-default);
+    font-size: var(--font-size-2);
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-axis {
+    color: var(--text-subtle);
+    font-weight: var(--font-weight-medium);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding-top: 2px;
+  }
+  .summary-value {
+    color: var(--text-default);
+  }
+  .summary-value .v-name {
+    font-weight: var(--font-weight-medium);
+  }
+  .summary-value .v-impl {
+    display: block;
+    font-size: 11px;
+    color: var(--text-subtle);
+    margin-top: 2px;
+  }
+  .summary-value .v-default {
+    color: var(--text-hint);
+    font-style: italic;
+  }
+
+  /* ============ BEHAVIOUR PANEL ============ */
+  .behaviour-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+  .behaviour-list li {
+    padding: 10px var(--spacing-3);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-2);
+    font-size: var(--font-size-2);
+    display: flex;
+    gap: var(--spacing-2);
+    align-items: flex-start;
+  }
+  .behaviour-list .b-key {
+    color: var(--text-subtle);
+    font-weight: var(--font-weight-medium);
+    min-width: 100px;
+    flex-shrink: 0;
+  }
+  .behaviour-list .b-val { color: var(--text-default); }
+  .b-allow { color: var(--color-green-700); font-weight: var(--font-weight-medium); }
+  .b-block { color: var(--color-red-700); font-weight: var(--font-weight-medium); }
+  .b-warn { color: var(--color-amber-700); font-weight: var(--font-weight-medium); }
+
+  /* ============ TOKENS PANEL ============ */
+  .token-block {
+    background: var(--color-stone-900);
+    color: #e6f0ed;
+    padding: var(--spacing-3) var(--spacing-4);
+    border-radius: var(--radius-2);
+    font-family: var(--font-family-mono);
+    font-size: 11px;
+    line-height: 1.6;
+    overflow-x: auto;
+  }
+  .token-block .tk-comment { color: #6b7d75; }
+  .token-block .tk-var { color: #92c5b8; }
+  .token-block .tk-val { color: #d4a574; }
+
+  /* ============ RULE BANNER ============ */
+  .rule-banner {
+    background: var(--color-primary-50);
+    border: 1px solid #b3d2dc;
+    border-radius: var(--radius-3);
+    padding: var(--spacing-3) var(--spacing-4);
+    font-size: var(--font-size-2);
+    color: var(--primary-700);
+    margin-bottom: var(--spacing-5);
+    display: flex;
+    gap: var(--spacing-2);
+    align-items: flex-start;
+  }
+  .rule-banner svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ============ ISSUE BANNER ============ */
+  .issue-banner {
+    background: #fef3f0;
+    border: 1px solid var(--color-red-500);
+    border-radius: var(--radius-3);
+    padding: var(--spacing-3) var(--spacing-4);
+    font-size: var(--font-size-2);
+    color: var(--color-red-700);
+    margin-bottom: var(--spacing-5);
+    display: none;
+  }
+  .issue-banner.visible { display: block; }
+  .issue-banner strong { display: block; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ============ LEFT CONTROL PANEL ============ -->
+  <aside class="control-panel">
+    <div class="panel-header">
+      <h1>Asset State Tester</h1>
+      <p>Cycle through every state combination an asset can occupy on a card.</p>
+    </div>
+
+    <!-- Presets -->
+    <div class="panel-section">
+      <div class="section-label">
+        <span>Presets</span>
+      </div>
+      <div class="preset-row" id="preset-row">
+        <button class="preset-btn" data-preset="default">Default</button>
+        <button class="preset-btn" data-preset="long-filename">Long filename</button>
+        <button class="preset-btn" data-preset="embargoed">Embargoed</button>
+        <button class="preset-btn" data-preset="expired">Expired</button>
+        <button class="preset-btn" data-preset="archived">Archived</button>
+        <button class="preset-btn" data-preset="in-review">In review</button>
+        <button class="preset-btn" data-preset="on-workflow">On a workflow</button>
+        <button class="preset-btn is-issue" data-preset="expired-archived">Expired + Archived</button>
+      </div>
+    </div>
+
+    <!-- Lifecycle -->
+    <div class="panel-section">
+      <div class="section-label">
+        <span>Lifecycle</span>
+        <span class="axis-hint">User/admin set</span>
+      </div>
+      <div class="axis-group" data-axis="lifecycle">
+        <label class="axis-option active" data-value="active">
+          <span class="axis-dot"></span>
+          <span class="axis-label">Active</span>
+          <span class="axis-default">default</span>
+        </label>
+        <label class="axis-option" data-value="archived">
+          <span class="axis-dot"></span>
+          <span class="axis-label">Archived</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Rights -->
+    <div class="panel-section">
+      <div class="section-label">
+        <span>Rights</span>
+        <span class="axis-hint">Date-driven, auto</span>
+      </div>
+      <div class="axis-group" data-axis="rights">
+        <label class="axis-option active" data-value="active">
+          <span class="axis-dot"></span>
+          <span class="axis-label">Active</span>
+          <span class="axis-default">default</span>
+        </label>
+        <label class="axis-option" data-value="embargoed">
+          <span class="axis-dot"></span>
+          <span class="axis-label">Embargoed</span>
+        </label>
+        <label class="axis-option" data-value="expired">
+          <span class="axis-dot"></span>
+          <span class="axis-label">Expired</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Approval status -->
+    <div class="panel-section">
+      <div class="section-label">
+        <span>Approval status</span>
+        <span class="axis-hint">Approval state</span>
+      </div>
+      <div class="axis-group" data-axis="approval">
+        <label class="axis-option active" data-value="approved">
+          <span class="axis-dot"></span>
+          <span class="axis-label">Approved</span>
+          <span class="axis-default">default</span>
+        </label>
+        <label class="axis-option" data-value="draft">
+          <span class="axis-dot"></span>
+          <span class="axis-label">Draft</span>
+        </label>
+        <label class="axis-option" data-value="review">
+          <span class="axis-dot"></span>
+          <span class="axis-label">In review</span>
+        </label>
+        <label class="axis-option" data-value="rejected">
+          <span class="axis-dot"></span>
+          <span class="axis-label">Rejected</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Workflows (future state) -->
+    <div class="panel-section">
+      <div class="section-label">
+        <span>Workflows (future state)</span>
+        <span class="axis-hint">Unity integration</span>
+      </div>
+      <div class="axis-group" data-axis="workflows">
+        <label class="axis-option active" data-value="none">
+          <span class="axis-dot"></span>
+          <span class="axis-label">Not on a workflow</span>
+          <span class="axis-default">default</span>
+        </label>
+        <label class="axis-option" data-value="on-workflow">
+          <span class="axis-dot"></span>
+          <span class="axis-label">On a workflow</span>
+        </label>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ============ RIGHT PREVIEW STAGE ============ -->
+  <main class="preview-stage">
+    <div class="stage-header">
+      <h2>Asset card preview</h2>
+      <p>Three asset-side axes today (lifecycle, rights, approval). Fourth slot reserved for Unity workflows.</p>
+    </div>
+
+    <div class="rule-banner">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      <div>
+        <strong>Slot map:</strong> Top-left = select. Top-right = more actions. Bottom-right = filetype. <strong>Bottom-left thumb</strong> = rights badge. <strong>Detail row inline dots:</strong> lifecycle (slot 1) · approval status (slot 2) · workflows (slot 3, reserved for Unity integration). Access is handled at the backend query layer — users never see assets they don't have permission for.
+      </div>
+    </div>
+
+    <div class="issue-banner" id="issue-banner">
+      <strong>⚠ Plan inconsistency</strong>
+      <span id="issue-text"></span>
+    </div>
+
+    <div class="stage-grid">
+
+      <!-- Card preview -->
+      <div class="preview-block">
+        <h3>Card</h3>
+        <div class="card-frame">
+          <div class="asset-card" id="asset-card">
+            <div class="asset-thumb">
+              <div class="thumb-placeholder" id="thumb-placeholder">🖼</div>
+              <!-- Top-left: SELECT checkbox slot (committed, not available for status) -->
+              <div style="position:absolute;top:8px;left:8px;width:18px;height:18px;border:1.5px solid var(--color-stone-400);border-radius:var(--radius-1);background:rgba(255,255,255,0.9);"></div>
+              <!-- Top-right: MORE ACTIONS slot (committed) -->
+              <div style="position:absolute;top:8px;right:8px;width:22px;height:22px;background:rgba(255,255,255,0.9);border-radius:var(--radius-1);display:flex;align-items:center;justify-content:center;color:var(--text-subtle);">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="18" r="1"/></svg>
+              </div>
+              <!-- Filetype badge (bottom-right) -->
+              <span class="filetype-badge">JPG</span>
+              <!-- Rights badge (bottom-left) -->
+              <div id="rights-badge-slot"></div>
+            </div>
+            <div class="asset-meta">
+              <div class="asset-name" id="asset-name">
+                <span id="filename-text">FIFA_WC2026_Logo_Primary_RGB.svg</span>
+              </div>
+              <div class="asset-detail">
+                <span class="status-dots-inline" id="status-dots"></span>
+                <span>2.4 MB</span>
+                <span class="sep">·</span>
+                <span>Uploaded yesterday</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- State summary -->
+      <div class="preview-block">
+        <h3>State summary</h3>
+        <div class="state-summary" id="state-summary"></div>
+      </div>
+
+      <!-- Behaviour -->
+      <div class="preview-block">
+        <h3>System behaviour</h3>
+        <ul class="behaviour-list" id="behaviour-list"></ul>
+      </div>
+
+      <!-- Tokens used -->
+      <div class="preview-block">
+        <h3>Scale tokens in use</h3>
+        <div class="token-block" id="token-block"></div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+  // ============ STATE ============
+  // Three axes today: lifecycle, rights, approval.
+  // Fourth axis reserved for Unity workflow integration (future).
+  // Access is handled at the backend query layer — users never see assets
+  // they don't have permission for, so it's not a card state.
+  const state = {
+    lifecycle: 'active',
+    rights: 'active',
+    approval: 'approved',
+    workflows: 'none',
+    filename: 'FIFA_WC2026_Logo_Primary_RGB.svg'
+  };
+
+  const FILENAMES = {
+    short: 'FIFA_WC2026_Logo_Primary_RGB.svg',
+    long:  'fwc2026_sea_26td_mex_noam_licm_ass_llc_ve_rv_pat2_2piece_s_email_v3_final.jpg'
+  };
+
+  const PRESETS = {
+    'default':           { lifecycle:'active',   rights:'active',    approval:'approved', workflows:'none',         filename:FILENAMES.short },
+    'long-filename':     { lifecycle:'active',   rights:'embargoed', approval:'review',   workflows:'none',         filename:FILENAMES.long },
+    'embargoed':         { lifecycle:'active',   rights:'embargoed', approval:'approved', workflows:'none',         filename:FILENAMES.short },
+    'expired':           { lifecycle:'active',   rights:'expired',   approval:'approved', workflows:'none',         filename:FILENAMES.short },
+    'archived':          { lifecycle:'archived', rights:'active',    approval:'approved', workflows:'none',         filename:FILENAMES.short },
+    'in-review':         { lifecycle:'active',   rights:'active',    approval:'review',   workflows:'none',         filename:FILENAMES.short },
+    'on-workflow':       { lifecycle:'active',   rights:'active',    approval:'approved', workflows:'on-workflow',  filename:FILENAMES.short },
+    'expired-archived':  { lifecycle:'archived', rights:'expired',   approval:'approved', workflows:'none',         filename:FILENAMES.short }
+  };
+
+  // ============ AXIS DEFINITIONS ============
+  const AXIS_META = {
+    lifecycle: {
+      label: 'Lifecycle',
+      slot: 'Detail row · inline dot (slot 1)',
+      values: {
+        active:   { name:'Active',   impl:'No dot rendered',                                isDefault:true },
+        archived: { name:'Archived', impl:'Stone-grey dot inline before file size · thumbnail dimmed 50%' }
+      }
+    },
+    rights: {
+      label: 'Rights',
+      slot: 'Bottom-left thumb · badge',
+      values: {
+        active:    { name:'Active',    impl:'No badge rendered',                                                isDefault:true },
+        embargoed: { name:'Embargoed', impl:'Amber pill · `--rights-embargoed-*`' },
+        expired:   { name:'Expired',   impl:'Red pill · `--rights-expired-*`' }
+      }
+    },
+    approval: {
+      label: 'Approval status',
+      slot: 'Detail row · inline dot (slot 2)',
+      values: {
+        approved: { name:'Approved',  impl:'No dot rendered',                              isDefault:true },
+        draft:    { name:'Draft',     impl:'Stone-grey dot · `--status-draft-*`' },
+        review:   { name:'In review', impl:'Purple dot · `--status-review-*`' },
+        rejected: { name:'Rejected',  impl:'Red dot · `--status-rejected-*`' }
+      }
+    },
+    workflows: {
+      label: 'Workflows (future)',
+      slot: 'Detail row · inline dot (slot 3) — reserved for Unity integration',
+      values: {
+        none:          { name:'Not on a workflow', impl:'No dot rendered',          isDefault:true },
+        'on-workflow': { name:'On a workflow',     impl:'Teal dot · `--accent-9`' }
+      }
+    }
+  };
+
+  // ============ RENDER FUNCTIONS ============
+  function renderCard() {
+    // Rights badge slot
+    const rb = document.getElementById('rights-badge-slot');
+    if (state.rights === 'embargoed') {
+      rb.innerHTML = `<span class="rights-badge embargoed">EMBARGOED</span>`;
+    } else if (state.rights === 'expired') {
+      rb.innerHTML = `<span class="rights-badge expired">EXPIRED</span>`;
+    } else {
+      rb.innerHTML = '';
+    }
+
+    // Access — no card-level signal. Restriction surfaces at download/lightbox action only.
+    // Asset is fully visible and clickable regardless of viewer permissions.
+    const card = document.getElementById('asset-card');
+
+    // Card archived dim
+    card.classList.toggle('is-archived', state.lifecycle === 'archived');
+
+    // Filename — short or long, drives two-line wrap test
+    document.getElementById('filename-text').textContent = state.filename;
+
+    // Status dots — inline in detail row, fixed slots, tooltip on hover.
+    // No labels rendered (would expand line width). Colour + slot position = signal.
+    const dots = document.getElementById('status-dots');
+    let dotHtml = '';
+    // Slot 1: lifecycle
+    if (state.lifecycle === 'archived') {
+      dotHtml += `<span class="status-dot lifecycle-archived" title="Archived"></span>`;
+    }
+    // Slot 2: approval status
+    if (state.approval !== 'approved') {
+      const cls = `approval-${state.approval}`;
+      const lbl = AXIS_META.approval.values[state.approval].name;
+      dotHtml += `<span class="status-dot ${cls}" title="${lbl}"></span>`;
+    }
+    // Slot 3: workflows (future state — Unity integration)
+    if (state.workflows === 'on-workflow') {
+      dotHtml += `<span class="status-dot workflows-on" title="On a workflow"></span>`;
+    }
+    dots.innerHTML = dotHtml;
+  }
+
+  function renderSummary() {
+    const el = document.getElementById('state-summary');
+    el.innerHTML = Object.entries(AXIS_META).map(([axis, meta]) => {
+      const v = state[axis];
+      const def = meta.values[v];
+      const isDefault = def.isDefault;
+      return `
+        <div class="summary-row">
+          <div class="summary-axis">${meta.label}</div>
+          <div class="summary-value">
+            <span class="v-name ${isDefault ? 'v-default' : ''}">${def.name}${isDefault ? ' (default)' : ''}</span>
+            <span class="v-impl">${def.impl}</span>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderBehaviour() {
+    const el = document.getElementById('behaviour-list');
+    const items = [];
+
+    // Visibility
+    let visibility = 'Visible in library';
+    if (state.lifecycle === 'archived') visibility = 'Visible only when "Archived" filter is on · default views hide it';
+    items.push({ key:'Visibility', val:visibility, tone:state.lifecycle === 'archived' ? 'warn' : 'allow' });
+
+    // Download
+    let download = '<span class="b-allow">Allowed</span> · all renditions';
+    if (state.rights === 'embargoed') download = '<span class="b-block">Blocked</span> · full-res. Working file allowed.';
+    else if (state.rights === 'expired') download = '<span class="b-block">Blocked</span> · full-res. Working file watermarked.';
+    items.push({ key:'Download', val:download });
+
+    // Approval status
+    let approval = '<span class="b-allow">Approved</span> · publishable';
+    if (state.approval === 'draft') approval = '<span class="b-warn">Draft</span> · not yet submitted for review';
+    if (state.approval === 'review') approval = '<span class="b-warn">In review</span> · awaiting approver';
+    if (state.approval === 'rejected') approval = '<span class="b-block">Rejected</span> · returned to owner';
+    items.push({ key:'Approval', val:approval });
+
+    // Workflows (future)
+    if (state.workflows === 'on-workflow') {
+      items.push({ key:'Workflows', val:'<span class="b-warn">On a workflow</span> · Unity integration (future state — exact semantics TBD)' });
+    }
+
+    // Search
+    let search = 'Indexed · appears in default search';
+    if (state.lifecycle === 'archived') search = 'Indexed · excluded from default search · appears with archived filter';
+    items.push({ key:'Search', val:search });
+
+    el.innerHTML = items.map(i => `
+      <li><span class="b-key">${i.key}</span><span class="b-val">${i.val}</span></li>
+    `).join('');
+  }
+
+  function renderTokens() {
+    const el = document.getElementById('token-block');
+    const lines = [];
+    lines.push(`<span class="tk-comment">/* Filetype — top right (always rendered) */</span>`);
+    lines.push(`<span class="tk-var">--filetype-image-bg</span>: <span class="tk-val">var(--color-teal-100)</span>;`);
+
+    if (state.rights === 'embargoed') {
+      lines.push(``);
+      lines.push(`<span class="tk-comment">/* Rights badge — PROPOSED Scale evolution */</span>`);
+      lines.push(`<span class="tk-var">--rights-embargoed-bg</span>: <span class="tk-val">var(--color-amber-100)</span>;`);
+      lines.push(`<span class="tk-var">--rights-embargoed-border</span>: <span class="tk-val">var(--color-amber-500)</span>;`);
+      lines.push(`<span class="tk-var">--rights-embargoed-fg</span>: <span class="tk-val">var(--color-amber-700)</span>;`);
+    }
+    if (state.rights === 'expired') {
+      lines.push(``);
+      lines.push(`<span class="tk-comment">/* Rights badge — PROPOSED Scale evolution */</span>`);
+      lines.push(`<span class="tk-var">--rights-expired-bg</span>: <span class="tk-val">var(--color-red-100)</span>;`);
+      lines.push(`<span class="tk-var">--rights-expired-border</span>: <span class="tk-val">var(--color-red-500)</span>;`);
+      lines.push(`<span class="tk-var">--rights-expired-fg</span>: <span class="tk-val">var(--color-red-700)</span>;`);
+    }
+
+    if (state.approval === 'draft') {
+      lines.push(``);
+      lines.push(`<span class="tk-comment">/* Approval dot — Scale existing */</span>`);
+      lines.push(`<span class="tk-var">--status-draft-fg</span>: <span class="tk-val">var(--color-stone-400)</span>;`);
+    }
+    if (state.approval === 'review') {
+      lines.push(``);
+      lines.push(`<span class="tk-comment">/* Approval dot — Scale existing */</span>`);
+      lines.push(`<span class="tk-var">--status-review-fg</span>: <span class="tk-val">var(--color-purple-500)</span>;`);
+    }
+    if (state.approval === 'rejected') {
+      lines.push(``);
+      lines.push(`<span class="tk-comment">/* Approval dot — Scale existing */</span>`);
+      lines.push(`<span class="tk-var">--status-cancelled-fg</span>: <span class="tk-val">var(--color-red-500)</span>;`);
+    }
+    if (state.workflows === 'on-workflow') {
+      lines.push(``);
+      lines.push(`<span class="tk-comment">/* Workflows dot — RESERVED for Unity integration */</span>`);
+      lines.push(`<span class="tk-var">--accent-9</span>: <span class="tk-val">#0B9485</span>;`);
+    }
+    if (state.lifecycle === 'archived') {
+      lines.push(``);
+      lines.push(`<span class="tk-comment">/* Lifecycle dot — Scale existing */</span>`);
+      lines.push(`<span class="tk-var">--neutral-9</span>: <span class="tk-val">var(--color-stone-500)</span>;`);
+    }
+
+    el.innerHTML = lines.join('<br>');
+  }
+
+  function renderIssues() {
+    const banner = document.getElementById('issue-banner');
+    const txt = document.getElementById('issue-text');
+    let issue = null;
+
+    // Detect known plan questions
+    if (state.lifecycle === 'archived' && state.rights === 'expired') {
+      issue = 'Asset is both Archived (lifecycle) and Expired (rights). Old model collided these into one badge slot. New model: EXPIRED pill in rights slot + grey dot in detail row. Two axes, two locations.';
+    }
+
+    if (issue) {
+      txt.textContent = issue;
+      banner.classList.add('visible');
+    } else {
+      banner.classList.remove('visible');
+    }
+  }
+
+  function renderAll() {
+    renderCard();
+    renderSummary();
+    renderBehaviour();
+    renderTokens();
+    renderIssues();
+  }
+
+  // ============ EVENT HANDLERS ============
+  document.querySelectorAll('.axis-group').forEach(group => {
+    const axis = group.dataset.axis;
+    group.querySelectorAll('.axis-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        group.querySelectorAll('.axis-option').forEach(o => o.classList.remove('active'));
+        opt.classList.add('active');
+        state[axis] = opt.dataset.value;
+        renderAll();
+      });
+    });
+  });
+
+  document.getElementById('preset-row').addEventListener('click', e => {
+    if (!e.target.dataset.preset) return;
+    const p = PRESETS[e.target.dataset.preset];
+    Object.assign(state, p);
+    // Reflect in axis UI
+    document.querySelectorAll('.axis-group').forEach(group => {
+      const axis = group.dataset.axis;
+      group.querySelectorAll('.axis-option').forEach(o => {
+        o.classList.toggle('active', o.dataset.value === state[axis]);
+      });
+    });
+    renderAll();
+  });
+
+  // ============ INIT ============
+  renderAll();
+</script>
+
+</body>
+</html>
