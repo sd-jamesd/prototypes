@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAM v1.1 — How we ship from here</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Scale — Stone (warm neutral) */
+    --color-stone-50: #fefcfc;
+    --color-stone-100: #f5f5f4;
+    --color-stone-200: #e7e5e4;
+    --color-stone-300: #d6d3d1;
+    --color-stone-400: #978985;
+    --color-stone-500: #6b615e;
+    --color-stone-600: #57534e;
+    --color-stone-700: #44403c;
+    --color-stone-800: #292524;
+    --color-stone-900: #261e1b;
+
+    /* Scale — Primary (Cerulean) */
+    --color-primary-50: #e8f6fa;
+    --color-primary-100: #c4e8f1;
+    --color-primary-500: #0d7f9c;
+    --color-primary-600: #0b6e8a;
+    --color-primary-700: #005f7b;
+    --color-primary-800: #1b404e;
+
+    /* Scale — Semantic status ramps */
+    --color-green-100: #e6f7ed;
+    --color-green-500: #29a383;
+    --color-green-600: #208368;
+    --color-green-700: #1E442D;
+
+    --color-amber-100: #ffefd5;
+    --color-amber-500: #f5a524;
+    --color-amber-600: #985b00;
+    --color-amber-700: #4E350D;
+
+    --color-red-100: #feebe7;
+    --color-red-500: #e54d2e;
+    --color-red-600: #d13415;
+    --color-red-700: #582C29;
+
+    /* Semantic tokens */
+    --surface-default: var(--color-stone-50);
+    --surface-subtle: #ffffff;
+    --surface-muted: var(--color-stone-100);
+    --border-default: var(--color-stone-200);
+    --border-subtle: var(--color-stone-100);
+    --text-default: var(--color-stone-900);
+    --text-subtle: var(--color-stone-600);
+    --text-muted: var(--color-stone-500);
+    --text-faint: var(--color-stone-400);
+    --primary-default: var(--color-primary-600);
+    --primary-hover: var(--color-primary-700);
+    --primary-subtle: var(--color-primary-50);
+
+    /* Spacing */
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-7: 32px;
+    --spacing-8: 40px;
+    --spacing-9: 48px;
+    --spacing-10: 64px;
+
+    /* Type */
+    --font-family-text: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-family-mono: 'JetBrains Mono', monospace;
+    --font-size-1: 12px;
+    --font-size-2: 14px;
+    --font-size-3: 16px;
+    --font-size-4: 18px;
+    --font-size-5: 24px;
+    --font-size-6: 32px;
+    --line-height-1: 16px;
+    --line-height-2: 20px;
+    --line-height-3: 24px;
+    --line-height-5: 32px;
+    --line-height-6: 40px;
+    --letter-spacing-tight: -0.01em;
+    --letter-spacing-tighter: -0.02em;
+    --letter-spacing-1: 0.04em;
+
+    /* Radius */
+    --radius-1: 3px;
+    --radius-2: 4px;
+    --radius-3: 6px;
+    --radius-4: 8px;
+
+    /* Shadow */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--surface-default);
+    color: var(--text-default);
+    font-family: var(--font-family-text);
+    font-size: var(--font-size-2);
+    line-height: var(--line-height-2);
+    -webkit-font-smoothing: antialiased;
+  }
+  body { padding: var(--spacing-9) var(--spacing-10) var(--spacing-10); max-width: 1240px; margin: 0 auto; }
+
+  /* Masthead */
+  .masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 1px solid var(--border-default);
+    padding-bottom: var(--spacing-5);
+    margin-bottom: var(--spacing-8);
+  }
+  .masthead-left .eyebrow {
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-1);
+    letter-spacing: var(--letter-spacing-1);
+    text-transform: uppercase;
+    color: var(--primary-default);
+    margin-bottom: var(--spacing-3);
+  }
+  .masthead-left h1 {
+    font-family: var(--font-family-text);
+    font-weight: 600;
+    font-size: var(--font-size-6);
+    line-height: var(--line-height-6);
+    letter-spacing: var(--letter-spacing-tighter);
+  }
+  .masthead-left h1 span {
+    color: var(--text-subtle);
+    font-weight: 500;
+  }
+  .masthead-right {
+    text-align: right;
+    font-size: var(--font-size-1);
+    color: var(--text-muted);
+    line-height: 1.6;
+    display: flex;
+    gap: var(--spacing-6);
+    align-items: flex-end;
+  }
+  .masthead-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .masthead-stat-label {
+    font-family: var(--font-family-mono);
+    font-size: 10px;
+    letter-spacing: var(--letter-spacing-1);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .masthead-stat-value {
+    font-size: var(--font-size-3);
+    font-weight: 600;
+    color: var(--text-default);
+    letter-spacing: var(--letter-spacing-tight);
+  }
+
+  /* Section */
+  section { margin-bottom: var(--spacing-9); }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-3);
+    margin-bottom: var(--spacing-3);
+  }
+  .section-num {
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-1);
+    font-weight: 500;
+    color: var(--primary-default);
+    letter-spacing: var(--letter-spacing-1);
+  }
+  .section-title {
+    font-family: var(--font-family-text);
+    font-weight: 600;
+    font-size: var(--font-size-5);
+    line-height: var(--line-height-5);
+    letter-spacing: var(--letter-spacing-tight);
+  }
+  .section-lede {
+    font-size: var(--font-size-3);
+    color: var(--text-subtle);
+    line-height: var(--line-height-3);
+    max-width: 780px;
+    margin-bottom: var(--spacing-6);
+  }
+  .section-lede strong { color: var(--text-default); font-weight: 600; }
+
+  /* Diagram card */
+  .diagram-wrap {
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-4);
+    padding: var(--spacing-7) var(--spacing-6) var(--spacing-5);
+    box-shadow: var(--shadow-sm);
+  }
+  .diagram-wrap svg { width: 100%; height: auto; display: block; }
+  .diagram-legend {
+    display: flex;
+    gap: var(--spacing-6);
+    flex-wrap: wrap;
+    margin-top: var(--spacing-3);
+    padding-top: var(--spacing-4);
+    border-top: 1px solid var(--border-subtle);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-1);
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+  }
+  .diagram-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+  .swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: var(--radius-1);
+    border: 0.5px solid var(--border-default);
+  }
+  .swatch-diamond {
+    width: 10px;
+    height: 10px;
+    transform: rotate(45deg);
+    border-radius: 1px;
+  }
+
+  /* Rules row */
+  .rules {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-4);
+  }
+  .rule {
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-4);
+    padding: var(--spacing-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+  }
+  .rule-num {
+    font-family: var(--font-family-mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--primary-default);
+    letter-spacing: var(--letter-spacing-1);
+    text-transform: uppercase;
+  }
+  .rule-title {
+    font-family: var(--font-family-text);
+    font-weight: 600;
+    font-size: var(--font-size-4);
+    line-height: 1.3;
+    letter-spacing: var(--letter-spacing-tight);
+    color: var(--text-default);
+  }
+  .rule-body {
+    font-size: var(--font-size-2);
+    color: var(--text-subtle);
+    line-height: var(--line-height-3);
+  }
+  .rule-tag {
+    font-family: var(--font-family-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    margin-top: auto;
+    padding-top: var(--spacing-3);
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  /* Linear grid */
+  .linear-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-4);
+  }
+  .linear-block {
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-4);
+    padding: var(--spacing-6);
+    box-shadow: var(--shadow-sm);
+  }
+  .linear-block h3 {
+    font-family: var(--font-family-text);
+    font-weight: 600;
+    font-size: var(--font-size-3);
+    margin-bottom: var(--spacing-4);
+    padding-bottom: var(--spacing-3);
+    border-bottom: 1px solid var(--border-subtle);
+    letter-spacing: var(--letter-spacing-tight);
+    color: var(--text-default);
+  }
+  .linear-block dl {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: var(--spacing-3) var(--spacing-4);
+    font-size: var(--font-size-2);
+    line-height: var(--line-height-3);
+  }
+  .linear-block dt {
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-1);
+    color: var(--primary-default);
+    letter-spacing: 0.02em;
+    padding-top: 2px;
+  }
+  .linear-block dd { color: var(--text-subtle); }
+  .linear-block dd strong { color: var(--text-default); font-weight: 600; }
+
+  /* Footer */
+  .footer {
+    margin-top: var(--spacing-9);
+    padding-top: var(--spacing-5);
+    border-top: 1px solid var(--border-default);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-1);
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+  }
+  .footer-quote {
+    font-family: var(--font-family-text);
+    font-style: normal;
+    font-size: var(--font-size-2);
+    color: var(--text-subtle);
+    letter-spacing: 0;
+    font-weight: 500;
+  }
+
+  /* SVG text */
+  .svg-mono { font-family: var(--font-family-mono); font-size: 9px; fill: var(--text-muted); letter-spacing: 0.03em; }
+  .svg-label { font-family: var(--font-family-text); font-size: 11px; font-weight: 600; fill: var(--text-default); }
+  .svg-label-sub { font-family: var(--font-family-text); font-size: 10px; fill: var(--text-subtle); }
+  .svg-stream { font-family: var(--font-family-text); font-size: 12px; font-weight: 600; fill: var(--text-default); }
+  .svg-milestone-label { font-family: var(--font-family-text); font-size: 11px; font-weight: 600; fill: var(--text-default); }
+  .svg-date { font-family: var(--font-family-mono); font-size: 10px; fill: var(--text-muted); }
+
+  @media (max-width: 880px) {
+    body { padding: var(--spacing-7) var(--spacing-5); }
+    .masthead { flex-direction: column; align-items: flex-start; gap: var(--spacing-4); }
+    .masthead-right { text-align: left; }
+    .masthead-left h1 { font-size: var(--font-size-5); line-height: var(--line-height-5); }
+    .rules { grid-template-columns: 1fr; }
+    .linear-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-left">
+    <div class="eyebrow">DAM Team · Standup briefing</div>
+    <h1>How we ship <span>from here to September</span></h1>
+  </div>
+  <div class="masthead-right">
+    <div class="masthead-stat">
+      <span class="masthead-stat-label">Cycle 1 starts</span>
+      <span class="masthead-stat-value">Mon 1 Jun</span>
+    </div>
+    <div class="masthead-stat">
+      <span class="masthead-stat-label">v2.0 launch</span>
+      <span class="masthead-stat-value">Fri 11 Sep</span>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="section-header">
+    <span class="section-num">01 — THE CADENCE</span>
+  </div>
+  <h2 class="section-title" style="margin-bottom: var(--spacing-3);">Two-week cycles, four-week releases</h2>
+  <p class="section-lede">Dev runs one cycle ahead of QA so neither stream ever waits on the other. Every four weeks a new version ships to the client. v2.0 lands on <strong>11 Sep</strong> with a one-week finalisation buffer.</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 1100 460" role="img" aria-label="Release cadence timeline from 1 June to 11 September">
+      <defs>
+        <marker id="arrowPrimary" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#0b6e8a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+        <marker id="arrowFaint" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#6b615e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+        <marker id="arrowError" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#d13415" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <!-- Release bands top -->
+      <g>
+        <rect x="100" y="14" width="260" height="26" rx="4" fill="#f5f5f4" stroke="#e7e5e4" stroke-width="0.5"/>
+        <text class="svg-label" x="230" y="32" text-anchor="middle">Release v1.1 (4 weeks)</text>
+
+        <rect x="370" y="14" width="260" height="26" rx="4" fill="#f5f5f4" stroke="#e7e5e4" stroke-width="0.5"/>
+        <text class="svg-label" x="500" y="32" text-anchor="middle">Release v1.2 (4 weeks)</text>
+
+        <rect x="640" y="14" width="260" height="26" rx="4" fill="#f5f5f4" stroke="#e7e5e4" stroke-width="0.5"/>
+        <text class="svg-label" x="770" y="32" text-anchor="middle">Release v1.3 (4 weeks)</text>
+
+        <rect x="910" y="14" width="170" height="26" rx="4" fill="#feebe7" stroke="#e54d2e" stroke-width="0.5"/>
+        <text class="svg-label" x="995" y="32" text-anchor="middle" style="fill: #d13415;">v2.0 launch</text>
+      </g>
+
+      <!-- Cycle headers -->
+      <g>
+        <text class="svg-mono" x="60" y="62">CYCLE</text>
+        <text class="svg-mono" x="165" y="62" text-anchor="middle">1</text>
+        <text class="svg-mono" x="295" y="62" text-anchor="middle">2</text>
+        <text class="svg-mono" x="435" y="62" text-anchor="middle">3</text>
+        <text class="svg-mono" x="565" y="62" text-anchor="middle">4</text>
+        <text class="svg-mono" x="705" y="62" text-anchor="middle">5</text>
+        <text class="svg-mono" x="835" y="62" text-anchor="middle">6</text>
+        <text class="svg-mono" x="995" y="62" text-anchor="middle">7 + BUFFER</text>
+
+        <text class="svg-date" x="165" y="78" text-anchor="middle">1–12 Jun</text>
+        <text class="svg-date" x="295" y="78" text-anchor="middle">15–26 Jun</text>
+        <text class="svg-date" x="435" y="78" text-anchor="middle">29 Jun–10 Jul</text>
+        <text class="svg-date" x="565" y="78" text-anchor="middle">13–24 Jul</text>
+        <text class="svg-date" x="705" y="78" text-anchor="middle">27 Jul–7 Aug</text>
+        <text class="svg-date" x="835" y="78" text-anchor="middle">10–21 Aug</text>
+        <text class="svg-date" x="995" y="78" text-anchor="middle">24 Aug–11 Sep</text>
+      </g>
+
+      <!-- Vertical guides -->
+      <g opacity="0.4">
+        <line x1="100" y1="88" x2="100" y2="380" stroke="#e7e5e4" stroke-width="0.5"/>
+        <line x1="230" y1="88" x2="230" y2="380" stroke="#e7e5e4" stroke-width="0.5"/>
+        <line x1="360" y1="88" x2="360" y2="380" stroke="#e7e5e4" stroke-width="0.5"/>
+        <line x1="500" y1="88" x2="500" y2="380" stroke="#e7e5e4" stroke-width="0.5"/>
+        <line x1="630" y1="88" x2="630" y2="380" stroke="#e7e5e4" stroke-width="0.5"/>
+        <line x1="770" y1="88" x2="770" y2="380" stroke="#e7e5e4" stroke-width="0.5"/>
+        <line x1="910" y1="88" x2="910" y2="380" stroke="#e7e5e4" stroke-width="0.5"/>
+        <line x1="1080" y1="88" x2="1080" y2="380" stroke="#e7e5e4" stroke-width="0.5"/>
+      </g>
+
+      <!-- DEV stream — Cerulean primary -->
+      <text class="svg-stream" x="60" y="135">Dev</text>
+      <g>
+        <rect x="105" y="108" width="120" height="48" rx="4" fill="#e8f6fa" stroke="#0b6e8a" stroke-width="0.75"/>
+        <text class="svg-label" x="165" y="128" text-anchor="middle">Build v1.1</text>
+        <text class="svg-label-sub" x="165" y="144" text-anchor="middle">features</text>
+      </g>
+      <g>
+        <rect x="235" y="108" width="120" height="48" rx="4" fill="#e8f6fa" stroke="#0b6e8a" stroke-width="0.75"/>
+        <text class="svg-label" x="295" y="128" text-anchor="middle">Build v1.2</text>
+        <text class="svg-label-sub" x="295" y="144" text-anchor="middle">features</text>
+      </g>
+      <g>
+        <rect x="375" y="108" width="120" height="48" rx="4" fill="#e8f6fa" stroke="#0b6e8a" stroke-width="0.75"/>
+        <text class="svg-label" x="435" y="128" text-anchor="middle">Build v1.3</text>
+        <text class="svg-label-sub" x="435" y="144" text-anchor="middle">features</text>
+      </g>
+      <g>
+        <rect x="505" y="108" width="120" height="48" rx="4" fill="#e8f6fa" stroke="#0b6e8a" stroke-width="0.75"/>
+        <text class="svg-label" x="565" y="128" text-anchor="middle">Build v1.4</text>
+        <text class="svg-label-sub" x="565" y="144" text-anchor="middle">features</text>
+      </g>
+      <g>
+        <rect x="645" y="108" width="120" height="48" rx="4" fill="#e8f6fa" stroke="#0b6e8a" stroke-width="0.75"/>
+        <text class="svg-label" x="705" y="128" text-anchor="middle">Build v2.0</text>
+        <text class="svg-label-sub" x="705" y="144" text-anchor="middle">features</text>
+      </g>
+      <g>
+        <rect x="775" y="108" width="120" height="48" rx="4" fill="#e8f6fa" stroke="#0b6e8a" stroke-width="0.75"/>
+        <text class="svg-label" x="835" y="128" text-anchor="middle">Final v2.0</text>
+        <text class="svg-label-sub" x="835" y="144" text-anchor="middle">features</text>
+      </g>
+      <g>
+        <rect x="915" y="108" width="160" height="48" rx="4" fill="#feebe7" stroke="#e54d2e" stroke-width="0.75"/>
+        <text class="svg-label" x="995" y="128" text-anchor="middle" style="fill: #d13415;">Bug fixes only</text>
+        <text class="svg-label-sub" x="995" y="144" text-anchor="middle" style="fill: #d13415;">no new features</text>
+      </g>
+
+      <!-- QA stream — Warning amber -->
+      <text class="svg-stream" x="60" y="225">QA + PM</text>
+      <g>
+        <rect x="235" y="198" width="120" height="48" rx="4" fill="#ffefd5" stroke="#f5a524" stroke-width="0.75"/>
+        <text class="svg-label" x="295" y="218" text-anchor="middle">Test v1.1</text>
+        <text class="svg-label-sub" x="295" y="234" text-anchor="middle">+ stabilise</text>
+      </g>
+      <g>
+        <rect x="375" y="198" width="120" height="48" rx="4" fill="#ffefd5" stroke="#f5a524" stroke-width="0.75"/>
+        <text class="svg-label" x="435" y="218" text-anchor="middle">Test v1.2</text>
+        <text class="svg-label-sub" x="435" y="234" text-anchor="middle">+ stabilise</text>
+      </g>
+      <g>
+        <rect x="505" y="198" width="120" height="48" rx="4" fill="#ffefd5" stroke="#f5a524" stroke-width="0.75"/>
+        <text class="svg-label" x="565" y="218" text-anchor="middle">Test v1.3</text>
+        <text class="svg-label-sub" x="565" y="234" text-anchor="middle">+ stabilise</text>
+      </g>
+      <g>
+        <rect x="645" y="198" width="120" height="48" rx="4" fill="#ffefd5" stroke="#f5a524" stroke-width="0.75"/>
+        <text class="svg-label" x="705" y="218" text-anchor="middle">Test v1.4</text>
+        <text class="svg-label-sub" x="705" y="234" text-anchor="middle">+ stabilise</text>
+      </g>
+      <g>
+        <rect x="775" y="198" width="120" height="48" rx="4" fill="#ffefd5" stroke="#f5a524" stroke-width="0.75"/>
+        <text class="svg-label" x="835" y="218" text-anchor="middle">Test v2.0</text>
+        <text class="svg-label-sub" x="835" y="234" text-anchor="middle">+ stabilise</text>
+      </g>
+      <g>
+        <rect x="915" y="198" width="160" height="48" rx="4" fill="#feebe7" stroke="#e54d2e" stroke-width="0.75"/>
+        <text class="svg-label" x="995" y="218" text-anchor="middle" style="fill: #d13415;">Launch</text>
+        <text class="svg-label-sub" x="995" y="234" text-anchor="middle" style="fill: #d13415;">finalisation</text>
+      </g>
+
+      <!-- Handoff arrows -->
+      <line x1="225" y1="134" x2="235" y2="198" stroke="#0b6e8a" stroke-width="1" marker-end="url(#arrowPrimary)"/>
+      <line x1="355" y1="134" x2="375" y2="198" stroke="#0b6e8a" stroke-width="1" marker-end="url(#arrowPrimary)"/>
+      <line x1="495" y1="134" x2="505" y2="198" stroke="#0b6e8a" stroke-width="1" marker-end="url(#arrowPrimary)"/>
+      <line x1="625" y1="134" x2="645" y2="198" stroke="#0b6e8a" stroke-width="1" marker-end="url(#arrowPrimary)"/>
+      <line x1="765" y1="134" x2="775" y2="198" stroke="#0b6e8a" stroke-width="1" marker-end="url(#arrowPrimary)"/>
+      <line x1="895" y1="134" x2="915" y2="198" stroke="#0b6e8a" stroke-width="1" marker-end="url(#arrowPrimary)"/>
+
+      <!-- Ship lines -->
+      <line x1="360" y1="246" x2="360" y2="304" stroke="#29a383" stroke-width="0.5" stroke-dasharray="3 3"/>
+      <line x1="630" y1="246" x2="630" y2="304" stroke="#29a383" stroke-width="0.5" stroke-dasharray="3 3"/>
+      <line x1="910" y1="246" x2="910" y2="304" stroke="#29a383" stroke-width="0.5" stroke-dasharray="3 3"/>
+      <line x1="1080" y1="246" x2="1080" y2="304" stroke="#e54d2e" stroke-width="0.5" stroke-dasharray="3 3"/>
+
+      <!-- Ship milestones — Success green -->
+      <g>
+        <polygon points="360,294 372,306 360,318 348,306" fill="#29a383" stroke="#208368" stroke-width="0.5"/>
+        <text class="svg-milestone-label" x="360" y="338" text-anchor="middle">Ship v1.1</text>
+        <text class="svg-date" x="360" y="354" text-anchor="middle">26 Jun</text>
+      </g>
+      <g>
+        <polygon points="630,294 642,306 630,318 618,306" fill="#29a383" stroke="#208368" stroke-width="0.5"/>
+        <text class="svg-milestone-label" x="630" y="338" text-anchor="middle">Ship v1.2</text>
+        <text class="svg-date" x="630" y="354" text-anchor="middle">24 Jul</text>
+      </g>
+      <g>
+        <polygon points="910,294 922,306 910,318 898,306" fill="#29a383" stroke="#208368" stroke-width="0.5"/>
+        <text class="svg-milestone-label" x="910" y="338" text-anchor="middle">Ship v1.3</text>
+        <text class="svg-date" x="910" y="354" text-anchor="middle">21 Aug</text>
+      </g>
+      <g>
+        <polygon points="1080,292 1094,306 1080,320 1066,306" fill="#e54d2e" stroke="#d13415" stroke-width="0.5"/>
+        <text class="svg-milestone-label" x="1080" y="338" text-anchor="middle" style="fill: #d13415;">Launch v2.0</text>
+        <text class="svg-date" x="1080" y="354" text-anchor="middle" style="fill: #d13415;">11 Sep</text>
+      </g>
+
+      <!-- Cadence annotations -->
+      <line x1="372" y1="396" x2="618" y2="396" stroke="#6b615e" stroke-width="0.5" opacity="0.5" marker-end="url(#arrowFaint)" marker-start="url(#arrowFaint)"/>
+      <text class="svg-mono" x="495" y="412" text-anchor="middle">4 WEEKS</text>
+
+      <line x1="642" y1="396" x2="898" y2="396" stroke="#6b615e" stroke-width="0.5" opacity="0.5" marker-end="url(#arrowFaint)" marker-start="url(#arrowFaint)"/>
+      <text class="svg-mono" x="770" y="412" text-anchor="middle">4 WEEKS</text>
+
+      <line x1="922" y1="396" x2="1066" y2="396" stroke="#d13415" stroke-width="0.5" opacity="0.7" marker-end="url(#arrowError)" marker-start="url(#arrowError)"/>
+      <text class="svg-mono" x="994" y="412" text-anchor="middle" style="fill: #d13415;">3 WEEKS</text>
+    </svg>
+
+    <div class="diagram-legend">
+      <span><span class="swatch" style="background: #e8f6fa; border-color: #0b6e8a;"></span>Dev build cycle</span>
+      <span><span class="swatch" style="background: #ffefd5; border-color: #f5a524;"></span>QA + PM cycle</span>
+      <span><span class="swatch swatch-diamond" style="background: #29a383;"></span>Release shipped</span>
+      <span><span class="swatch swatch-diamond" style="background: #e54d2e;"></span>v2.0 launch</span>
+      <span><span class="swatch" style="background: #feebe7; border-color: #e54d2e;"></span>Finalisation only</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-header">
+    <span class="section-num">02 — WHY IT WORKS</span>
+  </div>
+  <h2 class="section-title" style="margin-bottom: var(--spacing-3);">Three rules hold the model together</h2>
+  <p class="section-lede">Follow them and the cadence runs itself. Break them and it collapses inside two cycles.</p>
+
+  <div class="rules">
+    <div class="rule">
+      <div class="rule-num">Rule 01</div>
+      <div class="rule-title">Dev runs one cycle ahead of QA</div>
+      <p class="rule-body">Dev finishes v1.1 in Cycle 1 and moves straight to v1.2 in Cycle 2. QA picks up v1.1 in Cycle 2 with the whole cycle to test it. Neither stream waits on the other.</p>
+      <div class="rule-tag">The pipeline</div>
+    </div>
+    <div class="rule">
+      <div class="rule-num">Rule 02</div>
+      <div class="rule-title">The in-flight release always beats the next one</div>
+      <p class="rule-body">If QA finds a bug in v1.1 during Cycle 2, fixing it outranks v1.2 build. The release with a ship date wins. Without this rule v1.1 rots while v1.2 races ahead.</p>
+      <div class="rule-tag">The bug rule</div>
+    </div>
+    <div class="rule">
+      <div class="rule-num">Rule 03</div>
+      <div class="rule-title">The buffer week is finalisation, not build</div>
+      <p class="rule-body">The final week before v2.0 launch is bug fixes and QA only. No new features cross into the buffer. Anything not feature-complete by 5 Sep is v2.1, not squeezed in.</p>
+      <div class="rule-tag">The buffer rule</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-header">
+    <span class="section-num">03 — HOW IT LIVES IN LINEAR</span>
+  </div>
+  <h2 class="section-title" style="margin-bottom: var(--spacing-3);">Projects are releases, Cycles are sprints</h2>
+  <p class="section-lede">Every issue belongs to one <strong>Project</strong> (which release) and one <strong>Cycle</strong> (which two weeks).</p>
+
+  <div class="linear-grid">
+    <div class="linear-block">
+      <h3>The four Projects</h3>
+      <dl>
+        <dt>DAM v1.1</dt><dd>Ships <strong>26 Jun</strong></dd>
+        <dt>DAM v1.2</dt><dd>Ships <strong>24 Jul</strong></dd>
+        <dt>DAM v1.3</dt><dd>Ships <strong>21 Aug</strong></dd>
+        <dt>DAM v2.0</dt><dd>Launches <strong>11 Sep</strong></dd>
+        <dt>DAM Backlog</dt><dd>Everything not yet scoped into a release</dd>
+      </dl>
+    </div>
+
+    <div class="linear-block">
+      <h3>Reading an issue</h3>
+      <dl>
+        <dt>Bar</dt><dd>Why it's in this release — <strong>table-stakes</strong>, <strong>competitive</strong>, or <strong>differentiator</strong></dd>
+        <dt>Type</dt><dd>Bug, Improvement, or New Feature</dd>
+        <dt>Discipline</dt><dd>UX, UI, Dev — which skills it needs</dd>
+        <dt>T-Shirt</dt><dd>XS &lt;1d · S 1–3d · M 3–5d · L 1–2w</dd>
+        <dt>Priority</dt><dd>Urgent / High / Med / Low — order within the cycle</dd>
+      </dl>
+    </div>
+
+    <div class="linear-block">
+      <h3>Sub-issues — when to use them</h3>
+      <dl>
+        <dt>Use</dt><dd>When an issue crosses 2+ disciplines and is M or larger. One sub-issue per discipline, each with its own assignee and estimate.</dd>
+        <dt>Skip</dt><dd>For XS/S work — just pass the assignee along as it moves through the disciplines.</dd>
+        <dt>Flag</dt><dd>Add <strong>design-blocked</strong> to UI/Dev sub-issues when they're waiting on UX.</dd>
+      </dl>
+    </div>
+
+    <div class="linear-block">
+      <h3>Day-to-day rhythm</h3>
+      <dl>
+        <dt>Cycle</dt><dd>2 weeks, starts Monday. Cycle 1 = <strong>1–12 Jun</strong>.</dd>
+        <dt>Done</dt><dd>An issue is done when dev-complete, merged, and ready for QA pickup next cycle.</dd>
+        <dt>Bugs</dt><dd>v1.1 bugs found in Cycle 2 jump the queue — they ship with v1.1, not v1.2.</dd>
+        <dt>Buffer</dt><dd>End of Cycle 7 (5 Sep) → bug fixes only until launch 11 Sep.</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<div class="footer">
+  <div>SCREENDRAGON · DAM TEAM · v1.1 BRIEFING</div>
+  <div class="footer-quote">The cadence runs itself if we run the rules.</div>
+  <div>PREPARED FOR STANDUP · 28 MAY 2026</div>
+</div>
+
+</body>
+</html>
