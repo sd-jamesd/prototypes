@@ -390,7 +390,7 @@
     <span class="section-num">01 — THE CADENCE</span>
   </div>
   <h2 class="section-title" style="margin-bottom: var(--spacing-3);">Two-week cycles, four-week releases</h2>
-  <p class="section-lede">Dev runs one cycle ahead of QA so neither stream ever waits on the other. Every four weeks a new version ships to the client. v2.0 lands on <strong>11 Sep</strong> with a one-week finalisation buffer.</p>
+  <p class="section-lede">Dev builds a new <strong>feature set</strong> every cycle (Set 1, Set 2, Set 3…). QA tests the previous cycle's set. A release ships every 4 weeks and bundles one or two completed sets together. v1.1 is the smaller priming release — just Set 1 — because there's nothing earlier to test in Cycle 1. From v1.2 onward, every release contains two sets.</p>
 
   <div class="diagram-wrap">
     <svg viewBox="0 0 1100 460" role="img" aria-label="Release cadence timeline from 1 June to 11 September">
@@ -406,19 +406,10 @@
         </marker>
       </defs>
 
-      <!-- Release bands top -->
+      <!-- Release header — single bar spanning the timeline -->
       <g>
-        <rect x="100" y="14" width="260" height="26" rx="4" fill="#f5f5f4" stroke="#e7e5e4" stroke-width="0.5"/>
-        <text class="svg-label" x="230" y="32" text-anchor="middle">Release v1.1 (4 weeks)</text>
-
-        <rect x="370" y="14" width="260" height="26" rx="4" fill="#f5f5f4" stroke="#e7e5e4" stroke-width="0.5"/>
-        <text class="svg-label" x="500" y="32" text-anchor="middle">Release v1.2 (4 weeks)</text>
-
-        <rect x="640" y="14" width="260" height="26" rx="4" fill="#f5f5f4" stroke="#e7e5e4" stroke-width="0.5"/>
-        <text class="svg-label" x="770" y="32" text-anchor="middle">Release v1.3 (4 weeks)</text>
-
-        <rect x="910" y="14" width="170" height="26" rx="4" fill="#feebe7" stroke="#e54d2e" stroke-width="0.5"/>
-        <text class="svg-label" x="995" y="32" text-anchor="middle" style="fill: #d13415;">v2.0 launch</text>
+        <rect x="100" y="14" width="980" height="26" rx="4" fill="#f5f5f4" stroke="#e7e5e4" stroke-width="0.5"/>
+        <text class="svg-label" x="590" y="32" text-anchor="middle">Each cycle = one feature Set · Releases ship every 4 weeks bundling 1 or 2 Sets</text>
       </g>
 
       <!-- Cycle headers -->
@@ -456,81 +447,81 @@
       <!-- DEV stream — Cerulean primary -->
       <text class="svg-stream" x="60" y="135">Dev</text>
       <g>
-        <rect x="105" y="108" width="120" height="48" rx="4" fill="#e8f6fa" stroke="#0b6e8a" stroke-width="0.75"/>
-        <text class="svg-label" x="165" y="128" text-anchor="middle">Build v1.1</text>
-        <text class="svg-label-sub" x="165" y="144" text-anchor="middle">features</text>
+        <rect x="105" y="108" width="120" height="48" rx="4" fill="#f5f5f4" stroke="#978985" stroke-width="0.75"/>
+        <text class="svg-label" x="165" y="128" text-anchor="middle">Build features</text>
+        <text class="svg-label-sub" x="165" y="144" text-anchor="middle">Set 1</text>
       </g>
       <g>
         <rect x="235" y="108" width="120" height="48" rx="4" fill="#e8f6fa" stroke="#0b6e8a" stroke-width="0.75"/>
-        <text class="svg-label" x="295" y="128" text-anchor="middle">Build v1.2</text>
-        <text class="svg-label-sub" x="295" y="144" text-anchor="middle">features</text>
+        <text class="svg-label" x="295" y="128" text-anchor="middle">Build features</text>
+        <text class="svg-label-sub" x="295" y="144" text-anchor="middle">Set 2</text>
       </g>
       <g>
         <rect x="375" y="108" width="120" height="48" rx="4" fill="#e8f6fa" stroke="#0b6e8a" stroke-width="0.75"/>
-        <text class="svg-label" x="435" y="128" text-anchor="middle">Build v1.3</text>
-        <text class="svg-label-sub" x="435" y="144" text-anchor="middle">features</text>
+        <text class="svg-label" x="435" y="128" text-anchor="middle">Build features</text>
+        <text class="svg-label-sub" x="435" y="144" text-anchor="middle">Set 3</text>
       </g>
       <g>
-        <rect x="505" y="108" width="120" height="48" rx="4" fill="#e8f6fa" stroke="#0b6e8a" stroke-width="0.75"/>
-        <text class="svg-label" x="565" y="128" text-anchor="middle">Build v1.4</text>
-        <text class="svg-label-sub" x="565" y="144" text-anchor="middle">features</text>
+        <rect x="505" y="108" width="120" height="48" rx="4" fill="#f0f1fe" stroke="#5b5bd6" stroke-width="0.75"/>
+        <text class="svg-label" x="565" y="128" text-anchor="middle">Build features</text>
+        <text class="svg-label-sub" x="565" y="144" text-anchor="middle">Set 4</text>
       </g>
       <g>
-        <rect x="645" y="108" width="120" height="48" rx="4" fill="#e8f6fa" stroke="#0b6e8a" stroke-width="0.75"/>
-        <text class="svg-label" x="705" y="128" text-anchor="middle">Build v2.0</text>
-        <text class="svg-label-sub" x="705" y="144" text-anchor="middle">features</text>
+        <rect x="645" y="108" width="120" height="48" rx="4" fill="#f0f1fe" stroke="#5b5bd6" stroke-width="0.75"/>
+        <text class="svg-label" x="705" y="128" text-anchor="middle">Build features</text>
+        <text class="svg-label-sub" x="705" y="144" text-anchor="middle">Set 5</text>
       </g>
       <g>
-        <rect x="775" y="108" width="120" height="48" rx="4" fill="#e8f6fa" stroke="#0b6e8a" stroke-width="0.75"/>
-        <text class="svg-label" x="835" y="128" text-anchor="middle">Final v2.0</text>
-        <text class="svg-label-sub" x="835" y="144" text-anchor="middle">features</text>
+        <rect x="775" y="108" width="120" height="48" rx="4" fill="#ffefd5" stroke="#985b00" stroke-width="0.75"/>
+        <text class="svg-label" x="835" y="128" text-anchor="middle">Build features</text>
+        <text class="svg-label-sub" x="835" y="144" text-anchor="middle">Set 6</text>
       </g>
       <g>
-        <rect x="915" y="108" width="160" height="48" rx="4" fill="#feebe7" stroke="#e54d2e" stroke-width="0.75"/>
-        <text class="svg-label" x="995" y="128" text-anchor="middle" style="fill: #d13415;">Bug fixes only</text>
-        <text class="svg-label-sub" x="995" y="144" text-anchor="middle" style="fill: #d13415;">no new features</text>
+        <rect x="915" y="108" width="160" height="48" rx="4" fill="#ffefd5" stroke="#985b00" stroke-width="0.75"/>
+        <text class="svg-label" x="995" y="128" text-anchor="middle">Build Set 7</text>
+        <text class="svg-label-sub" x="995" y="144" text-anchor="middle">then bug fixes only</text>
       </g>
 
       <!-- QA stream — Warning amber -->
       <text class="svg-stream" x="60" y="225">QA + PM</text>
       <g>
-        <rect x="235" y="198" width="120" height="48" rx="4" fill="#ffefd5" stroke="#f5a524" stroke-width="0.75"/>
-        <text class="svg-label" x="295" y="218" text-anchor="middle">Test v1.1</text>
+        <rect x="235" y="198" width="120" height="48" rx="4" fill="#f5f5f4" stroke="#978985" stroke-width="0.75"/>
+        <text class="svg-label" x="295" y="218" text-anchor="middle">Test Set 1</text>
         <text class="svg-label-sub" x="295" y="234" text-anchor="middle">+ stabilise</text>
       </g>
       <g>
-        <rect x="375" y="198" width="120" height="48" rx="4" fill="#ffefd5" stroke="#f5a524" stroke-width="0.75"/>
-        <text class="svg-label" x="435" y="218" text-anchor="middle">Test v1.2</text>
+        <rect x="375" y="198" width="120" height="48" rx="4" fill="#e8f6fa" stroke="#0b6e8a" stroke-width="0.75"/>
+        <text class="svg-label" x="435" y="218" text-anchor="middle">Test Set 2</text>
         <text class="svg-label-sub" x="435" y="234" text-anchor="middle">+ stabilise</text>
       </g>
       <g>
-        <rect x="505" y="198" width="120" height="48" rx="4" fill="#ffefd5" stroke="#f5a524" stroke-width="0.75"/>
-        <text class="svg-label" x="565" y="218" text-anchor="middle">Test v1.3</text>
+        <rect x="505" y="198" width="120" height="48" rx="4" fill="#e8f6fa" stroke="#0b6e8a" stroke-width="0.75"/>
+        <text class="svg-label" x="565" y="218" text-anchor="middle">Test Set 3</text>
         <text class="svg-label-sub" x="565" y="234" text-anchor="middle">+ stabilise</text>
       </g>
       <g>
-        <rect x="645" y="198" width="120" height="48" rx="4" fill="#ffefd5" stroke="#f5a524" stroke-width="0.75"/>
-        <text class="svg-label" x="705" y="218" text-anchor="middle">Test v1.4</text>
+        <rect x="645" y="198" width="120" height="48" rx="4" fill="#f0f1fe" stroke="#5b5bd6" stroke-width="0.75"/>
+        <text class="svg-label" x="705" y="218" text-anchor="middle">Test Set 4</text>
         <text class="svg-label-sub" x="705" y="234" text-anchor="middle">+ stabilise</text>
       </g>
       <g>
-        <rect x="775" y="198" width="120" height="48" rx="4" fill="#ffefd5" stroke="#f5a524" stroke-width="0.75"/>
-        <text class="svg-label" x="835" y="218" text-anchor="middle">Test v2.0</text>
+        <rect x="775" y="198" width="120" height="48" rx="4" fill="#f0f1fe" stroke="#5b5bd6" stroke-width="0.75"/>
+        <text class="svg-label" x="835" y="218" text-anchor="middle">Test Set 5</text>
         <text class="svg-label-sub" x="835" y="234" text-anchor="middle">+ stabilise</text>
       </g>
       <g>
         <rect x="915" y="198" width="160" height="48" rx="4" fill="#feebe7" stroke="#e54d2e" stroke-width="0.75"/>
-        <text class="svg-label" x="995" y="218" text-anchor="middle" style="fill: #d13415;">Launch</text>
-        <text class="svg-label-sub" x="995" y="234" text-anchor="middle" style="fill: #d13415;">finalisation</text>
+        <text class="svg-label" x="995" y="218" text-anchor="middle" style="fill: #d13415;">Test Sets 6 + 7</text>
+        <text class="svg-label-sub" x="995" y="234" text-anchor="middle" style="fill: #d13415;">Launch finalisation</text>
       </g>
 
       <!-- Handoff arrows -->
-      <line x1="225" y1="134" x2="235" y2="198" stroke="#0b6e8a" stroke-width="1" marker-end="url(#arrowPrimary)"/>
-      <line x1="355" y1="134" x2="375" y2="198" stroke="#0b6e8a" stroke-width="1" marker-end="url(#arrowPrimary)"/>
-      <line x1="495" y1="134" x2="505" y2="198" stroke="#0b6e8a" stroke-width="1" marker-end="url(#arrowPrimary)"/>
-      <line x1="625" y1="134" x2="645" y2="198" stroke="#0b6e8a" stroke-width="1" marker-end="url(#arrowPrimary)"/>
-      <line x1="765" y1="134" x2="775" y2="198" stroke="#0b6e8a" stroke-width="1" marker-end="url(#arrowPrimary)"/>
-      <line x1="895" y1="134" x2="915" y2="198" stroke="#0b6e8a" stroke-width="1" marker-end="url(#arrowPrimary)"/>
+      <line x1="225" y1="134" x2="235" y2="198" stroke="#6b615e" stroke-width="1" marker-end="url(#arrowFaint)"/>
+      <line x1="355" y1="134" x2="375" y2="198" stroke="#6b615e" stroke-width="1" marker-end="url(#arrowFaint)"/>
+      <line x1="495" y1="134" x2="505" y2="198" stroke="#6b615e" stroke-width="1" marker-end="url(#arrowFaint)"/>
+      <line x1="625" y1="134" x2="645" y2="198" stroke="#6b615e" stroke-width="1" marker-end="url(#arrowFaint)"/>
+      <line x1="765" y1="134" x2="775" y2="198" stroke="#6b615e" stroke-width="1" marker-end="url(#arrowFaint)"/>
+      <line x1="895" y1="134" x2="915" y2="198" stroke="#6b615e" stroke-width="1" marker-end="url(#arrowFaint)"/>
 
       <!-- Ship lines -->
       <line x1="360" y1="246" x2="360" y2="304" stroke="#29a383" stroke-width="0.5" stroke-dasharray="3 3"/>
@@ -543,21 +534,25 @@
         <polygon points="360,294 372,306 360,318 348,306" fill="#29a383" stroke="#208368" stroke-width="0.5"/>
         <text class="svg-milestone-label" x="360" y="338" text-anchor="middle">Ship v1.1</text>
         <text class="svg-date" x="360" y="354" text-anchor="middle">26 Jun</text>
+        <text class="svg-date" x="360" y="368" text-anchor="middle" style="fill: #0b6e8a;">Set 1</text>
       </g>
       <g>
         <polygon points="630,294 642,306 630,318 618,306" fill="#29a383" stroke="#208368" stroke-width="0.5"/>
         <text class="svg-milestone-label" x="630" y="338" text-anchor="middle">Ship v1.2</text>
         <text class="svg-date" x="630" y="354" text-anchor="middle">24 Jul</text>
+        <text class="svg-date" x="630" y="368" text-anchor="middle" style="fill: #0b6e8a;">Sets 2 + 3</text>
       </g>
       <g>
         <polygon points="910,294 922,306 910,318 898,306" fill="#29a383" stroke="#208368" stroke-width="0.5"/>
         <text class="svg-milestone-label" x="910" y="338" text-anchor="middle">Ship v1.3</text>
         <text class="svg-date" x="910" y="354" text-anchor="middle">21 Aug</text>
+        <text class="svg-date" x="910" y="368" text-anchor="middle" style="fill: #0b6e8a;">Sets 4 + 5</text>
       </g>
       <g>
         <polygon points="1080,292 1094,306 1080,320 1066,306" fill="#e54d2e" stroke="#d13415" stroke-width="0.5"/>
         <text class="svg-milestone-label" x="1080" y="338" text-anchor="middle" style="fill: #d13415;">Launch v2.0</text>
         <text class="svg-date" x="1080" y="354" text-anchor="middle" style="fill: #d13415;">11 Sep</text>
+        <text class="svg-date" x="1080" y="368" text-anchor="middle" style="fill: #0b6e8a;">Sets 6 + 7</text>
       </g>
 
       <!-- Cadence annotations -->
@@ -572,11 +567,12 @@
     </svg>
 
     <div class="diagram-legend">
-      <span><span class="swatch" style="background: #e8f6fa; border-color: #0b6e8a;"></span>Dev build cycle</span>
-      <span><span class="swatch" style="background: #ffefd5; border-color: #f5a524;"></span>QA + PM cycle</span>
+      <span><span class="swatch" style="background: #f5f5f4; border-color: #978985;"></span>v1.1</span>
+      <span><span class="swatch" style="background: #e8f6fa; border-color: #0b6e8a;"></span>v1.2</span>
+      <span><span class="swatch" style="background: #f0f1fe; border-color: #5b5bd6;"></span>v1.3</span>
+      <span><span class="swatch" style="background: #ffefd5; border-color: #985b00;"></span>v2.0</span>
+      <span><span class="swatch" style="background: #feebe7; border-color: #e54d2e;"></span>Launch finalisation</span>
       <span><span class="swatch swatch-diamond" style="background: #29a383;"></span>Release shipped</span>
-      <span><span class="swatch swatch-diamond" style="background: #e54d2e;"></span>v2.0 launch</span>
-      <span><span class="swatch" style="background: #feebe7; border-color: #e54d2e;"></span>Finalisation only</span>
     </div>
   </div>
 </section>
