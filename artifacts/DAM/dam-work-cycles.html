@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DAM v1.1 — How we ship from here</title>
+<title>DAM v1.2 — How we ship from here</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -390,7 +390,7 @@
     <span class="section-num">01 — THE CADENCE</span>
   </div>
   <h2 class="section-title" style="margin-bottom: var(--spacing-3);">Two-week cycles, four-week releases</h2>
-  <p class="section-lede">Dev builds a new <strong>feature set</strong> every cycle (Set 1, Set 2, Set 3…). QA tests the previous cycle's set. A release ships every 4 weeks and bundles one or two completed sets together. v1.1 is the smaller priming release — just Set 1 — because there's nothing earlier to test in Cycle 1. From v1.2 onward, every release contains two sets.</p>
+  <p class="section-lede">Dev builds a new <strong>feature set</strong> every cycle (Set 1, Set 2, Set 3…). QA tests the previous cycle's set. A release ships every 4 weeks and bundles one or two completed sets together. v1.2 is the smaller priming release — just Set 1 — because there's nothing earlier to test in Cycle 1. From v1.3 onward, every release contains two sets.</p>
 
   <div class="diagram-wrap">
     <svg viewBox="0 0 1100 460" role="img" aria-label="Release cadence timeline from 1 June to 11 September">
@@ -532,19 +532,19 @@
       <!-- Ship milestones — Success green -->
       <g>
         <polygon points="360,294 372,306 360,318 348,306" fill="#29a383" stroke="#208368" stroke-width="0.5"/>
-        <text class="svg-milestone-label" x="360" y="338" text-anchor="middle">Ship v1.1</text>
+        <text class="svg-milestone-label" x="360" y="338" text-anchor="middle">Ship v1.2</text>
         <text class="svg-date" x="360" y="354" text-anchor="middle">26 Jun</text>
         <text class="svg-date" x="360" y="368" text-anchor="middle" style="fill: #0b6e8a;">Set 1</text>
       </g>
       <g>
         <polygon points="630,294 642,306 630,318 618,306" fill="#29a383" stroke="#208368" stroke-width="0.5"/>
-        <text class="svg-milestone-label" x="630" y="338" text-anchor="middle">Ship v1.2</text>
+        <text class="svg-milestone-label" x="630" y="338" text-anchor="middle">Ship v1.3</text>
         <text class="svg-date" x="630" y="354" text-anchor="middle">24 Jul</text>
         <text class="svg-date" x="630" y="368" text-anchor="middle" style="fill: #0b6e8a;">Sets 2 + 3</text>
       </g>
       <g>
         <polygon points="910,294 922,306 910,318 898,306" fill="#29a383" stroke="#208368" stroke-width="0.5"/>
-        <text class="svg-milestone-label" x="910" y="338" text-anchor="middle">Ship v1.3</text>
+        <text class="svg-milestone-label" x="910" y="338" text-anchor="middle">Ship v1.4</text>
         <text class="svg-date" x="910" y="354" text-anchor="middle">21 Aug</text>
         <text class="svg-date" x="910" y="368" text-anchor="middle" style="fill: #0b6e8a;">Sets 4 + 5</text>
       </g>
@@ -567,9 +567,9 @@
     </svg>
 
     <div class="diagram-legend">
-      <span><span class="swatch" style="background: #f5f5f4; border-color: #978985;"></span>v1.1</span>
-      <span><span class="swatch" style="background: #e8f6fa; border-color: #0b6e8a;"></span>v1.2</span>
-      <span><span class="swatch" style="background: #f0f1fe; border-color: #5b5bd6;"></span>v1.3</span>
+      <span><span class="swatch" style="background: #f5f5f4; border-color: #978985;"></span>v1.2</span>
+      <span><span class="swatch" style="background: #e8f6fa; border-color: #0b6e8a;"></span>v1.3</span>
+      <span><span class="swatch" style="background: #f0f1fe; border-color: #5b5bd6;"></span>v1.4</span>
       <span><span class="swatch" style="background: #ffefd5; border-color: #985b00;"></span>v2.0</span>
       <span><span class="swatch" style="background: #feebe7; border-color: #e54d2e;"></span>Launch finalisation</span>
       <span><span class="swatch swatch-diamond" style="background: #29a383;"></span>Release shipped</span>
@@ -588,13 +588,13 @@
     <div class="rule">
       <div class="rule-num">Rule 01</div>
       <div class="rule-title">Dev runs one cycle ahead of QA</div>
-      <p class="rule-body">Dev finishes v1.1 in Cycle 1 and moves straight to v1.2 in Cycle 2. QA picks up v1.1 in Cycle 2 with the whole cycle to test it. Neither stream waits on the other.</p>
+      <p class="rule-body">Dev finishes v1.2 in Cycle 1 and moves straight to v1.3 in Cycle 2. QA picks up v1.2 in Cycle 2 with the whole cycle to test it. Neither stream waits on the other.</p>
       <div class="rule-tag">The pipeline</div>
     </div>
     <div class="rule">
       <div class="rule-num">Rule 02</div>
       <div class="rule-title">The in-flight release always beats the next one</div>
-      <p class="rule-body">If QA finds a bug in v1.1 during Cycle 2, fixing it outranks v1.2 build. The release with a ship date wins. Without this rule v1.1 rots while v1.2 races ahead.</p>
+      <p class="rule-body">If QA finds a bug in v1.2 during Cycle 2, fixing it outranks v1.3 build. The release with a ship date wins. Without this rule v1.2 rots while v1.3 races ahead.</p>
       <div class="rule-tag">The bug rule</div>
     </div>
     <div class="rule">
@@ -617,9 +617,9 @@
     <div class="linear-block">
       <h3>The four Projects</h3>
       <dl>
-        <dt>DAM v1.1</dt><dd>Ships <strong>26 Jun</strong></dd>
-        <dt>DAM v1.2</dt><dd>Ships <strong>24 Jul</strong></dd>
-        <dt>DAM v1.3</dt><dd>Ships <strong>21 Aug</strong></dd>
+        <dt>DAM v1.2</dt><dd>Ships <strong>26 Jun</strong></dd>
+        <dt>DAM v1.3</dt><dd>Ships <strong>24 Jul</strong></dd>
+        <dt>DAM v1.4</dt><dd>Ships <strong>21 Aug</strong></dd>
         <dt>DAM v2.0</dt><dd>Launches <strong>11 Sep</strong></dd>
         <dt>DAM Backlog</dt><dd>Everything not yet scoped into a release</dd>
       </dl>
@@ -650,7 +650,7 @@
       <dl>
         <dt>Cycle</dt><dd>2 weeks, starts Monday. Cycle 1 = <strong>1–12 Jun</strong>.</dd>
         <dt>Done</dt><dd>An issue is done when dev-complete, merged, and ready for QA pickup next cycle.</dd>
-        <dt>Bugs</dt><dd>v1.1 bugs found in Cycle 2 jump the queue — they ship with v1.1, not v1.2.</dd>
+        <dt>Bugs</dt><dd>v1.2 bugs found in Cycle 2 jump the queue — they ship with v1.2, not v1.3.</dd>
         <dt>Buffer</dt><dd>End of Cycle 7 (5 Sep) → bug fixes only until launch 11 Sep.</dd>
       </dl>
     </div>
@@ -658,7 +658,7 @@
 </section>
 
 <div class="footer">
-  <div>SCREENDRAGON · DAM TEAM · v1.1 BRIEFING</div>
+  <div>SCREENDRAGON · DAM TEAM · v1.2 BRIEFING</div>
   <div class="footer-quote">The cadence runs itself if we run the rules.</div>
   <div>PREPARED FOR STANDUP · 28 MAY 2026</div>
 </div>
