@@ -1,0 +1,2533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAM — Layout B.2: Title as subject (Scale tokens)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* ---- Stone neutral scale (warm) ---- */
+  --stone-1: #FEFCFC;
+  --stone-2: #FBF8F8;
+  --stone-3: #F5F5F4;
+  --stone-4: #E7E5E4;
+  --stone-5: #D6D3D1;
+  --stone-7: #D5CCC9;
+  --stone-8: #6B615E;
+  --stone-9: #978985;
+  --stone-10: #8C7F7B;
+  --stone-11: #57534E;
+  --stone-12: #261E1B;
+
+  /* ---- Cerulean (primary action) scale ---- */
+  --primary-3: #E4F5FC;
+  --primary-4: #D5EFF9;
+  --primary-6: #B0D9E9;
+  --primary-8: #6CB3CE;
+  --primary-9: #0B6E8A;
+  --primary-10: #005F7B;
+  --primary-11: #197592;
+  --primary-12: #1B404E;
+
+  /* ---- Semantic surfaces ---- */
+  --surface-rail: var(--stone-2);
+  --surface-filters: var(--stone-1);
+  --surface-content: #FFFFFF;
+  --surface-card: #FFFFFF;
+
+  /* ---- Semantic borders ---- */
+  --border-default: var(--stone-4);
+  --border-subtle: var(--stone-3);
+  --border-strong: var(--stone-7);
+
+  /* ---- Semantic text ---- */
+  --text-default: var(--stone-12);
+  --text-muted: var(--stone-11);
+  --text-subtle: var(--stone-10);
+  --text-placeholder: var(--stone-9);
+
+  /* ---- Primary ---- */
+  --primary: var(--primary-9);
+  --primary-hover: var(--primary-10);
+  --primary-subtle: var(--primary-3);
+
+  /* ---- Geometry ---- */
+  --radius-2: 4px;
+  --radius-3: 6px;
+}
+
+* { box-sizing: border-box; }
+svg { width: 14px; height: 14px; flex-shrink: 0; display: inline-block; vertical-align: middle; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  color: var(--text-default);
+  background: var(--stone-3);
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  padding: 32px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.mock-block { margin-bottom: 32px; }
+
+.variant-header { margin-bottom: 12px; }
+
+.variant-header .tag {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary-11);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+
+.variant-header h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-default);
+}
+
+.variant-header p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 22px;
+  max-width: 920px;
+}
+
+.annotation {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 18px;
+  padding-left: 16px;
+  border-left: 2px solid var(--primary);
+  margin-left: 16px;
+}
+
+.annotation strong { color: var(--text-default); font-weight: 600; }
+.annotation .heading { color: var(--text-default); font-weight: 600; }
+
+/* ============================================================
+   SHELL — Unity wrapper + iframe boundary
+   ============================================================ */
+
+.unity-shell {
+  background: var(--surface-content);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-3);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  grid-template-rows: 48px 1fr;
+  min-height: 720px;
+}
+
+/* Unity rail */
+.unity-rail {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  background: #1d4d80;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 0;
+  gap: 8px;
+}
+
+.unity-rail .brand-mark {
+  width: 32px; height: 32px;
+  border: 1.5px solid #fff; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 14px;
+  border-radius: 2px;
+  margin-bottom: 8px;
+}
+
+.unity-rail .item {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-2);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.65);
+  cursor: pointer;
+}
+.unity-rail .item.active { background: rgba(255,255,255,0.15); color: #fff; }
+.unity-rail .item svg { width: 16px; height: 16px; }
+
+.unity-rail .spacer { flex: 1; }
+
+.unity-rail .avatar-item {
+  width: 28px; height: 28px;
+  border-radius: 50%; background: var(--stone-4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+/* Unity top bar */
+.unity-topbar {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex; align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border-default);
+  background: var(--surface-content);
+  gap: 8px;
+}
+
+.unity-topbar .crumbs {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px;
+}
+
+.unity-topbar .crumbs a { color: var(--text-default); text-decoration: none; font-weight: 500; cursor: pointer; }
+.unity-topbar .crumbs .sep { color: var(--text-subtle); }
+.unity-topbar .crumbs .current { color: var(--text-muted); font-weight: 400; }
+
+.unity-topbar .spacer { flex: 1; }
+
+.unity-topbar .global-search {
+  width: 200px; height: 28px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-2);
+  background: var(--surface-content);
+  display: flex; align-items: center;
+  padding: 0 12px; gap: 8px;
+  font-size: 12px; color: var(--text-placeholder);
+}
+
+/* Iframe region */
+.iframe-region {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex; flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.iframe-label {
+  position: absolute; top: 8px; left: 50%;
+  transform: translateX(-50%);
+  background: #d97706; color: #fff;
+  font-size: 10px; font-weight: 600;
+  padding: 2px 10px; border-radius: 3px;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  z-index: 10; pointer-events: none;
+  opacity: 0.85;
+}
+
+.show-boundary .iframe-region {
+  outline: 2px dashed #d97706;
+  outline-offset: -2px;
+}
+
+/* ============================================================
+   DAM internal layout
+   ============================================================ */
+
+.dam-inner {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* DAM rail — stone-2 per surface rules */
+.dam-rail {
+  background: var(--surface-rail);
+  border-right: 1px solid var(--border-default);
+  display: flex; flex-direction: column;
+  align-items: center;
+  padding: 12px 0; gap: 8px;
+}
+
+.dam-rail .expand {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); cursor: pointer;
+  margin-bottom: 8px;
+}
+.dam-rail .expand:hover { background: var(--stone-3); color: var(--text-default); }
+
+.dam-rail .item {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); cursor: pointer;
+}
+.dam-rail .item:hover { background: var(--stone-3); color: var(--text-default); }
+.dam-rail .item.active { background: var(--primary-subtle); color: var(--primary-11); }
+.dam-rail .item svg { width: 16px; height: 16px; }
+
+/* DAM page area */
+.dam-page-area {
+  background: var(--surface-content);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+/* ============================================================
+   PAGE HEADER — title-as-subject pattern
+   ============================================================ */
+
+.page-header {
+  padding: 16px 24px;
+  display: flex; align-items: center;
+  gap: 12px;
+  background: var(--surface-content);
+  border-bottom: 1px solid var(--border-default);
+  flex-shrink: 0;
+}
+
+/* Left cluster — title + search. Grows rightward, stays left-anchored. */
+.header-left {
+  display: flex; align-items: center;
+  gap: 16px;
+  min-width: 0;  /* allows children to truncate */
+  flex-shrink: 1;
+}
+
+/* Spacer — absorbs all width variation between clusters */
+.header-spacer { flex: 1; min-width: 24px; }
+
+/* Right cluster — controls and actions. Anchored right, fixed order. */
+.header-right {
+  display: flex; align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Title block — inline baseline-aligned across all states */
+.title-block {
+  display: flex; align-items: baseline;
+  gap: 8px;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+/* Empty state — just the library name as H1 */
+.title-block.empty .title-h1 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+  color: var(--text-default);
+  white-space: nowrap;
+}
+
+/* Library breadcrumb segment — smaller, lighter, sits before separator */
+.title-block .lib-segment {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 120ms;
+}
+
+.title-block .lib-segment:hover {
+  color: var(--text-default);
+}
+
+/* Separator chevron between library and current */
+.title-block .breadcrumb-sep {
+  color: var(--text-subtle);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+/* Search-active H1 — same H1 styling, sits inline after the breadcrumb */
+.title-block.search-active .title-h1 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+  color: var(--text-default);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 380px;
+}
+
+.title-block.search-active .title-h1 .query {
+  color: var(--text-default);
+}
+
+/* Search input shell — Scale token */
+.input-shell {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 12px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-2);
+  background: var(--surface-content);
+  height: 36px;
+  flex: 1;
+  max-width: 560px;
+}
+
+.input-shell:focus-within {
+  border-color: var(--primary-8);
+  box-shadow: 0 0 0 2px var(--primary-3);
+}
+
+.input-shell svg { color: var(--text-muted); }
+.input-shell .placeholder { flex: 1; color: var(--text-placeholder); font-size: 14px; }
+
+/* Compact search chip — for active search state */
+.search-chip {
+  display: inline-flex; align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 6px 0 12px;
+  background: var(--surface-content);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-2);
+  font-size: 14px;
+  color: var(--text-default);
+  cursor: text;
+  max-width: 320px;
+  transition: border-color 120ms;
+}
+
+.search-chip:hover {
+  border-color: var(--border-strong);
+}
+
+.search-chip .lead {
+  color: var(--text-muted);
+  display: inline-flex;
+}
+
+.search-chip .query-text {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.search-chip .chip-close {
+  width: 22px; height: 22px;
+  border-radius: 50%; border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  transition: all 120ms;
+}
+
+.search-chip .chip-close:hover {
+  background: var(--primary-subtle);
+  color: var(--primary);
+}
+
+.search-chip .chip-close svg { width: 10px; height: 10px; }
+
+/* Result count — stone treatment (not teal — it's metadata, not action) */
+.result-count {
+  display: flex; align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-default);
+  padding: 0 12px;
+  height: 32px;
+  border-radius: var(--radius-2);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 120ms;
+  flex-shrink: 0;
+}
+
+.result-count:hover { background: var(--stone-3); }
+
+.result-count .count-num { font-feature-settings: 'tnum'; }
+.result-count svg { color: var(--text-muted); }
+.result-count .caret { color: var(--text-subtle); }
+
+/* View toggle */
+.view-toggle {
+  display: flex; align-items: center;
+  background: var(--stone-3);
+  border-radius: var(--radius-2);
+  padding: 2px; gap: 2px;
+  flex-shrink: 0;
+}
+
+.view-toggle button {
+  width: 28px; height: 28px;
+  border: none; background: transparent;
+  border-radius: 3px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 120ms;
+}
+
+.view-toggle button:hover { color: var(--text-default); }
+
+.view-toggle button.active {
+  background: var(--surface-content);
+  color: var(--text-default);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+/* Buttons — Scale tokens */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 14px; border-radius: var(--radius-2);
+  font-family: inherit; font-weight: 500; font-size: 14px;
+  cursor: pointer;
+  transition: all 120ms;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  flex-shrink: 0;
+}
+
+.btn-primary {
+  background: var(--primary); border-color: var(--primary); color: white;
+}
+.btn-primary:hover {
+  background: var(--primary-hover); border-color: var(--primary-hover);
+}
+
+.btn-secondary {
+  background: var(--surface-content);
+  border-color: var(--stone-7);
+  color: var(--text-default);
+}
+.btn-secondary:hover {
+  background: var(--stone-3); border-color: var(--stone-8);
+}
+
+.btn-ghost {
+  background: transparent; border: none;
+  color: var(--text-muted);
+}
+.btn-ghost:hover {
+  background: var(--stone-3); color: var(--text-default);
+}
+
+.btn svg { width: 14px; height: 14px; }
+
+/* ============================================================
+   PILL ROW — applied filters
+   ============================================================ */
+
+.pill-row {
+  padding: 12px 24px;
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface-content);
+  border-bottom: 1px solid var(--border-default);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  min-height: 48px;
+}
+
+.applied-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 4px;
+}
+
+/* Chip — Scale token, expanded for icon + larger touch target */
+.chip {
+  display: inline-flex; align-items: center;
+  gap: 8px;
+  padding: 6px 8px 6px 12px;
+  background: var(--stone-3);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-default);
+  white-space: nowrap;
+  transition: background 120ms;
+}
+
+.chip:hover {
+  background: var(--stone-4);
+}
+
+/* Leading icon — quiet, indicates filter origin */
+.chip .chip-icon {
+  display: inline-flex;
+  color: var(--text-subtle);
+  flex-shrink: 0;
+}
+
+.chip .chip-icon svg { width: 14px; height: 14px; }
+
+/* ✕ icon — teal by default per screenshot pattern */
+.chip-close {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--primary);
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0;
+  transition: background 120ms;
+  flex-shrink: 0;
+}
+
+.chip-close:hover {
+  background: var(--primary-subtle);
+}
+
+.chip-close svg { width: 11px; height: 11px; }
+
+/* Inline text actions — Save / Clear, no border, sit in pill flow */
+.strip-action {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  background: none; border: none;
+  font-family: inherit;
+  padding: 6px 4px;
+  display: inline-flex; align-items: center;
+  gap: 8px;
+  transition: color 120ms;
+}
+
+.strip-action:hover {
+  color: var(--text-default);
+}
+
+.strip-action .action-icon {
+  display: inline-flex;
+  color: var(--text-muted);
+  transition: color 120ms;
+}
+
+.strip-action:hover .action-icon {
+  color: var(--text-default);
+}
+
+.strip-action .action-icon svg { width: 14px; height: 14px; }
+
+.pill-row .strip-divider,
+.controls-divider {
+  width: 1px; height: 16px;
+  background: var(--border-default);
+  margin: 0 2px;
+}
+
+/* ============================================================
+   FILTER PANEL
+   ============================================================ */
+
+.workspace-below {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  flex: 1;
+  overflow: hidden;
+}
+
+.filter-panel {
+  background: var(--surface-filters);
+  border-right: 1px solid var(--border-default);
+  padding: 16px 12px;
+  display: flex; flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+}
+
+.filter-search {
+  display: flex; align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-2);
+  background: var(--surface-content);
+  font-size: 14px;
+  color: var(--text-placeholder);
+  margin-bottom: 8px;
+}
+
+.filter-search:focus-within {
+  border-color: var(--primary-8);
+  box-shadow: 0 0 0 2px var(--primary-3);
+}
+
+.filter-search svg { color: var(--text-muted); }
+
+/* Filter group header — Scale token with active indicator */
+.filter-group-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 4px 8px 10px;
+  font-weight: 600; font-size: 13px;
+  color: var(--text-default);
+  cursor: pointer;
+  border-radius: var(--radius-2);
+  position: relative;
+  transition: background 120ms;
+}
+
+.filter-group-header:hover { background: var(--stone-3); }
+
+.filter-group-header.has-active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 6px; bottom: 6px;
+  width: 2px;
+  background: var(--primary);
+  border-radius: 1px;
+}
+
+.filter-group-header .icon { color: var(--text-muted); display: inline-flex; }
+.filter-group-header .icon svg { width: 14px; height: 14px; }
+
+.filter-group-header .label { flex: 1; }
+
+.filter-group-header .chev {
+  color: var(--text-muted);
+  width: 14px; height: 14px;
+}
+
+.filter-group-header .chev svg { width: 14px; height: 14px; }
+
+/* Count pill — subtle variant */
+.count-pill-subtle {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px;
+  padding: 0 5px;
+  background: var(--primary-subtle);
+  color: var(--primary-11);
+  font-size: 11px; font-weight: 600;
+  border-radius: 9px;
+  line-height: 1;
+}
+
+/* Expanded filter group children */
+.filter-group-children {
+  padding: 4px 4px 4px 22px;
+  display: flex; flex-direction: column;
+  gap: 2px;
+}
+
+.facet-row {
+  display: flex; align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  font-size: 13px;
+  color: var(--text-default);
+  border-radius: var(--radius-2);
+  cursor: pointer;
+  transition: background 120ms;
+}
+
+.facet-row:hover { background: var(--stone-3); }
+
+/* Checkbox — Scale token */
+.checkbox {
+  width: 16px; height: 16px;
+  border: 1.5px solid var(--stone-7);
+  border-radius: 3px;
+  background: var(--surface-content);
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.checkbox.checked {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.checkbox.checked::after {
+  content: '';
+  width: 4px; height: 8px;
+  border-right: 1.5px solid white;
+  border-bottom: 1.5px solid white;
+  transform: rotate(45deg) translate(-1px, -1px);
+}
+
+.facet-row .label { flex: 1; }
+.facet-row .count {
+  font-size: 11px;
+  color: var(--text-subtle);
+  font-feature-settings: 'tnum';
+}
+
+/* ============================================================
+   CONTENT AREA — asset grid
+   ============================================================ */
+
+.content {
+  background: var(--surface-content);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+.grid {
+  padding: 20px 24px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  flex: 1;
+  align-content: start;
+  align-items: start;
+  overflow-y: auto;
+}
+
+.card {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-3);
+  overflow: hidden;
+  background: var(--surface-card);
+  display: flex; flex-direction: column;
+  transition: border-color 120ms, box-shadow 120ms;
+}
+
+.card:hover {
+  border-color: var(--border-strong);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.card .thumb {
+  aspect-ratio: 16/10;
+  background: var(--stone-3);
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.card .thumb.mountains-1 { background: linear-gradient(180deg, #4a6d8e 0%, #88a4bc 50%, #d8d4cc 75%, #4a3a2e 100%); }
+.card .thumb.mountains-2 { background: linear-gradient(180deg, #c4d4e0 0%, #8a9da8 40%, #5a6d3a 75%, #3a4a2e 100%); }
+.card .thumb.mountains-3 { background: linear-gradient(180deg, #a3825a 0%, #d4a574 50%, #6b4a2e 100%); }
+.card .thumb.mountains-4 { background: linear-gradient(180deg, #a8a89e 0%, #b4b0a4 40%, #4a4538 100%); }
+.card .thumb.mountains-5 { background: linear-gradient(160deg, #a8c9a4 0%, #6b8d4e 60%, #2d4a1f 100%); }
+
+.card .thumb.fifa-light {
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  color: #003478; font-weight: 900;
+  font-size: 28px; letter-spacing: -1px;
+  font-style: italic;
+}
+
+.card .thumb.video-black { background: #0a0a0a; }
+
+.card .thumb.broken {
+  background: repeating-conic-gradient(#f5f5f4 0% 25%, #ffffff 0% 50%) 50% / 14px 14px;
+}
+
+.card .filetype-badge {
+  position: absolute;
+  bottom: 8px; right: 8px;
+  background: var(--stone-12);
+  color: var(--stone-1);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+}
+
+.card .meta { padding: 10px 12px; }
+
+.card .meta .name {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 2px;
+  color: var(--text-default);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card .meta .sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 14px;
+}
+
+.card .meta .sub .date {
+  display: block; margin-top: 2px;
+  color: var(--text-subtle);
+}
+
+/* OCR snippet on card */
+.card .ocr-hit {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border-default);
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 14px;
+  display: flex; align-items: flex-start;
+  gap: 4px;
+}
+
+.card .ocr-hit svg {
+  color: var(--text-muted);
+  margin-top: 2px;
+  width: 10px; height: 10px;
+}
+
+.card .ocr-hit mark {
+  background: var(--primary-3);
+  color: var(--primary-12);
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+/* ============================================================
+   SIMILARITY SEARCH — specific elements
+   ============================================================ */
+
+/* Similarity uses the same inline title-block pattern — no override on the wrapper.
+   Just adds: reference thumbnail, ref-name chip, threshold trigger inline. */
+
+.title-block.similarity .ref-thumb {
+  width: 28px; height: 28px;
+  border-radius: var(--radius-2);
+  background: var(--stone-3);
+  border: 1px solid var(--border-default);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+  align-self: center;
+}
+
+.title-block.similarity .ref-thumb.fifa {
+  background: #fff;
+  color: #003478;
+  font-weight: 900;
+  font-size: 10px;
+  font-style: italic;
+  letter-spacing: -0.5px;
+}
+
+.title-block.similarity .title-h1 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+  color: var(--text-default);
+  white-space: nowrap;
+  display: flex; align-items: baseline;
+  gap: 8px;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.title-block.similarity .ref-name {
+  color: var(--text-default);
+  font-weight: 600;
+  font-family: 'SF Mono', Menlo, monospace;
+  font-size: 14px;
+  background: var(--stone-3);
+  padding: 2px 8px;
+  border-radius: var(--radius-2);
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  align-self: center;
+}
+
+/* Threshold trigger — sits inline after the ref-name, stone treatment */
+.title-block.similarity .threshold-sep {
+  color: var(--text-subtle);
+  font-size: 14px;
+  font-weight: 400;
+  margin: 0 2px;
+}
+
+/* Threshold trigger — sits inline after the ref-name, stone treatment */
+.title-block.similarity .threshold-sep {
+  color: var(--text-subtle);
+  font-size: 14px;
+  font-weight: 400;
+  margin: 0 2px;
+  align-self: center;
+}
+
+.threshold-trigger {
+  display: inline-flex; align-items: center;
+  gap: 6px;
+  padding: 4px 8px 4px 10px;
+  height: 28px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-2);
+  background: var(--surface-content);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-default);
+  cursor: pointer;
+  transition: all 120ms;
+  font-feature-settings: 'tnum';
+  position: relative;
+}
+
+.threshold-trigger:hover {
+  background: var(--stone-3);
+  border-color: var(--border-strong);
+}
+
+.threshold-trigger.is-open {
+  background: var(--primary-3);
+  border-color: var(--primary-8);
+  color: var(--primary-11);
+}
+
+.threshold-trigger .caret {
+  color: var(--text-muted);
+  width: 10px; height: 10px;
+}
+
+.threshold-trigger.is-open .caret { color: var(--primary-11); }
+
+/* Popover — absolutely positioned below the trigger */
+.threshold-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 320px;
+  background: var(--surface-content);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-3);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  padding: 16px;
+  z-index: 20;
+  font-weight: 400;
+  cursor: default;
+}
+
+.threshold-popover .popover-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.threshold-popover .value-row {
+  display: flex; align-items: baseline;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.threshold-popover .current-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-default);
+  line-height: 1;
+  font-feature-settings: 'tnum';
+}
+
+.threshold-popover .current-label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.threshold-popover .slider-row {
+  margin-bottom: 16px;
+}
+
+.threshold-popover .threshold-track {
+  width: 100%;
+  height: 4px;
+  background: var(--stone-4);
+  border-radius: 2px;
+  position: relative;
+  cursor: pointer;
+}
+
+.threshold-popover .threshold-fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+.threshold-popover .threshold-thumb {
+  position: absolute;
+  top: 50%;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--surface-content);
+  border: 2px solid var(--primary);
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+.threshold-popover .scale-labels {
+  display: flex; justify-content: space-between;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-subtle);
+  font-feature-settings: 'tnum';
+}
+
+.threshold-popover .presets {
+  display: flex; gap: 6px;
+  margin-bottom: 14px;
+}
+
+.threshold-popover .preset {
+  flex: 1;
+  padding: 6px 8px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--surface-content);
+  border: 1px solid var(--border-default);
+  color: var(--text-default);
+  border-radius: var(--radius-2);
+  cursor: pointer;
+  transition: all 120ms;
+  font-feature-settings: 'tnum';
+}
+
+.threshold-popover .preset:hover {
+  background: var(--stone-3);
+  border-color: var(--border-strong);
+}
+
+.threshold-popover .preset.active {
+  background: var(--primary-3);
+  border-color: var(--primary-8);
+  color: var(--primary-11);
+}
+
+.threshold-popover .helper {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.threshold-popover .helper strong {
+  color: var(--text-default);
+  font-weight: 600;
+}
+
+/* Universal view-controls row — sits between header and workspace.
+   Carries: threshold (similarity only), applied filter pills, save action, result meta.
+   One row across every state where any of these are present. */
+.view-controls-row {
+  padding: 14px 24px;
+  display: flex; align-items: center;
+  gap: 14px;
+  background: var(--surface-content);
+  border-bottom: 1px solid var(--border-default);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
+
+.threshold-control {
+  display: flex; align-items: center; gap: 10px;
+  flex-shrink: 0;
+}
+
+.threshold-control .label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.threshold-track {
+  width: 140px;
+  height: 4px;
+  background: var(--stone-4);
+  border-radius: 2px;
+  position: relative;
+  cursor: pointer;
+}
+
+.threshold-fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+.threshold-thumb {
+  position: absolute;
+  top: 50%;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--surface-content);
+  border: 2px solid var(--primary);
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+}
+
+.threshold-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-default);
+  font-feature-settings: 'tnum';
+  min-width: 36px;
+}
+
+/* Sort indicator (Sort by similarity / Sort by date) */
+.sort-indicator {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-2);
+  transition: background 120ms;
+}
+
+.sort-indicator:hover { background: var(--stone-3); }
+
+.sort-indicator .value {
+  color: var(--text-default);
+  font-weight: 500;
+}
+
+/* Vertical divider inside the controls row, only when both threshold and pills exist */
+.controls-divider {
+  width: 1px; height: 20px;
+  background: var(--border-default);
+  flex-shrink: 0;
+}
+
+/* Pill cluster — wraps as a group, stays before right cluster */
+.controls-pills {
+  display: flex; align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  row-gap: 8px;
+  min-width: 0;
+}
+
+.controls-pills .applied-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 2px;
+  flex-shrink: 0;
+}
+
+/* Right-anchored cluster inside the controls row */
+.controls-right {
+  display: flex; align-items: center;
+  gap: 12px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.controls-right .result-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.controls-right .result-meta strong {
+  color: var(--text-default);
+  font-weight: 600;
+  font-feature-settings: 'tnum';
+}
+
+/* Similarity score badge — sits on the card thumb */
+.card .sim-score {
+  position: absolute;
+  top: 8px; left: 8px;
+  background: rgba(11, 110, 138, 0.92);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: var(--radius-2);
+  font-feature-settings: 'tnum';
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(4px);
+}
+
+/* Reference asset card — first card in the grid, marked specially */
+.card.is-reference {
+  border-color: var(--primary);
+  position: relative;
+}
+
+.card.is-reference::before {
+  content: 'Reference';
+  position: absolute;
+  top: 8px; left: 8px;
+  background: var(--primary);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: var(--radius-2);
+  letter-spacing: 0.02em;
+  z-index: 1;
+}
+
+.card.is-reference .sim-score { display: none; }
+
+/* Zero results state */
+.zero-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  text-align: center;
+  gap: 12px;
+  min-height: 320px;
+}
+
+.zero-results .icon {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--stone-3);
+  border: 1px solid var(--border-default);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-subtle);
+}
+
+.zero-results .icon svg { width: 20px; height: 20px; }
+
+.zero-results .heading {
+  font-size: 16px; font-weight: 600;
+  color: var(--text-default);
+}
+
+.zero-results .body {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 420px;
+  line-height: 20px;
+}
+
+.zero-results .actions {
+  display: flex; gap: 8px;
+  margin-top: 8px;
+}
+
+</style>
+</head>
+<body class="show-boundary">
+
+<div class="page">
+
+<!-- ============================================================
+     OVERVIEW
+     ============================================================ -->
+
+<div class="mock-block">
+  <div class="variant-header">
+    <div class="tag">Layout B.2 — Title carries search state</div>
+    <h2>Title-as-subject pattern (Scale DAM tokens)</h2>
+    <p>Six states stacked, same skeleton. The page title's data binding is the entire mechanism: when there's no search, it's the library name; when text search is active, it's <code>FIFA WC 2026 › Results for "&lt;query&gt;"</code>; when similarity search is active, it's <code>FIFA WC 2026 › Visually similar to &lt;ref asset&gt;</code>. The library always sits as a quieter breadcrumb segment before the H1. No banners, no tints. Built strictly against Scale tokens — stone for chrome, teal reserved for primary action, active state, and checked filters.</p>
+    <p style="margin-top: 12px;"><strong style="color: var(--text-default);">Header layout:</strong> two-cluster pattern. Left cluster holds the title block and search element (chip or input) — grows rightward, absorbs all width variation from the title's state change. Right cluster holds result count, view toggle, Queue, Upload — stays right-anchored, fixed X-coordinates across every state. The two clusters never move relative to their respective edges; a flexible spacer between them absorbs the difference.</p>
+    <p style="margin-top: 12px;"><strong style="color: var(--text-default);">View-controls row:</strong> a single conditional row between header and workspace. Carries applied filter pills, Save action, and result meta. Renders only when filters are applied. The similarity threshold lives in the title block as a popover trigger (not in this row), keeping the row's job consistent: chrome that displays applied refinements to a result set. Library / text search → no controls row when no filters. Similarity → no controls row when no filters. Filters applied → controls row appears, same shape regardless of whether the search is text or similarity. Two-row maximum across every state (header + controls row); single-row baseline.</p>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     STATE 1 — LIBRARY, NO SEARCH
+     ============================================================ -->
+
+<div class="mock-block">
+  <div class="variant-header">
+    <div class="tag">State 1 of 6</div>
+    <h2>Library — no search, no filters</h2>
+    <p>Baseline. Page title = library name. Search input full width. Pill row absent (conditional). Workspace shows full library.</p>
+  </div>
+
+  <div class="unity-shell">
+    <div class="unity-rail">
+      <div class="brand-mark">F</div>
+      <div class="item active"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l5-5 5 5v5a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+      <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h10M3 12h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+      <div class="spacer"></div>
+      <div class="avatar-item">JD</div>
+      <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 7v-1a3 3 0 016 0v1M2 7h8v6H2V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+      <div class="item"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.4"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+    </div>
+
+    <div class="unity-topbar">
+      <div class="crumbs">
+        <a>Home</a>
+        <span class="sep">/</span>
+        <span class="current">Digital Archive</span>
+      </div>
+      <div class="spacer"></div>
+      <div class="global-search">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <span>Search...</span>
+      </div>
+    </div>
+
+    <div class="iframe-region">
+      <div class="iframe-label">DAM iframe</div>
+      <div class="dam-inner">
+        <div class="dam-rail">
+          <div class="expand"><svg viewBox="0 0 16 16" fill="none"><path d="M5 4l4 4-4 4M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l5-5 5 5v5a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          <div class="item active"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.4"/><rect x="6.5" y="3" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.4"/><rect x="11" y="3" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.4"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M4 2h8v12l-4-2-4 2V2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2l5 2v4c0 3-2 5-5 6-3-1-5-3-5-6V4l5-2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 10v3h10v-3M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+
+        <div class="dam-page-area">
+          <div class="page-header">
+            <div class="header-left">
+              <div class="title-block empty">
+              <div class="title-h1">FIFA World Cup 2026</div>
+            </div>
+              <div class="input-shell">
+              <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <span class="placeholder">Search FIFA World Cup 2026</span>
+            </div>
+            </div>
+            <div class="header-spacer"></div>
+            <div class="header-right">
+            <div class="result-count">
+              <span class="count-num">1,776</span>
+              <span style="color: var(--text-muted); font-weight: 400;">assets</span>
+              <span class="caret"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></span>
+            </div>
+            <div class="view-toggle">
+              <button class="active"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.2"/></svg></button>
+              <button><svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+              <button><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="7" y="2" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="12" y="2" width="2" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="7" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="7" y="7" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="12" y="7" width="2" height="3" stroke="currentColor" stroke-width="1.2"/></svg></button>
+            </div>
+            <button class="btn btn-secondary"><svg viewBox="0 0 16 16" fill="none"><path d="M3 10v3h10v-3M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Queue</button>
+            <button class="btn btn-primary"><svg viewBox="0 0 16 16" fill="none"><path d="M3 13h10M8 2v8M5 5l3-3 3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Upload</button>
+          </div>
+          </div>
+
+          <!-- No pill row — no filters applied -->
+
+          <div class="workspace-below">
+            <div class="filter-panel">
+              <div class="filter-search">
+                <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <span>Find a filter…</span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M3 4h10M3 12h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+                <span class="label">Attributes</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 4h6l1 1.5h3v6.5H3V4z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">Tags</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2l1.6 4.4L14 7l-3.4 2.9L11.6 14 8 11.6 4.4 14l1-4.1L2 7l4.4-.6L8 2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">AI Tags</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2l5 2v4c0 3-2 5-5 6-3-1-5-3-5-6V4l5-2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">Rights state</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="1" stroke="currentColor" stroke-width="1.4"/></svg></span>
+                <span class="label">File type</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" stroke="currentColor" stroke-width="1.4"/></svg></span>
+                <span class="label">Dimensions</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+            </div>
+
+            <div class="content">
+              <div class="grid">
+                <div class="card"><div class="thumb mountains-1"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image33</div><div class="sub">439 KB · 4096×2304<span class="date">Uploaded 08 May 2026</span></div></div></div>
+                <div class="card"><div class="thumb mountains-2"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image28</div><div class="sub">198 KB · 3840×2160<span class="date">Uploaded 08 May 2026</span></div></div></div>
+                <div class="card"><div class="thumb mountains-3"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image3</div><div class="sub">598 KB · 5120×2880<span class="date">Uploaded 24 Apr 2026</span></div></div></div>
+                <div class="card"><div class="thumb mountains-4"><span class="filetype-badge">PNG</span></div><div class="meta"><div class="name">Image26</div><div class="sub">2.5 MB · 6000×4000<span class="date">Uploaded 23 Apr 2026</span></div></div></div>
+                <div class="card"><div class="thumb mountains-5"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image27</div><div class="sub">2.1 MB · 4096×2731<span class="date">Uploaded 23 Apr 2026</span></div></div></div>
+                <div class="card"><div class="thumb fifa-light">FIFA<span class="filetype-badge">SVG</span></div><div class="meta"><div class="name">FIFA_WC2026_Logo_Primary</div><div class="sub">14.2 KB<span class="date">Uploaded 12 May 2026</span></div></div></div>
+                <div class="card"><div class="thumb video-black"><span class="filetype-badge">MP4</span></div><div class="meta"><div class="name">EP_Brand_Video_Sizzle_4k</div><div class="sub">612.1 MB<span class="date">Uploaded 11 May 2026</span></div></div></div>
+                <div class="card"><div class="thumb broken"><span class="filetype-badge">PNG</span></div><div class="meta"><div class="name">EP_BrandElement_Checkmark</div><div class="sub">7 KB<span class="date">Uploaded 08 May 2026</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="annotation">
+    <div class="heading">Baseline behaviour</div>
+    <div><strong>Title slot</strong>: single line, library name, 18px / 600. Same as today.</div>
+    <div><strong>Pill row</strong>: not rendered. The DOM element doesn't exist when there are no applied filters AND no search — saves vertical space, prevents an empty chrome row.</div>
+    <div><strong>Result count</strong>: stone treatment, not teal. <code>1,776 assets</code> with sort caret. Per rule #2, teal would only apply if the count itself were the primary action (e.g. Queue showing 3 pending). Here it's metadata.</div>
+    <div><strong>One primary button</strong>: Upload only. Queue is secondary. Per rule #4.</div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     STATE 2 — SEARCH ACTIVE, NO FILTERS
+     ============================================================ -->
+
+<div class="mock-block">
+  <div class="variant-header">
+    <div class="tag">State 2 of 6</div>
+    <h2>Search active — title becomes the subject</h2>
+    <p>User has searched for <code>image</code>. The title slot reorganises: library name becomes a quieter breadcrumb segment (13px / muted), separator chevron, then the H1 query. All inline at the same baseline. The search input collapses to a chip. The pill row remains absent because no filters are applied — search alone isn't a "filter."</p>
+  </div>
+
+  <div class="unity-shell">
+    <div class="unity-rail">
+      <div class="brand-mark">F</div>
+      <div class="item active"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l5-5 5 5v5a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+      <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h10M3 12h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+      <div class="spacer"></div>
+      <div class="avatar-item">JD</div>
+      <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 7v-1a3 3 0 016 0v1M2 7h8v6H2V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+      <div class="item"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.4"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+    </div>
+
+    <div class="unity-topbar">
+      <div class="crumbs">
+        <a>Home</a>
+        <span class="sep">/</span>
+        <span class="current">Digital Archive</span>
+      </div>
+      <div class="spacer"></div>
+      <div class="global-search">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <span>Search...</span>
+      </div>
+    </div>
+
+    <div class="iframe-region">
+      <div class="iframe-label">DAM iframe</div>
+      <div class="dam-inner">
+        <div class="dam-rail">
+          <div class="expand"><svg viewBox="0 0 16 16" fill="none"><path d="M5 4l4 4-4 4M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l5-5 5 5v5a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          <div class="item active"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.4"/><rect x="6.5" y="3" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.4"/><rect x="11" y="3" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.4"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M4 2h8v12l-4-2-4 2V2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2l5 2v4c0 3-2 5-5 6-3-1-5-3-5-6V4l5-2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 10v3h10v-3M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+
+        <div class="dam-page-area">
+          <div class="page-header">
+            <div class="header-left">
+              <div class="title-block search-active">
+                <a class="lib-segment">FIFA World Cup 2026</a>
+                <span class="breadcrumb-sep">›</span>
+                <div class="title-h1">
+                  Results for <span class="query">"image"</span>
+                </div>
+              </div>
+              <div class="search-chip" title="Click to edit search">
+              <span class="lead">
+                <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </span>
+              <span class="query-text">image</span>
+              <button class="chip-close" title="Clear search and return to library">
+                <svg viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+            </div>
+            <div class="header-spacer"></div>
+            <div class="header-right">
+
+            <div class="result-count">
+              <span class="count-num">31</span>
+              <span style="color: var(--text-muted); font-weight: 400;">results</span>
+              <span class="caret"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></span>
+            </div>
+            <div class="view-toggle">
+              <button class="active"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.2"/></svg></button>
+              <button><svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+              <button><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="7" y="2" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="12" y="2" width="2" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="7" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="7" y="7" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="12" y="7" width="2" height="3" stroke="currentColor" stroke-width="1.2"/></svg></button>
+            </div>
+            <button class="btn btn-secondary">Queue</button>
+            <button class="btn btn-primary">Upload</button>
+          </div>
+          </div>
+
+          <!-- No pill row — no filters applied -->
+
+          <div class="workspace-below">
+            <div class="filter-panel">
+              <div class="filter-search">
+                <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <span>Find a filter…</span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M3 4h10M3 12h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+                <span class="label">Attributes</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 4h6l1 1.5h3v6.5H3V4z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">Tags</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2l1.6 4.4L14 7l-3.4 2.9L11.6 14 8 11.6 4.4 14l1-4.1L2 7l4.4-.6L8 2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">AI Tags</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2l5 2v4c0 3-2 5-5 6-3-1-5-3-5-6V4l5-2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">Rights state</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="1" stroke="currentColor" stroke-width="1.4"/></svg></span>
+                <span class="label">File type</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" stroke="currentColor" stroke-width="1.4"/></svg></span>
+                <span class="label">Dimensions</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+            </div>
+
+            <div class="content">
+              <div class="grid">
+                <div class="card"><div class="thumb mountains-1"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image33</div><div class="sub">439 KB · 4096×2304<span class="date">Uploaded 08 May 2026</span></div></div></div>
+                <div class="card"><div class="thumb mountains-2"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image28</div><div class="sub">198 KB · 3840×2160<span class="date">Uploaded 08 May 2026</span></div></div></div>
+                <div class="card"><div class="thumb mountains-3"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image3</div><div class="sub">598 KB · 5120×2880<span class="date">Uploaded 24 Apr 2026</span></div></div></div>
+                <div class="card"><div class="thumb mountains-4"><span class="filetype-badge">PNG</span></div><div class="meta"><div class="name">Image26</div><div class="sub">2.5 MB · 6000×4000<span class="date">Uploaded 23 Apr 2026</span></div></div></div>
+                <div class="card"><div class="thumb mountains-5"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image27</div><div class="sub">2.1 MB · 4096×2731<span class="date">Uploaded 23 Apr 2026</span></div></div></div>
+                <div class="card"><div class="thumb mountains-1"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image30</div><div class="sub">879 KB · 3840×2160<span class="date">Uploaded 23 Apr 2026</span></div></div></div>
+                <div class="card"><div class="thumb mountains-3"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image25</div><div class="sub">1 MB · 4096×2304<span class="date">Uploaded 16 Feb 2026</span></div></div></div>
+                <div class="card"><div class="thumb mountains-5"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image4</div><div class="sub">321 KB · 3840×2160<span class="date">Uploaded 16 Feb 2026</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="annotation">
+    <div class="heading">What's signalling search state</div>
+    <div><strong>Title slot composition</strong>: single line, baseline-aligned. Library segment (13px / 500, text-muted) precedes a separator chevron, then the H1 "Results for &quot;image&quot;" (18px / 600, text-default). Hierarchy through size + colour weight, not stacking. Header height drops by ~12px compared to the stacked version, removing the vertical whitespace the right cluster was sitting in.</div>
+    <div><strong>Library segment is a link</strong>: clicking it returns to the library view. The chip's ✕ does the same thing. Two affordances for the same action because they suit different mental models — one for "exit search mode," one for "navigate back."</div>
+    <div><strong>Search chip</strong>: replaces the full input. Compact. Click to expand and edit, ✕ clears search. Reclaims ~280px of header width that the full input was consuming.</div>
+    <div><strong>No banner, no tint, no badge</strong>. The title swap is sufficient. Per rule #2, teal would be inappropriate here — search state isn't an "action" or "active selection," it's a page-subject change. Stone hierarchy carries the load.</div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     STATE 3 — SEARCH + FILTERS APPLIED
+     ============================================================ -->
+
+<div class="mock-block">
+  <div class="variant-header">
+    <div class="tag">State 3 of 6</div>
+    <h2>Search + filters — pill row appears between header and workspace</h2>
+    <p>User has searched for <code>image</code> and applied two filters: <code>File type: JPG</code> and <code>Rights state: Cleared</code>. Pill row now renders below the header, sharing its left edge. Filter panel shows the corresponding groups with the active indicator (2px teal accent on the group header's left) and a subtle count pill.</p>
+  </div>
+
+  <div class="unity-shell">
+    <div class="unity-rail">
+      <div class="brand-mark">F</div>
+      <div class="item active"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l5-5 5 5v5a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+      <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h10M3 12h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+      <div class="spacer"></div>
+      <div class="avatar-item">JD</div>
+      <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 7v-1a3 3 0 016 0v1M2 7h8v6H2V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+      <div class="item"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.4"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+    </div>
+
+    <div class="unity-topbar">
+      <div class="crumbs">
+        <a>Home</a>
+        <span class="sep">/</span>
+        <span class="current">Digital Archive</span>
+      </div>
+      <div class="spacer"></div>
+      <div class="global-search">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <span>Search...</span>
+      </div>
+    </div>
+
+    <div class="iframe-region">
+      <div class="iframe-label">DAM iframe</div>
+      <div class="dam-inner">
+        <div class="dam-rail">
+          <div class="expand"><svg viewBox="0 0 16 16" fill="none"><path d="M5 4l4 4-4 4M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l5-5 5 5v5a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          <div class="item active"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.4"/><rect x="6.5" y="3" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.4"/><rect x="11" y="3" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.4"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M4 2h8v12l-4-2-4 2V2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2l5 2v4c0 3-2 5-5 6-3-1-5-3-5-6V4l5-2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 10v3h10v-3M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+
+        <div class="dam-page-area">
+          <div class="page-header">
+            <div class="header-left">
+              <div class="title-block search-active">
+                <a class="lib-segment">FIFA World Cup 2026</a>
+                <span class="breadcrumb-sep">›</span>
+                <div class="title-h1">
+                  Results for <span class="query">"image"</span>
+                </div>
+              </div>
+              <div class="search-chip">
+              <span class="lead">
+                <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </span>
+              <span class="query-text">image</span>
+              <button class="chip-close">
+                <svg viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+            </div>
+            <div class="header-spacer"></div>
+            <div class="header-right">
+
+            <div class="result-count">
+              <span class="count-num">14</span>
+              <span style="color: var(--text-muted); font-weight: 400;">results</span>
+              <span class="caret"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></span>
+            </div>
+            <div class="view-toggle">
+              <button class="active"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.2"/></svg></button>
+              <button><svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+              <button><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="7" y="2" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="12" y="2" width="2" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="7" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="7" y="7" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="12" y="7" width="2" height="3" stroke="currentColor" stroke-width="1.2"/></svg></button>
+            </div>
+            <button class="btn btn-secondary">Queue</button>
+            <button class="btn btn-primary">Upload</button>
+          </div>
+          </div>
+
+          <!-- Unified view-controls row: pills (with icons) + save + clear inline, meta right-anchored -->
+          <div class="view-controls-row">
+            <div class="controls-pills">
+              <span class="chip">
+                <span class="chip-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 7.5L7.5 2.5h5v5l-5 5-5-5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="10" cy="6" r="1" fill="currentColor"/></svg></span>
+                JPG
+                <button class="chip-close"><svg viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+              </span>
+              <span class="chip">
+                <span class="chip-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 7.5L7.5 2.5h5v5l-5 5-5-5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="10" cy="6" r="1" fill="currentColor"/></svg></span>
+                Cleared
+                <button class="chip-close"><svg viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+              </span>
+              <button class="strip-action">
+                <span class="action-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 3.5l1.5 1.5L7 2.5M3 8.5l1.5 1.5L7 7.5M3 13.5l1.5 1.5L7 12.5M9 4h5M9 9h5M9 14h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                Save Filters
+              </button>
+              <button class="strip-action">
+                <span class="action-icon"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M6 6l4 4M10 6l-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+                Clear All
+              </button>
+            </div>
+
+            <div class="controls-right">
+              <span class="result-meta"><strong>14</strong> of 31 results shown</span>
+            </div>
+          </div>
+
+          <div class="workspace-below">
+            <div class="filter-panel">
+              <div class="filter-search">
+                <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <span>Find a filter…</span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M3 4h10M3 12h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+                <span class="label">Attributes</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 4h6l1 1.5h3v6.5H3V4z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">Tags</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2l1.6 4.4L14 7l-3.4 2.9L11.6 14 8 11.6 4.4 14l1-4.1L2 7l4.4-.6L8 2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">AI Tags</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+
+              <!-- Rights state — has active selection -->
+              <div class="filter-group-header has-active">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2l5 2v4c0 3-2 5-5 6-3-1-5-3-5-6V4l5-2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">Rights state</span>
+                <span class="count-pill-subtle">1</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-children">
+                <div class="facet-row">
+                  <span class="checkbox checked"></span>
+                  <span class="label">Cleared</span>
+                  <span class="count">11</span>
+                </div>
+                <div class="facet-row">
+                  <span class="checkbox"></span>
+                  <span class="label">Restricted</span>
+                  <span class="count">2</span>
+                </div>
+                <div class="facet-row">
+                  <span class="checkbox"></span>
+                  <span class="label">Expiring &lt; 30d</span>
+                  <span class="count">1</span>
+                </div>
+              </div>
+
+              <!-- File type — has active selection -->
+              <div class="filter-group-header has-active">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="1" stroke="currentColor" stroke-width="1.4"/></svg></span>
+                <span class="label">File type</span>
+                <span class="count-pill-subtle">1</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-children">
+                <div class="facet-row">
+                  <span class="checkbox checked"></span>
+                  <span class="label">JPG</span>
+                  <span class="count">18</span>
+                </div>
+                <div class="facet-row">
+                  <span class="checkbox"></span>
+                  <span class="label">PNG</span>
+                  <span class="count">11</span>
+                </div>
+                <div class="facet-row">
+                  <span class="checkbox"></span>
+                  <span class="label">SVG</span>
+                  <span class="count">2</span>
+                </div>
+              </div>
+
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" stroke="currentColor" stroke-width="1.4"/></svg></span>
+                <span class="label">Dimensions</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+            </div>
+
+            <div class="content">
+              <div class="grid">
+                <div class="card"><div class="thumb mountains-1"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image33</div><div class="sub">439 KB · 4096×2304<span class="date">Uploaded 08 May 2026</span></div></div></div>
+                <div class="card"><div class="thumb mountains-2"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image28</div><div class="sub">198 KB · 3840×2160<span class="date">Uploaded 08 May 2026</span></div></div></div>
+                <div class="card"><div class="thumb mountains-3"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image3</div><div class="sub">598 KB · 5120×2880<span class="date">Uploaded 24 Apr 2026</span></div></div></div>
+                <div class="card"><div class="thumb mountains-5"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image27</div><div class="sub">2.1 MB · 4096×2731<span class="date">Uploaded 23 Apr 2026</span></div></div></div>
+                <div class="card"><div class="thumb mountains-1"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image30</div><div class="sub">879 KB · 3840×2160<span class="date">Uploaded 23 Apr 2026</span></div></div></div>
+                <div class="card"><div class="thumb mountains-3"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image25</div><div class="sub">1 MB · 4096×2304<span class="date">Uploaded 16 Feb 2026</span></div></div></div>
+                <div class="card"><div class="thumb mountains-5"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image4</div><div class="sub">321 KB · 3840×2160<span class="date">Uploaded 16 Feb 2026</span></div></div></div>
+                <div class="card"><div class="thumb mountains-1"><span class="filetype-badge">JPG</span></div><div class="meta"><div class="name">Image65</div><div class="sub">932 KB · 4096×2304<span class="date">Uploaded 10 Feb 2026</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="annotation">
+    <div class="heading">How Scale rules are applied here</div>
+    <div><strong>Active-group indicator (rule #6)</strong>: Rights state and File type group headers show a 2px teal accent on the left + subtle count pill in the header. Group children are NOT background-washed — the checked checkbox carries the per-option state.</div>
+    <div><strong>Applied-filter chip (rule #7)</strong>: stone-3 background, stone-12 text, ✕ icon stone-muted by default and teal on hover. Two chips don't compete with the title or any primary action.</div>
+    <div><strong>Count pill — subtle variant (rule #5)</strong>: the "1" in each active group header. Primary-subtle background, primary-11 text. Count is context here, not action.</div>
+    <div><strong>No teal anywhere it doesn't earn</strong>: applied label is stone, "Clear all" is stone-muted (hover deepens to default text), "Save as filter" is stone-muted (rule #2 — actions in chrome are stone, only the primary action and active state earn teal).</div>
+    <div><strong>Result meta</strong>: "14 of 31 results shown" tells the user how filtered they are within the search. Stone text, just enough emphasis on the count via tnum + bold.</div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     STATE 4 — ZERO RESULTS
+     ============================================================ -->
+
+<div class="mock-block">
+  <div class="variant-header">
+    <div class="tag">State 4 of 6</div>
+    <h2>Zero results — search returns nothing</h2>
+    <p>Edge case worth getting right because it's the most common failure point for first-time users. Title still says "Results for &quot;trophyy&quot;" — the page identity holds even when the grid is empty. The grid area renders a zero state with recovery actions.</p>
+  </div>
+
+  <div class="unity-shell">
+    <div class="unity-rail">
+      <div class="brand-mark">F</div>
+      <div class="item active"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l5-5 5 5v5a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+      <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h10M3 12h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+      <div class="spacer"></div>
+      <div class="avatar-item">JD</div>
+      <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 7v-1a3 3 0 016 0v1M2 7h8v6H2V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+      <div class="item"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.4"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+    </div>
+
+    <div class="unity-topbar">
+      <div class="crumbs">
+        <a>Home</a>
+        <span class="sep">/</span>
+        <span class="current">Digital Archive</span>
+      </div>
+      <div class="spacer"></div>
+      <div class="global-search">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <span>Search...</span>
+      </div>
+    </div>
+
+    <div class="iframe-region">
+      <div class="iframe-label">DAM iframe</div>
+      <div class="dam-inner">
+        <div class="dam-rail">
+          <div class="expand"><svg viewBox="0 0 16 16" fill="none"><path d="M5 4l4 4-4 4M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l5-5 5 5v5a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          <div class="item active"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.4"/><rect x="6.5" y="3" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.4"/><rect x="11" y="3" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.4"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M4 2h8v12l-4-2-4 2V2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2l5 2v4c0 3-2 5-5 6-3-1-5-3-5-6V4l5-2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 10v3h10v-3M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+
+        <div class="dam-page-area">
+          <div class="page-header">
+            <div class="header-left">
+              <div class="title-block search-active">
+                <a class="lib-segment">FIFA World Cup 2026</a>
+                <span class="breadcrumb-sep">›</span>
+                <div class="title-h1">
+                  Results for <span class="query">"trophyy"</span>
+                </div>
+              </div>
+              <div class="search-chip">
+              <span class="lead">
+                <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </span>
+              <span class="query-text">trophyy</span>
+              <button class="chip-close">
+                <svg viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+            </div>
+            <div class="header-spacer"></div>
+            <div class="header-right">
+
+            <div class="result-count">
+              <span class="count-num">0</span>
+              <span style="color: var(--text-muted); font-weight: 400;">results</span>
+            </div>
+            <div class="view-toggle">
+              <button class="active"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.2"/></svg></button>
+              <button><svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+              <button><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="7" y="2" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="12" y="2" width="2" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="7" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="7" y="7" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="12" y="7" width="2" height="3" stroke="currentColor" stroke-width="1.2"/></svg></button>
+            </div>
+            <button class="btn btn-secondary">Queue</button>
+            <button class="btn btn-primary">Upload</button>
+          </div>
+          </div>
+
+          <div class="workspace-below">
+            <div class="filter-panel">
+              <div class="filter-search">
+                <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <span>Find a filter…</span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M3 4h10M3 12h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+                <span class="label">Attributes</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 4h6l1 1.5h3v6.5H3V4z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">Tags</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2l1.6 4.4L14 7l-3.4 2.9L11.6 14 8 11.6 4.4 14l1-4.1L2 7l4.4-.6L8 2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">AI Tags</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2l5 2v4c0 3-2 5-5 6-3-1-5-3-5-6V4l5-2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">Rights state</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="1" stroke="currentColor" stroke-width="1.4"/></svg></span>
+                <span class="label">File type</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" stroke="currentColor" stroke-width="1.4"/></svg></span>
+                <span class="label">Dimensions</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+            </div>
+
+            <div class="content">
+              <div class="zero-results">
+                <div class="icon">
+                  <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                </div>
+                <div class="heading">No assets match "trophyy"</div>
+                <div class="body">Nothing in FIFA World Cup 2026 matches this search. Check the spelling, try fewer or different words, or return to the library.</div>
+                <div class="actions">
+                  <button class="btn btn-secondary">Return to library</button>
+                  <button class="btn btn-ghost">Edit search</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="annotation">
+    <div class="heading">Why this matters</div>
+    <div><strong>The title still does its job</strong>: even with zero results, the page still says what was searched for. Users can read the page identity correctly without needing to look at the empty grid and infer why it's empty.</div>
+    <div><strong>Two recovery actions, both secondary</strong>: "Return to library" (back to no-search) and "Edit search" (refocuses the chip into edit mode). No primary action in the zero state — neither path is more correct than the other, depends on user intent.</div>
+    <div><strong>Filter panel stays available</strong>: power users can apply filters to a zero-result search to refine the no-results query. Edge but worth supporting.</div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     STATE 5 — VISUALLY SIMILAR ASSETS
+     ============================================================ -->
+
+<div class="mock-block">
+  <div class="variant-header">
+    <div class="tag">State 5 of 6</div>
+    <h2>Visually similar assets — explicit mode</h2>
+    <p>User triggered <code>Find similar</code> from an asset detail page. The page is structurally a search results page — same skeleton — but the title carries a reference asset instead of a text query. The threshold sits inline in the title block as a click-to-edit popover trigger, keeping it tied conceptually to the query definition rather than the result set. The reference asset also appears as the first card in the grid (marked, no score) so users have an immediate visual yardstick against which to read each match score. <strong>The popover is shown open here for demonstration</strong> — in production it's closed by default.</p>
+  </div>
+
+  <div class="unity-shell">
+    <div class="unity-rail">
+      <div class="brand-mark">F</div>
+      <div class="item active"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l5-5 5 5v5a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+      <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h10M3 12h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+      <div class="spacer"></div>
+      <div class="avatar-item">JD</div>
+      <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 7v-1a3 3 0 016 0v1M2 7h8v6H2V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+      <div class="item"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.4"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+    </div>
+
+    <div class="unity-topbar">
+      <div class="crumbs">
+        <a>Home</a>
+        <span class="sep">/</span>
+        <span class="current">Digital Archive</span>
+      </div>
+      <div class="spacer"></div>
+      <div class="global-search">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <span>Search...</span>
+      </div>
+    </div>
+
+    <div class="iframe-region">
+      <div class="iframe-label">DAM iframe</div>
+      <div class="dam-inner">
+        <div class="dam-rail">
+          <div class="expand"><svg viewBox="0 0 16 16" fill="none"><path d="M5 4l4 4-4 4M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l5-5 5 5v5a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          <div class="item active"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.4"/><rect x="6.5" y="3" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.4"/><rect x="11" y="3" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.4"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M4 2h8v12l-4-2-4 2V2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2l5 2v4c0 3-2 5-5 6-3-1-5-3-5-6V4l5-2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 10v3h10v-3M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+
+        <div class="dam-page-area">
+          <div class="page-header">
+            <div class="header-left">
+              <!-- TITLE BLOCK: similarity variant with threshold trigger -->
+              <div class="title-block similarity">
+                <a class="lib-segment">FIFA World Cup 2026</a>
+                <span class="breadcrumb-sep">›</span>
+                <div class="ref-thumb fifa">FIFA</div>
+                <div class="title-h1">
+                  Visually similar to
+                  <span class="ref-name">FIFA_WC2026_Logo_Primary.svg</span>
+                  <span class="threshold-sep">·</span>
+                  <span style="position: relative; display: inline-flex;">
+                    <button class="threshold-trigger is-open">
+                      ≥ 70% similar
+                      <svg class="caret" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <!-- Popover shown for the mock -->
+                    <div class="threshold-popover">
+                      <div class="popover-label">Similarity threshold</div>
+                      <div class="value-row">
+                        <span class="current-value">70%</span>
+                        <span class="current-label">minimum match</span>
+                      </div>
+                      <div class="slider-row">
+                        <div class="threshold-track">
+                          <div class="threshold-fill" style="width: 70%;"></div>
+                          <div class="threshold-thumb" style="left: 70%;"></div>
+                        </div>
+                        <div class="scale-labels">
+                          <span>50%</span>
+                          <span>70%</span>
+                          <span>90%</span>
+                          <span>100%</span>
+                        </div>
+                      </div>
+                      <div class="presets">
+                        <button class="preset">50%</button>
+                        <button class="preset active">70%</button>
+                        <button class="preset">90%</button>
+                        <button class="preset">Custom</button>
+                      </div>
+                      <div class="helper">
+                        <strong>Higher</strong> shows tighter visual matches.
+                        <strong>Lower</strong> includes looser, more varied results.
+                      </div>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="header-spacer"></div>
+            <div class="header-right">
+              <div class="result-count">
+                <span class="count-num">12</span>
+                <span style="color: var(--text-muted); font-weight: 400;">matches</span>
+              </div>
+              <div class="sort-indicator" style="border: 1px solid var(--border-default); padding: 7px 10px; height: 32px; border-radius: var(--radius-2); background: var(--surface-content);">
+                Sort by <span class="value">Similarity</span>
+                <svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </div>
+              <div class="view-toggle">
+                <button class="active"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.2"/></svg></button>
+                <button><svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+                <button><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="7" y="2" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="12" y="2" width="2" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="7" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="7" y="7" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="12" y="7" width="2" height="3" stroke="currentColor" stroke-width="1.2"/></svg></button>
+              </div>
+              <button class="btn btn-secondary">Queue all</button>
+              <button class="btn btn-primary">Upload</button>
+            </div>
+          </div>
+
+          <!-- No view-controls row — no filters applied. Threshold lives in title block. -->
+
+          <div class="workspace-below">
+            <div class="filter-panel">
+              <div class="filter-search">
+                <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <span>Find a filter…</span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M3 4h10M3 12h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+                <span class="label">Attributes</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 4h6l1 1.5h3v6.5H3V4z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">Tags</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2l5 2v4c0 3-2 5-5 6-3-1-5-3-5-6V4l5-2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">Rights state</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="1" stroke="currentColor" stroke-width="1.4"/></svg></span>
+                <span class="label">File type</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" stroke="currentColor" stroke-width="1.4"/></svg></span>
+                <span class="label">Dimensions</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+            </div>
+
+            <div class="content">
+              <div class="grid">
+                <!-- REFERENCE asset — marked, no score, first position -->
+                <div class="card is-reference">
+                  <div class="thumb fifa-light">FIFA<span class="filetype-badge">SVG</span></div>
+                  <div class="meta">
+                    <div class="name">FIFA_WC2026_Logo_Primary.svg</div>
+                    <div class="sub">14.2 KB · Vector<span class="date">Uploaded 12 May 2026</span></div>
+                  </div>
+                </div>
+
+                <!-- Matches in descending similarity order -->
+                <div class="card">
+                  <div class="thumb fifa-light">FIFA<span class="sim-score">98%</span><span class="filetype-badge">SVG</span></div>
+                  <div class="meta">
+                    <div class="name">FIFA_WC2026_Logo_Alt.svg</div>
+                    <div class="sub">14.2 KB · Vector<span class="date">Uploaded 12 May 2026</span></div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="thumb fifa-light">FIFA<span class="sim-score">94%</span><span class="filetype-badge">PNG</span></div>
+                  <div class="meta">
+                    <div class="name">FIFA_WC2026_Logo_RGB.png</div>
+                    <div class="sub">280 KB · 2048×768<span class="date">Uploaded 12 May 2026</span></div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="thumb" style="background:#1B404E; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:28px; letter-spacing:-1px; font-style:italic;">FIFA<span class="sim-score">88%</span><span class="filetype-badge">SVG</span></div>
+                  <div class="meta">
+                    <div class="name">FIFA_WC2026_Logo_Mono.svg</div>
+                    <div class="sub">11.8 KB · Vector<span class="date">Uploaded 10 May 2026</span></div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="thumb" style="background:#0B6E8A; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:28px; letter-spacing:-1px; font-style:italic;">FIFA<span class="sim-score">85%</span><span class="filetype-badge">SVG</span></div>
+                  <div class="meta">
+                    <div class="name">FIFA_WC2026_Logo_Reversed.svg</div>
+                    <div class="sub">12.4 KB · Vector<span class="date">Uploaded 10 May 2026</span></div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="thumb fifa-light" style="font-size:20px;">FIFA®<span class="sim-score">82%</span><span class="filetype-badge">PNG</span></div>
+                  <div class="meta">
+                    <div class="name">FIFA_Logo_With_Mark.png</div>
+                    <div class="sub">320 KB · 1024×384<span class="date">Uploaded 09 May 2026</span></div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="thumb mountains-1"><span class="sim-score">76%</span><span class="filetype-badge">JPG</span></div>
+                  <div class="meta">
+                    <div class="name">FIFA_WC2026_Hero_Stadium.jpg</div>
+                    <div class="sub">2.1 MB · 4096×2731<span class="date">Uploaded 08 May 2026</span></div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="thumb" style="background:#fff; display:flex; align-items:center; justify-content:center; color:#003478; font-weight:900; font-size:14px; letter-spacing:-0.5px; font-style:italic;">WORLD CUP<span class="sim-score">74%</span><span class="filetype-badge">SVG</span></div>
+                  <div class="meta">
+                    <div class="name">WorldCup_Wordmark.svg</div>
+                    <div class="sub">8.4 KB · Vector<span class="date">Uploaded 07 May 2026</span></div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="thumb" style="background:#1B404E; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:14px; letter-spacing:-0.5px; font-style:italic;">WORLD CUP<span class="sim-score">71%</span><span class="filetype-badge">PNG</span></div>
+                  <div class="meta">
+                    <div class="name">WorldCup_Wordmark_Dark.png</div>
+                    <div class="sub">96 KB · 1024×256<span class="date">Uploaded 07 May 2026</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="annotation">
+    <div class="heading">What this state commits to</div>
+    <div><strong>Page identity is "Visually similar to &lt;ref asset&gt;"</strong>. Not a quoted text query — a thumbnail + filename. The reference filename in a stone-3 chip with mono font reads as data, not chrome. The 32px reference thumbnail inline gives a quick visual anchor.</div>
+    <div><strong>The reference asset is also the first card.</strong> Marked "Reference" with a teal label, bordered teal (rule #6 — teal earns its place as active state). No similarity score on this card because it's not a match — it's the basis for matching. This gives users an immediate "this is what I asked for, and here's how close each match comes."</div>
+    <div><strong>Threshold lives in the title block as a popover trigger.</strong> The threshold is a parameter of the query itself (alongside the reference asset and library scope), not a refinement of the result set. Sitting it inline with the ref-name keeps these query-defining things together. Stone trigger styling — clickable but not announced as an action or active-state. Click opens the popover with slider, presets, and helper text. Closes on outside click or after a value commits.</div>
+    <div><strong>No controls row in this state.</strong> With threshold in the title and no filters applied, the row has nothing to carry. Header is the only chrome above the workspace. State 5b shows what happens when filters get added — controls row appears, but only for the pills.</div>
+    <div><strong>Similarity score badges (per rule #2)</strong>: solid teal background with white text on the thumb. Score IS the point here — the count of similarity. This is one of the few legitimate places to use solid teal as a content overlay rather than chrome.</div>
+    <div><strong>Sort default is "Similarity"</strong>, not date. Reflects what users came for. Sort is still a stone control — sort selection isn't an "action," it's a property of the view.</div>
+    <div><strong>Filter panel still works.</strong> A user can apply "File type: SVG" to narrow similarity results to just vectors. Filters compose with similarity as they would with text search.</div>
+  </div>
+
+  <div class="annotation" style="border-left-color: var(--stone-7);">
+    <div class="heading">Implementation notes for the dev</div>
+    <div><strong>Entry point.</strong> Similarity is triggered from an asset detail page's "Find similar" action. URL pattern: <code>/library/&lt;id&gt;/similar?ref=&lt;asset-id&gt;&amp;threshold=70</code>. The reference asset id and threshold are query params; this lets users deep-link a specific similarity search and lets the back button work properly.</div>
+    <div><strong>Reference card behaviour.</strong> Clicking the reference card returns to its asset detail page (where the search started). Standard chevron-back interaction.</div>
+    <div><strong>Threshold debounce.</strong> Slider should debounce ~300ms before re-running the similarity query. Otherwise dragging causes a query storm.</div>
+    <div><strong>Result count semantics.</strong> "12 matches" not "12 results." Subtle but matters — matches has the right connotation for similarity (degree-based) where results is right for text search (binary).</div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     STATE 5B — SIMILARITY + FILTERS (worst-case row width)
+     ============================================================ -->
+
+<div class="mock-block">
+  <div class="variant-header">
+    <div class="tag">State 6 of 6</div>
+    <h2>Similarity + filters — worst-case controls row</h2>
+    <p>User running a similarity search has also applied two filters: <code>File type: SVG</code> and <code>Rights: Cleared</code>. Threshold stays in the title block (popover closed here). Filter pills appear in the controls row. The controls row is now identical in shape to State 3's text-search-with-filters version — same pattern across both search modes.</p>
+  </div>
+
+  <div class="unity-shell">
+    <div class="unity-rail">
+      <div class="brand-mark">F</div>
+      <div class="item active"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l5-5 5 5v5a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+      <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h10M3 12h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+      <div class="spacer"></div>
+      <div class="avatar-item">JD</div>
+      <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 7v-1a3 3 0 016 0v1M2 7h8v6H2V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+      <div class="item"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.4"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+    </div>
+
+    <div class="unity-topbar">
+      <div class="crumbs">
+        <a>Home</a>
+        <span class="sep">/</span>
+        <span class="current">Digital Archive</span>
+      </div>
+      <div class="spacer"></div>
+      <div class="global-search">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <span>Search...</span>
+      </div>
+    </div>
+
+    <div class="iframe-region">
+      <div class="iframe-label">DAM iframe</div>
+      <div class="dam-inner">
+        <div class="dam-rail">
+          <div class="expand"><svg viewBox="0 0 16 16" fill="none"><path d="M5 4l4 4-4 4M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l5-5 5 5v5a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          <div class="item active"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.4"/><rect x="6.5" y="3" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.4"/><rect x="11" y="3" width="3" height="10" rx="0.5" stroke="currentColor" stroke-width="1.4"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M4 2h8v12l-4-2-4 2V2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2l5 2v4c0 3-2 5-5 6-3-1-5-3-5-6V4l5-2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+          <div class="item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 10v3h10v-3M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+
+        <div class="dam-page-area">
+          <div class="page-header">
+            <div class="header-left">
+              <div class="title-block similarity">
+                <a class="lib-segment">FIFA World Cup 2026</a>
+                <span class="breadcrumb-sep">›</span>
+                <div class="ref-thumb fifa">FIFA</div>
+                <div class="title-h1">
+                  Visually similar to
+                  <span class="ref-name">FIFA_WC2026_Logo_Primary.svg</span>
+                  <span class="threshold-sep">·</span>
+                  <span style="position: relative; display: inline-flex;">
+                    <button class="threshold-trigger">
+                      ≥ 70% similar
+                      <svg class="caret" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="header-spacer"></div>
+            <div class="header-right">
+              <div class="result-count">
+                <span class="count-num">4</span>
+                <span style="color: var(--text-muted); font-weight: 400;">matches</span>
+              </div>
+              <div class="sort-indicator" style="border: 1px solid var(--border-default); padding: 7px 10px; height: 32px; border-radius: var(--radius-2); background: var(--surface-content);">
+                Sort by <span class="value">Similarity</span>
+                <svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </div>
+              <div class="view-toggle">
+                <button class="active"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.2"/></svg></button>
+                <button><svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+                <button><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="7" y="2" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="12" y="2" width="2" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="7" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="7" y="7" width="3" height="3" stroke="currentColor" stroke-width="1.2"/><rect x="12" y="7" width="2" height="3" stroke="currentColor" stroke-width="1.2"/></svg></button>
+              </div>
+              <button class="btn btn-secondary">Queue all</button>
+              <button class="btn btn-primary">Upload</button>
+            </div>
+          </div>
+
+          <!-- Controls row: pills with icons, save + clear inline, meta right-anchored -->
+          <div class="view-controls-row">
+            <div class="controls-pills">
+              <span class="chip">
+                <span class="chip-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 7.5L7.5 2.5h5v5l-5 5-5-5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="10" cy="6" r="1" fill="currentColor"/></svg></span>
+                SVG
+                <button class="chip-close"><svg viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+              </span>
+              <span class="chip">
+                <span class="chip-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 7.5L7.5 2.5h5v5l-5 5-5-5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="10" cy="6" r="1" fill="currentColor"/></svg></span>
+                Cleared
+                <button class="chip-close"><svg viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+              </span>
+              <button class="strip-action">
+                <span class="action-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 3.5l1.5 1.5L7 2.5M3 8.5l1.5 1.5L7 7.5M3 13.5l1.5 1.5L7 12.5M9 4h5M9 9h5M9 14h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                Save Search
+              </button>
+              <button class="strip-action">
+                <span class="action-icon"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M6 6l4 4M10 6l-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+                Clear Filters
+              </button>
+            </div>
+
+            <div class="controls-right">
+              <span class="result-meta"><strong>4</strong> of 12 matches shown</span>
+            </div>
+          </div>
+
+          <div class="workspace-below">
+            <div class="filter-panel">
+              <div class="filter-search">
+                <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <span>Find a filter…</span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M3 4h10M3 12h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+                <span class="label">Attributes</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 4h6l1 1.5h3v6.5H3V4z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">Tags</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+
+              <!-- Rights state — has active selection -->
+              <div class="filter-group-header has-active">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2l5 2v4c0 3-2 5-5 6-3-1-5-3-5-6V4l5-2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">Rights state</span>
+                <span class="count-pill-subtle">1</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-children">
+                <div class="facet-row">
+                  <span class="checkbox checked"></span>
+                  <span class="label">Cleared</span>
+                  <span class="count">4</span>
+                </div>
+                <div class="facet-row">
+                  <span class="checkbox"></span>
+                  <span class="label">Restricted</span>
+                  <span class="count">2</span>
+                </div>
+              </div>
+
+              <!-- File type — has active selection -->
+              <div class="filter-group-header has-active">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="1" stroke="currentColor" stroke-width="1.4"/></svg></span>
+                <span class="label">File type</span>
+                <span class="count-pill-subtle">1</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+              <div class="filter-group-children">
+                <div class="facet-row">
+                  <span class="checkbox checked"></span>
+                  <span class="label">SVG</span>
+                  <span class="count">4</span>
+                </div>
+                <div class="facet-row">
+                  <span class="checkbox"></span>
+                  <span class="label">PNG</span>
+                  <span class="count">3</span>
+                </div>
+                <div class="facet-row">
+                  <span class="checkbox"></span>
+                  <span class="label">JPG</span>
+                  <span class="count">3</span>
+                </div>
+              </div>
+
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" stroke="currentColor" stroke-width="1.4"/></svg></span>
+                <span class="label">Dimensions</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
+            </div>
+
+            <div class="content">
+              <div class="grid">
+                <!-- Reference asset, no score -->
+                <div class="card is-reference">
+                  <div class="thumb fifa-light">FIFA<span class="filetype-badge">SVG</span></div>
+                  <div class="meta">
+                    <div class="name">FIFA_WC2026_Logo_Primary.svg</div>
+                    <div class="sub">14.2 KB · Vector<span class="date">Uploaded 12 May 2026</span></div>
+                  </div>
+                </div>
+
+                <!-- Filtered matches: SVG + Cleared only -->
+                <div class="card">
+                  <div class="thumb fifa-light">FIFA<span class="sim-score">98%</span><span class="filetype-badge">SVG</span></div>
+                  <div class="meta">
+                    <div class="name">FIFA_WC2026_Logo_Alt.svg</div>
+                    <div class="sub">14.2 KB · Vector<span class="date">Uploaded 12 May 2026</span></div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="thumb" style="background:#1B404E; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:28px; letter-spacing:-1px; font-style:italic;">FIFA<span class="sim-score">88%</span><span class="filetype-badge">SVG</span></div>
+                  <div class="meta">
+                    <div class="name">FIFA_WC2026_Logo_Mono.svg</div>
+                    <div class="sub">11.8 KB · Vector<span class="date">Uploaded 10 May 2026</span></div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="thumb" style="background:#0B6E8A; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:28px; letter-spacing:-1px; font-style:italic;">FIFA<span class="sim-score">85%</span><span class="filetype-badge">SVG</span></div>
+                  <div class="meta">
+                    <div class="name">FIFA_WC2026_Logo_Reversed.svg</div>
+                    <div class="sub">12.4 KB · Vector<span class="date">Uploaded 10 May 2026</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="annotation">
+    <div class="heading">What the merged row earns</div>
+    <div><strong>Controls row matches State 3's shape.</strong> Pills cluster on the left, Save + meta on the right. No threshold, no divider — those were the things that made the row feel structurally different from a normal applied-filter row. Now it's the same row component across all "filters applied" states regardless of search type.</div>
+    <div><strong>Threshold is reachable from the title block.</strong> Closed by default. Click to open the popover (see State 5 above for the open state). Threshold value displayed in the trigger — users always know what the current threshold is without opening it.</div>
+    <div><strong>Sort indicator moved to the header right cluster.</strong> Sort is a view control like view-toggle; lives with its functional family. Stone border, stone treatment. The right cluster gains one element but stays compact.</div>
+    <div><strong>Two rows of chrome maximum, baseline of one.</strong> Header always present; controls row appears only when filters apply. Library / text search with no filters = one row. Similarity with no filters = one row. Filters applied (either search mode) = two rows. Same component in every case.</div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SUMMARY
+     ============================================================ -->
+
+<div class="mock-block">
+  <div class="variant-header">
+    <div class="tag">Summary</div>
+    <h2>What the title-as-subject pattern commits to</h2>
+    <p style="max-width:none;">
+      The page title is the single primary signal that distinguishes a library view from a search results view. When a search is active, the title slot reorganises into a breadcrumb-style trail: library name as a quieter segment (13px, text-muted), separator chevron, prominent H1 carrying the query. All inline at the same baseline — no vertical stacking. The user's eye lands on the H1 first (largest, darkest), reads the breadcrumb context naturally to its left, and parses the page identity in one scan.
+    </p>
+    <p style="max-width:none;margin-top:12px;">
+      Hierarchy is carried through typography (size + colour weight), not layout (stacking). This is the more honest treatment: the library segment is genuinely subordinate to the query, and inline-with-smaller-quieter-text says that more truthfully than "small label above big title."
+    </p>
+    <p style="max-width:none;margin-top:12px;">
+      <strong>One thing worth re-flagging from earlier:</strong> when the iframe-to-Unity breadcrumb sync ships and Unity shows the library name in its breadcrumb (Home / Digital Archive / FIFA World Cup 2026), the library segment + chevron can be dropped from the DAM page header. The title slot becomes a single H1 — just "Results for &quot;image&quot;". The data-binding accommodates that without any structural changes — same flex container, fewer children.
+    </p>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
