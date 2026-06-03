@@ -161,18 +161,182 @@
     margin-left:4px; }
   .ocr-dismiss:hover { background:var(--primary-muted); color:var(--primary-700); }
   .ocr-dismiss svg { width:13px; height:13px; }
+
+  /* ============================================================
+     SHARED OCR MATCH CHIP — one token across all surfaces
+     accent + doc icon = "matched because of document text".
+     Deliberately NOT a .status-badge (no status dot, not a
+     workflow state) and NOT a .filetype-badge (not solid-fill,
+     not uppercase). Its own match-reason lane.
+     ============================================================ */
+  .ocr-chip {
+    display:inline-flex; align-items:center; gap:5px;
+    background:var(--primary-subtle); color:var(--primary-700);
+    border:1px solid var(--color-primary-100); border-radius:var(--radius-2);
+    padding:2px 8px; font-size:11px; font-weight:var(--font-weight-medium);
+    line-height:1.4; white-space:nowrap; max-width:100%;
+  }
+  .ocr-chip svg { width:12px; height:12px; flex-shrink:0; }
+  .ocr-chip .label { overflow:hidden; text-overflow:ellipsis; }
+
+  /* ---- quick search dropdown ---- */
+  .qs-panel { width:460px; max-width:100%; background:var(--surface-default);
+    border:1px solid var(--border-default); border-radius:var(--radius-4);
+    box-shadow:var(--shadow-md); overflow:hidden; }
+  .qs-search { display:flex; align-items:center; gap:var(--spacing-2);
+    padding:var(--spacing-3) var(--spacing-4); border-bottom:1px solid var(--border-default); }
+  .qs-search svg { width:16px; height:16px; color:var(--text-subtle); flex-shrink:0; }
+  .qs-search .q { flex:1; font-size:var(--font-size-2); color:var(--text-default); }
+  .qs-search .count { font-size:var(--font-size-1); color:var(--text-subtle); }
+  .qs-row { display:flex; align-items:center; gap:var(--spacing-3);
+    padding:var(--spacing-2) var(--spacing-4); cursor:pointer; }
+  .qs-row:hover { background:var(--surface-muted); }
+  .qs-thumb { width:34px; height:34px; border-radius:var(--radius-2); background:var(--surface-muted);
+    border:1px solid var(--border-default); flex-shrink:0; display:flex; align-items:center; justify-content:center;
+    color:var(--text-subtle); font-size:7px; line-height:8px; padding:3px; overflow:hidden; }
+  .qs-body { flex:1; min-width:0; }
+  .qs-titleline { display:flex; align-items:center; gap:var(--spacing-2); }
+  .qs-title { font-size:var(--font-size-2); font-weight:var(--font-weight-medium);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .qs-detail { font-size:11px; color:var(--text-subtle); margin-top:1px; }
+  .qs-body .ocr-chip { margin-top:4px; }
+  .qs-foot { padding:var(--spacing-2) var(--spacing-4); border-top:1px solid var(--border-default);
+    font-size:11px; color:var(--text-subtle); display:flex; align-items:center; gap:6px; }
+  .qs-foot kbd { background:var(--surface-muted); border:1px solid var(--border-default);
+    border-radius:3px; padding:0 5px; font-family:inherit; font-size:10px; }
+
+  /* ---- result card grid (Scale .asset-card) ---- */
+  .card-grid { display:flex; gap:var(--spacing-4); flex-wrap:wrap; }
+  .asset-card { width:200px; border:2px solid var(--border-default); border-radius:var(--radius-3);
+    overflow:hidden; cursor:pointer; transition:border-color .15s; background:var(--surface-default); }
+  .asset-card:hover { border-color:var(--primary-default); }
+  .asset-thumb { background:var(--surface-muted); display:flex; align-items:center; justify-content:center;
+    position:relative; height:130px; }
+  .asset-thumb .doc-fill { width:78%; height:84%; background:#fff; border:1px solid var(--border-default);
+    border-radius:3px; padding:8px; font-size:5px; line-height:6px; color:#cfc9c4; overflow:hidden;
+    column-count:2; column-gap:6px; }
+  .asset-thumb .ft { position:absolute; bottom:8px; left:8px; }
+  .asset-meta { padding:8px 10px; }
+  .asset-name { font-size:var(--font-size-1); font-weight:var(--font-weight-medium);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .asset-detail { font-size:11px; color:var(--text-subtle); margin-top:2px; }
+  .asset-meta .ocr-chip { margin-top:6px; max-width:100%; }
+  .filetype-badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:var(--radius-2);
+    font-size:11px; font-weight:var(--font-weight-semibold); text-transform:uppercase; letter-spacing:0.05em; }
 </style>
 </head>
 <body>
 
 <div class="page-head">
-  <h1>OCR match — lightbox flag</h1>
-  <p>Self-contained match browser docked to the preview pane. Scale <code>--primary</code> / callout tokens — not the destructive rights wash. Flicking matches updates the strip only; the preview stays on the single available rendition. Session-scoped: only appears when arrived from a search whose query hit the document text.</p>
+  <h1>OCR match — flag system</h1>
+  <p>One shared match-reason chip across the journey — quick search → result card → lightbox — so a text hit reads as the same object everywhere. Accent + Lucide <code>scan-search</code> icon, on Scale <code>--primary</code> tokens. Copy branches by source: <strong>text in document</strong> (PDF/DOCX) or <strong>text in image</strong> (PNG/JPG/TIFF OCR). It is not a <code>.status-badge</code> (no status dot, not a workflow state) and not a <code>.filetype-badge</code> (not solid-fill). On the list surfaces the chip carries only the reason; page number and match count belong to the lightbox, where you navigate matches. The lightbox banner appears for documents only — it exists to reach text you can't see (other pages). Images render in full, so they carry the chip in search but no banner once opened.</p>
 </div>
+
+<!-- ============ SURFACE A — QUICK SEARCH ============ -->
+<div class="mock-block">
+  <div class="mock-label"><span class="pin">Surface A</span> Quick search — result row</div>
+  <div class="qs-panel">
+    <div class="qs-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span class="q">poster</span>
+      <span class="count">12 results</span>
+    </div>
+    <div class="qs-row">
+      <div class="qs-thumb" style="background:var(--filetype-image-bg); color:#0d6e5c; font-weight:600; font-size:9px;">IMG</div>
+      <div class="qs-body">
+        <div class="qs-title">2026_WorldCup_NewYork_Host_Poster.png</div>
+        <span class="ocr-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
+          <span class="label">text in image</span>
+        </span>
+      </div>
+      <span class="filetype-badge" style="background:var(--filetype-image-bg); color:#0d6e5c;">PNG</span>
+    </div>
+    <div class="qs-row">
+      <div class="qs-thumb" style="background:var(--filetype-image-bg); color:#0d6e5c; font-weight:600; font-size:9px;">IMG</div>
+      <div class="qs-body">
+        <div class="qs-title">Guadalajara_Host_City_Poster.tiff</div>
+        <span class="ocr-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
+          <span class="label">text in image</span>
+        </span>
+      </div>
+      <span class="filetype-badge" style="background:var(--filetype-image-bg); color:#0d6e5c;">TIFF</span>
+    </div>
+    <div class="qs-row">
+      <div class="qs-thumb">FIFA World Cup 2026 Posters. Lorem ipsum dolor sit amet consectetur adipiscing elit.</div>
+      <div class="qs-body">
+        <div class="qs-title">FIFA_WorldCup_2026_Posters.pdf</div>
+        <span class="ocr-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
+          <span class="label">text in document</span>
+        </span>
+      </div>
+      <span class="filetype-badge" style="background:var(--filetype-document-bg); color:#4E350D;">PDF</span>
+    </div>
+    <div class="qs-row">
+      <div class="qs-thumb" style="background:var(--filetype-video-bg); color:#5B21B6; font-weight:600; font-size:9px;">VID</div>
+      <div class="qs-body">
+        <div class="qs-title">Adidas_2026_Kits_Advert.mp4</div>
+        <div class="qs-detail">1:28 mins · filename match</div>
+      </div>
+      <span class="filetype-badge" style="background:var(--filetype-video-bg); color:#5B21B6;">MP4</span>
+    </div>
+    <div class="qs-foot"><kbd>↵</kbd> for full results</div>
+  </div>
+  <p class="mock-note">Chip moved under the title (subtitle position) — less intrusive, and it matches the live UI where the match descriptor is the row subtitle. Copy now branches by source: <strong>text in image</strong> for OCR on PNG/TIFF/JPG, <strong>text in document</strong> for PDF/DOCX. Filetype shown by the right-side badge, so the chip line stays single-purpose. The MP4 has no chip — it matched on filename, which is the distinction the chip exists to make.</p>
+</div>
+
+<!-- ============ SURFACE B — RESULT CARD ============ -->
+<div class="mock-block">
+  <div class="mock-label"><span class="pin">Surface B</span> Search results — asset card</div>
+  <div class="card-grid">
+    <div class="asset-card">
+      <div class="asset-thumb">
+        <div class="doc-fill">FIFA World Cup 2026 Posters. Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud.</div>
+        <span class="filetype-badge ft" style="background:var(--filetype-document-bg); color:#4E350D;">PDF</span>
+      </div>
+      <div class="asset-meta">
+        <div class="asset-name">FIFA_WorldCup_2026_Posters.pdf</div>
+        <div class="asset-detail">2.4 MB · Uploaded 22 May 2026</div>
+        <span class="ocr-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
+          <span class="label">text in document</span>
+        </span>
+      </div>
+    </div>
+    <div class="asset-card">
+      <div class="asset-thumb" style="background:linear-gradient(135deg,#5b21b6,#ec4899);">
+        <span class="filetype-badge ft" style="background:var(--filetype-image-bg); color:#0d6e5c;">JPG</span>
+      </div>
+      <div class="asset-meta">
+        <div class="asset-name">Guadalajara_Host_City_Poster.jpg</div>
+        <div class="asset-detail">1.8 MB · Uploaded 22 May 2026</div>
+        <span class="ocr-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
+          <span class="label">text in image</span>
+        </span>
+      </div>
+    </div>
+    <div class="asset-card">
+      <div class="asset-thumb" style="background:var(--color-stone-900);">
+        <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="10 8 16 12 10 16 10 8" fill="rgba(255,255,255,0.55)" stroke="none"/><circle cx="12" cy="12" r="10"/></svg>
+        <span class="filetype-badge ft" style="background:var(--filetype-video-bg); color:#5B21B6;">MP4</span>
+      </div>
+      <div class="asset-meta">
+        <div class="asset-name">Adidas_2026_Kits_Advert.mp4</div>
+        <div class="asset-detail">1:28 mins · Uploaded 22 May 2026</div>
+      </div>
+    </div>
+  </div>
+  <p class="mock-note">Same chip token, same scan-search icon, same wording as Surface A — copy branches by source (<strong>text in document</strong> on the PDF, <strong>text in image</strong> on the JPG poster). The MP4 carries no chip: it matched on filename, not extracted text. Chip sits below the metadata line. Filetype badges per Scale — document gold, image teal, video violet, solid-fill, uppercase.</p>
+</div>
+
+<!-- ============ SURFACE C — LIGHTBOX ============ -->
 
 <!-- ============ STATE 1 — MULTIPLE MATCHES ============ -->
 <div class="mock-block">
-  <div class="mock-label"><span class="pin">State 1 of 3</span> Multiple matches — find-in-page navigation</div>
+  <div class="mock-label"><span class="pin">Surface C · 1 of 3</span> Lightbox — multiple matches</div>
   <div class="lightbox">
     <div class="lb-titlebar">
       <span class="lb-title">History_FIFA_Marcio.pdf</span>
@@ -195,8 +359,8 @@
     <!-- the new strip -->
     <div class="ocr-strip">
       <span class="ocr-flag">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><circle cx="11.5" cy="14.5" r="2.5"/><line x1="13.3" y1="16.3" x2="15" y2="18"/></svg>
-        Found in document text
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
+        text in document
       </span>
       <span class="ocr-snippet">…the championship cup. The federation's recorded <mark>history</mark> begins with the 1991 inaugural tournament held in…</span>
       <span class="ocr-nav">
@@ -232,7 +396,7 @@
 
 <!-- ============ STATE 2 — SINGLE MATCH ============ -->
 <div class="mock-block">
-  <div class="mock-label"><span class="pin">State 2 of 3</span> Single match — no navigation</div>
+  <div class="mock-label"><span class="pin">Surface C · 2 of 3</span> Lightbox — single match</div>
   <div class="lightbox">
     <div class="lb-titlebar">
       <span class="lb-title">History_FIFA_Marcio.pdf</span>
@@ -250,8 +414,8 @@
 
     <div class="ocr-strip">
       <span class="ocr-flag">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><circle cx="11.5" cy="14.5" r="2.5"/><line x1="13.3" y1="16.3" x2="15" y2="18"/></svg>
-        Found in document text
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
+        text in document
       </span>
       <span class="ocr-snippet">…the commercial board. Marco Silva was appointed head of <mark>marketing</mark> for the 2027 campaign, overseeing sponsor…</span>
       <span class="ocr-meta">page 3</span>
@@ -281,10 +445,10 @@
 
 <!-- ============ STATE 3 — COEXIST WITH RIGHTS BANNER ============ -->
 <div class="mock-block">
-  <div class="mock-label"><span class="pin">State 3 of 3</span> Coexistence — expired asset that is also an OCR hit</div>
+  <div class="mock-label"><span class="pin">Surface C · 3 of 4</span> Lightbox — document coexists with rights banner</div>
   <div class="lightbox">
     <div class="lb-titlebar">
-      <span class="lb-title">F14_autoarchive-expired_USA_Marketing_Digital.jpg</span>
+      <span class="lb-title">USA_Marketing_Rights_2025.pdf</span>
       <button class="btn btn-secondary">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
         Add to Queue
@@ -308,8 +472,8 @@
     <!-- OCR strip: session-level, navigational, sits below rights -->
     <div class="ocr-strip">
       <span class="ocr-flag">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><circle cx="11.5" cy="14.5" r="2.5"/><line x1="13.3" y1="16.3" x2="15" y2="18"/></svg>
-        Found in document text
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
+        text in document
       </span>
       <span class="ocr-snippet">…rights summary follows. USA <mark>marketing</mark> assets are cleared for digital channels only; see appendix for the…</span>
       <span class="ocr-nav">
@@ -338,6 +502,46 @@
     </div>
   </div>
   <p class="mock-note">Two surfaces, two owners, no collision. <strong>Red rights banner</strong> = asset-level + blocking (owns header slot, Download disabled). <strong>Accent OCR strip</strong> = session-level + navigational (docks to preview). Order reads correctly top-to-bottom: why you can't act, then what you searched for.</p>
+</div>
+
+<!-- ============ STATE 4 — IMAGE, NO BANNER ============ -->
+<div class="mock-block">
+  <div class="mock-label"><span class="pin">Surface C · 4 of 4</span> Lightbox — image match, no banner</div>
+  <div class="lightbox">
+    <div class="lb-titlebar">
+      <span class="lb-title">Guadalajara_Host_City_Poster.jpg</span>
+      <button class="btn btn-secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        Add to Queue
+      </button>
+      <button class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download
+      </button>
+      <button class="btn btn-ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button>
+      <button class="btn btn-ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+
+    <!-- no rights banner, no OCR strip: the image is fully visible -->
+
+    <div class="lb-body">
+      <div class="lb-preview" style="display:flex; align-items:center; justify-content:center;">
+        <div style="width:200px; height:260px; border-radius:var(--radius-3); background:linear-gradient(150deg,#5b21b6 0%,#9d174d 55%,#ea580c 100%); color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; padding:20px; box-shadow:var(--shadow-md);">
+          <div style="font-size:10px; letter-spacing:0.25em; opacity:0.8;">FIFA WORLD CUP 2026</div>
+          <div style="font-size:24px; font-weight:800; line-height:1.05;">GUADALAJARA</div>
+          <div style="font-size:12px; font-weight:600; letter-spacing:0.15em;">HOST CITY POSTER</div>
+          <div style="margin-top:auto; font-size:8px; opacity:0.65;">Official licensed artwork · do not redistribute</div>
+        </div>
+      </div>
+      <div class="lb-rail">
+        <div class="rail-tab active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>General</div>
+        <div class="rail-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/></svg>Attributes</div>
+        <div class="rail-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg>AI Tags</div>
+        <div class="rail-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/></svg>Metadata</div>
+      </div>
+    </div>
+  </div>
+  <p class="mock-note">Same asset that carried a <strong>text in image</strong> chip in search — but <strong>no banner here</strong>. The poster renders in full; the matched words ("Guadalajara", "poster") are on screen to read, and the match-reason was already delivered on the card before opening. A banner would only restate what's visible. The lightbox banner is reserved for text the user <em>can't</em> see — i.e. other pages of a multi-page document. <span style="color:var(--text-subtle);">Caveat: if OCR routinely catches non-obvious embedded text in your images (fine print, background signage), revisit — a lighter treatment could earn its place.</span></p>
 </div>
 
 </body>
