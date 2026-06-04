@@ -229,7 +229,7 @@
 
 <div class="page-head">
   <h1>OCR match — flag system</h1>
-  <p>One shared match-reason chip across the journey — quick search → result card → lightbox — so a text hit reads as the same object everywhere. Accent + Lucide <code>scan-search</code> icon, on Scale <code>--primary</code> tokens. Copy branches by source: <strong>text in document</strong> (PDF/DOCX) or <strong>text in image</strong> (PNG/JPG/TIFF OCR). It is not a <code>.status-badge</code> (no status dot, not a workflow state) and not a <code>.filetype-badge</code> (not solid-fill). On the list surfaces the chip carries only the reason; page number and match count belong to the lightbox, where you navigate matches. The lightbox banner appears for documents only — it exists to reach text you can't see (other pages). Images render in full, so they carry the chip in search but no banner once opened.</p>
+  <p>One shared match-reason chip across the journey — quick search → result card → lightbox — so a text hit reads as the same object everywhere. Accent + Lucide <code>scan-search</code> icon, on Scale <code>--primary</code> tokens. Copy branches by source: <strong>text in document</strong> (PDF/DOCX) or <strong>text in image</strong> (PNG/JPG/TIFF OCR). It is not a <code>.status-badge</code> (no status dot, not a workflow state) and not a <code>.filetype-badge</code> (not solid-fill). On the list surfaces the chip carries only the reason; the matched term in context, the match count and (for documents) the page belong to the lightbox banner. The banner appears for both documents and images — anywhere the matched text is hard to find in the preview. Documents show the page reference; images omit it (no pages) and rely on the context snippet to locate the match.</p>
 </div>
 
 <!-- ============ SURFACE A — QUICK SEARCH ============ -->
@@ -504,12 +504,12 @@
   <p class="mock-note">Two surfaces, two owners, no collision. <strong>Red rights banner</strong> = asset-level + blocking (owns header slot, Download disabled). <strong>Accent OCR strip</strong> = session-level + navigational (docks to preview). Order reads correctly top-to-bottom: why you can't act, then what you searched for.</p>
 </div>
 
-<!-- ============ STATE 4 — IMAGE, NO BANNER ============ -->
+<!-- ============ STATE 4 — IMAGE WITH BANNER (no page ref) ============ -->
 <div class="mock-block">
-  <div class="mock-label"><span class="pin">Surface C · 4 of 4</span> Lightbox — image match, no banner</div>
+  <div class="mock-label"><span class="pin">Surface C · 4 of 4</span> Lightbox — image match, banner without page reference</div>
   <div class="lightbox">
     <div class="lb-titlebar">
-      <span class="lb-title">Guadalajara_Host_City_Poster.jpg</span>
+      <span class="lb-title">Tag_A.4.jpg</span>
       <button class="btn btn-secondary">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
         Add to Queue
@@ -522,15 +522,32 @@
       <button class="btn btn-ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
 
-    <!-- no rights banner, no OCR strip: the image is fully visible -->
+    <!-- OCR strip, image variant: snippet + count, NO page reference -->
+    <div class="ocr-strip">
+      <span class="ocr-flag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
+        text in image
+      </span>
+      <span class="ocr-snippet">…steamboat co. <mark>new</mark> orleans &amp; st louis packet line…</span>
+      <span class="ocr-nav">
+        <button class="nav-btn" aria-label="Previous match"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <span class="ocr-meta">1 of 3 matches</span>
+        <button class="nav-btn" aria-label="Next match"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </span>
+      <button class="ocr-dismiss" aria-label="Dismiss"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
 
     <div class="lb-body">
       <div class="lb-preview" style="display:flex; align-items:center; justify-content:center;">
-        <div style="width:200px; height:260px; border-radius:var(--radius-3); background:linear-gradient(150deg,#5b21b6 0%,#9d174d 55%,#ea580c 100%); color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; padding:20px; box-shadow:var(--shadow-md);">
-          <div style="font-size:10px; letter-spacing:0.25em; opacity:0.8;">FIFA WORLD CUP 2026</div>
-          <div style="font-size:24px; font-weight:800; line-height:1.05;">GUADALAJARA</div>
-          <div style="font-size:12px; font-weight:600; letter-spacing:0.15em;">HOST CITY POSTER</div>
-          <div style="margin-top:auto; font-size:8px; opacity:0.65;">Official licensed artwork · do not redistribute</div>
+        <!-- busy photo: a wall of small signs, text not findable by eye -->
+        <div style="width:300px; height:230px; border-radius:var(--radius-3); background:linear-gradient(160deg,#3a2a1a 0%,#5a3d24 55%,#2e2016 100%); position:relative; overflow:hidden; box-shadow:var(--shadow-md);">
+          <div style="position:absolute; top:14px; left:16px; width:54px; height:38px; background:#c9a24b; border-radius:3px; transform:rotate(-3deg); font-size:5px; color:#3a2a1a; padding:4px; line-height:1.2; font-weight:700;">CAPT JACOBS ROWING CLUB</div>
+          <div style="position:absolute; top:20px; left:84px; width:46px; height:44px; background:#7a8b5a; border-radius:50%; transform:rotate(2deg); font-size:5px; color:#1e150c; display:flex; align-items:center; justify-content:center; text-align:center; font-weight:700;">CARLSBERG</div>
+          <div style="position:absolute; top:62px; left:40px; width:64px; height:30px; background:#b5532a; border-radius:2px; font-size:6px; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; letter-spacing:0.05em;">WHISKEY</div>
+          <div style="position:absolute; top:16px; left:150px; width:58px; height:40px; background:#caa55a; border-radius:3px; transform:rotate(2deg); font-size:5px; color:#2e2016; padding:4px; line-height:1.2; font-weight:700;">CANADIAN PACIFIC LINE</div>
+          <div style="position:absolute; top:64px; left:128px; width:60px; height:48px; background:#d8d2c0; border-radius:2px; transform:rotate(-1deg); font-size:5px; color:#3a2a1a; padding:4px; line-height:1.2; font-weight:700; outline:2px solid var(--primary-default); outline-offset:1px;">ST LOUIS &amp; <span style="background:var(--primary-muted); color:var(--primary-700);">NEW</span> ORLEANS PACKET CO</div>
+          <div style="position:absolute; bottom:14px; left:30px; width:70px; height:34px; background:#9a7b3e; border-radius:2px; font-size:5px; color:#1e150c; padding:4px; line-height:1.2; font-weight:700;">FINEST HISTORIC SIGNS</div>
+          <div style="position:absolute; bottom:18px; right:30px; width:60px; height:60px; background:linear-gradient(#f4f1e6,#d8d2c0); border-radius:3px; transform:rotate(2deg); font-size:5px; color:#3a2a1a; padding:5px; line-height:1.2; font-weight:700;">STEAMBOAT CO. NEW ORLEANS</div>
         </div>
       </div>
       <div class="lb-rail">
@@ -541,7 +558,7 @@
       </div>
     </div>
   </div>
-  <p class="mock-note">Same asset that carried a <strong>text in image</strong> chip in search — but <strong>no banner here</strong>. The poster renders in full; the matched words ("Guadalajara", "poster") are on screen to read, and the match-reason was already delivered on the card before opening. A banner would only restate what's visible. The lightbox banner is reserved for text the user <em>can't</em> see — i.e. other pages of a multi-page document. <span style="color:var(--text-subtle);">Caveat: if OCR routinely catches non-obvious embedded text in your images (fine print, background signage), revisit — a lighter treatment could earn its place.</span></p>
+  <p class="mock-note">The case that flips the earlier call: text is everywhere in this photo and <strong>findable nowhere</strong> by eye. Searched "new" → the banner shows it <strong>in context</strong> (<code>…st louis &amp; <strong>new</strong> orleans packet co…</code>), not as a bare term, so you know which of the thirty signs matched. Image variant = document banner <strong>minus the page reference</strong> (images have no pages); match count + nav stay when there's more than one instance. We can't highlight on the image itself, so the snippet does the locating work.</p>
 </div>
 
 </body>
