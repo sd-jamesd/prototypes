@@ -653,36 +653,76 @@ html, body {
 .filter-panel {
   background: var(--surface-filters);
   border-right: 1px solid var(--border-default);
-  padding: 16px 12px;
+  padding: 16px;
   display: flex; flex-direction: column;
-  gap: 4px;
+  gap: 12px;
   overflow-y: auto;
 }
 
+/* Panel header — "Filters" heading + collapse icon */
+.filter-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 4px 8px;
+}
+
+.filter-panel-header .panel-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-default);
+  line-height: 24px;
+}
+
+.filter-panel-header .panel-action {
+  width: 28px; height: 28px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--primary);
+  cursor: pointer;
+  border-radius: var(--radius-2);
+  background: transparent;
+  border: none;
+  padding: 0;
+  transition: background 120ms;
+}
+
+.filter-panel-header .panel-action:hover {
+  background: var(--primary-subtle);
+}
+
+.filter-panel-header .panel-action svg { width: 16px; height: 16px; }
+
+/* Filter search — borderless, underline only */
 .filter-search {
   display: flex; align-items: center;
   gap: 8px;
-  padding: 7px 12px;
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-2);
-  background: var(--surface-content);
+  padding: 8px 4px;
+  border: none;
+  border-bottom: 1px solid var(--border-default);
+  border-radius: 0;
+  background: transparent;
   font-size: 14px;
   color: var(--text-placeholder);
-  margin-bottom: 8px;
+  font-style: italic;
 }
 
 .filter-search:focus-within {
-  border-color: var(--primary-8);
-  box-shadow: 0 0 0 2px var(--primary-3);
+  border-bottom-color: var(--primary-8);
+  box-shadow: none;
 }
 
-.filter-search svg { color: var(--text-muted); }
+.filter-search svg { color: var(--text-muted); width: 14px; height: 14px; }
 
-/* Filter group header — Scale token with active indicator */
+/* Filter groups section — sits below the search */
+.filter-groups {
+  display: flex; flex-direction: column;
+  gap: 8px;
+}
+
+/* Filter group header — larger, bolder per the screenshot */
 .filter-group-header {
-  display: flex; align-items: center; gap: 8px;
+  display: flex; align-items: center; gap: 10px;
   padding: 8px 4px 8px 10px;
-  font-weight: 600; font-size: 13px;
+  font-weight: 600;
+  font-size: 14px;
   color: var(--text-default);
   cursor: pointer;
   border-radius: var(--radius-2);
@@ -702,7 +742,7 @@ html, body {
 }
 
 .filter-group-header .icon { color: var(--text-muted); display: inline-flex; }
-.filter-group-header .icon svg { width: 14px; height: 14px; }
+.filter-group-header .icon svg { width: 16px; height: 16px; }
 
 .filter-group-header .label { flex: 1; }
 
@@ -713,30 +753,52 @@ html, body {
 
 .filter-group-header .chev svg { width: 14px; height: 14px; }
 
+/* Sub-group label — BRAND, MONTH, etc. uppercase + spaced */
+.filter-subgroup-label {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 4px 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
+
+.filter-subgroup-label .right {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-subtle);
+}
+
+.filter-subgroup-label .right svg { width: 12px; height: 12px; }
+
 /* Count pill — subtle variant */
 .count-pill-subtle {
   display: inline-flex; align-items: center; justify-content: center;
-  min-width: 18px; height: 18px;
-  padding: 0 5px;
+  min-width: 20px; height: 20px;
+  padding: 0 6px;
   background: var(--primary-subtle);
   color: var(--primary-11);
-  font-size: 11px; font-weight: 600;
-  border-radius: 9px;
+  font-size: 12px; font-weight: 600;
+  border-radius: 10px;
   line-height: 1;
 }
 
 /* Expanded filter group children */
 .filter-group-children {
-  padding: 4px 4px 4px 22px;
+  padding: 2px 4px 4px 10px;
   display: flex; flex-direction: column;
-  gap: 2px;
+  gap: 0;
 }
 
 .facet-row {
   display: flex; align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
-  font-size: 13px;
+  gap: 10px;
+  padding: 7px 8px;
+  font-size: 14px;
   color: var(--text-default);
   border-radius: var(--radius-2);
   cursor: pointer;
@@ -747,9 +809,9 @@ html, body {
 
 /* Checkbox — Scale token */
 .checkbox {
-  width: 16px; height: 16px;
+  width: 18px; height: 18px;
   border: 1.5px solid var(--stone-7);
-  border-radius: 3px;
+  border-radius: 4px;
   background: var(--surface-content);
   display: inline-flex; align-items: center; justify-content: center;
   flex-shrink: 0;
@@ -763,7 +825,7 @@ html, body {
 
 .checkbox.checked::after {
   content: '';
-  width: 4px; height: 8px;
+  width: 5px; height: 9px;
   border-right: 1.5px solid white;
   border-bottom: 1.5px solid white;
   transform: rotate(45deg) translate(-1px, -1px);
@@ -771,7 +833,7 @@ html, body {
 
 .facet-row .label { flex: 1; }
 .facet-row .count {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--text-subtle);
   font-feature-settings: 'tnum';
 }
@@ -1435,9 +1497,20 @@ html, body {
 
           <div class="workspace-below">
             <div class="filter-panel">
+              <div class="filter-panel-header">
+                <span class="panel-title">Filters</span>
+                <button class="panel-action" title="Collapse all">
+                  <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h8M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </button>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M4 2h8v12l-4-2.5L4 14V2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">Saved Filters</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
               <div class="filter-search">
-                <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-                <span>Find a filter…</span>
+                <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <span>Find attributes or tags...</span>
               </div>
               <div class="filter-group-header">
                 <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M3 4h10M3 12h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
@@ -1588,9 +1661,20 @@ html, body {
 
           <div class="workspace-below">
             <div class="filter-panel">
+              <div class="filter-panel-header">
+                <span class="panel-title">Filters</span>
+                <button class="panel-action" title="Collapse all">
+                  <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h8M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </button>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M4 2h8v12l-4-2.5L4 14V2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">Saved Filters</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
               <div class="filter-search">
-                <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-                <span>Find a filter…</span>
+                <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <span>Find attributes or tags...</span>
               </div>
               <div class="filter-group-header">
                 <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M3 4h10M3 12h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
@@ -1767,9 +1851,20 @@ html, body {
 
           <div class="workspace-below">
             <div class="filter-panel">
+              <div class="filter-panel-header">
+                <span class="panel-title">Filters</span>
+                <button class="panel-action" title="Collapse all">
+                  <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h8M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </button>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M4 2h8v12l-4-2.5L4 14V2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">Saved Filters</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
               <div class="filter-search">
-                <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-                <span>Find a filter…</span>
+                <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <span>Find attributes or tags...</span>
               </div>
               <div class="filter-group-header">
                 <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M3 4h10M3 12h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
@@ -1959,9 +2054,20 @@ html, body {
 
           <div class="workspace-below">
             <div class="filter-panel">
+              <div class="filter-panel-header">
+                <span class="panel-title">Filters</span>
+                <button class="panel-action" title="Collapse all">
+                  <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h8M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </button>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M4 2h8v12l-4-2.5L4 14V2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">Saved Filters</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
               <div class="filter-search">
-                <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-                <span>Find a filter…</span>
+                <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <span>Find attributes or tags...</span>
               </div>
               <div class="filter-group-header">
                 <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M3 4h10M3 12h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
@@ -2145,9 +2251,20 @@ html, body {
 
           <div class="workspace-below">
             <div class="filter-panel">
+              <div class="filter-panel-header">
+                <span class="panel-title">Filters</span>
+                <button class="panel-action" title="Collapse all">
+                  <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h8M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </button>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M4 2h8v12l-4-2.5L4 14V2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">Saved Filters</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
               <div class="filter-search">
-                <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-                <span>Find a filter…</span>
+                <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <span>Find attributes or tags...</span>
               </div>
               <div class="filter-group-header">
                 <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M3 4h10M3 12h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
@@ -2390,9 +2507,20 @@ html, body {
 
           <div class="workspace-below">
             <div class="filter-panel">
+              <div class="filter-panel-header">
+                <span class="panel-title">Filters</span>
+                <button class="panel-action" title="Collapse all">
+                  <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h8M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </button>
+              </div>
+              <div class="filter-group-header">
+                <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M4 2h8v12l-4-2.5L4 14V2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+                <span class="label">Saved Filters</span>
+                <span class="chev"><svg viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+              </div>
               <div class="filter-search">
-                <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-                <span>Find a filter…</span>
+                <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <span>Find attributes or tags...</span>
               </div>
               <div class="filter-group-header">
                 <span class="icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M3 4h10M3 12h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
