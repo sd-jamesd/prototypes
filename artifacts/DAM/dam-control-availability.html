@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAM control availability</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Scale stone / primary raw */
+  --color-stone-50:#fefcfc; --color-stone-100:#f5f5f4; --color-stone-200:#e7e5e4;
+  --color-stone-300:#d6d3d1; --color-stone-400:#978985; --color-stone-500:#6b615e; --color-stone-900:#261e1b;
+  --color-primary-50:#e8f6fa; --color-primary-100:#c4e8f1; --color-primary-600:#0b6e8a;
+  --color-primary-700:#005f7b; --color-primary-800:#1b404e;
+  /* feedback */
+  --color-green-100:#e6f7ed; --color-green-600:#208368;
+  --color-red-100:#feebe7; --color-red-600:#d13415;
+  --color-amber-100:#ffefd5; --color-amber-600:#985b00;
+  /* filetype tints */
+  --color-teal-100:#C3FAE8; --color-navy-100:#D0D5F2; --color-violet-100:#E5DBFF;
+  --color-gold-100:#FFF4CC; --color-mint-100:#D3F9D8;
+  --filetype-image-bg:var(--color-teal-100); --filetype-vector-bg:var(--color-navy-100);
+  --filetype-document-bg:var(--color-gold-100); --filetype-video-bg:var(--color-violet-100);
+  --filetype-audio-bg:var(--color-mint-100);
+  /* semantic */
+  --surface-default:var(--color-stone-50); --surface-muted:var(--color-stone-100); --surface-emphasis:var(--color-stone-200);
+  --text-default:var(--color-stone-900); --text-muted:var(--color-stone-500); --text-subtle:var(--color-stone-400);
+  --border-default:var(--color-stone-200); --border-subtle:var(--color-stone-100); --border-emphasis:var(--color-stone-300);
+  --primary-default:var(--color-primary-600); --primary-hover:var(--color-primary-700);
+  --primary-subtle:var(--color-primary-50); --primary-muted:var(--color-primary-100);
+  /* type */
+  --font-family-text:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-family-mono:'JetBrains Mono',monospace;
+  --font-size-1:12px; --font-size-2:14px; --font-size-3:16px; --font-size-4:18px; --font-size-5:24px; --font-size-6:32px;
+  --font-weight-regular:400; --font-weight-medium:500; --font-weight-semibold:600; --font-weight-bold:700;
+  --line-height-1:16px; --line-height-2:20px; --line-height-3:24px; --line-height-5:32px; --line-height-6:40px;
+  --letter-spacing-1:0.04em; --letter-spacing-tight:-0.01em; --letter-spacing-tighter:-0.02em;
+  /* spacing / radius / shadow */
+  --spacing-1:4px; --spacing-2:8px; --spacing-3:12px; --spacing-4:16px; --spacing-5:20px;
+  --spacing-6:24px; --spacing-7:32px; --spacing-8:40px; --spacing-9:48px; --spacing-10:64px;
+  --radius-1:3px; --radius-2:4px; --radius-3:6px; --radius-4:8px; --radius-full:9999px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:0 1px 3px rgba(0,0,0,0.1),0 1px 2px rgba(0,0,0,0.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--font-family-text); font-size:var(--font-size-2); line-height:var(--line-height-2);
+  color:var(--text-default); background:var(--surface-default); -webkit-font-smoothing:antialiased;
+}
+.doc-wrapper{display:flex; min-height:100vh;}
+
+/* ---- Left nav (Scale .doc-nav) ---- */
+.doc-nav{
+  width:260px; min-width:260px; background:var(--surface-default);
+  border-right:1px solid var(--border-default); padding:var(--spacing-6) 0;
+  position:sticky; top:0; height:100vh; overflow-y:auto;
+}
+.doc-nav-title{
+  font-size:var(--font-size-3); font-weight:var(--font-weight-semibold);
+  padding:0 var(--spacing-6) var(--spacing-4); color:var(--text-default);
+  border-bottom:1px solid var(--border-default); margin-bottom:var(--spacing-4);
+}
+.doc-nav-section{
+  padding:var(--spacing-2) var(--spacing-6); font-size:var(--font-size-1);
+  font-weight:var(--font-weight-medium); color:var(--text-subtle);
+  text-transform:uppercase; letter-spacing:var(--letter-spacing-1); margin-top:var(--spacing-4);
+}
+.doc-nav a{
+  display:block; cursor:pointer; padding:var(--spacing-1) var(--spacing-6);
+  font-size:var(--font-size-2); color:var(--text-muted); text-decoration:none;
+  border-left:2px solid transparent; transition:all .15s;
+}
+.doc-nav a:hover{color:var(--text-default); background:var(--surface-muted);}
+.doc-nav a.active{
+  color:var(--primary-default); border-left-color:var(--primary-default);
+  background:var(--primary-subtle); font-weight:var(--font-weight-medium);
+}
+
+/* ---- Main (Scale .doc-main) ---- */
+.doc-main{flex:1; max-width:920px; padding:var(--spacing-8) var(--spacing-8) var(--spacing-10); margin:0 auto;}
+.doc-meta{font-size:var(--font-size-1); color:var(--text-subtle); margin-bottom:var(--spacing-6);}
+h1{font-size:var(--font-size-6); font-weight:var(--font-weight-bold); line-height:var(--line-height-6); letter-spacing:var(--letter-spacing-tighter); margin-bottom:var(--spacing-3);}
+h2{font-size:var(--font-size-5); font-weight:var(--font-weight-semibold); line-height:var(--line-height-5); letter-spacing:var(--letter-spacing-tighter); margin-top:var(--spacing-9); margin-bottom:var(--spacing-4); padding-top:var(--spacing-6); border-top:1px solid var(--border-default); scroll-margin-top:var(--spacing-5);}
+h3{font-size:var(--font-size-3); font-weight:var(--font-weight-semibold); margin-top:var(--spacing-7); margin-bottom:var(--spacing-3); scroll-margin-top:var(--spacing-5);}
+p{margin-bottom:var(--spacing-3); color:var(--text-default);}
+.lead{color:var(--text-muted); font-size:var(--font-size-3); line-height:var(--line-height-3); margin-bottom:var(--spacing-5);}
+strong{font-weight:var(--font-weight-semibold);}
+ol,ul{margin:0 0 var(--spacing-4) var(--spacing-5);}
+li{margin-bottom:var(--spacing-2);}
+code{font-family:var(--font-family-mono); font-size:var(--font-size-1); background:var(--surface-muted); border:1px solid var(--border-subtle); border-radius:var(--radius-1); padding:1px 5px; color:var(--text-default);}
+
+/* ---- The rule callout ---- */
+.callout{
+  background:var(--primary-subtle); border:1px solid var(--primary-muted);
+  border-left:3px solid var(--primary-default); border-radius:var(--radius-3);
+  padding:var(--spacing-4) var(--spacing-5); margin-bottom:var(--spacing-5);
+  font-size:var(--font-size-3); line-height:var(--line-height-3);
+}
+.callout strong{color:var(--primary-hover);}
+.subhead{font-size:var(--font-size-2); font-weight:var(--font-weight-semibold); text-transform:uppercase; letter-spacing:var(--letter-spacing-1); color:var(--text-muted); margin:var(--spacing-6) 0 var(--spacing-2);}
+.tpl{background:var(--surface-muted); border:1px solid var(--border-subtle); border-left:3px solid var(--primary-default); border-radius:var(--radius-3); padding:var(--spacing-3) var(--spacing-4); margin:var(--spacing-2) 0 var(--spacing-4); font-family:var(--font-family-mono); font-size:var(--font-size-1); line-height:1.65; white-space:pre-wrap; color:var(--text-default);}
+
+/* ---- Tables ---- */
+table{width:100%; border-collapse:collapse; margin:var(--spacing-3) 0 var(--spacing-5); font-size:var(--font-size-2);}
+th,td{text-align:left; padding:var(--spacing-2) var(--spacing-3); border-bottom:1px solid var(--border-subtle); vertical-align:top;}
+thead th{
+  font-size:var(--font-size-1); font-weight:var(--font-weight-semibold); color:var(--text-muted);
+  text-transform:uppercase; letter-spacing:var(--letter-spacing-1);
+  border-bottom:1px solid var(--border-emphasis); white-space:nowrap;
+}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:var(--surface-muted);}
+td code{white-space:nowrap;}
+
+/* matrix-specific */
+.matrix th, .matrix td{text-align:center;}
+.matrix th:first-child, .matrix td:first-child{text-align:left; font-weight:var(--font-weight-medium); white-space:normal; min-width:200px;}
+.matrix td:first-child .sub{display:block; font-weight:var(--font-weight-regular); color:var(--text-muted); font-size:var(--font-size-1); margin-top:2px;}
+.matrix thead th{font-size:11px; padding:var(--spacing-2);}
+.ft{display:inline-block; padding:2px 8px; border-radius:var(--radius-2); font-size:11px; font-weight:var(--font-weight-semibold); color:var(--text-default); text-transform:none; letter-spacing:0;}
+.ft-raster{background:var(--filetype-image-bg);} .ft-vector{background:var(--filetype-vector-bg);}
+.ft-pdf,.ft-doc{background:var(--filetype-document-bg);} .ft-video{background:var(--filetype-video-bg);}
+.ft-audio{background:var(--filetype-audio-bg);} .ft-other{background:var(--surface-emphasis);}
+.yes,.no{font-weight:var(--font-weight-bold); font-size:var(--font-size-3); line-height:1;}
+.yes{color:var(--color-green-600);} .no{color:var(--color-red-600);}
+.matrix tbody tr.universal td{background:var(--color-green-100);}
+.matrix tbody tr.universal:hover td{background:#dcefdf;}
+
+/* treatment pills for the rule table */
+.pill{display:inline-block; padding:2px 8px; border-radius:var(--radius-full); font-size:11px; font-weight:var(--font-weight-medium); white-space:nowrap;}
+.pill-active{background:var(--color-green-100); color:var(--color-green-600);}
+.pill-disabled{background:var(--surface-emphasis); color:var(--text-muted);}
+.pill-route{background:var(--color-amber-100); color:var(--color-amber-600);}
+
+.note{background:var(--surface-muted); border:1px solid var(--border-subtle); border-radius:var(--radius-3); padding:var(--spacing-4) var(--spacing-5); margin-top:var(--spacing-4);}
+.note li:last-child{margin-bottom:0;}
+.xref{color:var(--primary-default); text-decoration:none; border-bottom:1px solid var(--primary-muted);}
+.xref:hover{border-bottom-color:var(--primary-default);}
+.legend{font-size:var(--font-size-1); color:var(--text-muted); margin-bottom:var(--spacing-2);}
+.legend .yes,.legend .no{font-size:var(--font-size-2);}
+
+/* ---- Surface mockups ---- */
+.mock{border:1px solid var(--border-emphasis); border-radius:var(--radius-4); background:#fff; box-shadow:var(--shadow-md); overflow:hidden; margin:var(--spacing-3) 0 var(--spacing-2);}
+.mock-head{display:flex; align-items:center; gap:var(--spacing-2); padding:var(--spacing-3) var(--spacing-4); border-bottom:1px solid var(--border-default);}
+.mock-title{font-weight:var(--font-weight-semibold); font-size:var(--font-size-3); flex:1;}
+.mbtn{height:32px; display:inline-flex; align-items:center; gap:6px; padding:0 12px; border-radius:var(--radius-2); font-size:var(--font-size-2); font-weight:var(--font-weight-medium); cursor:default; border:1px solid var(--border-emphasis); background:#fff; color:var(--text-default); white-space:nowrap;}
+.mbtn-primary{background:var(--primary-default); color:#fff; border-color:var(--primary-default);}
+.mbtn-ghost{border:none; background:transparent; color:var(--text-muted); padding:0 8px; font-size:18px;}
+.mbtn svg{width:16px; height:16px;}
+.mock-body{display:flex; min-height:280px;}
+.mock-preview{flex:1; background:var(--surface-muted); display:flex; align-items:center; justify-content:center; color:var(--text-subtle); border-right:1px solid var(--border-default); font-size:var(--font-size-1); letter-spacing:var(--letter-spacing-1); text-transform:uppercase;}
+.mock-panel{width:230px; min-width:230px; padding:var(--spacing-5); border-right:1px solid var(--border-default);}
+.mock-panel h4{font-size:var(--font-size-4); font-weight:var(--font-weight-semibold); margin-bottom:var(--spacing-3);}
+.panel-msg{color:var(--text-muted); font-size:var(--font-size-2);}
+.rail{width:80px; min-width:80px; display:flex; flex-direction:column; padding:var(--spacing-3) 0;}
+.rail-item{display:flex; flex-direction:column; align-items:center; gap:5px; padding:var(--spacing-3) 0; font-size:11px; color:var(--text-muted); cursor:default; border-left:2px solid transparent;}
+.rail-item svg{width:20px; height:20px;}
+.rail-item.active{color:var(--primary-default); background:var(--primary-subtle); border-left-color:var(--primary-default); font-weight:var(--font-weight-medium);}
+.rail-collapse{display:flex; justify-content:center; padding:var(--spacing-2) 0 var(--spacing-4); color:var(--text-subtle);}
+.rail-collapse svg{width:18px; height:18px;}
+/* edit tools */
+.toolrail{display:flex; gap:var(--spacing-2); padding:var(--spacing-3) var(--spacing-4); border-bottom:1px solid var(--border-default); flex-wrap:wrap;}
+.tool{display:inline-flex; align-items:center; height:32px; padding:0 12px; border:1px solid var(--border-emphasis); border-radius:var(--radius-2); font-size:var(--font-size-2); background:#fff; color:var(--text-default); position:relative; cursor:default;}
+.tool.active{border-color:var(--primary-default); color:var(--primary-default); background:var(--primary-subtle); font-weight:var(--font-weight-medium);}
+.tool.disabled{opacity:.5; cursor:not-allowed; color:var(--text-subtle);}
+.tooltip{position:absolute; bottom:calc(100% + 9px); left:50%; transform:translateX(-50%); background:var(--text-default); color:#fff; font-size:var(--font-size-1); line-height:1.4; padding:6px 10px; border-radius:var(--radius-2); white-space:nowrap; box-shadow:var(--shadow-md); z-index:5;}
+.tooltip::after{content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:5px solid transparent; border-top-color:var(--text-default);}
+.caption{font-size:var(--font-size-1); color:var(--text-muted); margin:var(--spacing-2) 0 var(--spacing-6); padding:var(--spacing-2) 0 var(--spacing-2) var(--spacing-3); border-left:2px solid var(--primary-muted);}
+
+/* dark edit surface */
+.mock-dark{background:var(--color-stone-800); border-color:#1c1917;}
+.mock-dark .mock-head{border-bottom-color:rgba(255,255,255,0.1);}
+.mock-dark .mock-title{color:#fff; display:flex; align-items:center; gap:8px;}
+.mock-dark .mock-title svg{width:18px; height:18px; color:var(--primary-default);}
+.mock-dark .lead-ed{color:var(--primary-default); font-weight:var(--font-weight-semibold);}
+.mock-dark .mbtn{background:transparent; border-color:rgba(255,255,255,0.4); color:#fff;}
+.mock-dark .mbtn svg{color:#fff;}
+.mock-dark .mbtn-save{background:#fff; border-color:#fff; color:var(--color-stone-900);}
+.mock-dark .mbtn-ghost{border:none; color:rgba(255,255,255,0.7);}
+.mock-dark .mock-body{min-height:340px;}
+.rail-left{width:96px; min-width:96px; border-right:1px solid rgba(255,255,255,0.08); display:flex; flex-direction:column; padding:var(--spacing-4) 0;}
+.mock-dark .rail-item{color:rgba(255,255,255,0.55);}
+.mock-dark .rail-item.active{color:var(--primary-default); background:rgba(11,110,138,0.22); border-left-color:var(--primary-default); font-weight:var(--font-weight-medium);}
+.edit-panel{width:250px; min-width:250px; position:relative; border-right:1px solid rgba(255,255,255,0.08); padding:var(--spacing-5);}
+.edit-panel-dim{opacity:0.22; pointer-events:none;}
+.ph-label{height:8px; width:90px; background:rgba(255,255,255,0.5); border-radius:3px; margin:var(--spacing-3) 0 var(--spacing-2);}
+.ph-field{height:34px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.25); border-radius:var(--radius-2);}
+.ph-row{display:flex; gap:8px;}
+.ph-chip{width:40px; height:40px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); border-radius:var(--radius-2);}
+.panel-overlay{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:200px; text-align:center; background:rgba(40,37,36,0.94); border:1px solid rgba(255,255,255,0.1); border-radius:var(--radius-4); padding:var(--spacing-5); box-shadow:0 4px 18px rgba(0,0,0,0.5);}
+.panel-overlay h4{color:#fff; font-size:var(--font-size-3); font-weight:var(--font-weight-semibold); margin-bottom:var(--spacing-2);}
+.panel-overlay p{color:rgba(255,255,255,0.7); font-size:var(--font-size-2); line-height:var(--line-height-2); margin:0;}
+.mock-preview-dark{background:#0c0a09; border-right:none; color:#1e4fd6; font-size:26px; font-weight:800; letter-spacing:0.02em; text-transform:none;}
+
+@media(max-width:760px){
+  .doc-nav{display:none;}
+  .doc-main{padding:var(--spacing-6) var(--spacing-5);}
+  table{display:block; overflow-x:auto; white-space:nowrap;}
+  .mock-body{flex-direction:column;} .mock-panel,.rail{width:100%;}
+}
+</style>
+</head>
+<body>
+<div class="doc-wrapper">
+  <nav class="doc-nav">
+    <div class="doc-nav-title">DAM control availability</div>
+    <div class="doc-nav-section">Messaging</div>
+    <a href="#copy" data-target="copy">Copy</a>
+    <a href="#mechanics" data-target="mechanics">Mechanics</a>
+    <div class="doc-nav-section">Format matrix</div>
+    <a href="#the-line" data-target="the-line">The line</a>
+    <a href="#capability-matrix" data-target="capability-matrix">Capability × format</a>
+    <a href="#format-groups" data-target="format-groups">Format groups</a>
+    <a href="#matrix-note" data-target="matrix-note">Note</a>
+    <div class="doc-nav-section">Examples</div>
+    <a href="#ex-lightbox" data-target="ex-lightbox">Lightbox surface</a>
+    <a href="#ex-edit" data-target="ex-edit">Edit Mode surface</a>
+  </nav>
+
+  <main class="doc-main">
+    <h1>DAM control availability</h1>
+    <p class="doc-meta">Dev reference · Lightbox + Edit Mode · Scale design system</p>
+
+    <h2 id="copy">Copy</h2>
+    <p>These messages come from three families — each a template populated per feature, so there's no need to write a separate message for every tab. Most are family A: one template, where you swap the feature name and its supported formats.</p>
+
+    <p class="subhead">A · Format relevance</p>
+    <p>Tab → render title + body in the panel. In-panel control → render the body only, as a tooltip. Same source string either way.</p>
+    <div class="tpl">Title   {feature} not available
+Body    {feature} is only available for {formats}.
+
+render  `${feature} is only available for ${joinOr(formats)}.`
+        // joinOr(["JPEG","PNG","WebP"]) → "JPEG, PNG, or WebP"</div>
+    <p>The renderer is written once; each feature supplies its own row:</p>
+    <table>
+      <thead><tr><th>Feature (tab)</th><th>{feature}</th><th>{formats} — supported</th></tr></thead>
+      <tbody>
+        <tr><td>Adjustments</td><td>Image adjustments</td><td>JPEG, PNG, WebP</td></tr>
+        <tr><td>Similar</td><td>Visual similarity</td><td>JPEG, PNG, WebP</td></tr>
+        <tr><td>AI Tags</td><td>AI tagging</td><td>JPEG, PNG, WebP</td></tr>
+        <tr><td>OCR</td><td>Text recognition</td><td>JPEG, PNG, WebP, PDF</td></tr>
+      </tbody>
+    </table>
+    <p class="legend">List supported formats when that set is short (the common case). Flip to the negative — <code>Not available for {fileType} files.</code> — only when the supported set is long and the excluded set is short. Adding a feature means adding a row, not new code.</p>
+
+    <p class="subhead">B · Rights</p>
+    <div class="tpl">You don't have rights to {action}. [Request access]</div>
+    <p>Stays active and routes — not disabled. e.g. <code>You don't have rights to download the original. [Request access]</code></p>
+
+    <p class="subhead">C · State &amp; control-level</p>
+    <table>
+      <thead><tr><th>Case</th><th>Text</th></tr></thead>
+      <tbody>
+        <tr><td>Draft / locked</td><td><code>Available once this version is approved.</code></td></tr>
+        <tr><td>No upscale</td><td><code>Original image is too small.</code></td></tr>
+      </tbody>
+    </table>
+
+    <p class="subhead">D · AI result states <span style="text-transform:none; letter-spacing:0; font-weight:var(--font-weight-regular); color:var(--text-subtle)">— async: AI Tags, Similar</span></p>
+    <p>These tabs are async and the results are AI-generated, so every state carries the AI treatment — two of three: gradient/shimmer, sparkle icon, AI badge. Lifecycle:</p>
+    <table>
+      <thead><tr><th>State</th><th>AI Tags</th><th>Similar</th></tr></thead>
+      <tbody>
+        <tr><td>Generating <span class="sub" style="display:block;color:var(--text-muted);font-size:11px;">first run — model computing</span></td><td><code>Generating tags…</code></td><td><code>Finding similar assets…</code></td></tr>
+        <tr><td>Loading <span class="sub" style="display:block;color:var(--text-muted);font-size:11px;">fetching cached results</span></td><td><code>Loading tags…</code></td><td><code>Loading similar assets…</code></td></tr>
+        <tr><td>Empty <span class="sub" style="display:block;color:var(--text-muted);font-size:11px;">ran, nothing found</span></td><td><code>No tags generated for this asset.</code></td><td><code>No visually similar assets found in this library.</code></td></tr>
+        <tr><td>Error</td><td><code>Couldn't generate tags. Retry.</code></td><td><code>Couldn't load similar assets. Retry.</code></td></tr>
+      </tbody>
+    </table>
+    <p class="legend">Generating is slower than loading (the model is running), so use an AI shimmer skeleton — not a bare spinner — and add a "This can take a moment." subline if it may exceed a couple of seconds. Loading is a brief skeleton. Format-unavailable uses family A, not this lifecycle.</p>
+
+    <h2 id="mechanics">Mechanics</h2>
+    <p>Disabled = <code>opacity:0.5; cursor:not-allowed; color:var(--text-subtle)</code> (Scale <code>.btn:disabled</code>), <code>aria-disabled="true"</code>, and <strong>keep focusable</strong> so the tooltip is reachable by keyboard. View/nav tabs use standard tab semantics — never <code>aria-disabled</code>; the panel content is the announced state.</p>
+
+    <!-- ============ FORMAT MATRIX ============ -->
+    <h2 id="the-line">The line</h2>
+    <div class="callout">
+      AI features and transformations/adjustments run on <strong>raster image formats only</strong>. Every other format gets asset management + whatever preview its type supports.
+    </div>
+    <p>This matrix says <em>which</em> formats unlock each capability; the <a class="xref" href="#the-rule">rules above</a> say <em>how</em> to present a blocked one.</p>
+
+    <h3 id="capability-matrix">Capability × format</h3>
+    <p class="legend"><span class="yes">✓</span> supported &nbsp; <span class="no">✗</span> not supported</p>
+    <table class="matrix">
+      <thead>
+        <tr>
+          <th>Capability</th>
+          <th><span class="ft ft-raster">Raster</span></th>
+          <th><span class="ft ft-vector">Vector</span></th>
+          <th><span class="ft ft-pdf">PDF</span></th>
+          <th><span class="ft ft-doc">Doc</span></th>
+          <th><span class="ft ft-video">Video</span></th>
+          <th><span class="ft ft-audio">Audio</span></th>
+          <th><span class="ft ft-other">Other</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>AI Tags</td><td><span class="yes">✓</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td></tr>
+        <tr><td>Visual similarity (Similar)</td><td><span class="yes">✓</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td></tr>
+        <tr><td>OCR</td><td><span class="yes">✓</span></td><td><span class="no">✗</span></td><td><span class="yes">✓</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td></tr>
+        <tr><td>Transform &amp; adjust <span class="sub">crop, resize, rotate/flip, focal point, presets, convert</span></td><td><span class="yes">✓</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td></tr>
+        <tr><td>Preview / playback</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="no">✗</span></td></tr>
+        <tr><td>Page nav / thumbnails</td><td><span class="no">✗</span></td><td><span class="no">✗</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td><td><span class="no">✗</span></td></tr>
+        <tr class="universal"><td>Asset management <span class="sub">download, share, metadata, attributes, version, queue, move/rename/delete</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="format-groups">Format groups</h3>
+    <p class="legend">Map by MIME / extension.</p>
+    <table>
+      <tbody>
+        <tr><td><span class="ft ft-raster">Raster</span></td><td>JPG, JPEG, PNG, TIFF, WebP, GIF, BMP, HEIC, + camera RAW (CR2, NEF, DNG…)</td></tr>
+        <tr><td><span class="ft ft-vector">Vector</span></td><td>SVG, EPS, AI</td></tr>
+        <tr><td><span class="ft ft-pdf">PDF</span></td><td>PDF</td></tr>
+        <tr><td><span class="ft ft-doc">Doc</span></td><td>DOCX, PPTX, XLSX</td></tr>
+        <tr><td><span class="ft ft-video">Video</span></td><td>MP4, MOV, WebM…</td></tr>
+        <tr><td><span class="ft ft-audio">Audio</span></td><td>MP3, WAV, AAC…</td></tr>
+        <tr><td><span class="ft ft-other">Other</span></td><td>ZIP, fonts, 3D, raw data — no in-app preview</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="matrix-note">Note</h3>
+    <div class="note">
+      <ul>
+        <li><strong>Vector AI is deferred, not impossible.</strong> We can generate the raster previews vector AI tagging/similarity would need, but the token cost isn't justified yet. Revisit when that changes — the only change required is flipping the vector cells on the AI Tags and Visual similarity rows.</li>
+        <li><strong>OCR is the one AI feature that extends past raster</strong> — it runs on PDFs (scanned/text), so it's ✓ for PDF.</li>
+        <li><strong>"Raster" is the gate; the adjustment editor's real supported set is narrower</strong> — JPEG, PNG, WebP. Drive the panel message from that actual list, not the broad raster group: TIFF / HEIC / RAW may preview but not adjust.</li>
+        <li><strong>Audio uses the same player as video</strong> — preview/playback ✓. AI and transforms still don't apply.</li>
+        <li><strong>Bulk download = lowest common quality</strong> across the selection — a tier unavailable for any one asset is unavailable for the set.</li>
+      </ul>
+    </div>
+    <!-- ============ EXAMPLES ============ -->
+    <h2 id="ex-lightbox">Example · Lightbox surface</h2>
+    <p>A PDF asset. <strong>AI Tags</strong> and <strong>Similar</strong> don't apply to PDFs — but the tabs stay active and the panel does the explaining. No tab is greyed; the rail looks identical to an image asset's. The Similar tab is selected below.</p>
+    <div class="mock">
+      <div class="mock-head">
+        <span class="mock-title">FIFA_Sponsorship_Deck.pdf</span>
+        <span class="mbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 5h10M11 12h10M11 19h10M3 5l1.5 1.5L7 4M3 12l1.5 1.5L7 11M3 19l1.5 1.5L7 18"/></svg>Add to Queue</span>
+        <span class="mbtn mbtn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>Download</span>
+        <span class="mbtn mbtn-ghost">&middot;&middot;&middot;</span>
+        <span class="mbtn mbtn-ghost">&times;</span>
+      </div>
+      <div class="mock-body">
+        <div class="mock-preview">PDF preview</div>
+        <div class="mock-panel">
+          <h4>Similar</h4>
+          <p class="panel-msg">Visual similarity is only available for JPEG, PNG, or WebP files.</p>
+        </div>
+        <div class="rail">
+          <div class="rail-collapse"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></div>
+          <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>General</div>
+          <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8 7l8 9"/></svg>Attributes</div>
+          <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l1.8 4.7L18.5 9.5 13.8 11.3 12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/></svg>AI Tags</div>
+          <div class="rail-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l1.8 4.7L18.5 9.5 13.8 11.3 12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/></svg>Similar</div>
+          <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7l8-4 8 4-8 4z"/><path d="M4 7v6l8 4 8-4V7"/></svg>Metadata</div>
+          <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>Download</div>
+        </div>
+      </div>
+    </div>
+    <p class="caption">Rule: tab &rarr; always active, message in panel. AI Tags gets the same treatment if selected. General, Attributes, Metadata and Download work normally.</p>
+
+    <h2 id="ex-edit">Example · Edit Mode surface</h2>
+    <p>Edit Mode is the same tab + panel shape as the lightbox — a left rail (Details, Attributes, Adjustments, Ai, Versions, Rights, Access) and a panel. A PDF here: <strong>Adjustments</strong> doesn't apply, so the tab stays active and the <em>panel</em> carries the message — the tab is never greyed. It's a dark surface, so contrast follows Scale's dark specs.</p>
+    <div class="mock mock-dark">
+      <div class="mock-head">
+        <span class="mock-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 14l5-5 2 2-5 5H8z"/></svg><span class="lead-ed">Editing</span> &middot; fcm_4cf_s</span>
+        <span class="mbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>Download</span>
+        <span class="mbtn mbtn-save">Save</span>
+        <span class="mbtn mbtn-ghost">&times;</span>
+      </div>
+      <div class="mock-body">
+        <div class="rail rail-left">
+          <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>Details</div>
+          <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8 7l8 9"/></svg>Attributes</div>
+          <div class="rail-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2v14a2 2 0 0 0 2 2h14M2 6h14a2 2 0 0 1 2 2v14"/></svg>Adjustments</div>
+          <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l1.8 4.7L18.5 9.5 13.8 11.3 12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/></svg>Ai</div>
+          <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M6 8.5v7M18 8v3a3 3 0 0 1-3 3H9"/><circle cx="18" cy="6" r="2.5"/></svg>Versions</div>
+          <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/></svg>Rights</div>
+          <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.5a3 3 0 0 1 0 5.8"/><path d="M20.5 20a5.5 5.5 0 0 0-3.5-5.1"/></svg>Access</div>
+        </div>
+        <div class="edit-panel">
+          <div class="edit-panel-dim">
+            <div class="ph-label" style="width:120px;"></div>
+            <div class="ph-field"></div>
+            <div class="ph-label" style="width:60px;"></div>
+            <div class="ph-row"><div class="ph-chip"></div><div class="ph-chip"></div></div>
+            <div class="ph-label"></div>
+            <div class="ph-field"></div>
+          </div>
+          <div class="panel-overlay">
+            <h4>Adjustments not available</h4>
+            <p>Image adjustments are only available for JPEG, PNG, or WebP files.</p>
+          </div>
+        </div>
+        <div class="mock-preview mock-preview-dark">FIFA</div>
+      </div>
+    </div>
+    <p class="caption">Rule: tab &rarr; always active, message in panel — identical to the lightbox. Copy lists the supported formats (more actionable than naming the excluded type). Per-control disable + tooltip is reserved for individual options <em>inside</em> an applicable panel (a no-upscale size, a rights-locked quality tier), not for a whole feature that doesn't apply.</p>
+
+  </main>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.doc-nav a'));
+  var targets = links.map(function(a){ return document.getElementById(a.dataset.target); });
+  function onScroll(){
+    var pos = window.scrollY + 120;
+    var current = targets[0].id;
+    for (var i=0;i<targets.length;i++){
+      if (targets[i] && targets[i].offsetTop <= pos) current = targets[i].id;
+    }
+    links.forEach(function(a){ a.classList.toggle('active', a.dataset.target === current); });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+</body>
+</html>
