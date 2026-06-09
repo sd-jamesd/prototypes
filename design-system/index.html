@@ -110,13 +110,6 @@
   --color-cyan-500: #00a2c7;
   --color-cyan-600: #107d98;
 
-  /* ---- Filetype ---- */
-  --color-teal-100: #C3FAE8;
-  --color-navy-100: #D0D5F2;
-  --color-violet-100: #E5DBFF;
-  --color-gold-100: #FFF4CC;
-  --color-mint-100: #D3F9D8;
-
   /* ---- Semantic: Surface ---- */
   --surface-default: var(--color-stone-50);
   --surface-subtle: var(--color-stone-50);
@@ -165,12 +158,9 @@
   --status-review-border: var(--color-purple-500);
   --status-review-fg: var(--color-purple-700);
 
-  /* ---- Filetype ---- */
-  --filetype-image-bg: var(--color-teal-100);
-  --filetype-vector-bg: var(--color-navy-100);
-  --filetype-video-bg: var(--color-violet-100);
-  --filetype-document-bg: var(--color-gold-100);
-  --filetype-audio-bg: var(--color-mint-100);
+  /* ---- Filetype badge (neutral — identity, not state) ---- */
+  --filetype-badge-bg: rgba(28,28,25,0.62); /* sand-900 @ 62% scrim — legible on any thumbnail */
+  --filetype-badge-fg: #ffffff;
 
   /* ---- Spacing (8pt grid) ---- */
   --spacing-1: 4px;
@@ -613,6 +603,8 @@ pre code {
   align-items: center;
   padding: 2px 8px;
   border-radius: var(--radius-2);
+  background: var(--filetype-badge-bg);
+  color: var(--filetype-badge-fg);
   font-size: 11px;
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
@@ -878,7 +870,7 @@ pre code {
 /* === Component styles from scale-docs-section-5.html === */
 .example-render-dark{padding:var(--spacing-6);background:var(--color-stone-900);}
 .example-code{border-top:1px solid var(--border-default);background:var(--color-stone-900);color:#e0e6f0;padding:var(--spacing-4);font-family:var(--font-family-mono);font-size:12.5px;line-height:18px;overflow-x:auto;}
-.filetype-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:var(--radius-2);font-size:11px;font-weight:var(--font-weight-semibold);text-transform:uppercase;letter-spacing:0.05em;}
+.filetype-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:var(--radius-2);background:var(--filetype-badge-bg);color:var(--filetype-badge-fg);font-size:11px;font-weight:var(--font-weight-semibold);text-transform:uppercase;letter-spacing:0.05em;}
 
 .avatar{display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius-full);font-weight:var(--font-weight-semibold);color:var(--color-stone-50);flex-shrink:0;}
 .avatar-sm{width:24px;height:24px;font-size:10px;}
@@ -1712,7 +1704,7 @@ pre code {
   </div>
 </div>
 
-<h4>Semantic Colour Ramps (status/filetype)</h4>
+<h4>Semantic Colour Ramps (status)</h4>
 <div class="example-block">
   <div class="example-label">Colour ramps — each status has bg / border / fg</div>
   <div class="example-render" style="display:flex; flex-wrap:wrap; gap:16px;">
@@ -2056,32 +2048,30 @@ pre code {
 
 <!-- Filetype Tokens -->
 <h2 id="filetype-tokens">File Type Tokens</h2>
-<p>File type badges use a separate token namespace from status badges. The visual differentiation rule: <strong>light-bg/border = status</strong>; <strong>solid-fill = filetype</strong>.</p>
+<p>File type is a static identity attribute, not a state — so it does not earn colour. The badge renders in a single neutral treatment regardless of type; the label text carries the meaning. <strong>Hue belongs to state and rights only; identity attributes render neutral.</strong></p>
 
 <div class="example-block">
-  <div class="example-label">File type badges</div>
+  <div class="example-label">File type badges — one neutral treatment for every type</div>
   <div class="example-render" style="display:flex; gap:8px; flex-wrap:wrap;">
-    <span class="filetype-badge" style="background:var(--filetype-image-bg); color:#0d6e5c;">JPG</span>
-    <span class="filetype-badge" style="background:var(--filetype-image-bg); color:#0d6e5c;">PNG</span>
-    <span class="filetype-badge" style="background:var(--filetype-vector-bg); color:#2a3577;">SVG</span>
-    <span class="filetype-badge" style="background:var(--filetype-vector-bg); color:#2a3577;">AI</span>
-    <span class="filetype-badge" style="background:var(--filetype-video-bg); color:#5B21B6;">MP4</span>
-    <span class="filetype-badge" style="background:var(--filetype-document-bg); color:#4E350D;">PDF</span>
-    <span class="filetype-badge" style="background:var(--filetype-document-bg); color:#4E350D;">DOCX</span>
-    <span class="filetype-badge" style="background:var(--filetype-audio-bg); color:#1E442D;">MP3</span>
+    <span class="filetype-badge">JPG</span>
+    <span class="filetype-badge">PNG</span>
+    <span class="filetype-badge">SVG</span>
+    <span class="filetype-badge">AI</span>
+    <span class="filetype-badge">MP4</span>
+    <span class="filetype-badge">PDF</span>
+    <span class="filetype-badge">DOCX</span>
+    <span class="filetype-badge">MP3</span>
   </div>
 </div>
 
 <table class="token-table">
-  <thead><tr><th>File group</th><th>Token</th><th>Covers</th></tr></thead>
+  <thead><tr><th>Token</th><th>Value</th><th>Rationale</th></tr></thead>
   <tbody>
-    <tr><td>Image</td><td><code>--filetype-image-bg</code> (teal)</td><td>JPG, PNG, GIF, WebP, TIFF</td></tr>
-    <tr><td>Vector</td><td><code>--filetype-vector-bg</code> (navy)</td><td>SVG, AI, EPS</td></tr>
-    <tr><td>Video</td><td><code>--filetype-video-bg</code> (violet)</td><td>MP4, MOV, AVI, WebM</td></tr>
-    <tr><td>Document</td><td><code>--filetype-document-bg</code> (gold)</td><td>PDF, DOCX, XLSX, PPTX, TXT</td></tr>
-    <tr><td>Audio</td><td><code>--filetype-audio-bg</code> (mint)</td><td>MP3, WAV, FLAC, AAC</td></tr>
+    <tr><td><code>--filetype-badge-bg</code></td><td><code>rgba(28,28,25,0.62)</code> (sand-900 @ 62%)</td><td>Neutral scrim, legible on any thumbnail — dark photo, white packaging, or transparent PNG</td></tr>
+    <tr><td><code>--filetype-badge-fg</code></td><td><code>#ffffff</code></td><td>White text clears AA on the scrim at every luminosity</td></tr>
   </tbody>
 </table>
+<p style="font-size:13px;color:var(--text-subtle);">Per-type colour (<code>--filetype-image-bg</code> etc.) was retired: five buckets can't identify 20+ real extensions, the label already does, and saturated per-type fills collided with the card's state signals (filetype blue vs in-approval; filetype violet vs on-workflow) and failed WCAG 1.4.1.</p>
 
 
 
@@ -4085,18 +4075,18 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
 </div>
 
 <h3>File Type Badges</h3>
-<p>Separate token namespace from status. Visual rule: <strong>light-bg/border = status</strong>; <strong>solid fill = filetype</strong>.</p>
+<p>Identity, not state — one neutral treatment for every type. <strong>Hue belongs to state and rights only.</strong></p>
 <div class="example-block">
-  <div class="example-label">File type badges — grouped by category</div>
+  <div class="example-label">File type badges — neutral, label carries the type</div>
   <div class="example-render" style="display:flex;gap:8px;flex-wrap:wrap;">
-    <span class="filetype-badge" style="background:var(--filetype-image-bg);color:#0d6e5c;">JPG</span>
-    <span class="filetype-badge" style="background:var(--filetype-image-bg);color:#0d6e5c;">PNG</span>
-    <span class="filetype-badge" style="background:var(--filetype-vector-bg);color:#2a3577;">SVG</span>
-    <span class="filetype-badge" style="background:var(--filetype-vector-bg);color:#2a3577;">AI</span>
-    <span class="filetype-badge" style="background:var(--filetype-video-bg);color:var(--color-purple-700);">MP4</span>
-    <span class="filetype-badge" style="background:var(--filetype-document-bg);color:var(--color-amber-700);">PDF</span>
-    <span class="filetype-badge" style="background:var(--filetype-document-bg);color:var(--color-amber-700);">DOCX</span>
-    <span class="filetype-badge" style="background:var(--filetype-audio-bg);color:var(--color-green-700);">MP3</span>
+    <span class="filetype-badge">JPG</span>
+    <span class="filetype-badge">PNG</span>
+    <span class="filetype-badge">SVG</span>
+    <span class="filetype-badge">AI</span>
+    <span class="filetype-badge">MP4</span>
+    <span class="filetype-badge">PDF</span>
+    <span class="filetype-badge">DOCX</span>
+    <span class="filetype-badge">MP3</span>
   </div>
 </div>
 
@@ -4282,7 +4272,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
       <div class="asset-meta">
         <div class="asset-name">campaign-hero-v2.jpg</div>
         <div class="asset-detail">
-          <span class="filetype-badge" style="background:var(--filetype-image-bg);color:#0d6e5c;font-size:9px;padding:1px 4px;">JPG</span>
+          <span class="filetype-badge" style="font-size:9px;padding:1px 4px;">JPG</span>
           <span style="margin-left:4px;">2.4 MB</span>
         </div>
       </div>
@@ -4299,7 +4289,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
       <div class="asset-meta">
         <div class="asset-name">brand-logo-dark.svg</div>
         <div class="asset-detail">
-          <span class="filetype-badge" style="background:var(--filetype-vector-bg);color:#2a3577;font-size:9px;padding:1px 4px;">SVG</span>
+          <span class="filetype-badge" style="font-size:9px;padding:1px 4px;">SVG</span>
           <span style="margin-left:4px;">48 KB</span>
         </div>
       </div>
@@ -4316,7 +4306,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
       <div class="asset-meta">
         <div class="asset-name">product-video-final.mp4</div>
         <div class="asset-detail">
-          <span class="filetype-badge" style="background:var(--filetype-video-bg);color:var(--color-purple-700);font-size:9px;padding:1px 4px;">MP4</span>
+          <span class="filetype-badge" style="font-size:9px;padding:1px 4px;">MP4</span>
           <span style="margin-left:4px;">128 MB</span>
         </div>
       </div>
@@ -4331,7 +4321,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
     <tr><td>Border</td><td><code>--border-default</code> (2px)</td><td><code>--primary-default</code> (2px)</td></tr>
     <tr><td>Checkbox fill</td><td>white</td><td><code>--primary-default</code></td></tr>
     <tr><td>Hover actions</td><td>checkbox (top-left) + overflow (top-right)</td><td>same, always visible</td></tr>
-    <tr><td>Filetype badge</td><td colspan="2"><code>--filetype-{group}-bg</code></td></tr>
+    <tr><td>Filetype badge</td><td colspan="2"><code>--filetype-badge-bg</code> / <code>--filetype-badge-fg</code> (neutral, all types)</td></tr>
   </tbody>
 </table>
 

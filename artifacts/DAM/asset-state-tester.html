@@ -35,12 +35,6 @@
     --color-purple-500: #8e4ec6;
     --color-purple-700: #5B21B6;
 
-    --color-teal-100: #d1ece4;
-    --color-navy-100: #d6dafb;
-    --color-violet-100: #ece2fc;
-    --color-gold-100: #fce4b4;
-    --color-mint-100: #d5ebd7;
-
     --color-primary-50: #e8f1f5;
     --color-primary-500: #0B6E8A;
     --color-primary-600: #0a5d75;
@@ -73,11 +67,9 @@
     --status-rejected-bg: var(--color-red-100);
     --status-rejected-fg: var(--color-red-700);
 
-    /* Filetype namespace */
-    --filetype-image-bg: var(--color-teal-100);
-    --filetype-vector-bg: var(--color-navy-100);
-    --filetype-video-bg: var(--color-violet-100);
-    --filetype-document-bg: var(--color-gold-100);
+    /* Filetype badge (neutral — identity, not state) */
+    --filetype-badge-bg: rgba(28,28,25,0.62); /* sand-900 @ 62% scrim — legible on any thumbnail */
+    --filetype-badge-fg: #ffffff;
 
     --spacing-1: 4px; --spacing-2: 8px; --spacing-3: 12px; --spacing-4: 16px;
     --spacing-5: 20px; --spacing-6: 24px; --spacing-7: 32px;
@@ -335,7 +327,7 @@
     object-fit: cover;
   }
 
-  /* Filetype badge — bottom-right (matches existing DAM screenshot) */
+  /* Filetype badge — bottom-right · neutral scrim, legible on any thumbnail */
   .filetype-badge {
     position: absolute;
     bottom: 8px;
@@ -346,8 +338,8 @@
     font-weight: var(--font-weight-semibold);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    background: #2196F3;
-    color: white;
+    background: var(--filetype-badge-bg);
+    color: var(--filetype-badge-fg);
   }
 
   /* Rights badge — bottom left (proposed --rights-* namespace) */
@@ -1851,8 +1843,9 @@
   function renderTokens() {
     const el = document.getElementById('token-block');
     const lines = [];
-    lines.push(`<span class="tk-comment">/* Filetype — top right (always rendered) */</span>`);
-    lines.push(`<span class="tk-var">--filetype-image-bg</span>: <span class="tk-val">var(--color-teal-100)</span>;`);
+    lines.push(`<span class="tk-comment">/* Filetype — bottom right (always rendered, neutral) */</span>`);
+    lines.push(`<span class="tk-var">--filetype-badge-bg</span>: <span class="tk-val">rgba(28,28,25,0.62)</span>;`);
+    lines.push(`<span class="tk-var">--filetype-badge-fg</span>: <span class="tk-val">#ffffff</span>;`);
 
     if (state.rights === 'embargoed') {
       lines.push(``);
