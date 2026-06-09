@@ -308,28 +308,7 @@
     flex-direction: column;
   }
 
-  /* Variant A — simplified single-shape icons */
-  .state-badge.variant-a svg {
-    width: 12px;
-    height: 12px;
-    stroke-width: 2.75;
-  }
-
-  /* Variant B — single-stroke glyphs (tick, arrow, square) */
-  .state-badge.variant-b svg {
-    width: 13px;
-    height: 13px;
-    stroke-width: 3;
-  }
-
-  /* Variant C — colour-only filled circles, no icons */
-  .state-badge.variant-c {
-    width: 14px;
-    height: 14px;
-    border: 2px solid white;
-    box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
-  }
-  .state-badge.variant-c svg { display: none; }
+  /* Triple card frame retired — single card preview now */
 
   /* ============ ASSET CARD (Scale spec) ============ */
   .asset-card {
@@ -449,39 +428,16 @@
   }
 
   /* State indicators — right-aligned in detail row.
-     Circular coloured badges with white icons.
-     Each axis has ONE colour, binary on/off per axis. */
+     Final spec: 10px coloured dot, 2px white ring, 1px outer shadow.
+     No icons — colour does the work at production scale. */
   .state-indicators {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 10px;
   }
-  .state-badge {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    cursor: pointer;
-    flex-shrink: 0;
-    position: relative;
-  }
-  .state-badge svg {
-    width: 11px;
-    height: 11px;
-    stroke-width: 2.5;
-  }
-  .state-badge.archived {
-    background: var(--color-stone-600);
-  }
-  .state-badge.workflow {
-    background: var(--color-purple-500);
-  }
-  .state-badge.approval {
-    background: #3b82f6;
-  }
+  .state-badge.archived  { background: var(--color-stone-600); }
+  .state-badge.approval  { background: #3b82f6; }
+  .state-badge.workflow  { background: var(--color-purple-500); }
 
   /* ============ INSTANT TOOLTIPS ============
      Native title tooltips have a ~500ms browser delay we can't control.
@@ -631,50 +587,58 @@
   .rights-banner .rb-sep { opacity: 0.4; margin: 0 6px; }
   .rights-banner .rb-secondary { opacity: 0.85; }
 
-  /* Light-mode state chips — sit under asset title */
+  /* State chip — used in list rows and lightbox header.
+     Same colour vocabulary as the card dot. Real chip-dot element,
+     no ring (chip's own background/border provides framing). */
   .state-chip {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 3px 10px 3px 4px;
+    gap: 8px;
+    padding: 4px 12px 4px 10px;
     border-radius: 100px;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: var(--font-weight-medium);
     border: 1px solid;
+    line-height: 1.2;
   }
-  .state-chip .chip-icon {
-    width: 16px;
-    height: 16px;
+  /* Canonical state dot — same colour, ring, and shadow on card and inside chips.
+     Size adapts by role: 10px on the card (lead signal), 8px in chips (supporting the label). */
+  .state-badge,
+  .chip-dot {
     border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    box-shadow:
+      0 0 0 2px white,
+      0 0 0 3px rgba(0, 0, 0, 0.08);
     flex-shrink: 0;
-    color: white;
   }
-  .state-chip .chip-icon svg {
+  .state-badge {
     width: 10px;
     height: 10px;
-    stroke-width: 2.5;
+    cursor: pointer;
+    position: relative;
+  }
+  .chip-dot {
+    width: 8px;
+    height: 8px;
   }
   .state-chip.archived {
     background: var(--color-stone-100);
     border-color: var(--color-stone-300);
     color: var(--color-stone-700);
   }
-  .state-chip.archived .chip-icon { background: var(--color-stone-600); }
+  .state-chip.archived .chip-dot { background: var(--color-stone-600); }
   .state-chip.approval {
     background: #eff6ff;
     border-color: #bfdbfe;
     color: #1e40af;
   }
-  .state-chip.approval .chip-icon { background: #3b82f6; }
+  .state-chip.approval .chip-dot { background: #3b82f6; }
   .state-chip.workflow {
     background: #f5f0ff;
     border-color: #d8b4fe;
     color: #6b21a8;
   }
-  .state-chip.workflow .chip-icon { background: var(--color-purple-500); }
+  .state-chip.workflow .chip-dot { background: var(--color-purple-500); }
 
   .lightbox-body {
     display: grid;
@@ -836,6 +800,117 @@
     color: var(--color-amber-700);
   }
   .rights-banner-mini svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+  /* ============ PRODUCTION SPEC CARD ============ */
+  .spec-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-5);
+    margin-bottom: var(--spacing-5);
+  }
+  .spec-tile {
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    padding: var(--spacing-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+  .spec-tile-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--spacing-2);
+  }
+  .spec-tile-title {
+    font-size: var(--font-size-3);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-default);
+  }
+  .spec-tile-meta {
+    font-size: var(--font-size-1);
+    color: var(--text-subtle);
+    font-family: var(--font-family-mono);
+  }
+  .spec-tile-visual {
+    background: white;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+    padding: var(--spacing-5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 64px;
+  }
+  .spec-tile-role {
+    font-size: var(--font-size-2);
+    color: var(--text-subtle);
+    line-height: 1.5;
+  }
+
+  .spec-section {
+    margin-top: var(--spacing-5);
+  }
+  .spec-section-label {
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-subtle);
+    margin-bottom: var(--spacing-3);
+  }
+
+  .spec-colours {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--spacing-3);
+  }
+  .spec-colour-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: 10px 12px;
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+  }
+  .spec-colour-row .swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  }
+  .spec-colour-row .label {
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-default);
+    flex: 1;
+  }
+  .spec-colour-row .token {
+    font-size: 11px;
+    font-family: var(--font-family-mono);
+    color: var(--text-subtle);
+  }
+
+  .spec-code {
+    background: var(--color-stone-900);
+    color: #e6e6e0;
+    padding: var(--spacing-4) var(--spacing-5);
+    border-radius: var(--radius-2);
+    font-family: var(--font-family-mono);
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-x: auto;
+  }
+  .spec-code .c-comment { color: #6b7d75; }
+  .spec-code .c-selector { color: #92c5b8; }
+  .spec-code .c-prop { color: #d4a574; }
+  .spec-code .c-val { color: #e6e6e0; }
+  .spec-code .c-tag { color: #92c5b8; }
+  .spec-code .c-attr { color: #d4a574; }
+  .spec-code .c-string { color: #e6c585; }
 
   /* ============ LIST ROW PREVIEW ============ */
   .list-frame {
@@ -1216,55 +1291,28 @@
 
     <div class="stage-grid">
 
-      <!-- Card preview — two variants for icon comparison -->
+      <!-- Card preview — single canonical treatment -->
       <div class="preview-block preview-block-full">
-        <h3>Card · icon treatment comparison</h3>
-        <div class="card-frame card-frame-triple">
-
-          <div class="card-frame-col">
-            <div class="card-frame-label">A · simplified icons</div>
-            <div class="asset-card" id="asset-card-a">
-              <div class="asset-thumb">
-                <div class="thumb-placeholder">🖼</div>
-                <div style="position:absolute;top:8px;left:8px;width:18px;height:18px;border:1.5px solid var(--color-stone-400);border-radius:var(--radius-1);background:rgba(255,255,255,0.9);"></div>
-                <div style="position:absolute;top:8px;right:8px;width:22px;height:22px;background:rgba(255,255,255,0.9);border-radius:var(--radius-1);display:flex;align-items:center;justify-content:center;color:var(--text-subtle);">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="18" r="1"/></svg>
-                </div>
-                <span class="filetype-badge">JPG</span>
-                <div id="rights-badge-slot-a"></div>
+        <h3>Card</h3>
+        <div class="card-frame">
+          <div class="asset-card" id="asset-card-a">
+            <div class="asset-thumb">
+              <div class="thumb-placeholder">🖼</div>
+              <div style="position:absolute;top:8px;left:8px;width:18px;height:18px;border:1.5px solid var(--color-stone-400);border-radius:var(--radius-1);background:rgba(255,255,255,0.9);"></div>
+              <div style="position:absolute;top:8px;right:8px;width:22px;height:22px;background:rgba(255,255,255,0.9);border-radius:var(--radius-1);display:flex;align-items:center;justify-content:center;color:var(--text-subtle);">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="18" r="1"/></svg>
               </div>
-              <div class="asset-meta">
-                <div class="asset-name"><span id="filename-text-a">FIFA_WC2026_Logo_Primary_RGB.svg</span></div>
-                <div class="asset-detail">
-                  <span class="asset-detail-left">03 Jun 2026</span>
-                  <span class="state-indicators" id="status-dots-a"></span>
-                </div>
+              <span class="filetype-badge">JPG</span>
+              <div id="rights-badge-slot-a"></div>
+            </div>
+            <div class="asset-meta">
+              <div class="asset-name"><span id="filename-text-a">FIFA_WC2026_Logo_Primary_RGB.svg</span></div>
+              <div class="asset-detail">
+                <span class="asset-detail-left">03 Jun 2026</span>
+                <span class="state-indicators" id="status-dots-a"></span>
               </div>
             </div>
           </div>
-
-          <div class="card-frame-col">
-            <div class="card-frame-label">C · colour-only dots</div>
-            <div class="asset-card" id="asset-card-c">
-              <div class="asset-thumb">
-                <div class="thumb-placeholder">🖼</div>
-                <div style="position:absolute;top:8px;left:8px;width:18px;height:18px;border:1.5px solid var(--color-stone-400);border-radius:var(--radius-1);background:rgba(255,255,255,0.9);"></div>
-                <div style="position:absolute;top:8px;right:8px;width:22px;height:22px;background:rgba(255,255,255,0.9);border-radius:var(--radius-1);display:flex;align-items:center;justify-content:center;color:var(--text-subtle);">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="18" r="1"/></svg>
-                </div>
-                <span class="filetype-badge">JPG</span>
-                <div id="rights-badge-slot-c"></div>
-              </div>
-              <div class="asset-meta">
-                <div class="asset-name"><span id="filename-text-c">FIFA_WC2026_Logo_Primary_RGB.svg</span></div>
-                <div class="asset-detail">
-                  <span class="asset-detail-left">03 Jun 2026</span>
-                  <span class="state-indicators" id="status-dots-c"></span>
-                </div>
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
 
@@ -1393,16 +1441,16 @@
                 <span class="map-axis">Lifecycle</span>
               </td>
               <td class="state-map-cell">
-                <span class="state-badge archived variant-a" style="width:18px;height:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" stroke-width="2.75"><rect x="4" y="4" width="16" height="16" rx="2"/></svg></span>
-                <div class="state-map-cell-label">Detail row · right-aligned icon badge</div>
+                <span class="state-badge archived"></span>
+                <div class="state-map-cell-label">Detail row · right-aligned dot</div>
               </td>
               <td class="state-map-cell">
-                <span class="state-chip archived"><span class="chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><rect x="4" y="4" width="16" height="16" rx="2"/></svg></span>Archived</span>
+                <span class="state-chip archived"><span class="chip-dot"></span>Archived</span>
                 <div class="state-map-cell-label">Inline chip · before upload date</div>
               </td>
               <td class="state-map-cell">
-                <span class="state-chip archived"><span class="chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><rect x="4" y="4" width="16" height="16" rx="2"/></svg></span>Archived</span>
-                <div class="state-map-cell-label">Chip under asset title</div>
+                <span class="state-chip archived"><span class="chip-dot"></span>Archived</span>
+                <div class="state-map-cell-label">Chip inline with asset title</div>
               </td>
             </tr>
             <tr>
@@ -1411,16 +1459,16 @@
                 <span class="map-axis">Approval flow</span>
               </td>
               <td class="state-map-cell">
-                <span class="state-badge approval variant-a" style="width:18px;height:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" stroke-width="2.75"><polyline points="20 6 9 17 4 12"/></svg></span>
-                <div class="state-map-cell-label">Detail row · right-aligned icon badge</div>
+                <span class="state-badge approval"></span>
+                <div class="state-map-cell-label">Detail row · right-aligned dot</div>
               </td>
               <td class="state-map-cell">
-                <span class="state-chip approval"><span class="chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></span>In approval</span>
+                <span class="state-chip approval"><span class="chip-dot"></span>In approval</span>
                 <div class="state-map-cell-label">Inline chip · before upload date</div>
               </td>
               <td class="state-map-cell">
-                <span class="state-chip approval"><span class="chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></span>In approval</span>
-                <div class="state-map-cell-label">Chip under asset title</div>
+                <span class="state-chip approval"><span class="chip-dot"></span>In approval</span>
+                <div class="state-map-cell-label">Chip inline with asset title</div>
               </td>
             </tr>
             <tr>
@@ -1429,20 +1477,119 @@
                 <span class="map-axis">Workflows</span>
               </td>
               <td class="state-map-cell">
-                <span class="state-badge workflow variant-a" style="width:18px;height:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" stroke-width="2.75"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M6 9v3a6 6 0 0 0 6 6h3"/></svg></span>
-                <div class="state-map-cell-label">Detail row · right-aligned icon badge</div>
+                <span class="state-badge workflow"></span>
+                <div class="state-map-cell-label">Detail row · right-aligned dot</div>
               </td>
               <td class="state-map-cell">
-                <span class="state-chip workflow"><span class="chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M6 9v3a6 6 0 0 0 6 6h3"/></svg></span>On workflow</span>
+                <span class="state-chip workflow"><span class="chip-dot"></span>On workflow</span>
                 <div class="state-map-cell-label">Inline chip · before upload date</div>
               </td>
               <td class="state-map-cell">
-                <span class="state-chip workflow"><span class="chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M6 9v3a6 6 0 0 0 6 6h3"/></svg></span>On workflow</span>
-                <div class="state-map-cell-label">Chip under asset title</div>
+                <span class="state-chip workflow"><span class="chip-dot"></span>On workflow</span>
+                <div class="state-map-cell-label">Chip inline with asset title</div>
               </td>
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Production spec — canonical CSS reference -->
+      <div class="preview-block preview-block-full">
+        <h3>Production spec · canonical CSS</h3>
+
+        <div class="spec-grid">
+          <div class="spec-tile">
+            <div class="spec-tile-header">
+              <span class="spec-tile-title">Card dot</span>
+              <span class="spec-tile-meta">10px · lead signal</span>
+            </div>
+            <div class="spec-tile-visual">
+              <span style="width:10px;height:10px;border-radius:50%;background:#3b82f6;box-shadow:0 0 0 2px white,0 0 0 3px rgba(0,0,0,0.08);"></span>
+            </div>
+            <div class="spec-tile-role">Stands alone in the card detail row. Larger because colour is the only signal — no text label.</div>
+          </div>
+
+          <div class="spec-tile">
+            <div class="spec-tile-header">
+              <span class="spec-tile-title">Chip dot</span>
+              <span class="spec-tile-meta">8px · supports label</span>
+            </div>
+            <div class="spec-tile-visual">
+              <span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;box-shadow:0 0 0 2px white,0 0 0 3px rgba(0,0,0,0.08);"></span>
+            </div>
+            <div class="spec-tile-role">Inside the chip on list rows and the lightbox. Smaller because the text label carries the meaning; the dot punctuates it.</div>
+          </div>
+        </div>
+
+        <div class="spec-section">
+          <div class="spec-section-label">Colours</div>
+          <div class="spec-colours">
+            <div class="spec-colour-row">
+              <span class="swatch" style="background:#525049;"></span>
+              <span class="label">Archived</span>
+              <span class="token">stone-600</span>
+            </div>
+            <div class="spec-colour-row">
+              <span class="swatch" style="background:#3b82f6;"></span>
+              <span class="label">In approval</span>
+              <span class="token">#3b82f6</span>
+            </div>
+            <div class="spec-colour-row">
+              <span class="swatch" style="background:#8e4ec6;"></span>
+              <span class="label">On workflow</span>
+              <span class="token">purple-500</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="spec-section">
+          <div class="spec-section-label">Canonical CSS</div>
+          <div class="spec-code"><span class="c-comment">/* Shared treatment — colour, ring, shadow are identical;
+   size adapts by role. */</span>
+<span class="c-selector">.state-badge</span>,
+<span class="c-selector">.chip-dot</span> {
+  <span class="c-prop">border-radius</span>: <span class="c-val">50%</span>;
+  <span class="c-prop">box-shadow</span>:
+    <span class="c-val">0 0 0 2px white,
+    0 0 0 3px rgba(0, 0, 0, 0.08)</span>;
+  <span class="c-prop">flex-shrink</span>: <span class="c-val">0</span>;
+}
+
+<span class="c-selector">.state-badge</span> { <span class="c-prop">width</span>: <span class="c-val">10px</span>; <span class="c-prop">height</span>: <span class="c-val">10px</span>; <span class="c-prop">cursor</span>: <span class="c-val">pointer</span>; <span class="c-prop">position</span>: <span class="c-val">relative</span>; }
+<span class="c-selector">.chip-dot</span>    { <span class="c-prop">width</span>:  <span class="c-val">8px</span>; <span class="c-prop">height</span>:  <span class="c-val">8px</span>; }
+
+<span class="c-comment">/* Colours — apply to both contexts via parent class */</span>
+<span class="c-selector">.state-badge.archived</span>,
+<span class="c-selector">.state-chip.archived .chip-dot</span>  { <span class="c-prop">background</span>: <span class="c-val">var(--color-stone-600)</span>; }
+
+<span class="c-selector">.state-badge.approval</span>,
+<span class="c-selector">.state-chip.approval .chip-dot</span>  { <span class="c-prop">background</span>: <span class="c-val">#3b82f6</span>; }
+
+<span class="c-selector">.state-badge.workflow</span>,
+<span class="c-selector">.state-chip.workflow .chip-dot</span>  { <span class="c-prop">background</span>: <span class="c-val">var(--color-purple-500)</span>; }</div>
+        </div>
+
+        <div class="spec-section">
+          <div class="spec-section-label">Markup</div>
+          <div class="spec-code"><span class="c-comment">// Card — dot alone in detail row</span>
+&lt;<span class="c-tag">span</span> <span class="c-attr">class</span>=<span class="c-string">"state-badge archived"</span> <span class="c-attr">data-tooltip</span>=<span class="c-string">"Archived"</span>&gt;&lt;/<span class="c-tag">span</span>&gt;
+
+<span class="c-comment">// Chip — dot + label in list rows and lightbox</span>
+&lt;<span class="c-tag">span</span> <span class="c-attr">class</span>=<span class="c-string">"state-chip archived"</span>&gt;
+  &lt;<span class="c-tag">span</span> <span class="c-attr">class</span>=<span class="c-string">"chip-dot"</span>&gt;&lt;/<span class="c-tag">span</span>&gt;Archived
+&lt;/<span class="c-tag">span</span>&gt;</div>
+        </div>
+
+        <div class="spec-section">
+          <div class="spec-section-label">Rules</div>
+          <ul style="margin:0;padding-left:18px;color:var(--text-default);font-size:var(--font-size-2);line-height:1.7;">
+            <li>One axis = one colour. No multi-state encoding within a single dot.</li>
+            <li>Ring and shadow are constant across sizes. Only diameter changes.</li>
+            <li>Card dot stands alone (no label); chip dot punctuates a text label.</li>
+            <li>Hover tooltip required on every card dot. Label text inside chip serves the same purpose; no chip tooltip needed unless adding extra context.</li>
+            <li>Never invent a new colour for a new state without updating this spec first.</li>
+          </ul>
+        </div>
       </div>
 
       <!-- State summary -->
@@ -1534,60 +1681,42 @@
 
   // ============ RENDER FUNCTIONS ============
   function renderCard() {
-    // State indicators — render three variants side by side for direct comparison.
-    // A: simplified icons (box / check / git-branch)
-    // B: single-stroke glyphs (square / tick / arrow)
-    // C: colour-only filled circles, no icons
-    const VARIANTS = {
-      a: {
-        archive:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>',
-        approval: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
-        workflow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M6 9v3a6 6 0 0 0 6 6h3"/></svg>'
-      },
-      c: {
-        archive:  '',
-        approval: '',
-        workflow: ''
-      }
-    };
+    // State indicators — single canonical treatment.
+    // 10px coloured dot, 2px white ring, 1px outer shadow.
+    // No icons — colour does the work at production scale.
+    const target = document.getElementById('status-dots-a');
+    const rb = document.getElementById('rights-badge-slot-a');
+    const fn = document.getElementById('filename-text-a');
+    if (fn) fn.textContent = state.filename;
 
-    ['a', 'c'].forEach(v => {
-      const target = document.getElementById('status-dots-' + v);
-      const rb = document.getElementById('rights-badge-slot-' + v);
-      const fn = document.getElementById('filename-text-' + v);
-      if (fn) fn.textContent = state.filename;
+    if (rb) {
+      if (state.rights === 'embargoed') {
+        rb.innerHTML = `<span class="rights-badge embargoed">EMBARGOED</span>`;
+      } else if (state.rights === 'expired') {
+        rb.innerHTML = `<span class="rights-badge expired">EXPIRED</span>`;
+      } else {
+        rb.innerHTML = '';
+      }
+    }
 
-      // Rights badge per variant
-      if (rb) {
-        if (state.rights === 'embargoed') {
-          rb.innerHTML = `<span class="rights-badge embargoed">EMBARGOED</span>`;
-        } else if (state.rights === 'expired') {
-          rb.innerHTML = `<span class="rights-badge expired">EXPIRED</span>`;
-        } else {
-          rb.innerHTML = '';
-        }
-      }
+    let html = '';
+    if (state.lifecycle === 'archived') {
+      html += `<span class="state-badge archived" data-tooltip="Archived"></span>`;
+    }
+    if (state.approval === 'in-approval') {
+      html += `<span class="state-badge approval" data-tooltip="In approval"></span>`;
+    }
+    if (state.workflows === 'on-workflow') {
+      html += `<span class="state-badge workflow" data-tooltip="On a workflow"></span>`;
+    }
+    target.innerHTML = html;
 
-      let html = '';
-      if (state.lifecycle === 'archived') {
-        html += `<span class="state-badge archived variant-${v}" data-tooltip="Archived">${VARIANTS[v].archive}</span>`;
-      }
-      if (state.approval === 'in-approval') {
-        html += `<span class="state-badge approval variant-${v}" data-tooltip="In approval">${VARIANTS[v].approval}</span>`;
-      }
-      if (state.workflows === 'on-workflow') {
-        html += `<span class="state-badge workflow variant-${v}" data-tooltip="On a workflow">${VARIANTS[v].workflow}</span>`;
-      }
-      target.innerHTML = html;
-
-      // Archived dim per variant
-      const cardEl = document.getElementById('asset-card-' + v);
-      if (cardEl) cardEl.classList.toggle('is-archived', state.lifecycle === 'archived');
-    });
+    const cardEl = document.getElementById('asset-card-a');
+    if (cardEl) cardEl.classList.toggle('is-archived', state.lifecycle === 'archived');
 
     // List row — single live row reflecting current state.
-    // Rights = same compact pill as the card (already label-only, no expansion needed).
-    // Lifecycle/approval/workflow = full chips (room for label that the card can't afford).
+    // Rights = same compact pill as the card.
+    // Lifecycle/approval/workflow = full chips (dot + label).
     const listRow = document.getElementById('list-row');
     if (listRow) {
       document.getElementById('list-name').textContent = state.filename;
@@ -1601,25 +1730,21 @@
         listHtml += `<span class="rights-pill-mini expired">EXPIRED</span>`;
       }
       if (state.lifecycle === 'archived') {
-        listHtml += `<span class="state-chip archived"><span class="chip-icon">${VARIANTS.a.archive}</span>Archived</span>`;
+        listHtml += `<span class="state-chip archived"><span class="chip-dot"></span>Archived</span>`;
       }
       if (state.approval === 'in-approval') {
-        listHtml += `<span class="state-chip approval"><span class="chip-icon">${VARIANTS.a.approval}</span>In approval</span>`;
+        listHtml += `<span class="state-chip approval"><span class="chip-dot"></span>In approval</span>`;
       }
       if (state.workflows === 'on-workflow') {
-        listHtml += `<span class="state-chip workflow"><span class="chip-icon">${VARIANTS.a.workflow}</span>On workflow</span>`;
+        listHtml += `<span class="state-chip workflow"><span class="chip-dot"></span>On workflow</span>`;
       }
       listState.innerHTML = listHtml;
     }
 
     // Lightbox — matches real DAM
-    // Rights renders as a full-width banner above the body (matches existing implementation).
-    // Lifecycle, approval, workflow render as light-mode chips under the asset title.
-    const LIGHTBOX_ICONS = {
-      archive:  VARIANTS.a.archive,
-      approval: VARIANTS.a.approval,
-      workflow: VARIANTS.a.workflow
-    };
+    // Rights renders as a full-width banner above the body.
+    // Lifecycle, approval, workflow render as chips under the asset title.
+    // Chips use the same dot vocabulary as the card (rendered via ::before).
     document.getElementById('lightbox-filename').textContent = state.filename;
 
     // Rights banner
@@ -1654,17 +1779,16 @@
       }
     }
 
-    // State chips — lifecycle, approval, workflow (NOT rights, which has banner)
     const chips = document.getElementById('lightbox-chips');
     let chipHtml = '';
     if (state.lifecycle === 'archived') {
-      chipHtml += `<span class="state-chip archived" data-tooltip="Asset is archived"><span class="chip-icon">${LIGHTBOX_ICONS.archive}</span>Archived</span>`;
+      chipHtml += `<span class="state-chip archived" data-tooltip="Asset is archived"><span class="chip-dot"></span>Archived</span>`;
     }
     if (state.approval === 'in-approval') {
-      chipHtml += `<span class="state-chip approval" data-tooltip="Currently in approval flow"><span class="chip-icon">${LIGHTBOX_ICONS.approval}</span>In approval</span>`;
+      chipHtml += `<span class="state-chip approval" data-tooltip="Currently in approval flow"><span class="chip-dot"></span>In approval</span>`;
     }
     if (state.workflows === 'on-workflow') {
-      chipHtml += `<span class="state-chip workflow" data-tooltip="Linked to a Unity workflow"><span class="chip-icon">${LIGHTBOX_ICONS.workflow}</span>On workflow</span>`;
+      chipHtml += `<span class="state-chip workflow" data-tooltip="Linked to a Unity workflow"><span class="chip-dot"></span>On workflow</span>`;
     }
     chips.innerHTML = chipHtml;
     chips.style.display = chipHtml ? 'flex' : 'none';
