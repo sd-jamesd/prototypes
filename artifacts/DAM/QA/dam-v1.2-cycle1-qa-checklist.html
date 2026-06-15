@@ -111,9 +111,9 @@ footer{margin-top:32px;font-size:12px;color:var(--neutral-6);text-align:center;}
   <h2>When something fails — how to log it</h2>
   <ol>
     <li><b>Pass</b> → tick the box. Done.</li>
-    <li><b>Fail</b> → in Linear, click <code>+</code> / <b>New issue</b> to create a fresh issue. (It's a new issue — not an action on the original.)</li>
-    <li>Set the <b>Bug</b> label + a <b>QA Severity</b> label (Blocker / Major / Minor), assign the developer, cycle = <b>Cycle 2</b>.</li>
-    <li>Add a <b>"Relates to"</b> link to the item's <code>SCR-00</code> reference. Note what you did, expected, and saw. Leave the original issue untouched.</li>
+    <li><b>Fail</b> → click the item's <code>SCR-00</code> reference to open the issue, then <b>⋯</b> (top right) → <b>Create related</b> → <b>Issue…</b> &nbsp;(pick <b>Issue</b>, not Sub-issue). This opens a new issue already linked back to the original.</li>
+    <li>On the new issue, add the <b>Bug</b> label + a <b>QA Severity</b> label (Blocker / Major / Minor), assign the developer, set cycle = <b>Cycle 2</b>.</li>
+    <li>Note what you did, expected, and saw. Leave the original issue untouched.</li>
     <li>Dev fixes → sets <b>Ready for QA</b>; you move to <b>In QA</b>, re-test, then <b>Done</b>.</li>
   </ol>
 </div>
@@ -304,14 +304,39 @@ footer{margin-top:32px;font-size:12px;color:var(--neutral-6);text-align:center;}
   </div>
 </section>
 
-<footer>Stash DAM v1.2 · ticks are session-only — use Print / PDF to capture a run.</footer>
+<footer>Stash DAM v1.2 · progress saves in your browser · Print / PDF to capture a run.</footer>
 
 </div>
 
 <script>
+const STORAGE_KEY = 'dam-v12-qa-checklist-v1';
 const boxes = Array.from(document.querySelectorAll('.item input[type=checkbox], .invariants input[type=checkbox]'));
 const fill = document.getElementById('fill');
 const label = document.getElementById('label');
+
+// Stable per-checkbox key derived from its label text (survives reordering); duplicates get a suffix.
+const seen = {};
+boxes.forEach(b=>{
+  const t = (b.closest('.check').querySelector('span')?.textContent || '').trim().replace(/\s+/g,' ');
+  seen[t] = (seen[t] || 0) + 1;
+  b.dataset.key = seen[t] > 1 ? t + '#' + seen[t] : t;
+});
+
+function load(){
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) {}
+  boxes.forEach(b=>{
+    if (saved[b.dataset.key]) {
+      b.checked = true;
+      b.closest('.check').classList.add('checked');
+    }
+  });
+}
+function save(){
+  const state = {};
+  boxes.forEach(b=>{ if (b.checked) state[b.dataset.key] = 1; });
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
 function update(){
   const done = boxes.filter(b=>b.checked).length;
   const pct = boxes.length ? Math.round(done/boxes.length*100) : 0;
@@ -321,10 +346,16 @@ function update(){
 boxes.forEach(b=>{
   b.addEventListener('change', ()=>{
     b.closest('.check').classList.toggle('checked', b.checked);
+    save();
     update();
   });
 });
-function resetAll(){ boxes.forEach(b=>{b.checked=false; b.closest('.check').classList.remove('checked');}); update(); }
+function resetAll(){
+  boxes.forEach(b=>{ b.checked=false; b.closest('.check').classList.remove('checked'); });
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  update();
+}
+load();
 update();
 </script>
 </body>
