@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DAM v1.2 — QA Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent-9:#0B6E8A; --accent-3:#E4F5FC; --accent-6:#B0D9E9;
+  --neutral-2:#FBF8F8; --neutral-3:#f5f5f4; --neutral-6:#978985;
+  --neutral-11:#57534e; --neutral-12:#261E1B;
+  --border-default:#e7e5e4; --surface-subtle:#fafaf9; --surface-muted:#f5f5f4;
+  --amber-100:#ffefd5; --amber-500:#f5a524; --amber-600:#985b00;
+  --green-100:#e6f4ea; --green-600:#2f7d4f;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --mono:'SFMono-Regular',Menlo,Consolas,monospace;
+  --r2:4px; --r3:6px;
+}
+*{box-sizing:border-box;}
+body{font-family:var(--font);color:var(--neutral-12);background:var(--neutral-2);margin:0;line-height:1.5;font-size:14px;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:900px;margin:0 auto;padding:32px 24px 80px;}
+
+header.page{border-bottom:2px solid var(--neutral-12);padding-bottom:16px;margin-bottom:8px;}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-9);}
+h1{font-size:24px;font-weight:600;margin:4px 0 6px;}
+.sub{color:var(--neutral-11);font-size:13.5px;max-width:680px;}
+
+.progress-bar{position:sticky;top:0;z-index:10;background:var(--neutral-2);padding:12px 0 10px;margin:16px 0 20px;border-bottom:1px solid var(--border-default);display:flex;align-items:center;gap:14px;}
+.bar-track{flex:1;height:8px;background:var(--surface-muted);border-radius:99px;overflow:hidden;}
+.bar-fill{height:100%;background:var(--accent-9);width:0%;transition:width .25s;}
+.bar-label{font-size:12.5px;font-weight:600;color:var(--neutral-11);white-space:nowrap;min-width:96px;text-align:right;}
+.actions{display:flex;gap:8px;}
+.btn{font-family:var(--font);font-size:12.5px;font-weight:500;border-radius:var(--r2);padding:6px 12px;cursor:pointer;border:1px solid var(--border-default);background:#fff;color:var(--neutral-11);}
+.btn:hover{background:var(--surface-muted);}
+.btn-primary{background:var(--accent-9);border-color:var(--accent-9);color:#fff;}
+
+.howto{background:var(--accent-3);border:1px solid var(--accent-6);border-radius:var(--r3);padding:16px 20px;margin-bottom:18px;}
+.howto h2{font-size:14px;font-weight:600;margin:0 0 8px;}
+.howto ol{margin:0;padding-left:20px;font-size:12.5px;color:var(--neutral-11);}
+.howto li{margin-bottom:4px;}
+.howto b{color:var(--neutral-12);}
+
+.invariants{background:#fff;border:1px solid var(--border-default);border-radius:var(--r3);padding:16px 20px;margin-bottom:26px;}
+.invariants h2{font-size:13.5px;font-weight:600;margin:0 0 4px;}
+.invariants .note{font-size:12px;color:var(--neutral-6);margin-bottom:10px;}
+
+section.group{background:#fff;border:1px solid var(--border-default);border-radius:var(--r3);margin-bottom:18px;overflow:hidden;}
+.group-head{padding:14px 20px;border-bottom:1px solid var(--border-default);background:var(--surface-subtle);}
+.group-top{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.group-head h2{font-size:15px;font-weight:600;margin:0;}
+.ready{font-size:11px;font-weight:600;padding:2px 9px;border-radius:99px;white-space:nowrap;}
+.ready-yes{background:var(--green-100);color:var(--green-600);}
+.ready-hold{background:var(--amber-100);color:var(--amber-600);}
+.reflinks{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px 8px;font-size:11.5px;align-items:center;}
+.reflinks .lbl{color:var(--neutral-6);font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
+
+.scr{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px;background:#fff;border:1px solid var(--accent-6);color:var(--accent-9);border-radius:99px;padding:2px 9px;text-decoration:none;font-weight:600;}
+.scr:hover{background:var(--accent-3);}
+.scr::after{content:"↗";font-family:var(--font);font-size:10px;opacity:.7;}
+.mock{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--accent-9);text-decoration:none;font-weight:500;}
+.mock:hover{text-decoration:underline;}
+
+.item{padding:14px 20px;border-bottom:1px solid var(--border-default);}
+.item:last-child{border-bottom:none;}
+.item .what{font-size:13px;color:var(--neutral-11);margin:0 0 4px;}
+.item .what b{color:var(--neutral-12);font-weight:600;}
+.item .itemref{font-size:11px;margin:0 0 8px;}
+.item .itemref a{color:var(--accent-9);font-family:var(--mono);text-decoration:none;font-weight:600;}
+.item .itemref a:hover{text-decoration:underline;}
+
+.check{display:flex;gap:10px;align-items:flex-start;padding:6px 0;cursor:pointer;}
+.check input{margin:2px 0 0;width:15px;height:15px;accent-color:var(--accent-9);flex-shrink:0;cursor:pointer;}
+.check span{font-size:13px;color:var(--neutral-12);}
+.check.checked span{color:var(--neutral-6);text-decoration:line-through;}
+code{font-family:var(--mono);font-size:12px;background:var(--surface-muted);border:1px solid var(--border-default);border-radius:3px;padding:0 4px;color:var(--neutral-11);}
+.state{font-weight:600;color:var(--neutral-12);}
+
+.watch{margin-top:10px;border-left:3px solid var(--amber-500);background:var(--amber-100);padding:9px 12px;border-radius:0 var(--r2) var(--r2) 0;font-size:12.5px;color:var(--amber-600);}
+.watch b{color:var(--amber-600);}
+
+footer{margin-top:32px;font-size:12px;color:var(--neutral-6);text-align:center;}
+
+@media print{
+  body{background:#fff;}
+  .progress-bar,.actions{display:none;}
+  section.group,.invariants,.howto,.watch{break-inside:avoid;}
+  .check input,.watch,.howto,.scr{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="page">
+  <div class="eyebrow">Stash DAM · QA</div>
+  <h1>DAM v1.2 — QA Checklist</h1>
+  <p class="sub">Test each item against the live build. This is your guide — written in end-user terms, with the Linear issue behind each item linked for when you need to raise a bug.</p>
+</header>
+
+<div class="progress-bar">
+  <div class="bar-track"><div class="bar-fill" id="fill"></div></div>
+  <div class="bar-label" id="label">0 / 0</div>
+  <div class="actions">
+    <button class="btn" onclick="resetAll()">Reset</button>
+    <button class="btn btn-primary" onclick="window.print()">Print / PDF</button>
+  </div>
+</div>
+
+<div class="howto">
+  <h2>When something fails — how to log it</h2>
+  <ol>
+    <li><b>Pass</b> → tick the box. Done.</li>
+    <li><b>Fail</b> → in Linear, click <code>+</code> / <b>New issue</b> to create a fresh issue. (It's a new issue — not an action on the original.)</li>
+    <li>Set the <b>Bug</b> label + a <b>QA Severity</b> label (Blocker / Major / Minor), assign the developer, cycle = <b>Cycle 2</b>.</li>
+    <li>Add a <b>"Relates to"</b> link to the item's <code>SCR-00</code> reference. Note what you did, expected, and saw. Leave the original issue untouched.</li>
+    <li>Dev fixes → sets <b>Ready for QA</b>; you move to <b>In QA</b>, re-test, then <b>Done</b>.</li>
+  </ol>
+</div>
+
+<div class="invariants">
+  <h2>Cross-cutting rules — check on every surface</h2>
+  <p class="note">A surface can pass its own cases and still break one of these. If one fails, log it against whichever item surfaced it.</p>
+  <label class="check"><input type="checkbox"><span><b>Disable, don't hide.</b> Controls that don't apply stay visible but greyed, with a reason on hover — never removed.</span></label>
+  <label class="check"><input type="checkbox"><span><b>Visibility preserved, enforcement at the action.</b> Embargoed / expired / restricted assets stay visible in browse; the block lands at download/use, not at listing. (One exception in §2.)</span></label>
+  <label class="check"><input type="checkbox"><span><b>Two-of-three for AI.</b> Any AI-generated content shows at least two of: gradient border, sparkle icon, AI badge.</span></label>
+  <label class="check"><input type="checkbox"><span><b>Badge channel discipline.</b> Filetype = neutral; saturated colour only ever means state (rights / lifecycle).</span></label>
+  <label class="check"><input type="checkbox"><span><b>Consistent styling.</b> Inter throughout, Lucide icons, on-system colour. Flag anything off-pattern.</span></label>
+  <label class="check"><input type="checkbox"><span><b>Embedded context.</b> Behaviour holds inside the Unity wrapper — titles render and session state survives.</span></label>
+</div>
+
+<!-- 1 -->
+<section class="group">
+  <div class="group-head">
+    <div class="group-top"><h2>1 · Library page header &amp; search results</h2><span class="ready ready-yes">Ready to test</span></div>
+    <div class="reflinks">
+      <span class="lbl">Issues</span>
+      <a class="scr" href="https://linear.app/screendragon/issue/SCR-36/dam-library-page-header-and-search-results-ui" target="_blank" rel="noopener">SCR-36</a>
+      <a class="scr" href="https://linear.app/screendragon/issue/SCR-105/update-search-ui-on-filter-panel" target="_blank" rel="noopener">SCR-105</a>
+      <a class="scr" href="https://linear.app/screendragon/issue/SCR-112/remove-collection-search-from-left-hand-list" target="_blank" rel="noopener">SCR-112</a>
+      <a class="mock" href="https://sd-jamesd.github.io/prototypes/artifacts/DAM/header-search-ui.html" target="_blank" rel="noopener">Reference design ↗</a>
+    </div>
+  </div>
+
+  <div class="item">
+    <p class="what"><b>Header layout + title-as-subject.</b> Title + search on the left, view/actions on the right. The title names the current view.</p>
+    <p class="itemref">Reference: <a href="https://linear.app/screendragon/issue/SCR-36/dam-library-page-header-and-search-results-ui" target="_blank" rel="noopener">SCR-36</a></p>
+    <label class="check"><input type="checkbox"><span>Default view shows the standard title; layout holds at narrow and wide widths.</span></label>
+    <label class="check"><input type="checkbox"><span>Running a search swaps the title to the query subject; clearing restores the default.</span></label>
+  </div>
+
+  <div class="item">
+    <p class="what"><b>View-controls row.</b> One row between header and grid — applied-filter chips, inline Save / Clear, result count. Shows only when a filter or search is active.</p>
+    <p class="itemref">Reference: <a href="https://linear.app/screendragon/issue/SCR-36/dam-library-page-header-and-search-results-ui" target="_blank" rel="noopener">SCR-36</a></p>
+    <label class="check"><input type="checkbox"><span>Absent on an unfiltered view; appears once a filter or search is applied.</span></label>
+    <label class="check"><input type="checkbox"><span>Chips show leading icons; Clear resets all, Save persists the view.</span></label>
+    <label class="check"><input type="checkbox"><span>Result count matches the grid and updates as filters change.</span></label>
+  </div>
+
+  <div class="item">
+    <p class="what"><b>Filter panel indicators.</b> Active facet groups get a teal left-edge accent + a count pill.</p>
+    <p class="itemref">Reference: <a href="https://linear.app/screendragon/issue/SCR-36/dam-library-page-header-and-search-results-ui" target="_blank" rel="noopener">SCR-36</a></p>
+    <label class="check"><input type="checkbox"><span>Checking a facet adds the accent + count pill; pill shows the exact count.</span></label>
+    <label class="check"><input type="checkbox"><span>A collapsed group with active facets still shows the indicator.</span></label>
+  </div>
+
+  <div class="item">
+    <p class="what"><b>Filter-panel search styling.</b> Search demoted below the Filters title as a plain underline, moved below Saved Filters, updated placeholder.</p>
+    <p class="itemref">Reference: <a href="https://linear.app/screendragon/issue/SCR-105/update-search-ui-on-filter-panel" target="_blank" rel="noopener">SCR-105</a></p>
+    <label class="check"><input type="checkbox"><span>Filters title sits level with the collapse button; search is an underline below it, not a boxed field.</span></label>
+    <label class="check"><input type="checkbox"><span>Search bar sits below Saved Filters; placeholder matches the spec.</span></label>
+  </div>
+
+  <div class="item">
+    <p class="what"><b>Collection search removed.</b></p>
+    <p class="itemref">Reference: <a href="https://linear.app/screendragon/issue/SCR-112/remove-collection-search-from-left-hand-list" target="_blank" rel="noopener">SCR-112</a></p>
+    <label class="check"><input type="checkbox"><span>The old collection search in the left-hand list is gone — no dead control or layout gap.</span></label>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="group">
+  <div class="group-head">
+    <div class="group-top"><h2>2 · Search ranking &amp; scoring</h2><span class="ready ready-yes">Ready to test</span></div>
+    <div class="reflinks"><span class="lbl">Issue</span><a class="scr" href="https://linear.app/screendragon/issue/SCR-31/priority-scoring-for-search-results" target="_blank" rel="noopener">SCR-31</a></div>
+  </div>
+  <div class="item">
+    <p class="what"><b>Deterministic ranking.</b> Results are reproducible from the asset + query — no learning, no behavioural signals.</p>
+    <label class="check"><input type="checkbox"><span>Same query + same library returns an identical order on repeat runs.</span></label>
+    <label class="check"><input type="checkbox"><span>A term matching the title outranks the same term matching a lower-weight field (e.g. file name, OCR).</span></label>
+    <label class="check"><input type="checkbox"><span>Approved / valid-rights assets rank above otherwise-equal ones; archived assets rank lower.</span></label>
+    <label class="check"><input type="checkbox"><span>No-permission, territory mismatch, and pending-without-view-draft assets don't appear in results at all.</span></label>
+    <div class="watch"><b>Watch-point — same word, opposite behaviour by surface.</b> In <b>search</b>, an <span class="state">Expired</span> asset is filtered out of results entirely. In <b>library browse</b>, the same expired asset stays visible with its badge and is blocked only at download. Both are correct — don't log either as a bug.</div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="group">
+  <div class="group-head">
+    <div class="group-top"><h2>3 · OCR match highlighting</h2><span class="ready ready-yes">Ready to test</span></div>
+    <div class="reflinks"><span class="lbl">Issue</span><a class="scr" href="https://linear.app/screendragon/issue/SCR-33/highlight-ocr-matches-in-search-results" target="_blank" rel="noopener">SCR-33</a></div>
+  </div>
+  <div class="item">
+    <p class="what"><b>OCR matches in results.</b> Text found inside an asset is flagged in three places, including a tag on quick search.</p>
+    <label class="check"><input type="checkbox"><span>A query matching text inside an asset (not its metadata) returns it and flags it as an OCR match.</span></label>
+    <label class="check"><input type="checkbox"><span>All three OCR flags render, including the quick-search tag.</span></label>
+    <label class="check"><input type="checkbox"><span>An asset matched on both metadata and OCR doesn't double-flag.</span></label>
+    <label class="check"><input type="checkbox"><span>Assets with no text layer simply aren't flagged — no error.</span></label>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="group">
+  <div class="group-head">
+    <div class="group-top"><h2>4 · Asset card state model</h2><span class="ready ready-yes">Ready to test</span></div>
+    <div class="reflinks">
+      <span class="lbl">Issues</span>
+      <a class="scr" href="https://linear.app/screendragon/issue/SCR-119/asset-card-state-model-rights-badges-lifecycle-dot" target="_blank" rel="noopener">SCR-119</a>
+      <a class="scr" href="https://linear.app/screendragon/issue/SCR-125/asset-card-demote-filetype-badges-to-neutral-reserve-colour-for-state" target="_blank" rel="noopener">SCR-125</a>
+    </div>
+  </div>
+  <div class="item">
+    <p class="what"><b>Rights badge + lifecycle dot are independent.</b> An asset's rights state and lifecycle state each render in their own slot — neither overrides the other.</p>
+    <p class="itemref">Reference: <a href="https://linear.app/screendragon/issue/SCR-119/asset-card-state-model-rights-badges-lifecycle-dot" target="_blank" rel="noopener">SCR-119</a></p>
+    <label class="check"><input type="checkbox"><span>An asset that is both <span class="state">Expired</span> and <span class="state">Archived</span> shows both signals distinctly.</span></label>
+    <label class="check"><input type="checkbox"><span>A clean asset (cleared rights, active) shows neither badge nor dot — no empty placeholder.</span></label>
+    <label class="check"><input type="checkbox"><span>The card's state matches the asset's record (check against the lightbox).</span></label>
+  </div>
+  <div class="item">
+    <p class="what"><b>Filetype badge is neutral.</b> One neutral chip (dark scrim + white text, bottom of thumbnail) for every type. No per-type colour.</p>
+    <p class="itemref">Reference: <a href="https://linear.app/screendragon/issue/SCR-125/asset-card-demote-filetype-badges-to-neutral-reserve-colour-for-state" target="_blank" rel="noopener">SCR-125</a></p>
+    <label class="check"><input type="checkbox"><span>Every filetype badge is the same neutral chip — no JPG-blue / PNG-colour survives.</span></label>
+    <label class="check"><input type="checkbox"><span>The badge stays legible on light, dark, and transparent-background thumbnails.</span></label>
+    <label class="check"><input type="checkbox"><span>On a card with a filetype badge and a rights badge, the only colour is the rights signal.</span></label>
+    <div class="watch"><b>Watch-point.</b> The approval dot (blue) and workflow dot (purple) should now use Scale system tokens. Confirm they do — if either renders an off-token colour, that's a valid bug.</div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="group">
+  <div class="group-head">
+    <div class="group-top"><h2>5 · Right-hand menu &amp; lightbox</h2><span class="ready ready-yes">Ready to test</span></div>
+    <div class="reflinks">
+      <span class="lbl">Issues</span>
+      <a class="scr" href="https://linear.app/screendragon/issue/SCR-43/disable-irrelevant-rhm-menu-items" target="_blank" rel="noopener">SCR-43</a>
+      <a class="scr" href="https://linear.app/screendragon/issue/SCR-42/rhm-icons-and-font-weight-too-heavy" target="_blank" rel="noopener">SCR-42</a>
+      <a class="mock" href="https://sd-jamesd.github.io/prototypes/artifacts/DAM/dam-control-availability.html" target="_blank" rel="noopener">Control-availability matrix ↗</a>
+    </div>
+  </div>
+  <div class="item">
+    <p class="what"><b>Irrelevant menu items are disabled, not removed.</b> Compare against the control-availability matrix (linked above).</p>
+    <p class="itemref">Reference: <a href="https://linear.app/screendragon/issue/SCR-43/disable-irrelevant-rhm-menu-items" target="_blank" rel="noopener">SCR-43</a></p>
+    <label class="check"><input type="checkbox"><span>Items that don't apply to the asset are greyed and visible, never gone.</span></label>
+    <label class="check"><input type="checkbox"><span>Which items are active vs disabled matches the matrix across each asset type.</span></label>
+    <label class="check"><input type="checkbox"><span>A disabled item explains itself on hover instead of failing silently.</span></label>
+  </div>
+  <div class="item">
+    <p class="what"><b>Menu icon + label weight lightened.</b></p>
+    <p class="itemref">Reference: <a href="https://linear.app/screendragon/issue/SCR-42/rhm-icons-and-font-weight-too-heavy" target="_blank" rel="noopener">SCR-42</a></p>
+    <label class="check"><input type="checkbox"><span>Icons and labels are lighter — not heavier than the surrounding panel.</span></label>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="group">
+  <div class="group-head">
+    <div class="group-top"><h2>6 · Edit / Upload / Bulk-edit</h2><span class="ready ready-yes">Ready to test</span></div>
+    <div class="reflinks"><span class="lbl">Issue</span><a class="scr" href="https://linear.app/screendragon/issue/SCR-96/update-ui-of-edit-upload-bulk-edit-screens" target="_blank" rel="noopener">SCR-96</a></div>
+  </div>
+  <div class="item">
+    <p class="what"><b>Consistent edit UI on a dark surface.</b> Topline names the mode; Cancel/Save replace the close button; edited fields highlight their left border in the accent colour.</p>
+    <label class="check"><input type="checkbox"><span>Edit, Bulk-edit and Upload all use the dark surface with bordered panels.</span></label>
+    <label class="check"><input type="checkbox"><span>The topline names the active mode (Edit / Bulk edit / Upload).</span></label>
+    <label class="check"><input type="checkbox"><span>Cancel discards, Save commits — no leftover close button.</span></label>
+    <label class="check"><input type="checkbox"><span>Editing a field highlights its left border; an unsaved-changes count shows.</span></label>
+    <label class="check"><input type="checkbox"><span>In native dark mode, edit stays dark (no second flip).</span></label>
+    <label class="check"><input type="checkbox"><span>Bulk-edit is additive — changing one field across a selection doesn't overwrite other fields.</span></label>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="group">
+  <div class="group-head">
+    <div class="group-top"><h2>7 · AI sparkle consistency</h2><span class="ready ready-yes">Ready to test</span></div>
+    <div class="reflinks"><span class="lbl">Issue</span><a class="scr" href="https://linear.app/screendragon/issue/SCR-47/ai-sparkle-consistency-across-dam" target="_blank" rel="noopener">SCR-47</a></div>
+  </div>
+  <div class="item">
+    <p class="what"><b>One sparkle, everywhere.</b> Lightbox, edit, AI panel, and any other AI surface.</p>
+    <label class="check"><input type="checkbox"><span>The sparkle is identical (glyph, size, treatment) across every AI surface.</span></label>
+    <label class="check"><input type="checkbox"><span>Each AI surface still shows at least two AI signals — the sparkle isn't the only one.</span></label>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="group">
+  <div class="group-head">
+    <div class="group-top"><h2>8 · Iconography &amp; terminology</h2><span class="ready ready-yes">Ready to test</span></div>
+    <div class="reflinks"><span class="lbl">Issue</span><a class="scr" href="https://linear.app/screendragon/issue/SCR-93/file-metadata-iconography" target="_blank" rel="noopener">SCR-93</a></div>
+  </div>
+  <div class="item">
+    <p class="what"><b>Terminology split with a distinct icon.</b> "Meta data" → <b>Attributes</b>; "Metadata" → <b>File metadata</b>.</p>
+    <label class="check"><input type="checkbox"><span>Labels read <b>Attributes</b> and <b>File metadata</b> everywhere — no old "metadata" wording left.</span></label>
+    <label class="check"><input type="checkbox"><span>Attributes keeps its existing icon; File metadata has its own new icon; they're never swapped.</span></label>
+  </div>
+</section>
+
+<footer>Stash DAM v1.2 · ticks are session-only — use Print / PDF to capture a run.</footer>
+
+</div>
+
+<script>
+const boxes = Array.from(document.querySelectorAll('.item input[type=checkbox], .invariants input[type=checkbox]'));
+const fill = document.getElementById('fill');
+const label = document.getElementById('label');
+function update(){
+  const done = boxes.filter(b=>b.checked).length;
+  const pct = boxes.length ? Math.round(done/boxes.length*100) : 0;
+  fill.style.width = pct + '%';
+  label.textContent = done + ' / ' + boxes.length;
+}
+boxes.forEach(b=>{
+  b.addEventListener('change', ()=>{
+    b.closest('.check').classList.toggle('checked', b.checked);
+    update();
+  });
+});
+function resetAll(){ boxes.forEach(b=>{b.checked=false; b.closest('.check').classList.remove('checked');}); update(); }
+update();
+</script>
+</body>
+</html>

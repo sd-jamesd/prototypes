@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit — Tags accordion restructure (Scale v4)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --color-stone-700:#44403c;
+  --color-stone-800:#292524;
+  --color-stone-900:#261e1b;
+  --font-family-text:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-weight-regular:400;--font-weight-medium:500;--font-weight-semibold:600;
+  --font-size-1:12px;--font-size-2:14px;
+  --spacing-2:8px;--radius-1:3px;--radius-3:6px;--radius-full:9999px;
+  --primary-default:#3b82f6;
+
+  --ai-gradient-1:#0B6E8A;--ai-gradient-3:#00A2C7;--ai-gradient-4:#5B5BD6;
+  --ai-stroke-chip:linear-gradient(135deg,var(--ai-gradient-1),var(--ai-gradient-3),var(--ai-gradient-4));
+  --ai-bg-chip-dark:linear-gradient(135deg,rgba(0,162,199,0.16),rgba(91,91,214,0.16));
+
+  --panel:#211d1b;
+  --surface-1:var(--color-stone-800);
+  --surface-2:#1c1916;
+  --border-d:rgba(255,255,255,0.10);
+  --dark-border-ui:rgba(255,255,255,0.40);
+  --t-strong:rgba(255,255,255,0.92);
+  --t-default:rgba(255,255,255,0.76);
+  --t-muted:rgba(255,255,255,0.52);
+  --ai-on-dark:#5BC4E0;   /* accent, lifted for legibility on dark */
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:var(--font-family-text);background:#16130f;color:var(--t-default);-webkit-font-smoothing:antialiased;padding:0;}
+
+.app{display:flex;min-height:100vh;}
+/* left rail */
+.rail{width:74px;background:#1b1815;border-right:1px solid var(--border-d);padding-top:56px;flex-shrink:0;}
+.rail-item{display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 0;color:var(--t-muted);font-size:11px;cursor:pointer;border-left:2px solid transparent;}
+.rail-item svg{width:20px;height:20px;}
+.rail-item.active{color:#5b9bf6;border-left-color:#5b9bf6;}
+.rail-item.removed{opacity:0.32;position:relative;}
+.rail-item.removed .strike{position:absolute;top:50%;left:14px;right:14px;height:1px;background:var(--t-muted);}
+
+/* top bar */
+.topbar{position:fixed;top:0;left:0;right:0;height:44px;background:#1b1815;border-bottom:1px solid var(--border-d);display:flex;align-items:center;gap:10px;padding:0 18px;font-size:var(--font-size-2);z-index:5;}
+.topbar .edit-ic{color:#5b9bf6;}
+.topbar .lbl{color:var(--t-muted);}
+.topbar .fname{color:var(--t-strong);font-weight:var(--font-weight-medium);}
+
+.main{flex:1;padding:64px 28px 40px;}
+.col{max-width:420px;}
+.section-h{font-size:var(--font-size-2);font-weight:var(--font-weight-semibold);color:var(--t-strong);margin:0 0 16px;}
+
+/* accordion */
+.acc{border:1px solid var(--border-d);border-radius:var(--radius-3);overflow:hidden;}
+.acc+.acc{margin-top:8px;}
+.acc-head{display:flex;align-items:center;gap:8px;padding:12px 14px;background:var(--surface-1);cursor:pointer;font-weight:var(--font-weight-medium);color:var(--t-strong);font-size:var(--font-size-2);}
+.acc-head .chev{margin-left:auto;color:var(--t-muted);}
+.acc-head .lead{color:var(--t-muted);display:inline-flex;}
+.acc.open .acc-head{border-left:3px solid #5b9bf6;}
+.acc-body{padding:14px;background:var(--surface-2);border-top:1px solid var(--border-d);}
+
+/* sub-section labels inside Tags */
+.sub{margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.sub-l{font-size:11px;font-weight:var(--font-weight-semibold);text-transform:uppercase;letter-spacing:0.05em;color:var(--t-muted);}
+.sub-meta{font-size:11px;color:var(--t-muted);margin-left:auto;cursor:pointer;}
+.sub-meta:hover{color:var(--t-default);}
+.ai-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:var(--radius-full);font-size:9px;font-weight:var(--font-weight-semibold);letter-spacing:0.04em;text-transform:uppercase;background:linear-gradient(135deg,rgba(41,163,131,0.22),rgba(91,91,214,0.22));border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.82);}
+.ai-badge svg{stroke:rgba(255,255,255,0.82);}
+
+.pills{display:flex;flex-wrap:wrap;gap:var(--spacing-2);}
+
+/* chips */
+.chip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:var(--radius-full);font-size:13px;font-weight:var(--font-weight-medium);line-height:1;cursor:pointer;border:none;white-space:nowrap;font-family:var(--font-family-text);}
+.chip .conf{font-size:11px;font-weight:var(--font-weight-regular);font-variant-numeric:tabular-nums;}
+.chip .ico{width:13px;height:13px;flex-shrink:0;display:inline-flex;}
+
+/* SUGGESTION (transient tray): full two-of-three on toggle */
+.chip.sg{background:transparent;border:1px solid var(--dark-border-ui);color:var(--t-default);}
+.chip.sg .conf{color:var(--t-muted);}
+.chip.sg:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.55);}
+.chip.sg .plus{color:var(--ai-on-dark);}
+
+/* APPLIED collection chip — accepted AI: SUBTLE marker (small sparkle), neutral body */
+.chip.applied{background:rgba(255,255,255,0.07);border:1px solid var(--border-d);color:var(--t-strong);cursor:default;}
+.chip.applied .spark{color:var(--ai-on-dark);width:12px;height:12px;}
+.chip.applied .x{color:var(--t-muted);width:13px;height:13px;}
+.chip.applied .x:hover{color:var(--t-strong);}
+/* manual applied chip = identical body, no sparkle */
+
+/* input */
+.tag-input{display:flex;align-items:center;gap:8px;height:38px;padding:0 12px;border:1px solid var(--border-d);border-radius:var(--radius-3);background:var(--surface-1);margin-bottom:12px;}
+.tag-input svg{width:15px;height:15px;color:var(--t-muted);flex-shrink:0;}
+.tag-input input{flex:1;background:none;border:none;outline:none;color:var(--t-default);font-family:var(--font-family-text);font-size:var(--font-size-2);}
+.tag-input input::placeholder{color:var(--t-muted);font-style:italic;}
+
+.divider{height:1px;background:var(--border-d);margin:16px 0;}
+.empty{font-size:var(--font-size-1);color:var(--t-muted);padding:2px 0;}
+
+/* auto-accept event banner — chrome, not a bucket */
+.aa-banner{display:flex;align-items:center;gap:8px;padding:8px 10px;margin-bottom:12px;border-radius:var(--radius-1);
+  background:linear-gradient(135deg,rgba(0,162,199,0.10),rgba(91,91,214,0.10));border:1px solid rgba(91,150,224,0.22);
+  font-size:var(--font-size-1);color:var(--t-default);}
+.aa-banner .ai-on{color:var(--ai-on-dark);width:14px;height:14px;flex-shrink:0;}
+.aa-banner b{color:var(--t-strong);font-weight:var(--font-weight-semibold);}
+.aa-banner .act{margin-left:auto;color:var(--ai-on-dark);cursor:pointer;font-weight:var(--font-weight-medium);}
+.aa-banner .dismiss{color:var(--t-muted);cursor:pointer;width:14px;height:14px;}
+.aa-banner .dismiss:hover{color:var(--t-default);}
+
+.expander{margin-top:10px;font-size:var(--font-size-1);color:var(--t-muted);cursor:pointer;display:inline-flex;align-items:center;gap:4px;}
+.expander:hover{color:var(--t-default);}
+.expander svg{width:12px;height:12px;}
+
+.note{margin-top:22px;max-width:420px;font-size:11px;color:var(--t-muted);line-height:17px;}
+.note code{background:rgba(255,255,255,0.07);padding:1px 5px;border-radius:3px;font-size:10.5px;color:rgba(255,255,255,0.82);}
+.note b{color:var(--t-default);font-weight:var(--font-weight-semibold);}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <svg class="edit-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+  <span class="lbl">Editing</span><span class="lbl">·</span>
+  <span class="fname">Vilebrequin_RedWhite_RaceCar_SideProfile_Track_8R8V</span>
+</div>
+
+<div class="app">
+  <div class="rail">
+    <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>Details</div>
+    <div class="rail-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v6M20 4 9 15"/></svg>Attributes</div>
+    <div class="rail-item removed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 2.8a1 1 0 0 1 2 0l1 5.5a2 2 0 0 0 1.6 1.6l5.5 1a1 1 0 0 1 0 2l-5.5 1a2 2 0 0 0-1.6 1.6l-1 5.5a1 1 0 0 1-2 0l-1-5.5a2 2 0 0 0-1.6-1.6l-5.5-1a1 1 0 0 1 0-2l5.5-1a2 2 0 0 0 1.6-1.6z"/></svg>AI<span class="strike"></span></div>
+    <div class="rail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg>Versions</div>
+  </div>
+
+  <div class="main">
+    <div class="col">
+      <h2 class="section-h">Attributes &amp; tags</h2>
+
+      <!-- Attributes accordion (collapsed) -->
+      <div class="acc">
+        <div class="acc-head">
+          <span class="lead"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v6M20 4 9 15"/></svg></span>
+          Attributes
+          <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <!-- Tags accordion (open) — restructured -->
+      <div class="acc open">
+        <div class="acc-head">
+          <span class="lead"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.6 2.6 21 11a2 2 0 0 1 0 2.8l-6.2 6.2a2 2 0 0 1-2.8 0L3.6 11.6A2 2 0 0 1 3 10.2V4a1 1 0 0 1 1-1h6.2a2 2 0 0 1 1.4.6Z"/><circle cx="7.5" cy="7.5" r="1"/></svg></span>
+          Tags
+          <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transform:rotate(180deg)"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+        <div class="acc-body">
+
+          <!-- auto-accept event: legible, not silent. chrome — not a bucket -->
+          <div class="aa-banner">
+            <svg class="ai-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 2.8a1 1 0 0 1 2 0l1 5.5a2 2 0 0 0 1.6 1.6l5.5 1a1 1 0 0 1 0 2l-5.5 1a2 2 0 0 0-1.6 1.6l-1 5.5a1 1 0 0 1-2 0l-1-5.5a2 2 0 0 0-1.6-1.6l-5.5-1a1 1 0 0 1 0-2l5.5-1a2 2 0 0 0 1.6-1.6z"/></svg>
+            <span><b>7 tags auto-accepted</b> at ≥75% confidence</span>
+            <span class="act">Review</span>
+            <svg class="dismiss" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </div>
+
+          <!-- 1 · TAGS — the unified applied collection (pre-populated by auto-accept) -->
+          <div class="sub"><span class="sub-l">Tags</span><span class="sub-meta" style="cursor:default;">9 applied</span></div>
+          <div class="tag-input">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" placeholder="Type to search or add tags…">
+          </div>
+          <div class="pills">
+            <!-- auto-accepted AI (≥75%): subtle sparkle, no %, in collection from load -->
+            <span class="chip applied"><svg class="spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 2.8a1 1 0 0 1 2 0l1 5.5a2 2 0 0 0 1.6 1.6l5.5 1a1 1 0 0 1 0 2l-5.5 1a2 2 0 0 0-1.6 1.6l-1 5.5a1 1 0 0 1-2 0l-1-5.5a2 2 0 0 0-1.6-1.6l-5.5-1a1 1 0 0 1 0-2l5.5-1a2 2 0 0 0 1.6-1.6z"/></svg>Person<svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+            <span class="chip applied"><svg class="spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 2.8a1 1 0 0 1 2 0l1 5.5a2 2 0 0 0 1.6 1.6l5.5 1a1 1 0 0 1 0 2l-5.5 1a2 2 0 0 0-1.6 1.6l-1 5.5a1 1 0 0 1-2 0l-1-5.5a2 2 0 0 0-1.6-1.6l-5.5-1a1 1 0 0 1 0-2l5.5-1a2 2 0 0 0 1.6-1.6z"/></svg>Car<svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+            <span class="chip applied"><svg class="spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 2.8a1 1 0 0 1 2 0l1 5.5a2 2 0 0 0 1.6 1.6l5.5 1a1 1 0 0 1 0 2l-5.5 1a2 2 0 0 0-1.6 1.6l-1 5.5a1 1 0 0 1-2 0l-1-5.5a2 2 0 0 0-1.6-1.6l-5.5-1a1 1 0 0 1 0-2l5.5-1a2 2 0 0 0 1.6-1.6z"/></svg>Vehicle<svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+            <span class="chip applied"><svg class="spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 2.8a1 1 0 0 1 2 0l1 5.5a2 2 0 0 0 1.6 1.6l5.5 1a1 1 0 0 1 0 2l-5.5 1a2 2 0 0 0-1.6 1.6l-1 5.5a1 1 0 0 1-2 0l-1-5.5a2 2 0 0 0-1.6-1.6l-5.5-1a1 1 0 0 1 0-2l5.5-1a2 2 0 0 0 1.6-1.6z"/></svg>Machine<svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+            <span class="chip applied"><svg class="spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 2.8a1 1 0 0 1 2 0l1 5.5a2 2 0 0 0 1.6 1.6l5.5 1a1 1 0 0 1 0 2l-5.5 1a2 2 0 0 0-1.6 1.6l-1 5.5a1 1 0 0 1-2 0l-1-5.5a2 2 0 0 0-1.6-1.6l-5.5-1a1 1 0 0 1 0-2l5.5-1a2 2 0 0 0 1.6-1.6z"/></svg>Wheel<svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+            <span class="chip applied"><svg class="spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 2.8a1 1 0 0 1 2 0l1 5.5a2 2 0 0 0 1.6 1.6l5.5 1a1 1 0 0 1 0 2l-5.5 1a2 2 0 0 0-1.6 1.6l-1 5.5a1 1 0 0 1-2 0l-1-5.5a2 2 0 0 0-1.6-1.6l-5.5-1a1 1 0 0 1 0-2l5.5-1a2 2 0 0 0 1.6-1.6z"/></svg>Race Car<svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+            <span class="chip applied"><svg class="spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 2.8a1 1 0 0 1 2 0l1 5.5a2 2 0 0 0 1.6 1.6l5.5 1a1 1 0 0 1 0 2l-5.5 1a2 2 0 0 0-1.6 1.6l-1 5.5a1 1 0 0 1-2 0l-1-5.5a2 2 0 0 0-1.6-1.6l-5.5-1a1 1 0 0 1 0-2l5.5-1a2 2 0 0 0 1.6-1.6z"/></svg>Auto Racing<svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+            <!-- manual: same body, no sparkle -->
+            <span class="chip applied">Vilebrequin<svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+            <span class="chip applied">SS26 Campaign<svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- 2 · REVIEW — only the floor–threshold band needs a decision -->
+          <div class="sub">
+            <span class="sub-l">AI suggestions · review</span>
+            <span class="ai-badge"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M11 2.8a1 1 0 0 1 2 0l1 5.5a2 2 0 0 0 1.6 1.6l5.5 1a1 1 0 0 1 0 2l-5.5 1a2 2 0 0 0-1.6 1.6l-1 5.5a1 1 0 0 1-2 0l-1-5.5a2 2 0 0 0-1.6-1.6l-5.5-1a1 1 0 0 1 0-2l5.5-1a2 2 0 0 0 1.6-1.6z"/></svg>AI</span>
+            <span class="sub-meta">50–75% · Accept all</span>
+          </div>
+          <div class="pills">
+            <button class="chip sg"><svg class="ico plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Rally <span class="conf">74%</span></button>
+            <button class="chip sg"><svg class="ico plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Head <span class="conf">67%</span></button>
+            <button class="chip sg"><svg class="ico plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Bracelet <span class="conf">61%</span></button>
+            <button class="chip sg"><svg class="ico plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Tire <span class="conf">55%</span></button>
+            <button class="chip sg"><svg class="ico plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Tarmac <span class="conf">55%</span></button>
+            <button class="chip sg"><svg class="ico plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Road <span class="conf">55%</span></button>
+            <button class="chip sg"><svg class="ico plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Alloy Wheel <span class="conf">54%</span></button>
+            <button class="chip sg"><svg class="ico plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Sports Car <span class="conf">53%</span></button>
+          </div>
+
+          <!-- 3 · sub-floor: hidden behind expander. the noise tail. -->
+          <div class="expander">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            Show 17 lower-confidence suggestions (&lt;50%)
+          </div>
+
+        </div>
+      </div>
+
+      <div class="note">
+        <b>Threshold partitions the list, it doesn't just silently move tags.</b> ≥75% → pre-applied in <code>Tags</code> (auto-accept, legible via the banner, undoable). 50–75% → <code>review</code> tray, the only band needing a click. &lt;50% → collapsed (the noise tail). Auto-accepted and manually-accepted AI tags share one chip style (subtle sparkle) — auto-vs-user is <code>accepted_by</code> in the tag manager, not a third state. Display floor is a <b>separate</b> config from the auto-accept threshold.
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>
