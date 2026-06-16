@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAM — Unified Details panel (edit ↔ lightbox)</title>
+<style>
+:root{
+  /* Scale v4 tokens (subset) */
+  --color-stone-50:#fefcfc; --color-stone-100:#f5f5f4; --color-stone-200:#e7e5e4;
+  --color-stone-300:#d6d3d1; --color-stone-400:#978985; --color-stone-500:#6b615e;
+  --color-stone-700:#44403c; --color-stone-800:#292524; --color-stone-900:#261e1b;
+  --color-primary-300:#4db5cf; --color-primary-600:#0b6e8a; --color-primary-700:#005f7b;
+  --accent-3:#E4F5FC; --accent-9:#0B6E8A;
+  --color-teal-100:#C3FAE8;
+  --primary-default:var(--color-primary-600);
+  --text-default:var(--color-stone-900); --text-muted:var(--color-stone-500); --text-subtle:var(--color-stone-400);
+  --border-default:var(--color-stone-200); --border-subtle:var(--color-stone-100);
+  --spacing-2:8px; --spacing-3:12px; --spacing-4:16px; --spacing-6:24px;
+  --radius-2:4px; --radius-3:6px; --radius-4:8px;
+  --shadow-lg:0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.1);
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fs-1:12px; --fs-2:14px; --fs-3:16px; --fs-5:24px;
+  /* dark editor surfaces */
+  --ed-bg:#1c1815; --ed-chrome:#161311; --ed-line:rgba(255,255,255,0.08);
+  --ed-label:rgba(255,255,255,0.55); --ed-value:rgba(255,255,255,0.92);
+  --ed-input-bg:rgba(255,255,255,0.05); --ed-input-bd:rgba(255,255,255,0.40);
+  --ed-tab:rgba(255,255,255,0.5); --ed-tab-active:var(--color-primary-300);
+}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--color-stone-100);color:var(--text-default);
+  padding:32px;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:1180px;margin:0 auto;}
+h1{font-size:var(--fs-5);font-weight:700;letter-spacing:-0.02em;margin-bottom:6px;}
+.sub{font-size:var(--fs-2);color:var(--text-muted);max-width:760px;line-height:1.5;margin-bottom:8px;}
+.thesis{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border-default);
+  border-radius:var(--radius-full,9999px);padding:7px 14px;font-size:var(--fs-1);font-weight:600;
+  color:var(--text-default);margin:14px 0 28px;border-radius:9999px;}
+.thesis .dot{width:6px;height:6px;border-radius:50%;background:var(--primary-default);}
+
+.cols{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start;}
+.col{flex:1 1 480px;min-width:420px;}
+.mode-cap{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.mode-cap .tag{font-size:var(--fs-1);font-weight:700;letter-spacing:0.04em;text-transform:uppercase;
+  color:var(--text-muted);}
+.mode-cap .pill{font-size:var(--fs-1);font-weight:600;padding:2px 8px;border-radius:var(--radius-2);}
+.pill-edit{background:var(--color-stone-900);color:#fff;}
+.pill-view{background:var(--accent-3);color:var(--accent-9);}
+
+/* ---------- shared panel frame ---------- */
+.frame{border-radius:var(--radius-4);overflow:hidden;box-shadow:var(--shadow-lg);display:flex;flex-direction:column;}
+
+/* ===== EDIT MODE (dark editor) ===== */
+.ed{background:var(--ed-bg);}
+.ed .top{display:flex;align-items:center;justify-content:space-between;background:var(--ed-chrome);
+  padding:0 14px;height:48px;border-bottom:1px solid var(--ed-line);}
+.ed .top .title{display:flex;align-items:center;gap:10px;color:var(--ed-value);font-size:var(--fs-2);font-weight:600;}
+.ed .top .title .verb{color:var(--ed-tab-active);}
+.ed .top .title .ctx{color:var(--ed-label);font-weight:500;}
+.ed .top .acts{display:flex;align-items:center;gap:8px;}
+.btn{font-family:var(--font);font-size:var(--fs-2);font-weight:600;height:32px;padding:0 14px;
+  border-radius:var(--radius-2);cursor:pointer;display:inline-flex;align-items:center;gap:7px;border:1px solid transparent;}
+.btn-pri{background:var(--primary-default);color:#fff;}
+.btn-ghost-d{background:transparent;color:var(--ed-value);border-color:var(--ed-input-bd);}
+.btn-x{background:transparent;border:none;color:var(--ed-label);cursor:pointer;display:flex;padding:6px;}
+
+.ed .body{display:flex;}
+.ed .rail{width:84px;background:var(--ed-chrome);border-right:1px solid var(--ed-line);
+  padding:14px 0;display:flex;flex-direction:column;gap:4px;}
+.ed .rtab{display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 4px;color:var(--ed-tab);
+  font-size:11px;font-weight:500;cursor:default;position:relative;}
+.ed .rtab svg{width:18px;height:18px;}
+.ed .rtab.active{color:var(--ed-tab-active);}
+.ed .rtab.active::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:2px;
+  background:var(--ed-tab-active);border-radius:0 2px 2px 0;}
+.ed .rtab .new{position:absolute;top:2px;right:8px;font-size:8px;font-weight:700;letter-spacing:.02em;
+  color:var(--ed-bg);background:var(--ed-tab-active);padding:1px 4px;border-radius:3px;}
+
+.ed .panel{flex:1;padding:24px 26px;min-height:430px;}
+.ed .panel h2{color:var(--ed-value);font-size:var(--fs-3);font-weight:600;margin-bottom:20px;}
+.field{margin-bottom:16px;}
+.field .lab{font-size:var(--fs-1);font-weight:500;color:var(--ed-label);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.inp{width:100%;background:var(--ed-input-bg);border:1px solid var(--ed-input-bd);border-radius:var(--radius-2);
+  color:var(--ed-value);font-family:var(--font);font-size:var(--fs-2);padding:9px 11px;}
+.inp::placeholder{color:rgba(255,255,255,0.35);}
+.inp.area{min-height:62px;resize:none;}
+.owner-row{display:flex;align-items:center;justify-content:space-between;}
+.owner-row .who{color:var(--ed-value);font-size:var(--fs-2);}
+.btn-transfer{background:rgba(255,255,255,0.06);border:1px solid var(--ed-input-bd);color:var(--ed-value);
+  font-size:var(--fs-1);font-weight:500;height:28px;padding:0 10px;border-radius:var(--radius-2);
+  display:inline-flex;align-items:center;gap:6px;cursor:pointer;}
+
+/* read-only fact rows (shared visual logic, themed per mode) */
+.facts{margin-top:8px;padding-top:18px;}
+.ed .facts{border-top:1px solid var(--ed-line);}
+.ed .facts .fl{font-size:var(--fs-1);color:var(--ed-label);}
+.ed .facts .fv{font-size:var(--fs-2);color:var(--ed-value);}
+.factrow{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:7px 0;}
+.factrow .fv{text-align:right;}
+.flab{display:flex;align-items:center;gap:6px;}
+.funnel{width:12px;height:12px;opacity:.85;flex:none;}
+.ed .funnel{color:var(--ed-tab-active);}
+.view .funnel{color:var(--accent-9);}
+.link-v{color:var(--color-primary-300);word-break:break-all;}
+
+/* ===== VIEW MODE (light lightbox) ===== */
+.view{background:#fff;}
+.view .top{display:flex;align-items:center;justify-content:space-between;padding:0 18px;height:54px;
+  border-bottom:1px solid var(--border-default);}
+.view .top .title{font-size:var(--fs-3);font-weight:700;color:var(--text-default);}
+.view .top .acts{display:flex;align-items:center;gap:8px;}
+.btn-sec{background:#fff;color:var(--text-default);border:1px solid var(--border-default);font-weight:500;}
+.btn-x-l{background:transparent;border:none;color:var(--text-muted);cursor:pointer;display:flex;padding:6px;}
+
+.view .body{display:flex;}
+.view .panel{flex:1;padding:22px 24px;min-height:430px;}
+.view .panel h2{font-size:var(--fs-3);font-weight:600;color:var(--text-default);margin-bottom:20px;}
+.view .rail{width:84px;border-left:1px solid var(--border-default);padding:14px 0;display:flex;flex-direction:column;gap:2px;}
+.view .rtab{display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 4px;color:var(--text-muted);
+  font-size:11px;font-weight:500;cursor:default;position:relative;border-radius:var(--radius-3);margin:0 8px;}
+.view .rtab svg{width:18px;height:18px;}
+.view .rtab.active{color:var(--accent-9);background:var(--accent-3);}
+.view .rtab .ren{position:absolute;top:1px;right:6px;font-size:8px;font-weight:700;color:#fff;
+  background:var(--text-subtle);padding:1px 4px;border-radius:3px;}
+.view .rtab .new{position:absolute;top:1px;right:6px;font-size:8px;font-weight:700;color:#fff;
+  background:var(--accent-9);padding:1px 4px;border-radius:3px;}
+
+.view .field .lab{font-size:var(--fs-1);font-weight:500;color:var(--text-subtle);margin-bottom:5px;}
+.view .ro{font-size:var(--fs-2);color:var(--text-default);padding:2px 0 0;}
+.view .ro.empty{color:var(--text-subtle);font-style:italic;}
+.view .owner-row .who{color:var(--text-default);font-size:var(--fs-2);}
+.view .facts{border-top:1px solid var(--border-default);}
+.view .facts .fl{font-size:var(--fs-1);color:var(--text-subtle);}
+.view .facts .fv{font-size:var(--fs-2);color:var(--text-default);}
+.view .link-v{color:var(--accent-9);}
+.ro-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--text-subtle);
+  border:1px solid var(--border-default);background:var(--color-stone-50);padding:1px 7px;border-radius:9999px;}
+
+/* legend */
+.legend{margin-top:30px;background:#fff;border:1px solid var(--border-default);border-radius:var(--radius-4);
+  padding:18px 22px;}
+.legend h3{font-size:var(--fs-2);font-weight:700;margin-bottom:12px;}
+.legend ul{list-style:none;display:flex;flex-direction:column;gap:9px;}
+.legend li{display:flex;gap:10px;align-items:flex-start;font-size:var(--fs-2);color:var(--text-muted);line-height:1.45;}
+.legend li b{color:var(--text-default);font-weight:600;}
+.key{flex:none;margin-top:2px;}
+.key.edit{width:14px;height:14px;border-radius:3px;background:var(--ed-input-bg);border:1px solid var(--ed-input-bd);}
+.key.ro{width:14px;height:14px;border-radius:3px;background:var(--color-stone-100);border:1px solid var(--border-default);}
+.drop{margin-top:14px;padding-top:14px;border-top:1px dashed var(--border-default);font-size:var(--fs-1);color:var(--text-muted);}
+.drop b{color:var(--error-9,#e54d2e);}
+.strike{text-decoration:line-through;color:var(--text-subtle);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Unified Details panel</h1>
+  <p class="sub">One field set, two render states. Edit mode renders editable fields as inputs; view mode renders them as static text. Read-only facts render identically in both. <b>Mode governs editability, not which fields or tabs exist.</b></p>
+  <div class="thesis"><span class="dot"></span>Same fields · same order · same labels · mode toggles field state only</div>
+
+  <div class="cols">
+
+    <!-- ================= EDIT MODE ================= -->
+    <div class="col">
+      <div class="mode-cap"><span class="tag">Edit mode</span><span class="pill pill-edit">Dark editor · editable</span></div>
+      <div class="frame ed">
+        <div class="top">
+          <div class="title"><span class="verb">Editing</span> · <span class="ctx">car4</span></div>
+          <div class="acts">
+            <button class="btn btn-ghost-d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Download</button>
+            <button class="btn btn-pri">Save</button>
+            <button class="btn-x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+          </div>
+        </div>
+        <div class="body">
+          <div class="rail">
+            <div class="rtab active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>Details</div>
+            <div class="rtab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18M3 12h18M3 17h18"/></svg>Attributes</div>
+            <div class="rtab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5"/></svg>Tags</div>
+            <div class="rtab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="new">NEW</span>Metadata</div>
+            <div class="rtab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>Adjust</div>
+            <div class="rtab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v6M18 6a9 9 0 0 1-9 9"/></svg>Versions</div>
+            <div class="rtab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg><span class="new">NEW</span>Activity</div>
+            <div class="rtab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Rights</div>
+            <div class="rtab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>Access</div>
+          </div>
+
+          <div class="panel">
+            <h2>Details</h2>
+
+            <div class="field">
+              <div class="lab">Title</div>
+              <input class="inp" value="car4">
+            </div>
+            <div class="field">
+              <div class="lab">Description</div>
+              <textarea class="inp area" placeholder="Add a description…"></textarea>
+            </div>
+
+            <div class="facts">
+              <div class="factrow"><span class="fl flab">Original filename</span><span class="fv">car4.jpg</span></div>
+              <div class="factrow"><span class="fl flab">Asset type</span><span class="fv">Image</span></div>
+              <div class="factrow"><span class="fl flab">Dimensions</span><span class="fv">259 × 194 px</span></div>
+              <div class="factrow"><span class="fl flab">Resolution</span><span class="fv">72 dpi</span></div>
+              <div class="factrow"><span class="fl flab">Colour space</span><span class="fv">sRGB</span></div>
+              <div class="factrow"><span class="fl flab">File size</span><span class="fv">5.4 KB</span></div>
+              <div class="factrow"><span class="fl flab">Owner</span><span class="fv">SD Admin</span></div>
+              <div class="factrow"><span class="fl flab">Uploaded by</span><span class="fv">SD Admin</span></div>
+              <div class="factrow"><span class="fl flab">Upload date</span><span class="fv">9 Jun 2026, 12:44</span></div>
+              <div class="factrow"><span class="fl flab">File link</span><span class="fv link-v">damdev.screendragon.com/?inode=107271</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= VIEW MODE ================= -->
+    <div class="col">
+      <div class="mode-cap"><span class="tag">View mode</span><span class="pill pill-view">Lightbox · read-only</span></div>
+      <div class="frame view">
+        <div class="top">
+          <div class="title">car4.jpg</div>
+          <div class="acts">
+            <button class="btn btn-sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Add to Queue</button>
+            <button class="btn btn-pri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Download</button>
+            <button class="btn-x-l"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+          </div>
+        </div>
+        <div class="body">
+          <div class="panel">
+            <h2>Details</h2>
+
+            <div class="field">
+              <div class="lab">Title</div>
+              <div class="ro">car4</div>
+            </div>
+            <div class="field">
+              <div class="lab">Description</div>
+              <div class="ro empty">No description</div>
+            </div>
+
+            <div class="facts">
+              <div class="factrow"><span class="fl flab">Original filename</span><span class="fv">car4.jpg</span></div>
+              <div class="factrow"><span class="fl flab">Asset type</span><span class="fv">Image</span></div>
+              <div class="factrow"><span class="fl flab">Dimensions</span><span class="fv">259 × 194 px</span></div>
+              <div class="factrow"><span class="fl flab">Resolution</span><span class="fv">72 dpi</span></div>
+              <div class="factrow"><span class="fl flab">Colour space</span><span class="fv">sRGB</span></div>
+              <div class="factrow"><span class="fl flab">File size</span><span class="fv">5.4 KB</span></div>
+              <div class="factrow"><span class="fl flab">Owner</span><span class="fv">SD Admin</span></div>
+              <div class="factrow"><span class="fl flab">Uploaded by</span><span class="fv">SD Admin</span></div>
+              <div class="factrow"><span class="fl flab">Upload date</span><span class="fv">9 Jun 2026, 12:44</span></div>
+              <div class="factrow"><span class="fl flab">File link</span><span class="fv link-v">damdev.screendragon.com/?inode=107271</span></div>
+            </div>
+          </div>
+
+          <div class="rail">
+            <div class="rtab active"><span class="ren">was General</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>Details</div>
+            <div class="rtab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18M3 12h18M3 17h18"/></svg>Attributes</div>
+            <div class="rtab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5"/></svg>Tags</div>
+            <div class="rtab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-5 10-5 10 5 10 5M2 17s3-3 10-3 10 3 10 3M2 7s3-3 10-3 10 3 10 3"/></svg>Similar</div>
+            <div class="rtab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Metadata</div>
+            <div class="rtab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg><span class="new">NEW</span>Activity</div>
+            <div class="rtab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Download</div>
+            <div class="rtab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Rights</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- legend -->
+  <div class="legend">
+    <h3>Reading the mock</h3>
+    <ul>
+      <li><span class="key edit"></span><span><b>Editable fields</b> (Title, Description) — inputs in edit mode, static text in view mode. The set is identical; only the affordance changes. This is <i>disable/show, don't hide</i> applied to the view/edit split.</span></li>
+      <li><span class="key ro"></span><span><b>Read-only facts</b> render identically in both modes — they were never editable, so there's no state to toggle. The editor's job for these is view-only, same as the lightbox.</span></li>
+      <li><svg style="color:var(--accent-9);width:14px;height:14px;flex:none;margin-top:2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg><span><b>Activity (new):</b> read-only audit trail of every action on the asset — the UI for the audit-history panel already required by the rights spec. Orthogonal to the other tabs: they own live state and emit typed events (actor · action · target · before→after · timestamp · source); Activity reads them. An access or rights change is one line item. Distinct from <b>Versions</b> (content lineage): a version upload appears in both — Versions owns it, Activity references it. Append-only, source-tagged (human/AI/automation), filterable by category + actor, role-scoped content. Inherently read-only, so it renders identically in edit and lightbox.</span></li>
+    </ul>
+    <div class="drop">
+      Dropped from the old curated set: <b class="strike">Asset ID (107271)</b> — internal IDs are system-level only per the metadata spec. DPI kept (Resolution), but display fixed — "1 dpi" is the file's unitless JFIF density, not a real DPI. &nbsp;Renamed: <b>General → Details</b>. &nbsp;Rail label stays one word — <b>Metadata</b> — with the precise form <b>File metadata</b> as the panel header once opened (same rail/header split Details uses). The "File" qualifier disambiguates the umbrella word from the sibling Attributes and Tags tabs. &nbsp;<b>Metadata</b> now present in edit mode too (read-only), so the tab set matches across modes. &nbsp;<b>Tags merge (SCR-120):</b> the separate <b>AI Tags</b> (lightbox) / <b>AI</b> (editor) tab folds into one <b>Tags</b> collection — accepted AI tags sit alongside manual ones with a subtle persistent provenance marker; the full sparkle / two-of-three treatment is reserved for pre-acceptance suggestions <i>inside</i> the tab, so no AI call-out remains on the rail. Tags now sits in the descriptive cluster (Details · Attributes · Tags · Metadata) in the same relative order in both modes. &nbsp;<b>Owner</b> shown read-only here as provenance (with "Uploaded by"). <b>Transfer ownership</b> lives in edit mode, in the <b>Access</b> tab — reframed as the per-asset people surface: an Ownership section (universal: owner + Transfer) above the Access-grants section (rights-conditional). Transfer is a property change, not an object operation, so it belongs in edit mode rather than the asset action menu — but it fires its own confirm dialog (surfacing that pending access requests and approver authority move to the new owner) rather than staging behind Save. &nbsp;Separate Cycle 2 bug: the Metadata tab currently leaks the temp ingest path (<code>tmphaxqqcq1.jpg</code> / <code>/tmp</code>) and over-exposes system fields (File Permissions, MIMEType, Encoding Process).
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
