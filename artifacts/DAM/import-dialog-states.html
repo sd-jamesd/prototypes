@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Import dialog — prototype + handoff</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#0B6E8A; --teal-dark:#095A71; --ink:#211E1A; --muted:#6E6862;
+    --line:#E5E0D9; --line-soft:#EFEBE4; --surface:#FFFFFF; --canvas:#F5F2ED;
+    --teal-tint:#E6F1F4;
+    --s1:8px; --s2:16px; --s3:24px; --s4:32px; --radius:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--canvas);-webkit-font-smoothing:antialiased}
+  .page{max-width:1080px;margin:0 auto;padding:var(--s4) var(--s3) 64px}
+
+  header{padding:var(--s4) 0 var(--s3);border-bottom:1px solid var(--line);margin-bottom:var(--s4)}
+  header h1{font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 6px}
+  header p{font-size:15px;color:var(--muted);margin:0;max-width:62ch;line-height:1.5}
+
+  .section-label{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin:0 0 var(--s2)}
+
+  /* Controls */
+  .controls{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s2)}
+  .ctrl-group{display:flex;align-items:center;gap:10px}
+  .ctrl-group .glabel{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+  .seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+  .seg button{font:inherit;font-size:14px;font-weight:500;border:0;background:transparent;color:var(--muted);padding:8px 16px;border-radius:7px;cursor:pointer;transition:all .15s ease}
+  .seg button:hover{color:var(--ink)}
+  .seg button[aria-pressed="true"]{background:var(--teal-tint);color:var(--teal);box-shadow:0 1px 2px rgba(33,30,26,.06)}
+  .vgroup{transition:opacity .2s ease}
+  .vgroup.disabled{opacity:.35;pointer-events:none}
+
+  /* Stage + dialog */
+  .stage{background:var(--ink);border-radius:var(--radius);padding:var(--s4);display:flex;align-items:center;justify-content:center;min-height:340px}
+  .dialog{width:100%;max-width:400px;background:var(--surface);border-radius:var(--radius);box-shadow:0 20px 48px -16px rgba(0,0,0,.4);padding:var(--s4);text-align:center}
+  .visual{height:60px;display:flex;align-items:center;justify-content:center;margin-bottom:var(--s3)}
+  .spinner{width:42px;height:42px}
+  .spinner circle{fill:none;stroke-width:4}
+  .spinner .track{stroke:var(--line-soft)}
+  .spinner .head{stroke:var(--teal);stroke-linecap:round;stroke-dasharray:90 200;transform-origin:center;animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion:reduce){ .spinner .head{animation:none} }
+  .check{width:48px;height:48px;border-radius:50%;background:var(--teal-tint);display:flex;align-items:center;justify-content:center}
+  .check svg{width:24px;height:24px;stroke:var(--teal);stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .check path{stroke-dasharray:30;stroke-dashoffset:30;animation:draw .4s ease forwards .1s}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  .dialog h2{font-size:18px;font-weight:600;margin:0 0 var(--s1);letter-spacing:-.01em}
+  .dialog .body{font-size:14px;line-height:1.5;color:var(--muted);margin:0 auto;max-width:33ch}
+  .queue{display:inline-flex;align-items:baseline;gap:6px;margin-bottom:var(--s2);padding:6px 14px;background:var(--teal-tint);border-radius:999px}
+  .queue .pos{font-size:15px;font-weight:600;color:var(--teal)}
+  .queue .pos-label{font-size:13px;color:var(--teal);opacity:.8}
+  .count{font-size:14px;font-weight:600;margin-bottom:var(--s2)}
+  .bar{height:6px;background:var(--line-soft);border-radius:999px;overflow:hidden;margin:0 auto var(--s2);max-width:270px}
+  .bar .fill{height:100%;background:var(--teal);border-radius:999px;width:0;transition:width .4s ease}
+  .rotating{font-size:13px;color:var(--muted);min-height:19px;transition:opacity .25s ease}
+  .footer{margin-top:var(--s3)}
+  .btn-link{font:inherit;font-size:13px;font-weight:500;background:transparent;border:0;color:var(--teal);cursor:pointer;padding:8px;border-radius:6px}
+  .btn-link:hover{background:var(--canvas)}
+  .refreshing{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-top:var(--s2)}
+  .refreshing .spinner{width:14px;height:14px}
+
+  [data-show]{display:none}
+  [data-show].active{display:block}
+  [data-variant]{display:none}
+  [data-variant].active{display:block}
+
+  /* Handoff */
+  .handoff{margin-top:56px}
+  .row{display:grid;grid-template-columns:400px 1fr;gap:var(--s4);align-items:start;padding:var(--s4) 0;border-top:1px solid var(--line)}
+  @media (max-width:880px){ .row{grid-template-columns:1fr} .controls{gap:var(--s2)} }
+  .row .stage{min-height:280px;padding:var(--s3)}
+  .row .dialog{max-width:344px;padding:var(--s3)}
+  .state-tag{display:inline-block;font-size:12px;font-weight:600;color:var(--teal);background:var(--teal-tint);padding:4px 10px;border-radius:6px;letter-spacing:.02em;margin-bottom:var(--s2)}
+  .spec h3{font-size:16px;font-weight:600;margin:0 0 var(--s2)}
+  .spec dl{margin:0;display:grid;grid-template-columns:120px 1fr;gap:0}
+  .spec dt{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:10px 0;border-top:1px solid var(--line-soft)}
+  .spec dd{font-size:14px;line-height:1.5;margin:0;padding:10px 0;border-top:1px solid var(--line-soft)}
+  .spec dd .copy{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:2px 7px;display:inline-block;margin:2px 0}
+  .spec dd ul{margin:4px 0 0;padding-left:18px}
+  .spec dd li{margin:3px 0}
+  .note{font-size:13px;color:var(--muted);margin-top:var(--s2);line-height:1.5;padding:10px 12px;background:var(--surface);border-left:3px solid var(--teal);border-radius:0 6px 6px 0}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>Bulk import dialog — states</h1>
+    <p>One dialog, three backend statuses. It updates in place and auto-refreshes the screen on completion. Use the live preview to step through states; the handoff section below has the copy strings to pull verbatim.</p>
+  </header>
+
+  <!-- LIVE PREVIEW -->
+  <p class="section-label">Live preview</p>
+  <div class="controls">
+    <div class="ctrl-group">
+      <span class="glabel">State</span>
+      <div class="seg" role="group" aria-label="Dialog state">
+        <button data-state="queued" aria-pressed="true">Queued</button>
+        <button data-state="progress" aria-pressed="false">In progress</button>
+        <button data-state="complete" aria-pressed="false">Complete</button>
+      </div>
+    </div>
+    <div class="ctrl-group vgroup disabled" id="vgroup">
+      <span class="glabel">Progress variant</span>
+      <div class="seg vseg" role="group" aria-label="Progress variant">
+        <button data-v="nocount" aria-pressed="true">No count</button>
+        <button data-v="count" aria-pressed="false">With count</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+
+      <!-- QUEUED -->
+      <div data-show="queued" class="active">
+        <div class="visual"><svg class="spinner" viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="18"/><circle class="head" cx="22" cy="22" r="18"/></svg></div>
+        <div class="queue"><span class="pos" id="queue-pos">3rd</span><span class="pos-label">in queue</span></div>
+        <h2 id="dlg-title">Waiting to start</h2>
+        <p class="body" id="queue-body">Your import is queued. It'll begin shortly.</p>
+        <div class="footer"><button class="btn-link">Close and notify me when it's done</button></div>
+      </div>
+
+      <!-- IN PROGRESS -->
+      <div data-show="progress">
+        <div class="visual"><svg class="spinner" viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="18"/><circle class="head" cx="22" cy="22" r="18"/></svg></div>
+        <h2>Importing tasks</h2>
+        <div data-variant="count">
+          <div class="count"><span id="count-now">0</span> of 340 added</div>
+          <div class="bar"><div class="fill" id="bar-fill"></div></div>
+        </div>
+        <div data-variant="nocount" class="active">
+          <p class="body">This is running now. Large imports take a few minutes.</p>
+          <div style="height:16px"></div>
+        </div>
+        <p class="rotating" id="rotating">Validating fields…</p>
+        <div class="footer"><button class="btn-link">Close and notify me when it's done</button></div>
+      </div>
+
+      <!-- COMPLETE -->
+      <div data-show="complete">
+        <div class="visual"><div class="check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></div>
+        <h2>Import complete</h2>
+        <p class="body">All 340 tasks added to your project.</p>
+        <div class="refreshing"><svg class="spinner" viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="18"/><circle class="head" cx="22" cy="22" r="18"/></svg>Refreshing now…</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- HANDOFF -->
+  <div class="handoff">
+    <p class="section-label">Handoff — copy is source of truth, pull verbatim</p>
+
+    <!-- QUEUED -->
+    <div class="row">
+      <div class="stage">
+        <div class="dialog">
+          <div class="visual"><svg class="spinner" viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="18"/><circle class="head" cx="22" cy="22" r="18"/></svg></div>
+          <div class="queue"><span class="pos">3rd</span><span class="pos-label">in queue</span></div>
+          <h2>Waiting to start</h2>
+          <p class="body">Your import is queued. It'll begin shortly.</p>
+          <div class="footer"><button class="btn-link">Close and notify me when it's done</button></div>
+        </div>
+      </div>
+      <div class="spec">
+        <span class="state-tag">STATUS: queued</span>
+        <h3>Waiting to start</h3>
+        <dl>
+          <dt>Title</dt><dd><span class="copy">Waiting to start</span></dd>
+          <dt>Position</dt><dd><span class="copy">{ordinal} in queue</span> — e.g. 3rd in queue. Updates on each poll.</dd>
+          <dt>Body</dt>
+          <dd>Maps to position:
+            <ul>
+              <li>2nd+: <span class="copy">Your import is queued. It'll begin shortly.</span></li>
+              <li>1st: <span class="copy">Your import is next. Starting any moment.</span></li>
+            </ul>
+          </dd>
+          <dt>Action</dt><dd><span class="copy">Close and notify me when it's done</span> — dismisses dialog, job continues, fires notification on complete.</dd>
+        </dl>
+        <p class="note">Highest-risk state — nothing visibly happens until the job starts. The ticking position is what proves it's alive. If position can't be resolved, fall back to <span class="copy" style="font-size:12px">Large imports can take a few minutes.</span> and keep the spinner.</p>
+      </div>
+    </div>
+
+    <!-- NO COUNT (default) -->
+    <div class="row">
+      <div class="stage">
+        <div class="dialog">
+          <div class="visual"><svg class="spinner" viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="18"/><circle class="head" cx="22" cy="22" r="18"/></svg></div>
+          <h2>Importing tasks</h2>
+          <p class="body">This is running now. Large imports take a few minutes.</p>
+          <p class="rotating" style="margin-top:16px">Adding tasks to your project…</p>
+          <div class="footer"><button class="btn-link">Close and notify me when it's done</button></div>
+        </div>
+      </div>
+      <div class="spec">
+        <span class="state-tag">STATUS: queue started — no count (default)</span>
+        <h3>Importing tasks</h3>
+        <dl>
+          <dt>Title</dt><dd><span class="copy">Importing tasks</span></dd>
+          <dt>Body</dt><dd><span class="copy">This is running now. Large imports take a few minutes.</span></dd>
+          <dt>Rotating</dt>
+          <dd>Cycle ~2.2s — carries the "it's working" signal in place of a count:
+            <ul>
+              <li><span class="copy">Validating fields…</span></li>
+              <li><span class="copy">Adding tasks to your project…</span></li>
+              <li><span class="copy">Linking assignees and dates…</span></li>
+              <li><span class="copy">Almost there…</span></li>
+            </ul>
+          </dd>
+          <dt>Action</dt><dd><span class="copy">Close and notify me when it's done</span></dd>
+        </dl>
+        <p class="note">Default version, since the count isn't available mid-import. Indeterminate spinner, no progress bar. The rotating line must keep moving — a static line on an infinite spinner reads as hung.</p>
+      </div>
+    </div>
+
+    <!-- WITH COUNT (fallback) -->
+    <div class="row">
+      <div class="stage">
+        <div class="dialog">
+          <div class="visual"><svg class="spinner" viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="18"/><circle class="head" cx="22" cy="22" r="18"/></svg></div>
+          <h2>Importing tasks</h2>
+          <div class="count">184 of 340 added</div>
+          <div class="bar"><div class="fill" style="width:54%"></div></div>
+          <p class="rotating">Adding tasks to your project…</p>
+          <div class="footer"><button class="btn-link">Close and notify me when it's done</button></div>
+        </div>
+      </div>
+      <div class="spec">
+        <span class="state-tag">STATUS: queue started — with count</span>
+        <h3>Importing tasks (count available)</h3>
+        <dl>
+          <dt>Title</dt><dd><span class="copy">Importing tasks</span></dd>
+          <dt>Count</dt><dd><span class="copy">{added} of {total} added</span> — drives the progress bar width.</dd>
+          <dt>Rotating</dt><dd>Same lines as the no-count version.</dd>
+          <dt>Action</dt><dd><span class="copy">Close and notify me when it's done</span></dd>
+        </dl>
+        <p class="note">Only use if the poll ever starts returning a reliable count. A real number is proof, not a promise — it beats any reassurance copy. Kept here as the upgrade path.</p>
+      </div>
+    </div>
+
+    <!-- COMPLETE -->
+    <div class="row">
+      <div class="stage">
+        <div class="dialog">
+          <div class="visual"><div class="check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></div>
+          <h2>Import complete</h2>
+          <p class="body">All 340 tasks added to your project.</p>
+          <div class="refreshing"><svg class="spinner" viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="18"/><circle class="head" cx="22" cy="22" r="18"/></svg>Refreshing now…</div>
+        </div>
+      </div>
+      <div class="spec">
+        <span class="state-tag">STATUS: queue completed</span>
+        <h3>Import complete</h3>
+        <dl>
+          <dt>Title</dt><dd><span class="copy">Import complete</span></dd>
+          <dt>Body</dt><dd><span class="copy">All {total} tasks added to your project.</span></dd>
+          <dt>State</dt><dd><span class="copy">Refreshing now…</span> — hold briefly, then auto-refresh the screen.</dd>
+        </dl>
+        <p class="note">Show the complete state for ~1s before the refresh so it reads as intentional, not a glitch. Partial-failure copy (e.g. <span class="copy" style="font-size:12px">332 of 340 added — 8 failed. Review</span>) is a separate state — flag if you need it.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const segBtns = document.querySelectorAll('.controls .seg button[data-state]');
+  const vBtns = document.querySelectorAll('.vseg button');
+  const vgroup = document.getElementById('vgroup');
+  const panels = document.querySelectorAll('.stage [data-show]');
+  let progressTimer, rotateTimer, queueTimer;
+
+  const rotatingLines = ['Validating fields…','Adding tasks to your project…','Linking assignees and dates…','Almost there…'];
+
+  function clearTimers(){ clearInterval(progressTimer); clearInterval(rotateTimer); clearInterval(queueTimer); }
+
+  function runProgress(){
+    const countEl = document.getElementById('count-now');
+    const fillEl = document.getElementById('bar-fill');
+    const rotEl = document.getElementById('rotating');
+    let n = 0, total = 340, ri = 0;
+    if(fillEl) fillEl.style.width = '0%';
+    progressTimer = setInterval(()=>{
+      n = Math.min(total, n + Math.floor(Math.random()*14)+6);
+      if(countEl) countEl.textContent = n;
+      if(fillEl) fillEl.style.width = (n/total*100)+'%';
+      if(n>=total){ clearInterval(progressTimer); rotEl.textContent='Wrapping up…'; }
+    }, 400);
+    rotateTimer = setInterval(()=>{
+      ri = (ri+1) % rotatingLines.length;
+      rotEl.style.opacity = 0;
+      setTimeout(()=>{ rotEl.textContent = rotatingLines[ri]; rotEl.style.opacity = 1; }, 250);
+    }, 2200);
+  }
+
+  function runQueue(){
+    const posEl = document.getElementById('queue-pos');
+    const bodyEl = document.getElementById('queue-body');
+    const labels = {3:'3rd',2:'2nd',1:'1st'};
+    let p = 3;
+    queueTimer = setInterval(()=>{
+      p--; if(p<1){ clearInterval(queueTimer); return; }
+      posEl.textContent = labels[p];
+      bodyEl.textContent = p===1 ? 'Your import is next. Starting any moment.' : 'Your import is queued. It\u2019ll begin shortly.';
+    }, 2600);
+  }
+
+  function setVariant(v){
+    document.querySelectorAll('.stage [data-variant]').forEach(el => el.classList.toggle('active', el.dataset.variant === v));
+    vBtns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
+    if(document.querySelector('.stage [data-show="progress"]').classList.contains('active')){
+      clearInterval(progressTimer); clearInterval(rotateTimer); runProgress();
+    }
+  }
+
+  function setState(state){
+    clearTimers();
+    panels.forEach(p => p.classList.toggle('active', p.dataset.show === state));
+    segBtns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.state === state)));
+    vgroup.classList.toggle('disabled', state !== 'progress');
+    if(state === 'progress') runProgress();
+    if(state === 'queued') runQueue();
+  }
+
+  segBtns.forEach(b => b.addEventListener('click', () => setState(b.dataset.state)));
+  vBtns.forEach(b => b.addEventListener('click', () => setVariant(b.dataset.v)));
+  setState('queued');
+</script>
+</body>
+</html>
