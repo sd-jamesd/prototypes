@@ -1,0 +1,3566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Download Surfaces QA Tester — DAM</title>
+<style>
+  :root {
+    --color-stone-50: #f8f7f4;
+    --color-stone-100: #f2f1ee;
+    --color-stone-200: #e7e6e1;
+    --color-stone-300: #d4d2cb;
+    --color-stone-400: #a8a59b;
+    --color-stone-500: #7d7a6f;
+    --color-stone-600: #525049;
+    --color-stone-800: #2a2a26;
+    --color-stone-900: #1c1c19;
+
+    --color-red-100: #feebe7;
+    --color-red-500: #e54d2e;
+    --color-red-600: #d13415;
+    --color-red-700: #582C29;
+
+    --color-amber-100: #ffefd5;
+    --color-amber-500: #f5a524;
+    --color-amber-600: #985b00;
+    --color-amber-700: #4E350D;
+
+    --color-green-100: #e6f7ed;
+    --color-green-500: #29a383;
+    --color-green-600: #208368;
+    --color-green-700: #1E442D;
+
+    --color-primary-50: #e8f1f5;
+    --color-primary-100: #d1e3ec;
+    --color-primary-500: #0B6E8A;
+    --color-primary-600: #0a5d75;
+    --color-primary-700: #1a3a46;
+
+    --filetype-image-bg: #B8E5DC;
+    --filetype-image-fg: #0d6e5c;
+
+    --surface-default: #ffffff;
+    --surface-subtle: var(--color-stone-50);
+    --surface-muted: var(--color-stone-100);
+    --text-default: var(--color-stone-900);
+    --text-subtle: var(--color-stone-500);
+    --text-hint: var(--color-stone-400);
+    --border-default: var(--color-stone-200);
+    --border-strong: var(--color-stone-300);
+    --primary-default: var(--color-primary-500);
+    --primary-hover: var(--color-primary-600);
+    --primary-subtle: var(--color-primary-50);
+    --primary-muted: var(--color-primary-100);
+
+    --spacing-1: 4px; --spacing-2: 8px; --spacing-3: 12px; --spacing-4: 16px;
+    --spacing-5: 20px; --spacing-6: 24px; --spacing-7: 32px; --spacing-8: 40px;
+
+    --radius-1: 3px; --radius-2: 4px; --radius-3: 6px; --radius-4: 8px;
+    --radius-full: 9999px;
+
+    --font-family-text: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-family-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --font-size-0: 11px;
+    --font-size-1: 12px; --font-size-2: 13px; --font-size-3: 14px; --font-size-4: 16px; --font-size-5: 18px;
+    --font-weight-medium: 500; --font-weight-semibold: 600;
+
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-lg: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: var(--font-family-text);
+    color: var(--text-default);
+    background: var(--surface-muted);
+    font-size: var(--font-size-3);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    min-height: 100vh;
+  }
+
+  /* ============================================================
+     LEFT: CONTROL PANEL
+     ============================================================ */
+  .control-panel {
+    background: var(--surface-default);
+    border-right: 1px solid var(--border-default);
+    padding: var(--spacing-5);
+    overflow-y: auto;
+    max-height: 100vh;
+    position: sticky;
+    top: 0;
+  }
+
+  .panel-header {
+    margin-bottom: var(--spacing-5);
+    padding-bottom: var(--spacing-4);
+    border-bottom: 1px solid var(--border-default);
+  }
+  .panel-header h1 {
+    margin: 0 0 var(--spacing-2) 0;
+    font-size: var(--font-size-4);
+    font-weight: var(--font-weight-semibold);
+  }
+  .panel-header p {
+    margin: 0;
+    font-size: var(--font-size-2);
+    color: var(--text-subtle);
+  }
+
+  .control-section {
+    margin-bottom: var(--spacing-5);
+  }
+  .control-label {
+    display: block;
+    font-size: var(--font-size-1);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: var(--spacing-3);
+  }
+
+  .picker-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+  }
+  .picker-item {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+    padding: var(--spacing-3);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--font-size-2);
+    color: var(--text-default);
+    transition: all 0.1s;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .picker-item:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-subtle);
+  }
+  .picker-item.active {
+    border-color: var(--primary-default);
+    background: var(--primary-subtle);
+  }
+  .picker-item-title {
+    font-weight: var(--font-weight-medium);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-2);
+  }
+  .picker-item-meta {
+    font-size: var(--font-size-1);
+    color: var(--text-subtle);
+  }
+  .picker-item-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 6px;
+    border-radius: var(--radius-2);
+    font-size: 10px;
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .picker-item-tag.cleared { background: var(--color-green-100); color: var(--color-green-700); }
+  .picker-item-tag.simple { background: var(--color-stone-200); color: var(--color-stone-800); }
+  .picker-item-tag.embargo { background: var(--color-amber-100); color: var(--color-amber-700); }
+  .picker-item-tag.expired { background: var(--color-red-100); color: var(--color-red-700); }
+  .picker-item-tag.geo { background: var(--color-amber-100); color: var(--color-amber-700); }
+  .picker-item-tag.watermark { background: var(--color-amber-100); color: var(--color-amber-700); }
+  .picker-item-tag.mixed { background: var(--color-stone-200); color: var(--color-stone-800); }
+  .picker-item-tag.blocked { background: var(--color-red-100); color: var(--color-red-700); }
+
+  /* ============================================================
+     RIGHT: STAGE
+     ============================================================ */
+  .stage {
+    padding: var(--spacing-6);
+    overflow-y: auto;
+    max-height: 100vh;
+  }
+
+  .stage-header {
+    margin-bottom: var(--spacing-5);
+  }
+  .stage-title {
+    font-size: var(--font-size-5);
+    font-weight: var(--font-weight-semibold);
+    margin: 0 0 var(--spacing-2) 0;
+  }
+  .stage-subtitle {
+    font-size: var(--font-size-3);
+    color: var(--text-subtle);
+    margin: 0;
+  }
+
+  /* Outcome pill */
+  .outcome-bar {
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-4);
+    padding: var(--spacing-4) var(--spacing-5);
+    margin-bottom: var(--spacing-5);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+  }
+  .outcome-pill {
+    flex-shrink: 0;
+    padding: var(--spacing-2) var(--spacing-3);
+    border-radius: var(--radius-2);
+    font-size: var(--font-size-1);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: 1px solid;
+  }
+  .outcome-pill.full { background: var(--color-green-100); border-color: var(--color-green-500); color: var(--color-green-700); }
+  .outcome-pill.warning { background: var(--color-amber-100); border-color: var(--color-amber-500); color: var(--color-amber-700); }
+  .outcome-pill.restricted { background: var(--color-amber-100); border-color: var(--color-amber-500); color: var(--color-amber-700); }
+  .outcome-pill.blocked { background: var(--color-red-100); border-color: var(--color-red-500); color: var(--color-red-700); }
+  .outcome-pill.mixed { background: var(--color-stone-200); border-color: var(--color-stone-400); color: var(--color-stone-800); }
+  .outcome-text {
+    flex: 1;
+  }
+  .outcome-text-title {
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: 2px;
+  }
+  .outcome-text-detail {
+    font-size: var(--font-size-2);
+    color: var(--text-subtle);
+  }
+
+  /* Surface tabs */
+  .surface-tabs {
+    display: flex;
+    gap: var(--spacing-1);
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-4);
+    padding: var(--spacing-1);
+    margin-bottom: var(--spacing-5);
+  }
+  .surface-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: var(--spacing-3) var(--spacing-4);
+    border-radius: var(--radius-3);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    transition: all 0.1s;
+  }
+  .surface-tab:hover {
+    color: var(--text-default);
+    background: var(--surface-subtle);
+  }
+  .surface-tab.active {
+    background: var(--primary-default);
+    color: white;
+  }
+  .surface-tab.active:hover {
+    background: var(--primary-hover);
+  }
+  .surface-tab svg { flex-shrink: 0; }
+
+  /* Surface preview area */
+  .surface-preview {
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-4);
+    overflow: hidden;
+    margin-bottom: var(--spacing-5);
+  }
+  .surface-preview-label {
+    background: var(--surface-subtle);
+    padding: var(--spacing-2) var(--spacing-4);
+    font-size: var(--font-size-1);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--border-default);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .surface-preview-stage {
+    background: linear-gradient(135deg, var(--surface-muted) 0%, var(--color-stone-200) 100%);
+    padding: var(--spacing-7);
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .surface-preview-stage.surface-peek {
+    min-height: 560px;
+    align-items: flex-start;
+    padding-top: var(--spacing-7);
+  }
+  .surface-preview-stage.surface-bulk {
+    min-height: 480px;
+    align-items: flex-end;
+    padding-bottom: var(--spacing-7);
+  }
+  .preview-mono-tag {
+    font-family: var(--font-family-mono);
+    font-size: 11px;
+    color: var(--text-hint);
+  }
+
+  /* QA checklist */
+  .qa-panel {
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-4);
+    padding: var(--spacing-5);
+    margin-bottom: var(--spacing-5);
+  }
+  .qa-title {
+    font-size: var(--font-size-1);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: var(--spacing-3);
+  }
+  .qa-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-2);
+  }
+  .qa-item {
+    display: flex;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-3);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-2);
+    border: 1px solid var(--border-default);
+    font-size: var(--font-size-1);
+    line-height: 1.4;
+  }
+  .qa-item.pass { border-color: var(--color-green-500); background: var(--color-green-100); }
+  .qa-item.warn { border-color: var(--color-amber-500); background: var(--color-amber-100); }
+  .qa-item-icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Behaviour notes */
+  .behaviour-panel {
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-4);
+    padding: var(--spacing-5);
+    margin-bottom: var(--spacing-5);
+  }
+  .behaviour-title {
+    font-size: var(--font-size-1);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: var(--spacing-3);
+  }
+  .behaviour-list {
+    margin: 0;
+    padding-left: var(--spacing-5);
+    font-size: var(--font-size-2);
+    line-height: 1.6;
+  }
+  .behaviour-list li {
+    margin-bottom: var(--spacing-2);
+  }
+  .behaviour-list li:last-child { margin-bottom: 0; }
+  .behaviour-list code {
+    font-family: var(--font-family-mono);
+    font-size: 11px;
+    background: var(--surface-muted);
+    padding: 1px 4px;
+    border-radius: var(--radius-1);
+  }
+
+  /* ============================================================
+     COMPONENT STYLES — replicating the spec
+     ============================================================ */
+
+  /* Asset card overflow menu */
+  .asset-card-mock {
+    position: relative;
+    width: 220px;
+    background: var(--surface-default);
+    border-radius: var(--radius-3);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .asset-card-thumb {
+    aspect-ratio: 4/3;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  .asset-card-meta {
+    padding: var(--spacing-3);
+    border-top: 1px solid var(--border-default);
+  }
+  .asset-card-name {
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    color: var(--primary-default);
+    margin-bottom: 2px;
+  }
+  .asset-card-detail {
+    font-size: var(--font-size-1);
+    color: var(--text-subtle);
+  }
+  .asset-card-status {
+    position: absolute;
+    top: var(--spacing-2);
+    left: var(--spacing-2);
+    padding: 2px 6px;
+    border-radius: var(--radius-2);
+    font-size: 10px;
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: 1px solid;
+    background: var(--surface-default);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .asset-card-status::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: var(--radius-full);
+  }
+  .asset-card-status.cleared { color: var(--color-green-700); border-color: var(--color-green-500); }
+  .asset-card-status.cleared::before { background: var(--color-green-500); }
+  .asset-card-status.embargoed { color: var(--color-amber-700); border-color: var(--color-amber-500); }
+  .asset-card-status.embargoed::before { background: var(--color-amber-500); }
+  .asset-card-status.expired { color: var(--color-red-700); border-color: var(--color-red-500); }
+  .asset-card-status.expired::before { background: var(--color-red-500); }
+  .asset-card-status.restricted { color: var(--color-amber-700); border-color: var(--color-amber-500); }
+  .asset-card-status.restricted::before { background: var(--color-amber-500); }
+  .overflow-menu {
+    position: absolute;
+    top: 32px;
+    right: -8px;
+    width: 220px;
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-1);
+    z-index: 10;
+  }
+  .overflow-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-2) var(--spacing-3);
+    border-radius: var(--radius-2);
+    font-size: var(--font-size-2);
+    color: var(--text-default);
+    cursor: pointer;
+  }
+  .overflow-item:hover { background: var(--surface-subtle); }
+  .overflow-item.disabled { color: var(--text-hint); cursor: not-allowed; }
+  .overflow-item.disabled:hover { background: transparent; }
+  .overflow-item.destructive { color: var(--color-red-600); }
+  .overflow-divider {
+    height: 1px;
+    background: var(--border-default);
+    margin: var(--spacing-1) 0;
+  }
+  .overflow-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: var(--text-subtle);
+  }
+  .overflow-item.disabled .overflow-icon { color: var(--text-hint); }
+
+  /* Submenu (e.g. for Download → Original / Configure) */
+  .overflow-item.has-submenu {
+    position: relative;
+  }
+  .overflow-item.has-submenu > .submenu-chevron {
+    margin-left: auto;
+    color: var(--text-subtle);
+    flex-shrink: 0;
+  }
+  .overflow-submenu {
+    position: absolute;
+    left: 100%;
+    top: -5px;
+    margin-left: 4px;
+    min-width: 200px;
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-1);
+    z-index: 20;
+    display: none;
+  }
+  .overflow-item.has-submenu.open > .overflow-submenu {
+    display: block;
+  }
+  .overflow-item.has-submenu.open {
+    background: var(--primary-subtle);
+    color: var(--primary-default);
+  }
+  .overflow-item.has-submenu.open > .overflow-icon {
+    color: var(--primary-default);
+  }
+  .overflow-item.has-submenu.open > .submenu-chevron {
+    color: var(--primary-default);
+  }
+
+  /* Lightbox */
+  .lightbox-mock {
+    width: 100%;
+    max-width: 720px;
+    background: var(--surface-default);
+    border-radius: var(--radius-4);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-default);
+  }
+  .lightbox-header {
+    padding: var(--spacing-4) var(--spacing-5);
+    border-bottom: 1px solid var(--border-default);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+  }
+  .lightbox-title {
+    font-size: var(--font-size-4);
+    font-weight: var(--font-weight-semibold);
+    flex: 1;
+  }
+  .lightbox-body {
+    display: flex;
+    min-height: 220px;
+  }
+  .lightbox-image {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+  }
+  .lightbox-image-blocked {
+    background: var(--color-stone-200);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-hint);
+    flex-direction: column;
+    gap: var(--spacing-2);
+    font-size: var(--font-size-2);
+  }
+  .lightbox-rail {
+    width: 56px;
+    background: var(--surface-subtle);
+    border-left: 1px solid var(--border-default);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .rail-tab {
+    padding: var(--spacing-3);
+    text-align: center;
+    cursor: pointer;
+    font-size: 10px;
+    color: var(--text-subtle);
+    border-left: 2px solid transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .rail-tab.active {
+    background: var(--primary-subtle);
+    color: var(--primary-default);
+    border-left-color: var(--primary-default);
+  }
+
+  /* Bulk action bar */
+  .bulk-bar-context {
+    width: 100%;
+    max-width: 580px;
+    position: relative;
+    padding: var(--spacing-7) 0;
+  }
+  .bulk-bar {
+    background: var(--color-stone-900);
+    border-radius: var(--radius-3);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-2);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    color: white;
+  }
+  .bulk-count {
+    background: rgba(255,255,255,0.15);
+    border-radius: var(--radius-full);
+    padding: 4px 10px;
+    font-size: var(--font-size-1);
+    font-weight: var(--font-weight-semibold);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .bulk-count-num {
+    background: var(--primary-default);
+    border-radius: var(--radius-full);
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-0);
+  }
+  .bulk-divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(255,255,255,0.2);
+  }
+  .bulk-btn {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    height: 32px;
+    padding: 0 var(--spacing-3);
+    border-radius: var(--radius-2);
+    font-family: inherit;
+    font-size: var(--font-size-1);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .bulk-btn:hover { background: rgba(255,255,255,0.18); }
+  .bulk-btn-primary { background: var(--primary-default); }
+  .bulk-btn-primary:hover { background: var(--primary-hover); }
+  .bulk-btn-icon { width: 32px; padding: 0; justify-content: center; }
+  .bulk-btn-destructive { color: #FCA5A5; }
+  .bulk-spacer { flex: 1; }
+  .bulk-queue-badge {
+    background: rgba(255,255,255,0.2);
+    padding: 1px 6px;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-0);
+    margin-left: 2px;
+  }
+  .bulk-chevron-btn {
+    transition: transform 0.2s;
+  }
+  .bulk-bar-context.tray-open .bulk-chevron-btn svg {
+    transform: rotate(180deg);
+  }
+
+  /* Bulk review tray — opens above the bar */
+  .bulk-tray {
+    background: var(--color-stone-800);
+    border-radius: var(--radius-3);
+    box-shadow: var(--shadow-lg);
+    margin-bottom: var(--spacing-2);
+    overflow: hidden;
+    color: white;
+    display: none;
+  }
+  .bulk-bar-context.tray-open .bulk-tray {
+    display: block;
+  }
+  .bulk-tray-header {
+    padding: var(--spacing-3) var(--spacing-3);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: var(--font-size-1);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .bulk-tray-header-actions {
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-1);
+  }
+  .bulk-tray-clear {
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+    font-size: var(--font-size-1);
+  }
+  .bulk-tray-clear:hover { color: white; }
+  .bulk-tray-list {
+    max-height: 280px;
+    overflow-y: auto;
+    padding: var(--spacing-2);
+  }
+  .bulk-tray-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-2);
+    border-radius: var(--radius-2);
+  }
+  .bulk-tray-item:hover {
+    background: rgba(255,255,255,0.05);
+  }
+  .bulk-tray-thumb {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-2);
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+  }
+  .bulk-tray-name {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .bulk-tray-remove {
+    width: 24px;
+    height: 24px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-1);
+    cursor: pointer;
+    color: rgba(255,255,255,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .bulk-tray-remove:hover {
+    background: rgba(255,255,255,0.1);
+    color: white;
+  }
+
+  /* Queue page */
+  /* Downloads peek — global nav dropdown */
+  .peek-context {
+    width: 100%;
+    max-width: 720px;
+  }
+  .peek-nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-3) var(--spacing-4);
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+  }
+  .peek-nav-left {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+  .peek-view-toggle {
+    display: flex;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-2);
+    padding: 2px;
+    border: 1px solid var(--border-default);
+  }
+  .peek-view-toggle-btn {
+    padding: 6px 10px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-1);
+    cursor: pointer;
+    color: var(--text-subtle);
+    display: inline-flex;
+    align-items: center;
+  }
+  .peek-view-toggle-btn.active {
+    background: white;
+    color: var(--primary-default);
+    box-shadow: var(--shadow-sm);
+  }
+  .peek-nav-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+  .peek-downloads-btn {
+    background: var(--primary-default);
+    color: white;
+    border: none;
+    height: 36px;
+    padding: 0 var(--spacing-3);
+    border-radius: var(--radius-2);
+    font-family: inherit;
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    position: relative;
+  }
+  .peek-downloads-btn-count {
+    background: rgba(255,255,255,0.25);
+    border-radius: var(--radius-full);
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-1);
+    font-weight: var(--font-weight-semibold);
+  }
+  .peek-upload-btn {
+    background: var(--primary-default);
+    color: white;
+    border: none;
+    height: 36px;
+    padding: 0 var(--spacing-3);
+    border-radius: var(--radius-2);
+    font-family: inherit;
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+
+  /* The peek dropdown itself */
+  .peek-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: var(--spacing-4);
+    width: 360px;
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    z-index: 50;
+  }
+  .peek-dropdown-header {
+    padding: var(--spacing-3) var(--spacing-4);
+    border-bottom: 1px solid var(--border-default);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-3);
+    color: var(--text-default);
+  }
+  .peek-dropdown-empty {
+    padding: var(--spacing-6) var(--spacing-4);
+    text-align: center;
+    color: var(--text-subtle);
+    font-size: var(--font-size-2);
+  }
+  .peek-dropdown-empty-icon {
+    width: 32px;
+    height: 32px;
+    margin: 0 auto var(--spacing-3);
+    color: var(--text-hint);
+  }
+  .peek-dropdown-list {
+    padding: var(--spacing-2);
+    max-height: 280px;
+    overflow-y: auto;
+  }
+  .peek-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-2);
+    border-radius: var(--radius-2);
+  }
+  .peek-dropdown-item:hover {
+    background: var(--surface-subtle);
+  }
+  .peek-dropdown-thumb {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-2);
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+  }
+  .peek-dropdown-name {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .peek-dropdown-remove {
+    width: 24px;
+    height: 24px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-1);
+    cursor: pointer;
+    color: var(--text-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .peek-dropdown-remove:hover {
+    background: var(--surface-muted);
+    color: var(--text-default);
+  }
+  .peek-dropdown-footer {
+    padding: var(--spacing-3) var(--spacing-4);
+    border-top: 1px solid var(--border-default);
+    background: var(--surface-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-3);
+  }
+  .peek-dropdown-meta {
+    font-size: var(--font-size-1);
+    color: var(--text-subtle);
+  }
+  .peek-go-to-queue {
+    background: var(--primary-default);
+    color: white;
+    border: none;
+    height: 32px;
+    padding: 0 var(--spacing-3);
+    border-radius: var(--radius-2);
+    font-family: inherit;
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Empty/populated state controls */
+  .peek-state-controls {
+    display: inline-flex;
+    background: var(--surface-default);
+    border-radius: var(--radius-2);
+    padding: 2px;
+    border: 1px solid var(--border-default);
+    margin-bottom: var(--spacing-3);
+  }
+  .peek-state-control {
+    padding: 6px 12px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-1);
+    cursor: pointer;
+    color: var(--text-subtle);
+    font-size: var(--font-size-1);
+    font-weight: var(--font-weight-medium);
+    font-family: inherit;
+  }
+  .peek-state-control.active {
+    background: var(--primary-default);
+    color: white;
+  }
+
+  .queue-page-mock {
+    width: 100%;
+    max-width: 680px;
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-4);
+    overflow: hidden;
+  }
+  .queue-page-header {
+    padding: var(--spacing-4) var(--spacing-5) 0;
+    border-bottom: 1px solid var(--border-default);
+  }
+  .queue-page-title {
+    font-size: var(--font-size-4);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--spacing-3);
+  }
+  .queue-tabs {
+    display: flex;
+    gap: var(--spacing-4);
+  }
+  .queue-tab {
+    padding: var(--spacing-3) 0;
+    margin-bottom: -1px;
+    border-bottom: 2px solid transparent;
+    color: var(--text-subtle);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    font-size: var(--font-size-2);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+  .queue-tab.active {
+    color: var(--text-default);
+    border-bottom-color: var(--primary-default);
+  }
+  .queue-tab-count {
+    background: var(--surface-muted);
+    color: var(--text-subtle);
+    font-size: var(--font-size-0);
+    padding: 1px 6px;
+    border-radius: var(--radius-full);
+    font-weight: var(--font-weight-medium);
+  }
+  .queue-tab.active .queue-tab-count {
+    background: var(--primary-subtle);
+    color: var(--primary-default);
+  }
+  .queue-page-body {
+    padding: var(--spacing-4) var(--spacing-5);
+    background: var(--surface-subtle);
+  }
+  .queue-row {
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    padding: var(--spacing-3);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    margin-bottom: var(--spacing-2);
+  }
+  .queue-row:last-child { margin-bottom: 0; }
+  .queue-row-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-2);
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+  }
+  .queue-row-info { flex: 1; min-width: 0; }
+  .queue-row-name {
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-2);
+  }
+  .queue-row-meta {
+    font-size: var(--font-size-1);
+    color: var(--text-subtle);
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    flex-wrap: wrap;
+  }
+  .queue-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 1px 6px;
+    background: var(--surface-muted);
+    border-radius: var(--radius-2);
+    font-size: var(--font-size-0);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-default);
+  }
+  .queue-chip-warning {
+    background: var(--color-amber-100);
+    color: var(--color-amber-700);
+  }
+  .queue-chip-blocked {
+    background: var(--color-red-100);
+    color: var(--color-red-700);
+  }
+  .queue-chip-dot {
+    width: 3px;
+    height: 3px;
+    border-radius: var(--radius-full);
+    background: var(--text-hint);
+  }
+  .queue-action-bar {
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    padding: var(--spacing-3);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    margin-top: var(--spacing-3);
+  }
+  .queue-action-summary {
+    flex: 1;
+    font-size: var(--font-size-2);
+  }
+  .queue-action-summary strong { font-weight: var(--font-weight-semibold); }
+
+  /* Generic primary button */
+  .btn {
+    height: 32px;
+    padding: 0 var(--spacing-3);
+    border-radius: var(--radius-2);
+    font-family: inherit;
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary {
+    background: var(--primary-default);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-primary:disabled {
+    background: var(--color-stone-300);
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-subtle);
+  }
+  .btn-ghost:hover {
+    background: var(--surface-muted);
+    color: var(--text-default);
+  }
+
+  /* Download modal */
+  .modal-mock {
+    width: 100%;
+    max-width: 580px;
+    background: var(--surface-default);
+    border-radius: var(--radius-4);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    border: 1px solid var(--border-default);
+    display: flex;
+    flex-direction: column;
+    max-height: 640px;
+  }
+  .modal-header {
+    padding: var(--spacing-4) var(--spacing-5);
+    border-bottom: 1px solid var(--border-default);
+    display: flex;
+    align-items: center;
+  }
+  .modal-title {
+    font-size: var(--font-size-4);
+    font-weight: var(--font-weight-semibold);
+    flex: 1;
+  }
+  .modal-close {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-subtle);
+    padding: var(--spacing-1);
+    line-height: 0;
+  }
+  .modal-body {
+    padding: var(--spacing-4) var(--spacing-5);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+  .modal-footer {
+    padding: var(--spacing-3) var(--spacing-5);
+    border-top: 1px solid var(--border-default);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+  }
+  .modal-footer-summary {
+    flex: 1;
+    font-size: var(--font-size-1);
+    color: var(--text-subtle);
+  }
+  .modal-footer-summary strong {
+    color: var(--text-default);
+    font-weight: var(--font-weight-semibold);
+  }
+  .modal-banner {
+    padding: var(--spacing-3) var(--spacing-4);
+    border-radius: var(--radius-3);
+    border: 1px solid;
+    font-size: var(--font-size-2);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-3);
+  }
+  .modal-banner.amber {
+    background: var(--color-amber-100);
+    border-color: var(--color-amber-500);
+    color: var(--color-amber-700);
+  }
+  .modal-banner.red {
+    background: var(--color-red-100);
+    border-color: var(--color-red-500);
+    color: var(--color-red-700);
+  }
+  .modal-banner.neutral {
+    background: var(--surface-muted);
+    border-color: var(--border-default);
+    color: var(--text-default);
+  }
+  .modal-banner-icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .modal-banner-title {
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: 2px;
+  }
+  .modal-banner-body {
+    font-size: var(--font-size-1);
+  }
+  .modal-section-heading {
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--spacing-3);
+  }
+  .modal-section-heading-counter {
+    font-size: var(--font-size-1);
+    color: var(--text-subtle);
+    font-weight: 400;
+    margin-left: var(--spacing-2);
+  }
+  .version-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+  .version-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    cursor: pointer;
+  }
+  .version-row.selected {
+    border-color: var(--primary-default);
+    background: var(--primary-subtle);
+  }
+  .version-row.disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    background: var(--surface-subtle);
+  }
+  .version-check {
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: var(--radius-1);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+  }
+  .version-row.selected .version-check {
+    background: var(--primary-default);
+    border-color: var(--primary-default);
+    color: white;
+  }
+  .version-info { flex: 1; min-width: 0; }
+  .version-title {
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+  .version-desc {
+    font-size: var(--font-size-1);
+    color: var(--text-subtle);
+    margin-top: 2px;
+  }
+  .version-specs {
+    font-size: var(--font-size-1);
+    color: var(--text-subtle);
+    flex-shrink: 0;
+  }
+  .version-best-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 6px;
+    background: var(--color-amber-100);
+    color: var(--color-amber-700);
+    border-radius: var(--radius-2);
+    font-size: 10px;
+    font-weight: var(--font-weight-medium);
+  }
+  .lock-icon {
+    color: var(--text-hint);
+  }
+  .request-access-block {
+    padding: var(--spacing-3) var(--spacing-4);
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-3);
+  }
+  .request-access-prompt {
+    font-size: var(--font-size-2);
+  }
+  .request-access-prompt strong {
+    font-weight: var(--font-weight-semibold);
+  }
+  .request-access-form {
+    padding: var(--spacing-3) var(--spacing-4);
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+  .request-access-textarea {
+    width: 100%;
+    min-height: 64px;
+    padding: var(--spacing-2) var(--spacing-3);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-2);
+    font-family: inherit;
+    font-size: var(--font-size-2);
+    resize: vertical;
+    background: white;
+  }
+  .request-access-textarea:focus {
+    outline: none;
+    border-color: var(--primary-default);
+    box-shadow: 0 0 0 1px var(--primary-default);
+  }
+  .request-access-saved {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-subtle);
+    font-size: var(--font-size-1);
+  }
+  .request-access-confirmed {
+    padding: var(--spacing-3) var(--spacing-4);
+    background: var(--color-amber-100);
+    border: 1px solid var(--color-amber-500);
+    border-radius: var(--radius-3);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    color: var(--color-amber-700);
+    font-size: var(--font-size-2);
+  }
+  .request-access-confirmed strong { font-weight: var(--font-weight-semibold); }
+  .format-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-2);
+  }
+  .format-tile {
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+    padding: var(--spacing-3);
+    cursor: pointer;
+    background: white;
+    min-height: 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .format-tile.selected {
+    border-color: var(--primary-default);
+    background: var(--primary-subtle);
+  }
+  .format-tile-name {
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+  }
+  .format-tile.selected .format-tile-name {
+    color: var(--primary-default);
+  }
+  .format-tile-spec {
+    font-size: var(--font-size-1);
+    color: var(--text-subtle);
+    margin-top: 2px;
+  }
+
+  /* Selection panel — combined summary + config toggle for bulk modal */
+  .selection-panel {
+    background: var(--surface-muted);
+    border-radius: var(--radius-3);
+    flex-shrink: 0;
+  }
+  .selection-panel-summary {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3);
+  }
+  .selection-thumb-stack {
+    display: flex;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .selection-thumb-stack > div {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-2);
+    background-size: cover;
+    background-position: center;
+    border: 2px solid white;
+    margin-left: -10px;
+  }
+  .selection-thumb-stack > div:first-child { margin-left: 0; }
+  .selection-thumb-stack > div.overflow {
+    background: var(--color-stone-300);
+    color: var(--text-default);
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .selection-summary-text {
+    flex: 1;
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .selection-summary-meta {
+    font-size: var(--font-size-1);
+    color: var(--text-subtle);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+  .selection-panel-divider {
+    height: 1px;
+    background: var(--border-default);
+    margin: 0 var(--spacing-3);
+  }
+  .selection-panel-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3);
+  }
+  .selection-panel-toggle-label {
+    flex: 1;
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+  }
+  .toggle-switch {
+    width: 40px;
+    height: 22px;
+    background: var(--color-stone-300);
+    border-radius: var(--radius-full);
+    position: relative;
+    cursor: pointer;
+    border: 1px solid var(--color-stone-400);
+    padding: 0;
+    flex-shrink: 0;
+    transition: background 0.15s;
+    display: block;
+  }
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: var(--radius-full);
+    transition: transform 0.2s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+  .toggle-switch.on {
+    background: var(--primary-default);
+    border-color: var(--primary-default);
+  }
+  .toggle-switch.on::after { transform: translateX(18px); }
+
+  /* Per-asset accordion rows in modal */
+  .per-asset-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+  .per-asset-row {
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    overflow: hidden;
+    background: white;
+  }
+  .per-asset-row.expanded {
+    border-color: var(--border-strong);
+  }
+  .per-asset-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3);
+    cursor: pointer;
+  }
+  .per-asset-header:hover { background: var(--surface-subtle); }
+  .per-asset-thumb {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-2);
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+  }
+  .per-asset-name-block { flex: 1; min-width: 0; }
+  .per-asset-name {
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+  }
+  .per-asset-summary {
+    font-size: var(--font-size-1);
+    color: var(--text-subtle);
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    flex-wrap: wrap;
+  }
+  .per-asset-mini-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 6px;
+    border-radius: var(--radius-2);
+    font-size: 10px;
+    font-weight: var(--font-weight-medium);
+    background: var(--surface-muted);
+    color: var(--text-default);
+  }
+  .per-asset-mini-chip.warning {
+    background: var(--color-amber-100);
+    color: var(--color-amber-700);
+  }
+  .per-asset-mini-chip.blocked {
+    background: var(--color-red-100);
+    color: var(--color-red-700);
+  }
+  .per-asset-chevron {
+    color: var(--text-subtle);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .per-asset-row.expanded .per-asset-chevron {
+    transform: rotate(180deg);
+  }
+  .per-asset-body {
+    padding: var(--spacing-4);
+    border-top: 1px solid var(--border-default);
+    background: var(--surface-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+
+  /* Asset placeholder fills (deterministic by name) */
+  .img-fill-1 { background: linear-gradient(135deg, #FFE066 0%, #F4A261 100%); }
+  .img-fill-2 { background: linear-gradient(135deg, #2C3E50 0%, #8B4513 100%); }
+  .img-fill-3 { background: linear-gradient(135deg, #06B6D4 0%, #0891B2 100%); }
+  .img-fill-4 { background: linear-gradient(135deg, #10B981 0%, #059669 100%); }
+  .img-fill-blocked {
+    background: var(--color-stone-300);
+    position: relative;
+  }
+  .img-fill-blocked::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.1) 0 8px, transparent 8px 16px);
+  }
+
+  /* Filetype badge */
+  .filetype-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 6px;
+    border-radius: var(--radius-2);
+    font-size: 10px;
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--filetype-image-bg);
+    color: var(--filetype-image-fg);
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ============================================================
+       LEFT: CONTROL PANEL
+       ============================================================ -->
+  <aside class="control-panel">
+    <div class="panel-header">
+      <h1>Download surfaces tester</h1>
+      <p>Walk through how each download surface responds to rights states. Pick a scenario, then flip between the four surfaces to see the UI behaviour.</p>
+    </div>
+
+    <div class="control-section">
+      <label class="control-label">Rights scenario</label>
+      <div class="picker-list" id="scenario-picker"></div>
+    </div>
+  </aside>
+
+  <!-- ============================================================
+       RIGHT: STAGE
+       ============================================================ -->
+  <main class="stage">
+
+    <div class="stage-header">
+      <h2 class="stage-title" id="scenario-title">Select a scenario</h2>
+      <p class="stage-subtitle" id="scenario-description">Choose a rights state from the left panel to begin.</p>
+    </div>
+
+    <!-- Outcome bar -->
+    <div class="outcome-bar" id="outcome-bar" style="display:none;">
+      <div class="outcome-pill" id="outcome-pill"></div>
+      <div class="outcome-text">
+        <div class="outcome-text-title" id="outcome-title"></div>
+        <div class="outcome-text-detail" id="outcome-detail"></div>
+      </div>
+    </div>
+
+    <!-- Surface tabs -->
+    <div class="surface-tabs" id="surface-tabs" style="display:none;">
+      <button class="surface-tab active" data-surface="card">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="2" width="12" height="12" rx="1.5"/>
+          <path d="M2 10h12"/>
+        </svg>
+        Asset card
+      </button>
+      <button class="surface-tab" data-surface="lightbox">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="1" y="3" width="14" height="10" rx="1.5"/>
+          <circle cx="6" cy="7" r="1.2"/>
+          <path d="M14 11l-3-3-6 5"/>
+        </svg>
+        Lightbox
+      </button>
+      <button class="surface-tab" data-surface="bulk">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="3" width="5" height="10" rx="1"/>
+          <rect x="9" y="3" width="5" height="10" rx="1"/>
+        </svg>
+        Bulk action bar
+      </button>
+      <button class="surface-tab" data-surface="peek">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M8 2v8M5 7l3 3 3-3" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="2" y="11" width="12" height="3" rx="1"/>
+        </svg>
+        Downloads peek
+      </button>
+      <button class="surface-tab" data-surface="modal">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="3" width="12" height="10" rx="1"/>
+          <path d="M2 6h12" stroke-linecap="round"/>
+        </svg>
+        Modal
+      </button>
+      <button class="surface-tab" data-surface="queue">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M2 4h12M2 8h12M2 12h8" stroke-linecap="round"/>
+        </svg>
+        Downloads page
+      </button>
+    </div>
+
+    <!-- Surface preview -->
+    <div class="surface-preview" id="surface-preview" style="display:none;">
+      <div class="surface-preview-label">
+        <span id="surface-label">Asset card · overflow menu open</span>
+        <span class="preview-mono-tag">Live preview</span>
+      </div>
+      <div class="surface-preview-stage" id="surface-stage"></div>
+    </div>
+
+    <!-- Behaviour notes -->
+    <div class="behaviour-panel" id="behaviour-panel" style="display:none;">
+      <div class="behaviour-title">Behaviour for this surface</div>
+      <ul class="behaviour-list" id="behaviour-list"></ul>
+    </div>
+
+    <!-- QA checklist -->
+    <div class="qa-panel" id="qa-panel" style="display:none;">
+      <div class="qa-title">QA checklist · what to verify</div>
+      <div class="qa-grid" id="qa-grid"></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ============================================================
+// SCENARIOS
+// Each scenario describes a single asset's rights state and how
+// each of the four surfaces should render it.
+// ============================================================
+
+const ICON_CHECK = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l3 3 7-7"/></svg>';
+const ICON_X = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>';
+const ICON_WARN = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.5L1 14h14L8 1.5z M8 6v3 M8 11.5v.5"/></svg>';
+
+const SCENARIOS = [
+  {
+    id: 'simple',
+    title: 'No rights, no templates',
+    short: 'Simple file',
+    tag: 'simple',
+    tagLabel: 'Simple',
+    description: 'Asset has no rights configuration and no format templates. The simplest possible case — no version choice, no format choice, nothing to configure. Menu collapses to a single Download action that triggers the file directly.',
+    outcome: { pill: 'full', label: 'Direct download', title: 'No configuration needed', detail: 'Single Download menu item, no modal. Click to download the file as-is.' },
+    asset: {
+      name: 'Internal_Team_Photo_2026.jpg',
+      type: 'JPG',
+      size: '6.2 MB',
+      thumb: 'img-fill-3',
+      cardStatus: null,
+      noRights: true,
+      noTemplates: true
+    }
+  },
+  {
+    id: 'cleared',
+    title: 'All cleared',
+    short: 'Cleared baseline',
+    tag: 'cleared',
+    tagLabel: 'Cleared',
+    description: 'Has rights configuration and templates, all cleared for this user. Direct download is available as a shortcut for Original; Configure download opens the modal for full version + format choice.',
+    outcome: { pill: 'full', label: 'Full access', title: 'User can download all versions and formats', detail: 'Original, watermarked, and preview available. No banners, no warnings, no friction.' },
+    asset: {
+      name: 'spring4.jpg',
+      type: 'JPG',
+      size: '58 KB',
+      thumb: 'img-fill-1',
+      cardStatus: { label: 'Cleared', class: 'cleared' }
+    }
+  },
+  {
+    id: 'embargoed',
+    title: 'Embargoed (future release)',
+    short: 'Embargoed',
+    tag: 'embargo',
+    tagLabel: 'Embargo',
+    description: 'Asset is licensed but not yet available for use. Embargo lifts on a future date — common for unreleased campaign assets.',
+    embargoDate: '14 May 2026',
+    outcome: { pill: 'blocked', label: 'Blocked · embargoed', title: 'Cannot download until embargo lifts', detail: 'Asset visible but downloads disabled. Banner shows embargo end date. Request access does not bypass — embargo is time-based, not permission-based.' },
+    asset: {
+      name: 'WC2026_PreLaunch_Hero.jpg',
+      type: 'JPG',
+      size: '24 MB',
+      thumb: 'img-fill-blocked',
+      cardStatus: { label: 'Embargoed', class: 'embargoed' }
+    }
+  },
+  {
+    id: 'expired',
+    title: 'Licence expired',
+    short: 'Expired',
+    tag: 'expired',
+    tagLabel: 'Expired',
+    description: 'Licence ended on a past date. Asset still in DAM for archival reasons but no longer downloadable for use.',
+    expiryDate: '12 Jan 2026',
+    outcome: { pill: 'blocked', label: 'Blocked · expired', title: 'Licence has ended', detail: 'No download paths available. Request access offered as escalation — admin may renew licence or grant time-limited access.' },
+    asset: {
+      name: 'Qatar22_Retro_Hero.jpg',
+      type: 'JPG',
+      size: '18.7 MB',
+      thumb: 'img-fill-2',
+      cardStatus: { label: 'Expired', class: 'expired' }
+    }
+  },
+  {
+    id: 'geo',
+    title: 'Geo-restricted (territory)',
+    short: 'Geo-restricted',
+    tag: 'geo',
+    tagLabel: 'Geo',
+    description: "Asset licensed for specific territories that don't include the user's profile region. User in UK; asset licensed for USA only.",
+    licensedFor: 'USA · Marketing · Digital',
+    outcome: { pill: 'restricted', label: 'Restricted · territory mismatch', title: 'Original blocked, watermarked available', detail: "Watermarked version preselected as 'Best available'. Original disabled. Request access shows the licence criteria so user understands the mismatch." },
+    asset: {
+      name: 'Stadium_USA_Aerial.jpg',
+      type: 'JPG',
+      size: '26.4 MB',
+      thumb: 'img-fill-3',
+      cardStatus: { label: 'Restricted', class: 'restricted' }
+    }
+  },
+  {
+    id: 'watermark',
+    title: 'Watermarked-only access',
+    short: 'Watermarked only',
+    tag: 'watermark',
+    tagLabel: 'Watermark',
+    description: 'User has rights to a watermarked version for review purposes, but not to the original. Common for external agencies or pre-approval review.',
+    outcome: { pill: 'restricted', label: 'Restricted · watermark only', title: 'Watermarked version available', detail: 'User can download the watermarked version directly. Original requires explicit approval via Request access.' },
+    asset: {
+      name: 'KV_Master_Layered.psd',
+      type: 'PSD',
+      size: '412 MB',
+      thumb: 'img-fill-4',
+      cardStatus: { label: 'Watermark', class: 'restricted' }
+    }
+  },
+  {
+    id: 'mixed',
+    title: 'Mixed rights (bulk selection)',
+    short: 'Mixed (bulk)',
+    tag: 'mixed',
+    tagLabel: 'Mixed',
+    description: 'Selection of multiple assets where some are cleared and some are restricted. Tests how each surface communicates partial availability.',
+    selectionDetail: '3 assets · 1 cleared, 1 watermark only, 1 expired',
+    outcome: { pill: 'mixed', label: 'Mixed rights', title: 'Some assets in this selection are restricted', detail: 'Bulk surfaces apply LCD: only versions/formats valid across the whole selection are offered. Banner explains why fewer options are available than expected.' },
+    asset: null
+  }
+];
+
+// ============================================================
+// PER-SURFACE BEHAVIOUR DEFINITIONS
+// For each scenario × each surface, what should the user see
+// and what should QA verify.
+// ============================================================
+
+const SURFACE_BEHAVIOURS = {
+  simple: {
+    card: {
+      notes: [
+        'No status badge on the card — the asset has no rights configuration to communicate.',
+        'Single <code>Download</code> menu item with no submenu chevron — there\'s nothing to choose, so nothing to expand.',
+        'Click <code>Download</code> triggers the file directly — no modal, no submenu.',
+        'Add to Queue still works the same way.'
+      ],
+      qa: [
+        { state: 'pass', text: 'No status badge on the card' },
+        { state: 'pass', text: 'Single Download item, NO submenu chevron' },
+        { state: 'pass', text: 'No "Configure download…" because nothing to configure' },
+        { state: 'pass', text: 'No Request access item' },
+        { state: 'pass', text: 'Add to Queue still present' }
+      ]
+    },
+    lightbox: {
+      notes: [
+        'No rights banner — nothing to surface.',
+        'Header <code>Download</code> CTA triggers direct download.',
+        'Right rail Download tab still exists for users who want to see metadata, but version picker has only "Original" selected (since no rights system means no Preview/Watermarked variants).',
+        'No Rights tab in the rail — there are no rights to display.'
+      ],
+      qa: [
+        { state: 'pass', text: 'No banner above preview' },
+        { state: 'pass', text: 'Download CTA enabled, triggers directly' },
+        { state: 'pass', text: 'Rail shows simplified version options' },
+        { state: 'pass', text: 'No Rights tab in rail' }
+      ]
+    },
+    bulk: {
+      notes: [
+        'Bulk action bar identical to Cleared scenario — no rights to communicate.',
+        'If the entire selection is "simple" assets, Download CTA triggers direct bulk download (zip), no modal.',
+        'If selection mixes simple and rights-managed, modal opens for the rights-managed ones (handled in mixed scenarios).'
+      ],
+      qa: [
+        { state: 'pass', text: 'Bar shows count and standard actions' },
+        { state: 'pass', text: 'Download CTA triggers direct zip when all simple' },
+        { state: 'warn', text: 'Mixed simple + rights-managed: behaviour TBD' }
+      ]
+    },
+    modal: {
+      notes: [
+        'Modal does not open for simple-asset single-download flows — the Download menu item triggers directly.',
+        'Modal still opens if user adds to queue and configures from the Downloads page, or if Configure download is reached via a multi-asset selection that includes rights-managed items.'
+      ],
+      qa: [
+        { state: 'warn', text: 'Modal not relevant for single simple download' },
+        { state: 'pass', text: 'No menu item leads here in this scenario' }
+      ]
+    },
+    peek: {
+      notes: [
+        'Peek dropdown shows the queued asset: thumb, file name, remove (×). Same compact pattern as the bulk action review tray.',
+        'No file size, no filetype badge, no rights indicators — the peek is a verification surface, not an action surface.',
+        'Footer: <code>Go to queue</code> CTA navigates to the Downloads page. No Download button in the peek itself.',
+        'Empty state: shown when queue is empty. Use the Empty/Populated toggle above the mock to flip between states.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Items show only thumb + name + ×' },
+        { state: 'pass', text: 'No size, no filetype badge' },
+        { state: 'pass', text: 'No Download button in peek' },
+        { state: 'pass', text: 'Single Go to queue CTA' },
+        { state: 'pass', text: 'Empty state hides footer CTA' }
+      ]
+    },
+        queue: {
+      notes: [
+        'Queue row shows the asset with no rights chips, just file metadata.',
+        'No version selection needed — only Original is available, automatically selected.',
+        'Format selection only appears if templates are configured for this file type. For a truly simple asset, the row is just the file ready to download.',
+        '<code>Download N assets</code> CTA enabled.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Queue row clean — no rights indicators' },
+        { state: 'pass', text: 'No version picker needed (auto-selected)' },
+        { state: 'pass', text: 'Download CTA enabled' }
+      ]
+    }
+  },
+  cleared: {
+    card: {
+      notes: [
+        'Asset card status badge shows <code>Cleared</code> in green.',
+        'Single <code>Download</code> menu item with submenu chevron — click to expand.',
+        'Submenu shows <code>Direct download</code> (system delivers what the user has rights to — Original here) and <code>Configure download…</code> (open the modal for explicit version/format choice).',
+        'The submenu labels are the same across all rights states. The system handles delivering the right version — the user doesn\'t need to know the rules.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Single Download item, not split' },
+        { state: 'pass', text: 'Submenu chevron visible' },
+        { state: 'pass', text: 'Click reveals two submenu items' },
+        { state: 'pass', text: 'Direct download label is consistent (not "Download original")' }
+      ]
+    },
+    lightbox: {
+      notes: [
+        'Header shows primary <code>Download</code> CTA, no warnings.',
+        'Right rail Download tab shows all 3 versions selectable: Preview, Watermarked, Original.',
+        'No rights banner appears in the main preview area.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Header Download button is enabled' },
+        { state: 'pass', text: 'All version radio options selectable' },
+        { state: 'pass', text: 'No banner above the image preview' },
+        { state: 'pass', text: 'Add to Queue / In Queue toggle works' }
+      ]
+    },
+    bulk: {
+      notes: [
+        'Bulk action bar shows count, all 5 actions enabled.',
+        '<code>Download</code> CTA opens the unified modal with full options.',
+        'No rights banner above or below the bar.',
+        '<code>Add to Queue</code> button updates the queue badge count visibly.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Bar shows count and all actions' },
+        { state: 'pass', text: 'Download CTA highlighted in primary blue' },
+        { state: 'pass', text: 'Add to Queue badge increments on click' },
+        { state: 'pass', text: 'No restriction summary text' }
+      ]
+    },
+        modal: {
+      notes: [
+        'Modal opens with <strong>Original preselected</strong> as the highest version the user has rights to.',
+        'Format requires explicit choice — no preselection (intentional, prevents wrong defaults).',
+        'No banner, no warnings.',
+        '<code>Download</code> CTA enabled in footer; closes modal and triggers download.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Original preselected at top of version list' },
+        { state: 'pass', text: 'No format preselected — user must choose' },
+        { state: 'pass', text: 'No banner above version list' },
+        { state: 'pass', text: 'Download CTA enabled' }
+      ]
+    },
+    peek: {
+      notes: [
+        'Peek dropdown shows the queued asset with thumb, name, remove (×).',
+        'No rights state surfaced in the peek — that\'s the Downloads page\'s job.',
+        '<code>Go to queue</code> footer CTA navigates to Downloads. No download path in the peek.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Items show only thumb + name + ×' },
+        { state: 'pass', text: 'No rights chips or version info' },
+        { state: 'pass', text: 'Single Go to queue CTA' }
+      ]
+    },
+        queue: {
+      notes: [
+        'Queue tab shows the asset with full config chips (Original · Instagram Square · etc).',
+        'No rights warnings on the row.',
+        'Page-level toggle <code>Configure assets individually?</code> defaults to off — shared config across queue items.',
+        '<code>Download N assets</code> CTA enabled.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Queue row shows asset with config chips' },
+        { state: 'pass', text: 'No "Best available" or warning indicator' },
+        { state: 'pass', text: 'Download CTA enabled' },
+        { state: 'pass', text: 'Both tabs visible (Queue + History)' }
+      ]
+    }
+  },
+  embargoed: {
+    card: {
+      notes: [
+        'Asset card status badge shows <code>Embargoed</code> in amber.',
+        'Single <code>Download</code> item, disabled (no submenu opens). Tooltip: "Embargoed until [date]".',
+        '<code>Add to Queue</code> remains enabled — user can stage it for later (post-embargo).',
+        'No Request access path — embargo is temporal, not permission-based.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Embargoed badge visible top-left of card' },
+        { state: 'pass', text: 'Single Download item shown as disabled' },
+        { state: 'pass', text: 'Tooltip explains the block' },
+        { state: 'pass', text: 'Add to Queue still enabled' },
+        { state: 'warn', text: 'No Request access shown (correct for embargo)' }
+      ]
+    },
+    lightbox: {
+      notes: [
+        'Amber rights banner above the preview: <code>Embargoed until 14 May 2026 — Final downloads not available until this date.</code>',
+        'Header <code>Download</code> button is disabled with tooltip.',
+        'Right rail Download tab shows all versions disabled.',
+        '<code>Add to Queue</code> remains enabled.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Amber banner with embargo date displayed' },
+        { state: 'pass', text: 'Header Download disabled' },
+        { state: 'pass', text: 'All versions disabled in rail' },
+        { state: 'pass', text: 'Add to Queue enabled (user can stage)' }
+      ]
+    },
+    bulk: {
+      notes: [
+        'If selection contains only this asset: <code>Download</code> CTA disabled, hover tooltip explains embargo.',
+        'If embargo is in mixed selection: amber banner above modal, embargoed asset listed with "Embargoed until [date]" pill in queue summary.',
+        'Bulk bar itself unchanged — restriction logic surfaces in the modal/queue rather than the bar.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Download CTA disabled when only embargoed selected' },
+        { state: 'pass', text: 'Tooltip explains embargo on hover' },
+        { state: 'pass', text: 'Other bar actions still enabled' },
+        { state: 'warn', text: 'Mixed selection: see "Mixed rights" scenario' }
+      ]
+    },
+        modal: {
+      notes: [
+        'Amber banner above version list: <code>Embargoed until [date]</code>.',
+        'All versions disabled — Preview, Watermarked, and Original.',
+        'No Request access path — embargo is temporal, not permission-based.',
+        '<code>Download</code> CTA disabled. Footer shows <code>0 of 1 ready</code>.',
+        'User can still close and Add to Queue — asset becomes downloadable in place when embargo lifts.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Amber banner with embargo date visible' },
+        { state: 'pass', text: 'All version rows disabled' },
+        { state: 'warn', text: 'No Request access component (correct for embargo)' },
+        { state: 'pass', text: 'Download CTA disabled with "0 of 1 ready"' }
+      ]
+    },
+    peek: {
+      notes: [
+        'Peek shows the embargoed asset like any other queued item — thumb, name, ×. Same component, same data shape.',
+        'No "Embargoed" chip or warning in the peek itself. Rights state is intentionally suppressed at this surface.',
+        'User clicks <code>Go to queue</code> to see the rights state and the disabled Download CTA on the Downloads page.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Embargoed item appears like any other in peek' },
+        { state: 'pass', text: 'No rights warning in the peek' },
+        { state: 'warn', text: 'Confirm: should peek hint at restrictions or stay clean?' }
+      ]
+    },
+        queue: {
+      notes: [
+        'Queue row shows asset with amber <code>Embargoed until 14 May</code> chip in the meta line.',
+        'Row CTA / config disabled — accordion can expand but version pickers all disabled.',
+        '<code>Download N assets</code> CTA accounts for embargoed: shows <code>1 of 3 available</code> if mixed, fully disabled if only embargoed.',
+        'User can keep it staged — when embargo lifts, it becomes downloadable in place.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Embargoed chip visible on queue row' },
+        { state: 'pass', text: 'Row config disabled' },
+        { state: 'pass', text: 'Download CTA reflects mixed availability' },
+        { state: 'pass', text: 'Asset stays in queue (not auto-removed)' }
+      ]
+    }
+  },
+  expired: {
+    card: {
+      notes: [
+        'Asset card status badge shows <code>Expired</code> in red.',
+        'Single <code>Download</code> item, disabled. Tooltip: "Licence expired [date]".',
+        '<code>Request access</code> appears as a separate menu item — escalation path.',
+        '<code>Add to Queue</code> still permitted; queue surface shows the expired state.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Expired badge in red on card' },
+        { state: 'pass', text: 'Single Download item shown as disabled' },
+        { state: 'pass', text: 'Tooltip explains licence expiry' },
+        { state: 'pass', text: 'Request access menu item visible' },
+        { state: 'pass', text: 'Add to Queue allowed' }
+      ]
+    },
+    lightbox: {
+      notes: [
+        'Red rights banner above preview: <code>Licence expired on 12 Jan 2026 — Final downloads not available.</code>',
+        'Header <code>Download</code> disabled.',
+        'Right rail switches to a Rights tab that shows the expired state and a <code>Request access</code> CTA.',
+        'No version row clickable — all paths blocked until rights restored.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Red banner with expiry date' },
+        { state: 'pass', text: 'All download paths disabled' },
+        { state: 'pass', text: 'Request access prominent in rail' },
+        { state: 'pass', text: 'Add to Queue enabled' }
+      ]
+    },
+    bulk: {
+      notes: [
+        'If only expired in selection: <code>Download</code> disabled, with inline note "All assets expired — request access".',
+        'In mixed selection: expired asset surfaces with red chip in queue summary; LCD removes incompatible versions/formats.',
+        'Bar action bar unchanged structurally; restriction surfaces in modal/queue.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Download CTA disabled when only expired' },
+        { state: 'pass', text: 'Inline note suggests request access' },
+        { state: 'warn', text: 'Mixed selection: see "Mixed rights" scenario' }
+      ]
+    },
+        modal: {
+      notes: [
+        'Red banner above version list: <code>Licence expired on [date]</code>.',
+        'All versions disabled.',
+        '<strong>Request access component visible</strong> — click to expand inline form. Submit to send request and see confirmation state.',
+        'Try clicking "Request access" — the form expands inline with a textarea. The textarea is pre-filled with the saved reason from the previous session ("Need for social"). Edit if needed, then click Send request to see the submitted state.',
+        '<code>Download</code> CTA disabled.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Red banner with expiry date' },
+        { state: 'pass', text: 'Request access component clickable' },
+        { state: 'pass', text: 'Form expands inline with pre-filled reason' },
+        { state: 'pass', text: 'Send request transitions to confirmed state' },
+        { state: 'pass', text: 'Saved reason persists across scenarios' }
+      ]
+    },
+    peek: {
+      notes: [
+        'Peek shows the expired asset with the same compact treatment — thumb, name, ×.',
+        'No "Expired" chip, no Request access affordance. Rights complexity lives in the Downloads page.',
+        'User clicks <code>Go to queue</code> to handle the expired state in context.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Expired item appears like any other in peek' },
+        { state: 'pass', text: 'No rights warning or Request access in peek' },
+        { state: 'warn', text: 'Confirm: should peek hint at restrictions or stay clean?' }
+      ]
+    },
+        queue: {
+      notes: [
+        'Queue row shows asset with red <code>Expired</code> chip and a "Request access" inline link in the meta line.',
+        'Accordion expands but all options disabled. Inline Request access form available within the accordion.',
+        '<code>Download N assets</code> reflects: skips expired assets and notes "1 of 3 ready" if mixed.',
+        'When user submits Request access, chip changes to amber <code>Access requested</code> with timestamp.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Expired chip + Request access link on row' },
+        { state: 'pass', text: 'Inline request form expands inside accordion' },
+        { state: 'pass', text: 'Submitted request changes chip to "Requested"' },
+        { state: 'pass', text: 'Download CTA accurate to remaining cleared count' }
+      ]
+    }
+  },
+  geo: {
+    card: {
+      notes: [
+        'Asset card status badge shows <code>Restricted</code> in amber.',
+        'Single <code>Download</code> menu item with submenu chevron.',
+        'Submenu shows <code>Direct download</code> (system delivers Watermarked version, the highest the user has rights to) and <code>Configure download…</code> for explicit choice.',
+        'The submenu labels are the same as for cleared assets — the system handles version selection. User sees the result, not the rules.',
+        '<code>Request access</code> available as a separate top-level menu item — escalation path for the Original.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Restricted badge in amber' },
+        { state: 'pass', text: 'Single Download item with submenu' },
+        { state: 'pass', text: 'Direct download label is consistent across rights states' },
+        { state: 'pass', text: 'Configure download… opens modal' },
+        { state: 'pass', text: 'Request access in separate menu item' }
+      ]
+    },
+    lightbox: {
+      notes: [
+        'Neutral grey rights banner above preview shows the licence criteria: <code>Licensed for: USA · Marketing · Digital. Your profile does not meet all criteria.</code>',
+        'Header <code>Download</code> stays enabled — opens modal where Watermarked is preselected as Best available.',
+        'Right rail Download tab: Watermarked selected (with "Best available" amber pill), Original disabled, Request access component visible below.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Banner shows licence criteria, not vague "no permission"' },
+        { state: 'pass', text: 'Watermarked preselected with Best available pill' },
+        { state: 'pass', text: 'Original disabled with reason' },
+        { state: 'pass', text: 'Request access component below version list' }
+      ]
+    },
+    bulk: {
+      notes: [
+        'Bar unchanged structurally. <code>Download</code> opens modal which surfaces the territory restriction.',
+        'In modal: amber banner "Some assets restricted across selection". LCD removes Original from version options if any asset blocks it.',
+        'Per-asset toggle in modal lets user see which specific assets are restricted.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Bar enabled, opens modal as normal' },
+        { state: 'pass', text: 'Modal shows mixed-rights banner' },
+        { state: 'pass', text: 'LCD applies (no Original in shared mode)' },
+        { state: 'pass', text: 'Per-asset toggle reveals which asset is restricted' }
+      ]
+    },
+        modal: {
+      notes: [
+        'Neutral grey banner above version list shows the licence criteria explicitly: <code>Licensed for: USA · Marketing · Digital</code>.',
+        '<strong>Watermarked preselected</strong> with "Best available" amber pill — system picked the highest version the user has rights to.',
+        'Original disabled with explanation in the row.',
+        'Request access component below — try clicking it to see the inline form with the session-saved reason.',
+        '<code>Download</code> CTA enabled (uses watermarked).'
+      ],
+      qa: [
+        { state: 'pass', text: 'Banner shows licence criteria, not vague "no permission"' },
+        { state: 'pass', text: 'Watermarked preselected with Best available pill' },
+        { state: 'pass', text: 'Request access form expands inline' },
+        { state: 'pass', text: 'Reason from session pre-fills' },
+        { state: 'pass', text: 'Download CTA enabled with watermarked path' }
+      ]
+    },
+    peek: {
+      notes: [
+        'Peek shows the asset like any other — thumb, name, ×.',
+        'No "Best available" pill or rights indicators. Version selection happens at the Downloads page or modal.',
+        '<code>Go to queue</code> navigates to Downloads where the Watermarked-as-Best-available logic surfaces.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Item appears like any other in peek' },
+        { state: 'pass', text: 'No rights chips' },
+        { state: 'pass', text: 'Go to queue routes to Downloads page' }
+      ]
+    },
+        queue: {
+      notes: [
+        'Queue row shows asset with chip showing <code>Watermarked · Best available</code> in amber.',
+        'Accordion expand: Watermarked preselected, Original disabled, Request access component below version list (collapsed/trigger state).',
+        'Click Request access expands inline form with textarea (saves reason from previous session).',
+        '<code>Download N assets</code> CTA enabled — uses watermarked version where Original blocked.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Best available chip on queue row' },
+        { state: 'pass', text: 'Original disabled in expanded version list' },
+        { state: 'pass', text: 'Request access form opens inline' },
+        { state: 'pass', text: 'Reason textarea pre-filled from session' },
+        { state: 'pass', text: 'Download proceeds with available versions' }
+      ]
+    }
+  },
+  watermark: {
+    card: {
+      notes: [
+        'Status badge shows <code>Watermark</code> in amber.',
+        'Single <code>Download</code> menu item with submenu chevron.',
+        'Submenu shows <code>Direct download</code> (delivers Watermarked, the highest available) and <code>Configure download…</code> for the full picker view.',
+        '<code>Request access</code> available as a separate top-level menu item.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Watermark badge visible' },
+        { state: 'pass', text: 'Single Download item with submenu' },
+        { state: 'pass', text: 'Direct download label is consistent across rights states' },
+        { state: 'pass', text: 'Configure download… opens modal' },
+        { state: 'pass', text: 'Request access escalation present' }
+      ]
+    },
+    lightbox: {
+      notes: [
+        'Banner above preview: <code>Watermarked version available — Original requires approval.</code>',
+        'Watermarked preselected in version list, Original disabled with lock icon.',
+        'Request access component below version list (collapsed state).',
+        'Image preview itself shows watermark overlay.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Watermark visible in preview image' },
+        { state: 'pass', text: 'Banner explains watermark + original gate' },
+        { state: 'pass', text: 'Watermarked preselected' },
+        { state: 'pass', text: 'Request access form expands inline' }
+      ]
+    },
+    bulk: {
+      notes: [
+        'Bar enabled. Modal applies LCD: only Watermarked available across selection if any asset is watermark-only.',
+        'Per-asset mode reveals which assets need original-access requests.',
+        'Apply-to-all subset shortcut still works (e.g. apply to all PSDs).'
+      ],
+      qa: [
+        { state: 'pass', text: 'LCD limits to Watermarked in shared mode' },
+        { state: 'pass', text: 'Per-asset mode surfaces individual restrictions' },
+        { state: 'pass', text: 'Subset shortcut respects file-type compatibility' }
+      ]
+    },
+        modal: {
+      notes: [
+        'Watermarked preselected with "Best available" pill.',
+        'Original disabled with lock icon and "Requires approval" reason.',
+        'Request access component active — try the click-through to see all three states (collapsed → expanded → submitted).',
+        'After submitting request: confirmation appears in place of the form, with "Pending review" status.',
+        '<code>Download</code> CTA enabled — the watermarked version is the supported path.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Watermarked preselected, Best available pill' },
+        { state: 'pass', text: 'Original disabled with lock icon' },
+        { state: 'pass', text: 'Request access expands and submits' },
+        { state: 'pass', text: 'Confirmed state shows pending review' },
+        { state: 'pass', text: 'Reason saves across sessions' }
+      ]
+    },
+    peek: {
+      notes: [
+        'Peek shows the asset normally — thumb, name, ×.',
+        'No watermark indicator. The peek is intentionally rights-blind.',
+        '<code>Go to queue</code> navigates to Downloads where rights handling lives.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Item appears like any other in peek' },
+        { state: 'pass', text: 'No watermark chip in peek' },
+        { state: 'pass', text: 'Go to queue routes to Downloads page' }
+      ]
+    },
+        queue: {
+      notes: [
+        'Queue row chip: <code>Watermarked · Best available</code>.',
+        'Expanded accordion: Watermarked selected, Original disabled.',
+        'Request access form expandable inline — once submitted, row shows <code>Original requested</code> chip with timestamp.',
+        'Download proceeds normally with watermarked version.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Best available chip visible' },
+        { state: 'pass', text: 'Inline request form available' },
+        { state: 'pass', text: 'Submitted state shows Original requested chip' },
+        { state: 'pass', text: 'Download CTA enabled (watermarked path)' }
+      ]
+    }
+  },
+  mixed: {
+    card: {
+      notes: [
+        'Card surface is single-asset only — does not encounter mixed rights directly.',
+        'For mixed selections, see Bulk action bar and Queue surfaces.',
+        'Each individual card in the grid still shows its own rights state badge — that\'s how the user knows which assets are restricted before bulk-selecting.'
+      ],
+      qa: [
+        { state: 'warn', text: 'N/A — card surface is per-asset' },
+        { state: 'pass', text: 'Each card carries its individual rights badge' }
+      ]
+    },
+    lightbox: {
+      notes: [
+        'Lightbox is single-asset only.',
+        'For mixed scenarios in bulk download, see Bulk and Queue surfaces.'
+      ],
+      qa: [
+        { state: 'warn', text: 'N/A — lightbox is per-asset' }
+      ]
+    },
+    bulk: {
+      notes: [
+        '<code>Download</code> opens modal. Modal shows amber banner: <code>Some assets restricted across selection. Download Original is unavailable for the whole selection.</code>',
+        'Default modal applies LCD: only versions/formats valid for ALL selected assets shown.',
+        'Per-asset toggle exposes which specific assets are which state — user sees expired in red, watermark-only in amber, cleared in green.',
+        '<code>Apply this config to all JPGs</code> shortcut respects rights — won\'t apply Original to a watermark-only asset.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Banner explains mixed rights' },
+        { state: 'pass', text: 'LCD removes incompatible versions in shared mode' },
+        { state: 'pass', text: 'Per-asset mode shows individual states' },
+        { state: 'pass', text: 'Subset shortcut respects rights logic' },
+        { state: 'pass', text: 'CTA reflects "N of M downloadable"' }
+      ]
+    },
+        modal: {
+      notes: [
+        '<strong>Toggle <code>Configure assets individually?</code></strong> visible at top of modal — try clicking it.',
+        '<strong>Toggle off (default — shared mode):</strong> amber banner explains mixed rights. LCD applied: Original is hidden because it\'s not licensed across all selected assets. Preview preselected. Request access scoped to whole selection.',
+        '<strong>Toggle on (per-asset mode):</strong> banner and shared version/format pickers replaced with per-asset accordion. Each asset shows its own rights state in the chip summary (cleared / watermark / expired) and expands for individual configuration.',
+        'Try clicking each per-asset row to expand and see its individual version + format pickers, with rights state respected per row.',
+        '<code>Download 3 assets</code> CTA reflects: in shared mode all 3 use the LCD config; in per-asset mode it skips assets that aren\'t configured/cleared.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Toggle visible at top of modal in bulk scenario' },
+        { state: 'pass', text: 'Shared mode: banner + LCD-filtered options' },
+        { state: 'pass', text: 'Per-asset mode: accordion replaces shared sections' },
+        { state: 'pass', text: 'Each row shows its own rights state in summary chips' },
+        { state: 'pass', text: 'Expanded row shows version + format pickers per-asset' },
+        { state: 'warn', text: 'Decision: Watermarked LCD over Preview LCD in shared?' }
+      ]
+    },
+    peek: {
+      notes: [
+        'Peek shows all 3 queued assets in a scrollable list (max-height 280px). Each item: thumb, name, ×.',
+        'Mixed rights state is NOT visualised here — no chips, no warnings, no "1 needs request" summary. The peek is a quick-check, not a status board.',
+        'Footer shows <code>3 files</code> count and <code>Go to queue</code> CTA.',
+        'Reviewers may push back on this — but the rationale is that adding rights state to the peek means designing a third configuration UI in a popover that can\'t host it. Keep the peek thin; let the Downloads page handle complexity.'
+      ],
+      qa: [
+        { state: 'pass', text: '3 items shown with thumb + name + ×' },
+        { state: 'pass', text: 'No rights state in peek (deliberate)' },
+        { state: 'pass', text: 'Footer shows "3 files" count' },
+        { state: 'pass', text: 'Go to queue CTA navigates to Downloads' },
+        { state: 'warn', text: 'Open question: hint at mixed state or stay rights-blind?' }
+      ]
+    },
+        queue: {
+      notes: [
+        'Queue tab shows all 3 rows with their individual rights chips: cleared (green check), watermark-only (amber Best available), expired (red).',
+        'Page-level toggle defaults to per-asset on for mixed queues — shared config rarely makes sense when rights differ.',
+        '<code>Download 3 assets · 2 ready, 1 needs request</code> in the action bar summary.',
+        'Expired row offers Request access inline; submitted state changes the chip.',
+        'Download proceeds with cleared + watermark assets; expired skipped or held until access granted.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Each row shows its own rights chip' },
+        { state: 'pass', text: 'Toggle defaults to per-asset on for mixed' },
+        { state: 'pass', text: 'Action bar summary reflects readiness' },
+        { state: 'pass', text: 'Inline request access available per-row' },
+        { state: 'warn', text: 'Decision: skip expired or hold queue?' }
+      ]
+    }
+  }
+};
+
+// ============================================================
+// RENDER FUNCTIONS — surface mocks
+// ============================================================
+
+function renderAssetCard(scenario) {
+  const a = scenario.asset;
+  if (!a) {
+    return `<div style="text-align:center;color:var(--text-subtle);font-size:var(--font-size-2);max-width:340px;">
+      <div style="font-size:24px;margin-bottom:var(--spacing-3);">⚠</div>
+      <strong>Card surface is per-asset.</strong><br>
+      Mixed-rights scenarios appear when a user multi-selects from the grid — see the Bulk action bar and Queue surfaces.
+    </div>`;
+  }
+
+  const badge = a.cardStatus
+    ? `<div class="asset-card-status ${a.cardStatus.class}">${a.cardStatus.label}</div>`
+    : '';
+
+  // Build menu items based on scenario
+  const menuItems = buildCardMenuItems(scenario);
+
+  return `
+    <div style="display:flex;align-items:flex-start;gap:var(--spacing-4);">
+      <div class="asset-card-mock">
+        <div class="asset-card-thumb ${a.thumb}">
+          ${badge}
+        </div>
+        <div class="asset-card-meta">
+          <div class="asset-card-name">${a.name}</div>
+          <div class="asset-card-detail">${a.size} · Uploaded today</div>
+        </div>
+      </div>
+      <div class="overflow-menu" style="position:relative;top:0;">
+        ${menuItems}
+      </div>
+    </div>
+  `;
+}
+
+function buildCardMenuItems(scenario) {
+  const folderIcon = '<svg class="overflow-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 4h5l1 1.5h6V13H2V4z" stroke-linejoin="round"/></svg>';
+  const shareIcon = '<svg class="overflow-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M11 5l-7 3M11 11l-7-3" stroke-linecap="round"/><circle cx="12" cy="4" r="1.5"/><circle cx="3" cy="8" r="1.5"/><circle cx="12" cy="12" r="1.5"/></svg>';
+  const editIcon = '<svg class="overflow-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M11 3l2 2-7 7-3 1 1-3 7-7z" stroke-linejoin="round"/></svg>';
+  const queueIcon = '<svg class="overflow-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 4h12M2 8h12M2 12h8M11 11l2 2 3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const downloadIcon = '<svg class="overflow-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2v8M5 7l3 3 3-3M2 13h12" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const requestIcon = '<svg class="overflow-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="6" width="10" height="8" rx="1"/><path d="M5 6V4a3 3 0 016 0v2"/></svg>';
+  const trashIcon = '<svg class="overflow-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 4h12M5 1h6M5.5 7v5M10.5 7v5M3 4l1 10h8l1-10" stroke-linecap="round"/></svg>';
+  const submenuChevron = '<svg class="submenu-chevron" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  // Three menu modes:
+  // 1. Simple (no rights, no templates) → single "Download" item, no submenu, direct
+  // 2. Has rights/templates, something downloadable → "Download" with submenu (Original + Configure)
+  // 3. Fully blocked → "Download" with submenu containing only Configure (or disabled state)
+  const isSimple = scenario.id === 'simple';
+  const isFullyBlocked = scenario.id === 'embargoed' || scenario.id === 'expired';
+  const showRequest = scenario.id === 'expired' || scenario.id === 'geo' || scenario.id === 'watermark';
+
+  let html = `
+    <div class="overflow-item">${folderIcon}<span>Add to Collection</span><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-left:auto;color:var(--text-hint);"><path d="M6 4l4 4-4 4" stroke-linecap="round"/></svg></div>
+    <div class="overflow-item">${shareIcon}<span>Share</span></div>
+    <div class="overflow-item">${editIcon}<span>Edit Details</span></div>
+    <div class="overflow-item">${queueIcon}<span>Add to Queue</span></div>
+    <div class="overflow-divider"></div>
+  `;
+
+  if (isSimple) {
+    // No submenu — just direct Download
+    html += `<div class="overflow-item" title="Downloads the file directly">${downloadIcon}<span>Download</span></div>`;
+  } else if (isFullyBlocked) {
+    // Single Download, disabled (the submenu wouldn't have anything useful)
+    const tooltip = scenario.id === 'embargoed' ? `title="Embargoed until ${scenario.embargoDate}"` : `title="Licence expired ${scenario.expiryDate}"`;
+    html += `<div class="overflow-item disabled" ${tooltip}>${downloadIcon}<span>Download</span></div>`;
+  } else {
+    // Single Download with submenu — opens on click
+    let submenuItems = '';
+
+    // Direct download — same label across all rights states; system delivers LCD/highest-available
+    submenuItems += `<div class="overflow-item">${downloadIcon}<span>Direct download</span></div>`;
+
+    // Configure download — always present
+    submenuItems += `<div class="overflow-item" onclick="selectSurface('modal')">${downloadIcon}<span>Configure download…</span></div>`;
+
+    html += `
+      <div class="overflow-item has-submenu open" onclick="event.stopPropagation()">
+        ${downloadIcon}
+        <span>Download</span>
+        ${submenuChevron}
+        <div class="overflow-submenu">${submenuItems}</div>
+      </div>`;
+  }
+
+  if (showRequest) {
+    html += `<div class="overflow-item" style="color:var(--primary-default);">${requestIcon}<span>Request access</span></div>`;
+  }
+
+  html += `<div class="overflow-divider"></div>
+    <div class="overflow-item destructive">${trashIcon}<span>Delete</span></div>`;
+
+  return html;
+}
+
+function renderLightbox(scenario) {
+  const a = scenario.asset;
+  if (!a) {
+    return `<div style="text-align:center;color:var(--text-subtle);font-size:var(--font-size-2);max-width:340px;">
+      <div style="font-size:24px;margin-bottom:var(--spacing-3);">⚠</div>
+      <strong>Lightbox is per-asset.</strong><br>
+      Mixed-rights scenarios appear in bulk download flows — see the Bulk action bar and Queue surfaces.
+    </div>`;
+  }
+
+  const banner = buildLightboxBanner(scenario);
+  const downloadDisabled = scenario.id === 'embargoed' || scenario.id === 'expired';
+  const imageBlocked = scenario.id === 'embargoed';
+
+  const inQueue = `<button class="btn btn-ghost" style="border:1px solid var(--border-default);"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 4h10M2 8h10M2 12h6M11 11l2 2 3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>In Queue</button>`;
+  const downloadBtn = `<button class="btn btn-primary" ${downloadDisabled ? 'disabled' : "onclick=\"selectSurface('modal')\""}><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 7l3 3 3-3M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Download</button>`;
+
+  return `
+    <div class="lightbox-mock">
+      <div class="lightbox-header">
+        <div class="lightbox-title">${a.name}</div>
+        ${inQueue}
+        ${downloadBtn}
+      </div>
+      ${banner}
+      <div class="lightbox-body">
+        ${imageBlocked
+          ? `<div class="lightbox-image lightbox-image-blocked"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="11" width="14" height="10" rx="1"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>Embargoed preview</div>`
+          : `<div class="lightbox-image ${a.thumb}"></div>`
+        }
+        <div class="lightbox-rail">
+          <div class="rail-tab"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l2 2" stroke-linecap="round"/></svg>General</div>
+          <div class="rail-tab"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 5h10M3 8h10M3 11h6"/></svg>Attrs</div>
+          <div class="rail-tab active"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v8M5 7l3 3 3-3M2 13h12" stroke-linecap="round" stroke-linejoin="round"/></svg>Download</div>
+          <div class="rail-tab"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="6" width="10" height="8" rx="1"/><path d="M5 6V4a3 3 0 016 0v2"/></svg>Rights</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function buildLightboxBanner(scenario) {
+  if (scenario.id === 'embargoed') {
+    return `<div style="padding:var(--spacing-3) var(--spacing-5);background:var(--color-amber-100);border-bottom:1px solid var(--color-amber-500);font-size:var(--font-size-2);display:flex;align-items:flex-start;gap:var(--spacing-2);color:var(--color-amber-700);">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-top:1px;flex-shrink:0;"><rect x="3" y="6" width="10" height="8" rx="1"/><path d="M5 6V4a3 3 0 016 0v2"/></svg>
+      <div><strong>Embargoed until ${scenario.embargoDate}</strong> · Final downloads not available until this date.</div>
+    </div>`;
+  }
+  if (scenario.id === 'expired') {
+    return `<div style="padding:var(--spacing-3) var(--spacing-5);background:var(--color-red-100);border-bottom:1px solid var(--color-red-500);font-size:var(--font-size-2);display:flex;align-items:flex-start;gap:var(--spacing-2);color:var(--color-red-700);">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-top:1px;flex-shrink:0;"><circle cx="8" cy="8" r="6"/><path d="M5 5l6 6M11 5l-6 6" stroke-linecap="round"/></svg>
+      <div><strong>Licence expired on ${scenario.expiryDate}</strong> · Final downloads not available. Request access to escalate.</div>
+    </div>`;
+  }
+  if (scenario.id === 'geo') {
+    return `<div style="padding:var(--spacing-3) var(--spacing-5);background:var(--surface-muted);border-bottom:1px solid var(--border-default);font-size:var(--font-size-2);display:flex;align-items:flex-start;gap:var(--spacing-2);color:var(--text-default);">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-top:1px;flex-shrink:0;color:var(--text-subtle);"><circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2c2 2 3 4 3 6s-1 4-3 6c-2-2-3-4-3-6s1-4 3-6"/></svg>
+      <div>Licensed for: <strong>${scenario.licensedFor}</strong> · Your profile does not meet all criteria. Watermarked version available; original requires access request.</div>
+    </div>`;
+  }
+  if (scenario.id === 'watermark') {
+    return `<div style="padding:var(--spacing-3) var(--spacing-5);background:var(--color-amber-100);border-bottom:1px solid var(--color-amber-500);font-size:var(--font-size-2);display:flex;align-items:flex-start;gap:var(--spacing-2);color:var(--color-amber-700);">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-top:1px;flex-shrink:0;"><circle cx="8" cy="8" r="6"/><path d="M8 5v3M8 11v.5" stroke-linecap="round"/></svg>
+      <div><strong>Watermarked version available</strong> · Original requires approval via Request access.</div>
+    </div>`;
+  }
+  return '';
+}
+
+function renderBulkBar(scenario) {
+  const state = getScenarioState(scenario.id);
+  const isMixed = scenario.id === 'mixed';
+  const downloadDisabled = scenario.id === 'embargoed' || scenario.id === 'expired';
+
+  // Build the items shown in the tray. Mixed = 3 assets; everything else = 1
+  let items;
+  if (isMixed) {
+    items = [
+      { name: 'spring4.jpg', thumb: 'img-fill-1' },
+      { name: 'KV_Master_Layered.psd', thumb: 'img-fill-4' },
+      { name: 'Qatar22_Retro_Hero.jpg', thumb: 'img-fill-2' }
+    ];
+  } else if (scenario.asset) {
+    items = [{ name: scenario.asset.name, thumb: scenario.asset.thumb }];
+  } else {
+    items = [];
+  }
+
+  const count = items.length;
+
+  let restrictionNote = '';
+  if (scenario.id === 'embargoed') {
+    restrictionNote = `<div style="background:var(--color-amber-100);border:1px solid var(--color-amber-500);border-radius:var(--radius-2);padding:var(--spacing-2) var(--spacing-3);margin-top:var(--spacing-3);font-size:var(--font-size-1);color:var(--color-amber-700);max-width:580px;">⚠ Selected asset embargoed until ${scenario.embargoDate} — Download disabled until lift date.</div>`;
+  } else if (scenario.id === 'expired') {
+    restrictionNote = `<div style="background:var(--color-red-100);border:1px solid var(--color-red-500);border-radius:var(--radius-2);padding:var(--spacing-2) var(--spacing-3);margin-top:var(--spacing-3);font-size:var(--font-size-1);color:var(--color-red-700);max-width:580px;">✕ Selected asset has expired licence — request access to escalate.</div>`;
+  } else if (scenario.id === 'mixed') {
+    restrictionNote = `<div style="background:var(--surface-muted);border:1px solid var(--border-default);border-radius:var(--radius-2);padding:var(--spacing-2) var(--spacing-3);margin-top:var(--spacing-3);font-size:var(--font-size-1);color:var(--text-default);max-width:580px;">⚠ Mixed rights in selection · 2 of 3 ready · Download opens modal with details.</div>`;
+  }
+
+  // Tray content
+  const trayHtml = `
+    <div class="bulk-tray">
+      <div class="bulk-tray-header">
+        <span>Selected · ${count} ${count === 1 ? 'item' : 'items'}</span>
+        <button class="bulk-tray-clear">Clear all</button>
+      </div>
+      <div class="bulk-tray-list">
+        ${items.map(item => `
+          <div class="bulk-tray-item">
+            <div class="bulk-tray-thumb ${item.thumb}"></div>
+            <div class="bulk-tray-name">${item.name}</div>
+            <button class="bulk-tray-remove" title="Deselect">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+
+  const trayOpenClass = state.bulkTrayOpen ? 'tray-open' : '';
+
+  return `
+    <div class="bulk-bar-context ${trayOpenClass}">
+      ${trayHtml}
+      <div class="bulk-bar">
+        <span class="bulk-count">
+          <span class="bulk-count-num">${count}</span>
+          selected
+        </span>
+        <button class="bulk-btn bulk-btn-icon bulk-chevron-btn" title="${state.bulkTrayOpen ? 'Hide selection' : 'Review selection'}" onclick="toggleBulkTray('${scenario.id}')">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6l5 5 5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="bulk-spacer"></div>
+        <button class="bulk-btn">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="3" width="12" height="10" rx="1"/><path d="M5 7h6M5 10h4" stroke-linecap="round"/></svg>
+          Add to collection
+        </button>
+        <button class="bulk-btn">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h10M2 8h10M2 12h6M11 11l2 2 3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Add to Queue
+          <span class="bulk-queue-badge">${count}</span>
+        </button>
+        <div class="bulk-divider"></div>
+        <button class="bulk-btn bulk-btn-destructive bulk-btn-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 4h12M5 1h6M5.5 7v5M10.5 7v5M3 4l1 10h8l1-10" stroke-linecap="round"/></svg></button>
+        <button class="bulk-btn bulk-btn-primary" ${downloadDisabled ? 'style="opacity:0.5;cursor:not-allowed;"' : 'onclick="selectSurface(\'modal\')"'}>
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 7l3 3 3-3M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Download
+        </button>
+        <div class="bulk-divider"></div>
+        <button class="bulk-btn bulk-btn-icon" title="Clear selection"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg></button>
+      </div>
+      ${restrictionNote}
+    </div>
+  `;
+}
+
+function toggleBulkTray(scenarioId) {
+  const state = getScenarioState(scenarioId);
+  state.bulkTrayOpen = !state.bulkTrayOpen;
+  renderSurface();
+}
+
+function renderPeek(scenario) {
+  const state = getScenarioState(scenario.id);
+  // Default to populated; reviewer can flip to empty
+  if (typeof state.peekEmpty === 'undefined') state.peekEmpty = false;
+
+  // Items in the queue — same source as queue page rows so they stay consistent
+  let items;
+  if (scenario.id === 'mixed') {
+    items = [
+      { name: 'spring4.jpg', thumb: 'img-fill-1' },
+      { name: 'KV_Master_Layered.psd', thumb: 'img-fill-4' },
+      { name: 'Qatar22_Retro_Hero.jpg', thumb: 'img-fill-2' }
+    ];
+  } else if (scenario.asset) {
+    items = [{ name: scenario.asset.name, thumb: scenario.asset.thumb }];
+  } else {
+    items = [];
+  }
+
+  const count = items.length;
+  const totalLabel = count === 1 ? '1 file' : `${count} files`;
+
+  const stateToggle = `
+    <div class="peek-state-controls">
+      <button class="peek-state-control ${state.peekEmpty ? '' : 'active'}" onclick="togglePeekEmpty('${scenario.id}', false)">Populated</button>
+      <button class="peek-state-control ${state.peekEmpty ? 'active' : ''}" onclick="togglePeekEmpty('${scenario.id}', true)">Empty state</button>
+    </div>
+  `;
+
+  const dropdownContent = state.peekEmpty
+    ? `
+      <div class="peek-dropdown-empty">
+        <svg class="peek-dropdown-empty-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3">
+          <path d="M2 4h12M2 8h12M2 12h8" stroke-linecap="round"/>
+        </svg>
+        <div>Your queue is empty</div>
+        <div style="margin-top:var(--spacing-2);font-size:var(--font-size-1);">Add assets to download as a batch</div>
+      </div>
+    `
+    : `
+      <div class="peek-dropdown-list">
+        ${items.map(item => `
+          <div class="peek-dropdown-item">
+            <div class="peek-dropdown-thumb ${item.thumb}"></div>
+            <div class="peek-dropdown-name">${item.name}</div>
+            <button class="peek-dropdown-remove" title="Remove from queue">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        `).join('')}
+      </div>
+      <div class="peek-dropdown-footer">
+        <div class="peek-dropdown-meta">${totalLabel}</div>
+        <button class="peek-go-to-queue" onclick="selectSurface('queue')">
+          Go to queue
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    `;
+
+  // Display button content: icon on left, label, then count on right (when populated)
+  const downloadsIconSvg = `<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v8M5 7l3 3 3-3" stroke-linecap="round" stroke-linejoin="round"/><rect x="2" y="11" width="12" height="3" rx="1"/></svg>`;
+  const downloadsBtnContent = state.peekEmpty
+    ? `${downloadsIconSvg}<span>Downloads</span>`
+    : `${downloadsIconSvg}<span>Downloads</span><span class="peek-downloads-btn-count">${count}</span>`;
+
+  return `
+    <div style="display:flex;flex-direction:column;align-items:center;gap:var(--spacing-3);width:100%;">
+      ${stateToggle}
+      <div class="peek-context">
+        <div class="peek-nav-bar">
+          <div class="peek-nav-left">
+            <div class="peek-view-toggle">
+              <button class="peek-view-toggle-btn"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M3 8h10M3 12h10" stroke-linecap="round"/></svg></button>
+              <button class="peek-view-toggle-btn active"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="0.5"/><rect x="9" y="2" width="5" height="5" rx="0.5"/><rect x="2" y="9" width="5" height="5" rx="0.5"/><rect x="9" y="9" width="5" height="5" rx="0.5"/></svg></button>
+            </div>
+          </div>
+          <div class="peek-nav-right">
+            <button class="peek-downloads-btn">${downloadsBtnContent}</button>
+            <button class="peek-upload-btn">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 14V6M5 9l3-3 3 3" stroke-linecap="round" stroke-linejoin="round"/><rect x="2" y="2" width="12" height="3" rx="1"/></svg>
+              <span>Upload</span>
+            </button>
+          </div>
+          <div class="peek-dropdown">
+            <div class="peek-dropdown-header">Download queue</div>
+            ${dropdownContent}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function togglePeekEmpty(scenarioId, empty) {
+  getScenarioState(scenarioId).peekEmpty = empty;
+  renderSurface();
+}
+
+function renderQueuePage(scenario) {
+  // Default the queue page to show this scenario asset(s)
+  let rows;
+  let summary;
+  let downloadEnabled = true;
+  let downloadLabel = 'Download 1 asset';
+
+  if (scenario.id === 'mixed') {
+    rows = [
+      { name: 'spring4.jpg', thumb: 'img-fill-1', size: '58 KB', state: 'cleared', config: 'Original · Instagram Square' },
+      { name: 'KV_Master_Layered.psd', thumb: 'img-fill-4', size: '412 MB', state: 'watermark', config: 'Watermarked' },
+      { name: 'Qatar22_Retro_Hero.jpg', thumb: 'img-fill-2', size: '18.7 MB', state: 'expired', config: null }
+    ];
+    summary = '<strong>3 assets · 2 ready, 1 needs request</strong> · ZIP · ~6.2 MB';
+    downloadLabel = 'Download 2 assets';
+  } else if (scenario.id === 'simple') {
+    rows = [
+      { name: scenario.asset.name, thumb: scenario.asset.thumb, size: scenario.asset.size, state: 'simple', config: null }
+    ];
+    summary = '<strong>1 asset ready</strong> · 6.2 MB';
+  } else if (scenario.id === 'cleared') {
+    rows = [
+      { name: scenario.asset.name, thumb: scenario.asset.thumb, size: scenario.asset.size, state: 'cleared', config: 'Original · Instagram Square' }
+    ];
+    summary = '<strong>1 asset ready</strong> · ZIP · ~1.2 MB';
+  } else if (scenario.id === 'embargoed') {
+    rows = [
+      { name: scenario.asset.name, thumb: scenario.asset.thumb, size: scenario.asset.size, state: 'embargoed', config: null, embargoDate: scenario.embargoDate }
+    ];
+    summary = '<strong>0 of 1 ready</strong> · 1 embargoed';
+    downloadEnabled = false;
+    downloadLabel = 'Download · 0 ready';
+  } else if (scenario.id === 'expired') {
+    rows = [
+      { name: scenario.asset.name, thumb: scenario.asset.thumb, size: scenario.asset.size, state: 'expired', config: null, expiryDate: scenario.expiryDate }
+    ];
+    summary = '<strong>0 of 1 ready</strong> · 1 expired · request access';
+    downloadEnabled = false;
+    downloadLabel = 'Download · 0 ready';
+  } else if (scenario.id === 'geo') {
+    rows = [
+      { name: scenario.asset.name, thumb: scenario.asset.thumb, size: scenario.asset.size, state: 'geo', config: 'Watermarked · Best available · Instagram Square' }
+    ];
+    summary = '<strong>1 asset ready</strong> · using Best available version';
+  } else if (scenario.id === 'watermark') {
+    rows = [
+      { name: scenario.asset.name, thumb: scenario.asset.thumb, size: scenario.asset.size, state: 'watermark', config: 'Watermarked · Best available' }
+    ];
+    summary = '<strong>1 asset ready</strong> · using Best available version';
+  }
+
+  const rowsHtml = rows.map(r => {
+    let chips = '';
+    if (r.config) {
+      const parts = r.config.split(' · ');
+      chips = parts.map(p => {
+        if (p === 'Best available') return `<span class="queue-chip queue-chip-warning">${p}</span>`;
+        return `<span class="queue-chip">${p}</span>`;
+      }).join('<span class="queue-chip-dot"></span>');
+    } else if (r.state === 'embargoed') {
+      chips = `<span class="queue-chip queue-chip-warning">⏱ Embargoed until ${r.embargoDate}</span>`;
+    } else if (r.state === 'expired') {
+      chips = `<span class="queue-chip queue-chip-blocked">✕ Expired ${r.expiryDate}</span><span class="queue-chip-dot"></span><span style="color:var(--primary-default);font-size:var(--font-size-1);font-weight:var(--font-weight-medium);cursor:pointer;">Request access</span>`;
+    }
+
+    return `
+      <div class="queue-row">
+        <div class="queue-row-thumb ${r.thumb}"></div>
+        <div class="queue-row-info">
+          <div class="queue-row-name">${r.name}</div>
+          <div class="queue-row-meta">
+            <span class="filetype-badge">JPG</span>
+            <span>${r.size}</span>
+            <span class="queue-chip-dot"></span>
+            ${chips}
+          </div>
+        </div>
+        <button class="btn btn-ghost" style="padding:6px;width:28px;height:28px;"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg></button>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="queue-page-mock">
+      <div class="queue-page-header">
+        <div class="queue-page-title">Downloads</div>
+        <div class="queue-tabs">
+          <div class="queue-tab active">Queue <span class="queue-tab-count">${rows.length}</span></div>
+          <div class="queue-tab">History <span class="queue-tab-count">12</span></div>
+        </div>
+      </div>
+      <div class="queue-page-body">
+        ${rowsHtml}
+        <div class="queue-action-bar">
+          <div class="queue-action-summary">${summary}</div>
+          <button class="btn btn-primary" ${!downloadEnabled ? 'disabled' : ''}>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 7l3 3 3-3M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            ${downloadLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// MODAL RENDERER — interactive
+// State for request access form (collapsed / expanded / submitted)
+// is held per-scenario in modalState
+// ============================================================
+
+const modalState = {
+  // Persists across scenarios within the session
+  savedReason: 'Need for social',
+  // Per-scenario interaction state
+  perScenario: {}
+};
+
+function getScenarioState(scenarioId) {
+  if (!modalState.perScenario[scenarioId]) {
+    modalState.perScenario[scenarioId] = {
+      requestAccess: 'collapsed', // collapsed | expanded | submitted
+      configMode: 'shared',        // shared | per-asset (only meaningful for bulk)
+      expandedAsset: null,         // which per-asset row is expanded (when configMode = per-asset)
+      bulkTrayOpen: false          // bulk action bar review tray
+    };
+  }
+  return modalState.perScenario[scenarioId];
+}
+
+function renderModal(scenario) {
+  const state = getScenarioState(scenario.id);
+
+  // Simple scenario: no modal — direct download path
+  if (scenario.id === 'simple') {
+    return `<div style="text-align:center;color:var(--text-subtle);font-size:var(--font-size-2);max-width:380px;padding:var(--spacing-7);">
+      <div style="font-size:32px;margin-bottom:var(--spacing-3);">↓</div>
+      <strong style="color:var(--text-default);font-size:var(--font-size-3);display:block;margin-bottom:var(--spacing-2);">No modal for simple downloads</strong>
+      Assets without rights or templates skip the modal entirely. Click <code>Download</code> from the asset card or lightbox and the file is delivered directly.
+      <div style="margin-top:var(--spacing-4);padding-top:var(--spacing-4);border-top:1px solid var(--border-default);font-size:var(--font-size-1);">
+        The modal is reserved for assets that have something to configure — a version choice (rights-managed) or a format choice (templates).
+      </div>
+    </div>`;
+  }
+
+  let bannerHtml = '';
+  let versionsHtml = '';
+  let requestAccessHtml = '';
+  let footerHtml = '';
+
+  // Build banner per scenario
+  if (scenario.id === 'embargoed') {
+    bannerHtml = `
+      <div class="modal-banner amber">
+        <svg class="modal-banner-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="10" height="8" rx="1"/><path d="M5 6V4a3 3 0 016 0v2"/></svg>
+        <div>
+          <div class="modal-banner-title">Embargoed until ${scenario.embargoDate}</div>
+          <div class="modal-banner-body">Final downloads are not available until this date. Asset stays in your queue and becomes downloadable when the embargo lifts.</div>
+        </div>
+      </div>`;
+  } else if (scenario.id === 'expired') {
+    bannerHtml = `
+      <div class="modal-banner red">
+        <svg class="modal-banner-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 5l6 6M11 5l-6 6" stroke-linecap="round"/></svg>
+        <div>
+          <div class="modal-banner-title">Licence expired on ${scenario.expiryDate}</div>
+          <div class="modal-banner-body">Final downloads are not available. Use Request access below to escalate to the rights manager.</div>
+        </div>
+      </div>`;
+  } else if (scenario.id === 'geo') {
+    bannerHtml = `
+      <div class="modal-banner neutral">
+        <svg class="modal-banner-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2c2 2 3 4 3 6s-1 4-3 6c-2-2-3-4-3-6s1-4 3-6"/></svg>
+        <div>
+          <div class="modal-banner-title">Licensed for: ${scenario.licensedFor}</div>
+          <div class="modal-banner-body">Your profile does not meet all criteria. Watermarked version preselected as Best available; original requires access request.</div>
+        </div>
+      </div>`;
+  } else if (scenario.id === 'mixed') {
+    bannerHtml = `
+      <div class="modal-banner amber">
+        <svg class="modal-banner-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v6M8 11v.5" stroke-linecap="round"/><circle cx="8" cy="8" r="6"/></svg>
+        <div>
+          <div class="modal-banner-title">Some options unavailable</div>
+          <div class="modal-banner-body">One asset in this selection is restricted. Original file is hidden because it's not licensed across all selected assets.</div>
+        </div>
+      </div>`;
+  }
+
+  // Build versions list
+  if (scenario.id === 'embargoed' || scenario.id === 'expired') {
+    // All disabled
+    versionsHtml = `
+      <div>
+        <div class="modal-section-heading">Available versions <span class="modal-section-heading-counter">All restricted</span></div>
+        <div class="version-list">
+          <div class="version-row disabled">
+            <div class="version-check"></div>
+            <div class="version-info">
+              <div class="version-title">Preview</div>
+            </div>
+            <div class="version-specs">1200px · 75% quality</div>
+          </div>
+          <div class="version-row disabled">
+            <div class="version-check"></div>
+            <div class="version-info">
+              <div class="version-title">Watermarked version</div>
+            </div>
+            <div class="version-specs">2000px · watermarked</div>
+          </div>
+          <div class="version-row disabled">
+            <div class="version-check"></div>
+            <div class="version-info">
+              <div class="version-title">Original file <svg class="lock-icon" width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="7" width="10" height="7" rx="1"/><path d="M5 7V5a3 3 0 016 0v2"/></svg></div>
+              <div class="version-desc">${scenario.id === 'embargoed' ? 'Embargoed' : 'Licence expired'}</div>
+            </div>
+            <div class="version-specs">Full resolution</div>
+          </div>
+        </div>
+      </div>`;
+  } else if (scenario.id === 'geo' || scenario.id === 'watermark') {
+    // Watermarked preselected, Original disabled
+    versionsHtml = `
+      <div>
+        <div class="modal-section-heading">Available versions <span class="modal-section-heading-counter">1 selected</span></div>
+        <div class="version-list">
+          <div class="version-row">
+            <div class="version-check"></div>
+            <div class="version-info">
+              <div class="version-title">Preview</div>
+            </div>
+            <div class="version-specs">1200px · 75% quality</div>
+          </div>
+          <div class="version-row selected">
+            <div class="version-check">${ICON_CHECK}</div>
+            <div class="version-info">
+              <div class="version-title">Watermarked version <span class="version-best-pill">Best available</span></div>
+            </div>
+            <div class="version-specs">2000px · watermarked</div>
+          </div>
+          <div class="version-row disabled">
+            <div class="version-check"></div>
+            <div class="version-info">
+              <div class="version-title">Original file <svg class="lock-icon" width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="7" width="10" height="7" rx="1"/><path d="M5 7V5a3 3 0 016 0v2"/></svg></div>
+              <div class="version-desc">${scenario.id === 'geo' ? 'Restricted for your profile' : 'Requires approval'}</div>
+            </div>
+            <div class="version-specs">Full resolution</div>
+          </div>
+        </div>
+      </div>`;
+  } else if (scenario.id === 'mixed') {
+    versionsHtml = `
+      <div>
+        <div class="modal-section-heading">Available versions <span class="modal-section-heading-counter">1 selected</span></div>
+        <div class="version-list">
+          <div class="version-row selected">
+            <div class="version-check">${ICON_CHECK}</div>
+            <div class="version-info">
+              <div class="version-title">Preview</div>
+            </div>
+            <div class="version-specs">1200px · 75% quality</div>
+          </div>
+          <div class="version-row">
+            <div class="version-check"></div>
+            <div class="version-info">
+              <div class="version-title">Watermarked version</div>
+            </div>
+            <div class="version-specs">2000px · watermarked</div>
+          </div>
+          <div class="version-row disabled">
+            <div class="version-check"></div>
+            <div class="version-info">
+              <div class="version-title">Original file <svg class="lock-icon" width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="7" width="10" height="7" rx="1"/><path d="M5 7V5a3 3 0 016 0v2"/></svg></div>
+              <div class="version-desc">Restricted across selection</div>
+            </div>
+            <div class="version-specs">Full resolution</div>
+          </div>
+        </div>
+      </div>`;
+  } else {
+    // Cleared — all available, Original preselected as default
+    versionsHtml = `
+      <div>
+        <div class="modal-section-heading">Available versions <span class="modal-section-heading-counter">1 selected</span></div>
+        <div class="version-list">
+          <div class="version-row">
+            <div class="version-check"></div>
+            <div class="version-info">
+              <div class="version-title">Preview</div>
+            </div>
+            <div class="version-specs">1200px · 75% quality</div>
+          </div>
+          <div class="version-row">
+            <div class="version-check"></div>
+            <div class="version-info">
+              <div class="version-title">Watermarked version</div>
+            </div>
+            <div class="version-specs">2000px · watermarked</div>
+          </div>
+          <div class="version-row selected">
+            <div class="version-check">${ICON_CHECK}</div>
+            <div class="version-info">
+              <div class="version-title">Original file</div>
+            </div>
+            <div class="version-specs">${scenario.asset?.size || '—'}</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // Build request access component (collapsed | expanded | submitted)
+  // Embargo doesn't get request access — it's temporal, not permission-based
+  const showRequestAccess = scenario.id === 'expired' || scenario.id === 'geo' || scenario.id === 'watermark' || scenario.id === 'mixed';
+
+  if (showRequestAccess) {
+    if (state.requestAccess === 'collapsed') {
+      requestAccessHtml = `
+        <div class="request-access-block">
+          <div class="request-access-prompt">
+            <strong>Need the original file?</strong> Send a request for review.
+          </div>
+          <button class="btn btn-ghost" style="border:1px solid var(--primary-default);color:var(--primary-default);" onclick="setRequestAccessState('${scenario.id}', 'expanded')">Request access</button>
+        </div>`;
+    } else if (state.requestAccess === 'expanded') {
+      const savedNote = modalState.savedReason
+        ? `<span class="request-access-saved"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8l3 3 7-7"/></svg> Reason from your last request — edit if different</span>`
+        : '';
+      requestAccessHtml = `
+        <div class="request-access-form">
+          <div>
+            <div style="font-weight:var(--font-weight-semibold);font-size:var(--font-size-2);">Explain why you need access</div>
+            <div style="font-size:var(--font-size-1);color:var(--text-subtle);margin-top:2px;">Sent to the asset's rights manager. You'll be notified by email.</div>
+          </div>
+          <textarea class="request-access-textarea" id="request-textarea-${scenario.id}" placeholder="e.g. Need for Brazil match-day social campaign">${modalState.savedReason}</textarea>
+          <div style="display:flex;align-items:center;gap:var(--spacing-3);">
+            ${savedNote}
+            <div style="margin-left:auto;display:flex;gap:var(--spacing-2);">
+              <button class="btn btn-ghost" onclick="setRequestAccessState('${scenario.id}', 'collapsed')">Cancel</button>
+              <button class="btn btn-primary" onclick="submitRequestAccess('${scenario.id}')">Send request</button>
+            </div>
+          </div>
+        </div>`;
+    } else if (state.requestAccess === 'submitted') {
+      requestAccessHtml = `
+        <div class="request-access-confirmed">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5l2 1" stroke-linecap="round"/></svg>
+          <div>
+            <strong>Request sent</strong> · Pending review by rights manager.
+            <span style="color:var(--text-subtle);font-weight:400;margin-left:var(--spacing-2);font-size:var(--font-size-1);">You'll get an email when it's reviewed.</span>
+          </div>
+        </div>`;
+    }
+  }
+
+  // Build footer
+  let downloadEnabled = !(scenario.id === 'embargoed' || scenario.id === 'expired');
+  let footerSummary = '';
+  let footerCta = 'Download';
+
+  if (scenario.id === 'cleared') {
+    footerSummary = '<strong>1 file</strong> · ~24 MB';
+  } else if (scenario.id === 'embargoed') {
+    footerSummary = '<strong>0 of 1 ready</strong>';
+    footerCta = 'Download · 0 ready';
+  } else if (scenario.id === 'expired') {
+    footerSummary = '<strong>0 of 1 ready</strong> · request access to escalate';
+    footerCta = 'Download · 0 ready';
+  } else if (scenario.id === 'geo' || scenario.id === 'watermark') {
+    footerSummary = '<strong>1 file</strong> · using Best available version';
+  } else if (scenario.id === 'mixed') {
+    footerSummary = '<strong>3 files</strong> · ZIP · ~12 MB';
+    footerCta = 'Download 3 assets';
+  }
+
+  footerHtml = `
+    <div class="modal-footer-summary">${footerSummary}</div>
+    <button class="btn btn-ghost">Cancel</button>
+    <button class="btn btn-primary" ${downloadEnabled ? '' : 'disabled'}>
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 7l3 3 3-3M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      ${footerCta}
+    </button>`;
+
+  // Format section (skip for fully blocked)
+  let formatHtml = '';
+  if (scenario.id !== 'embargoed' && scenario.id !== 'expired') {
+    formatHtml = `
+      <div>
+        <div class="modal-section-heading">Available formats <span class="modal-section-heading-counter">1 selected</span></div>
+        <div class="format-grid">
+          <div class="format-tile selected">
+            <div class="format-tile-name">Instagram Square</div>
+            <div class="format-tile-spec">1:1 ratio</div>
+          </div>
+          <div class="format-tile">
+            <div class="format-tile-name">Facebook Feed</div>
+            <div class="format-tile-spec">1080 × 566</div>
+          </div>
+          <div class="format-tile">
+            <div class="format-tile-name">Instagram Story</div>
+            <div class="format-tile-spec">1080 × 1920</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  const titleText = scenario.id === 'mixed' ? 'Download 3 assets' : 'Download asset';
+  const assetName = scenario.id === 'mixed' ? '' : (scenario.asset?.name || '');
+
+  // For Mixed scenario, build the toggle and conditional per-asset view
+  let bodyContentHtml = '';
+  let selectionSummaryHtml = '';
+
+  if (scenario.id === 'mixed') {
+    const isPerAsset = state.configMode === 'per-asset';
+    // Unified selection panel: thumbnails + names + toggle
+    selectionSummaryHtml = `
+      <div class="selection-panel">
+        <div class="selection-panel-summary">
+          <div class="selection-thumb-stack">
+            <div class="img-fill-1"></div>
+            <div class="img-fill-4"></div>
+            <div class="img-fill-2"></div>
+          </div>
+          <div class="selection-summary-text">
+            spring4.jpg, KV_Master_Layered.psd, Qatar22_Retro_Hero.jpg
+            <div class="selection-summary-meta">3 assets · ~430 MB total</div>
+          </div>
+        </div>
+        <div class="selection-panel-divider"></div>
+        <div class="selection-panel-toggle">
+          <div class="selection-panel-toggle-label">Configure assets individually?</div>
+          <button class="toggle-switch ${isPerAsset ? 'on' : ''}" onclick="toggleConfigMode('${scenario.id}')"></button>
+        </div>
+      </div>`;
+
+    if (isPerAsset) {
+      // Per-asset accordion replaces the version/format/request blocks
+      bodyContentHtml = renderPerAssetAccordion(scenario, state);
+    } else {
+      // Shared mode: existing LCD version+format+request flow
+      bodyContentHtml = `${bannerHtml}${versionsHtml}${requestAccessHtml}${formatHtml}`;
+    }
+  } else {
+    // All other scenarios: just the standard flow
+    bodyContentHtml = `${bannerHtml}${versionsHtml}${requestAccessHtml}${formatHtml}`;
+  }
+
+  return `
+    <div class="modal-mock">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">${titleText}</div>
+          ${assetName ? `<div style="font-size:var(--font-size-1);color:var(--text-subtle);margin-top:2px;">${assetName}</div>` : ''}
+        </div>
+        <button class="modal-close" style="margin-left:auto;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        ${selectionSummaryHtml}
+        ${bodyContentHtml}
+      </div>
+      <div class="modal-footer">${footerHtml}</div>
+    </div>
+  `;
+}
+
+// Per-asset accordion for bulk mode in Mixed scenario
+function renderPerAssetAccordion(scenario, state) {
+  // Three assets: 1 cleared, 1 watermark only, 1 expired
+  const assets = [
+    {
+      id: 'spring4',
+      name: 'spring4.jpg',
+      thumb: 'img-fill-1',
+      state: 'cleared',
+      summary: '<span class="per-asset-mini-chip">Original</span><span class="per-asset-mini-chip">Instagram Square</span>'
+    },
+    {
+      id: 'kv-master',
+      name: 'KV_Master_Layered.psd',
+      thumb: 'img-fill-4',
+      state: 'watermark',
+      summary: '<span class="per-asset-mini-chip">Watermarked</span><span class="per-asset-mini-chip warning">Best available</span><span class="per-asset-mini-chip">Instagram Square</span>'
+    },
+    {
+      id: 'qatar22',
+      name: 'Qatar22_Retro_Hero.jpg',
+      thumb: 'img-fill-2',
+      state: 'expired',
+      summary: '<span class="per-asset-mini-chip blocked">⏱ Expired</span><span style="color:var(--primary-default);font-size:10px;font-weight:500;">Request access</span>'
+    }
+  ];
+
+  return `
+    <div class="per-asset-list">
+      ${assets.map(a => {
+        const expanded = state.expandedAsset === a.id;
+        return `
+          <div class="per-asset-row ${expanded ? 'expanded' : ''}">
+            <div class="per-asset-header" onclick="togglePerAssetExpand('${scenario.id}', '${a.id}')">
+              <div class="per-asset-thumb ${a.thumb}"></div>
+              <div class="per-asset-name-block">
+                <div class="per-asset-name">${a.name}</div>
+                <div class="per-asset-summary">${a.summary}</div>
+              </div>
+              <svg class="per-asset-chevron" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6l5 5 5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            ${expanded ? renderPerAssetBody(a) : ''}
+          </div>
+        `;
+      }).join('')}
+      <div style="font-size:var(--font-size-1);color:var(--text-subtle);text-align:center;padding:var(--spacing-2);">
+        Each asset configured independently. Try clicking a row to expand.
+      </div>
+    </div>
+  `;
+}
+
+function renderPerAssetBody(asset) {
+  if (asset.state === 'cleared') {
+    return `
+      <div class="per-asset-body">
+        <div>
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-subtle);margin-bottom:var(--spacing-2);">Version</div>
+          <div class="version-list">
+            <div class="version-row"><div class="version-check"></div><div class="version-info"><div class="version-title">Preview</div></div><div class="version-specs">1200px</div></div>
+            <div class="version-row"><div class="version-check"></div><div class="version-info"><div class="version-title">Watermarked</div></div><div class="version-specs">2000px</div></div>
+            <div class="version-row selected"><div class="version-check">${ICON_CHECK}</div><div class="version-info"><div class="version-title">Original</div></div><div class="version-specs">58 KB</div></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-subtle);margin-bottom:var(--spacing-2);">Format</div>
+          <div class="format-grid">
+            <div class="format-tile selected"><div class="format-tile-name">Instagram Square</div><div class="format-tile-spec">1:1</div></div>
+            <div class="format-tile"><div class="format-tile-name">Facebook Feed</div><div class="format-tile-spec">1080 × 566</div></div>
+            <div class="format-tile"><div class="format-tile-name">Instagram Story</div><div class="format-tile-spec">1080 × 1920</div></div>
+          </div>
+        </div>
+      </div>`;
+  } else if (asset.state === 'watermark') {
+    return `
+      <div class="per-asset-body">
+        <div>
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-subtle);margin-bottom:var(--spacing-2);">Version</div>
+          <div class="version-list">
+            <div class="version-row"><div class="version-check"></div><div class="version-info"><div class="version-title">Preview</div></div><div class="version-specs">1200px</div></div>
+            <div class="version-row selected"><div class="version-check">${ICON_CHECK}</div><div class="version-info"><div class="version-title">Watermarked <span class="version-best-pill">Best available</span></div></div><div class="version-specs">2000px</div></div>
+            <div class="version-row disabled"><div class="version-check"></div><div class="version-info"><div class="version-title">Original <svg class="lock-icon" width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="7" width="10" height="7" rx="1"/><path d="M5 7V5a3 3 0 016 0v2"/></svg></div><div class="version-desc">Requires approval</div></div><div class="version-specs">412 MB</div></div>
+          </div>
+          <div style="margin-top:var(--spacing-3);">
+            <div class="request-access-block">
+              <div class="request-access-prompt"><strong>Need the original file?</strong></div>
+              <button class="btn btn-ghost" style="border:1px solid var(--primary-default);color:var(--primary-default);">Request access</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-subtle);margin-bottom:var(--spacing-2);">Format</div>
+          <div class="format-grid">
+            <div class="format-tile selected"><div class="format-tile-name">Instagram Square</div><div class="format-tile-spec">1:1</div></div>
+            <div class="format-tile"><div class="format-tile-name">Facebook Feed</div><div class="format-tile-spec">1080 × 566</div></div>
+            <div class="format-tile"><div class="format-tile-name">Instagram Story</div><div class="format-tile-spec">1080 × 1920</div></div>
+          </div>
+        </div>
+      </div>`;
+  } else if (asset.state === 'expired') {
+    return `
+      <div class="per-asset-body">
+        <div class="modal-banner red" style="margin-bottom:0;">
+          <svg class="modal-banner-icon" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 5l6 6M11 5l-6 6" stroke-linecap="round"/></svg>
+          <div>
+            <div class="modal-banner-title">Licence expired on 12 Jan 2026</div>
+            <div class="modal-banner-body">No download paths available. Request access to escalate.</div>
+          </div>
+        </div>
+        <div class="request-access-block">
+          <div class="request-access-prompt"><strong>Need this asset?</strong> Send a request for review.</div>
+          <button class="btn btn-ghost" style="border:1px solid var(--primary-default);color:var(--primary-default);">Request access</button>
+        </div>
+      </div>`;
+  }
+  return '';
+}
+
+function toggleConfigMode(scenarioId) {
+  const state = getScenarioState(scenarioId);
+  state.configMode = state.configMode === 'shared' ? 'per-asset' : 'shared';
+  state.expandedAsset = null; // reset on mode change
+  renderSurface();
+}
+
+function togglePerAssetExpand(scenarioId, assetId) {
+  const state = getScenarioState(scenarioId);
+  state.expandedAsset = state.expandedAsset === assetId ? null : assetId;
+  renderSurface();
+}
+
+function setRequestAccessState(scenarioId, newState) {
+  getScenarioState(scenarioId).requestAccess = newState;
+  renderSurface();
+}
+
+function submitRequestAccess(scenarioId) {
+  // Save the textarea value to session
+  const textarea = document.getElementById(`request-textarea-${scenarioId}`);
+  if (textarea && textarea.value.trim()) {
+    modalState.savedReason = textarea.value.trim();
+  }
+  getScenarioState(scenarioId).requestAccess = 'submitted';
+  renderSurface();
+}
+
+// ============================================================
+// CONTROLLER
+// ============================================================
+
+const SURFACE_LABELS = {
+  card: 'Asset card · overflow menu open',
+  lightbox: 'Lightbox · Download tab active',
+  bulk: 'Bulk action bar · grid context',
+  peek: 'Downloads peek · global nav dropdown',
+  modal: 'Download modal · interactive',
+  queue: 'Downloads page · Queue tab active'
+};
+
+const SURFACE_RENDERERS = {
+  card: renderAssetCard,
+  lightbox: renderLightbox,
+  bulk: renderBulkBar,
+  peek: renderPeek,
+  modal: renderModal,
+  queue: renderQueuePage
+};
+
+let currentScenario = null;
+let currentSurface = 'card';
+
+function renderScenarioPicker() {
+  const picker = document.getElementById('scenario-picker');
+  picker.innerHTML = SCENARIOS.map(s => `
+    <button class="picker-item" data-id="${s.id}">
+      <div class="picker-item-title">
+        <span>${s.title}</span>
+        <span class="picker-item-tag ${s.tag}">${s.tagLabel}</span>
+      </div>
+      <div class="picker-item-meta">${s.short}</div>
+    </button>
+  `).join('');
+  picker.querySelectorAll('.picker-item').forEach(el => {
+    el.addEventListener('click', () => selectScenario(el.dataset.id));
+  });
+}
+
+function selectScenario(id) {
+  currentScenario = SCENARIOS.find(s => s.id === id);
+  document.querySelectorAll('.picker-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.id === id);
+  });
+  renderStage();
+}
+
+function selectSurface(surface) {
+  currentSurface = surface;
+  document.querySelectorAll('.surface-tab').forEach(el => {
+    el.classList.toggle('active', el.dataset.surface === surface);
+  });
+  renderSurface();
+}
+
+function renderStage() {
+  if (!currentScenario) return;
+  const s = currentScenario;
+
+  document.getElementById('scenario-title').textContent = s.title;
+  document.getElementById('scenario-description').textContent = s.description;
+
+  const outcomeBar = document.getElementById('outcome-bar');
+  outcomeBar.style.display = 'flex';
+  document.getElementById('outcome-pill').className = `outcome-pill ${s.outcome.pill}`;
+  document.getElementById('outcome-pill').textContent = s.outcome.label;
+  document.getElementById('outcome-title').textContent = s.outcome.title;
+  document.getElementById('outcome-detail').textContent = s.outcome.detail;
+
+  document.getElementById('surface-tabs').style.display = 'flex';
+  document.getElementById('surface-preview').style.display = 'block';
+  document.getElementById('behaviour-panel').style.display = 'block';
+  document.getElementById('qa-panel').style.display = 'block';
+
+  renderSurface();
+}
+
+function renderSurface() {
+  if (!currentScenario) return;
+
+  document.getElementById('surface-label').textContent = SURFACE_LABELS[currentSurface];
+
+  const stage = document.getElementById('surface-stage');
+  stage.className = 'surface-preview-stage surface-' + currentSurface;
+
+  const renderer = SURFACE_RENDERERS[currentSurface];
+  stage.innerHTML = renderer(currentScenario);
+
+  const behaviour = SURFACE_BEHAVIOURS[currentScenario.id]?.[currentSurface];
+  if (behaviour) {
+    document.getElementById('behaviour-list').innerHTML =
+      behaviour.notes.map(n => `<li>${n}</li>`).join('');
+    document.getElementById('qa-grid').innerHTML =
+      behaviour.qa.map(q => {
+        const icon = q.state === 'pass' ? `<span class="qa-item-icon" style="color:var(--color-green-600);">${ICON_CHECK}</span>` :
+                     q.state === 'warn' ? `<span class="qa-item-icon" style="color:var(--color-amber-600);">${ICON_WARN}</span>` :
+                     `<span class="qa-item-icon">${ICON_X}</span>`;
+        return `<div class="qa-item ${q.state}">${icon}<span>${q.text}</span></div>`;
+      }).join('');
+  }
+}
+
+// Init
+renderScenarioPicker();
+document.querySelectorAll('.surface-tab').forEach(el => {
+  el.addEventListener('click', () => selectSurface(el.dataset.surface));
+});
+selectScenario('cleared');
+</script>
+
+</body>
+</html>
