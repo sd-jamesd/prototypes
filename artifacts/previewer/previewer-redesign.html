@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screendragon Proof Viewer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    /* Radix UI — Slate dark (steps noted for reference) */
+    --bg:            #111113; /* slate-1  — app background        */
+    --surface-1:     #18191B; /* slate-2  — subtle background     */
+    --surface-2:     #212225; /* slate-3  — UI element background */
+    --surface-3:     #272A2D; /* slate-4  — hovered UI element    */
+    --border:        #2E3135; /* slate-5  — subtle border         */
+    --border-mid:    #43484E; /* slate-7  — UI element border     */
+    --text:          #EDEEF0; /* slate-12 — high-contrast text    */
+    --text-muted:    #B0B4BA; /* slate-11 — low-contrast text     */
+    --text-subtle:   #696E77; /* slate-9  — placeholder / hint    */
+    --primary:       #3b77fa;
+    --primary-soft:  rgba(37,99,235,0.15);
+    --green:         #16A34A;
+    --green-bright:  #22C55E;
+    --green-soft:    rgba(22,163,74,0.15);
+    --amber:         #D97706;
+    --amber-soft:    rgba(217,119,6,0.12);
+    --red:           #DC2626;
+    --red-soft:      rgba(220,38,38,0.12);
+    --radius-sm:     3px;
+    --radius-md:     5px;
+    --radius-lg:     8px;
+    --font:          'Inter', system-ui, sans-serif;
+    --font-mono:     'JetBrains Mono', monospace;
+    --transition:    0.14s ease;
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── LAYOUT ── */
+  .previewer { display: flex; flex-direction: column; height: 100vh; width: 100vw; }
+
+  /* ── TOP BAR ─────────────────────────────────────────────────────── */
+  .top-bar {
+    height: 44px;
+    background: #1c222e;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    padding: 0 10px 0 10px;
+    gap: 8px;
+    flex-shrink: 0;
+    z-index: 100;
+  }
+  .top-bar-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+  .top-bar-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+
+  .logo {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    padding-right: 8px;
+    border-right: 1px solid var(--border-mid);
+  }
+
+  .version-badge {
+    display: inline-flex;
+    align-items: center;
+    background: var(--primary);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 10px;
+    letter-spacing: 0.03em;
+    flex-shrink: 0;
+  }
+
+  .filename {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Proof status chip — top bar right, shows current state */
+  .proof-status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 10px;
+    border: 1px solid;
+    transition: var(--transition);
+    flex-shrink: 0;
+  }
+  .proof-status-chip::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+  .proof-status-chip.pending  { color: var(--amber);       border-color: rgba(217,119,6,0.35);    background: var(--amber-soft); }
+  .proof-status-chip.approved { color: var(--green-bright); border-color: rgba(34,197,94,0.35);    background: var(--green-soft); }
+  .proof-status-chip.rejected { color: #F87171;             border-color: rgba(220,38,38,0.35);    background: var(--red-soft);   }
+
+  .tb-divider { width: 1px; height: 18px; background: var(--border-mid); margin: 0 4px; flex-shrink: 0; }
+
+  .tb-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .tb-btn:hover { background: var(--surface-2); color: var(--text); border-color: var(--border-mid); }
+  .tb-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+  /* Show Notes button — solid green, matching the screenshot */
+  .tb-btn.notes-btn {
+    background: var(--green);
+    color: #fff;
+    border-color: var(--green);
+    padding: 5px 12px;
+  }
+  .tb-btn.notes-btn:hover { background: #15803D; border-color: #15803D; color: #fff; }
+  .tb-btn.notes-btn.active {
+    background: transparent;
+    border-color: var(--green);
+    color: var(--green-bright);
+  }
+  .tb-btn.notes-btn.active:hover { background: var(--green-soft); }
+
+  .notes-count-badge {
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 8px;
+    min-width: 18px;
+    text-align: center;
+  }
+  .notes-btn.active .notes-count-badge {
+    background: var(--green-soft);
+    color: var(--green-bright);
+  }
+
+  /* ── BODY ── */
+  .body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ── ICON RAIL ── */
+  .icon-rail {
+    width: 40px;
+    background: #161a24;
+    border-right: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0;
+    gap: 2px;
+    z-index: 50;
+    flex-shrink: 0;
+  }
+  .rail-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: var(--radius-md);
+    border: none;
+    background: transparent;
+    color: var(--text-subtle);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+  }
+  .rail-btn:hover  { background: var(--surface-2); color: var(--text-muted); }
+  .rail-btn.active { background: var(--primary-soft); color: var(--primary); }
+  .rail-btn svg { width: 16px; height: 16px; }
+
+  /* ── SLIDE-IN PANEL ── */
+  .panel {
+    position: absolute;
+    top: 0; left: 40px;
+    width: 290px;
+    height: 100%;
+    background: #FAFAF9;
+    border-right: 1px solid #DDD9D4;
+    display: flex;
+    flex-direction: column;
+    z-index: 40;
+    transform: translateX(-330px);
+    transition: transform 0.2s ease;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.35);
+  }
+  .panel.open { transform: translateX(0); }
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 14px;
+    border-bottom: 1px solid #DDD9D4;
+    flex-shrink: 0;
+  }
+  .panel-title { font-size: 13px; font-weight: 600; color: #261E1B; }
+  .panel-close {
+    width: 22px; height: 22px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #6B5F5A;
+    display: flex; align-items: center; justify-content: center;
+    transition: var(--transition);
+  }
+  .panel-close:hover { background: #EEECE9; color: #261E1B; }
+  .panel-close svg { width: 13px; height: 13px; }
+  .panel-body { flex: 1; overflow-y: auto; padding: 12px 14px; }
+  .panel-body::-webkit-scrollbar { width: 3px; }
+  .panel-body::-webkit-scrollbar-thumb { background: #DDD9D4; border-radius: 3px; }
+
+  /* Panel light-mode content helpers */
+  .info-row { margin-bottom: 14px; }
+  .info-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #9C8F8A; margin-bottom: 3px; }
+  .info-value { font-size: 12px; color: #261E1B; }
+  .info-divider { height: 1px; background: #EEECE9; margin: 12px 0; }
+  .panel-footer { padding: 10px 14px; border-top: 1px solid #DDD9D4; flex-shrink: 0; }
+  .panel-tabs { display: flex; border-bottom: 1px solid #DDD9D4; padding: 0 14px; flex-shrink: 0; }
+  .panel-tab {
+    padding: 7px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #6B5F5A;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: var(--transition);
+  }
+  .panel-tab.active { color: #0B6E8A; border-bottom-color: #0B6E8A; }
+
+  /* ── CANVAS AREA ── */
+  .canvas-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Annotation bar */
+  .annotation-bar {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 5px 12px;
+    background: var(--surface-1);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .annotation-bar.visible { display: flex; }
+  .ann-tool {
+    width: 30px; height: 30px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-mid);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: var(--transition);
+  }
+  .ann-tool:hover  { background: var(--surface-2); color: var(--text); }
+  .ann-tool.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+  .ann-tool svg { width: 14px; height: 14px; }
+  .ann-divider { width: 1px; height: 18px; background: var(--border-mid); margin: 0 2px; }
+  .ann-cancel {
+    padding: 4px 10px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-mid);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font);
+    font-size: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .ann-cancel:hover { background: var(--surface-2); color: var(--text); }
+
+  /* Package asset strip */
+  .pkg-asset-bar {
+    display: none;
+    align-items: center;
+    gap: 0;
+    padding: 5px 8px;
+    background: #171c25;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    overflow-x: auto;
+  }
+  .pkg-asset-bar.visible { display: flex; }
+  .pkg-asset-bar::-webkit-scrollbar { height: 2px; }
+  .pkg-asset-bar::-webkit-scrollbar-thumb { background: var(--border-mid); }
+  .pkg-asset-thumb {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 5px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+    flex-shrink: 0;
+    position: relative;
+  }
+  .pkg-asset-thumb:hover { background: rgba(255,255,255,0.05); }
+  .pkg-asset-thumb.active { background: var(--primary-soft); }
+  .pkg-thumb-img {
+    width: 40px; height: 40px;
+    border-radius: var(--radius-sm);
+    border: 2px solid transparent;
+    background: var(--surface-3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px;
+    color: var(--text-muted);
+    font-weight: 600;
+    overflow: hidden;
+    transition: border-color var(--transition);
+    position: relative; /* needed for overlay */
+  }
+  .pkg-asset-thumb.active    .pkg-thumb-img { border-color: var(--primary); }
+  .pkg-asset-thumb.approved  .pkg-thumb-img { border-color: var(--green-bright); }
+  .pkg-asset-thumb.rejected  .pkg-thumb-img { border-color: #EF4444; }
+  .pkg-thumb-img img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* Decision overlay — sits on top of the image */
+  .pkg-thumb-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity var(--transition);
+    pointer-events: none;
+  }
+  .pkg-thumb-overlay svg { width: 18px; height: 18px; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5)); }
+  .pkg-asset-thumb.approved .pkg-thumb-overlay { background: rgba(22,163,74,0.55); opacity: 1; }
+  .pkg-asset-thumb.rejected .pkg-thumb-overlay { background: rgba(220,38,38,0.55); opacity: 1; }
+
+  .pkg-thumb-name { font-size: 9px; color: var(--text-subtle); max-width: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pkg-asset-thumb.active    .pkg-thumb-name { color: #60A5FA; }
+  .pkg-asset-thumb.approved  .pkg-thumb-name { color: var(--green-bright); }
+  .pkg-asset-thumb.rejected  .pkg-thumb-name { color: #F87171; }
+  .pkg-reviewed-dot {
+    position: absolute;
+    top: 2px; right: 2px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--green-bright);
+    border: 1.5px solid var(--surface-2);
+  }
+  .pkg-nav-btn {
+    width: 30px; height: 30px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-mid);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: var(--transition);
+    margin: 0 2px;
+  }
+  .pkg-nav-btn:hover { background: var(--surface-3); color: var(--text); }
+  .pkg-nav-btn svg { width: 13px; height: 13px; }
+  .pkg-progress {
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    padding-left: 10px;
+    border-left: 1px solid var(--border-mid);
+    flex-shrink: 0;
+  }
+  .pkg-progress-label { display: contents; }
+  .pkg-progress-num {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    width: 100%;
+    text-align: center;
+  }
+  .pkg-progress-word {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+  .pkg-progress-bar { width: 100%; min-width: 60px; height: 3px; background: var(--border-mid); border-radius: 2px; overflow: hidden; }
+  .pkg-progress-fill { height: 100%; background: var(--green-bright); border-radius: 2px; width: 0%; transition: width 0.3s ease; }
+
+  /* ── CANVAS ── */
+  .canvas {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--bg);
+    position: relative;
+  }
+  .canvas-inner {
+    width: 700px;
+    height: 440px;
+    background: #1A1715;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    user-select: none;
+    /* Proof state border — the core visual indicator */
+    outline: 2px solid transparent;
+    outline-offset: 3px;
+    box-shadow: 0 0 0 0 transparent;
+    transition: outline-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  /* Proof state on canvas-wrap propagates to canvas-inner */
+  .canvas-wrap.proof-pending  .canvas-inner {
+    outline-color: var(--amber);
+    box-shadow: 0 0 0 1px rgba(217,119,6,0.2), 0 0 28px rgba(217,119,6,0.08);
+  }
+  .canvas-wrap.proof-approved .canvas-inner {
+    outline-color: var(--green-bright);
+    box-shadow: 0 0 0 1px rgba(34,197,94,0.2), 0 0 28px rgba(34,197,94,0.08);
+  }
+  .canvas-wrap.proof-rejected .canvas-inner {
+    outline-color: #EF4444;
+    box-shadow: 0 0 0 1px rgba(239,68,68,0.2), 0 0 28px rgba(239,68,68,0.08);
+  }
+
+  .canvas-inner img { width: 100%; height: 100%; object-fit: contain; border-radius: 2px; display: block; }
+  .annotation-marker { position: absolute; pointer-events: none; }
+  .ann-circle { border: 2px solid #F59E0B; border-radius: 50%; width: 200px; height: 130px; top: 80px; left: 200px; }
+
+  /* ── REVIEW BAR ─────────────────────────────────────────────────── */
+  /*  Single bar between the canvas and the bottom toolbar.            */
+  /*  This owns ALL approve/reject actions — nothing in the top bar.   */
+  .review-bar {
+    height: 44px;
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 8px;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
+  }
+
+  /* State colouring on the review bar matches the canvas border */
+  .canvas-wrap.proof-pending  .review-bar { border-color: rgba(217, 119, 6, 0.35); background: rgba(217, 119, 6, 0.07);  }
+  .canvas-wrap.proof-approved .review-bar { border-color: rgba(34,197,94,0.35);  background: rgba(34,197,94,0.07);  }
+  .canvas-wrap.proof-rejected .review-bar { border-color: rgba(239,68,68,0.35);  background: rgba(239,68,68,0.07);  }
+
+  .review-state {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+  }
+  .review-state-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
+  }
+  .canvas-wrap.proof-pending  .review-state-dot { background: var(--amber); }
+  .canvas-wrap.proof-approved .review-state-dot { background: var(--green-bright); }
+  .canvas-wrap.proof-rejected .review-state-dot { background: #F87171; }
+
+  .review-state-label {
+    font-size: 12px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+  .canvas-wrap.proof-pending  .review-state-label { color: var(--amber); }
+  .canvas-wrap.proof-approved .review-state-label { color: var(--green-bright); }
+  .canvas-wrap.proof-rejected .review-state-label { color: #F87171; }
+
+  .review-state-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .review-actions { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+
+  .review-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid;
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    flex-shrink: 0;
+  }
+  .review-btn svg { width: 12px; height: 12px; }
+
+  .review-btn.approve {
+    /* background: rgba(22,163,74,0.12); */
+    background-color: #16A34A;;
+    border-color: rgba(22,163,74,0.4);
+    color: white;
+  }
+  .review-btn.approve:hover { background: rgba(22,163,74,0.22); border-color: var(--green-bright); }
+
+  .review-btn.reject {
+    /* background: rgba(220,38,38,0.1); */
+    background-color: #DC2626;
+    border-color: rgba(220,38,38,0.35);
+    color: white;
+  }
+  .review-btn.reject:hover { background: rgba(220,38,38,0.2); border-color: #F87171; }
+
+  .review-btn.undo {
+    background: transparent;
+    border-color: var(--border-mid);
+    color: var(--text-muted);
+  }
+  .review-btn.undo:hover { background: var(--surface-2); color: var(--text); }
+
+  /* Package review — progress + per-asset reviewed toggle */
+  .pkg-review-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 8px;
+    border-right: 1px solid var(--border-mid);
+    margin-right: 4px;
+  }
+  .pkg-review-progress-label { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+  .pkg-review-progress-bar { width: 64px; height: 3px; background: var(--border-mid); border-radius: 2px; overflow: hidden; }
+  .pkg-review-progress-fill { height: 100%; background: var(--green-bright); border-radius: 2px; transition: width 0.3s ease; }
+
+  .mark-reviewed-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-mid);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .mark-reviewed-btn:hover { border-color: var(--green-bright); color: var(--green-bright); }
+  .mark-reviewed-btn.done { background: var(--green-soft); border-color: var(--green-bright); color: var(--green-bright); }
+  .mark-reviewed-btn svg { width: 12px; height: 12px; }
+
+  /* ── BOTTOM TOOLBAR ── */
+  .bottom-toolbar {
+    height: 40px;
+    background: #1c222e;
+    border-top: none;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  /* Mode toggle — moved from top floating pill to bottom toolbar left */
+  .mode-toggle {
+    display: flex;
+    align-items: center;
+    background: var(--surface-3);
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-md);
+    padding: 2px;
+    gap: 1px;
+    flex-shrink: 0;
+    margin-right: 4px;
+  }
+  .mode-toggle-btn {
+    padding: 3px 9px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font);
+    font-size: 11px;
+    font-weight: 500;
+    background: transparent;
+    color: var(--text-muted);
+    transition: var(--transition);
+    white-space: nowrap;
+  }
+  .mode-toggle-btn.active {
+    background: var(--primary);
+    color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  }
+
+  .bt-divider { width: 1px; height: 18px; background: var(--border); margin: 0 3px; flex-shrink: 0; }
+
+  .bt-btn {
+    width: 30px; height: 30px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: var(--transition);
+    flex-shrink: 0;
+  }
+  .bt-btn:hover  { background: var(--surface-2); color: var(--text); }
+  .bt-btn.active { color: var(--primary); }
+  .bt-btn svg { width: 15px; height: 15px; }
+
+  .zoom-display {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    padding: 0 5px;
+    min-width: 40px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .bt-spacer { flex: 1; }
+
+  .page-nav { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
+  .page-nav-btn {
+    width: 26px; height: 26px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-mid);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: var(--transition);
+  }
+  .page-nav-btn:hover { background: var(--surface-2); color: var(--text); }
+  .page-nav-btn svg { width: 11px; height: 11px; }
+  .page-input {
+    width: 32px; height: 26px;
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-align: center;
+    outline: none;
+  }
+  .page-input:focus { border-color: var(--primary); }
+  .page-total { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); white-space: nowrap; }
+
+  /* ── RIGHT NOTES PANEL ── */
+  .notes-panel {
+    width: 270px;
+    background: #1c222e;
+    border-left: 1px solid var(--border);
+    display: none;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+  .notes-panel.visible { display: flex; }
+  .notes-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);;
+    flex-shrink: 0;
+  }
+  .notes-title { font-size: 13px; font-weight: 600; color: #ffffff; display: flex; align-items: center; gap: 6px; }
+  .notes-count {
+    background: var(--primary);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 8px;
+  }
+  .notes-add-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--green);
+    background: var(--green);
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 500;
+    color: #ffffff;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .ann-card .ann-cancel-btn {
+    color: var(--border);
+  }
+  .notes-add-btn:hover { background: rgba(37,99,235,0.25); color: #fff; }
+  .notes-add-btn svg { width: 11px; height: 11px; }
+  .notes-filter-row {
+    display: flex;
+    gap: 3px;
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .notes-filter-btn {
+    padding: 3px 8px;
+    border-radius: 10px;
+    border: 1px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    font-family: var(--font);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .notes-filter-btn:hover  { border-color: hsl(193, 88%, 37%); color: #0d8fb3; }
+  .notes-filter-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+  .notes-body { flex: 1; overflow-y: auto; padding: 8px 10px; }
+  .notes-body::-webkit-scrollbar { width: 3px; }
+  .notes-body::-webkit-scrollbar-thumb { background: #DDD9D4; border-radius: 3px; }
+
+  .ann-card {
+    border: 1px solid #E8E5E1;
+    border-radius: 0;
+    padding: 10px;
+    margin-bottom: 7px;
+    cursor: pointer;
+    transition: var(--transition);
+    background: #fff;
+  }
+  .ann-card:nth-child(1) { background: #fffab8; border-top: 4px solid #ffe629;}
+  .ann-card:nth-child(2) { background: #ffeae6; border-top: 4px solid #b02a2d;}
+  .ann-card:nth-child(3) { background: #f7edfe; border-top: 4px solid #8e4ec6;}
+  .ann-card:nth-child(4) { background: #ffeae6; border-top: 4px solid #b02a2d;}
+  .ann-card:nth-child(5) { background: #f7edfe; border-top: 4px solid #8e4ec6;}
+  .ann-card:hover { border-color: var(--primary); }
+  .ann-card.composing { border-color: var(--primary); box-shadow: 0 0 0 2px #E4F5FC; }
+  .ann-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+  .ann-author { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: #261E1B; }
+  .ann-avatar {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: #E4F5FC;
+    color: #0B6E8A;
+    font-size: 8px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ann-status-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 8px;
+    white-space: nowrap;
+  }
+  .ann-status-badge.new        { background: #E4F5FC; color: #0B6E8A; }
+  .ann-status-badge.inprogress { background: #FEF3C7; color: #B45309; }
+  .ann-status-badge.closed     { background: #DCFCE7; color: #166534; }
+  .ann-comment-text { font-size: 12px; color: #6B5F5A; line-height: 1.5; margin-bottom: 5px; }
+  .ann-meta { font-size: 10px; color: #9C8F8A; }
+  .ann-page-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    background: #F5F4F2;
+    color: #6B5F5A;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    margin-top: 4px;
+    margin-bottom: 2px;
+  }
+  .ann-reply-area { margin-top: 7px; padding-top: 7px; border-top: 1px solid #EEECE9; }
+  .ann-reply-input {
+    width: 100%;
+    border: 1px solid #DDD9D4;
+    border-radius: var(--radius-sm);
+    padding: 6px 8px;
+    font-family: var(--font);
+    font-size: 11px;
+    color: #261E1B;
+    background: #F5F4F2;
+    resize: none;
+    outline: none;
+    min-height: 44px;
+  }
+  .ann-reply-input:focus { border-color: #0B6E8A; }
+  .ann-reply-actions { display: flex; justify-content: flex-end; gap: 4px; margin-top: 5px; }
+  .ann-save-btn {
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: #0B6E8A;
+    color: #fff;
+    font-family: var(--font);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .ann-save-btn:hover { background: #085E77; }
+  .ann-cancel-btn {
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: #ffffff;
+    font-family: var(--font);
+    font-size: 11px;
+    cursor: pointer;
+  }
+
+  /* Package notes scope — underline tabs on dark strip */
+  .notes-scope-row {
+    display: none;
+    align-items: stretch;
+    padding: 0 8px;
+    background: var(--surface-1);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .notes-scope-row.visible { display: flex; }
+  .notes-scope-btn {
+    padding: 8px 10px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    font-family: var(--font);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-subtle);
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+    margin-bottom: -1px;
+  }
+  .notes-scope-btn:hover:not(.active) { color: var(--text-muted); }
+  .notes-scope-btn.active { color: var(--text); border-bottom-color: var(--primary); }
+
+  /* version item in history tab */
+  .version-item { border: 1px solid #E8E5E1; border-radius: var(--radius-md); padding: 10px 12px; margin-bottom: 7px; cursor: pointer; transition: var(--transition); }
+  .version-item:hover { border-color: #0B6E8A; background: #E4F5FC; }
+  .version-item.current { border-color: #0B6E8A; background: #E4F5FC; }
+  .version-name { font-size: 13px; font-weight: 600; color: #261E1B; }
+  .version-detail { font-size: 11px; color: #6B5F5A; margin-top: 2px; }
+  .version-ts { font-size: 11px; color: #9C8F8A; margin-top: 1px; }
+
+  .activity-comment-input {
+    width: 100%;
+    border: 1px solid #DDD9D4;
+    border-radius: var(--radius-md);
+    padding: 7px 10px;
+    font-family: var(--font);
+    font-size: 12px;
+    color: #261E1B;
+    background: #fff;
+    resize: none;
+    margin-bottom: 10px;
+    outline: none;
+  }
+  .activity-comment-input:focus { border-color: #0B6E8A; }
+  .activity-event { display: flex; gap: 9px; margin-bottom: 12px; }
+  .activity-avatar { width: 26px; height: 26px; border-radius: 50%; background: #E4F5FC; color: #0B6E8A; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; flex-shrink: 0; }
+  .activity-action { font-size: 12px; color: #261E1B; font-weight: 500; }
+  .activity-meta { font-size: 11px; color: #9C8F8A; margin-top: 1px; }
+  .activity-filename { font-size: 11px; color: #6B5F5A; font-family: var(--font-mono); margin-top: 2px; }
+
+  .empty-state { display: flex; flex-direction: column; align-items: center; padding: 28px 16px; text-align: center; gap: 7px; }
+  .empty-icon { width: 44px; height: 44px; background: #F5F4F2; border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: #9C8F8A; margin-bottom: 3px; }
+  .empty-icon svg { width: 20px; height: 20px; }
+  .empty-title { font-size: 13px; font-weight: 600; color: #261E1B; }
+  .empty-desc { font-size: 12px; color: #6B5F5A; line-height: 1.5; }
+
+  .share-btn {
+    width: 100%;
+    padding: 7px;
+    border-radius: var(--radius-md);
+    border: 1px solid #0B6E8A;
+    background: transparent;
+    color: #0B6E8A;
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .share-btn:hover { background: #E4F5FC; }
+
+  .import-btn {
+    width: 100%;
+    padding: 7px;
+    border-radius: var(--radius-md);
+    border: 1px solid #DDD9D4;
+    background: #F5F4F2;
+    color: #6B5F5A;
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    transition: var(--transition);
+  }
+  .import-btn:hover { border-color: #0B6E8A; color: #0B6E8A; }
+  .import-btn svg { width: 12px; height: 12px; }
+</style>
+</head>
+<body>
+
+<div class="previewer" id="previewer">
+
+  <!-- ── TOP BAR ──────────────────────────────────────────────────── -->
+  <!-- Clean: logo · version · filename  |  status chip · Download · Notes · Exit -->
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <span class="logo">hhg</span>
+      <span class="version-badge" id="versionBadge">v1</span>
+      <span class="filename" id="topFilename">Approving a Timesheet.pdf</span>
+    </div>
+    <div class="top-bar-right">
+      <!-- Proof status chip — reflects canvas border state -->
+      <span class="proof-status-chip pending" id="proofStatusChip">Pending review</span>
+
+      <div class="tb-divider"></div>
+
+      <button class="tb-btn" onclick="downloadFile()">
+        <svg fill="none" viewBox="0 0 16 16"><path d="M8 3v7m0 0l-3-3m3 3l3-3M3 13h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Download File
+      </button>
+
+      <button class="tb-btn notes-btn" id="notesToggleBtn" onclick="toggleNotes()">
+        <svg fill="none" viewBox="0 0 16 16"><path d="M2 4h12v8a1 1 0 01-1 1H3a1 1 0 01-1-1V4zm0 0V3a1 1 0 011-1h10a1 1 0 011 1v1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span id="notesLabel">Show Notes</span>
+        <span class="notes-count-badge" id="notesBadge">0</span>
+      </button>
+
+      <button class="tb-btn" onclick="exitPreviewer()">
+        <svg fill="none" viewBox="0 0 16 16"><path d="M10 3H13v10H10M7 11l4-3-4-3M2 8h9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Exit
+      </button>
+    </div>
+  </div>
+
+  <!-- ── BODY ── -->
+  <div class="body">
+
+    <!-- ── ICON RAIL ── -->
+    <div class="icon-rail">
+      <button class="rail-btn" id="railThumb" title="Thumbnails" onclick="togglePanel('thumbnails')">
+        <svg fill="none" viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/></svg>
+      </button>
+      <button class="rail-btn" id="railInfo" title="File information" onclick="togglePanel('info')">
+        <svg fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 7v4M8 5.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="rail-btn" id="railFiles" title="Associated files" onclick="togglePanel('files')">
+        <svg fill="none" viewBox="0 0 16 16"><path d="M3 3h6l2 2h2v9H3V3z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="rail-btn" id="railActivity" title="File activity" onclick="togglePanel('activity')">
+        <svg fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3.5l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+
+    <!-- ── PANELS ── -->
+
+    <div class="panel" id="panel-thumbnails">
+      <div class="panel-header">
+        <span class="panel-title">Thumbnails</span>
+        <button class="panel-close" onclick="closePanel('thumbnails')"><svg fill="none" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <div id="thumb-items"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-info">
+      <div class="panel-header">
+        <span class="panel-title">File information</span>
+        <button class="panel-close" onclick="closePanel('info')"><svg fill="none" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <div class="info-row"><div class="info-label">Uploaded by</div><div class="info-value">Sean O'Connell</div></div>
+        <div class="info-row"><div class="info-label">File name</div><div class="info-value" id="infoFilename">Approving a Timesheet.pdf</div></div>
+        <div style="display:flex;gap:20px;">
+          <div class="info-row"><div class="info-label">Size</div><div class="info-value">2,140 KB</div></div>
+          <div class="info-row"><div class="info-label">Uploaded</div><div class="info-value">09 Apr 2025</div></div>
+        </div>
+        <div class="info-divider"></div>
+        <div class="info-row">
+          <div class="info-label">File link</div>
+          <a href="#" onclick="return false;" style="color:#0B6E8A;text-decoration:none;font-size:12px;font-family:var(--font-mono);display:flex;align-items:center;gap:4px;">
+            <svg fill="none" viewBox="0 0 16 16" width="11" height="11"><path d="M6 4H4a2 2 0 000 4h2m4-4h2a2 2 0 010 4h-2M5 8h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            unity.screendragon.com/…
+          </a>
+        </div>
+      </div>
+      <div class="panel-footer"><button class="share-btn">Share file</button></div>
+    </div>
+
+    <div class="panel" id="panel-files">
+      <div class="panel-header">
+        <span class="panel-title">Associated files</span>
+        <button class="panel-close" onclick="closePanel('files')"><svg fill="none" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <div class="empty-state">
+          <div class="empty-icon"><svg fill="none" viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+          <div class="empty-title">No associated files</div>
+          <div class="empty-desc">Link or import files related to this asset for quick reference.</div>
+        </div>
+      </div>
+      <div class="panel-footer">
+        <button class="import-btn"><svg fill="none" viewBox="0 0 16 16"><path d="M8 3v7m0 0l-3-3m3 3l3-3M3 13h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Import file</button>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-activity">
+      <div class="panel-header">
+        <span class="panel-title">File activity</span>
+        <button class="panel-close" onclick="closePanel('activity')"><svg fill="none" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="panel-tabs">
+        <button class="panel-tab active" onclick="switchTab(this,'tab-activity')">Activity</button>
+        <button class="panel-tab" onclick="switchTab(this,'tab-history')">History</button>
+      </div>
+      <div id="tab-activity" class="panel-body">
+        <textarea class="activity-comment-input" placeholder="Add comment…" rows="2"></textarea>
+        <div class="activity-event">
+          <div class="activity-avatar">SO</div>
+          <div>
+            <div class="activity-action">Uploaded the file</div>
+            <div class="activity-filename">Approving a Timesheet.pdf</div>
+            <div class="activity-meta">Sean O'Connell · 09 Apr 2025, 10:05 AM · v1</div>
+          </div>
+        </div>
+      </div>
+      <div id="tab-history" class="panel-body" style="display:none;">
+        <div class="version-item current">
+          <div class="version-name">Version 1 <span style="font-size:10px;background:#E4F5FC;color:#0B6E8A;padding:1px 6px;border-radius:8px;margin-left:4px;">Current</span></div>
+          <div class="version-detail">Sean O'Connell · Approving a Timesheet.pdf</div>
+          <div class="version-ts">09 Apr 2025, 10:05 AM</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CANVAS WRAP ── -->
+    <!-- proof-pending / proof-approved / proof-rejected class drives both the canvas border and review bar -->
+    <div class="canvas-wrap proof-pending" id="canvasWrap">
+
+      <!-- Annotation toolbar -->
+      <div class="annotation-bar" id="annotationBar">
+        <!-- <button class="ann-tool active" onclick="selectTool(this)">
+          <svg fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+        <button class="ann-tool" onclick="selectTool(this)">
+          <svg fill="none" viewBox="0 0 16 16"><rect x="2.5" y="3.5" width="11" height="9" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+        <button class="ann-tool" onclick="selectTool(this)">
+          <svg fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3" fill="currentColor"/></svg>
+        </button>
+        <button class="ann-tool" onclick="selectTool(this)">
+          <svg fill="none" viewBox="0 0 16 16"><path d="M3 12h10M5 4l4 4-2 4H5l-2-4z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="ann-divider"></div> -->
+        <button class="notes-add-btn" onclick="addNote()">
+          <svg fill="none" viewBox="0 0 16 16"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Add note
+        </button>
+        <button class="ann-cancel" onclick="toggleNotes()">Cancel</button>
+      </div>
+
+      <!-- Package asset strip (proof set mode only) -->
+      <div class="pkg-asset-bar" id="pkgAssetBar"></div>
+
+      <!-- Canvas — border colour set by .canvas-wrap proof state class -->
+      <div class="canvas">
+        <div class="canvas-inner" id="canvasInner">
+          <img id="canvasImage" src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=720&q=80" alt="Proof preview" />
+          <div class="annotation-marker ann-circle" id="annMarker" style="display:none;"></div>
+        </div>
+      </div>
+
+      <!-- ── REVIEW BAR ─────────────────────────────────────────────
+           Owns all approval actions. Nothing approval-related lives
+           in the top bar. State is communicated via colour + label.   -->
+      <div class="review-bar" id="reviewBar">
+
+        <!-- State indicator -->
+        <div class="review-state">
+          <div class="review-state-dot"></div>
+          <span class="review-state-label" id="reviewStateLabel">Pending your review</span>
+          <span class="review-state-sub" id="reviewStateSub"></span>
+        </div>
+
+        <!-- Single proof actions -->
+        <div class="review-actions" id="reviewActionsSingle">
+          <button class="review-btn approve" onclick="doApprove()">
+            <svg fill="none" viewBox="0 0 16 16"><path d="M3 8.5L6.5 12l6.5-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Approve
+          </button>
+          <button class="review-btn reject" onclick="doReject()">
+            <svg fill="none" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            Reject
+          </button>
+        </div>
+
+        <!-- Proof set actions (hidden until proof set mode) -->
+        <div class="review-actions" id="reviewActionsPackage" style="display:none;">
+          <div class="pkg-review-progress">
+            <span class="pkg-review-progress-label" id="pkgReviewProgressLabel">0 of 5 reviewed</span>
+            <div class="pkg-review-progress-bar"><div class="pkg-review-progress-fill" id="pkgReviewFill"></div></div>
+          </div>
+          <button class="mark-reviewed-btn" id="markReviewedBtn" onclick="toggleReviewed()">
+            <svg fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/></svg>
+            Mark reviewed
+          </button>
+          <div class="tb-divider"></div>
+          <button class="review-btn approve" onclick="doPkgApprove()">
+            <svg fill="none" viewBox="0 0 16 16"><path d="M3 8.5L6.5 12l6.5-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Approve proof set
+          </button>
+          <button class="review-btn reject" onclick="doPkgReject()">
+            <svg fill="none" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            Reject
+          </button>
+        </div>
+
+      </div><!-- /review-bar -->
+
+      <!-- ── BOTTOM TOOLBAR ── -->
+      <div class="bottom-toolbar">
+
+        <!-- Mode toggle — moved from top floating pill to here -->
+        <div class="mode-toggle" id="modeToggle">
+          <button class="mode-toggle-btn active" onclick="setMode('single', this)">Single</button>
+          <button class="mode-toggle-btn" onclick="setMode('package', this)">Proof set</button>
+        </div>
+
+        <div class="bt-divider"></div>
+
+        <button class="bt-btn" title="Select">
+          <svg fill="none" viewBox="0 0 16 16"><path d="M4 2l8 6-4 1-2 4z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="bt-btn" title="Pan">
+          <svg fill="none" viewBox="0 0 16 16"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+        <div class="bt-divider"></div>
+        <button class="bt-btn" title="Rotate left"  onclick="rotate(-90)">
+          <svg fill="none" viewBox="0 0 16 16"><path d="M3 9a5 5 0 109.9-1.4M4 5.5L3 9l3.5.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="bt-btn" title="Rotate right" onclick="rotate(90)">
+          <svg fill="none" viewBox="0 0 16 16"><path d="M13 9a5 5 0 11-9.9-1.4M12 5.5L13 9l-3.5.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="bt-divider"></div>
+        <button class="bt-btn" title="Zoom out"     onclick="changeZoom(-10)">
+          <svg fill="none" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.4"/><path d="M4.5 7h5M11 11l2.5 2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+        <span class="zoom-display" id="zoomDisplay">100%</span>
+        <button class="bt-btn" title="Zoom in"      onclick="changeZoom(10)">
+          <svg fill="none" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.4"/><path d="M7 4.5v5M4.5 7h5M11 11l2.5 2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+        <button class="bt-btn" title="Fit to screen" onclick="setZoom(100)">
+          <svg fill="none" viewBox="0 0 16 16"><path d="M2 6V3h3M11 3h3v3M2 10v3h3M11 13h3v-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <div class="bt-spacer"></div>
+
+        <div class="page-nav">
+          <button class="page-nav-btn" onclick="goPage(1)">
+            <svg fill="none" viewBox="0 0 16 16"><path d="M10 4L6 8l4 4M4 4v8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="page-nav-btn" onclick="goPage(currentPage-1)">
+            <svg fill="none" viewBox="0 0 16 16"><path d="M10 4L6 8l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <input class="page-input" type="text" id="pageInput" value="1" onchange="goPage(parseInt(this.value))">
+          <span class="page-total" id="pageTotal">of 3</span>
+          <button class="page-nav-btn" onclick="goPage(currentPage+1)">
+            <svg fill="none" viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="page-nav-btn" onclick="goPage(99)">
+            <svg fill="none" viewBox="0 0 16 16"><path d="M6 4l4 4-4 4M12 4v8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+      </div><!-- /bottom-toolbar -->
+    </div><!-- /canvas-wrap -->
+
+    <!-- ── RIGHT NOTES PANEL ── -->
+    <div class="notes-panel" id="notesPanel">
+      <div class="notes-header">
+        <div class="notes-title">
+          Notes
+          <span class="notes-count" id="notesCount">1</span>
+        </div>
+      </div>
+      <div class="notes-filter-row">
+        <button class="notes-filter-btn active" onclick="filterNotes(this)">All</button>
+        <button class="notes-filter-btn" onclick="filterNotes(this)">New</button>
+        <button class="notes-filter-btn" onclick="filterNotes(this)">In progress</button>
+        <button class="notes-filter-btn" onclick="filterNotes(this)">Closed</button>
+      </div>
+      <div class="notes-scope-row" id="notesScopeRow">
+        <button class="notes-scope-btn" id="scopeThisBtn" onclick="setNotesScope('this')">This file</button>
+        <button class="notes-scope-btn active" id="scopeAllBtn" onclick="setNotesScope('all')">All files</button>
+      </div>
+      <div class="notes-body" id="notesBody"></div>
+    </div>
+
+  </div><!-- /body -->
+</div><!-- /previewer -->
+
+<script>
+  // ── STATE ──
+  let currentMode = 'single';
+  let notesOpen   = false;
+  let zoom        = 100;
+  let currentPage = 1;
+  let rotation    = 0;
+  let activePanel = null;
+  let proofState  = 'pending'; // pending | approved | rejected
+  let assetReviewed   = [false, false, false, false, false];
+  let assetDecisions  = [null,  null,  null,  null,  null];  // null | 'approved' | 'rejected'
+  let currentAsset    = 0;
+  let notesScope    = 'all';
+
+  const pkgAssets = [
+    { name: 'Hero_Banner_V3.jpg',  type: 'IMG', pages: 1,  img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=720&q=80' },
+    { name: 'Campaign_Brief.pdf',  type: 'PDF', pages: 8,  img: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=720&q=80' },
+    { name: 'Product_Shoot.mp4',   type: 'VID', pages: 1,  img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=720&q=80' },
+    { name: 'Social_Assets.pptx',  type: 'PPT', pages: 12, img: 'https://images.unsplash.com/photo-1600936438521-4c32c3fe6e88?w=720&q=80' },
+    { name: 'Brand_Guide_v2.pdf',  type: 'PDF', pages: 24, img: 'https://images.unsplash.com/photo-1634942537034-2531766767d1?w=720&q=80' },
+  ];
+
+  const annotations = [
+    { id:1, assetId:0, author:'Phil Keogh',      initials:'PK', text:'Logo proportion feels off — check spec against brand guide page 4.', status:'new',        page:1, ts:'Today 3:36 PM' },
+    { id:2, assetId:0, author:"Sean O'Connell",  initials:'SO', text:'Crop is tight on the right edge. Can we get 8% more breathing room?', status:'inprogress', page:1, ts:'Today 2:14 PM' },
+    { id:3, assetId:0, author:'Marta Rivera',    initials:'MR', text:'Approved on colour — matches the deck reference.',                      status:'closed',     page:1, ts:'Yesterday 5:02 PM' },
+    { id:4, assetId:1, author:"Sean O'Connell",  initials:'SO', text:"Section 3 budget table doesn't match the figure on page 6.",            status:'new',        page:3, ts:'Today 11:20 AM' },
+    { id:5, assetId:2, author:'Phil Keogh',      initials:'PK', text:'Cut at 00:14 is too abrupt — needs a 4-frame crossfade.',               status:'new',        page:1, ts:'Today 9:48 AM' },
+  ];
+
+  // ── PROOF STATE ──────────────────────────────────────────────────
+  function setProofState(state) {
+    proofState = state;
+    const wrap  = document.getElementById('canvasWrap');
+    const chip  = document.getElementById('proofStatusChip');
+    const label = document.getElementById('reviewStateLabel');
+    const sub   = document.getElementById('reviewStateSub');
+
+    wrap.className = wrap.className.replace(/proof-\w+/g, '').trim();
+    wrap.classList.add('proof-' + state);
+    chip.className = 'proof-status-chip ' + state;
+
+    const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    if (state === 'pending') {
+      chip.textContent = ''; // rebuilt below with ::before dot
+      chip.innerHTML = 'Pending review';
+      label.textContent = 'Pending your review';
+      sub.textContent   = '';
+      // restore action buttons
+      document.getElementById(currentMode === 'single' ? 'reviewActionsSingle' : 'reviewActionsPackage').style.display = 'flex';
+    } else if (state === 'approved') {
+      chip.textContent = 'Approved';
+      label.textContent = 'Approved';
+      sub.textContent   = `by you · Today ${now}`;
+      replaceActionsWithUndo();
+    } else {
+      chip.textContent = 'Rejected';
+      label.textContent = 'Rejected';
+      sub.textContent   = `by you · Today ${now}`;
+      replaceActionsWithUndo();
+    }
+  }
+
+  function replaceActionsWithUndo() {
+    const singleEl  = document.getElementById('reviewActionsSingle');
+    const packageEl = document.getElementById('reviewActionsPackage');
+    [singleEl, packageEl].forEach(el => {
+      el.style.display = 'none';
+    });
+    // Remove any existing undo button first
+    const existing = document.getElementById('reviewUndo');
+    if (existing) existing.remove();
+    const undo = document.createElement('button');
+    undo.id        = 'reviewUndo';
+    undo.className = 'review-btn undo';
+    undo.textContent = 'Undo decision';
+    undo.onclick   = () => {
+      undo.remove();
+      setProofState('pending');
+    };
+    document.getElementById('reviewBar').appendChild(undo);
+  }
+
+  function doApprove() { setProofState('approved'); }
+  function doReject()  { setProofState('rejected'); }
+
+  function doPkgApprove() {
+    assetDecisions[currentAsset] = 'approved';
+    assetReviewed[currentAsset]  = true;
+    renderPkgAssetBar();
+    // If all assets decided, reflect in overall proof state
+    const allDecided = assetDecisions.every(d => d !== null);
+    const anyRejected = assetDecisions.includes('rejected');
+    if (allDecided) setProofState(anyRejected ? 'rejected' : 'approved');
+  }
+
+  function doPkgReject() {
+    assetDecisions[currentAsset] = 'rejected';
+    assetReviewed[currentAsset]  = true;
+    renderPkgAssetBar();
+    const allDecided = assetDecisions.every(d => d !== null);
+    if (allDecided) setProofState('rejected');
+  }
+
+  // ── PANEL ────────────────────────────────────────────────────────
+  function togglePanel(name) {
+    if (activePanel === name) { closePanel(name); return; }
+    if (activePanel) closePanel(activePanel);
+    document.getElementById('panel-'+name).classList.add('open');
+    document.getElementById({thumbnails:'railThumb',info:'railInfo',files:'railFiles',activity:'railActivity'}[name]).classList.add('active');
+    activePanel = name;
+  }
+  function closePanel(name) {
+    document.getElementById('panel-'+name).classList.remove('open');
+    document.getElementById({thumbnails:'railThumb',info:'railInfo',files:'railFiles',activity:'railActivity'}[name]).classList.remove('active');
+    activePanel = null;
+  }
+  function switchTab(btn, tabId) {
+    btn.closest('.panel').querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    btn.closest('.panel').querySelectorAll('.panel-body').forEach(b => b.style.display = 'none');
+    document.getElementById(tabId).style.display = 'block';
+  }
+
+  // ── NOTES ────────────────────────────────────────────────────────
+  function toggleNotes() {
+    notesOpen = !notesOpen;
+    const btn   = document.getElementById('notesToggleBtn');
+    const panel = document.getElementById('notesPanel');
+    const annBar = document.getElementById('annotationBar');
+    const label = document.getElementById('notesLabel');
+    const marker = document.getElementById('annMarker');
+    if (notesOpen) {
+      btn.classList.add('active');
+      label.textContent = 'Close Notes';
+      panel.classList.add('visible');
+      annBar.classList.add('visible');
+      marker.style.display = 'block';
+      renderNotes();
+    } else {
+      btn.classList.remove('active');
+      label.textContent = 'Show Notes';
+      panel.classList.remove('visible');
+      annBar.classList.remove('visible');
+      marker.style.display = 'none';
+    }
+    updateNotesBadge();
+  }
+
+  function setNotesScope(scope) {
+    notesScope = scope;
+    document.getElementById('scopeThisBtn').classList.toggle('active', scope === 'this');
+    document.getElementById('scopeAllBtn').classList.toggle('active', scope === 'all');
+    renderNotes();
+  }
+
+  function renderNotes() {
+    const body = document.getElementById('notesBody');
+    const anns = annotations.filter(a => currentMode === 'package' && notesScope === 'all' ? true : a.assetId === currentAsset);
+    body.innerHTML = anns.map(renderAnnCard).join('') + renderComposingCard();
+    document.getElementById('notesCount').textContent = annotations.length;
+  }
+
+  function renderAnnCard(ann) {
+    const statusLabel = ann.status === 'inprogress' ? 'In progress' : ann.status.charAt(0).toUpperCase() + ann.status.slice(1);
+    return `<div class="ann-card">
+      <div class="ann-card-header">
+        <div class="ann-author"><div class="ann-avatar">${ann.initials}</div>${ann.author}</div>
+        <span class="ann-status-badge ${ann.status}">${statusLabel}</span>
+      </div>
+      <div class="ann-comment-text">${ann.text}</div>
+      <div class="ann-page-tag">
+        <svg fill="none" viewBox="0 0 12 12" width="9" height="9"><rect x="2" y="1" width="8" height="10" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
+        Page ${ann.page}
+      </div>
+      <div class="ann-meta">${ann.ts}</div>
+    </div>`;
+  }
+
+  function renderComposingCard() {
+    return `<div class="ann-card composing">
+      <div class="ann-card-header">
+        <div class="ann-author"><div class="ann-avatar">PK</div>Phil Keogh</div>
+        <span class="ann-status-badge new">New</span>
+      </div>
+      <div class="ann-comment-text" style="color:#9C8F8A;font-style:italic;">yellow circle</div>
+      <div class="ann-page-tag">Page 1</div>
+      <div class="ann-reply-area">
+        <textarea class="ann-reply-input" placeholder="Add a comment…"></textarea>
+        <div class="ann-reply-actions">
+          <button class="ann-cancel-btn" onclick="renderNotes()">Cancel</button>
+          <button class="ann-save-btn"   onclick="saveNote()">Save</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function addNote()  { if (!notesOpen) toggleNotes(); }
+  function saveNote() {
+    annotations.push({ id: annotations.length+1, assetId: currentAsset, author:'Phil Keogh', initials:'PK', text:'yellow circle', status:'new', page: currentPage, ts:'Today' });
+    updateNotesBadge();
+    renderNotes();
+  }
+
+  function updateNotesBadge() {
+    document.getElementById('notesBadge').textContent = annotations.length;
+  }
+
+  function filterNotes(btn) {
+    btn.closest('.notes-filter-row').querySelectorAll('.notes-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  // ── ANNOTATIONS ──────────────────────────────────────────────────
+  function selectTool(btn) {
+    document.querySelectorAll('.ann-tool').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  // ── ZOOM / ROTATION ──────────────────────────────────────────────
+  function changeZoom(d) {
+    zoom = Math.max(25, Math.min(200, zoom + d));
+    document.getElementById('zoomDisplay').textContent = zoom + '%';
+  }
+  function setZoom(v) { zoom = v; document.getElementById('zoomDisplay').textContent = v + '%'; }
+  function rotate(deg) {
+    rotation = (rotation + deg) % 360;
+    document.getElementById('canvasInner').style.transform = `rotate(${rotation}deg)`;
+  }
+
+  // ── PAGE NAV ─────────────────────────────────────────────────────
+  function goPage(p) {
+    const total = currentMode === 'package' ? pkgAssets[currentAsset].pages : 3;
+    currentPage = Math.max(1, Math.min(total, p));
+    document.getElementById('pageInput').value = currentPage;
+  }
+
+  // ── MODE ─────────────────────────────────────────────────────────
+  function setMode(mode, btn) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-toggle-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    const pkgBar     = document.getElementById('pkgAssetBar');
+    const vBadge     = document.getElementById('versionBadge');
+    const scopeRow   = document.getElementById('notesScopeRow');
+    const singleActs = document.getElementById('reviewActionsSingle');
+    const pkgActs    = document.getElementById('reviewActionsPackage');
+
+    // Reset proof state when switching modes
+    const existingUndo = document.getElementById('reviewUndo');
+    if (existingUndo) existingUndo.remove();
+    proofState = 'pending';
+    setProofState('pending');
+
+    if (mode === 'package') {
+      pkgBar.classList.add('visible');
+      vBadge.style.display = 'none';
+      scopeRow.classList.add('visible');
+      singleActs.style.display = 'none';
+      pkgActs.style.display    = 'flex';
+      document.getElementById('topFilename').textContent = 'Q4_Campaign_Proof_Package';
+      renderPkgAssetBar();
+      switchAsset(0);
+    } else {
+      pkgBar.classList.remove('visible');
+      vBadge.style.display = '';
+      scopeRow.classList.remove('visible');
+      singleActs.style.display = 'flex';
+      pkgActs.style.display    = 'none';
+      document.getElementById('topFilename').textContent = 'Approving a Timesheet.pdf';
+      document.getElementById('infoFilename').textContent = 'Approving a Timesheet.pdf';
+      document.getElementById('canvasImage').src = 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=720&q=80';
+      document.getElementById('pageTotal').textContent = 'of 3';
+      currentPage = 1;
+      document.getElementById('pageInput').value = 1;
+      rotation = 0;
+      document.getElementById('canvasInner').style.transform = '';
+    }
+    if (notesOpen) renderNotes();
+  }
+
+  // ── PACKAGE ASSET BAR ────────────────────────────────────────────
+  function renderPkgAssetBar() {
+    const bar = document.getElementById('pkgAssetBar');
+    const reviewedCount = assetReviewed.filter(Boolean).length;
+    const activeReviewed = assetReviewed[currentAsset];
+
+    let html = `<button class="pkg-nav-btn" onclick="switchAsset(currentAsset-1)">
+      <svg fill="none" viewBox="0 0 16 16"><path d="M10 4L6 8l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>`;
+
+    pkgAssets.forEach((asset, i) => {
+      const active   = i === currentAsset;
+      const decision = assetDecisions[i]; // null | 'approved' | 'rejected'
+      const classes  = ['pkg-asset-thumb', active ? 'active' : '', decision ?? ''].filter(Boolean).join(' ');
+      let overlay = '';
+      if (decision === 'approved') {
+        overlay = `<svg fill="none" viewBox="0 0 16 16"><path d="M3 8.5L6.5 12l6.5-7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+      } else if (decision === 'rejected') {
+        overlay = `<svg fill="none" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>`;
+      }
+      html += `<div class="${classes}" onclick="switchAsset(${i})">
+        <div class="pkg-thumb-img">
+          <img src="${asset.img}" alt="${asset.name}">
+          <div class="pkg-thumb-overlay">${overlay}</div>
+        </div>
+        <div class="pkg-thumb-name">${asset.name.split('.')[0]}</div>
+      </div>`;
+    });
+
+    html += `<button class="pkg-nav-btn" onclick="switchAsset(currentAsset+1)">
+      <svg fill="none" viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="pkg-progress">
+      <span class="pkg-progress-word">Reviewed</span>
+      <span class="pkg-progress-num">${reviewedCount}/${pkgAssets.length}</span>
+      <div class="pkg-progress-bar"><div class="pkg-progress-fill" style="width:${(reviewedCount/pkgAssets.length)*100}%"></div></div>
+    </div>`;
+
+    bar.innerHTML = html;
+
+    // Update review bar progress
+    document.getElementById('pkgReviewProgressLabel').textContent = `${reviewedCount} of ${pkgAssets.length} reviewed`;
+    document.getElementById('pkgReviewFill').style.width = `${(reviewedCount/pkgAssets.length)*100}%`;
+
+    const mrBtn = document.getElementById('markReviewedBtn');
+    if (mrBtn) {
+      mrBtn.className = 'mark-reviewed-btn' + (activeReviewed ? ' done' : '');
+      mrBtn.innerHTML = activeReviewed
+        ? `<svg fill="none" viewBox="0 0 16 16"><path d="M2 8a6 6 0 1012 0A6 6 0 002 8zm4 0l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Reviewed`
+        : `<svg fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/></svg> Mark reviewed`;
+    }
+  }
+
+  function switchAsset(idx) {
+    currentAsset = Math.max(0, Math.min(pkgAssets.length - 1, idx));
+    const asset = pkgAssets[currentAsset];
+    document.getElementById('canvasImage').src = asset.img;
+    document.getElementById('pageTotal').textContent = `of ${asset.pages}`;
+    document.getElementById('pageInput').value = 1;
+    document.getElementById('topFilename').textContent = asset.name;
+    currentPage = 1;
+    rotation = 0;
+    document.getElementById('canvasInner').style.transform = '';
+    renderPkgAssetBar();
+    if (notesOpen) renderNotes();
+  }
+
+  function toggleReviewed() {
+    assetReviewed[currentAsset] = !assetReviewed[currentAsset];
+    renderPkgAssetBar();
+  }
+
+  // ── MISC ─────────────────────────────────────────────────────────
+  function downloadFile() {}
+  function exitPreviewer() {}
+
+  // ── INIT THUMBNAILS ──────────────────────────────────────────────
+  (function() {
+    const grid = document.getElementById('thumb-items');
+    let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">';
+    for (let i = 1; i <= 6; i++) {
+      html += `<div onclick="goPage(${i})"
+        style="cursor:pointer;border:1px solid ${i===1?'#0B6E8A':'#DDD9D4'};border-radius:4px;aspect-ratio:3/4;
+               background:${i===1?'#E4F5FC':'#F5F4F2'};display:flex;align-items:center;justify-content:center;
+               font-size:11px;font-family:var(--font-mono);color:${i===1?'#0B6E8A':'#9C8F8A'};transition:.14s;"
+        onmouseover="this.style.borderColor='#0B6E8A'"
+        onmouseout="this.style.borderColor='${i===1?'#0B6E8A':'#DDD9D4'}'">
+        ${i}
+      </div>`;
+    }
+    html += '</div>';
+    if (grid) grid.innerHTML = html;
+  })();
+
+  updateNotesBadge();
+  renderNotes();
+</script>
+</body>
+</html>
