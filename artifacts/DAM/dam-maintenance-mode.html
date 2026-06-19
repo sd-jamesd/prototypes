@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" data-state="build">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Asset library temporarily offline · Screendragon DAM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============================================================
+     SCR-161 — DAM maintenance / build-time page
+     Composed from Scale (scale-design-system-v1.html):
+       · §4.2 Empty State — line icon → title → description → CTA
+       · §4.3 Loading — spinner-class indicator for indeterminate,
+         unknown-duration ops (the recovery poll), not a skeleton
+       · Button Tier 2 (Secondary) — reload modifies the view
+       · Dark Surface Contrast — rgba(255,255,255,.4) control borders
+     Served statically by the build/maintenance server; renders in
+     the DAM iframe BEFORE the app boots, so it cannot read the
+     in-app theme toggle. prefers-color-scheme is the only signal.
+     Scale does not yet document a full dark theme — this is the
+     minimal defensible adaptation, pending that work (SCR-159).
+     ============================================================ */
+  :root {
+    --color-stone-50:#fefcfc; --color-stone-100:#f5f5f4; --color-stone-200:#e7e5e4;
+    --color-stone-300:#d6d3d1; --color-stone-400:#978985; --color-stone-500:#6b615e;
+    --color-stone-600:#57534e; --color-stone-700:#44403c; --color-stone-800:#292524;
+    --color-stone-900:#261e1b;
+    --accent-9:#0B6E8A; --accent-10:#005F7B; --accent-11:#197592; --accent-12:#1B404E;
+    --primary-default:var(--accent-9); --primary-hover:var(--accent-10);
+    --primary-subtle:#E8F6FA;
+
+    --surface-default:var(--color-stone-50);
+    --surface-muted:var(--color-stone-100);
+    --text-default:var(--color-stone-900);
+    --text-muted:var(--color-stone-500);
+    --text-subtle:var(--color-stone-400);
+    --border-default:var(--color-stone-200);
+    --border-emphasis:var(--color-stone-300);
+
+    --font-family-text:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    --font-size-1:12px; --font-size-2:14px; --font-size-3:16px;
+    --font-size-5:24px; --font-size-6:32px;
+    --spacing-2:8px; --spacing-3:12px; --spacing-4:16px; --spacing-6:24px;
+    --spacing-7:32px; --spacing-8:40px; --spacing-9:48px; --spacing-10:64px;
+    --radius-2:4px; --radius-3:6px; --radius-full:9999px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --surface-default:var(--color-stone-900);
+      --surface-muted:var(--color-stone-800);
+      --text-default:var(--color-stone-100);
+      --text-muted:#a8a29e;
+      --text-subtle:#78716c;
+      --border-default:rgba(255,255,255,0.10);
+      --border-emphasis:rgba(255,255,255,0.18);
+      --primary-default:#4DB5CF;       /* accent-300 — legible on dark per Scale dark-surface contrast */
+      --primary-hover:#8DD1E3;
+      --primary-subtle:rgba(77,181,207,0.14);
+    }
+  }
+
+  * { box-sizing:border-box; }
+  html,body { height:100%; }
+  body {
+    margin:0;
+    font-family:var(--font-family-text);
+    color:var(--text-default);
+    background:var(--surface-default);
+    -webkit-font-smoothing:antialiased;
+    display:flex; align-items:center; justify-content:center;
+    padding:var(--spacing-8);
+  }
+
+  .panel {
+    width:100%; max-width:440px; text-align:center;
+  }
+
+  /* Wordmark — neutral, restrained. Swap for the real DAM mark on build. */
+  .mark {
+    display:inline-flex; align-items:center; gap:var(--spacing-2);
+    margin-bottom:var(--spacing-9);
+    color:var(--text-muted);
+    font-size:var(--font-size-2); font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  .mark .dot {
+    width:18px; height:18px; border-radius:var(--radius-2);
+    background:var(--text-subtle);
+  }
+
+  /* Empty-state icon (Scale §4.2): 40px line glyph, text-subtle.
+     Static — the page's only motion is the indeterminate status line. */
+  .glyph {
+    color:var(--text-subtle);
+    margin-bottom:var(--spacing-6);
+  }
+  /* Slow rotation = ambient "system is active", not a loading race.
+     The page's single motion source; status dot below stays static. */
+  .glyph svg {
+    width:40px; height:40px; display:block; margin:0 auto;
+    transform-origin:50% 50%;
+    animation:cog-spin 9s linear infinite;
+  }
+  @keyframes cog-spin { to { transform:rotate(360deg); } }
+
+  h1 {
+    font-size:var(--font-size-5); font-weight:600;
+    letter-spacing:-0.02em; line-height:32px;
+    margin:0 0 var(--spacing-4);
+  }
+  .reason {
+    font-size:var(--font-size-3); line-height:24px;
+    color:var(--text-default);
+    margin:0 0 var(--spacing-3); max-width:38ch;
+    margin-left:auto; margin-right:auto;
+  }
+  .recovery {
+    font-size:var(--font-size-2); line-height:20px;
+    color:var(--text-muted);
+    margin:0 0 var(--spacing-8); max-width:40ch;
+    margin-left:auto; margin-right:auto;
+  }
+
+  .actions { display:flex; flex-direction:column; align-items:center; gap:var(--spacing-4); }
+
+  /* Secondary button (Scale Tier 2): reload modifies the view, doesn't create data.
+     The page auto-recovers; this is the explicit manual fallback. */
+  .btn-secondary {
+    height:40px; padding:0 16px;
+    display:inline-flex; align-items:center; gap:var(--spacing-2);
+    font-family:inherit; font-size:var(--font-size-2); font-weight:500;
+    color:var(--primary-default);
+    background:transparent;
+    border:1px solid var(--primary-default);
+    border-radius:var(--radius-3);
+    cursor:pointer;
+    transition:background .12s ease;
+  }
+  .btn-secondary:hover { background:var(--primary-subtle); }
+  .btn-secondary:focus-visible { outline:none; box-shadow:0 0 0 3px var(--primary-subtle); }
+  .btn-secondary svg { width:16px; height:16px; }
+
+  .status {
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:var(--font-size-1); color:var(--text-subtle);
+    min-height:16px;
+  }
+  .status .led {
+    width:6px; height:6px; border-radius:var(--radius-full);
+    background:var(--primary-default);
+    opacity:.85;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .glyph svg { animation:none; }
+  }
+</style>
+</head>
+<body>
+  <main class="panel" role="status" aria-live="polite">
+    <div class="mark"><span class="dot" aria-hidden="true"></span>Screendragon DAM</div>
+
+    <div class="glyph" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 10.27 7 3.34"/><path d="m11 13.73-4 6.93"/><path d="M12 22v-2"/><path d="M12 2v2"/><path d="M14 12h8"/><path d="m17 20.66-1-1.73"/><path d="m17 3.34-1 1.73"/><path d="M2 12h2"/><path d="m20.66 17-1.73-1"/><path d="m20.66 7-1.73 1"/><path d="m3.34 17 1.73-1"/><path d="m3.34 7 1.73 1"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="12" r="8"/></svg>
+    </div>
+
+    <h1>The asset library is temporarily offline</h1>
+
+    <p class="reason" id="reason">We're applying an update. Your assets are safe — nothing has been lost or changed.</p>
+
+    <p class="recovery">This page reconnects on its own as soon as the library is back — you don't need to do anything.</p>
+
+    <div class="actions">
+      <button class="btn-secondary" id="retry" type="button">
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.46-3.54M13 3v2.5h-2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Try again
+      </button>
+      <span class="status" id="status"><span class="led" aria-hidden="true"></span>Checking…</span>
+    </div>
+  </main>
+
+<script>
+  /* ------------------------------------------------------------------
+     Auto-recovery. The blank-iframe bug is caused by loading before the
+     DAM has built. So this page polls a lightweight health endpoint and
+     reloads itself the moment the app responds. Manual "Try again" is the
+     fallback path, not the primary one.
+
+     Dev (Mark): point HEALTH_URL at a cheap 200/503 endpoint on the DAM
+     origin. 200 => reload into the app. Anything else => keep waiting.
+     Backoff caps at 30s so a long maintenance window doesn't hammer it.
+     ------------------------------------------------------------------ */
+  const HEALTH_URL = '/health';        // <-- dev to confirm
+  const reasonEl = document.getElementById('reason');
+  const statusEl = document.getElementById('status');
+  const retryEl  = document.getElementById('retry');
+
+  // Copy variant: ?mode=maintenance swaps the reason line. Default = build.
+  const mode = new URLSearchParams(location.search).get('mode');
+  if (mode === 'maintenance') {
+    reasonEl.textContent = "We're carrying out scheduled maintenance. Your assets are safe — nothing has been lost or changed.";
+  }
+
+  let delay = 4000;
+  const MAX = 30000;
+
+  async function probe() {
+    try {
+      const res = await fetch(HEALTH_URL, { cache:'no-store' });
+      if (res.ok) { location.reload(); return; }
+    } catch (_) { /* still down — keep waiting */ }
+    delay = Math.min(delay * 1.5, MAX);
+    schedule();
+  }
+  function schedule() { window.setTimeout(probe, delay); }
+
+  retryEl.addEventListener('click', () => {
+    statusEl.lastChild.textContent = 'Checking…';
+    delay = 4000;
+    probe();
+  });
+
+  schedule();
+</script>
+</body>
+</html>
