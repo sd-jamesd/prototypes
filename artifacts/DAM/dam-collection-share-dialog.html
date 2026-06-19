@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAM — Share Collection dialog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --color-stone-50:#fefcfc; --color-stone-100:#f5f5f4; --color-stone-200:#e7e5e4;
+  --color-stone-300:#d6d3d1; --color-stone-400:#978985; --color-stone-500:#6b615e; --color-stone-900:#261e1b;
+  --color-primary-50:#e8f6fa; --color-primary-100:#c4e8f1; --color-primary-600:#0b6e8a;
+  --color-primary-700:#005f7b; --color-primary-800:#1b404e;
+  --color-amber-100:#ffefd5; --color-amber-500:#f5a524; --color-amber-600:#985b00; --color-amber-700:#4e350d;
+  --error-9:#e54d2e;
+  --surface-default:#ffffff; --surface-subtle:var(--color-stone-50); --surface-muted:var(--color-stone-100); --surface-emphasis:var(--color-stone-200);
+  --text-default:var(--color-stone-900); --text-muted:var(--color-stone-500); --text-subtle:var(--color-stone-400); --text-on-primary:#fff;
+  --border-default:var(--color-stone-200); --border-emphasis:var(--color-stone-300); --border-subtle:var(--color-stone-100);
+  --primary-default:var(--color-primary-600); --primary-hover:var(--color-primary-700); --primary-subtle:var(--color-primary-50); --primary-muted:var(--color-primary-100);
+  --sp1:4px; --sp2:8px; --sp3:12px; --sp4:16px; --sp5:20px;
+  --fs1:12px; --fs2:14px; --fs3:16px;
+  --r2:4px; --r3:6px; --rf:9999px;
+  --shadow-lg:0 10px 24px rgba(0,0,0,0.14),0 3px 8px rgba(0,0,0,0.08);
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; --mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--color-stone-200);color:var(--text-default);
+  padding:32px;display:flex;justify-content:center;-webkit-font-smoothing:antialiased;}
+.stage{display:flex;gap:28px;align-items:flex-start;}
+
+/* dialog shell */
+.dialog{width:380px;background:var(--surface-default);border:1px solid var(--border-default);
+  border-radius:var(--r3);box-shadow:var(--shadow-lg);overflow:hidden;}
+.dlg-head{display:flex;align-items:flex-start;justify-content:space-between;padding:var(--sp4) var(--sp4) var(--sp3);}
+.dlg-title{font-size:var(--fs3);font-weight:600;letter-spacing:-0.01em;}
+.dlg-sub{font-size:var(--fs1);color:var(--text-muted);margin-top:2px;}
+.x{color:var(--text-subtle);cursor:pointer;display:flex;}
+.x:hover{color:var(--text-default);}
+
+/* tabs */
+.tabs{display:flex;gap:var(--sp4);padding:0 var(--sp4);border-bottom:1px solid var(--border-default);}
+.tab{padding:8px 0 10px;font-size:var(--fs2);color:var(--text-muted);cursor:pointer;
+  border-bottom:2px solid transparent;font-weight:500;}
+.tab:hover{color:var(--text-default);}
+.tab.active{color:var(--text-default);font-weight:600;border-bottom-color:var(--primary-default);}
+
+.body{padding:var(--sp4);}
+.label{font-size:var(--fs1);font-weight:500;color:var(--text-muted);margin-bottom:6px;display:block;}
+
+/* inputs / controls */
+.input{width:100%;height:36px;border:1px solid var(--border-emphasis);border-radius:var(--r2);
+  background:var(--surface-default);padding:0 12px;font-family:var(--font);font-size:var(--fs2);color:var(--text-default);}
+.input::placeholder{color:var(--text-subtle);}
+.input.ro{background:var(--surface-subtle);border-style:dashed;font-family:var(--mono);font-size:var(--fs1);color:var(--text-muted);}
+.row{display:flex;gap:var(--sp2);align-items:center;}
+.select{height:36px;border:1px solid var(--border-emphasis);border-radius:var(--r2);background:var(--surface-default);
+  padding:0 10px;font-size:var(--fs2);color:var(--text-default);display:flex;align-items:center;gap:8px;cursor:pointer;white-space:nowrap;}
+.select svg{color:var(--text-subtle);}
+.select.full{width:100%;justify-content:space-between;}
+
+/* buttons */
+.btn{height:36px;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  font-family:var(--font);font-weight:500;font-size:var(--fs2);border-radius:var(--r2);
+  cursor:pointer;border:1px solid transparent;padding:0 14px;}
+.btn-primary{background:var(--primary-default);color:var(--text-on-primary);}
+.btn-primary:hover{background:var(--primary-hover);}
+.btn-secondary{background:transparent;color:var(--primary-default);border-color:var(--primary-default);}
+.btn-ghost{background:transparent;color:var(--text-subtle);}
+.btn-ghost:hover{background:var(--surface-subtle);color:var(--text-default);}
+.btn-sm{height:32px;font-size:var(--fs1);padding:0 12px;}
+
+/* autocomplete dropdown */
+.menu{margin-top:4px;border:1px solid var(--border-default);border-radius:var(--r2);
+  box-shadow:var(--shadow-lg);overflow:hidden;}
+.menu-item{display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;font-size:var(--fs2);}
+.menu-item:hover{background:var(--surface-subtle);}
+.menu-item .grow{flex:1;min-width:0;}
+.menu-item .mi-name{color:var(--text-default);}
+.menu-item .mi-sub{font-size:11px;color:var(--text-subtle);}
+.menu-item.sel{background:var(--primary-subtle);}
+.menu-item.sel .mi-name{color:var(--primary-700);font-weight:600;}
+.menu-item.dis{opacity:.6;cursor:not-allowed;}
+.reason{font-size:10px;font-weight:600;padding:1px 7px;border-radius:var(--rf);background:var(--color-amber-100);color:var(--color-amber-700);flex-shrink:0;}
+.mi-check{color:var(--primary-default);flex-shrink:0;}
+
+/* avatars + tags */
+.av{width:26px;height:26px;border-radius:var(--rf);background:var(--primary-muted);color:var(--primary-700);
+  font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.av.ext{background:var(--color-amber-100);color:var(--color-amber-700);}
+.tag{font-size:10px;font-weight:600;padding:1px 7px;border-radius:var(--rf);letter-spacing:0.02em;flex-shrink:0;}
+.tag-int{background:var(--primary-subtle);color:var(--primary-700);}
+.tag-ext{background:var(--color-amber-100);color:var(--color-amber-700);}
+
+/* access list */
+.access{margin-top:var(--sp4);}
+.acc-row{display:flex;align-items:center;gap:10px;padding:8px 0;}
+.acc-row .grow{flex:1;min-width:0;}
+.acc-name{font-size:var(--fs2);color:var(--text-default);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.acc-sub{font-size:11px;color:var(--text-subtle);}
+.acc-role{font-size:var(--fs1);color:var(--text-muted);display:flex;align-items:center;gap:4px;cursor:pointer;}
+.acc-role:hover{color:var(--text-default);}
+.acc-remove{color:var(--text-subtle);cursor:pointer;display:flex;}
+.acc-remove:hover{color:var(--error-9);}
+
+.note{font-size:11.5px;color:var(--text-muted);line-height:1.5;margin-top:var(--sp3);
+  padding-top:var(--sp3);border-top:1px solid var(--border-subtle);}
+.note b{color:var(--text-default);font-weight:600;}
+
+/* security block */
+.sec{border:1px solid var(--border-default);border-radius:var(--r2);padding:var(--sp3);margin-top:var(--sp3);
+  display:flex;flex-direction:column;gap:var(--sp3);}
+.sec-line{display:flex;align-items:center;justify-content:space-between;gap:var(--sp3);}
+.sec-line .sl-label{font-size:var(--fs2);color:var(--text-default);}
+.sec-line .sl-req{font-size:10px;color:var(--text-subtle);margin-left:6px;}
+/* switch */
+.sw{width:36px;height:20px;border-radius:var(--rf);background:var(--color-stone-300);position:relative;cursor:pointer;flex-shrink:0;transition:background .15s;}
+.sw.on{background:var(--primary-default);}
+.sw::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+.sw.on::after{left:18px;}
+/* segmented */
+.seg{display:inline-flex;background:var(--surface-muted);border-radius:var(--r2);padding:2px;gap:2px;}
+.seg-opt{font-size:var(--fs1);padding:4px 10px;border-radius:3px;color:var(--text-muted);cursor:pointer;font-weight:500;}
+.seg-opt.sel{background:var(--surface-default);color:var(--text-default);box-shadow:0 1px 2px rgba(0,0,0,.1);}
+
+/* amber warning */
+.warn{display:flex;gap:8px;align-items:flex-start;background:var(--color-amber-100);border:1px solid var(--color-amber-500);
+  border-radius:var(--r2);padding:8px 10px;font-size:11.5px;color:var(--color-amber-700);line-height:1.4;margin-top:var(--sp3);}
+.warn svg{flex-shrink:0;margin-top:1px;}
+
+/* link summary chip */
+.chip{display:inline-flex;align-items:center;gap:8px;background:var(--surface-muted);border-radius:var(--rf);
+  padding:5px 12px;font-size:11px;color:var(--text-muted);margin-top:var(--sp3);}
+.chip .dot{width:3px;height:3px;border-radius:50%;background:var(--text-subtle);}
+.link-actions{display:flex;gap:var(--sp4);margin-top:var(--sp3);}
+.link-actions a{font-size:var(--fs1);color:var(--primary-default);cursor:pointer;font-weight:500;}
+.link-actions a:hover{color:var(--primary-hover);text-decoration:underline;}
+
+.dlg-foot{display:flex;align-items:center;justify-content:space-between;gap:var(--sp3);
+  padding:var(--sp3) var(--sp4);border-top:1px solid var(--border-default);background:var(--surface-subtle);}
+.foot-note{font-size:11px;color:var(--text-muted);line-height:1.4;flex:1;}
+
+/* annotation column */
+.notes{width:330px;font-size:13px;line-height:1.5;}
+.notes h2{font-size:15px;font-weight:700;margin-bottom:4px;letter-spacing:-0.01em;}
+.notes .sub{color:var(--text-muted);font-size:12px;margin-bottom:16px;}
+.nc{background:#fff;border:1px solid var(--border-default);border-radius:var(--r3);padding:13px 15px;margin-bottom:11px;}
+.nc h3{font-size:12.5px;font-weight:600;margin-bottom:5px;color:var(--primary-700);}
+.nc p{color:var(--text-muted);font-size:12.5px;}
+.flag{background:#fff;border:1px solid var(--color-stone-300);border-left:3px solid var(--primary-600);
+  border-radius:var(--r2);padding:11px 14px;font-size:12.5px;}
+.flag b{display:block;margin-bottom:3px;color:var(--primary-700);}
+code{font-family:var(--mono);font-size:11px;background:var(--surface-muted);padding:1px 5px;border-radius:3px;}
+.col-head{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px;}
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- ============ DIALOG A: INVITE PEOPLE ============ -->
+  <div>
+    <div class="col-head">Tab 1 · default</div>
+    <div class="dialog">
+      <div class="dlg-head">
+        <div>
+          <div class="dlg-title">Share “Car Collection”</div>
+          <div class="dlg-sub">100 files</div>
+        </div>
+        <span class="x"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+      </div>
+      <div class="tabs">
+        <span class="tab active">Invite people</span>
+        <span class="tab">Get a link</span>
+      </div>
+      <div class="body">
+        <label class="label">Add people</label>
+        <div class="row">
+          <input class="input" value="jane@client" placeholder="Name or email" style="flex:1;">
+          <div class="select">Can view <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <!-- autocomplete open: internal match + external fallback -->
+        <div class="menu">
+          <div class="menu-item">
+            <span class="av">EK</span>
+            <span class="grow"><span class="mi-name">Eugene Kavanagh</span><br><span class="mi-sub">eugene@screendragon.com</span></span>
+            <span class="tag tag-int">INTERNAL</span>
+          </div>
+          <div class="menu-item">
+            <span class="av ext"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg></span>
+            <span class="grow"><span class="mi-name">Invite jane@client.com</span><br><span class="mi-sub">External — verified guest link</span></span>
+            <span class="tag tag-ext">GUEST</span>
+          </div>
+        </div>
+
+        <div class="access">
+          <label class="label">People with access</label>
+          <div class="acc-row">
+            <span class="av">JD</span>
+            <span class="grow"><div class="acc-name">James D’Arcy (you)</div><div class="acc-sub">james@screendragon.com</div></span>
+            <span class="acc-sub">Owner</span>
+          </div>
+          <div class="acc-row">
+            <span class="av">EK</span>
+            <span class="grow"><div class="acc-name">Eugene Kavanagh <span class="tag tag-int">INTERNAL</span></div><div class="acc-sub">Account access</div></span>
+            <span class="acc-role">Can view <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </div>
+          <div class="acc-row">
+            <span class="av ext"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg></span>
+            <span class="grow"><div class="acc-name">jane@client.com <span class="tag tag-ext">GUEST</span></div><div class="acc-sub">Verified guest link · expires 25 Jun</div></span>
+            <span class="acc-role">View &amp; download <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+            <span class="acc-remove"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+          </div>
+        </div>
+
+        <p class="note"><b>Internal</b> people get account access through the DAM. <b>External</b> emails get a verified guest link to a branded gallery — no account, scoped to this collection.</p>
+      </div>
+      <div class="dlg-foot">
+        <span class="btn btn-ghost btn-sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Copy internal link</span>
+        <span class="btn btn-primary btn-sm">Done</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DIALOG B: GET A LINK (external, generated) ============ -->
+  <div>
+    <div class="col-head">Tab 2 · external — verified guests</div>
+    <div class="dialog">
+      <div class="dlg-head">
+        <div>
+          <div class="dlg-title">Share “Car Collection”</div>
+          <div class="dlg-sub">100 files</div>
+        </div>
+        <span class="x"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+      </div>
+      <div class="tabs">
+        <span class="tab">Invite people</span>
+        <span class="tab active">Get a link</span>
+      </div>
+      <div class="body">
+        <label class="label">Link access</label>
+        <div class="select full">
+          <span style="display:flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> External — verified guests</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+        </div>
+        <div class="menu">
+          <div class="menu-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+            <span class="grow"><span class="mi-name">Internal — anyone signed in</span><br><span class="mi-sub">Account access · stays inside the org</span></span>
+          </div>
+          <div class="menu-item sel">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span class="grow"><span class="mi-name">External — verified guests</span><br><span class="mi-sub">Each recipient verifies by email code or password</span></span>
+            <svg class="mi-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-line">
+            <span class="sl-label">Recipients can</span>
+            <div class="seg"><span class="seg-opt sel">View</span><span class="seg-opt">View &amp; download</span></div>
+          </div>
+          <div class="sec-line">
+            <span class="sl-label">Expires<span class="sl-req">· required</span></span>
+            <div class="select btn-sm" style="height:30px;font-size:var(--fs1);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 25 Jun 2026</div>
+          </div>
+          <div class="sec-line">
+            <span class="sl-label">Verify with</span>
+            <div class="seg"><span class="seg-opt sel">Email code</span><span class="seg-opt">Password</span></div>
+          </div>
+          <div class="sec-line">
+            <span class="sl-label">Dynamic watermark</span>
+            <span class="sw on"></span>
+          </div>
+          <div class="sec-line">
+            <span class="sl-label">Notify me on first open</span>
+            <span class="sw on"></span>
+          </div>
+        </div>
+
+        <label class="label" style="margin-top:var(--sp4);">Shareable link</label>
+        <div class="row">
+          <input class="input ro" value="https://share.screendragon.com/c/AbC123x9k…" readonly style="flex:1;">
+          <span class="btn btn-primary btn-sm"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</span>
+        </div>
+        <div class="chip">View <span class="dot"></span> Expires 25 Jun <span class="dot"></span> Email code <span class="dot"></span> Watermark <span class="dot"></span> Download off</div>
+        <div class="link-actions"><a>Change expiry</a><a>Disable link</a><a>View activity</a></div>
+      </div>
+      <div class="dlg-foot">
+        <span class="foot-note">Recipients land on a <b>branded gallery</b> of this collection. Files open in a limited viewer — no DAM access.</span>
+        <span class="btn btn-primary btn-sm">Done</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ANNOTATIONS ============ -->
+  <div class="notes">
+    <h2>Share collection — GO-LIVE v1</h2>
+    <div class="sub">Internal + verified external. Public/open is roadmap (SCR-129).</div>
+
+    <div class="nc">
+      <h3>1 · Distribution, not review</h3>
+      <p>Dropped Commenter / Approver roles and annotate/comment toggles from the previewer share. Collection capabilities are <b>View</b> / <b>View &amp; download</b> only — you browse and pull a 100-asset set, you don't mark it up.</p>
+    </div>
+
+    <div class="nc">
+      <h3>2 · Two scopes at go-live → list glyph</h3>
+      <p><b>Internal</b> (account access) reads as the <b>people</b> glyph; <b>External — verified guests</b> reads as the <b>globe</b> glyph (it's left the org). The share action sets the collection's reach state. <b>Public / open is roadmap</b> — it needs the rights-cleared gallery + CDN-mint (SCR-129), so it's not a scope option yet.</p>
+    </div>
+
+    <div class="nc">
+      <h3>3 · Rights enforced per-asset at delivery</h3>
+      <p>No collection-level rights gate. The delivery/mint endpoint checks each asset by role (§8 row 83 "Based on rights") — restricted assets stay ADM/DM/APR only, expired/embargoed are blocked — and that cascades identically into in-app views, collections, and external shares. One enforcement point, not three.</p>
+    </div>
+
+    <div class="nc">
+      <h3>4 · Security on the link, never the CDN</h3>
+      <p>Restricted: email-code (OTP) default / password optional, expiry required (7d), watermark on, notify-on-open, one-click revoke. OTP earns its place — it gives per-recipient identity, which is what powers the dynamic watermark and named activity log. The CDN only delivers signed, short-TTL bytes behind the gate.</p>
+    </div>
+
+    <div class="flag">
+      <b>⚑ Go-live scope</b>
+      Ships now: invite (internal + verified external) and the verified-external link, with the security stack above. <b>Public / open link is deferred</b> to the rights-cleared gallery + CDN-mint architecture (<code>SCR-129</code>) and lives in the roadmap mock. §7 row 73 ("Create public share links") should be reworded to "external share links (verified)" to match what go-live actually ships.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

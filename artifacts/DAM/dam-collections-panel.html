@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAM — Collections Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Stone */
+  --color-stone-50:#fefcfc; --color-stone-100:#f5f5f4; --color-stone-200:#e7e5e4;
+  --color-stone-300:#d6d3d1; --color-stone-400:#978985; --color-stone-500:#6b615e; --color-stone-900:#261e1b;
+  /* Primary (Cerulean) */
+  --color-primary-50:#e8f6fa; --color-primary-100:#c4e8f1; --color-primary-600:#0b6e8a;
+  --color-primary-700:#005f7b; --color-primary-800:#1b404e;
+  /* Amber — reserved for the one alert state (public/open) */
+  --color-amber-100:#ffefd5; --color-amber-600:#985b00;
+  /* Semantic */
+  --surface-subtle:var(--color-stone-50); --surface-muted:var(--color-stone-100); --surface-emphasis:var(--color-stone-200);
+  --text-default:var(--color-stone-900); --text-muted:var(--color-stone-500); --text-subtle:var(--color-stone-400);
+  --border-default:var(--color-stone-200); --border-subtle:var(--color-stone-100);
+  --primary-default:var(--color-primary-600); --primary-subtle:var(--color-primary-50); --primary-muted:var(--color-primary-100);
+  /* scale */
+  --spacing-1:4px; --spacing-2:8px; --spacing-3:12px; --spacing-4:16px; --spacing-6:24px;
+  --font-size-1:12px; --font-size-2:14px; --font-size-3:16px;
+  --radius-2:4px; --radius-3:6px; --radius-full:9999px;
+  --shadow-md:0 1px 3px rgba(0,0,0,0.1),0 1px 2px rgba(0,0,0,0.06);
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --ls-1:0.04em; --ls-tight:-0.01em;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--color-stone-200);color:var(--text-default);
+  padding:32px;display:flex;justify-content:center;-webkit-font-smoothing:antialiased;}
+.stage{display:flex;gap:32px;align-items:flex-start;}
+
+/* ---- Product frame ---- */
+.frame{display:flex;border:1px solid var(--border-default);border-radius:var(--radius-3);
+  overflow:hidden;box-shadow:var(--shadow-md);background:#fff;height:560px;}
+
+/* icon rail */
+.rail{width:56px;background:var(--surface-muted);border-right:1px solid var(--border-default);
+  display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:2px;}
+.rail-item{width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+  border-radius:var(--radius-2);color:var(--text-subtle);cursor:pointer;border-left:2px solid transparent;}
+.rail-item:hover{background:var(--surface-emphasis);color:var(--text-default);}
+.rail-item.active{background:var(--primary-subtle);color:var(--primary-default);border-left-color:var(--primary-default);}
+
+/* collections panel */
+.panel{width:300px;background:var(--surface-subtle);border-right:1px solid var(--border-default);
+  display:flex;flex-direction:column;}
+.panel-head{display:flex;align-items:center;justify-content:space-between;
+  padding:var(--spacing-4) var(--spacing-4) var(--spacing-3);}
+.panel-title{font-size:var(--font-size-3);font-weight:600;letter-spacing:var(--ls-tight);}
+.panel-head .ctrl{color:var(--text-muted);cursor:pointer;display:flex;}
+.panel-head .ctrl:hover{color:var(--text-default);}
+.search{margin:0 var(--spacing-4) var(--spacing-3);position:relative;}
+.search input{width:100%;height:34px;border:1px solid var(--border-default);border-radius:var(--radius-2);
+  background:#fff;padding:0 12px 0 32px;font-family:var(--font);font-size:var(--font-size-2);color:var(--text-default);}
+.search input::placeholder{color:var(--text-subtle);}
+.search svg{position:absolute;left:10px;top:9px;color:var(--text-subtle);}
+.list{flex:1;overflow-y:auto;padding:0 var(--spacing-2) var(--spacing-3);}
+
+/* rows */
+.row{display:flex;align-items:center;gap:var(--spacing-2);height:36px;padding:0 var(--spacing-3);
+  border-radius:var(--radius-2);cursor:pointer;border-left:2px solid transparent;position:relative;}
+.row:hover{background:var(--surface-muted);}
+.row.selected{background:var(--primary-subtle);border-left-color:var(--primary-default);}
+.row.selected .row-name{color:var(--primary-default);font-weight:600;}
+.row.selected .glyph{color:var(--primary-default);}
+/* left slot = identity/kind. populated only for distinct kinds (Favourites). empty but reserved on user rows to hold the text column. */
+.glyph{width:16px;height:16px;color:var(--text-muted);flex-shrink:0;display:flex;}
+/* right slot = status. visibility is mutable state, smaller + muted, sits before the count. */
+.status{width:14px;height:14px;color:var(--text-subtle);flex-shrink:0;display:flex;}
+.status.open{color:var(--color-amber-600);}
+.row-name{flex:1;font-size:var(--font-size-2);color:var(--text-default);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;}
+.count{font-size:var(--font-size-1);color:var(--text-muted);background:var(--surface-emphasis);
+  border-radius:var(--radius-full);padding:1px 8px;min-width:24px;text-align:center;line-height:16px;flex-shrink:0;}
+.row.selected .count{background:var(--primary-muted);color:var(--primary-700);}
+.chev{width:14px;height:14px;color:var(--text-subtle);flex-shrink:0;}
+.owner{font-size:11px;color:var(--text-subtle);font-weight:400;}
+
+/* section divider + group headers */
+.divider{height:1px;background:var(--border-subtle);margin:var(--spacing-2) var(--spacing-3);}
+.grp{display:flex;align-items:center;gap:6px;padding:var(--spacing-2) var(--spacing-3) var(--spacing-1);
+  cursor:pointer;color:var(--text-muted);}
+.grp:hover{color:var(--text-default);}
+.grp-chev{width:14px;height:14px;transition:transform .15s;}
+.grp.collapsed .grp-chev{transform:rotate(-90deg);}
+.grp-label{font-size:var(--font-size-1);font-weight:600;letter-spacing:var(--ls-1);text-transform:uppercase;}
+.grp-num{font-size:11px;color:var(--text-subtle);font-weight:500;}
+
+/* content stub */
+.content{width:230px;background:#fff;padding:var(--spacing-4);}
+.content h4{font-size:var(--font-size-2);color:var(--text-subtle);font-weight:500;margin-bottom:8px;}
+.thumb-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.thumb{aspect-ratio:1;border-radius:var(--radius-2);background:var(--surface-muted);
+  border:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:center;color:var(--text-subtle);}
+
+/* ---- Annotation column ---- */
+.notes{width:340px;font-size:13px;line-height:1.5;color:var(--text-default);}
+.notes h2{font-size:15px;font-weight:700;margin-bottom:4px;letter-spacing:var(--ls-tight);}
+.notes .sub{color:var(--text-muted);font-size:12px;margin-bottom:16px;}
+.note-card{background:#fff;border:1px solid var(--border-default);border-radius:var(--radius-3);
+  padding:14px 16px;margin-bottom:12px;}
+.note-card h3{font-size:13px;font-weight:600;margin-bottom:6px;color:var(--primary-700);}
+.note-card p{color:var(--text-muted);font-size:12.5px;}
+.legend{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.legend:last-child{margin-bottom:0;}
+.legend .lg-ic{width:18px;height:18px;color:var(--text-default);flex-shrink:0;display:flex;}
+.legend b{font-weight:600;}
+.legend span{color:var(--text-muted);}
+.flag{background:#fff;border:1px solid var(--color-stone-300);border-left:3px solid var(--color-primary-600);
+  border-radius:var(--radius-2);padding:12px 14px;font-size:12.5px;color:var(--text-default);}
+.flag b{display:block;margin-bottom:3px;color:var(--primary-700);}
+code{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--surface-muted);
+  padding:1px 5px;border-radius:3px;color:var(--text-default);}
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- ===================== PRODUCT FRAME ===================== -->
+  <div class="frame">
+    <!-- icon rail -->
+    <div class="rail">
+      <div class="rail-item" title="Home"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg></div>
+      <div class="rail-item" title="Library"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+      <div class="rail-item active" title="Collections"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="rail-item" title="Rights"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="rail-item" title="Downloads"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+    </div>
+
+    <!-- collections panel -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">Collections</span>
+        <span class="ctrl" title="Sort &amp; group"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="9" y1="18" x2="15" y2="18"/></svg></span>
+      </div>
+      <div class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Filter collections…">
+      </div>
+
+      <div class="list">
+        <!-- system: favourites — distinct KIND, keeps left identity heart, no visibility status -->
+        <div class="row selected">
+          <span class="glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.7-7.5 1.1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
+          <span class="row-name">My Favourites</span>
+          <span class="count">22</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- MY COLLECTIONS — left slot reserved but empty (same kind); visibility = small status glyph on the right -->
+        <div class="grp">
+          <svg class="grp-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="grp-label">My Collections</span>
+          <span class="grp-num">4</span>
+        </div>
+
+        <div class="row">
+          <span class="glyph"></span>
+          <span class="row-name">WC2026 Official Marks</span>
+          <span class="status" title="Private"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          <span class="count">124</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <div class="row">
+          <span class="glyph"></span>
+          <span class="row-name">Host City Logos – RGB</span>
+          <span class="status" title="Shared with named people"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+          <span class="count">16</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <div class="row">
+          <span class="glyph"></span>
+          <span class="row-name">Sponsor Activation Kit</span>
+          <span class="status" title="Shared externally · verified guests"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+          <span class="count">8</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- empty (0-count) variant, private default shown explicitly -->
+        <div class="row">
+          <span class="glyph"></span>
+          <span class="row-name" style="color:var(--text-muted);">New collection</span>
+          <span class="status" title="Private"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          <span class="count">0</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- SHARED WITH ME -->
+        <div class="grp" style="margin-top:4px;">
+          <svg class="grp-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="grp-label">Shared with me</span>
+          <span class="grp-num">2</span>
+        </div>
+
+        <div class="row">
+          <span class="glyph"></span>
+          <span class="row-name">FIFA Brand Guidelines 2026 <span class="owner">· E. Kavanagh</span></span>
+          <span class="status" title="Shared with named people"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+          <span class="count">47</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <div class="row">
+          <span class="glyph"></span>
+          <span class="row-name">Qatar Legacy Archive <span class="owner">· M. Brennan</span></span>
+          <span class="status" title="Shared externally · verified guests"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+          <span class="count">312</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- content stub -->
+    <div class="content">
+      <h4>My Favourites · 22</h4>
+      <div class="thumb-grid">
+        <div class="thumb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.5-3.5L9 20"/></svg></div>
+        <div class="thumb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.5-3.5L9 20"/></svg></div>
+        <div class="thumb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.5-3.5L9 20"/></svg></div>
+        <div class="thumb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.5-3.5L9 20"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== ANNOTATIONS ===================== -->
+  <div class="notes">
+    <h2>Collections panel — GO-LIVE v1</h2>
+    <div class="sub">Three visibility states. Scale v4 · Inter · Lucide.</div>
+
+    <div class="note-card">
+      <h3>1 · Group by ownership, not visibility</h3>
+      <p>Pinned system collection (Favourites) → <b>My Collections</b> → <b>Shared with me</b>. This is the axis users navigate by and the axis the rights model gates on (§7: creating shared collections is role-restricted; personal isn't).</p>
+    </div>
+
+    <div class="note-card">
+      <h3>2 · Left slot = identity. Right slot = status.</h3>
+      <p style="margin-bottom:8px;">The left column is reserved for <b>kind</b> — what the row fundamentally is. Only genuinely distinct kinds populate it (Favourites = system collection). User collections are all the same kind, so their left slot stays empty but reserved, holding a clean text column.</p>
+      <p>Visibility is <b>mutable state</b>, not kind — so it sits right, smaller and muted, as a status glyph before the count. Flip a collection's visibility and the glyph swaps; the row keeps its place. This matches how the product already renders status (asset rights states sit right too).</p>
+    </div>
+
+    <div class="note-card">
+      <h3>3 · Visibility states — go-live (three)</h3>
+      <div class="legend"><span class="lg-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span><b>Private</b> — personal collection</span></div>
+      <div class="legend"><span class="lg-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span><b>Shared internally</b> — named accounts inside the org</span></div>
+      <div class="legend"><span class="lg-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span><span><b>Shared externally</b> — verified guests (OTP / password)</span></div>
+      <p style="margin-top:8px;">Globe = <b>external</b> (it's left the org) — the trust boundary you scan for. The gate <i>mechanism</i> (password vs OTP) is never in the list; that's a detail-panel fact. <b>Public / open (amber globe) is roadmap</b> — it lands with the rights-cleared gallery (SCR-129), not at go-live.</p>
+    </div>
+
+    <div class="note-card">
+      <h3>4 · The bookmark is gone from the rows</h3>
+      <p>It stays on the <b>rail</b> as the destination icon; it no longer echoes down every row. Row = name + status glyph + subtle count pill + chevron. 0-count renders as a quiet <code>0</code> pill.</p>
+    </div>
+
+    <div class="flag">
+      <b>⚑ Go-live scope</b>
+      Three states ship now: private / internal / external-verified. Rights are enforced <b>per-asset at the delivery endpoint</b> (§8 row 83 "Based on rights"), which cascades into collections and shares — collections carry no rights gate of their own. <b>Public / open is deferred</b> to the rights-cleared gallery + CDN-mint work (SCR-129); the amber-globe state is designed and held in the roadmap mock.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
