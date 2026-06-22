@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lightbox Header — v3 (filename-priority)</title>
+<style>
+  :root {
+    --doc-bg: #E4E7EB;
+    --doc-surface: white;
+    --doc-text: #18181B;
+    --doc-subtle: #52525B;
+    --doc-muted: #71717A;
+    --doc-border: #D4D4D8;
+    --doc-border-soft: #E4E4E7;
+
+    --lb-surface: #FFFFFF;
+    --lb-stage-bg: #F4F4F5;
+    --lb-border: #E4E4E7;
+    --lb-border-strong: #D4D4D8;
+    --lb-text: #18181B;
+    --lb-text-subtle: #52525B;
+    --lb-text-muted: #71717A;
+    --lb-text-faint: #A1A1AA;
+    --lb-hover-bg: #F4F4F5;
+    --lb-active-bg: #E0F2FE;
+    --lb-active-fg: #0B6E8A;
+
+    --primary-default: #0B6E8A;
+    --primary-hover: #095670;
+    --primary-bg: rgba(11, 110, 138, 0.08);
+    --primary-border: #0B6E8A;
+
+    --error-fg: #DC2626;
+
+    --radius-1: 4px;
+    --radius-2: 6px;
+    --radius-3: 8px;
+    --radius-full: 9999px;
+
+    --anno-new: #22C55E;
+    --anno-fix: #F59E0B;
+    --anno-info: #3B82F6;
+    --anno-removed: #EF4444;
+
+    --pattern-cyan: #5BC8C0;
+    --pattern-blue: #1A36C8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--doc-bg);
+    color: var(--doc-text);
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 32px 0;
+  }
+
+  .container {
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .doc-header { margin-bottom: 28px; }
+  .doc-eyebrow {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--doc-muted); margin-bottom: 6px;
+  }
+  .doc-title {
+    font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 6px;
+  }
+  .doc-subtitle {
+    font-size: 15px; color: var(--doc-subtle); max-width: 760px;
+  }
+
+  .section {
+    background: var(--doc-surface);
+    border-radius: var(--radius-3);
+    padding: 28px;
+    margin-bottom: 24px;
+    border: 1px solid var(--doc-border);
+  }
+  .section-header {
+    display: flex; align-items: flex-start; gap: 14px;
+    margin-bottom: 24px; padding-bottom: 18px;
+    border-bottom: 1px solid var(--doc-border-soft);
+  }
+  .section-number {
+    background: var(--doc-text); color: white;
+    width: 32px; height: 32px;
+    border-radius: var(--radius-2);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 14px; flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 19px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 4px;
+  }
+  .section-subtitle { font-size: 13px; color: var(--doc-subtle); }
+
+  /* Header strip (for before/after) */
+  .header-strip-wrap {
+    margin-bottom: 16px;
+  }
+  .strip-label {
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .strip-label.before { color: var(--anno-removed); }
+  .strip-label.after { color: var(--anno-new); }
+
+  .header-strip {
+    background: var(--lb-surface);
+    border: 1px solid var(--lb-border-strong);
+    border-radius: var(--radius-2);
+    overflow: hidden;
+  }
+
+  /* OLD header (for before comparison) */
+  .lb-header-v2 {
+    height: 64px;
+    padding: 0 20px;
+    display: flex; align-items: center;
+    gap: 14px;
+  }
+  .nav-cluster-v2 {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .nav-btn-v2 {
+    width: 32px; height: 32px;
+    border-radius: var(--radius-2);
+    background: transparent;
+    border: 1px solid var(--lb-border-strong);
+    color: var(--lb-text-subtle);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .nav-counter-v2 {
+    font-size: 12px;
+    color: var(--lb-text-muted);
+    font-variant-numeric: tabular-nums;
+    padding: 0 6px;
+    min-width: 90px;
+    text-align: center;
+  }
+  .nav-counter-v2 strong { color: var(--lb-text); font-weight: 600; }
+
+  /* NEW header (filename-priority) */
+  .lb-header-v3 {
+    height: 64px;
+    padding: 0 16px 0 20px;
+    display: flex; align-items: center;
+    gap: 10px;
+  }
+  .nav-cluster-v3 {
+    display: flex; align-items: center; gap: 2px;
+    flex-shrink: 0;
+  }
+  .nav-btn-v3 {
+    width: 28px; height: 28px;
+    border-radius: var(--radius-2);
+    background: transparent;
+    border: none;
+    color: var(--lb-text-muted);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .nav-btn-v3:hover {
+    background: var(--lb-hover-bg);
+    color: var(--lb-text);
+  }
+  .nav-btn-v3.disabled {
+    opacity: 0.3; cursor: not-allowed;
+  }
+  .nav-btn-v3.disabled:hover {
+    background: transparent;
+    color: var(--lb-text-muted);
+  }
+
+  .filename-v3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--lb-text);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-family: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+    letter-spacing: -0.01em;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .lb-header-actions {
+    display: flex; align-items: center; gap: 8px;
+    flex-shrink: 0;
+  }
+  .btn {
+    height: 36px; padding: 0 14px;
+    border-radius: var(--radius-2);
+    font-size: 13px; font-weight: 500;
+    border: 1px solid var(--primary-border);
+    background: transparent;
+    color: var(--primary-default);
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: var(--primary-default);
+    border-color: var(--primary-default);
+    color: white;
+  }
+  .btn-icon-only {
+    width: 36px; padding: 0;
+    justify-content: center;
+    border: none;
+    color: var(--lb-text-muted);
+  }
+  .btn-icon-only:hover { color: var(--lb-text); background: var(--lb-hover-bg); }
+
+  /* Full lightbox preview */
+  .lightbox {
+    background: var(--lb-surface);
+    border: 1px solid var(--lb-border-strong);
+    border-radius: var(--radius-3);
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  }
+  .lb-header-divider {
+    border-bottom: 1px solid var(--lb-border);
+  }
+  .lb-body {
+    display: grid;
+    grid-template-columns: 1fr 320px 64px;
+    min-height: 520px;
+  }
+  .stage {
+    background: var(--lb-stage-bg);
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .stage-canvas {
+    width: 100%;
+    max-width: 700px;
+    aspect-ratio: 16/9;
+    border-radius: var(--radius-2);
+    overflow: hidden;
+  }
+  .pattern-svg { width: 100%; height: 100%; display: block; }
+
+  .stage-chevron {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px; height: 36px;
+    border-radius: var(--radius-full);
+    background: rgba(11, 110, 138, 0.7);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .stage-chevron.left { left: 16px; }
+  .stage-chevron.right { right: 16px; }
+
+  .stage-artboard-label {
+    position: absolute;
+    bottom: 16px; left: 16px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(6px);
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--lb-text);
+    font-weight: 500;
+  }
+  .stage-artboard-counter {
+    position: absolute;
+    bottom: 16px; right: 16px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(6px);
+    border-radius: var(--radius-full);
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--lb-text);
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+
+  /* Side panel */
+  .side-panel {
+    background: var(--lb-surface);
+    border-left: 1px solid var(--lb-border);
+    padding: 24px 20px;
+  }
+  .side-panel-header {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .side-panel-title {
+    font-size: 16px; font-weight: 600;
+  }
+  .side-panel-collapse {
+    width: 28px; height: 28px;
+    border-radius: var(--radius-2);
+    background: transparent; border: none;
+    color: var(--lb-text-muted); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .artboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .artboard-thumb {
+    aspect-ratio: 16/10;
+    border-radius: var(--radius-2);
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    position: relative;
+  }
+  .artboard-thumb.active {
+    border-color: var(--primary-default);
+  }
+
+  /* Rail */
+  .rail {
+    background: var(--lb-surface);
+    border-left: 1px solid var(--lb-border);
+    padding: 10px 0;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 2px;
+  }
+  .rail-collapse {
+    width: 36px; height: 36px;
+    border-radius: var(--radius-2);
+    background: transparent; border: none;
+    color: var(--lb-text-muted); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 8px;
+  }
+  .rail-tab {
+    width: 48px; padding: 10px 4px;
+    border-radius: var(--radius-2);
+    display: flex; flex-direction: column;
+    align-items: center; gap: 3px;
+    color: var(--lb-text-subtle);
+    cursor: pointer;
+    font-size: 9px;
+    position: relative;
+    text-align: center;
+  }
+  .rail-tab.active {
+    background: var(--lb-active-bg);
+    color: var(--lb-active-fg);
+    font-weight: 600;
+  }
+  .rail-tab-icon { width: 18px; height: 18px; }
+  .rail-tab .notif-dot {
+    position: absolute;
+    top: 6px; right: 8px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--error-fg);
+  }
+  .rail-spacer { flex: 1; }
+
+  /* Footer */
+  .lb-footer {
+    height: 40px;
+    border-top: 1px solid var(--lb-border);
+    padding: 0 20px;
+    display: flex; align-items: center;
+    justify-content: space-between;
+    background: var(--lb-surface);
+    font-size: 12px;
+    color: var(--lb-text-muted);
+  }
+  .kbd-hints {
+    display: flex; align-items: center;
+    gap: 16px;
+  }
+  .kbd-hint {
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .kbd {
+    display: inline-flex; align-items: center;
+    padding: 1px 6px;
+    border: 1px solid var(--lb-border-strong);
+    border-radius: var(--radius-1);
+    background: var(--lb-surface);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--lb-text);
+    min-width: 18px;
+    justify-content: center;
+    line-height: 1.5;
+  }
+  .footer-right {
+    font-variant-numeric: tabular-nums;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .footer-counter strong {
+    color: var(--lb-text);
+    font-weight: 600;
+  }
+
+  /* Annotations */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 20px;
+    align-items: start;
+  }
+  .annotations {
+    background: #FAFAFA;
+    border: 1px solid var(--doc-border);
+    border-radius: var(--radius-3);
+    padding: 20px;
+    align-self: start;
+  }
+  .annotations-title {
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--doc-muted); margin-bottom: 14px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--doc-border-soft);
+  }
+  .annotation {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--doc-border-soft);
+    font-size: 13px; line-height: 1.5;
+  }
+  .annotation:last-child { border-bottom: none; }
+  .annotation-label {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+  .annotation-label::before {
+    content: ''; width: 8px; height: 8px;
+    border-radius: 2px; background: currentColor;
+  }
+  .annotation-label.new { color: var(--anno-new); }
+  .annotation-label.removed { color: var(--anno-removed); }
+  .annotation-label.info { color: var(--anno-info); }
+  .annotation-body { color: var(--doc-subtle); font-size: 12px; }
+  .annotation-body strong { color: var(--doc-text); font-weight: 600; }
+  .annotation-body code {
+    background: var(--doc-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+  }
+
+  /* Back-to-source chip */
+  .back-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px 4px 9px;
+    background: var(--primary-bg);
+    border: 1px solid var(--primary-border);
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    color: var(--primary-default);
+    cursor: pointer;
+    font-weight: 500;
+    max-width: 300px;
+    transition: all 0.12s;
+    flex-shrink: 0;
+  }
+  .back-chip:hover {
+    background: var(--primary-default);
+    color: white;
+  }
+  .back-chip-label {
+    display: inline-flex; align-items: center; gap: 5px;
+    overflow: hidden;
+  }
+  .back-chip-filename {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+  }
+
+  /* Hover state demonstrated on arrows */
+  .nav-btn-v3.hover-demo {
+    background: var(--lb-hover-bg);
+    color: var(--lb-text);
+  }
+
+  /* Hovered zoom button */
+  .zoom-btn-stage {
+    width: 28px; height: 28px;
+    border-radius: var(--radius-full);
+    background: transparent;
+    border: none;
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .zoom-btn-stage.hover-demo {
+    background: rgba(255,255,255,0.18);
+  }
+  .stage-zoom-pill {
+    position: absolute;
+    bottom: 16px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(11, 110, 138, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: var(--radius-full);
+    padding: 6px;
+    display: flex; gap: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  /* Interactive states reference */
+  .states-table {
+    background: var(--lb-stage-bg);
+    border: 1px solid var(--lb-border);
+    border-radius: var(--radius-2);
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 160px repeat(4, 1fr);
+    gap: 16px 24px;
+    align-items: center;
+  }
+  .states-table-header {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--lb-text-muted);
+  }
+  .states-table-row-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--lb-text);
+  }
+  .states-table-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+  }
+  .states-table-cell-dark {
+    background: var(--primary-default);
+    border-radius: var(--radius-2);
+    min-height: 48px;
+    padding: 8px;
+  }
+
+  /* Section spacing for added sections */
+
+  /* State gallery */
+  .state-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .state-card {
+    background: var(--lb-surface);
+    border: 1px solid var(--lb-border-strong);
+    border-radius: var(--radius-2);
+    overflow: hidden;
+  }
+  .state-label-row {
+    padding: 10px 14px;
+    background: #FAFAFA;
+    border-bottom: 1px solid var(--lb-border);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--lb-text-muted);
+    font-weight: 600;
+  }
+  .state-label-row strong {
+    color: var(--lb-text);
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 13px;
+    margin-left: 6px;
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position: absolute">
+  <defs>
+    <pattern id="patternBlueCyan" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+      <rect width="80" height="80" fill="#5BC8C0"/>
+      <polygon points="0,0 20,40 0,80 8,80 20,52 32,80 48,80 32,52 60,80 60,40 60,0 48,0 32,28 20,0" fill="#1A36C8"/>
+      <polygon points="60,40 80,80 80,0 60,0" fill="#1A36C8" opacity="0.5"/>
+      <polygon points="40,0 60,28 80,0" fill="#1A36C8"/>
+    </pattern>
+    <pattern id="patternPurple" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+      <rect width="80" height="80" fill="#C4B5E8"/>
+      <polygon points="0,0 20,40 0,80 8,80 20,52 32,80 48,80 32,52 60,80 60,40 60,0 48,0 32,28 20,0" fill="#8F7FE0"/>
+      <polygon points="60,40 80,80 80,0 60,0" fill="#8F7FE0" opacity="0.5"/>
+      <polygon points="40,0 60,28 80,0" fill="#8F7FE0"/>
+    </pattern>
+    <pattern id="patternPink" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+      <rect width="80" height="80" fill="#F4A8B3"/>
+      <polygon points="0,0 20,40 0,80 8,80 20,52 32,80 48,80 32,52 60,80 60,40 60,0 48,0 32,28 20,0" fill="#C4B5E8"/>
+      <polygon points="60,40 80,80 80,0 60,0" fill="#C4B5E8" opacity="0.5"/>
+      <polygon points="40,0 60,28 80,0" fill="#C4B5E8"/>
+    </pattern>
+    <pattern id="patternCoral" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+      <rect width="80" height="80" fill="#F49A82"/>
+      <polygon points="0,0 20,40 0,80 8,80 20,52 32,80 48,80 32,52 60,80 60,40 60,0 48,0 32,28 20,0" fill="#8F7FE0"/>
+      <polygon points="60,40 80,80 80,0 60,0" fill="#8F7FE0" opacity="0.5"/>
+      <polygon points="40,0 60,28 80,0" fill="#8F7FE0"/>
+    </pattern>
+    <pattern id="patternYellowGreen" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+      <rect width="80" height="80" fill="#F4E27A"/>
+      <polygon points="0,0 20,40 0,80 8,80 20,52 32,80 48,80 32,52 60,80 60,40 60,0 48,0 32,28 20,0" fill="#8FCC5C"/>
+      <polygon points="60,40 80,80 80,0 60,0" fill="#8FCC5C" opacity="0.5"/>
+      <polygon points="40,0 60,28 80,0" fill="#8FCC5C"/>
+    </pattern>
+    <pattern id="patternGreenYellow" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+      <rect width="80" height="80" fill="#8FCC5C"/>
+      <polygon points="0,0 20,40 0,80 8,80 20,52 32,80 48,80 32,52 60,80 60,40 60,0 48,0 32,28 20,0" fill="#F4E27A"/>
+      <polygon points="60,40 80,80 80,0 60,0" fill="#F4E27A" opacity="0.5"/>
+      <polygon points="40,0 60,28 80,0" fill="#F4E27A"/>
+    </pattern>
+  </defs>
+</svg>
+
+<div class="container">
+
+  <div class="doc-header">
+    <div class="doc-eyebrow">SCR-113 · Lightbox Interaction Model</div>
+    <h1 class="doc-title">Lightbox header + interactive states</h1>
+    <p class="doc-subtitle">Design spec accompanying <a href="https://linear.app/screendragon/issue/SCR-113/lightbox-interaction-model" style="color: var(--primary-default); font-weight: 500;">SCR-113</a>. Filename-priority header, ghost nav arrows, hover and disabled states, and the back-to-source chip for similarity navigation. Light-mode lightbox styling matches production.</p>
+  </div>
+
+  <!-- ====== FULL LIGHTBOX ====== -->
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">1</div>
+      <div class="section-title-block">
+        <div class="section-title">Lightbox at rest — multi-artboard .ai file</div>
+        <div class="section-subtitle">Six-artboard pattern file, mid-set (not at first or last asset). Right nav arrow and middle zoom button shown in hover state to demonstrate interactive treatment.</div>
+      </div>
+    </div>
+
+    <div class="compare-grid">
+      <div class="lightbox">
+        <div class="lb-header-divider">
+          <div class="lb-header-v3">
+            <div class="nav-cluster-v3">
+              <button class="nav-btn-v3" title="Previous asset (←)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <button class="nav-btn-v3 hover-demo" title="Next asset (→) — shown in hover state">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+            <div class="filename-v3">brand_pattern_set_rgb.ai</div>
+            <div class="lb-header-actions">
+              <button class="btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Add to Queue
+              </button>
+              <button class="btn btn-primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download
+              </button>
+              <button class="btn btn-icon-only">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+              </button>
+              <button class="btn btn-icon-only">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="lb-body">
+          <div class="stage">
+            <div class="stage-canvas">
+              <svg class="pattern-svg" preserveAspectRatio="xMidYMid slice" viewBox="0 0 800 450">
+                <rect width="800" height="450" fill="url(#patternBlueCyan)"/>
+              </svg>
+            </div>
+            <button class="stage-chevron left">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button class="stage-chevron right">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <div class="stage-artboard-label">Artboard 1</div>
+            <div class="stage-artboard-counter">1 / 6</div>
+
+            <!-- Zoom controls visible with one button hovered for demo -->
+            <div class="stage-zoom-pill">
+              <button class="zoom-btn-stage">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              </button>
+              <button class="zoom-btn-stage hover-demo" title="Zoom out — hover state">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              </button>
+              <button class="zoom-btn-stage">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="side-panel">
+            <div class="side-panel-header">
+              <div class="side-panel-title">Artboards</div>
+              <button class="side-panel-collapse">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
+              </button>
+            </div>
+            <div class="artboard-grid">
+              <div class="artboard-thumb active">
+                <svg width="100%" height="100%" preserveAspectRatio="xMidYMid slice" viewBox="0 0 160 100"><rect width="160" height="100" fill="url(#patternBlueCyan)"/></svg>
+              </div>
+              <div class="artboard-thumb">
+                <svg width="100%" height="100%" preserveAspectRatio="xMidYMid slice" viewBox="0 0 160 100"><rect width="160" height="100" fill="url(#patternPurple)"/></svg>
+              </div>
+              <div class="artboard-thumb">
+                <svg width="100%" height="100%" preserveAspectRatio="xMidYMid slice" viewBox="0 0 160 100"><rect width="160" height="100" fill="url(#patternPink)"/></svg>
+              </div>
+              <div class="artboard-thumb">
+                <svg width="100%" height="100%" preserveAspectRatio="xMidYMid slice" viewBox="0 0 160 100"><rect width="160" height="100" fill="url(#patternCoral)"/></svg>
+              </div>
+              <div class="artboard-thumb">
+                <svg width="100%" height="100%" preserveAspectRatio="xMidYMid slice" viewBox="0 0 160 100"><rect width="160" height="100" fill="url(#patternYellowGreen)"/></svg>
+              </div>
+              <div class="artboard-thumb">
+                <svg width="100%" height="100%" preserveAspectRatio="xMidYMid slice" viewBox="0 0 160 100"><rect width="160" height="100" fill="url(#patternGreenYellow)"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="rail">
+            <button class="rail-collapse">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+            </button>
+            <div class="rail-tab">
+              <svg class="rail-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Details
+            </div>
+            <div class="rail-tab">
+              <svg class="rail-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              Attributes
+            </div>
+            <div class="rail-tab">
+              <svg class="rail-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg>
+              AI Tags
+            </div>
+            <div class="rail-tab">
+              <svg class="rail-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              Similar
+            </div>
+            <div class="rail-tab">
+              <svg class="rail-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              Metadata
+            </div>
+            <div class="rail-tab active">
+              <div class="notif-dot"></div>
+              <svg class="rail-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+              Artboards
+            </div>
+            <div class="rail-spacer"></div>
+            <div class="rail-tab">
+              <svg class="rail-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download
+            </div>
+          </div>
+        </div>
+
+        <div class="lb-footer">
+          <div class="kbd-hints">
+            <div class="kbd-hint"><span class="kbd">←</span><span class="kbd">→</span> Asset</div>
+            <div class="kbd-hint"><span class="kbd">↑</span><span class="kbd">↓</span> Artboard</div>
+            <div class="kbd-hint"><span class="kbd">+</span><span class="kbd">−</span> Zoom</div>
+            <div class="kbd-hint"><span class="kbd">0</span> Fit</div>
+            <div class="kbd-hint"><span class="kbd">Esc</span> Close</div>
+          </div>
+          <div class="footer-right">
+            <span class="footer-counter"><strong>12</strong> of 2,056</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="annotations">
+        <div class="annotations-title">Annotations</div>
+
+        <div class="annotation">
+          <div class="annotation-label new">Filename leads</div>
+          <div class="annotation-body">Now the dominant element in the header. The user's primary question — "what am I looking at?" — gets answered first, without contest from other elements.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label info">Hover demo</div>
+          <div class="annotation-body">Right nav arrow and middle zoom button shown in hover state. Ghost buttons gain a subtle background and darker text on hover; zoom buttons gain a faint white overlay. Full state range in Section 4.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label new">Ghost arrows</div>
+          <div class="annotation-body">No borders, smaller (28×28), tight against the filename. Still discoverable, still semantically linked to "this file" — but subordinate to the filename, as they should be.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label removed">Counter out of header</div>
+          <div class="annotation-body">"12 of 2,056" relocated to the right of the footer. Still findable, still useful when needed, but no longer crowding the primary identity.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label info">Kbd hints compacted</div>
+          <div class="annotation-body">Footer labels shortened: "Asset" not "Previous / next asset"; "Artboard" not "Previous / next artboard". The arrow icons carry the meaning; the word just labels what they navigate.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label info">Single artboard counter</div>
+          <div class="annotation-body">Removed the duplicate "Artboard 1 of 6" from the footer. Stage already shows it bottom-right. Footer carries only the asset-set counter, no overlap.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== BACK-TO-SOURCE CHIP ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">2</div>
+      <div class="section-title-block">
+        <div class="section-title">Back-to-source chip — similarity navigation</div>
+        <div class="section-subtitle">Appears in the header after a user navigates to another asset via the Similar tab. Single click returns to the original source asset. Clears on click, on lightbox close, or on a fresh session. Not stack-based — single-step return only.</div>
+      </div>
+    </div>
+
+    <div class="compare-grid">
+      <div class="lightbox">
+        <div class="lb-header-divider">
+          <div class="lb-header-v3">
+            <div class="nav-cluster-v3">
+              <button class="nav-btn-v3" title="Previous asset (←)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <button class="nav-btn-v3" title="Next asset (→)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+            <button class="back-chip" title="Return to source: brand_pattern_set_rgb.ai">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+              <span class="back-chip-label">Back to <span class="back-chip-filename">brand_pattern_set_rgb.ai</span></span>
+            </button>
+            <div class="filename-v3">venue_dusk_primary.jpg</div>
+            <div class="lb-header-actions">
+              <button class="btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Add to Queue
+              </button>
+              <button class="btn btn-primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download
+              </button>
+              <button class="btn btn-icon-only">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+              </button>
+              <button class="btn btn-icon-only">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="lb-body">
+          <div class="stage">
+            <div class="stage-canvas" style="background: linear-gradient(180deg, #1E293B 0%, #475569 60%, #FB923C 100%);">
+            </div>
+            <div class="stage-artboard-label" style="background: rgba(255,255,255,0.85);">JPG</div>
+            <div class="stage-zoom-pill">
+              <button class="zoom-btn-stage">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              </button>
+              <button class="zoom-btn-stage">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              </button>
+              <button class="zoom-btn-stage">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="side-panel">
+            <div class="side-panel-header">
+              <div class="side-panel-title">Similar</div>
+              <button class="side-panel-collapse">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
+              </button>
+            </div>
+            <div class="artboard-grid">
+              <div class="artboard-thumb active" style="position: relative;">
+                <div style="width: 100%; height: 100%; background: linear-gradient(180deg, #1E293B 0%, #475569 60%, #FB923C 100%);"></div>
+                <div style="position: absolute; top: 4px; left: 4px; background: var(--primary-default); color: white; font-size: 8px; padding: 2px 5px; border-radius: 2px; font-weight: 700; letter-spacing: 0.04em;">VIEWING</div>
+              </div>
+              <div class="artboard-thumb">
+                <div style="width: 100%; height: 100%; background: linear-gradient(180deg, #0F172A 0%, #1E293B 40%, #312E81 80%, #6366F1 100%);"></div>
+              </div>
+              <div class="artboard-thumb">
+                <div style="width: 100%; height: 100%; background: linear-gradient(180deg, #1E293B 0%, #475569 65%, #F97316 100%);"></div>
+              </div>
+              <div class="artboard-thumb">
+                <div style="width: 100%; height: 100%; background: linear-gradient(180deg, #0C1322 0%, #312E81 60%, #6366F1 100%);"></div>
+              </div>
+              <div class="artboard-thumb">
+                <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #166534 0%, #22C55E 60%, #FB923C 100%);"></div>
+              </div>
+              <div class="artboard-thumb">
+                <div style="width: 100%; height: 100%; background: linear-gradient(180deg, #1E293B 0%, #7C3AED 50%, #FB923C 100%);"></div>
+              </div>
+            </div>
+            <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--lb-border); font-size: 12px; color: var(--lb-text-muted); line-height: 1.5;">
+              You opened this asset from <strong style="color: var(--lb-text); font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 11px;">brand_pattern_set_rgb.ai</strong>'s similar results. Use the chip in the header to return to source.
+            </div>
+          </div>
+
+          <div class="rail">
+            <button class="rail-collapse">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+            </button>
+            <div class="rail-tab">
+              <svg class="rail-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Details
+            </div>
+            <div class="rail-tab">
+              <svg class="rail-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              Attributes
+            </div>
+            <div class="rail-tab">
+              <svg class="rail-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg>
+              AI Tags
+            </div>
+            <div class="rail-tab active">
+              <svg class="rail-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              Similar
+            </div>
+            <div class="rail-tab">
+              <svg class="rail-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              Metadata
+            </div>
+            <div class="rail-spacer"></div>
+            <div class="rail-tab">
+              <svg class="rail-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download
+            </div>
+          </div>
+        </div>
+
+        <div class="lb-footer">
+          <div class="kbd-hints">
+            <div class="kbd-hint"><span class="kbd">←</span><span class="kbd">→</span> Similar</div>
+            <div class="kbd-hint"><span class="kbd">+</span><span class="kbd">−</span> Zoom</div>
+            <div class="kbd-hint"><span class="kbd">0</span> Fit</div>
+            <div class="kbd-hint"><span class="kbd">Esc</span> Close</div>
+          </div>
+          <div class="footer-right">
+            <span class="footer-counter"><strong>2</strong> of 12 similar</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="annotations">
+        <div class="annotations-title">Annotations</div>
+
+        <div class="annotation">
+          <div class="annotation-label new">Back-to-source chip</div>
+          <div class="annotation-body">Pill with primary-tinted background, return icon, and the source filename. Sits between the nav arrows and the current filename — visually marks the contextual flow ("you arrived here from there").</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label info">Single-step return</div>
+          <div class="annotation-body">Clicking returns to the original source asset only — no stacked history. If the user navigates from A → B → C via Similar, the chip on C still says "Back to A" (not B). Per the SCR-113 spec — Phase 1 keeps this simple.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label info">Chip clears on</div>
+          <div class="annotation-body">Click (returns to source), lightbox close, or fresh session start. Browsing to a fully unrelated asset via the result-set arrows also clears it.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label new">Nav arrows context shifts</div>
+          <div class="annotation-body">When in a similarity flow, <code>← / →</code> navigate the similar-results set (12 items), not the library result set. Footer shows <strong>"2 of 12 similar"</strong> instead of the library counter. Hint label changes to <strong>"Similar"</strong>.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label info">Chip filename truncates</div>
+          <div class="annotation-body">If the source filename is long, the chip truncates with ellipsis (max ~200px). Tooltip on hover shows the full filename for confirmation.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label fix">Filename style preserved</div>
+          <div class="annotation-body">Current asset filename still in monospace bold to mark it as the primary identity. Source filename in the chip uses smaller monospace — same family for visual cohesion, lower weight to keep it subordinate to the current asset.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== STATE GALLERY ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">3</div>
+      <div class="section-title-block">
+        <div class="section-title">State variations</div>
+        <div class="section-subtitle">Edge cases for the revised header. Disabled state, no-result-set state.</div>
+      </div>
+    </div>
+
+    <div class="state-grid">
+      <!-- At first -->
+      <div class="state-card">
+        <div class="state-label-row">First asset <strong>· left disabled</strong></div>
+        <div class="lb-header-v3" style="height: 56px;">
+          <div class="nav-cluster-v3">
+            <button class="nav-btn-v3 disabled">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button class="nav-btn-v3">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+          <div class="filename-v3" style="font-size: 14px;">hero_campaign_announcement.jpg</div>
+          <div class="lb-header-actions">
+            <button class="btn btn-icon-only" style="width: 28px; height: 28px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+            </button>
+            <button class="btn btn-icon-only" style="width: 28px; height: 28px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+        <div style="padding: 10px 16px; background: #FAFAFA; border-top: 1px solid var(--lb-border); font-size: 11px; color: var(--lb-text-muted); font-variant-numeric: tabular-nums;">Footer counter: <strong style="color: var(--lb-text);">1</strong> of 2,056</div>
+      </div>
+
+      <!-- At last -->
+      <div class="state-card">
+        <div class="state-label-row">Last asset <strong>· right disabled</strong></div>
+        <div class="lb-header-v3" style="height: 56px;">
+          <div class="nav-cluster-v3">
+            <button class="nav-btn-v3">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button class="nav-btn-v3 disabled">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+          <div class="filename-v3" style="font-size: 14px;">urban_montage_collection.jpg</div>
+          <div class="lb-header-actions">
+            <button class="btn btn-icon-only" style="width: 28px; height: 28px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+            </button>
+            <button class="btn btn-icon-only" style="width: 28px; height: 28px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+        <div style="padding: 10px 16px; background: #FAFAFA; border-top: 1px solid var(--lb-border); font-size: 11px; color: var(--lb-text-muted); font-variant-numeric: tabular-nums;">Footer counter: <strong style="color: var(--lb-text);">2,056</strong> of 2,056</div>
+      </div>
+
+      <!-- Mid set -->
+      <div class="state-card">
+        <div class="state-label-row">Mid-set <strong>· both active</strong></div>
+        <div class="lb-header-v3" style="height: 56px;">
+          <div class="nav-cluster-v3">
+            <button class="nav-btn-v3">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button class="nav-btn-v3">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+          <div class="filename-v3" style="font-size: 14px;">venue_exterior_dusk.jpg</div>
+          <div class="lb-header-actions">
+            <button class="btn btn-icon-only" style="width: 28px; height: 28px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+            </button>
+            <button class="btn btn-icon-only" style="width: 28px; height: 28px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+        <div style="padding: 10px 16px; background: #FAFAFA; border-top: 1px solid var(--lb-border); font-size: 11px; color: var(--lb-text-muted); font-variant-numeric: tabular-nums;">Footer counter: <strong style="color: var(--lb-text);">847</strong> of 2,056</div>
+      </div>
+
+      <!-- Single asset -->
+      <div class="state-card">
+        <div class="state-label-row">Single-asset deep link <strong>· no arrows</strong></div>
+        <div class="lb-header-v3" style="height: 56px;">
+          <div class="filename-v3" style="font-size: 14px;">brand_pattern_set_rgb.ai</div>
+          <div class="lb-header-actions">
+            <button class="btn btn-icon-only" style="width: 28px; height: 28px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+            </button>
+            <button class="btn btn-icon-only" style="width: 28px; height: 28px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+        <div style="padding: 10px 16px; background: #FAFAFA; border-top: 1px solid var(--lb-border); font-size: 11px; color: var(--lb-text-muted);">Footer counter: <em>hidden — no result set context</em></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== INTERACTIVE STATES REFERENCE ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">4</div>
+      <div class="section-title-block">
+        <div class="section-title">Interactive states — reference</div>
+        <div class="section-subtitle">Default, hover, active, and disabled states for the header nav arrows, the stage zoom buttons, and the back-to-source chip. Spec for Eugene's implementation.</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 24px;">
+      <div style="font-size: 13px; font-weight: 600; color: var(--doc-text); margin-bottom: 12px;">Header nav arrows (ghost buttons)</div>
+      <div class="states-table">
+        <div></div>
+        <div class="states-table-header" style="text-align: center;">Default</div>
+        <div class="states-table-header" style="text-align: center;">Hover</div>
+        <div class="states-table-header" style="text-align: center;">Active / pressed</div>
+        <div class="states-table-header" style="text-align: center;">Disabled</div>
+
+        <div class="states-table-row-label">Previous (←)</div>
+        <div class="states-table-cell">
+          <button class="nav-btn-v3">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+        </div>
+        <div class="states-table-cell">
+          <button class="nav-btn-v3 hover-demo">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+        </div>
+        <div class="states-table-cell">
+          <button class="nav-btn-v3" style="background: rgba(11, 110, 138, 0.12); color: var(--primary-default);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+        </div>
+        <div class="states-table-cell">
+          <button class="nav-btn-v3 disabled">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+        </div>
+      </div>
+      <div style="margin-top: 10px; font-size: 12px; color: var(--doc-subtle); line-height: 1.5;">
+        <strong style="color: var(--doc-text);">Specs:</strong> 28×28px hit target · transparent at rest · light surface background on hover · darker primary tint on active/pressed · 0.3 opacity on disabled (no hover effect). All transitions 120ms ease.
+      </div>
+    </div>
+
+    <div style="margin-bottom: 24px;">
+      <div style="font-size: 13px; font-weight: 600; color: var(--doc-text); margin-bottom: 12px;">Stage zoom buttons (on dark pill)</div>
+      <div class="states-table">
+        <div></div>
+        <div class="states-table-header" style="text-align: center;">Default</div>
+        <div class="states-table-header" style="text-align: center;">Hover</div>
+        <div class="states-table-header" style="text-align: center;">Active / pressed</div>
+        <div class="states-table-header" style="text-align: center;">Disabled</div>
+
+        <div class="states-table-row-label">Zoom in (+)</div>
+        <div class="states-table-cell states-table-cell-dark">
+          <button class="zoom-btn-stage">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          </button>
+        </div>
+        <div class="states-table-cell states-table-cell-dark">
+          <button class="zoom-btn-stage hover-demo">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          </button>
+        </div>
+        <div class="states-table-cell states-table-cell-dark">
+          <button class="zoom-btn-stage" style="background: rgba(255,255,255,0.3);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          </button>
+        </div>
+        <div class="states-table-cell states-table-cell-dark">
+          <button class="zoom-btn-stage" style="opacity: 0.35; cursor: not-allowed;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          </button>
+        </div>
+      </div>
+      <div style="margin-top: 10px; font-size: 12px; color: var(--doc-subtle); line-height: 1.5;">
+        <strong style="color: var(--doc-text);">Specs:</strong> 28×28px round buttons inside the floating pill · transparent at rest (icon white on dark) · <code>rgba(255,255,255,0.18)</code> overlay on hover · <code>rgba(255,255,255,0.3)</code> on active · 0.35 opacity disabled (rare — e.g. at max zoom-in or fit-to-width already applied).
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size: 13px; font-weight: 600; color: var(--doc-text); margin-bottom: 12px;">Back-to-source chip</div>
+      <div class="states-table" style="grid-template-columns: 160px 1fr 1fr;">
+        <div></div>
+        <div class="states-table-header" style="text-align: center;">Default</div>
+        <div class="states-table-header" style="text-align: center;">Hover</div>
+
+        <div class="states-table-row-label">Chip</div>
+        <div class="states-table-cell">
+          <div class="back-chip">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+            <span class="back-chip-label">Back to <span class="back-chip-filename">brand_pattern_set_rgb.ai</span></span>
+          </div>
+        </div>
+        <div class="states-table-cell">
+          <div class="back-chip" style="background: var(--primary-default); color: white; border-color: var(--primary-default);">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+            <span class="back-chip-label">Back to <span class="back-chip-filename">brand_pattern_set_rgb.ai</span></span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 10px; font-size: 12px; color: var(--doc-subtle); line-height: 1.5;">
+        <strong style="color: var(--doc-text);">Specs:</strong> Pill with <code>--primary-bg</code> tint and <code>--primary-border</code> border at rest · primary text colour · solid primary background and white text on hover · only present in the back-to-source state, not in default lightbox sessions.
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
