@@ -1,0 +1,2424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Duplicate Check on Upload — Hash-Only Model</title>
+<style>
+  :root {
+    --surface-base: #0F1419;
+    --surface-1: #1A2128;
+    --surface-2: #232B33;
+    --surface-3: #2C353E;
+    --surface-hover: #2F3942;
+    --surface-elevated: #2A333C;
+
+    --border-default: rgba(255, 255, 255, 0.08);
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-strong: rgba(255, 255, 255, 0.16);
+
+    --text-default: #FAFAFA;
+    --text-subtle: #B4BCC5;
+    --text-muted: #7C8794;
+    --text-faint: #525C66;
+
+    --primary-default: #3B82F6;
+    --primary-hover: #2563EB;
+    --primary-bg: rgba(59, 130, 246, 0.12);
+    --primary-border: rgba(59, 130, 246, 0.35);
+
+    --accent-9: #0B6E8A;
+    --accent-bg: rgba(11, 110, 138, 0.15);
+
+    --warning-9: #F59E0B;
+    --warning-bg: rgba(245, 158, 11, 0.12);
+    --warning-border: rgba(245, 158, 11, 0.3);
+    --warning-fg: #FCD34D;
+    --warning-accent: #F59E0B;
+
+    --info-fg: #93C5FD;
+    --info-border: rgba(59, 130, 246, 0.35);
+    --info-bg: rgba(59, 130, 246, 0.12);
+
+    --success-9: #22C55E;
+    --success-bg: rgba(34, 197, 94, 0.12);
+    --success-fg: #86EFAC;
+    --success-border: rgba(34, 197, 94, 0.3);
+
+    --error-9: #EF4444;
+    --error-bg: rgba(239, 68, 68, 0.15);
+    --error-fg: #FCA5A5;
+
+    --rights-expired-bg: rgba(239, 68, 68, 0.18);
+    --rights-expired-fg: #FCA5A5;
+
+    --filetype-jpg: #3B82F6;
+    --filetype-png: #A855F7;
+    --filetype-pdf: #EF4444;
+
+    --radius-1: 4px;
+    --radius-2: 6px;
+    --radius-3: 8px;
+    --radius-full: 9999px;
+
+    --anno-new: #22C55E;
+    --anno-fix: #F59E0B;
+    --anno-removed: #EF4444;
+    --anno-info: #3B82F6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #E4E7EB;
+    color: var(--text-default);
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 32px 0;
+  }
+
+  .container {
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* DOC HEADER */
+  .doc-header { margin-bottom: 28px; color: #18181B; }
+  .doc-eyebrow {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.08em; color: #71717A; margin-bottom: 6px;
+  }
+  .doc-title {
+    font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 6px;
+  }
+  .doc-subtitle {
+    font-size: 15px; color: #52525B; max-width: 760px;
+  }
+  .doc-meta {
+    display: flex; gap: 20px; margin-top: 12px; font-size: 12px; color: #71717A;
+  }
+  .doc-meta strong { color: #18181B; font-weight: 600; }
+
+  /* Update + tradeoff callouts */
+  .callout {
+    background: white;
+    border: 1px solid #D4D4D8;
+    border-radius: var(--radius-3);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    color: #18181B;
+  }
+  .callout.what-changed { border-left: 3px solid var(--anno-removed); }
+  .callout.tradeoffs { border-left: 3px solid var(--anno-info); }
+
+  .callout-label {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.06em; margin-bottom: 8px;
+  }
+  .callout.what-changed .callout-label { color: var(--anno-removed); }
+  .callout.tradeoffs .callout-label { color: var(--anno-info); }
+
+  .callout ul {
+    list-style: none;
+    font-size: 13px; line-height: 1.7;
+  }
+  .callout li {
+    padding-left: 18px; position: relative;
+  }
+  .callout li::before {
+    content: '→'; position: absolute; left: 0; font-weight: 600;
+  }
+  .callout.what-changed li::before { color: var(--anno-removed); }
+  .callout.tradeoffs li::before { color: var(--anno-info); }
+
+  .tradeoff-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 10px;
+  }
+  .tradeoff-col {
+    padding-top: 4px;
+  }
+  .tradeoff-col-title {
+    font-size: 12px; font-weight: 600; margin-bottom: 8px;
+  }
+  .tradeoff-col.gain .tradeoff-col-title { color: var(--anno-new); }
+  .tradeoff-col.lose .tradeoff-col-title { color: var(--anno-removed); }
+  .tradeoff-col ul li::before {
+    content: '·';
+    color: currentColor;
+  }
+  .tradeoff-col.gain ul li::before { color: var(--anno-new); }
+  .tradeoff-col.lose ul li::before { color: var(--anno-removed); }
+  .tradeoff-col ul li {
+    font-size: 12px; line-height: 1.55;
+    color: #52525B;
+  }
+
+  /* SECTION */
+  .section {
+    background: white;
+    border-radius: var(--radius-3);
+    padding: 28px;
+    margin-bottom: 24px;
+    color: #18181B;
+    border: 1px solid #D4D4D8;
+  }
+  .section-header {
+    display: flex; align-items: flex-start; gap: 14px;
+    margin-bottom: 24px; padding-bottom: 18px;
+    border-bottom: 1px solid #E4E4E7;
+  }
+  .section-number {
+    background: #18181B; color: white;
+    width: 32px; height: 32px;
+    border-radius: var(--radius-2);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 14px; flex-shrink: 0;
+  }
+  .section-title-block { flex: 1; }
+  .section-title {
+    font-size: 19px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 4px;
+  }
+  .section-subtitle { font-size: 13px; color: #52525B; }
+
+  /* MOCKUP LAYOUT */
+  .mockup-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 24px;
+    align-items: start;
+  }
+  .mockup {
+    background: var(--surface-base);
+    border-radius: var(--radius-3);
+    overflow: hidden;
+    border: 1px solid var(--border-default);
+    color: var(--text-default);
+  }
+
+  /* App bar */
+  .app-bar {
+    height: 56px;
+    background: linear-gradient(to right, #1B5E5C, #1E7268);
+    display: flex; align-items: center;
+    padding: 0 20px; gap: 24px;
+  }
+  .app-logo {
+    font-size: 17px; font-weight: 700; color: white; letter-spacing: -0.02em;
+  }
+  .app-nav {
+    margin-left: 24px; display: flex; gap: 6px; font-size: 13px;
+    align-items: center; height: 100%;
+  }
+  .app-nav-item {
+    color: rgba(255,255,255,0.8); padding: 8px 14px;
+    border-radius: var(--radius-2);
+  }
+  .app-nav-item.active {
+    color: white; background: rgba(255,255,255,0.1); font-weight: 600;
+  }
+  .app-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .app-search {
+    width: 240px; height: 32px;
+    background: rgba(255,255,255,0.15);
+    border-radius: var(--radius-2);
+    padding: 0 12px; font-size: 12px;
+    display: flex; align-items: center; color: rgba(255,255,255,0.7);
+  }
+
+  /* Upload header */
+  .upload-header {
+    height: 64px;
+    background: var(--surface-1);
+    border-bottom: 1px solid var(--border-default);
+    display: flex; align-items: center;
+    padding: 0 24px; gap: 16px;
+  }
+  .upload-status { display: flex; align-items: center; gap: 14px; }
+  .upload-status-icon {
+    width: 38px; height: 38px;
+    background: var(--accent-bg); color: var(--accent-9);
+    border-radius: var(--radius-2);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .upload-status-text { display: flex; flex-direction: column; gap: 2px; }
+  .upload-status-primary {
+    font-size: 14px; font-weight: 600; color: var(--text-default);
+  }
+  .upload-status-secondary { font-size: 12px; color: var(--text-muted); }
+  .upload-status-secondary .review-flag { color: var(--warning-fg); font-weight: 500; }
+  .upload-status-secondary .resolved-count { color: var(--success-fg); font-weight: 500; }
+  .upload-header-actions {
+    margin-left: auto;
+    display: flex; gap: 10px; align-items: center;
+  }
+  .btn {
+    height: 36px; padding: 0 16px;
+    border-radius: var(--radius-2);
+    font-size: 13px; font-weight: 500;
+    border: 1px solid var(--border-strong);
+    background: transparent; color: var(--text-default);
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: inherit;
+  }
+  .btn:hover { background: var(--surface-hover); }
+  .btn-primary {
+    background: var(--primary-default);
+    border-color: var(--primary-default); color: white;
+  }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border-default);
+    color: var(--text-subtle);
+  }
+  .btn-ghost:hover { color: var(--text-default); background: var(--surface-hover); }
+  .btn-close {
+    width: 36px; height: 36px; padding: 0;
+    justify-content: center; color: var(--text-muted); border: none;
+  }
+
+  /* Body grid */
+  .upload-body {
+    display: grid;
+    grid-template-columns: 56px 320px 1fr;
+    min-height: 820px;
+  }
+
+  /* Tabs rail */
+  .tabs-rail {
+    background: var(--surface-1);
+    border-right: 1px solid var(--border-default);
+    display: flex; flex-direction: column;
+    align-items: center; padding-top: 14px; gap: 4px;
+  }
+  .tab {
+    width: 48px; padding: 10px 4px;
+    border-radius: var(--radius-2);
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    color: var(--text-muted); cursor: pointer; font-size: 10px;
+  }
+  .tab.active {
+    color: var(--info-fg);
+    background: rgba(59, 130, 246, 0.08);
+  }
+  .tab-icon { width: 18px; height: 18px; }
+
+  /* Metadata panel */
+  .meta-panel {
+    background: var(--surface-1);
+    border-right: 1px solid var(--border-default);
+    padding: 20px; overflow-y: auto;
+  }
+  .meta-panel-eyebrow {
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--text-muted); margin-bottom: 4px;
+  }
+  .meta-panel-filename {
+    font-size: 13px; font-weight: 600;
+    color: var(--text-default); margin-bottom: 18px;
+    padding-bottom: 14px; border-bottom: 1px solid var(--border-default);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .meta-section { margin-bottom: 20px; }
+  .meta-label {
+    font-size: 13px; font-weight: 600;
+    color: var(--text-default); margin-bottom: 8px;
+  }
+  .textarea {
+    width: 100%; min-height: 100px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+    padding: 10px 12px;
+    color: var(--text-default);
+    font-family: inherit; font-size: 13px; resize: vertical;
+  }
+  .textarea::placeholder { color: var(--text-faint); }
+  .meta-help {
+    font-size: 12px; color: var(--text-muted); margin-top: 6px;
+  }
+  .input-search {
+    width: 100%; height: 32px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+    padding: 0 12px 0 32px;
+    color: var(--text-default); font-size: 13px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%237C8794' stroke-width='2'><circle cx='11' cy='11' r='7'/><path d='m21 21-4.3-4.3'/></svg>");
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    margin-bottom: 12px;
+  }
+  .meta-list { margin-top: 4px; }
+  .meta-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-top: 1px solid var(--border-subtle);
+    font-size: 13px; color: var(--text-subtle); cursor: pointer;
+  }
+  .meta-item:hover { color: var(--text-default); }
+  .meta-item-chevron { color: var(--text-faint); }
+
+  /* Main area */
+  .main {
+    padding: 20px 24px;
+    background: var(--surface-base);
+    overflow-y: auto;
+  }
+
+  /* List toolbar */
+  .list-toolbar {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px; gap: 12px;
+  }
+  .list-toolbar-left {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .list-count {
+    font-size: 13px; font-weight: 600; color: var(--text-default);
+  }
+  .list-count-meta {
+    font-size: 12px; color: var(--text-muted); margin-left: 8px;
+    font-weight: 400;
+  }
+  .toggle-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 5px 12px 5px 10px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-full);
+    font-size: 12px; color: var(--text-subtle);
+    cursor: pointer;
+  }
+  .toggle-pill .toggle-track {
+    width: 26px; height: 14px; border-radius: 7px;
+    background: var(--surface-3);
+    position: relative;
+  }
+  .toggle-pill .toggle-thumb {
+    position: absolute; top: 2px; left: 2px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--text-muted);
+    transition: all 0.15s;
+  }
+  .toggle-pill.on {
+    background: var(--info-bg);
+    border-color: var(--info-border);
+    color: var(--info-fg);
+  }
+  .toggle-pill.on .toggle-track { background: var(--primary-default); }
+  .toggle-pill.on .toggle-thumb { left: 14px; background: white; }
+
+  .sort-dropdown {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 10px; background: var(--surface-2);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+    font-size: 12px; color: var(--text-subtle); cursor: pointer;
+  }
+
+  /* FILE LIST */
+  .file-list {
+    display: flex; flex-direction: column;
+    gap: 6px;
+  }
+
+  /* File row */
+  .file-row {
+    background: var(--surface-1);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+    overflow: hidden;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .file-row:hover { border-color: var(--border-strong); }
+
+  /* Only one flagged state now: identical match */
+  .file-row.flagged-identical {
+    border-left: 3px solid var(--warning-accent);
+  }
+  .file-row.expanded {
+    background: var(--surface-elevated);
+    border-color: var(--border-strong);
+  }
+  .file-row.expanded.flagged-identical { border-left-color: var(--warning-accent); }
+
+  /* Resolved state — muted */
+  .file-row.resolved.flagged-identical {
+    border-left-color: rgba(245, 158, 11, 0.4);
+  }
+  .file-row.resolved .file-row-thumb {
+    opacity: 0.6;
+  }
+  .file-row.resolved .file-row-name {
+    color: var(--text-subtle);
+  }
+
+  .file-row-content {
+    display: grid;
+    grid-template-columns: 22px 56px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+  }
+  .file-row.flagged-identical .file-row-content {
+    padding-left: 11px;
+  }
+
+  /* Resolved gallery rows don't show checkboxes — they're state showcases, not interactive rows */
+  .resolved-card .file-row-content {
+    grid-template-columns: 56px 1fr auto;
+    gap: 14px;
+  }
+  .resolved-card .file-row-checkbox {
+    display: none;
+  }
+  .file-row-right {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .file-row-thumb {
+    width: 56px; height: 56px;
+    border-radius: var(--radius-2);
+    overflow: hidden; flex-shrink: 0;
+    background: var(--surface-3);
+    position: relative;
+  }
+  .file-row-thumb.brand-logo {
+    background: #18181B; display: flex;
+    align-items: center; justify-content: center;
+  }
+  .file-row-thumb.brand-logo::before {
+    content: 'LOGO'; color: white; font-weight: 700;
+    font-size: 11px; letter-spacing: 0.04em;
+  }
+  .file-row-thumb.banner-green {
+    background: linear-gradient(135deg, #166534, #22C55E);
+  }
+  .file-row-thumb.venue {
+    background: linear-gradient(180deg, #1E293B 0%, #475569 60%, #FB923C 100%);
+  }
+  .file-row-thumb.squad {
+    background: linear-gradient(180deg, #0F172A 0%, #1E40AF 100%);
+  }
+  .file-row-thumb.infographic {
+    background: linear-gradient(135deg, #7C2D12, #DC2626);
+  }
+  .file-row-thumb.mascot {
+    background: linear-gradient(135deg, #DB2777, #F59E0B);
+  }
+  .file-row-thumb.pdf-doc {
+    background: var(--filetype-pdf); display: flex;
+    align-items: center; justify-content: center;
+  }
+  .file-row-thumb.pdf-doc::before {
+    content: 'PDF'; color: white; font-weight: 700;
+    font-size: 11px; letter-spacing: 0.04em;
+  }
+  .file-row-thumb.sponsor {
+    background: linear-gradient(135deg, #0F766E, #14B8A6);
+  }
+  .file-row-thumb.pattern-dark {
+    background: repeating-linear-gradient(45deg, #18181B 0 4px, #27272A 4px 8px);
+  }
+  .file-row-thumb.montage {
+    background: linear-gradient(135deg, #7E22CE, #C084FC);
+  }
+
+  .file-row-info { min-width: 0; }
+  .file-row-name {
+    font-size: 13px; font-weight: 500;
+    color: var(--text-default);
+    margin-bottom: 3px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .file-row-meta {
+    font-size: 11px; color: var(--text-muted);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .file-row-meta strong {
+    color: var(--text-subtle); font-weight: 600;
+  }
+  .meta-link {
+    color: var(--info-fg); text-decoration: none;
+    font-weight: 500; margin-left: 6px;
+  }
+  .meta-link:hover {
+    color: var(--primary-default); text-decoration: underline;
+  }
+
+  /* Status badges */
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 8px;
+    border-radius: var(--radius-full);
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.01em; white-space: nowrap;
+  }
+  .status-badge.with-dot::before {
+    content: ''; width: 6px; height: 6px;
+    border-radius: 50%; background: currentColor;
+  }
+  .status-ready {
+    background: var(--success-bg); color: var(--success-fg);
+  }
+  .status-identical {
+    background: var(--warning-bg); color: var(--warning-fg);
+    border: 1px solid var(--warning-border);
+  }
+  .status-identical .badge-icon {
+    width: 11px; height: 11px; flex-shrink: 0;
+  }
+
+  /* Resolved badges */
+  .status-resolved-skipped {
+    background: rgba(124, 135, 148, 0.18);
+    color: var(--text-subtle);
+    border: 1px solid var(--border-default);
+  }
+  .status-resolved-version {
+    background: var(--primary-bg);
+    color: var(--info-fg);
+    border: 1px solid var(--info-border);
+  }
+  .status-resolved-upload {
+    background: var(--success-bg);
+    color: var(--success-fg);
+  }
+
+  /* Checkbox for multi-select */
+  .file-row-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--text-muted);
+    border-radius: var(--radius-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.12s;
+    background: transparent;
+  }
+  .file-row-checkbox:hover {
+    border-color: var(--text-subtle);
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .file-row-checkbox.checked {
+    background: var(--primary-default);
+    border-color: var(--primary-default);
+  }
+  .file-row-checkbox.checked svg {
+    width: 11px;
+    height: 11px;
+    color: white;
+    stroke: white;
+  }
+  .file-row-checkbox.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  .file-row-checkbox.disabled:hover {
+    background: transparent;
+    border-color: var(--text-muted);
+  }
+
+  /* Selected row treatment — coexists with flagged left border */
+  .file-row.selected {
+    background: rgba(11, 110, 138, 0.08);
+  }
+  .file-row.selected:hover {
+    background: rgba(11, 110, 138, 0.12);
+  }
+  .file-row.selected.flagged-identical {
+    background: rgba(11, 110, 138, 0.08);
+    /* Left border stays — amber sits on top of selection tint */
+  }
+
+  /* Bulk action bar — replaces normal toolbar when items selected */
+  .bulk-action-bar {
+    background: var(--primary-bg);
+    border: 1px solid var(--primary-border);
+    border-radius: var(--radius-2);
+    padding: 8px 12px 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  .bulk-count {
+    color: var(--text-default);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .bulk-count strong {
+    color: var(--info-fg);
+    font-weight: 700;
+  }
+  .bulk-link {
+    background: transparent;
+    border: none;
+    color: var(--info-fg);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    padding: 0;
+    text-decoration: underline;
+    text-decoration-color: rgba(147, 197, 253, 0.4);
+    text-underline-offset: 2px;
+  }
+  .bulk-link:hover {
+    color: var(--primary-default);
+    text-decoration-color: currentColor;
+  }
+  .bulk-action {
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+    color: var(--text-subtle);
+    font-size: 12px;
+    padding: 5px 10px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    font-weight: 500;
+  }
+  .bulk-action:hover {
+    background: var(--surface-hover);
+    color: var(--text-default);
+    border-color: var(--border-strong);
+  }
+
+  /* Checking state — duplicate check in progress */
+  .status-checking {
+    background: var(--info-bg);
+    color: var(--info-fg);
+    border: 1px solid var(--info-border);
+  }
+  .spinner {
+    width: 11px; height: 11px;
+    flex-shrink: 0;
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Failed state — check could not complete */
+  .status-failed {
+    background: var(--error-bg);
+    color: var(--error-fg);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+  .row-retry {
+    width: 28px; height: 28px;
+    border-radius: var(--radius-2);
+    background: transparent;
+    border: 1px solid var(--border-default);
+    color: var(--text-muted);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .row-retry:hover {
+    background: var(--error-bg);
+    color: var(--error-fg);
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+  .badge-icon {
+    width: 11px; height: 11px; flex-shrink: 0;
+  }
+
+  .row-chevron {
+    width: 28px; height: 28px; border-radius: var(--radius-2);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+    transition: transform 0.15s, color 0.15s;
+    cursor: pointer;
+  }
+  .file-row:hover .row-chevron { color: var(--text-default); }
+  .file-row.expanded .row-chevron { transform: rotate(180deg); color: var(--text-default); }
+
+  .row-remove {
+    width: 28px; height: 28px; border-radius: var(--radius-2);
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; border: none;
+    color: var(--text-muted); cursor: pointer; opacity: 0;
+    transition: opacity 0.15s, background 0.15s;
+  }
+  .file-row:hover .row-remove { opacity: 1; }
+  .row-remove:hover { background: var(--error-bg); color: var(--error-fg); }
+
+  /* Expanded panel */
+  .row-expansion {
+    border-top: 1px solid var(--border-default);
+    padding: 16px 14px 16px 76px;
+    background: rgba(0, 0, 0, 0.18);
+  }
+  .duplicates-heading {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 14px;
+    font-size: 13px; color: var(--text-subtle);
+  }
+  .hash-icon {
+    width: 14px; height: 14px; flex-shrink: 0;
+    color: var(--warning-fg);
+  }
+  .duplicates-heading strong {
+    color: var(--text-default); font-weight: 600;
+  }
+  .match-list {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .match-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+    padding: 12px;
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    gap: 14px; align-items: center;
+  }
+  .match-thumb {
+    width: 64px; height: 64px;
+    border-radius: var(--radius-2);
+    overflow: hidden; position: relative;
+    background: var(--surface-3);
+  }
+  .match-thumb.venue-source {
+    background: linear-gradient(180deg, #1E293B 0%, #475569 60%, #FB923C 100%);
+  }
+  .filetype-badge {
+    position: absolute; bottom: 3px; right: 3px;
+    background: var(--filetype-jpg); color: white;
+    padding: 1px 4px; border-radius: 2px;
+    font-size: 8px; font-weight: 700; letter-spacing: 0.04em;
+  }
+  .filetype-badge.png { background: var(--filetype-png); }
+  .filetype-badge.pdf { background: var(--filetype-pdf); }
+  .rights-pill {
+    position: absolute; top: 3px; left: 3px;
+    background: var(--rights-expired-bg);
+    color: var(--rights-expired-fg);
+    padding: 1px 5px;
+    border-radius: var(--radius-1);
+    font-size: 8px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    display: flex; align-items: center; gap: 3px;
+  }
+  .rights-pill::before {
+    content: ''; width: 3px; height: 3px;
+    border-radius: 50%; background: currentColor;
+  }
+  .match-details { min-width: 0; }
+  .match-filename {
+    font-size: 13px; font-weight: 600; color: var(--text-default);
+    margin-bottom: 3px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .match-meta {
+    font-size: 11px; color: var(--text-muted); margin-bottom: 2px;
+  }
+  .match-location {
+    font-size: 11px; color: var(--text-muted);
+    display: flex; align-items: center; gap: 4px;
+  }
+  .match-location svg { flex-shrink: 0; color: var(--text-faint); }
+  .match-actions {
+    display: flex; flex-direction: column; gap: 5px; min-width: 150px;
+  }
+  .file-level-actions {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-default);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .file-level-actions .btn-tertiary {
+    flex-shrink: 0;
+  }
+  .file-level-actions-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-right: 4px;
+  }
+  .btn-tertiary {
+    background: transparent;
+    border: 1px solid var(--border-default);
+    color: var(--text-subtle);
+    height: 28px; padding: 0 11px;
+    font-size: 11px; border-radius: var(--radius-2);
+    cursor: pointer; font-weight: 500;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn-tertiary:hover {
+    color: var(--text-default);
+    border-color: var(--border-strong);
+    background: var(--surface-hover);
+  }
+  .btn-tertiary:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-tertiary.btn-action-primary {
+    background: var(--primary-default);
+    border-color: var(--primary-default);
+    color: white;
+  }
+  .btn-tertiary.btn-action-primary:hover {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+  }
+
+  .escape-row {
+    margin-top: 12px; padding-top: 12px;
+    border-top: 1px solid var(--border-default);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .escape-text { font-size: 11px; color: var(--text-muted); }
+  .link-action {
+    background: transparent; border: none;
+    color: var(--info-fg); font-size: 11px; font-weight: 500;
+    cursor: pointer; font-family: inherit; padding: 4px 0;
+  }
+  .link-action:hover { color: var(--primary-default); text-decoration: underline; }
+
+  /* ANNOTATIONS */
+  .annotations {
+    background: white;
+    border: 1px solid #D4D4D8;
+    border-radius: var(--radius-3);
+    padding: 20px;
+    align-self: start;
+    color: #18181B;
+    position: sticky; top: 20px;
+  }
+  .annotations-title {
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: #71717A; margin-bottom: 14px;
+    padding-bottom: 12px; border-bottom: 1px solid #E4E4E7;
+  }
+  .annotation {
+    padding: 12px 0;
+    border-bottom: 1px solid #E4E4E7;
+    font-size: 13px; line-height: 1.5;
+  }
+  .annotation:last-child { border-bottom: none; }
+  .annotation-label {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+  .annotation-label::before {
+    content: ''; width: 8px; height: 8px;
+    border-radius: 2px; background: currentColor;
+  }
+  .annotation-label.new { color: var(--anno-new); }
+  .annotation-label.fix { color: var(--anno-fix); }
+  .annotation-label.info { color: var(--anno-info); }
+  .annotation-label.removed { color: var(--anno-removed); }
+  .annotation-body {
+    color: #52525B; font-size: 12px;
+  }
+  .annotation-body strong { color: #18181B; font-weight: 600; }
+
+  /* SECTION DIVIDER */
+  .section-divider {
+    margin: 48px 0 24px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #18181B;
+    color: #18181B;
+  }
+  .section-divider-eyebrow {
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: #71717A; margin-bottom: 4px;
+  }
+  .section-divider-title {
+    font-size: 22px; font-weight: 700; letter-spacing: -0.01em;
+  }
+
+  /* RESOLVED STATE GALLERY */
+  .resolved-gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  .resolved-card {
+    background: var(--surface-base);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    padding: 16px;
+    color: var(--text-default);
+  }
+  .resolved-card-eyebrow {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 6px;
+  }
+  .resolved-card-title {
+    font-size: 13px; font-weight: 600; color: var(--text-default);
+    margin-bottom: 12px;
+  }
+  .resolved-card-row {
+    margin-bottom: 12px;
+  }
+  .resolved-card-desc {
+    font-size: 12px; color: var(--text-muted); line-height: 1.5;
+    padding-top: 10px; border-top: 1px solid var(--border-default);
+  }
+
+  /* COMPACT MOCKUP for filter demo */
+  .compact-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .compact-pane {
+    background: var(--surface-base);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-3);
+    padding: 16px; min-height: 380px;
+    color: var(--text-default);
+  }
+  .compact-eyebrow {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .compact-label {
+    font-size: 14px; font-weight: 600; color: var(--text-default);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-default);
+  }
+  .mini-list { display: flex; flex-direction: column; gap: 6px; }
+  .mini-row {
+    background: var(--surface-1);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2);
+    padding: 8px 10px;
+    display: grid;
+    grid-template-columns: 30px 1fr auto;
+    gap: 10px; align-items: center;
+    font-size: 11px;
+  }
+  .mini-row.flagged-identical { border-left: 3px solid var(--warning-accent); padding-left: 7px; }
+  .mini-row.resolved.flagged-identical { border-left-color: rgba(245, 158, 11, 0.4); }
+  .mini-row.resolved .mini-thumb { opacity: 0.6; }
+  .mini-row.resolved .mini-name { color: var(--text-muted); }
+  .mini-thumb {
+    width: 30px; height: 30px;
+    border-radius: var(--radius-1);
+  }
+  .mini-thumb.t1 { background: linear-gradient(135deg, #166534, #22C55E); }
+  .mini-thumb.t2 { background: #18181B; }
+  .mini-thumb.t3 { background: linear-gradient(180deg, #0F172A, #1E40AF); }
+  .mini-thumb.t4 { background: linear-gradient(180deg, #1E293B 60%, #F97316); }
+  .mini-thumb.t5 { background: linear-gradient(135deg, #7C2D12, #DC2626); }
+  .mini-thumb.t6 { background: linear-gradient(135deg, #DB2777, #F59E0B); }
+  .mini-thumb.t7 { background: var(--filetype-pdf); }
+  .mini-thumb.t8 { background: linear-gradient(135deg, #0F766E, #14B8A6); }
+  .mini-thumb.t9 { background: repeating-linear-gradient(45deg, #18181B 0 3px, #27272A 3px 6px); }
+  .mini-thumb.t10 { background: linear-gradient(135deg, #7E22CE, #C084FC); }
+  .mini-name {
+    font-size: 11px; color: var(--text-subtle);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .mini-badge {
+    font-size: 9px; font-weight: 600;
+    padding: 2px 6px; border-radius: var(--radius-full);
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .mini-badge.ready { background: var(--success-bg); color: var(--success-fg); }
+  .mini-badge.identical { background: var(--warning-bg); color: var(--warning-fg); }
+  .mini-badge.skipped { background: rgba(124, 135, 148, 0.18); color: var(--text-subtle); }
+  .mini-badge.version { background: var(--primary-bg); color: var(--info-fg); }
+  .mini-badge.uploading { background: var(--success-bg); color: var(--success-fg); }
+  .mini-badge.with-dot::before {
+    content: ''; width: 5px; height: 5px;
+    border-radius: 50%; background: currentColor;
+  }
+  .mini-toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .mini-count {
+    font-size: 11px; color: var(--text-default); font-weight: 600;
+  }
+  .mini-toggle {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 9px 3px 8px;
+    border-radius: var(--radius-full);
+    font-size: 10px; cursor: pointer;
+    background: var(--surface-2);
+    border: 1px solid var(--border-default);
+    color: var(--text-subtle);
+  }
+  .mini-toggle.on {
+    background: var(--info-bg);
+    border-color: var(--info-border);
+    color: var(--info-fg);
+  }
+  .mini-toggle-track {
+    width: 18px; height: 10px; border-radius: 5px;
+    background: var(--surface-3); position: relative;
+  }
+  .mini-toggle.on .mini-toggle-track { background: var(--primary-default); }
+  .mini-toggle-thumb {
+    position: absolute; top: 2px; left: 2px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--text-muted);
+  }
+  .mini-toggle.on .mini-toggle-thumb { left: 10px; background: white; }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="doc-header">
+    <div class="doc-eyebrow">Design Spec · Hash-Only Model</div>
+    <h1 class="doc-title">Duplicate Check on Upload — hash-only</h1>
+    <p class="doc-subtitle">Hash-based exact-match duplicate detection at upload. Only byte-for-byte identical files are surfaced as duplicates. Near-duplicate discovery (visually similar but not identical) is handled separately via Similarity Search, where users are browsing rather than committing.</p>
+    <div class="doc-meta">
+      <div><strong>Date:</strong> 16 Jun 2026</div>
+    </div>
+  </div>
+
+  <div class="callout tradeoffs">
+    <div class="callout-label">Trade-offs of hash-only</div>
+    <div class="tradeoff-grid">
+      <div class="tradeoff-col gain">
+        <div class="tradeoff-col-title">What we gain</div>
+        <ul>
+          <li>No false-positive friction for legitimate near-duplicates (product shots with language variants, market localisations, slight crops).</li>
+          <li>Upload flow stays fast — no embedding compute per file at upload.</li>
+          <li>All file types covered, including PDFs, video, Office docs, design files. PSD/AI/TIFF/EPS now work the same as JPG/PNG/WebP.</li>
+          <li>Simpler dev work. Hash matching is engineering-trivial compared to embedding-based detection.</li>
+          <li>No threshold tuning needed at upload. No QA cycle around "is 87% high enough?"</li>
+        </ul>
+      </div>
+      <div class="tradeoff-col lose">
+        <div class="tradeoff-col-title">What we lose</div>
+        <ul>
+          <li>Near-duplicates (resized, re-encoded, slightly cropped) not caught at upload. User can create unintended duplication.</li>
+          <li>Discovery of these moves to Similarity Search (post-upload, browse-time). Library-level cleanup tooling is out of scope for this release and not yet scoped as a separate feature.</li>
+          <li>Slightly higher long-term duplication burden in libraries — flagged for future cleanup work, not addressed here.</li>
+          <li>PDF/video/design libraries get exact-match dedup only. Worth communicating as a known Phase 1 limitation when explaining the feature.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== PRIMARY VIEW ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">1</div>
+      <div class="section-title-block">
+        <div class="section-title">10-file batch, mid-resolution</div>
+        <div class="section-subtitle">6 ready, 3 already resolved (one of each outcome), 1 still flagged with hash match and expanded. Every flagged file is an exact byte-for-byte match, not a probabilistic guess.</div>
+      </div>
+    </div>
+
+    <div class="mockup-layout">
+      <div class="mockup">
+        <!-- App bar -->
+        <div class="app-bar">
+          <div class="app-logo">screendragon</div>
+          <div class="app-nav">
+            <div class="app-nav-item active">DAM</div>
+            <div class="app-nav-item">DAM Form</div>
+            <div class="app-nav-item">Org Manager</div>
+            <div class="app-nav-item">Reports</div>
+          </div>
+          <div class="app-right">
+            <div class="app-search">Search…</div>
+          </div>
+        </div>
+
+        <!-- Upload header -->
+        <div class="upload-header">
+          <div class="upload-status">
+            <div class="upload-status-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <div class="upload-status-text">
+              <div class="upload-status-primary">Uploading 10 files</div>
+              <div class="upload-status-secondary">6 ready · <span class="resolved-count">3 resolved</span> · <span class="review-flag">1 flagged duplicate</span></div>
+            </div>
+          </div>
+          <div class="upload-header-actions">
+            <button class="btn btn-ghost">Back to upload</button>
+            <button class="btn btn-primary">Complete upload</button>
+            <button class="btn btn-close">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="upload-body">
+          <!-- Tabs rail -->
+          <div class="tabs-rail">
+            <div class="tab active">
+              <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Details
+            </div>
+            <div class="tab">
+              <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg>
+              AI
+            </div>
+            <div class="tab">
+              <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Rights
+            </div>
+          </div>
+
+          <!-- Metadata panel -->
+          <div class="meta-panel">
+            <div class="meta-panel-eyebrow">Editing metadata for</div>
+            <div class="meta-panel-filename">venue_exterior_dusk.jpg</div>
+
+            <div class="meta-section">
+              <div class="meta-label">Description</div>
+              <textarea class="textarea" placeholder="Add a description…"></textarea>
+              <div class="meta-help">Applying standard tags to 1 file.</div>
+            </div>
+            <div class="meta-section">
+              <div class="meta-label">Attributes</div>
+              <input type="text" class="input-search" placeholder="Search attributes…">
+              <div class="meta-list">
+                <div class="meta-item">Name <svg class="meta-item-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                <div class="meta-item">Official Mark <svg class="meta-item-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                <div class="meta-item">Version <svg class="meta-item-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                <div class="meta-item">Language <svg class="meta-item-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                <div class="meta-item">Country <svg class="meta-item-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                <div class="meta-item">Format <svg class="meta-item-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main area: file list -->
+          <div class="main">
+            <div class="list-toolbar">
+              <div class="list-toolbar-left">
+                <div class="list-count">10 files<span class="list-count-meta">42.7 MB total</span></div>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <div class="toggle-pill">
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                  <span>Show only unresolved</span>
+                </div>
+                <div class="sort-dropdown">
+                  Sort: Upload order
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="file-list">
+
+              <!-- 1: Ready -->
+              <div class="file-row">
+                <div class="file-row-content">
+                  <div class="file-row-checkbox"></div>
+                  <div class="file-row-thumb banner-green"></div>
+                  <div class="file-row-info">
+                    <div class="file-row-name">hero_campaign_announcement.jpg</div>
+                    <div class="file-row-meta">JPG · 4.8 MB · 3840 × 2160</div>
+                  </div>
+                  <div class="file-row-right">
+                    <span class="status-badge status-ready with-dot">Ready</span>
+                    <button class="row-remove" title="Remove from batch">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2: RESOLVED · Using existing -->
+              <div class="file-row flagged-identical resolved">
+                <div class="file-row-content">
+                  <div class="file-row-checkbox"></div>
+                  <div class="file-row-thumb brand-logo"></div>
+                  <div class="file-row-info">
+                    <div class="file-row-name">brand_logo_primary.png</div>
+                    <div class="file-row-meta">Using <strong>brand_logo_official.png</strong><a href="#" class="meta-link">Open in library →</a></div>
+                  </div>
+                  <div class="file-row-right">
+                    <span class="status-badge status-resolved-skipped">
+                      <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      Using existing
+                    </span>
+                    <div class="row-chevron" title="Change decision">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <button class="row-remove" title="Remove from batch">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3: Ready -->
+              <div class="file-row">
+                <div class="file-row-content">
+                  <div class="file-row-checkbox"></div>
+                  <div class="file-row-thumb squad"></div>
+                  <div class="file-row-info">
+                    <div class="file-row-name">team_portrait_official.jpg</div>
+                    <div class="file-row-meta">JPG · 6.2 MB · 4500 × 3000</div>
+                  </div>
+                  <div class="file-row-right">
+                    <span class="status-badge status-ready with-dot">Ready</span>
+                    <button class="row-remove" title="Remove from batch">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 4: Identical match — EXPANDED -->
+              <div class="file-row flagged-identical expanded">
+                <div class="file-row-content">
+                  <div class="file-row-checkbox"></div>
+                  <div class="file-row-thumb venue"></div>
+                  <div class="file-row-info">
+                    <div class="file-row-name">venue_exterior_dusk.jpg</div>
+                    <div class="file-row-meta">JPG · 5.4 MB · 4032 × 3024</div>
+                  </div>
+                  <div class="file-row-right">
+                    <span class="status-badge status-identical">
+                      <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      Identical match
+                    </span>
+                    <div class="row-chevron">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <button class="row-remove" title="Remove from batch">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="row-expansion">
+                  <div class="duplicates-heading">
+                    <svg class="hash-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    This exact file already exists in your library
+                  </div>
+                  <div class="match-list">
+                    <div class="match-card">
+                      <div class="match-thumb venue-source">
+                        <div class="filetype-badge">JPG</div>
+                      </div>
+                      <div class="match-details">
+                        <div class="match-filename">venue_dusk_primary.jpg</div>
+                        <div class="match-meta">JPG · 5.4 MB · 4032 × 3024 · Uploaded 12 Mar 2026 by S. Martinez</div>
+                        <div class="match-location">
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                          Venues
+                        </div>
+                      </div>
+                      <div class="match-actions">
+                        <button class="btn-tertiary">Upload as new version</button>
+                      </div>
+                    </div>
+                    <div class="match-card">
+                      <div class="match-thumb venue-source">
+                        <div class="rights-pill">Expired</div>
+                        <div class="filetype-badge">JPG</div>
+                      </div>
+                      <div class="match-details">
+                        <div class="match-filename">venue_dusk_archived_2024.jpg</div>
+                        <div class="match-meta">JPG · 5.4 MB · 4032 × 3024 · Uploaded 4 Jun 2024 by M. Adamou · Archived</div>
+                        <div class="match-location">
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                          Archive / Heritage Campaign
+                        </div>
+                      </div>
+                      <div class="match-actions">
+                        <button class="btn-tertiary" title="Re-licensing flow available for expired matches">Upload as new version</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="file-level-actions">
+                    <button class="btn-tertiary btn-action-primary">Use existing</button>
+                    <button class="btn-tertiary">Upload as new asset</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 5: Ready -->
+              <div class="file-row">
+                <div class="file-row-content">
+                  <div class="file-row-checkbox"></div>
+                  <div class="file-row-thumb infographic"></div>
+                  <div class="file-row-info">
+                    <div class="file-row-name">infographic_brand_overview.png</div>
+                    <div class="file-row-meta">PNG · 1.4 MB · 1920 × 1080</div>
+                  </div>
+                  <div class="file-row-right">
+                    <span class="status-badge status-ready with-dot">Ready</span>
+                    <button class="row-remove" title="Remove from batch">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 6: RESOLVED · New asset (user reviewed hash match and chose to add separately) -->
+              <div class="file-row flagged-identical resolved">
+                <div class="file-row-content">
+                  <div class="file-row-checkbox"></div>
+                  <div class="file-row-thumb mascot"></div>
+                  <div class="file-row-info">
+                    <div class="file-row-name">character_animation_render_v2.jpg</div>
+                    <div class="file-row-meta">Added as new asset · JPG · 2.1 MB · 2048 × 2048</div>
+                  </div>
+                  <div class="file-row-right">
+                    <span class="status-badge status-resolved-upload">
+                      <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      New asset
+                    </span>
+                    <div class="row-chevron" title="Change decision">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <button class="row-remove" title="Remove from batch">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 7: RESOLVED · New version -->
+              <div class="file-row flagged-identical resolved">
+                <div class="file-row-content">
+                  <div class="file-row-checkbox"></div>
+                  <div class="file-row-thumb pdf-doc"></div>
+                  <div class="file-row-info">
+                    <div class="file-row-name">press_briefing_template.pdf</div>
+                    <div class="file-row-meta">Replacing <strong>press_briefing_template_v1.pdf</strong><a href="#" class="meta-link">Open in library →</a></div>
+                  </div>
+                  <div class="file-row-right">
+                    <span class="status-badge status-resolved-version">
+                      <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                      New version
+                    </span>
+                    <div class="row-chevron" title="Change decision">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <button class="row-remove" title="Remove from batch">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 8: Ready -->
+              <div class="file-row">
+                <div class="file-row-content">
+                  <div class="file-row-checkbox"></div>
+                  <div class="file-row-thumb sponsor"></div>
+                  <div class="file-row-info">
+                    <div class="file-row-name">sponsor_panel_q4.jpg</div>
+                    <div class="file-row-meta">JPG · 1.9 MB · 2400 × 1200</div>
+                  </div>
+                  <div class="file-row-right">
+                    <span class="status-badge status-ready with-dot">Ready</span>
+                    <button class="row-remove" title="Remove from batch">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 9: Ready -->
+              <div class="file-row">
+                <div class="file-row-content">
+                  <div class="file-row-checkbox"></div>
+                  <div class="file-row-thumb pattern-dark"></div>
+                  <div class="file-row-info">
+                    <div class="file-row-name">branding_pattern_dark.png</div>
+                    <div class="file-row-meta">PNG · 312 KB · 1024 × 1024</div>
+                  </div>
+                  <div class="file-row-right">
+                    <span class="status-badge status-ready with-dot">Ready</span>
+                    <button class="row-remove" title="Remove from batch">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 10: Ready -->
+              <div class="file-row">
+                <div class="file-row-content">
+                  <div class="file-row-checkbox"></div>
+                  <div class="file-row-thumb montage"></div>
+                  <div class="file-row-info">
+                    <div class="file-row-name">urban_montage_collection.jpg</div>
+                    <div class="file-row-meta">JPG · 17.6 MB · 7680 × 4320</div>
+                  </div>
+                  <div class="file-row-right">
+                    <span class="status-badge status-ready with-dot">Ready</span>
+                    <button class="row-remove" title="Remove from batch">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Annotations -->
+      <div class="annotations">
+        <div class="annotations-title">Annotations</div>
+
+        <div class="annotation">
+          <div class="annotation-label info">Single deterministic flagged state</div>
+          <div class="annotation-body">Only one flagged state exists: <strong>Identical match</strong> — byte-for-byte hash equivalence. No "possible" or "maybe" framing, no AI signalling — the check is deterministic. Expansion heading reads: <em>"This exact file already exists in your library"</em>.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label info">Multiple hash matches</div>
+          <div class="annotation-body">Expansion can return more than one match when the library has internal duplicates of itself (legacy data, migrations, prior uncaught duplicates). UX handles this correctly. Cleanup of library-level duplicates is out of scope for this release — to be addressed by future tooling, not yet scoped.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label new">Per-match vs file-level scope</div>
+          <div class="annotation-body"><strong>Upload as new version</strong> is per-match — versioning binds to a specific existing asset, so the button sits in the match card. <strong>Use existing</strong> and <strong>Upload as new asset</strong> are file-level decisions — they don't reference a specific match, so they live below the match list.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label info">Expired match — version still allowed</div>
+          <div class="annotation-body">"Upload as new version" stays active on expired matches — it's the re-licensing flow (new content, new rights window, attached to the existing asset record). The EXPIRED badge on the thumbnail signals the state without disabling the action.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label new">Multi-match handled gracefully</div>
+          <div class="annotation-body">When the library has internal duplicates (multiple records with the same hash), the per-match versioning option lets the user pick which one to version. The file-level Use existing and Upload as new asset don't require a pick — they're file-scope decisions.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label info">All file types covered</div>
+          <div class="annotation-body">PDFs, video, Office docs, AI, PSD, EPS, TIFF — all hash-checked the same as JPG/PNG/WebP. No file-type-specific messaging at upload; every format follows the same flow.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label fix">Resolved-state model unchanged</div>
+          <div class="annotation-body">All three resolved outcomes share consistent treatment — badge style, meta-line pattern, "Open in library" affordance, and chevron-to-re-open. The trigger differs but the resolution UI is uniform.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== INITIAL CHECK / LOADING STATE ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">2</div>
+      <div class="section-title-block">
+        <div class="section-title">Initial check — loading state</div>
+        <div class="section-subtitle">Immediately after upload, each file's SHA-256 hash is computed locally and compared against the library. Rows show a checking state until the response returns, then transition to Ready (no match) or Identical match (duplicate found). Per-file, parallel — smaller files finish first.</div>
+      </div>
+    </div>
+
+    <div class="mockup-layout">
+      <div style="background: var(--surface-base); border: 1px solid var(--border-default); border-radius: var(--radius-3); padding: 18px 20px 20px;">
+
+        <div class="list-toolbar">
+          <div class="list-toolbar-left">
+            <div class="list-count">10 files<span class="list-count-meta">checking 6 · 3 done · 1 failed</span></div>
+          </div>
+        </div>
+
+        <div class="file-list">
+
+          <!-- Row 1: Checking -->
+          <div class="file-row">
+            <div class="file-row-content">
+              <div class="file-row-checkbox"></div>
+              <div class="file-row-thumb banner-green"></div>
+              <div class="file-row-info">
+                <div class="file-row-name">hero_campaign_announcement.jpg</div>
+                <div class="file-row-meta">JPG · 4.8 MB · 3840 × 2160</div>
+              </div>
+              <div class="file-row-right">
+                <span class="status-badge status-checking">
+                  <svg class="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                  Checking
+                </span>
+                <button class="row-remove" title="Remove from batch">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Just resolved — Ready -->
+          <div class="file-row">
+            <div class="file-row-content">
+              <div class="file-row-checkbox"></div>
+              <div class="file-row-thumb brand-logo"></div>
+              <div class="file-row-info">
+                <div class="file-row-name">brand_logo_primary.png</div>
+                <div class="file-row-meta">PNG · 312 KB · 1024 × 1024</div>
+              </div>
+              <div class="file-row-right">
+                <span class="status-badge status-ready with-dot">Ready</span>
+                <button class="row-remove" title="Remove from batch">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Checking -->
+          <div class="file-row">
+            <div class="file-row-content">
+              <div class="file-row-checkbox"></div>
+              <div class="file-row-thumb squad"></div>
+              <div class="file-row-info">
+                <div class="file-row-name">team_portrait_official.jpg</div>
+                <div class="file-row-meta">JPG · 6.2 MB · 4500 × 3000</div>
+              </div>
+              <div class="file-row-right">
+                <span class="status-badge status-checking">
+                  <svg class="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                  Checking
+                </span>
+                <button class="row-remove" title="Remove from batch">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 4: Checking — taking longer than usual -->
+          <div class="file-row">
+            <div class="file-row-content">
+              <div class="file-row-checkbox"></div>
+              <div class="file-row-thumb venue"></div>
+              <div class="file-row-info">
+                <div class="file-row-name">venue_exterior_dusk.jpg</div>
+                <div class="file-row-meta">JPG · 5.4 MB · 4032 × 3024 · taking longer than usual</div>
+              </div>
+              <div class="file-row-right">
+                <span class="status-badge status-checking">
+                  <svg class="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                  Checking
+                </span>
+                <button class="row-remove" title="Remove from batch">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 5: Just resolved — Identical match -->
+          <div class="file-row flagged-identical">
+            <div class="file-row-content">
+              <div class="file-row-checkbox"></div>
+              <div class="file-row-thumb pdf-doc"></div>
+              <div class="file-row-info">
+                <div class="file-row-name">press_briefing_template.pdf</div>
+                <div class="file-row-meta">PDF · 1.2 MB</div>
+              </div>
+              <div class="file-row-right">
+                <span class="status-badge status-identical">
+                  <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  Identical match
+                </span>
+                <div class="row-chevron">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+                <button class="row-remove" title="Remove from batch">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 6: Checking -->
+          <div class="file-row">
+            <div class="file-row-content">
+              <div class="file-row-checkbox"></div>
+              <div class="file-row-thumb infographic"></div>
+              <div class="file-row-info">
+                <div class="file-row-name">infographic_brand_overview.png</div>
+                <div class="file-row-meta">PNG · 1.4 MB · 1920 × 1080</div>
+              </div>
+              <div class="file-row-right">
+                <span class="status-badge status-checking">
+                  <svg class="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                  Checking
+                </span>
+                <button class="row-remove" title="Remove from batch">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 7: Just resolved — Ready -->
+          <div class="file-row">
+            <div class="file-row-content">
+              <div class="file-row-checkbox"></div>
+              <div class="file-row-thumb sponsor"></div>
+              <div class="file-row-info">
+                <div class="file-row-name">sponsor_panel_q4.jpg</div>
+                <div class="file-row-meta">JPG · 1.9 MB · 2400 × 1200</div>
+              </div>
+              <div class="file-row-right">
+                <span class="status-badge status-ready with-dot">Ready</span>
+                <button class="row-remove" title="Remove from batch">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 8: Check failed -->
+          <div class="file-row">
+            <div class="file-row-content">
+              <div class="file-row-checkbox"></div>
+              <div class="file-row-thumb pattern-dark"></div>
+              <div class="file-row-info">
+                <div class="file-row-name">branding_pattern_dark.png</div>
+                <div class="file-row-meta">Couldn't verify against library</div>
+              </div>
+              <div class="file-row-right">
+                <span class="status-badge status-failed">
+                  <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  Check failed
+                </span>
+                <button class="row-retry" title="Retry check">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                </button>
+                <button class="row-remove" title="Remove from batch">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="file-row">
+            <div class="file-row-content">
+              <div class="file-row-checkbox"></div>
+              <div class="file-row-thumb mascot"></div>
+              <div class="file-row-info">
+                <div class="file-row-name">character_animation_render_v2.jpg</div>
+                <div class="file-row-meta">JPG · 2.1 MB · 2048 × 2048</div>
+              </div>
+              <div class="file-row-right">
+                <span class="status-badge status-checking">
+                  <svg class="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                  Checking
+                </span>
+                <button class="row-remove" title="Remove from batch">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="file-row">
+            <div class="file-row-content">
+              <div class="file-row-checkbox"></div>
+              <div class="file-row-thumb montage"></div>
+              <div class="file-row-info">
+                <div class="file-row-name">urban_montage_collection.jpg</div>
+                <div class="file-row-meta">JPG · 17.6 MB · 7680 × 4320</div>
+              </div>
+              <div class="file-row-right">
+                <span class="status-badge status-checking">
+                  <svg class="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                  Checking
+                </span>
+                <button class="row-remove" title="Remove from batch">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Annotations -->
+      <div class="annotations">
+        <div class="annotations-title">Annotations</div>
+
+        <div class="annotation">
+          <div class="annotation-label new">Checking badge</div>
+          <div class="annotation-body">Info-tinted background with spinner icon and the word <strong>Checking</strong>. Spinner rotates at 0.9s/revolution — fast enough to feel active, slow enough to read as deliberate.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label info">No flagged border yet</div>
+          <div class="annotation-body">Rows in checking state look like Ready rows (no left-border accent). The amber border only appears <em>after</em> the check returns a hash match — never speculative, never preemptive.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label info">Per-file, parallel</div>
+          <div class="annotation-body">Each file's check runs independently. Smaller files (a 312 KB PNG) finish in well under a second; larger files (17 MB JPG) can take 2–3s for the hash compute plus the server lookup.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label new">Header status updates live</div>
+          <div class="annotation-body"><strong>10 files · checking 7 · 3 done</strong> — counts shift as each file resolves. Once all checks complete, the header swaps to the resolved-state breakdown shown in Section 1.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label info">Remove still available</div>
+          <div class="annotation-body">User can remove files from the batch during checking. Cancels the in-flight check for that file. No data sent to server beyond what was already in flight.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label fix">Complete during checking</div>
+          <div class="annotation-body">Complete upload stays enabled. If clicked while files are still checking, a confirmation appears: <em>"5 files are still being checked. Proceed without verification, or wait?"</em>. User chooses — system never blocks.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label new">"Taking longer than usual"</div>
+          <div class="annotation-body">After ~15s in checking state, the meta line acknowledges the wait inline: <em>"…taking longer than usual"</em>. Same badge, same spinner — just an honest copy change. Stops the user wondering if something's broken without prematurely declaring failure.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label new">Check failed + Retry</div>
+          <div class="annotation-body">After timeout or server error, the row resolves to <strong>Check failed</strong> with a muted error badge. Meta line: <em>"Couldn't verify against library"</em>. Retry icon (refresh) sits in the chevron slot — single click puts the row back into Checking state.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label info">Timeout calibration</div>
+          <div class="annotation-body">Per-file timeout scales with size: ~10s for small files (&lt;5 MB), ~30s for mid (5–50 MB), ~60s for large (50 MB+). Dev-side configuration, not user-facing. Hash compute is local but server lookup is the network round trip.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label info">Complete with failed rows</div>
+          <div class="annotation-body">If the user wants to ship without resolving a failed row, Complete upload prompts a confirmation: <em>"3 files couldn't be checked — proceed anyway?"</em>. Better than blocking — server hiccups shouldn't take the user hostage.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== RESOLVED STATES GALLERY ====== -->
+  <div class="section-divider">
+    <div class="section-divider-eyebrow">Detail · resolved states</div>
+    <div class="section-divider-title">Three outcomes, three treatments</div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">3</div>
+      <div class="section-title-block">
+        <div class="section-title">Resolved-state gallery</div>
+        <div class="section-subtitle">All three outcomes work from a single flagged state (Identical match).</div>
+      </div>
+    </div>
+
+    <div class="resolved-gallery">
+      <!-- Using existing -->
+      <div class="resolved-card">
+        <div class="resolved-card-eyebrow">Outcome · most common</div>
+        <div class="resolved-card-title">Using existing</div>
+        <div class="resolved-card-row">
+          <div class="file-row flagged-identical resolved">
+            <div class="file-row-content">
+              <div class="file-row-checkbox"></div>
+              <div class="file-row-thumb brand-logo"></div>
+              <div class="file-row-info">
+                <div class="file-row-name">brand_logo_primary.png</div>
+                <div class="file-row-meta">Using <strong>brand_logo_official.png</strong></div>
+              </div>
+              <div class="file-row-right">
+                <span class="status-badge status-resolved-skipped">
+                  <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  Using existing
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="resolved-card-desc">Source file removed from the upload batch. The library's existing asset stays unchanged. "Open in library →" gives the user a path to verify or use the existing asset. Expected to be the dominant resolved state for hash matches.</div>
+      </div>
+
+      <!-- New version -->
+      <div class="resolved-card">
+        <div class="resolved-card-eyebrow">Outcome</div>
+        <div class="resolved-card-title">New version</div>
+        <div class="resolved-card-row">
+          <div class="file-row flagged-identical resolved">
+            <div class="file-row-content">
+              <div class="file-row-checkbox"></div>
+              <div class="file-row-thumb pdf-doc"></div>
+              <div class="file-row-info">
+                <div class="file-row-name">press_briefing_template.pdf</div>
+                <div class="file-row-meta">Replacing <strong>press_briefing_template_v1.pdf</strong></div>
+              </div>
+              <div class="file-row-right">
+                <span class="status-badge status-resolved-version">
+                  <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                  New version
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="resolved-card-desc">Source commits as a new version of the existing asset on Complete. For hash matches the file content is identical, but a new version still creates a fresh metadata/audit record. Useful for compliance flows. Depends on versioning system being bridged.</div>
+      </div>
+
+      <!-- New asset -->
+      <div class="resolved-card">
+        <div class="resolved-card-eyebrow">Outcome · edge case</div>
+        <div class="resolved-card-title">New asset</div>
+        <div class="resolved-card-row">
+          <div class="file-row flagged-identical resolved">
+            <div class="file-row-content">
+              <div class="file-row-checkbox"></div>
+              <div class="file-row-thumb mascot"></div>
+              <div class="file-row-info">
+                <div class="file-row-name">character_animation_render_v2.jpg</div>
+                <div class="file-row-meta">Added as new asset · JPG · 2.1 MB</div>
+              </div>
+              <div class="file-row-right">
+                <span class="status-badge status-resolved-upload">
+                  <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  New asset
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="resolved-card-desc">User intentionally wants the same file added separately (different collection, different rights scope, separate audit record). Rare but legitimate. Duplicate-check signal logged against the asset record; library-level cleanup tooling is a separate concern, out of scope here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== TOGGLE STATES ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">4</div>
+      <div class="section-title-block">
+        <div class="section-title">"Show only unresolved" — before and after</div>
+        <div class="section-subtitle">Filter hides Ready and Resolved rows, leaving only what still needs decision.</div>
+      </div>
+    </div>
+
+    <div class="compact-row">
+      <div class="compact-pane">
+        <div class="compact-eyebrow">Off (default)</div>
+        <div class="compact-label">All 10 files shown</div>
+        <div class="mini-toolbar">
+          <div class="mini-count">10 files · 1 unresolved</div>
+          <div class="mini-toggle">
+            <div class="mini-toggle-track"><div class="mini-toggle-thumb"></div></div>
+            <span>Show only unresolved</span>
+          </div>
+        </div>
+        <div class="mini-list">
+          <div class="mini-row"><div class="mini-thumb t1"></div><div class="mini-name">hero_campaign_announcement.jpg</div><span class="mini-badge ready with-dot">Ready</span></div>
+          <div class="mini-row flagged-identical resolved"><div class="mini-thumb t2"></div><div class="mini-name">brand_logo_primary.png</div><span class="mini-badge skipped">Using existing</span></div>
+          <div class="mini-row"><div class="mini-thumb t3"></div><div class="mini-name">team_portrait_official.jpg</div><span class="mini-badge ready with-dot">Ready</span></div>
+          <div class="mini-row flagged-identical"><div class="mini-thumb t4"></div><div class="mini-name">venue_exterior_dusk.jpg</div><span class="mini-badge identical">Identical</span></div>
+          <div class="mini-row"><div class="mini-thumb t5"></div><div class="mini-name">infographic_brand_overview.png</div><span class="mini-badge ready with-dot">Ready</span></div>
+          <div class="mini-row flagged-identical resolved"><div class="mini-thumb t6"></div><div class="mini-name">character_animation_render_v2.jpg</div><span class="mini-badge uploading">New asset</span></div>
+          <div class="mini-row flagged-identical resolved"><div class="mini-thumb t7"></div><div class="mini-name">press_briefing_template.pdf</div><span class="mini-badge version">New version</span></div>
+          <div class="mini-row"><div class="mini-thumb t8"></div><div class="mini-name">sponsor_panel_q4.jpg</div><span class="mini-badge ready with-dot">Ready</span></div>
+          <div class="mini-row"><div class="mini-thumb t9"></div><div class="mini-name">branding_pattern_dark.png</div><span class="mini-badge ready with-dot">Ready</span></div>
+          <div class="mini-row"><div class="mini-thumb t10"></div><div class="mini-name">urban_montage_collection.jpg</div><span class="mini-badge ready with-dot">Ready</span></div>
+        </div>
+      </div>
+
+      <div class="compact-pane">
+        <div class="compact-eyebrow">On</div>
+        <div class="compact-label">Only the 1 unresolved row visible</div>
+        <div class="mini-toolbar">
+          <div class="mini-count">1 of 10 files · filtered</div>
+          <div class="mini-toggle on">
+            <div class="mini-toggle-track"><div class="mini-toggle-thumb"></div></div>
+            <span>Show only unresolved</span>
+          </div>
+        </div>
+        <div class="mini-list">
+          <div class="mini-row flagged-identical"><div class="mini-thumb t4"></div><div class="mini-name">venue_exterior_dusk.jpg</div><span class="mini-badge identical">Identical</span></div>
+        </div>
+        <div style="margin-top: 16px; padding: 12px; background: var(--surface-1); border-radius: var(--radius-2); font-size: 11px; color: var(--text-muted); text-align: center;">
+          As resolutions are made, this list empties. When all items are resolved, the toggle has no effect — there's nothing left to filter out.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== INTERACTION SPEC ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">5</div>
+      <div class="section-title-block">
+        <div class="section-title">Interaction model</div>
+        <div class="section-subtitle">Row + expansion + resolved-state model. Flagged rows are always <em>Identical match</em> — single deterministic flag state derived from SHA-256 hash comparison.</div>
+      </div>
+    </div>
+
+    <div style="font-size: 13px; color: #18181B; line-height: 1.65;">
+      <p style="margin-bottom: 14px;"><strong>Click "Use existing" below the match list.</strong> File-level action — doesn't bind to any specific match. Source file is removed from the upload batch. Row collapses to the resolved state with badge <em>"Using existing"</em> and meta-line referencing the existing asset (or summary count if multiple matches).</p>
+
+      <p style="margin-bottom: 14px;"><strong>Click "Upload as new version" on a specific match.</strong> Per-match action — binds the source file to that match as its new version. Source stays in the batch, marked to commit as a new version of the referenced match on Complete. For hash matches this means a new version event with identical file content; useful for audit/compliance flows or re-licensing of an expired match.</p>
+
+      <p style="margin-bottom: 14px;"><strong>Click "Upload as new asset" below the match list.</strong> File-level action — source commits as a standalone new asset. The duplicate-check signal is logged against the asset record; surfacing/cleanup of library-level duplicates is out of scope for this release.</p>
+
+      <p style="margin-bottom: 14px;"><strong>Click the chevron on a resolved row.</strong> Re-expands to show the original match options with the previously-chosen action highlighted. User can pick differently. No separate undo.</p>
+
+      <p style="margin-bottom: 14px;"><strong>Complete upload</strong> stays enabled throughout the session. The duplicate check is a flag, not a gate — the user's right to upload is honoured at every step. On click, the system handles each row according to its state:</p>
+
+      <ul style="margin: 0 0 14px 18px; padding: 0; font-size: 13px; line-height: 1.6; color: var(--text-default);">
+        <li><strong>Ready</strong> → commits as new asset</li>
+        <li><strong>Resolved as Using existing</strong> → discarded (file not uploaded)</li>
+        <li><strong>Resolved as New version</strong> → commits as new version of the referenced match</li>
+        <li><strong>Resolved as New asset</strong> → commits as new asset, with duplicate-check signal logged against the record</li>
+        <li><strong>Unresolved (Identical match)</strong> → defaults to uploading as new asset, same as if the user had chosen that resolution explicitly</li>
+        <li><strong>Checking</strong> → upload waits for check to complete, OR proceeds without verification if user confirms</li>
+        <li><strong>Check failed</strong> → upload proceeds if user confirms; signal logged that verification did not complete</li>
+      </ul>
+
+      <p style="margin-bottom: 14px;"><strong>Confirmation dialog</strong> appears when Complete is clicked with any unresolved, still-checking, or failed rows in the batch. Dialog lists the breakdown and asks for confirmation:</p>
+
+      <div style="margin: 0 0 18px 0; padding: 28px; background: var(--surface-base); border: 1px dashed var(--border-default); border-radius: var(--radius-2); display: flex; justify-content: center;">
+        <div style="background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: var(--radius-3); box-shadow: 0 20px 50px rgba(0,0,0,0.45), 0 6px 18px rgba(0,0,0,0.3); width: 100%; max-width: 440px; overflow: hidden;">
+
+          <div style="padding: 22px 22px 0;">
+            <div style="display: flex; gap: 14px; align-items: flex-start; margin-bottom: 16px;">
+              <div style="width: 38px; height: 38px; border-radius: var(--radius-2); background: var(--warning-bg); border: 1px solid var(--warning-border); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--warning-fg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              </div>
+              <div style="flex: 1; padding-top: 2px;">
+                <div style="font-size: 15px; font-weight: 600; color: var(--text-default); margin-bottom: 4px; line-height: 1.3;">Continue with upload?</div>
+                <div style="font-size: 12px; color: var(--text-subtle); line-height: 1.5;">Your batch contains items that haven't finished resolving. These will commit with the defaults shown below.</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin: 0 22px 18px; background: var(--surface-base); border: 1px solid var(--border-default); border-radius: var(--radius-2); padding: 4px 14px;">
+
+            <div style="display: flex; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-default);">
+              <div style="min-width: 22px; font-size: 18px; font-weight: 600; color: var(--text-default); line-height: 1; padding-top: 1px;">1</div>
+              <div style="flex: 1;">
+                <div style="font-size: 12px; color: var(--text-default); font-weight: 500; line-height: 1.4;">unresolved duplicate</div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Will upload as new asset</div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-default);">
+              <div style="min-width: 22px; font-size: 18px; font-weight: 600; color: var(--text-default); line-height: 1; padding-top: 1px;">2</div>
+              <div style="flex: 1;">
+                <div style="font-size: 12px; color: var(--text-default); font-weight: 500; line-height: 1.4;">files still being checked</div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Will upload without verification</div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 14px; padding: 10px 0;">
+              <div style="min-width: 22px; font-size: 18px; font-weight: 600; color: var(--text-default); line-height: 1; padding-top: 1px;">1</div>
+              <div style="flex: 1;">
+                <div style="font-size: 12px; color: var(--text-default); font-weight: 500; line-height: 1.4;">file couldn't be checked</div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Will upload without verification</div>
+              </div>
+            </div>
+
+          </div>
+
+          <div style="padding: 14px 22px 18px; display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--border-default); background: var(--surface-3, var(--surface-2));">
+            <button class="btn btn-ghost" style="height: 32px; padding: 0 14px; font-size: 12px;">Cancel</button>
+            <button class="btn btn-primary" style="height: 32px; padding: 0 14px; font-size: 12px;">Continue upload</button>
+          </div>
+
+        </div>
+      </div>
+
+      <p>The dialog only appears when at least one row is in a non-clean state. If all rows are Ready or cleanly resolved, Complete fires immediately with no interruption. Item counts shown in the dialog reflect the actual state of the batch — sections only appear if they contain items (a batch with only unresolved duplicates won't show the checking or failed lines).</p>
+    </div>
+  </div>
+
+  <!-- ====== EDGE CASES ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">6</div>
+      <div class="section-title-block">
+        <div class="section-title">Edge cases worth a call with the dev</div>
+        <div class="section-subtitle">Edge cases the hash-only model surfaces or simplifies. Library-level duplicates (where the library itself already contains internal duplicates) are newly visible at upload.</div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <div style="padding: 14px 16px; background: #FEFCE8; border: 1px solid #FDE68A; border-radius: var(--radius-2);">
+        <div style="font-size: 13px; color: #18181B; font-weight: 600; margin-bottom: 6px;">Library-level duplicates (multiple hash matches)</div>
+        <div style="font-size: 12px; color: #52525B; line-height: 1.5;">When the library already contains internal duplicates (same hash, separate asset records — typical legacy/migration artifact), the upload check returns more than one match. UX handles this correctly (just renders more match cards). The existence of these library-level duplicates is a separate problem; surfacing and cleanup is out of scope for this release and not yet scoped as a follow-on feature.</div>
+      </div>
+
+      <div style="padding: 14px 16px; background: #FEFCE8; border: 1px solid #FDE68A; border-radius: var(--radius-2);">
+        <div style="font-size: 13px; color: #18181B; font-weight: 600; margin-bottom: 6px;">Metadata edit when Use existing is chosen</div>
+        <div style="font-size: 12px; color: #52525B; line-height: 1.5;">If the user edited description / attributes before clicking Use existing, those edits get discarded. Flag with a small toast on resolve: <em>"File removed from batch. Metadata edits discarded."</em></div>
+      </div>
+
+      <div style="padding: 14px 16px; background: #FEFCE8; border: 1px solid #FDE68A; border-radius: var(--radius-2);">
+        <div style="font-size: 13px; color: #18181B; font-weight: 600; margin-bottom: 6px;">Metadata edit on New version files</div>
+        <div style="font-size: 12px; color: #52525B; line-height: 1.5;">For hash matches, the file content is identical to the existing asset — so what does "Upload as new version" actually change? Usually metadata or rights or audit context. Behaviour of edits applied at upload (overwrite existing metadata, append version-scoped notes, or discard) needs a dev call.</div>
+      </div>
+
+      <div style="padding: 14px 16px; background: #FEFCE8; border: 1px solid #FDE68A; border-radius: var(--radius-2);">
+        <div style="font-size: 13px; color: #18181B; font-weight: 600; margin-bottom: 6px;">Rights on New version with expired match</div>
+        <div style="font-size: 12px; color: #52525B; line-height: 1.5;">Versioning an expired asset is a legitimate re-licensing flow. New version should reset rights to the uploader's input rather than inheriting the expired state. Worth being explicit in the spec.</div>
+      </div>
+
+      <div style="padding: 14px 16px; background: #FEFCE8; border: 1px solid #FDE68A; border-radius: var(--radius-2);">
+        <div style="font-size: 13px; color: #18181B; font-weight: 600; margin-bottom: 6px;">"Open in library" target behaviour</div>
+        <div style="font-size: 12px; color: #52525B; line-height: 1.5;">Opens in a new tab. The user is mid-upload and shouldn't lose that state to verify an existing reference.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== MULTI-SELECT AND BULK EDIT ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">7</div>
+      <div class="section-title-block">
+        <div class="section-title">Multi-select and bulk edit</div>
+        <div class="section-subtitle">Checkboxes on every row let the user select multiple files and apply metadata, attributes, and rights in bulk. Selection state coexists with duplicate-check state — the left-border accent (system signal) sits on top of the selection tint (user signal). Both surfaces work without conflict.</div>
+      </div>
+    </div>
+
+    <div class="mockup-layout">
+      <div class="mockup">
+        <!-- App bar -->
+        <div class="app-bar">
+          <div class="app-logo">screendragon</div>
+          <div class="app-nav">
+            <div class="app-nav-item active">DAM</div>
+            <div class="app-nav-item">DAM Form</div>
+            <div class="app-nav-item">Org Manager</div>
+            <div class="app-nav-item">Reports</div>
+          </div>
+          <div class="app-right">
+            <div class="app-search">Search…</div>
+          </div>
+        </div>
+
+        <!-- Upload header -->
+        <div class="upload-header">
+          <div class="upload-status">
+            <div class="upload-status-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <div class="upload-status-text">
+              <div class="upload-status-primary">Uploading 10 files</div>
+              <div class="upload-status-secondary">6 ready · <span class="resolved-count">3 resolved</span> · <span class="review-flag">1 flagged duplicate</span></div>
+            </div>
+          </div>
+          <div class="upload-header-actions">
+            <button class="btn btn-ghost">Back to upload</button>
+            <button class="btn btn-primary">Complete upload</button>
+            <button class="btn btn-close">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="upload-body">
+          <!-- Tabs rail -->
+          <div class="tabs-rail">
+            <div class="tab active">
+              <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Details
+            </div>
+            <div class="tab">
+              <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg>
+              AI
+            </div>
+            <div class="tab">
+              <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Rights
+            </div>
+          </div>
+
+          <!-- Metadata panel — multi-select mode -->
+          <div class="meta-panel">
+            <div class="meta-panel-eyebrow">Editing metadata for</div>
+            <div class="meta-panel-filename">3 selected files</div>
+
+            <div class="meta-section">
+              <div class="meta-label">Description</div>
+              <textarea class="textarea" placeholder="Add a description for all 3 files…"></textarea>
+              <div class="meta-help">Applying standard tags to 3 files.</div>
+            </div>
+            <div class="meta-section">
+              <div class="meta-label">Attributes</div>
+              <input type="text" class="input-search" placeholder="Search attributes…">
+              <div class="meta-list">
+                <div class="meta-item">Name <svg class="meta-item-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                <div class="meta-item">Official Mark <svg class="meta-item-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                <div class="meta-item">Version <svg class="meta-item-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                <div class="meta-item">Language <svg class="meta-item-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                <div class="meta-item">Country <svg class="meta-item-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                <div class="meta-item">Format <svg class="meta-item-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main area: file list with bulk action bar -->
+          <div class="main">
+
+            <!-- Bulk action bar replaces normal toolbar when items selected -->
+            <div class="bulk-action-bar">
+              <span class="bulk-count"><strong>3</strong> files selected</span>
+              <button class="bulk-link">Clear selection</button>
+              <button class="bulk-action">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                Remove from batch
+              </button>
+            </div>
+
+            <div class="file-list">
+
+              <!-- 1: Ready · SELECTED -->
+              <div class="file-row selected">
+                <div class="file-row-content">
+                  <div class="file-row-checkbox checked">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div class="file-row-thumb banner-green"></div>
+                  <div class="file-row-info">
+                    <div class="file-row-name">hero_campaign_announcement.jpg</div>
+                    <div class="file-row-meta">JPG · 4.8 MB · 3840 × 2160</div>
+                  </div>
+                  <div class="file-row-right">
+                    <span class="status-badge status-ready with-dot">Ready</span>
+                    <button class="row-remove" title="Remove from batch">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2: Using existing (resolved) — checkbox enabled, can be selected for batch ops -->
+              <div class="file-row flagged-identical resolved">
+                <div class="file-row-content">
+                  <div class="file-row-checkbox"></div>
+                  <div class="file-row-thumb brand-logo"></div>
+                  <div class="file-row-info">
+                    <div class="file-row-name">brand_logo_primary.png</div>
+                    <div class="file-row-meta">Using <strong>brand_logo_official.png</strong><a href="#" class="meta-link">Open in library →</a></div>
+                  </div>
+                  <div class="file-row-right">
+                    <span class="status-badge status-resolved-skipped">
+                      <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      Using existing
+                    </span>
+                    <div class="row-chevron" title="Change decision">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <button class="row-remove" title="Remove from batch">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3: Ready · SELECTED -->
+              <div class="file-row selected">
+                <div class="file-row-content">
+                  <div class="file-row-checkbox checked">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div class="file-row-thumb squad"></div>
+                  <div class="file-row-info">
+                    <div class="file-row-name">team_portrait_official.jpg</div>
+                    <div class="file-row-meta">JPG · 6.2 MB · 4500 × 3000</div>
+                  </div>
+                  <div class="file-row-right">
+                    <span class="status-badge status-ready with-dot">Ready</span>
+                    <button class="row-remove" title="Remove from batch">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 4: Identical match — collapsed, not selected -->
+              <div class="file-row flagged-identical">
+                <div class="file-row-content">
+                  <div class="file-row-checkbox"></div>
+                  <div class="file-row-thumb venue"></div>
+                  <div class="file-row-info">
+                    <div class="file-row-name">venue_exterior_dusk.jpg</div>
+                    <div class="file-row-meta">JPG · 5.4 MB · 4032 × 3024</div>
+                  </div>
+                  <div class="file-row-right">
+                    <span class="status-badge status-identical">
+                      <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      Identical match
+                    </span>
+                    <div class="row-chevron">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <button class="row-remove" title="Remove from batch">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 5: Ready · SELECTED -->
+              <div class="file-row selected">
+                <div class="file-row-content">
+                  <div class="file-row-checkbox checked">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div class="file-row-thumb infographic"></div>
+                  <div class="file-row-info">
+                    <div class="file-row-name">infographic_brand_overview.png</div>
+                    <div class="file-row-meta">PNG · 1.4 MB · 1920 × 1080</div>
+                  </div>
+                  <div class="file-row-right">
+                    <span class="status-badge status-ready with-dot">Ready</span>
+                    <button class="row-remove" title="Remove from batch">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 6: New asset (resolved) — unchecked -->
+              <div class="file-row flagged-identical resolved">
+                <div class="file-row-content">
+                  <div class="file-row-checkbox"></div>
+                  <div class="file-row-thumb mascot"></div>
+                  <div class="file-row-info">
+                    <div class="file-row-name">character_animation_render_v2.jpg</div>
+                    <div class="file-row-meta">Added as new asset · JPG · 2.1 MB · 2048 × 2048</div>
+                  </div>
+                  <div class="file-row-right">
+                    <span class="status-badge status-resolved-upload">
+                      <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      New asset
+                    </span>
+                    <div class="row-chevron" title="Change decision">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <button class="row-remove" title="Remove from batch">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 7: New version (resolved) — unchecked -->
+              <div class="file-row flagged-identical resolved">
+                <div class="file-row-content">
+                  <div class="file-row-checkbox"></div>
+                  <div class="file-row-thumb pdf-doc"></div>
+                  <div class="file-row-info">
+                    <div class="file-row-name">press_briefing_template.pdf</div>
+                    <div class="file-row-meta">Replacing <strong>press_briefing_template_v1.pdf</strong><a href="#" class="meta-link">Open in library →</a></div>
+                  </div>
+                  <div class="file-row-right">
+                    <span class="status-badge status-resolved-version">
+                      <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                      New version
+                    </span>
+                    <div class="row-chevron" title="Change decision">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <button class="row-remove" title="Remove from batch">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 8: Ready · unchecked -->
+              <div class="file-row">
+                <div class="file-row-content">
+                  <div class="file-row-checkbox"></div>
+                  <div class="file-row-thumb sponsor"></div>
+                  <div class="file-row-info">
+                    <div class="file-row-name">sponsor_panel_q4.jpg</div>
+                    <div class="file-row-meta">JPG · 1.9 MB · 2400 × 1200</div>
+                  </div>
+                  <div class="file-row-right">
+                    <span class="status-badge status-ready with-dot">Ready</span>
+                    <button class="row-remove" title="Remove from batch">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="annotations">
+        <div class="annotations-title">Annotations</div>
+
+        <div class="annotation">
+          <div class="annotation-label new">Checkbox column</div>
+          <div class="annotation-body">Sits at the leftmost position of every row, always visible. 18×18 box with cerulean fill on checked. Click target extends across the column for ease of selection.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label new">Selection coexists with flagged state</div>
+          <div class="annotation-body">Two-channel feedback: left-border accent for system state (flagged for duplicate), background tint for user state (selected). They occupy different visual layers — a flagged + selected row shows amber on its edge, cerulean tint on its body.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label info">Selection works on every row</div>
+          <div class="annotation-body">Checkboxes stay enabled across all states — including Using existing and Check failed. Selection is for batch operations; Remove from batch works on any selection regardless of state. Metadata edit applicability is handled in the panel, not by blocking selection at the checkbox.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label new">Bulk action bar replaces toolbar</div>
+          <div class="annotation-body">When 1+ rows are selected, the normal "10 files · 42.7 MB total" toolbar swaps to <strong>"3 files selected"</strong> with Clear selection link and Remove from batch action. Clears back to default toolbar when selection drops to zero.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label new">Side panel shifts to multi-mode</div>
+          <div class="annotation-body">Filename area shows <strong>"3 selected files"</strong> instead of an individual filename. Description placeholder updates to <em>"Add a description for all 3 files…"</em>. Helper text confirms: <em>"Applying standard tags to 3 files."</em></div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label new">Mixed-state selection</div>
+          <div class="annotation-body">When selection includes a Using existing or Check failed row alongside editable rows, the panel header shows <strong>"Editing metadata for 2 of 3 selected files"</strong> and a helper line confirms <em>"1 file (Using existing) won't receive these edits"</em>. On Complete, edits apply only to the editable rows — the others stay as they are.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label info">Standard selection patterns</div>
+          <div class="annotation-body">Click checkbox to toggle. Shift+click for range. Cmd/Ctrl+click for additive. Space toggles focused row. Header checkbox (not shown here) would select-all with indeterminate state when partial.</div>
+        </div>
+
+        <div class="annotation">
+          <div class="annotation-label info">Tri-state attributes on multi-select</div>
+          <div class="annotation-body">Same pattern as library bulk edit: attribute checkboxes show empty (not set), checked (set on all), or tri-state with <strong>N of M</strong> count (set on some). At upload, most files start with empty attributes — so the default state is empty across the board. Tri-state only appears in the edge case where the user has already edited some files individually before opening multi-select.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
