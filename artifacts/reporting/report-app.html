@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reporting — Home + Builder (Scale)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --color-stone-50:#fefcfc; --color-stone-100:#f5f5f4; --color-stone-200:#e7e5e4;
+  --color-stone-300:#d6d3d1; --color-stone-400:#978985; --color-stone-500:#6b615e;
+  --color-stone-600:#57534e; --color-stone-700:#44403c; --color-stone-800:#292524; --color-stone-900:#261e1b;
+  --color-primary-50:#e8f6fa; --color-primary-100:#c4e8f1; --color-primary-600:#0b6e8a;
+  --color-primary-700:#005f7b; --color-primary-800:#1b404e;
+  --color-red-100:#feebe7; --color-red-500:#e54d2e; --color-red-600:#d13415;
+  --color-amber-100:#ffefd5; --color-amber-500:#f5a524; --color-amber-600:#985b00; --color-amber-700:#4E350D;
+  --color-green-100:#e6f7ed; --color-green-500:#29a383; --color-green-600:#208368;
+
+  --surface-default:var(--color-stone-50); --surface-muted:var(--color-stone-100); --surface-emphasis:var(--color-stone-200);
+  --text-default:var(--color-stone-900); --text-muted:var(--color-stone-500); --text-subtle:var(--color-stone-400);
+  --border-default:var(--color-stone-200); --border-subtle:var(--color-stone-100); --border-emphasis:var(--color-stone-300);
+  --primary-default:var(--color-primary-600); --primary-hover:var(--color-primary-700);
+  --primary-subtle:var(--color-primary-50); --primary-muted:var(--color-primary-100);
+  --nav-bg:var(--color-primary-800);
+  --status-active-fg:var(--color-green-600); --status-complete-fg:var(--color-green-600); --status-onhold-fg:var(--color-stone-500);
+
+  --spacing-1:4px; --spacing-2:8px; --spacing-3:12px; --spacing-4:16px; --spacing-5:20px; --spacing-6:24px;
+  --font-family-text:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-size-1:12px; --font-size-2:14px; --font-size-3:16px; --font-size-4:18px;
+  --font-weight-regular:400; --font-weight-medium:500; --font-weight-semibold:600;
+  --radius-1:3px; --radius-2:4px; --radius-3:6px; --radius-4:8px; --radius-full:9999px;
+  --btn-height-2:32px; --btn-height-3:40px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(--text-default);
+  background:var(--surface-muted);-webkit-font-smoothing:antialiased;}
+
+.nav{height:52px;background:var(--nav-bg);color:#fff;display:flex;align-items:center;padding:0 var(--spacing-6);gap:var(--spacing-4);}
+.brand{display:flex;align-items:center;gap:var(--spacing-3);font-weight:var(--font-weight-semibold);font-size:var(--font-size-3);}
+.brand .mark{width:18px;height:18px;border-radius:var(--radius-1);background:var(--color-green-500);}
+.nav .crumb{color:rgba(255,255,255,0.6);font-size:var(--font-size-2);}
+.nav .spacer{flex:1;}
+.scope-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);padding:4px 10px;border-radius:var(--radius-full);font-size:var(--font-size-1);}
+.avatar{width:28px;height:28px;border-radius:var(--radius-full);background:var(--color-green-500);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;}
+
+.builder{display:flex;height:calc(100vh - 52px);align-items:stretch;}
+.build-surface{display:flex;flex:0 0 auto;min-width:0;background:var(--surface-default);border-right:1px solid var(--border-default);overflow:hidden;height:100%;}
+.region{display:flex;flex-direction:column;border-right:1px solid var(--border-default);min-height:0;height:100%;}
+.region:last-child{border-right:none;}
+.region.lk,.field.lk{opacity:0.45;pointer-events:none;}
+.r-setup{flex:0 0 300px;} .r-cols{flex:0 0 300px;} .r-meta{flex:0 0 280px;}
+.region-head{padding:13px var(--spacing-4);border-bottom:1px solid var(--border-subtle);font-size:11px;font-weight:var(--font-weight-semibold);
+  text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.region-body{padding:var(--spacing-4);overflow-y:auto;flex:1;min-height:0;}
+.region-body.flush{padding:0;}
+.optlist.plain{border:none;border-radius:0;max-height:none;}
+.sort-row{display:flex;gap:8px;}
+.sort-row .select{flex:1;min-width:0;}
+.dir-btn{flex-shrink:0;height:var(--btn-height-3);padding:0 10px;border:1px solid var(--border-emphasis);border-radius:var(--radius-2);
+  background:var(--surface-default);font-family:inherit;font-size:11px;color:var(--text-default);cursor:pointer;white-space:nowrap;}
+.dir-btn:hover{background:var(--surface-muted);}
+.filter-row{display:flex;flex-direction:column;gap:6px;padding:8px;border:1px solid var(--border-default);border-radius:var(--radius-3);margin-bottom:8px;background:var(--surface-muted);}
+.fr-top{display:flex;align-items:center;justify-content:space-between;}
+.fr-field{font-size:var(--font-size-1);font-weight:var(--font-weight-medium);}
+.fr-x{border:none;background:none;color:var(--text-subtle);cursor:pointer;font-size:13px;line-height:1;padding:2px;}
+.fr-x:hover{color:var(--color-red-600);}
+.fr-ctl{display:flex;gap:6px;align-items:center;}
+.fr-ctl .select{height:32px;font-size:var(--font-size-1);}
+.fr-ctl select[data-op]{flex:0 0 70px;width:70px;}
+.fr-ctl input{height:32px;font-size:var(--font-size-1);flex:1 1 auto;min-width:0;padding:0 8px;border:1px solid var(--border-emphasis);border-radius:var(--radius-2);font-family:inherit;background:var(--surface-default);}
+.fr-ctl select[data-val]{flex:1 1 auto;width:auto;}
+.fr-op{font-size:11px;color:var(--text-muted);flex:0 0 auto;}
+.fr-mode{height:30px;font-size:var(--font-size-1);width:100%;color:var(--text-default);}
+.fr-ask{flex:1 1 auto;min-width:0;height:32px;display:flex;align-items:center;padding:0 8px;border:1px dashed var(--border-emphasis);border-radius:var(--radius-2);color:var(--text-subtle);font-size:11px;font-style:italic;background:repeating-linear-gradient(45deg,transparent,transparent 6px,rgba(0,0,0,.012) 6px,rgba(0,0,0,.012) 12px);}
+.fr-me{flex:1 1 auto;font-size:11px;font-style:italic;color:var(--text-muted);padding:6px 0;}
+.fr-req{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);margin-top:2px;cursor:pointer;}
+.fr-req input{width:13px;height:13px;}
+.def-v .pill.filt em.ask{font-style:italic;color:var(--text-muted);font-weight:var(--font-weight-medium);}
+.btn-ghost{background:transparent;color:var(--text-subtle);}
+.btn-ghost:hover{background:var(--surface-muted);color:var(--text-default);}
+.rt-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:60;padding:20px;}
+.rt-overlay.show{display:flex;}
+.rt-dialog{background:var(--surface-default);border-radius:var(--radius-4);box-shadow:var(--shadow-lg,0 12px 34px rgba(0,0,0,.2));width:100%;max-width:420px;overflow:hidden;}
+.rt-head{font-size:var(--font-size-3,16px);font-weight:var(--font-weight-semibold);padding:18px 20px 0;}
+.rt-sub{font-size:var(--font-size-1);color:var(--text-muted);padding:4px 20px 0;}
+.rt-body{padding:14px 20px;display:flex;flex-direction:column;gap:12px;max-height:52vh;overflow-y:auto;overflow-x:hidden;}
+.rt-field{display:flex;flex-direction:column;gap:5px;}
+.rt-field>label{font-size:var(--font-size-1);font-weight:var(--font-weight-medium);color:var(--text-default);}
+.rt-asterisk{color:var(--color-red-600);}
+.rt-field input,.rt-field select{height:34px;font-size:var(--font-size-2);padding:0 10px;border:1px solid var(--border-emphasis);border-radius:var(--radius-2);font-family:inherit;background:var(--surface-default);width:100%;}
+.rt-inline{display:flex;align-items:center;gap:8px;}
+.rt-inline .fr-op{flex:0 0 auto;}
+.rt-inline input{flex:1 1 auto;}
+.rt-bad{border-color:var(--color-red-500)!important;box-shadow:0 0 0 3px var(--color-red-100);}
+.rt-note{font-size:11px;font-style:italic;color:var(--text-muted);border-top:1px solid var(--border-subtle);padding-top:10px;}
+.rt-foot{display:flex;justify-content:flex-end;gap:8px;padding:2px 20px 18px;}
+.btn-secondary{background:transparent;color:var(--primary-default);border:1px solid var(--primary-default);}
+.btn-secondary:hover{background:var(--primary-subtle);}
+.rt-dialog.wide{max-width:480px;}
+.pm-add{width:100%;height:36px;font-size:var(--font-size-1);margin-bottom:4px;}
+.pm-list{display:flex;flex-direction:column;}
+.pm-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-subtle);}
+.pm-row:last-child{border-bottom:none;}
+.pm-av{width:28px;height:28px;border-radius:var(--radius-full);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex:0 0 auto;}
+.pm-av.grp{background:var(--surface-emphasis);color:var(--text-muted);}
+.pm-meta{flex:1 1 auto;min-width:0;}
+.pm-name{font-size:var(--font-size-2);color:var(--text-default);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pm-sub{font-size:11px;color:var(--text-muted);}
+.pm-lvl{height:30px;font-size:var(--font-size-1);flex:0 0 128px;width:128px;}
+.pm-x{border:none;background:none;color:var(--text-subtle);cursor:pointer;font-size:13px;padding:2px;line-height:1;}
+.pm-x:hover{color:var(--color-red-600);}
+.pm-fixed{font-size:11px;color:var(--text-muted);flex:0 0 auto;padding-right:4px;}
+.pm-section{font-size:11px;font-weight:var(--font-weight-semibold);letter-spacing:.02em;text-transform:uppercase;color:var(--text-muted);margin:18px 0 8px;}
+.pm-scope{display:flex;flex-direction:column;gap:8px;}
+.pm-opt{display:flex;gap:9px;align-items:flex-start;padding:9px 11px;border:1px solid var(--border-default);border-radius:var(--radius-3);cursor:pointer;}
+.pm-opt.sel{border-color:var(--primary-default);box-shadow:0 0 0 2px var(--primary-subtle);}
+.pm-opt input{margin-top:2px;flex:0 0 auto;}
+.pm-otext{min-width:0;display:flex;flex-direction:column;}
+.pm-omain{font-size:var(--font-size-1);color:var(--text-default);font-weight:var(--font-weight-medium);}
+.pm-osub{font-size:11px;color:var(--text-muted);margin-top:1px;}
+.pm-warn{display:flex;gap:7px;align-items:flex-start;margin-top:8px;padding:8px 10px;background:var(--color-amber-100);border:1px solid var(--color-amber-500);border-radius:var(--radius-2);font-size:11px;color:var(--color-amber-700);}
+.pm-warn svg{flex:0 0 auto;margin-top:1px;}
+.pm-note{font-size:11px;font-style:italic;color:var(--text-muted);border-top:1px solid var(--border-subtle);margin-top:14px;padding-top:10px;}
+#view-schedules{display:none;}
+.sched-main{padding:var(--spacing-6) var(--spacing-7);max-width:1180px;margin:0 auto;}
+.sch-bar{display:flex;align-items:center;gap:12px;margin-bottom:var(--spacing-4);}
+.sch-bar .spacer{flex:1;}
+.sch-table{background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-4);box-shadow:var(--shadow-sm);overflow:hidden;}
+.tzchip{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);background:var(--surface-muted);border:1px solid var(--border-default);padding:3px 9px;border-radius:var(--radius-full);}
+.tzchip svg{width:12px;height:12px;}
+.sch-head,.sch-row{display:grid;grid-template-columns:1.5fr 180px 165px 175px 180px 44px;align-items:center;gap:10px;}
+.sch-head{padding:11px var(--spacing-5);background:var(--surface-muted);border-bottom:1px solid var(--border-default);font-size:11px;font-weight:var(--fw-semibold);color:var(--text-muted);text-transform:uppercase;letter-spacing:.02em;}
+.sch-row{padding:14px var(--spacing-5);border-bottom:1px solid var(--border-subtle);}
+.sch-row:last-child{border-bottom:none;}
+.sch-row:hover{background:var(--surface-muted);}
+.sch-cell{font-size:var(--font-size-2);color:var(--text-default);min-width:0;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.r-sub2{font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sch-muted{font-size:11px;color:var(--text-muted);}
+.sd-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:end;}
+.sd-grid>.rt-field{margin:0;}
+.sd-hint{font-size:11px;color:var(--text-muted);align-self:center;}
+.sd-time{display:flex;align-items:center;gap:6px;}
+.sd-time select{flex:1;}
+.sort-arr{color:var(--primary-default);font-weight:700;}
+.scopechip.filt{background:var(--primary-subtle);border-color:var(--primary-muted);color:var(--primary-default);}
+.field{margin-bottom:var(--spacing-4);}
+.field:last-child{margin-bottom:0;}
+.field label{display:block;font-size:var(--font-size-1);font-weight:var(--font-weight-medium);color:var(--text-default);margin-bottom:6px;}
+.field.lk{opacity:0.45;pointer-events:none;}
+.field .gate{font-size:11px;color:var(--text-subtle);font-weight:var(--font-weight-regular);}
+
+.select{width:100%;height:var(--btn-height-3);padding:0 12px;border:1px solid var(--border-emphasis);border-radius:var(--radius-2);
+  font-family:inherit;font-size:var(--font-size-2);color:var(--text-default);background:var(--surface-default);cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%236b615e' stroke-width='1.3'><path d='M4 6l4 4 4-4'/></svg>");
+  background-repeat:no-repeat;background-position:right 10px center;}
+.select:focus{outline:none;border-color:var(--primary-default);box-shadow:0 0 0 3px var(--primary-subtle);}
+
+.optlist{border:1px solid var(--border-default);border-radius:var(--radius-3);max-height:150px;overflow-y:auto;}
+.opt{display:flex;align-items:center;gap:8px;padding:11px 12px;cursor:pointer;font-size:var(--font-size-2);border-bottom:1px solid var(--border-subtle);}
+.opt:last-child{border-bottom:none;}
+.opt:hover{background:var(--surface-muted);}
+.opt .meta{margin-left:auto;font-size:11px;color:var(--text-subtle);}
+.checkbox-input{appearance:none;width:16px;height:16px;border:1.5px solid var(--color-stone-500);border-radius:var(--radius-1);
+  background:var(--surface-default);cursor:pointer;position:relative;flex-shrink:0;}
+.checkbox-input:checked{background:var(--primary-default);border-color:var(--primary-default);}
+.checkbox-input:checked::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:11px;font-weight:700;}
+.checkbox-input:disabled{background:var(--surface-emphasis);border-color:var(--border-emphasis);cursor:not-allowed;}
+.checkbox-input:disabled:checked{background:var(--color-stone-400);border-color:var(--color-stone-400);}
+
+.col-section .optlist{max-height:230px;}
+.col-group-lbl{font-size:10px;font-weight:var(--font-weight-semibold);text-transform:uppercase;letter-spacing:0.04em;
+  color:var(--text-subtle);padding:7px 10px 4px;background:var(--surface-muted);border-bottom:1px solid var(--border-subtle);}
+.linkbtn{background:none;border:none;color:var(--primary-default);font-size:11px;font-weight:var(--font-weight-medium);cursor:pointer;font-family:inherit;padding:0;}
+
+/* ---- Preview ---- */
+.pv-area{flex:1 1 0;min-width:380px;display:flex;justify-content:center;padding:var(--spacing-5);height:100%;overflow:hidden;}
+.preview{flex:0 1 680px;min-width:0;max-width:680px;background:var(--surface-default);border:1px solid var(--border-default);
+  border-radius:var(--radius-4);box-shadow:var(--shadow-sm);overflow:hidden;display:flex;flex-direction:column;height:100%;}
+.pv-head{padding:var(--spacing-4) var(--spacing-5);border-bottom:1px solid var(--border-default);display:flex;align-items:center;gap:12px;}
+.pv-head .title{font-size:var(--font-size-4);font-weight:var(--font-weight-semibold);}
+.pv-head .sub{font-size:var(--font-size-1);color:var(--text-muted);}
+.pv-spacer{flex:1;}
+.pv-sf{display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-size:var(--font-size-1);font-weight:var(--font-weight-medium);color:var(--primary-default);background:var(--primary-subtle);border:1px solid transparent;border-radius:var(--radius-full);padding:5px 12px;cursor:pointer;}
+.pv-sf:hover{background:var(--surface-default);border-color:var(--primary-default);}
+.pv-sf svg{opacity:.85;flex:0 0 auto;}
+.pv-sf .sf-count{margin-left:1px;background:var(--primary-default);color:#fff;border-radius:var(--radius-full);font-size:10px;font-weight:var(--font-weight-semibold);padding:0 6px;line-height:16px;}
+
+.pv-note{display:flex;align-items:flex-start;gap:10px;margin:var(--spacing-4) var(--spacing-5) 0;padding:10px 12px;border-radius:var(--radius-3);
+  background:var(--primary-subtle);border:1px solid var(--primary-muted);color:var(--primary-default);font-size:var(--font-size-1);line-height:16px;}
+.pv-note svg{flex-shrink:0;margin-top:1px;}
+
+.pv-scope{display:flex;flex-wrap:wrap;gap:6px;padding:var(--spacing-4) var(--spacing-5) 0;}
+.pv-def{padding:var(--spacing-4) var(--spacing-5) 0;display:flex;flex-direction:column;gap:7px;}
+.def-row{display:flex;gap:12px;font-size:var(--font-size-1);line-height:1.45;}
+.def-k{flex:0 0 62px;color:var(--text-muted);font-weight:var(--font-weight-medium);}
+.def-v{flex:1;min-width:0;color:var(--text-default);}
+.def-v.unset{color:var(--text-subtle);}
+.def-v .pill{display:inline-block;background:var(--surface-muted);border:1px solid var(--border-default);border-radius:var(--radius-2);padding:1px 7px;margin:0 4px 4px 0;}
+.def-v .pill.filt{background:var(--surface-muted);border-color:var(--border-emphasis);color:var(--text-default);display:inline-flex;align-items:center;gap:5px;}
+.def-v .pill.filt b{font-weight:var(--font-weight-semibold);}
+.def-v .pill.filt .filt-ic{opacity:.5;flex:0 0 auto;}
+.scopechip{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--text-default);background:var(--surface-muted);
+  border:1px solid var(--border-default);border-radius:var(--radius-full);padding:3px 10px;}
+.scopechip b{font-weight:var(--font-weight-semibold);}
+.scopechip.muted{color:var(--text-subtle);}
+
+.pv-body{flex:1;overflow:auto;padding:var(--spacing-4) var(--spacing-5);}
+.col-manifest{border:1px solid var(--border-default);border-radius:var(--radius-3);overflow:hidden;}
+.cm-head{font-size:11px;color:var(--text-subtle);padding:8px 12px;background:var(--surface-muted);border-bottom:1px solid var(--border-default);display:flex;align-items:center;gap:6px;}
+.cm-head .cm-count{font-weight:var(--font-weight-medium);}
+.cm-head.warn{color:var(--color-amber-700);background:var(--color-amber-100);}
+.cm-head.warn .cm-count{font-weight:var(--font-weight-semibold);}
+.cm-head.over{color:var(--color-red-600);background:var(--color-red-100);}
+.cm-head.over .cm-count{font-weight:var(--font-weight-semibold);}
+.cm-tags{display:flex;flex-wrap:wrap;gap:7px;}
+.cm-group{padding:13px 14px;}
+.cm-group + .cm-group{border-top:1px solid var(--border-default);}
+.cm-grp-lbl{font-size:10px;font-weight:var(--font-weight-semibold);text-transform:uppercase;letter-spacing:.04em;color:var(--text-subtle);margin-bottom:9px;}
+.col-tag{font-size:var(--font-size-1);padding:5px 10px;border-radius:var(--radius-2);border:1px solid var(--border-default);background:var(--surface-muted);color:var(--text-default);display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+.col-tag.ct-grp{font-weight:var(--font-weight-medium);}
+.col-tag.ct-sort{box-shadow:0 0 0 2px var(--primary-muted);border-color:var(--primary-default);}
+.cm-arr{font-weight:700;color:var(--primary-default);}
+.col-tag .ct-unit{font-size:10px;font-weight:var(--font-weight-regular);opacity:.55;margin-left:1px;}
+.col-tag .ct-unit::before{content:"· ";}
+.col-tag .ct-pre{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;opacity:.65;}
+.cm-legend{display:flex;flex-wrap:wrap;gap:14px;padding:0 14px 13px;font-size:10px;color:var(--text-muted);}
+.cm-legend span{display:inline-flex;align-items:center;gap:5px;}
+.cm-legend i{width:10px;height:10px;border-radius:3px;display:inline-block;border:1px solid;}
+.lg-dim{background:var(--surface-default);border-color:var(--border-emphasis);}
+.lg-measure{background:var(--primary-subtle);border-color:var(--primary-muted);}
+.lg-meta{background:var(--color-amber-100);border-color:var(--color-amber-500);}
+.lg-grp{background:var(--color-green-100);border-color:var(--color-green-500);}
+.wire-wrap{border:1px solid var(--border-default);border-radius:var(--radius-3);overflow:hidden;}
+.wire-cap{font-size:11px;color:var(--text-subtle);padding:7px 12px;background:var(--surface-muted);border-bottom:1px solid var(--border-default);
+  display:flex;align-items:center;gap:6px;}
+table{width:100%;border-collapse:collapse;font-size:var(--font-size-2);}
+thead th{text-align:left;font-weight:var(--font-weight-semibold);font-size:var(--font-size-1);color:var(--text-default);
+  padding:10px 14px;border-bottom:2px solid var(--border-emphasis);white-space:nowrap;background:var(--surface-default);}
+thead th.num{text-align:right;}
+thead th.grp{color:var(--primary-default);}
+thead th.meta{color:var(--color-amber-700);}
+th .metatag{display:inline-block;margin-left:5px;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;
+  color:var(--color-amber-600);background:var(--color-amber-100);border:1px solid var(--color-amber-500);border-radius:3px;padding:0 4px;vertical-align:middle;}
+.meta-head{font-size:11px;color:var(--text-subtle);padding:8px var(--spacing-4);background:var(--surface-muted);border-bottom:1px solid var(--border-subtle);line-height:15px;}
+tbody td{padding:12px 14px;border-bottom:1px solid var(--border-subtle);}
+.bar{height:9px;border-radius:var(--radius-full);background:var(--surface-emphasis);}
+.bar.m{background:var(--color-amber-100);border:1px solid var(--color-amber-500);}
+td.num .bar{margin-left:auto;}
+td.num{text-align:right;}
+.bar.g{background:var(--primary-muted);}
+
+.pv-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:40px;color:var(--text-muted);}
+.pv-empty .ico{width:46px;height:46px;border-radius:var(--radius-full);background:var(--surface-muted);display:flex;align-items:center;justify-content:center;color:var(--text-subtle);}
+.pv-empty h3{font-size:var(--font-size-3);font-weight:var(--font-weight-semibold);color:var(--text-default);}
+
+/* ---- Footer ---- */
+.pv-foot{border-top:1px solid var(--border-default);padding:var(--spacing-4) var(--spacing-5);display:flex;align-items:center;gap:var(--spacing-4);}
+.est{display:flex;flex-direction:column;gap:4px;min-width:170px;}
+.est .row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;}
+.est .k{font-size:11px;color:var(--text-muted);}
+.est .v{font-size:var(--font-size-3);font-weight:var(--font-weight-semibold);font-variant-numeric:tabular-nums;}
+.meter{height:5px;border-radius:var(--radius-full);background:var(--surface-emphasis);overflow:hidden;}
+.meter>span{display:block;height:100%;background:var(--color-green-500);transition:width .25s,background .25s;}
+.meter.warn>span{background:var(--color-amber-500);} .meter.over>span{background:var(--color-red-500);}
+.pv-foot .spacer{flex:1;}
+.guard{font-size:11px;color:var(--color-amber-700);max-width:300px;line-height:15px;}
+.bd-opts{display:flex;flex-wrap:wrap;gap:6px;}
+.bd-opt{font-size:11px;padding:5px 10px;border:1px solid var(--border-emphasis);border-radius:var(--radius-full);background:var(--surface-default);color:var(--text-default);cursor:pointer;font-family:inherit;line-height:1.2;}
+.bd-opt:hover:not(:disabled):not(.sel){background:var(--surface-muted);}
+.bd-opt.sel{background:var(--primary-subtle);border-color:var(--primary-default);color:var(--primary-default);font-weight:var(--font-weight-medium);}
+.bd-opt:disabled{opacity:.4;cursor:not-allowed;}
+.est .mgrp{display:flex;flex-direction:column;gap:4px;}
+.est .mgrp+.mgrp{margin-top:9px;}
+.bd-hint{font-size:var(--font-size-1);color:var(--text-subtle);margin-top:7px;line-height:1.4;}
+.est .cap{font-size:11px;color:var(--text-muted);margin-top:7px;}
+/* scope & filters slide-over */
+.so-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:55;}
+.so-overlay.show{display:block;}
+.so-panel{position:fixed;top:0;right:0;height:100%;width:min(460px,94vw);background:var(--surface-default);box-shadow:-8px 0 28px rgba(0,0,0,.16);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .18s ease;}
+.so-overlay.show .so-panel{transform:translateX(0);}
+.so-head{display:flex;align-items:center;gap:10px;padding:15px 18px;border-bottom:1px solid var(--border-default);}
+.so-head .t{font-size:var(--font-size-3,16px);font-weight:var(--font-weight-semibold);}
+.so-x{margin-left:auto;border:none;background:none;cursor:pointer;color:var(--text-muted);font-size:15px;line-height:1;padding:4px;}
+.so-body{flex:1;overflow-y:auto;padding:16px 18px;}
+.so-sec-lbl{font-size:10px;font-weight:var(--font-weight-semibold);text-transform:uppercase;letter-spacing:.04em;color:var(--text-subtle);margin:0 0 11px;}
+.so-sec+.so-sec{margin-top:20px;padding-top:18px;border-top:1px solid var(--border-subtle);}
+.so-foot{padding:12px 18px;border-top:1px solid var(--border-default);display:flex;justify-content:flex-end;}
+.anchor-note{font-size:11px;color:var(--text-muted);font-style:italic;line-height:1.4;margin-top:0;}
+.anchor-opt{display:flex;align-items:center;gap:8px;font-size:var(--font-size-1);color:var(--text-default);cursor:pointer;margin-top:0;}
+.anchor-opt input{width:14px;height:14px;flex:0 0 auto;}
+#anchorBox:not(:empty){margin-top:14px;padding-top:14px;border-top:1px solid var(--border-subtle);}
+.anchor-hd{font-size:11px;font-weight:var(--font-weight-semibold);color:var(--text-default);margin-bottom:7px;}
+.f-add{margin-top:8px;}
+.f-card{border:1px solid var(--border-default);border-radius:var(--radius-3);margin-bottom:8px;overflow:hidden;}
+.f-card.open{border-color:var(--primary-default);box-shadow:0 0 0 2px var(--primary-subtle);}
+.f-head{display:flex;align-items:center;gap:8px;padding:9px 11px;cursor:pointer;}
+.f-name{font-size:var(--font-size-2);font-weight:var(--font-weight-medium);color:var(--text-default);flex:0 0 auto;}
+.f-sum{font-size:var(--font-size-1);color:var(--text-muted);flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.f-sum.empty{font-style:italic;}
+.f-caret{color:var(--text-subtle);font-size:9px;flex:0 0 auto;}
+.f-rm{border:none;background:none;color:var(--text-subtle);cursor:pointer;padding:2px;flex:0 0 auto;line-height:1;}
+.f-rm:hover{color:var(--color-red-600);}
+.f-edit{padding:4px 11px 12px;border-top:1px solid var(--border-subtle);display:flex;flex-direction:column;gap:11px;}
+.fe-l{font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;}
+.f-seg{display:flex;gap:5px;flex-wrap:wrap;}
+.f-seg button{font-size:11px;padding:4px 10px;border:1px solid var(--border-emphasis);border-radius:var(--radius-full);background:var(--surface-default);color:var(--text-default);cursor:pointer;font-family:inherit;}
+.f-seg button.on{background:var(--primary-subtle);border-color:var(--primary-default);color:var(--primary-default);font-weight:var(--font-weight-medium);}
+.f-edit input,.f-edit select{height:32px;font-size:var(--font-size-1);padding:0 9px;border:1px solid var(--border-emphasis);border-radius:var(--radius-2);font-family:inherit;background:var(--surface-default);width:100%;}
+.f-two{display:flex;align-items:center;gap:8px;}
+.f-two input{flex:1;}
+.f-two span{font-size:11px;color:var(--text-muted);flex:0 0 auto;}
+.f-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.f-chk{display:inline-flex;align-items:center;gap:6px;font-size:var(--font-size-1);padding:4px 9px;border:1px solid var(--border-emphasis);border-radius:var(--radius-full);cursor:pointer;color:var(--text-default);}
+.f-chk.on{background:var(--primary-subtle);border-color:var(--primary-default);color:var(--primary-default);}
+.f-chk input{display:none;}
+.f-roll{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:var(--font-size-1);color:var(--text-default);}
+.f-roll select,.f-roll input{width:auto;height:30px;}
+.f-roll input{width:60px;}
+.fe-mode{display:flex;flex-direction:column;gap:7px;border-top:1px dashed var(--border-default);padding-top:10px;}
+.def-v .pill.filt{cursor:pointer;transition:border-color .12s,box-shadow .12s;}
+.def-v .pill.filt:hover{border-color:var(--primary-default);box-shadow:0 0 0 2px var(--primary-subtle);}
+.def-nav{cursor:pointer;border-radius:var(--radius-2);}
+.def-nav:hover{background:var(--surface-muted);}
+.def-nav:hover .def-v{color:var(--primary-default);}
+.fpop{position:fixed;z-index:70;width:300px;max-width:92vw;background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-3);box-shadow:var(--shadow-lg,0 12px 30px rgba(0,0,0,.18));display:none;flex-direction:column;}
+.fpop.show{display:flex;}
+.fpop-head{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--border-subtle);}
+.fpop-name{font-size:var(--font-size-2);font-weight:var(--font-weight-semibold);flex:1;}
+.fpop-x{border:none;background:none;cursor:pointer;color:var(--text-muted);font-size:13px;padding:2px;line-height:1;}
+.fpop-body{padding:12px;display:flex;flex-direction:column;gap:11px;max-height:60vh;overflow-y:auto;}
+.fpop-body input,.fpop-body select{height:32px;font-size:var(--font-size-1);padding:0 9px;border:1px solid var(--border-emphasis);border-radius:var(--radius-2);font-family:inherit;background:var(--surface-default);width:100%;}
+.fpop-body .f-roll select,.fpop-body .f-roll input{width:auto;}
+.fpop-body .f-roll input{width:60px;}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;font-weight:var(--font-weight-medium);
+  border-radius:var(--radius-2);cursor:pointer;transition:all .15s;border:1px solid transparent;line-height:1;}
+.btn-md{height:var(--btn-height-3);padding:0 18px;font-size:var(--font-size-2);}
+.btn-primary{background:var(--primary-default);color:#fff;}
+.btn-primary:hover{background:var(--primary-hover);}
+.btn-tertiary{background:transparent;color:var(--primary-default);}
+.btn-tertiary:hover{background:var(--surface-muted);}
+.btn:disabled{opacity:0.45;cursor:not-allowed;pointer-events:none;}
+
+.toast{position:fixed;bottom:20px;right:20px;background:var(--color-stone-900);color:#fff;padding:12px 16px;border-radius:var(--radius-3);
+  font-size:var(--font-size-2);display:flex;align-items:center;gap:10px;box-shadow:0 4px 12px rgba(0,0,0,0.18);
+  opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;max-width:360px;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast .qid{color:var(--color-primary-100);font-weight:var(--font-weight-semibold);}
+
+
+:root{
+  --color-stone-50:#fefcfc;--color-stone-100:#f5f5f4;--color-stone-200:#e7e5e4;--color-stone-300:#d6d3d1;
+  --color-stone-400:#978985;--color-stone-500:#6b615e;--color-stone-600:#57534e;--color-stone-700:#44403c;
+  --color-stone-800:#292524;--color-stone-900:#261e1b;
+  --color-primary-50:#e8f6fa;--color-primary-100:#c4e8f1;--color-primary-600:#0b6e8a;--color-primary-700:#005f7b;--color-primary-800:#1b404e;
+  --color-green-100:#e6f7ed;--color-green-500:#29a383;--color-green-600:#208368;
+  --color-amber-100:#ffefd5;--color-amber-500:#f5a524;--color-amber-600:#985b00;--color-amber-700:#4E350D;
+  --color-purple-100:#ece7fb;--color-purple-600:#6e56cf;
+  --color-blue-100:#e1effe;--color-blue-600:#3563b0;
+
+  --surface-default:var(--color-stone-50);--surface-muted:var(--color-stone-100);--surface-emphasis:var(--color-stone-200);
+  --text-default:var(--color-stone-900);--text-muted:var(--color-stone-500);--text-subtle:var(--color-stone-400);
+  --border-default:var(--color-stone-200);--border-subtle:var(--color-stone-100);--border-emphasis:var(--color-stone-300);
+  --primary-default:var(--color-primary-600);--primary-hover:var(--color-primary-700);--primary-subtle:var(--color-primary-50);--primary-muted:var(--color-primary-100);
+  --nav-bg:var(--color-primary-800);
+  --spacing-2:8px;--spacing-3:12px;--spacing-4:16px;--spacing-5:20px;--spacing-6:24px;
+  --font-family-text:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-size-1:12px;--font-size-2:14px;--font-size-3:16px;--font-size-4:18px;--font-size-5:22px;
+  --fw-regular:400;--fw-medium:500;--fw-semibold:600;
+  --radius-1:3px;--radius-2:4px;--radius-3:6px;--radius-4:8px;--radius-full:9999px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.05);--shadow-md:0 1px 3px rgba(0,0,0,0.1),0 1px 2px rgba(0,0,0,0.06);
+  --btn-height-2:32px;--btn-height-3:40px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(--text-default);background:var(--surface-muted);-webkit-font-smoothing:antialiased;}
+
+.nav{height:52px;background:var(--nav-bg);color:#fff;display:flex;align-items:center;padding:0 var(--spacing-6);gap:var(--spacing-4);}
+.brand{display:flex;align-items:center;gap:var(--spacing-3);font-weight:var(--fw-semibold);font-size:var(--font-size-3);}
+.brand .mark{width:18px;height:18px;border-radius:var(--radius-1);background:var(--color-green-500);}
+.nav .crumb{color:rgba(255,255,255,0.6);}
+.nav .spacer{flex:1;}
+.scope-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);padding:4px 10px;border-radius:var(--radius-full);font-size:var(--font-size-1);}
+.avatar{width:28px;height:28px;border-radius:var(--radius-full);background:var(--color-green-500);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;}
+
+.shell{display:flex;min-height:calc(100vh - 52px);}
+.side{width:212px;flex-shrink:0;background:var(--surface-default);border-right:1px solid var(--border-default);padding:var(--spacing-4) var(--spacing-3);}
+.side-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-3);font-size:var(--font-size-2);
+  font-weight:var(--fw-medium);color:var(--text-muted);cursor:pointer;margin-bottom:2px;}
+.side-item:hover{background:var(--surface-muted);color:var(--text-default);}
+.side-item.active{background:var(--primary-subtle);color:var(--primary-default);}
+.side-item svg{width:17px;height:17px;}
+.side-div{height:1px;background:var(--border-subtle);margin:var(--spacing-4) 8px;}
+.side-cap{font-size:10px;font-weight:var(--fw-semibold);text-transform:uppercase;letter-spacing:0.05em;color:var(--text-subtle);padding:0 12px 8px;}
+
+.main{flex:1;min-width:0;padding:var(--spacing-6);}
+.sec-head{font-size:var(--font-size-4);font-weight:var(--fw-semibold);margin-bottom:var(--spacing-4);}
+
+.start-row{display:flex;gap:var(--spacing-4);overflow-x:auto;padding-bottom:6px;}
+.start-card{flex:0 0 210px;background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-4);
+  padding:var(--spacing-4);cursor:pointer;transition:all .15s;box-shadow:var(--shadow-sm);}
+.start-card:hover{border-color:var(--border-emphasis);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.start-ico{width:36px;height:36px;border-radius:var(--radius-3);display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.start-ico svg{width:19px;height:19px;}
+.ico-teal,.ico-green,.ico-amber,.ico-purple,.ico-blue{background:var(--surface-muted);color:var(--text-subtle);}
+.start-card .t{font-size:var(--font-size-2);font-weight:var(--fw-semibold);line-height:1.3;margin-bottom:4px;}
+.start-card .d{font-size:11px;color:var(--text-muted);line-height:1.4;}
+.start-card.browse{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+  border-style:dashed;background:transparent;box-shadow:none;color:var(--text-muted);gap:8px;flex:0 0 170px;}
+.start-card.browse:hover{color:var(--primary-default);border-color:var(--primary-default);transform:none;}
+.start-card.browse svg{width:22px;height:22px;}
+
+.list-bar{display:flex;align-items:center;gap:var(--spacing-4);margin:var(--spacing-3) 0 var(--spacing-4);}
+.sec-recent{margin-top:var(--spacing-6);}
+.tabs{display:flex;gap:2px;}
+.tab{padding:7px 14px;border-radius:var(--radius-3);font-size:var(--font-size-2);font-weight:var(--fw-medium);color:var(--text-muted);cursor:pointer;border:none;background:none;font-family:inherit;}
+.tab:hover{background:var(--surface-muted);color:var(--text-default);}
+.tab.active{background:var(--surface-emphasis);color:var(--text-default);}
+.tab .ct{color:var(--text-subtle);margin-left:5px;font-weight:var(--fw-regular);}
+.list-bar .spacer{flex:1;}
+.search{position:relative;}
+.search input{height:var(--btn-height-2);width:220px;padding:0 12px 0 32px;border:1px solid var(--border-emphasis);border-radius:var(--radius-2);
+  font-family:inherit;font-size:var(--font-size-2);background:var(--surface-default);outline:none;}
+.search input:focus{border-color:var(--primary-default);box-shadow:0 0 0 3px var(--primary-subtle);}
+.search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--text-subtle);}
+
+.list{background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-4);box-shadow:var(--shadow-sm);overflow:hidden;}
+.list-head,.list-row{display:grid;grid-template-columns:1fr 220px 170px 130px 44px;align-items:center;}
+.list-head{padding:10px var(--spacing-5);border-bottom:1px solid var(--border-default);font-size:11px;font-weight:var(--fw-semibold);
+  text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);}
+.list-row{padding:13px var(--spacing-5);border-bottom:1px solid var(--border-subtle);cursor:pointer;}
+.list-row:last-child{border-bottom:none;}
+.list-row:hover{background:var(--surface-muted);}
+.r-name{display:flex;align-items:center;gap:12px;min-width:0;}
+.r-ico{width:30px;height:30px;border-radius:var(--radius-2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.r-ico svg{width:16px;height:16px;}
+.r-title{font-size:15px;font-weight:var(--fw-semibold);color:var(--text-default);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.r-type{font-size:var(--font-size-2);color:var(--text-default);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.r-sub{display:flex;align-items:center;gap:8px;}
+.badge{font-size:10px;font-weight:var(--fw-medium);padding:1px 7px;border-radius:var(--radius-full);border:1px solid;display:inline-flex;align-items:center;gap:4px;}
+.badge.sched{background:var(--surface-muted);border-color:var(--border-default);color:var(--text-subtle);}
+.badge.shared{background:var(--surface-muted);border-color:var(--border-default);color:var(--text-subtle);}
+.badge.st-ok{background:var(--color-green-100);border-color:var(--color-green-500);color:var(--color-green-600);}
+.badge.st-fail{background:var(--color-red-100);border-color:var(--color-red-500);color:var(--color-red-600);}
+.badge.st-queued{background:var(--color-amber-100);border-color:var(--color-amber-500);color:var(--color-amber-700);}
+.badge .bdot{width:6px;height:6px;border-radius:50%;background:currentColor;flex:0 0 auto;}
+.r-cell{font-size:var(--font-size-2);color:var(--text-muted);white-space:nowrap;}
+.r-owner{display:flex;align-items:center;gap:8px;}
+.r-av{width:24px;height:24px;border-radius:var(--radius-full);background:var(--surface-emphasis);color:var(--text-muted);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;}
+.kebab{width:30px;height:30px;border-radius:var(--radius-2);border:none;background:none;color:var(--text-subtle);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.kebab:hover{background:var(--surface-emphasis);color:var(--text-default);}
+.empty{padding:48px;text-align:center;color:var(--text-muted);}
+.empty h3{font-size:var(--font-size-3);font-weight:var(--fw-semibold);color:var(--text-default);margin-bottom:6px;}
+
+.toast{position:fixed;bottom:20px;right:20px;background:var(--color-stone-900);color:#fff;padding:12px 16px;border-radius:var(--radius-3);
+  font-size:var(--font-size-2);display:flex;align-items:center;gap:10px;box-shadow:0 4px 12px rgba(0,0,0,0.18);
+  opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+
+#view-builder{display:none;}
+.nav-back{width:28px;height:28px;border-radius:var(--radius-full);border:1px solid rgba(255,255,255,0.25);
+  background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;align-items:center;justify-content:center;}
+.nav-back:hover{background:rgba(255,255,255,0.18);}
+.nav-back svg{width:15px;height:15px;}
+
+/* responsive */
+@media (max-width:1180px){
+  .r-setup{flex:0 0 264px;} .r-cols{flex:0 0 252px;} .r-meta{flex:0 0 240px;}
+  .preview{max-width:540px;}
+}
+@media (max-width:920px){
+  .builder{overflow-x:auto;}
+  .pv-area{min-width:360px;}
+}
+@media (max-width:760px){
+  .list-head,.list-row{grid-template-columns:1fr 120px 40px;}
+  .list-head>:nth-child(2),.list-head>:nth-child(3),
+  .list-row>:nth-child(2),.list-row>:nth-child(3){display:none;}
+  .main{padding:var(--spacing-4);}
+}
+
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="brand"><span class="mark"></span>Screendragon</div>
+  <button class="nav-back" id="navBack" aria-label="Back to Reports" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <span class="crumb" id="crumb">/ Reports</span>
+  <span class="spacer"></span>
+  <span class="scope-chip">Creative Delivery</span>
+  <div class="avatar" id="navAvatar">JD</div>
+</div>
+<div id="view-home">
+<div class="shell">
+  <aside class="side">
+    <div class="side-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Reports</div>
+    <div class="side-item" onclick="toast('Opens the report queue — async runs and their status')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Report queue</div>
+    <div class="side-item" onclick="showView('schedules')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Schedules</div>
+    <div class="side-div"></div>
+    <div class="side-cap">Quick start</div>
+    <div class="side-item" onclick="toast('Opens the full report-type picker, grouped by subject')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> All report types</div>
+  </aside>
+
+  <main class="main">
+    <div class="sec-head">Start a new report</div>
+    <div class="start-row" id="startRow"></div>
+
+    <div class="sec-head sec-recent">Recent reports</div>
+    <div class="list-bar">
+      <div class="tabs" id="tabs"></div>
+      <span class="spacer"></span>
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="search" placeholder="Search reports"></div>
+    </div>
+    <div class="list" id="list"></div>
+  </main>
+</div>
+
+</div>
+<div id="view-builder">
+<div class="builder">
+  <!-- ============ BUILD SURFACE ============ -->
+  <div class="build-surface">
+    <div class="region r-setup">
+      <div class="region-head">Report setup</div>
+      <div class="region-body">
+        <div class="field">
+          <label>Report type</label>
+          <select class="select" id="reportSelect"></select>
+        </div>
+        <div class="field lk" id="f-period">
+          <label>Reporting period <span class="gate" id="g-period">— pick a report first</span></label>
+          <select class="select" id="periodSelect">
+            <option value="">Select period…</option>
+            <option value="1">Last month</option>
+            <option value="3">Last 3 months</option>
+            <option value="6">Last 6 months</option>
+            <option value="12">Last 12 months</option>
+          </select>
+        </div>
+        <div class="field lk" id="f-breakdown">
+          <label>Breakdown</label>
+          <div class="bd-opts" id="bdOpts"></div>
+          <div class="bd-hint" id="bdHint"></div>
+        </div>
+        <div class="field lk" id="f-group">
+          <label>Group by <span class="gate">— optional · sections rows</span></label>
+          <select class="select" id="groupSelect"></select>
+        </div>
+        <div class="field lk" id="f-sort">
+          <label>Sort by</label>
+          <div class="sort-row">
+            <select class="select" id="sortSelect"></select>
+            <button class="dir-btn" id="dirBtn" type="button"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="region r-cols lk" id="card-cols">
+      <div class="region-head">Report columns <span class="linkbtn" id="resetCols">Reset</span></div>
+      <div class="region-body flush"><div class="optlist plain" id="colList"></div></div>
+    </div>
+    <div class="region r-meta lk" id="card-meta">
+      <div class="region-head">Custom metadata</div>
+      <div class="meta-head" id="metaScope"></div>
+      <div class="region-body flush"><div class="optlist plain" id="metaList"></div></div>
+    </div>
+  </div>
+
+  <!-- ============ LIVE WIREFRAME PREVIEW ============ -->
+  <div class="pv-area">
+  <div class="preview" id="preview">
+    <div class="pv-empty" id="pvEmpty">
+      <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+      <h3>Pick a report to preview its structure</h3>
+      <p>As you make selections, this panel shows the exact columns you'll get back — before you run it.</p>
+    </div>
+  </div>
+  </div>
+</div>
+
+</div>
+<div id="view-schedules">
+  <div class="sched-main">
+    <div class="sch-bar">
+      <div class="sec-head" style="margin:0">Report schedules</div>
+      <span class="spacer"></span>
+      <span class="tzchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Times shown in UTC</span>
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="schSearch" placeholder="Search schedules"></div>
+      <button class="btn btn-md btn-primary" id="newSchedBtn">New schedule</button>
+    </div>
+    <div class="sch-table" id="schTable"></div>
+  </div>
+</div>
+<div class="rt-overlay" id="lgOverlay">
+  <div class="rt-dialog" role="dialog" aria-modal="true" aria-labelledby="lgHead">
+    <div class="rt-head" id="lgHead">Large report</div>
+    <div class="rt-sub" id="lgSub"></div>
+    <div class="rt-foot"><button class="btn btn-md btn-ghost" id="lgCancel" type="button">Cancel</button><button class="btn btn-md btn-primary" id="lgGo" type="button">Run anyway</button></div>
+  </div>
+</div>
+<div class="fpop" id="filterPop">
+  <div class="fpop-head"><span class="fpop-name"></span><button class="fpop-x" id="fpopX" type="button">✕</button></div>
+  <div class="fpop-body"></div>
+</div>
+<div class="toast" id="toast"></div>
+<div class="so-overlay" id="soOverlay">
+  <div class="so-panel" role="dialog" aria-modal="true" aria-label="Scope and filters">
+    <div class="so-head"><span class="t">Scope &amp; filters</span><button class="so-x" id="soClose" type="button">✕</button></div>
+    <div class="so-body">
+      <div class="so-sec">
+        <div class="so-sec-lbl">Scope — what data is included</div>
+        <div class="field lk" id="f-client"><label>Client</label><select class="select" id="clientSelect"></select></div>
+        <div class="field lk" id="f-project"><label>Projects <span class="gate">— constrained to client</span></label><div class="optlist" id="projList"></div></div>
+        <div class="field lk" id="f-role"><label>Roles <span class="gate">— constrained to projects</span></label><div class="optlist" id="roleList"></div></div>
+        <div id="anchorBox"></div>
+      </div>
+      <div class="so-sec">
+        <div class="so-sec-lbl">Filters — narrow within scope</div>
+        <div id="filterList"></div>
+        <div class="f-add"><select class="select" id="addFilter"><option value="">+ Add filter…</option></select></div>
+      </div>
+    </div>
+    <div class="so-foot"><button class="btn btn-md btn-primary" id="soDone" type="button">Done</button></div>
+  </div>
+</div>
+<div class="rt-overlay" id="rtOverlay">
+  <div class="rt-dialog" role="dialog" aria-modal="true" aria-labelledby="rtHead">
+    <div class="rt-head" id="rtHead">Run report</div>
+    <div class="rt-sub">This report asks for a value each time it runs.</div>
+    <div class="rt-body" id="rtBody"></div>
+    <div class="rt-foot"><button class="btn btn-md btn-ghost" id="rtCancel" type="button">Cancel</button><button class="btn btn-md btn-primary" id="rtRun" type="button">Run report</button></div>
+  </div>
+</div>
+<div class="rt-overlay" id="permOverlay">
+  <div class="rt-dialog wide" role="dialog" aria-modal="true" aria-labelledby="permHead">
+    <div class="rt-head" id="permHead">Permissions</div>
+    <div class="rt-sub">Who can open this report, and whose data it shows when it runs.</div>
+    <div class="rt-body" id="permBody"></div>
+    <div class="rt-foot"><button class="btn btn-md btn-ghost" id="permCancel" type="button">Cancel</button><button class="btn btn-md btn-primary" id="permSave" type="button">Save access</button></div>
+  </div>
+</div>
+<div class="rt-overlay" id="schOverlay">
+  <div class="rt-dialog wide" role="dialog" aria-modal="true" aria-labelledby="schHead">
+    <div class="rt-head" id="schHead">New schedule <span class="tzchip" style="margin-left:8px;vertical-align:middle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> UTC</span></div>
+    <div class="rt-sub">Runs the report on a recurring basis and emails the result.</div>
+    <div class="rt-body" id="schBody"></div>
+    <div class="rt-foot"><button class="btn btn-md btn-ghost" id="schCancel" type="button">Cancel</button><button class="btn btn-md btn-primary" id="schSave" type="button">Create schedule</button></div>
+  </div>
+</div>
+<script>
+
+/* ---------------- Data ---------------- */
+const REPORTS = {
+  pps:{ name:'Project Performance Summary', grain:'Project', grainNote:'one row per project',
+    groupBy:[['','None'],['role','Role'],['ptype','Project type'],['month','Month']],
+    cols:[
+      {id:'project',label:'Project',type:'name',locked:true,on:true},
+      {id:'client',label:'Client',type:'name',on:true},
+      {id:'status',label:'Status',type:'status',on:true},
+      {id:'estHours',label:'Estimated hours',type:'num',on:true},
+      {id:'actHours',label:'Actual hours',type:'num',on:true},
+      {id:'hoursVar',label:'Hours variance %',type:'num',on:true},
+      {id:'revenue',label:'Actual revenue',type:'num',on:true},
+      {id:'gm',label:'Gross margin %',type:'num',on:true},
+      {id:'ptype',label:'Project type',type:'text',on:false},
+      {id:'pm',label:'Project manager',type:'name',on:false},
+      {id:'cost',label:'Actual cost',type:'num',on:false},
+      {id:'gp',label:'Gross profit',type:'num',on:false},
+      {id:'estRev',label:'Estimated revenue',type:'num',on:false},
+      {id:'scoping',label:'Scoping accuracy',type:'num',on:false},
+      {id:'dept',label:'Department',type:'text',on:false},
+      {id:'startDate',label:'Start date',type:'date',on:false},
+      {id:'endDate',label:'End date',type:'date',on:false},
+    ]},
+  rea:{ name:'Role Estimation Accuracy', grain:'Role', grainNote:'across selected projects',
+    groupBy:[['','None'],['ptype','Project type']],
+    cols:[
+      {id:'role',label:'Role',type:'name',locked:true,on:true},
+      {id:'projects',label:'Projects',type:'num',on:true},
+      {id:'estHours',label:'Estimated hours',type:'num',on:true},
+      {id:'tsHours',label:'Timesheet hours',type:'num',on:true},
+      {id:'hoursVar',label:'Hours variance %',type:'num',on:true},
+      {id:'resourced',label:'Resourced hours',type:'num',on:false},
+      {id:'scoping',label:'Scoping accuracy',type:'num',on:false},
+      {id:'util',label:'Utilisation %',type:'num',on:false},
+      {id:'billRate',label:'Bill rate',type:'num',on:false},
+      {id:'costRate',label:'Cost rate',type:'num',on:false},
+    ]},
+  cpa:{ name:'Client Profitability Analysis', grain:'Client', grainNote:'rolled up from projects',
+    groupBy:[['','None'],['ptype','Project type']],
+    cols:[
+      {id:'client',label:'Client',type:'name',locked:true,on:true},
+      {id:'projects',label:'Projects',type:'num',on:true},
+      {id:'revenue',label:'Actual revenue',type:'num',on:true},
+      {id:'cost',label:'Actual cost',type:'num',on:true},
+      {id:'gp',label:'Gross profit',type:'num',on:true},
+      {id:'gm',label:'Gross margin %',type:'num',on:true},
+      {id:'estRev',label:'Estimated revenue',type:'num',on:false},
+      {id:'oop',label:'Out-of-pocket',type:'num',on:false},
+      {id:'feeMargin',label:'Fee margin %',type:'num',on:false},
+    ]},
+  sca:{ name:'Scoping Accuracy', grain:'Project', grainNote:'estimate vs actual ratio',
+    groupBy:[['','None'],['ptype','Project type']],
+    cols:[
+      {id:'project',label:'Project',type:'name',locked:true,on:true},
+      {id:'client',label:'Client',type:'name',on:true},
+      {id:'estHours',label:'Estimated hours',type:'num',on:true},
+      {id:'actHours',label:'Actual hours',type:'num',on:true},
+      {id:'scoping',label:'Scoping accuracy',type:'num',on:true},
+      {id:'variance',label:'Variance %',type:'num',on:true},
+      {id:'ptype',label:'Project type',type:'text',on:false},
+      {id:'pm',label:'Project manager',type:'name',on:false},
+      {id:'dept',label:'Department',type:'text',on:false},
+    ]},
+  rpa:{ name:'Resource Planning Accuracy', grain:'Project / Role', grainNote:'plan vs actual',
+    groupBy:[['','None'],['ptype','Project type']],
+    cols:[
+      {id:'project',label:'Project',type:'name',locked:true,on:true},
+      {id:'role',label:'Role',type:'name',on:true},
+      {id:'resourced',label:'Resourced hours',type:'num',on:true},
+      {id:'timesheet',label:'Timesheet hours',type:'num',on:true},
+      {id:'util',label:'Utilisation %',type:'num',on:true},
+      {id:'user',label:'Resource',type:'name',on:false},
+      {id:'ptype',label:'Project type',type:'text',on:false},
+    ]},
+  tbd:{ name:'Timesheet Breakdown', grain:'Resource / Week', grainNote:'logged hours by week',
+    groupBy:[['','None'],['project','Project'],['role','Role']],
+    cols:[
+      {id:'resource',label:'Resource',type:'name',locked:true,on:true},
+      {id:'role',label:'Role',type:'name',on:true},
+      {id:'project',label:'Project',type:'name',on:true},
+      {id:'week',label:'Week ending',type:'date',on:true},
+      {id:'logged',label:'Logged hours',type:'num',on:true},
+      {id:'status',label:'Status',type:'status',on:true},
+      {id:'billable',label:'Billable hours',type:'num',on:false},
+      {id:'approver',label:'Approved by',type:'name',on:false},
+      {id:'userid',label:'User ID',type:'text',on:false},
+      {id:'ustatus',label:'User status',type:'status',on:false},
+      {id:'urate',label:'Resourced rate',type:'num',on:false},
+      {id:'fte',label:'FTE (calculated)',type:'num',on:false},
+      {id:'daysavail',label:'Days available',type:'num',on:false},
+    ]},
+};
+const CLIENTS=[{id:'fifa',name:'FIFA'},{id:'uefa',name:'UEFA'},{id:'rb',name:'Red Bull'},{id:'pl',name:'Premier League'},{id:'adidas',name:'Adidas — Global',locked:true}];
+const PROJECTS={
+  fifa:[{id:'wc26',name:'World Cup 2026 Brand System',type:'Brand Campaign'},{id:'fplus',name:'FIFA+ Streaming Launch',type:'Digital Production'},{id:'cwc',name:'Club World Cup Activation',type:'Event Activation'},{id:'fret',name:'FIFA Brand Retainer 2026',type:'Retainer'}],
+  uefa:[{id:'ucl',name:'Champions League Rebrand',type:'Brand Campaign'},{id:'euro28',name:'EURO 2028 Concept',type:'Brand Campaign'}],
+  rb:[{id:'rbac',name:'Athlete Content Series',type:'Digital Production'},{id:'rbgr',name:'Brand Guidelines Refresh',type:'Brand Campaign'}],
+  pl:[{id:'plmd',name:'Matchday Graphics Package',type:'Digital Production'}],
+};
+const PROJECT_ROLES={
+  wc26:{'Creative Director':1,'Senior Designer':2,'Designer':3,'Motion Designer':1,'Copywriter':1,'Account Manager':1,'Project Manager':1},
+  fplus:{'Creative Director':1,'UX Designer':2,'Developer':3,'Motion Designer':1,'Project Manager':1},
+  cwc:{'Creative Director':1,'Designer':2,'Account Manager':1,'Project Manager':1},
+  fret:{'Account Manager':1,'Designer':2,'Copywriter':1},
+  ucl:{'Creative Director':1,'Senior Designer':2,'Designer':2,'Motion Designer':1,'Project Manager':1},
+  euro28:{'Creative Director':1,'Senior Designer':1,'Designer':1},
+  rbac:{'Creative Director':1,'Motion Designer':2,'Developer':1,'Account Manager':1},
+  rbgr:{'Senior Designer':1,'Designer':1,'Copywriter':1},
+  plmd:{'Motion Designer':1,'Designer':2,'Developer':1},
+};
+const PERIOD_LABEL={'1':'Last month','3':'Last 3 months','6':'Last 6 months','12':'Last 12 months'};
+const META={
+  project:{label:'Project',fields:['Campaign region','Brand','Budget holder','Cost centre','Confidentiality','Project tier','Client code']},
+  role:{label:'Role',fields:['Discipline','Seniority band','Role meta 1','Role meta 2','Expertise']},
+  client:{label:'Client',fields:['Industry','Region','Client tier','Account director','Client code']},
+};
+const REPORT_META={pps:'project',rea:'role',cpa:'client',sca:'project',rpa:'project',tbd:'role'};
+const DEFAULT_SORT={pps:{col:'hoursVar',dir:'desc'},sca:{col:'variance',dir:'desc'},rea:{col:'hoursVar',dir:'desc'},rpa:{col:'util',dir:'desc'},cpa:{col:'gm',dir:'asc'},tbd:{col:'logged',dir:'desc'}};
+const BREAKDOWNS={total:{label:'Total'},day:{label:'Day'},weekending:{label:'Weekending'},week:{label:'Week breakdown'},monthly:{label:'Monthly'}};
+const REPORT_BD={
+  pps:{valid:['total','monthly','week'],def:'total'},
+  sca:{valid:['total','monthly'],def:'total'},
+  rea:{valid:['total','monthly','week'],def:'total'},
+  rpa:{valid:['total','monthly','week'],def:'total'},
+  cpa:{valid:['total','monthly'],def:'total'},
+  tbd:{valid:['total','day','weekending','week','monthly'],def:'week'},
+};
+const COL_SOFT=30;
+const COL_CEILING=48;
+const REPORT_ANCHOR={
+  pps:{def:'entity',toggle:true,noun:'projects'},
+  sca:{def:'fact',toggle:true,noun:'projects'},
+  rea:{def:'entity',toggle:true,noun:'roles'},
+  rpa:{def:'entity',toggle:false,noun:'resources'},
+  cpa:{def:'fact',toggle:true,noun:'clients'},
+  tbd:{def:'fact',toggle:false,noun:'resources'},
+};
+function anchorMult(){return S.anchor==='entity'?1.35:1;}
+function colMult(bd,m){if(bd==='week')return 7;if(bd==='monthly')return Math.max(1,m);return 1;}
+function rowMult(bd){return bd==='day'?22:bd==='weekending'?4:1;}
+function activeMetricCount(){return activeCols().filter(c=>c.type==='num').length;}
+function activeDimMetaCount(){return activeCols().filter(c=>c.type!=='num').length+activeMeta().length;}
+function projColsFor(bd){return activeDimMetaCount()+activeMetricCount()*colMult(bd,S.months);}
+function projRowsFor(bd){return Math.round(estimateRows()*rowMult(bd)*anchorMult());}
+const ENUM_VALUES={
+  'Status':['Active','Complete','On hold'],
+  'User status':['Active','Inactive','Invited','Archived'],
+  'Project type':['Brand Campaign','Digital Production','Event Activation','Retainer'],
+  'Confidentiality':['Standard','Restricted','Confidential'],
+  'Project tier':['Tier 1','Tier 2','Tier 3'],
+  'Client tier':['Strategic','Growth','Standard'],
+  'Region':['EMEA','Americas','APAC'],
+  'Seniority band':['Junior','Mid','Senior','Lead'],
+  'Discipline':['Design','Motion','Development','Account','PM','Copy'],
+};
+const CEILING=250;
+const PEOPLE=[
+  {id:'u-ao',name:'Aisling O\u2019Connor',kind:'user'},
+  {id:'u-mr',name:'Marco Rossi',kind:'user'},
+  {id:'u-sk',name:'Sarah Kim',kind:'user'},
+  {id:'u-tl',name:'Tom Lee',kind:'user'},
+  {id:'g-cd',name:'Creative Delivery',kind:'group'},
+  {id:'g-fin',name:'Finance',kind:'group'},
+  {id:'g-pmo',name:'PMO',kind:'group'},
+];
+const $=id=>document.getElementById(id);
+const clientName=id=>CLIENTS.find(c=>c.id===id).name;
+
+/* ---------------- State ---------------- */
+const S={report:'',months:0,periodLabel:'',client:'',projects:new Set(),roles:new Set(),group:'',cols:[],meta:[],sort:{col:'',dir:'desc'},filters:[],perm:{grants:[],scope:'viewer'},breakdown:'total',expandedFilter:null,anchor:'fact'};
+let queueId=52672;
+
+/* ---------------- Init ---------------- */
+(function(){
+  const sel=$('reportSelect');
+  sel.innerHTML='<option value="">Select report…</option>';
+  Object.entries(REPORTS).forEach(([id,r])=>{const o=document.createElement('option');o.value=id;o.textContent=r.name;sel.appendChild(o);});
+})();
+(function(){
+  const sel=$('clientSelect'); sel.innerHTML='<option value="">Select client…</option>';
+  CLIENTS.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.locked?c.name+'  — outside your scope':c.name;if(c.locked)o.disabled=true;sel.appendChild(o);});
+})();
+
+/* ---------------- Helpers ---------------- */
+function lock(id,locked){$(id).classList.toggle('lk',locked);}
+function activeCols(){return S.cols.filter(c=>c.on);}
+function activeMeta(){return S.meta.filter(c=>c.on);}
+function rolesForSelection(){const m={};S.projects.forEach(pid=>Object.entries(PROJECT_ROLES[pid]).forEach(([r,n])=>m[r]=(m[r]||0)+n));return m;}
+function effectiveRoles(pid){const present=Object.keys(PROJECT_ROLES[pid]);return S.roles.size===0?present:present.filter(r=>S.roles.has(r));}
+function estimateRows(){if(!S.months||S.projects.size===0)return 0;let d=0;S.projects.forEach(pid=>effectiveRoles(pid).forEach(r=>d+=PROJECT_ROLES[pid][r]));return d*S.months;}
+function isReady(){return S.report&&S.months>0&&S.projects.size>0&&projRowsFor(S.breakdown)<=CEILING&&projColsFor(S.breakdown)<=COL_CEILING;}
+function renderBreakdown(){
+  const set=REPORT_BD[S.report];
+  if(!S.report||!set){$('bdOpts').innerHTML='';return;}
+  if(!set.valid.includes(S.breakdown))S.breakdown=set.def;
+  if(S.months>0&&(projRowsFor(S.breakdown)>CEILING||projColsFor(S.breakdown)>COL_CEILING))S.breakdown='total';
+  $('bdOpts').innerHTML=set.valid.map(bd=>{
+    const exCols=projColsFor(bd),exRows=projRowsFor(bd);
+    const over=S.months>0&&(exCols>COL_CEILING||exRows>CEILING);
+    const why=exCols>COL_CEILING?`${exCols} columns — over the ${COL_CEILING}-col cap for this range`:exRows>CEILING?`${exRows.toLocaleString()} rows — over the ${CEILING}-row cap for this range`:'';
+    return `<button type="button" class="bd-opt ${S.breakdown===bd?'sel':''}" data-bd="${bd}"${over?` disabled title="${why}"`:''}>${BREAKDOWNS[bd].label}</button>`;
+  }).join('');
+  $('bdOpts').querySelectorAll('[data-bd]').forEach(b=>b.onclick=()=>{S.breakdown=b.dataset.bd;renderPreview();});
+  const BD_HINT={
+    total:'One column per metric — the whole range in a single bucket.',
+    day:'Each metric repeats per day — adds columns very fast.',
+    weekending:'Each metric repeats per week (week-ending date) — adds columns fast.',
+    week:'Each metric repeats per week — adds columns fast.',
+    monthly:'Each metric repeats per month.'
+  };
+  $('bdHint').textContent=BD_HINT[S.breakdown]||'';
+}
+
+/* ---------------- Renderers ---------------- */
+function renderColumns(){
+  const list=$('colList'); const r=REPORTS[S.report];
+  const def=S.cols.filter(c=>r.cols.find(x=>x.id===c.id&&x.on));
+  const opt=S.cols.filter(c=>!r.cols.find(x=>x.id===c.id&&x.on));
+  const rowHtml=c=>`<label class="opt"><input type="checkbox" class="checkbox-input" data-col="${c.id}" ${c.on?'checked':''} ${c.locked?'disabled':''}><span>${c.label}</span>${c.locked?'<span class="meta">required</span>':''}</label>`;
+  list.innerHTML='<div class="col-group-lbl">Default columns</div>'+def.map(rowHtml).join('')+
+    (opt.length?'<div class="col-group-lbl">Optional columns</div>'+opt.map(rowHtml).join(''):'');
+  list.querySelectorAll('[data-col]').forEach(cb=>cb.onchange=e=>{
+    const c=S.cols.find(x=>x.id===e.target.dataset.col); c.on=e.target.checked; renderSort(); renderFilters(); renderPreview();
+  });
+}
+function renderMeta(){
+  const ent=REPORT_META[S.report];
+  $('metaScope').textContent='Site-configured · scoped to '+META[ent].label+' · '+S.meta.length+' fields available';
+  const list=$('metaList');
+  list.innerHTML=S.meta.map(c=>`<label class="opt"><input type="checkbox" class="checkbox-input" data-meta="${c.id}" ${c.on?'checked':''}><span>${c.label}</span></label>`).join('');
+  list.querySelectorAll('[data-meta]').forEach(cb=>cb.onchange=e=>{const c=S.meta.find(x=>x.id===e.target.dataset.meta);c.on=e.target.checked;renderSort();renderPreview();});
+}
+function sortableFields(){return activeCols().concat(activeMeta());}
+function dirLabel(type,dir){
+  if(type==='num') return dir==='desc'?'Highest first':'Lowest first';
+  if(type==='date') return dir==='desc'?'Newest':'Oldest';
+  return dir==='desc'?'Z–A':'A–Z';
+}
+function ensureSortValid(){
+  const fields=sortableFields();
+  if(!fields.find(f=>f.id===S.sort.col)){
+    const def=DEFAULT_SORT[S.report];
+    S.sort = fields.find(f=>f.id===def.col) ? {...def} : (fields[0]?{col:fields[0].id,dir:'desc'}:{col:'',dir:'desc'});
+  }
+}
+function renderSort(){
+  ensureSortValid();
+  const fields=sortableFields();
+  $('sortSelect').innerHTML=fields.map(f=>`<option value="${f.id}" ${f.id===S.sort.col?'selected':''}>${f.label}</option>`).join('');
+  const cur=fields.find(f=>f.id===S.sort.col);
+  $('dirBtn').textContent=(S.sort.dir==='desc'?'↓ ':'↑ ')+dirLabel(cur?cur.type:'name',S.sort.dir);
+}
+function filterSpec(f){
+  if(f.type==='num') return {kind:'num'};
+  if(f.type==='date') return {kind:'date'};
+  if(ENUM_VALUES[f.label]) return {kind:'enum',values:ENUM_VALUES[f.label]};
+  return {kind:'text'};
+}
+function opSym(op){return {'>=':'≥','<=':'≤','=':'=','contains':'contains','after':'after','before':'before'}[op]||op;}
+function isPeopleField(f){return /manager|owner|created by|resource|assignee|requester|reviewer|approver|\buser\b|\bby\b/i.test(f.label);}
+function unitOf(c){
+  if(c.meta) return 'text';
+  if(c.type==='status') return 'status';
+  if(c.type==='date') return 'date';
+  if(c.type==='name'||c.type==='text') return 'text';
+  const l=c.label.toLowerCase(), id=c.id.toLowerCase();
+  if(l.includes('%')) return '%';
+  if(id.includes('rate')) return '€/hr';
+  if(/\bfte\b/.test(l)) return 'FTE';
+  if(/days avail|available/.test(l)) return 'days';
+  if(/hour|hrs/.test(l)) return 'hrs';
+  if(/accuracy/.test(l)) return 'ratio';
+  if(/revenue|cost|profit|margin|budget|fee|pocket|value|amount/.test(l)) return '€';
+  if(/project|count|number|qty/.test(l)) return 'count';
+  return 'number';
+}
+const NUM_OPS=[['>=','≥'],['<=','≤'],['=','='],['between','between']];
+const TEXT_OPS=[['contains','contains'],['starts','starts with'],['ends','ends with']];
+const DATE_OPS=[['after','after'],['before','before'],['between','between'],['rolling','rolling window']];
+const ENUM_OPS=[['is','is'],['in','is any of'],['notin','is none of']];
+function rollingText(r){r=r||{};const amt=r.amount??30;const unit=amt==1?(r.unit||'days').replace(/s$/,''):(r.unit||'days');return `${r.bound==='least'?'at least':'at most'} ${amt} ${unit} ${r.dir||'before'} today`;}
+function filterSummary(f){
+  if(f.mode==='me')return 'the person running it';
+  if(f.mode==='prompt')return `asked on run${f.required?' · required':''}`;
+  if(f.kind==='enum'){
+    if(f.op==='is')return f.val?`is ${f.val}`:'—';
+    const n=(f.vals||[]).length;return n?`is ${f.op==='notin'?'none':'any'} of ${n===1?f.vals[0]:n+' values'}`:'—';
+  }
+  if(f.kind==='num'){if(f.op==='between')return(f.val||f.val2)?`between ${f.val||'?'} and ${f.val2||'?'}`:'—';return f.val!==''?`${opSym(f.op)} ${f.val}`:'—';}
+  if(f.kind==='text'){const w={contains:'contains',starts:'starts with',ends:'ends with'}[f.op]||'contains';return f.val?`${w} “${f.val}”`:'—';}
+  if(f.kind==='date'){if(f.op==='rolling')return rollingText(f.rel);if(f.op==='between')return(f.val||f.val2)?`between ${f.val||'?'} and ${f.val2||'?'}`:'—';return f.val?`${f.op} ${f.val}`:'—';}
+  return '—';
+}
+function filterActive(f){
+  if(f.mode!=='fixed')return true;
+  if(f.kind==='enum')return f.op==='is'?!!f.val:(f.vals&&f.vals.length>0);
+  if(f.op==='between')return!!(f.val||f.val2);
+  if(f.op==='rolling')return true;
+  return f.val!=='';
+}
+function filterEditor(f,i){
+  const modeBlock=`<div class="fe-mode"><label class="fe-l">When the report runs</label>
+    <select data-fmode="${i}">
+      <option value="fixed" ${f.mode==='fixed'?'selected':''}>Use the value set here</option>
+      <option value="prompt" ${f.mode==='prompt'?'selected':''}>Ask whoever runs it</option>
+      ${isPeopleField(f)?`<option value="me" ${f.mode==='me'?'selected':''}>Scope to whoever runs it</option>`:''}
+    </select>
+    ${f.mode==='prompt'?`<label class="f-chk on" style="margin-top:2px"><input type="checkbox" data-freq="${i}" ${f.required?'checked':''} style="display:inline-block;width:13px;height:13px"> Required to run</label>`:''}</div>`;
+  if(f.mode==='me')return modeBlock;
+  const seg=(ops)=>`<div class="f-seg">${ops.map(([v,l])=>`<button type="button" data-fop="${i}" data-v="${v}" class="${f.op===v?'on':''}">${l}</button>`).join('')}</div>`;
+  const showVal=f.mode!=='prompt';
+  let head,val='';
+  if(f.kind==='enum'){
+    head=seg(ENUM_OPS);
+    if(showVal){
+      val=f.op==='is'
+        ?`<select data-fval="${i}">${(f.values||[]).map(v=>`<option ${f.val===v?'selected':''}>${v}</option>`).join('')}</select>`
+        :`<div class="f-chips">${(f.values||[]).map(v=>`<label class="f-chk ${(f.vals||[]).includes(v)?'on':''}"><input type="checkbox" data-fvals="${i}" value="${v}" ${(f.vals||[]).includes(v)?'checked':''}>${v}</label>`).join('')}</div>`;
+    }
+    return `<div><label class="fe-l">Match</label>${head}</div>${val?`<div>${val}</div>`:''}${modeBlock}`;
+  }
+  if(f.kind==='num'){
+    head=seg(NUM_OPS);
+    if(showVal)val=f.op==='between'
+      ?`<div class="f-two"><input type="number" data-fval="${i}" value="${f.val}" placeholder="min"><span>and</span><input type="number" data-fval2="${i}" value="${f.val2||''}" placeholder="max"></div>`
+      :`<input type="number" data-fval="${i}" value="${f.val}" placeholder="value">`;
+    return `<div><label class="fe-l">Condition</label>${head}</div>${val?`<div>${val}</div>`:''}${modeBlock}`;
+  }
+  if(f.kind==='text'){
+    head=seg(TEXT_OPS);
+    if(showVal)val=`<input data-fval="${i}" value="${f.val}" placeholder="text">`;
+    return `<div><label class="fe-l">Condition</label>${head}</div>${val?`<div>${val}</div>`:''}${modeBlock}`;
+  }
+  head=seg(DATE_OPS);
+  if(f.op==='rolling'){
+    const r=f.rel||{};
+    val=`<div class="f-roll">
+      <select data-frel="bound" data-i="${i}"><option value="most" ${r.bound!=='least'?'selected':''}>at most</option><option value="least" ${r.bound==='least'?'selected':''}>at least</option></select>
+      <input type="number" data-frel="amount" data-i="${i}" value="${r.amount??30}">
+      <select data-frel="unit" data-i="${i}">${['days','weeks','months'].map(u=>`<option ${(r.unit||'days')===u?'selected':''}>${u}</option>`).join('')}</select>
+      <select data-frel="dir" data-i="${i}"><option value="before" ${(r.dir||'before')==='before'?'selected':''}>before</option><option value="after" ${r.dir==='after'?'selected':''}>after</option></select>
+      <span style="font-size:11px;color:var(--text-muted)">today</span>
+    </div>
+    <label class="f-chk ${r.anchor?'on':''}" style="align-self:flex-start"><input type="checkbox" data-franchor="${i}" ${r.anchor?'checked':''}>Anchor to today — recompute each run</label>`;
+  } else if(showVal){
+    val=f.op==='between'
+      ?`<div class="f-two"><input data-fval="${i}" value="${f.val}" placeholder="from"><span>to</span><input data-fval2="${i}" value="${f.val2||''}" placeholder="to"></div>`
+      :`<input data-fval="${i}" value="${f.val}" placeholder="DD Mon YYYY">`;
+  }
+  return `<div><label class="fe-l">Date condition</label>${head}</div>${val?`<div>${val}</div>`:''}${modeBlock}`;
+}
+function touchSummary(f){const el=$('filterList').querySelector('.f-card.open .f-sum');if(el){const s=filterSummary(f);el.textContent=s==='—'?'any value':s;el.classList.toggle('empty',s==='—');}renderPreview();}
+function renderFilters(){
+  const list=$('filterList');
+  list.innerHTML=S.filters.map((f,i)=>{
+    const open=S.expandedFilter===f.id, s=filterSummary(f);
+    return `<div class="f-card ${open?'open':''}">
+      <div class="f-head" data-tog="${i}">
+        <span class="f-name">${f.label}</span>
+        <span class="f-sum ${s==='—'?'empty':''}">${s==='—'?'any value':s}</span>
+        <span class="f-caret">${open?'▲':'▼'}</span>
+        <button class="f-rm" data-rm="${i}" type="button" aria-label="Remove">✕</button>
+      </div>
+      ${open?`<div class="f-edit">${filterEditor(f,i)}</div>`:''}
+    </div>`;
+  }).join('');
+  list.querySelectorAll('[data-tog]').forEach(h=>h.onclick=e=>{if(e.target.closest('[data-rm]'))return;const f=S.filters[+h.dataset.tog];S.expandedFilter=S.expandedFilter===f.id?null:f.id;renderFilters();});
+  list.querySelectorAll('[data-rm]').forEach(b=>b.onclick=e=>{e.stopPropagation();S.filters.splice(+b.dataset.rm,1);renderFilters();renderPreview();});
+  wireFilterEditor(list,renderFilters);
+  const used=new Set(S.filters.map(f=>f.id));
+  const cols=S.cols.filter(f=>!used.has(f.id)), metas=S.meta.filter(f=>!used.has(f.id));
+  const hasDyn=S.filters.some(f=>f.id==='__dyndate');
+  $('addFilter').innerHTML='<option value="">+ Add filter…</option>'+
+    (cols.length?`<optgroup label="Columns">${cols.map(f=>`<option value="c:${f.id}">${f.label}</option>`).join('')}</optgroup>`:'')+
+    (metas.length?`<optgroup label="Metadata">${metas.map(f=>`<option value="m:${f.id}">${f.label}</option>`).join('')}</optgroup>`:'')+
+    (!hasDyn?`<optgroup label="Special"><option value="dyn:date">Dynamic date window</option></optgroup>`:'');
+}
+let popFilter=null;
+function wireFilterEditor(scope, rerender){
+  scope.querySelectorAll('[data-fop]').forEach(b=>b.onclick=()=>{S.filters[+b.dataset.fop].op=b.dataset.v;rerender();renderPreview();});
+  scope.querySelectorAll('[data-fmode]').forEach(s=>s.onchange=e=>{const f=S.filters[+e.target.dataset.fmode];f.mode=e.target.value;if(f.mode!=='prompt')f.required=false;rerender();renderPreview();});
+  scope.querySelectorAll('[data-fvals]').forEach(cb=>cb.onchange=e=>{const f=S.filters[+e.target.dataset.fvals],v=e.target.value;f.vals=f.vals||[];if(e.target.checked){if(!f.vals.includes(v))f.vals.push(v);}else f.vals=f.vals.filter(x=>x!==v);rerender();renderPreview();});
+  scope.querySelectorAll('select[data-fval]').forEach(s=>s.onchange=e=>{const f=S.filters[+e.target.dataset.fval];f.val=e.target.value;touchSummary(f);});
+  scope.querySelectorAll('input[data-fval]').forEach(inp=>inp.oninput=e=>{const f=S.filters[+e.target.dataset.fval];f.val=e.target.value;touchSummary(f);});
+  scope.querySelectorAll('[data-fval2]').forEach(inp=>inp.oninput=e=>{const f=S.filters[+e.target.dataset.fval2];f.val2=e.target.value;touchSummary(f);});
+  scope.querySelectorAll('[data-freq]').forEach(c=>c.onchange=e=>{S.filters[+e.target.dataset.freq].required=e.target.checked;touchSummary(S.filters[+e.target.dataset.freq]);});
+  scope.querySelectorAll('[data-frel]').forEach(el=>{const h=e=>{const f=S.filters[+el.dataset.i];f.rel=f.rel||{};f.rel[el.dataset.frel]=el.type==='number'?+e.target.value:e.target.value;touchSummary(f);};el.oninput=h;el.onchange=h;});
+  scope.querySelectorAll('[data-franchor]').forEach(c=>c.onchange=e=>{const f=S.filters[+e.target.dataset.franchor];f.rel=f.rel||{};f.rel.anchor=e.target.checked;});
+}
+function renderFilterPop(){
+  if(popFilter==null)return;
+  const f=S.filters[popFilter]; const pop=$('filterPop');
+  if(!f){closeFilterPop();return;}
+  pop.querySelector('.fpop-name').textContent=f.label;
+  const body=pop.querySelector('.fpop-body');
+  body.innerHTML=filterEditor(f,popFilter);
+  wireFilterEditor(body,renderFilterPop);
+}
+function openFilterPop(i,anchor){
+  popFilter=i; renderFilterPop();
+  const pop=$('filterPop'); pop.classList.add('show');
+  const r=anchor.getBoundingClientRect(), w=pop.offsetWidth||300, h=pop.offsetHeight||220;
+  let left=Math.max(12,Math.min(r.left,window.innerWidth-w-12));
+  let top=r.bottom+6; if(top+h>window.innerHeight-12)top=Math.max(12,r.top-h-6);
+  pop.style.left=left+'px'; pop.style.top=top+'px';
+}
+function closeFilterPop(){popFilter=null;$('filterPop').classList.remove('show');}
+function renderAnchor(){
+  const box=$('anchorBox'); if(!box)return;
+  if(!S.report){box.innerHTML='';return;}
+  const a=REPORT_ANCHOR[S.report];
+  const body = a.toggle
+    ? `<label class="anchor-opt"><input type="checkbox" id="anchorChk" ${S.anchor==='entity'?'checked':''}><span>Include ${a.noun} with no logged time</span></label>`
+    : `<div class="anchor-note">${a.def==='entity'?`Shows every one of the ${a.noun} in scope, including those with no activity in the period.`:`Shows only ${a.noun} with logged activity — none are invented.`}</div>`;
+  box.innerHTML=`<div class="anchor-hd">Row coverage</div>${body}`;
+  if(a.toggle)$('anchorChk').onchange=e=>{S.anchor=e.target.checked?'entity':'fact';renderPreview();};
+}
+function openScopeFilters(){$('soOverlay').classList.add('show');}
+function closeScopeFilters(){$('soOverlay').classList.remove('show');}
+function renderGroup(){
+  const sel=$('groupSelect'); const r=REPORTS[S.report];
+  sel.innerHTML=r.groupBy.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
+  sel.value=S.group;
+}
+function renderProjects(){
+  const list=$('projList');
+  if(!S.client){list.innerHTML='';return;}
+  const ps=PROJECTS[S.client];
+  list.innerHTML=ps.map(p=>`<label class="opt"><input type="checkbox" class="checkbox-input" data-proj="${p.id}" ${S.projects.has(p.id)?'checked':''}><span>${p.name}</span><span class="meta">${p.type}</span></label>`).join('');
+  list.querySelectorAll('[data-proj]').forEach(cb=>cb.onchange=e=>{const id=e.target.dataset.proj;e.target.checked?S.projects.add(id):S.projects.delete(id);afterProjects();});
+}
+function renderRoles(){
+  const list=$('roleList');
+  if(S.projects.size===0){list.innerHTML='';return;}
+  const m=rolesForSelection(); const roles=Object.keys(m).sort();
+  [...S.roles].forEach(r=>{if(!roles.includes(r))S.roles.delete(r);});
+  list.innerHTML='<div class="col-group-lbl">'+roles.length+' roles on selected projects — leave empty for all</div>'+
+    roles.map(role=>`<label class="opt"><input type="checkbox" class="checkbox-input" data-role="${role}" ${S.roles.has(role)?'checked':''}><span>${role}</span><span class="meta">${m[role]}</span></label>`).join('');
+  list.querySelectorAll('[data-role]').forEach(cb=>cb.onchange=e=>{const r=e.target.dataset.role;e.target.checked?S.roles.add(r):S.roles.delete(r);renderPreview();});
+}
+function afterProjects(){renderProjects();lock('f-role',S.projects.size===0);renderRoles();renderPreview();}
+
+function barW(type,i){
+  const base={name:74,text:58,status:52,date:54,num:44}[type]||50;
+  const v=base+((i*7)%14)-6; return Math.max(34,Math.min(82,v));
+}
+function renderPreview(){
+  if(!S.report){$('preview').innerHTML=$('pvEmpty').outerHTML;return;}
+  const r=REPORTS[S.report];
+  let cols=activeCols().map(c=>({...c})).concat(activeMeta().map(c=>({...c})));
+  if(S.group){
+    const gl=r.groupBy.find(g=>g[0]===S.group);
+    const existing=cols.find(c=>c.id===S.group);
+    if(existing){existing.grp=true;}
+    else if(gl){cols.unshift({id:'__grp',label:gl[1],type:'name',grp:true});}
+  }
+  const mult=colMult(S.breakdown,S.months);
+  const rawRows=estimateRows(), rows=Math.round(rawRows*rowMult(S.breakdown)*anchorMult()), over=rows>CEILING, warn=!over&&rows>CEILING*0.7;
+
+  const ps=PROJECTS[S.client]||[];
+  const projNames=[...S.projects].map(id=>{const p=ps.find(x=>x.id===id);return p?p.name:id;});
+  const funnel='<svg class="filt-ic" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>';
+  const filterChips=S.filters.map((f,i)=>({f,i})).filter(o=>filterActive(o.f)).map(({f,i})=>{
+    const s=filterSummary(f);
+    const soft=f.mode==='me'||f.mode==='prompt';
+    return `<span class="pill filt" data-fi="${i}" title="Edit filter">${funnel}${f.label} ${soft?`<em class="ask">${s}</em>`:s}</span>`;
+  }).join('');
+  const fcur=sortableFields().find(f=>f.id===S.sort.col);
+  const sortText=fcur?`${fcur.label}, ${dirLabel(fcur.type,S.sort.dir).toLowerCase()}`:'—';
+  const pills=(arr,cls)=>arr.map(v=>`<span class="pill ${cls||''}">${v}</span>`).join('');
+  const defRow=(k,v,unset,nav)=>`<div class="def-row${nav?' def-nav':''}"${nav?' data-openscope="1"':''}><span class="def-k">${k}</span><span class="def-v ${unset?'unset':''}">${v}</span></div>`;
+  const bdText=S.report?`${BREAKDOWNS[S.breakdown].label}${mult>1?` · ${mult} cols per metric`:rowMult(S.breakdown)>1?` · rows per ${S.breakdown==='day'?'day':'week'}`:' · single total column'}`:'—';
+  const def=`<div class="pv-def">
+    ${defRow('Period', S.periodLabel||'Not set', !S.periodLabel)}
+    ${defRow('Breakdown', bdText, !S.report)}
+    ${defRow('Client', S.client?clientName(S.client):'Not selected', !S.client, true)}
+    ${defRow('Projects', S.projects.size?pills(projNames):'None selected', !S.projects.size, true)}
+    ${defRow('Roles', S.roles.size?pills([...S.roles]):'All roles', false, true)}
+    ${defRow('Includes', S.report?(S.anchor==='entity'?`All ${REPORT_ANCHOR[S.report].noun} · incl. zero-activity`:`${REPORT_ANCHOR[S.report].noun.replace(/^./,c=>c.toUpperCase())} with activity`):'—', false, true)}
+    ${filterChips?defRow('Filters', filterChips, false):''}
+    ${defRow('Sort', sortText, !fcur)}
+  </div>`;
+
+  const tagClass=c=>c.grp?'ct-grp':c.meta?'ct-meta':c.type==='num'?'ct-measure':'ct-dim';
+  const tagFor=c=>{
+    const sorted=c.id===S.sort.col;
+    const unit=unitOf(c);
+    const showUnit=!(unit==='%'&&c.label.includes('%'));
+    return `<span class="col-tag ${tagClass(c)}${sorted?' ct-sort':''}">${c.grp?'<span class="ct-pre">group</span>':''}${c.label}${showUnit?`<span class="ct-unit">${unit}</span>`:''}${sorted?`<span class="cm-arr">${S.sort.dir==='desc'?'↓':'↑'}</span>`:''}${c.meta?'<span class="ct-pre">meta</span>':''}</span>`;
+  };
+  const dimCols=cols.filter(c=>!c.meta&&c.type!=='num');
+  const measCols=cols.filter(c=>!c.meta&&c.type==='num');
+  const metaCols=cols.filter(c=>c.meta);
+  const groupNote=S.group?` · grouped by ${(r.groupBy.find(g=>g[0]===S.group)||['',''])[1]}`:'';
+  const pcols=dimCols.length+metaCols.length+measCols.length*mult;
+  const cOver=pcols>COL_CEILING, cWarn=!cOver&&pcols>=COL_SOFT;
+  const bands=[['Dimensions',dimCols],['Metrics',measCols],['Custom metadata',metaCols]].filter(([,a])=>a.length);
+  const showLabels=bands.length>1;
+  const bandCount=(label,n)=>label==='Metrics'&&mult>1?`${n} × ${mult} ${BREAKDOWNS[S.breakdown].label.toLowerCase()}`:`${n}`;
+  const body=bands.map(([label,arr])=>`<div class="cm-group">${showLabels?`<div class="cm-grp-lbl">${label} · ${bandCount(label,arr.length)}</div>`:''}<div class="cm-tags">${arr.map(tagFor).join('')}</div></div>`).join('');
+  const manifest=`<div class="col-manifest">
+    <div class="cm-head ${cOver?'over':cWarn?'warn':''}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> <span class="cm-count">${pcols} columns</span>${mult>1?` (${measCols.length} metrics × ${mult})`:''}${groupNote} · emailed as one .xlsx tab${cOver?' · over limit':cWarn?' · large report':''}</div>
+    ${body}
+  </div>`;
+
+  $('preview').innerHTML=`
+    <div class="pv-head">
+      <div><div class="title">${r.name}</div><div class="sub">Grain: ${r.grain} · ${r.grainNote}</div></div>
+      <span class="pv-spacer"></span>
+      <button class="pv-sf" id="sfBtn" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg> Scope &amp; filters${S.filters.length?`<span class="sf-count">${S.filters.length}</span>`:''}</button>
+    </div>
+    <div class="pv-note">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      <span>This is the structure of your report — the columns you'll receive. Run to generate it; the file is emailed to you when ready.</span>
+    </div>
+    ${def}
+    <div class="pv-body">
+      ${manifest}
+    </div>
+    <div class="pv-foot">
+      <div class="est">
+        <div class="mgrp">
+          <div class="row"><span class="k">Estimated rows</span><span class="v">${rows?(S.filters.some(filterActive)?'up to ':'')+rows.toLocaleString():'—'}</span></div>
+          <div class="meter ${over?'over':warn?'warn':''}"><span style="width:${Math.min(100,(rows/CEILING)*100)}%"></span></div>
+        </div>
+        <div class="mgrp">
+          <div class="row"><span class="k">Projected columns</span><span class="v">${S.report?pcols:'—'}</span></div>
+          <div class="meter ${cOver?'over':cWarn?'warn':''}"><span style="width:${Math.min(100,(pcols/COL_CEILING)*100)}%"></span></div>
+        </div>
+        <span class="cap">Caps: ${CEILING.toLocaleString()} rows · ${COL_CEILING} columns${S.filters.some(filterActive)?' · filters may reduce':''}</span>
+      </div>
+      ${over?`<span class="guard">Over the ${CEILING}-row cap — narrow the period, projects or roles.</span>`:cOver?`<span class="guard">Over the ${COL_CEILING}-column cap — choose a coarser breakdown or fewer metrics.</span>`:'<span class="spacer"></span>'}
+      <span class="spacer"></span>
+      <button class="btn btn-md btn-secondary" id="accessBtn">${accessLabel()}</button>
+      <button class="btn btn-md btn-tertiary" id="exportBtn" ${isReady()?'':'disabled'}>Export .xlsx</button>
+      <button class="btn btn-md btn-primary" id="runBtn" ${isReady()?'':'disabled'}>Run report</button>
+    </div>`;
+  $('runBtn').onclick=()=>startRun('Run');
+  $('exportBtn').onclick=()=>startRun('Export');
+  $('accessBtn').onclick=openPerm;
+  renderBreakdown();
+  renderAnchor();
+  $('sfBtn').onclick=openScopeFilters;
+  $('preview').querySelectorAll('.pill.filt[data-fi]').forEach(ch=>ch.onclick=ev=>{ev.stopPropagation();openFilterPop(+ch.dataset.fi,ch);});
+  $('preview').querySelectorAll('[data-openscope]').forEach(row=>row.onclick=openScopeFilters);
+}
+let rtKind='Run';
+function startRun(kind){ if(projColsFor(S.breakdown)>=COL_SOFT) openLargeConfirm(kind); else proceedRun(kind); }
+function proceedRun(kind){ if(S.filters.some(f=>f.mode==='prompt')) openRunPrompts(kind); else queue(kind); }
+let lgKind='Run';
+function openLargeConfirm(kind){
+  lgKind=kind;
+  const c=projColsFor(S.breakdown), r=Math.round(estimateRows()*rowMult(S.breakdown));
+  $('lgSub').innerHTML=`This report projects <b>${c} columns</b>${r?` and up to <b>${r.toLocaleString()} rows</b>`:''}. Large exports take longer to generate and can be unwieldy to open in Excel. Continue?`;
+  $('lgGo').textContent=kind==='Export'?'Export anyway':'Run anyway';
+  $('lgOverlay').classList.add('show');
+}
+function closeLg(){$('lgOverlay').classList.remove('show');}
+function openRunPrompts(kind){
+  rtKind=kind;
+  const fs=S.filters.filter(f=>f.mode==='prompt');
+  const me=S.filters.filter(f=>f.mode==='me');
+  $('rtHead').textContent=kind==='Export'?'Export report':'Run report';
+  $('rtBody').innerHTML=fs.map((f,i)=>{
+    let input;
+    if(f.kind==='enum') input=`<select data-rt="${i}">${(f.values||[]).map(v=>`<option>${v}</option>`).join('')}</select>`;
+    else if(f.kind==='num') input=`<div class="rt-inline"><span class="fr-op">${opSym(f.op)}</span><input type="number" data-rt="${i}" placeholder="value"></div>`;
+    else if(f.kind==='date') input=`<div class="rt-inline"><span class="fr-op">${f.op}</span><input data-rt="${i}" placeholder="DD Mon YYYY"></div>`;
+    else input=`<input data-rt="${i}" placeholder="contains…">`;
+    return `<div class="rt-field"><label>${f.label}${f.required?' <span class="rt-asterisk">*</span>':''}</label>${input}</div>`;
+  }).join('')+(me.length?`<div class="rt-note">${me.map(f=>f.label).join(', ')} scoped to you — James D\u2019Arcy.</div>`:'');
+  $('rtOverlay').classList.add('show');
+}
+function closeRt(){$('rtOverlay').classList.remove('show');}
+
+const ICON_LOCK='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+const ICON_PPL='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>';
+const ICON_WARN='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+function initials(n){return n.split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();}
+function accessLabel(){const n=S.perm.grants.length;return n?`${ICON_PPL} Shared · ${n}`:`${ICON_LOCK} Share`;}
+let permSnap=null;
+function openPerm(){permSnap=JSON.stringify(S.perm);renderPerm();$('permOverlay').classList.add('show');}
+function closePerm(){$('permOverlay').classList.remove('show');}
+function renderPerm(){
+  const lvlSel=(g,i)=>`<select class="select pm-lvl" data-lvl="${i}"><option value="view" ${g.level==='view'?'selected':''}>Can view</option><option value="edit" ${g.level==='edit'?'selected':''}>Can edit</option><option value="admin" ${g.level==='admin'?'selected':''}>Admin</option></select>`;
+  const ownerRow=`<div class="pm-row"><span class="pm-av" style="background:${avatarBg('James D\u2019Arcy')}">${initials('James D\u2019Arcy')}</span><div class="pm-meta"><div class="pm-name">James D\u2019Arcy (you)</div><div class="pm-sub">Owner</div></div><span class="pm-fixed">Admin</span></div>`;
+  const grantRows=S.perm.grants.map((g,i)=>{
+    const av=g.kind==='group'?`<span class="pm-av grp">${ICON_PPL}</span>`:`<span class="pm-av" style="background:${avatarBg(g.name)}">${initials(g.name)}</span>`;
+    return `<div class="pm-row">${av}<div class="pm-meta"><div class="pm-name">${g.name}</div><div class="pm-sub">${g.kind==='group'?'Group':'Person'}</div></div>${lvlSel(g,i)}<button class="pm-x" data-prm="${i}" type="button" aria-label="Remove">✕</button></div>`;
+  }).join('');
+  const used=new Set(S.perm.grants.map(g=>g.id));
+  const users=PEOPLE.filter(p=>p.kind==='user'&&!used.has(p.id));
+  const groups=PEOPLE.filter(p=>p.kind==='group'&&!used.has(p.id));
+  const picker=`<select class="select pm-add" id="permAdd"><option value="">+ Add people or groups…</option>${users.length?`<optgroup label="People">${users.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</optgroup>`:''}${groups.length?`<optgroup label="Groups">${groups.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</optgroup>`:''}</select>`;
+  const scope=`<div class="pm-scope">
+    <label class="pm-opt ${S.perm.scope==='viewer'?'sel':''}"><input type="radio" name="pmscope" value="viewer" ${S.perm.scope==='viewer'?'checked':''}><span class="pm-otext"><span class="pm-omain">Each viewer\u2019s own data</span><span class="pm-osub">They see only what they\u2019re entitled to. Recommended.</span></span></label>
+    <label class="pm-opt ${S.perm.scope==='author'?'sel':''}"><input type="radio" name="pmscope" value="author" ${S.perm.scope==='author'?'checked':''}><span class="pm-otext"><span class="pm-omain">Your data scope</span><span class="pm-osub">Everyone who runs it sees what you can see.</span></span></label>
+  </div>${S.perm.scope==='author'?`<div class="pm-warn">${ICON_WARN}<span>This can expose data a viewer couldn\u2019t otherwise access — client financials, resource rates, or projects outside their remit.</span></div>`:''}`;
+  $('permBody').innerHTML=`<div class="pm-section">People &amp; groups with access</div>${picker}<div class="pm-list">${ownerRow}${grantRows}</div><div class="pm-section">When this report runs, it shows</div>${scope}<div class="pm-note">Scheduled email recipients are set when you schedule the report.</div>`;
+  $('permAdd').onchange=e=>{if(!e.target.value)return;const p=PEOPLE.find(x=>x.id===e.target.value);S.perm.grants.push({id:p.id,name:p.name,kind:p.kind,level:'view'});renderPerm();};
+  $('permBody').querySelectorAll('[data-prm]').forEach(b=>b.onclick=()=>{S.perm.grants.splice(+b.dataset.prm,1);renderPerm();});
+  $('permBody').querySelectorAll('[data-lvl]').forEach(s=>s.onchange=e=>{S.perm.grants[+e.target.dataset.lvl].level=e.target.value;});
+  $('permBody').querySelectorAll('input[name="pmscope"]').forEach(r=>r.onchange=e=>{S.perm.scope=e.target.value;renderPerm();});
+}
+function queue(kind){
+  queueId++;
+  const t=$('toast');
+  t.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9FE1CB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> ${kind} queued · <span class="qid">#${queueId}</span> — we'll email it when ready.`;
+  t.classList.add('show'); clearTimeout(window._tt); window._tt=setTimeout(()=>t.classList.remove('show'),3600);
+}
+
+/* ---------------- Wiring ---------------- */
+$('reportSelect').onchange=e=>{
+  S.report=e.target.value;
+  if(!S.report){['f-period','f-breakdown','f-client','f-project','f-role','f-group','f-sort','card-cols','card-meta'].forEach(i=>lock(i,true));renderPreview();return;}
+  S.cols=REPORTS[S.report].cols.map(c=>({...c})); S.group='';
+  S.meta=META[REPORT_META[S.report]].fields.map((f,i)=>({id:'m'+i,label:f,type:'text',meta:true,on:false}));
+  S.sort={...DEFAULT_SORT[S.report]}; S.filters=[]; S.expandedFilter=null; S.perm={grants:[],scope:'viewer'}; S.breakdown=REPORT_BD[S.report].def; S.anchor=REPORT_ANCHOR[S.report].def;
+  ['f-period','f-breakdown','card-cols','card-meta','f-group','f-sort'].forEach(i=>lock(i,false));
+  renderColumns(); renderMeta(); renderGroup(); renderSort(); renderFilters(); renderPreview();
+};
+$('periodSelect').onchange=e=>{S.months=+e.target.value||0;S.periodLabel=PERIOD_LABEL[e.target.value]||'';lock('f-client',!S.months);renderPreview();};
+$('clientSelect').onchange=e=>{S.client=e.target.value;S.projects.clear();S.roles.clear();lock('f-project',!S.client);lock('f-role',true);renderProjects();renderRoles();renderPreview();};
+$('groupSelect').onchange=e=>{S.group=e.target.value;renderPreview();};
+$('sortSelect').onchange=e=>{S.sort.col=e.target.value;renderSort();renderPreview();};
+$('dirBtn').onclick=()=>{S.sort.dir=S.sort.dir==='desc'?'asc':'desc';renderSort();renderPreview();};
+$('addFilter').onchange=e=>{
+  const v=e.target.value; if(!v){return;} e.target.value='';
+  if(v==='dyn:date'){
+    S.filters.push({id:'__dyndate',label:'Date window',kind:'date',values:null,mode:'fixed',required:false,op:'rolling',val:'',val2:'',vals:[],rel:{bound:'most',amount:30,unit:'days',dir:'before',anchor:true}});
+    S.expandedFilter='__dyndate'; renderFilters(); renderPreview(); return;
+  }
+  const [src,id]=v.split(':');
+  const f=(src==='c'?S.cols:S.meta).find(x=>x.id===id); const spec=filterSpec(f);
+  S.filters.push({id:f.id,label:f.label,kind:spec.kind,values:spec.values||null,mode:'fixed',required:false,
+    op:spec.kind==='num'?'>=':spec.kind==='date'?'after':spec.kind==='enum'?'is':'contains',
+    val:spec.kind==='enum'?spec.values[0]:'',val2:'',vals:[],rel:{bound:'most',amount:30,unit:'days',dir:'before',anchor:true}});
+  S.expandedFilter=f.id;
+  renderFilters(); renderPreview();
+};
+$('soClose').onclick=closeScopeFilters;
+$('lgCancel').onclick=closeLg;
+$('lgGo').onclick=()=>{closeLg();proceedRun(lgKind);};
+$('lgOverlay').onclick=e=>{if(e.target===$('lgOverlay'))closeLg();};
+$('soDone').onclick=closeScopeFilters;
+$('soOverlay').onclick=e=>{if(e.target===$('soOverlay'))closeScopeFilters();};
+$('fpopX').onclick=closeFilterPop;
+document.addEventListener('mousedown',e=>{
+  if(!$('filterPop').classList.contains('show'))return;
+  if($('filterPop').contains(e.target))return;
+  if(e.target.closest('.pill.filt[data-fi]'))return;
+  closeFilterPop();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeFilterPop();});
+$('resetCols').onclick=()=>{S.cols=REPORTS[S.report].cols.map(c=>({...c}));renderColumns();renderSort();renderFilters();renderPreview();};
+$('rtRun').onclick=()=>{
+  const fs=S.filters.filter(f=>f.mode==='prompt');let bad=false;
+  $('rtBody').querySelectorAll('[data-rt]').forEach(el=>{const f=fs[+el.dataset.rt];if(f&&f.required&&!el.value.trim()){bad=true;el.classList.add('rt-bad');}else el.classList.remove('rt-bad');});
+  if(bad)return;
+  closeRt();queue(rtKind);
+};
+$('rtCancel').onclick=closeRt;
+$('rtOverlay').onclick=e=>{if(e.target===$('rtOverlay'))closeRt();};
+$('permCancel').onclick=()=>{if(permSnap)S.perm=JSON.parse(permSnap);closePerm();renderPreview();};
+$('permSave').onclick=()=>{closePerm();renderPreview();toast('Access updated');};
+$('permOverlay').onclick=e=>{if(e.target===$('permOverlay')){if(permSnap)S.perm=JSON.parse(permSnap);closePerm();renderPreview();}};
+
+/* ---- home ---- */
+
+const ICONS={
+  bars:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><path d="M16 4a3 3 0 0 1 0 6"/></svg>',
+  calendar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+  cash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+};
+const STARTS=[
+  {id:'pps',name:'Project Performance Summary',d:'Delivery vs estimate, margin · by project',ico:'bars',tone:'ico-teal'},
+  {id:'sca',name:'Scoping Accuracy',d:'Estimate vs actual · by project',ico:'target',tone:'ico-green'},
+  {id:'rea',name:'Role Estimation Accuracy',d:'Over/under-estimated roles · by role',ico:'users',tone:'ico-purple'},
+  {id:'rpa',name:'Resource Planning Accuracy',d:'Plan vs actual · by project & user',ico:'calendar',tone:'ico-blue'},
+  {id:'cpa',name:'Client Profitability',d:'Revenue, cost, margin · by client',ico:'cash',tone:'ico-amber'},
+  {id:'tbd',name:'Timesheet Breakdown',d:'Logged hours · by resource & week',ico:'clock',tone:'ico-teal'},
+];
+const TYPE_ICON={pps:['bars','ico-teal'],sca:['target','ico-green'],rea:['users','ico-purple'],rpa:['calendar','ico-blue'],cpa:['cash','ico-amber'],tbd:['clock','ico-teal']};
+const TYPE_NAME={pps:'Project Performance Summary',sca:'Scoping Accuracy',rea:'Role Estimation Accuracy',rpa:'Resource Planning Accuracy',cpa:'Client Profitability',tbd:'Timesheet Breakdown'};
+const SAVED=[
+  {name:'FIFA — Project performance, Q2 2026',type:'pps',owner:'James D\u2019Arcy',oi:'JD',last:'2 hours ago',scope:'mine',sched:true,status:'completed'},
+  {name:'Creative Delivery — role estimation',type:'rea',owner:'James D\u2019Arcy',oi:'JD',last:'Yesterday',scope:'mine',status:'completed'},
+  {name:'Client profitability — all clients YTD',type:'cpa',owner:'Aisling O\u2019Connor',oi:'AO',last:'2 days ago',scope:'shared',status:'completed'},
+  {name:'World Cup 2026 — timesheet breakdown',type:'tbd',owner:'James D\u2019Arcy',oi:'JD',last:'3 days ago',scope:'mine',status:'failed'},
+  {name:'UEFA — scoping accuracy, H1',type:'sca',owner:'Marco Rossi',oi:'MR',last:'5 days ago',scope:'shared',status:'completed'},
+  {name:'Resource planning — APAC studio',type:'rpa',owner:'James D\u2019Arcy',oi:'JD',last:'1 week ago',scope:'mine',sched:true,status:'queued'},
+  {name:'Red Bull — project performance',type:'pps',owner:'Aisling O\u2019Connor',oi:'AO',last:'2 weeks ago',scope:'shared',status:'completed'},
+];
+const TABS=[['all','All'],['mine','Owned by me'],['shared','Shared with me']];
+// Run status (Completed/Failed/Queued) belongs on the Schedules page, not the recent list — kept here for that surface.
+const STATUS_BADGE={
+  completed:'<span class="badge st-ok"><span class="bdot"></span>Completed</span>',
+  failed:'<span class="badge st-fail"><span class="bdot"></span>Failed</span>',
+  queued:'<span class="badge st-queued"><span class="bdot"></span>Queued</span>',
+};
+const AVATAR_COLORS=['#0B6E8A','#208368','#0E7490','#5B5BD6','#7C3AED','#BE185D','#C2410C','#475569'];
+const SCHEDULES=[
+  {title:'FIFA — weekly delivery performance', type:'pps', cadence:'Weekly · Mondays', time:'09:00', next:'Mon 22 Jun, 09:00', last:'completed', lastWhen:'15 Jun', recipients:'FIFA Reporting (group)', owner:'James D\u2019Arcy'},
+  {title:'Creative Delivery — role estimation', type:'rea', cadence:'Every weekday', time:'08:00', next:'Tomorrow, 08:00', last:'completed', lastWhen:'Today', recipients:'You', owner:'James D\u2019Arcy'},
+  {title:'Client profitability — month-end', type:'cpa', cadence:'Monthly · last day', time:'18:00', next:'30 Jun, 18:00', last:'failed', lastWhen:'31 May', recipients:'Finance (group)', owner:'Aisling O\u2019Connor'},
+  {title:'World Cup 2026 — timesheet export', type:'tbd', cadence:'Weekly · Fridays', time:'17:30', next:'Fri 19 Jun, 17:30', last:'queued', lastWhen:'—', recipients:'PMO (group) +2', owner:'James D\u2019Arcy'},
+  {title:'Resource planning — APAC studio', type:'rpa', cadence:'Daily', time:'07:00', next:'Paused', last:'completed', lastWhen:'10 Jun', recipients:'You', owner:'James D\u2019Arcy', paused:true},
+];
+let sq='';
+let schForm={title:'',report:'',freq:'Weekly',day:'Monday',hh:'09',mm:'00',start:'18 Jun 2026',deliver:'You'};
+function avatarBg(name){let h=5381;for(let i=0;i<name.length;i++)h=((h*33)^name.charCodeAt(i))>>>0;return AVATAR_COLORS[h%AVATAR_COLORS.length];}
+let tab='all', q='';
+
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window._t);window._t=setTimeout(()=>t.classList.remove('show'),3200);}
+
+function renderStarts(){
+  $('startRow').innerHTML=STARTS.map(s=>`
+    <div class="start-card" onclick="openBuilder('${s.id}')">
+      <div class="start-ico ${s.tone}">${ICONS[s.ico]}</div>
+      <div class="t">${s.name}</div><div class="d">${s.d}</div>
+    </div>`).join('')+
+    `<div class="start-card browse" onclick="toast('Opens the full report-type picker, grouped by subject')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <div>Browse all report types</div></div>`;
+}
+function counts(scope){return SAVED.filter(r=>scope==='all'||r.scope===scope).length;}
+function renderTabs(){
+  $('tabs').innerHTML=TABS.map(([id,lbl])=>`<button class="tab ${tab===id?'active':''}" data-tab="${id}">${lbl}<span class="ct">${counts(id)}</span></button>`).join('');
+  $('tabs').querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;renderTabs();renderList();});
+}
+function renderList(){
+  let rows=SAVED.filter(r=>(tab==='all'||r.scope===tab)&&r.name.toLowerCase().includes(q));
+  if(!rows.length){$('list').innerHTML=`<div class="empty"><h3>No reports here yet</h3><p>${tab==='shared'?'Reports shared with you will appear here.':'Start a new report from the row above.'}</p></div>`;return;}
+  const head=`<div class="list-head"><span>Name</span><span>Report type</span><span>Owner</span><span>Last run</span><span></span></div>`;
+  const body=rows.map(r=>{
+    const [ic,tone]=TYPE_ICON[r.type];
+    return `<div class="list-row" onclick="openBuilder('${r.type}')">
+      <div class="r-name"><div class="r-ico ${tone}">${ICONS[ic]}</div>
+        <div style="min-width:0"><div class="r-title">${r.name}</div>
+          <div class="r-sub">${r.sched?'<span class="badge sched">Scheduled</span>':''}${r.scope==='shared'?'<span class="badge shared">Shared</span>':''}</div></div></div>
+      <div class="r-type">${TYPE_NAME[r.type]}</div>
+      <div class="r-owner"><span class="r-av" style="background:${avatarBg(r.owner)};color:#fff">${r.oi}</span><span class="r-cell">${r.owner}</span></div>
+      <div class="r-cell">${r.last}</div>
+      <button class="kebab" onclick="event.stopPropagation();toast('Run · Duplicate · Schedule · Share · Delete')"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+    </div>`;}).join('');
+  $('list').innerHTML=head+body;
+}
+$('search').oninput=e=>{q=e.target.value.toLowerCase();renderList();};
+renderStarts();renderTabs();renderList();
+(()=>{const a=$('navAvatar');if(a){a.style.background=avatarBg('James D\u2019Arcy');a.style.color='#fff';}})();
+
+/* ---- router ---- */
+
+function showView(v){
+  document.getElementById('view-home').style.display=v==='home'?'block':'none';
+  document.getElementById('view-builder').style.display=v==='builder'?'block':'none';
+  document.getElementById('view-schedules').style.display=v==='schedules'?'block':'none';
+  document.getElementById('navBack').style.display=(v==='builder'||v==='schedules')?'inline-flex':'none';
+  document.getElementById('crumb').textContent=v==='builder'?'/ Reports / New report':v==='schedules'?'/ Reports / Schedules':'/ Reports';
+  window.scrollTo(0,0);
+}
+function openBuilder(typeId){
+  $('periodSelect').value=''; $('clientSelect').value='';
+  S.months=0; S.periodLabel=''; S.client=''; S.projects.clear(); S.roles.clear();
+  ['f-client','f-project','f-role'].forEach(i=>lock(i,true));
+  $('projList').innerHTML=''; $('roleList').innerHTML='';
+  const sel=$('reportSelect'); sel.value=typeId; sel.dispatchEvent(new Event('change'));
+  showView('builder');
+}
+document.getElementById('navBack').onclick=()=>showView('home');
+showView('home');
+
+/* ---- schedules ---- */
+function renderSchedules(){
+  const rows=SCHEDULES.filter(s=>s.title.toLowerCase().includes(sq));
+  const head=`<div class="sch-head"><span>Schedule</span><span>Cadence</span><span>Next run</span><span>Last run</span><span>Delivery</span><span></span></div>`;
+  if(!rows.length){$('schTable').innerHTML=head+`<div class="empty"><h3>No schedules found</h3><p>Try a different search, or create a new schedule.</p></div>`;return;}
+  const body=rows.map(s=>{
+    const [ic,tone]=TYPE_ICON[s.type];
+    const status=s.paused?'<span class="badge sched">Paused</span>':(STATUS_BADGE[s.last]||'');
+    const lastWhen=(!s.paused&&s.lastWhen&&s.lastWhen!=='—')?`<span class="sch-muted">${s.lastWhen}</span>`:'';
+    const next=s.paused?'<span class="sch-muted">Paused</span>':s.next;
+    return `<div class="sch-row">
+      <div class="r-name"><div class="r-ico ${tone}">${ICONS[ic]}</div><div style="min-width:0"><div class="r-title">${s.title}</div><div class="r-sub2">${TYPE_NAME[s.type]}</div></div></div>
+      <div class="sch-cell">${s.cadence} · ${s.time}</div>
+      <div class="sch-cell">${next}</div>
+      <div class="sch-cell">${status}${lastWhen}</div>
+      <div class="sch-cell">${s.recipients}</div>
+      <button class="kebab" onclick="event.stopPropagation();toast('Run now · Edit · ${s.paused?'Resume':'Pause'} · Delete')"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+    </div>`;}).join('');
+  $('schTable').innerHTML=head+body;
+}
+function renderSchedDialog(){
+  const reportOpts=Object.entries(TYPE_NAME).map(([k,v])=>`<option value="${k}" ${schForm.report===k?'selected':''}>${v}</option>`).join('');
+  const freqs=['Daily','Weekly','Monthly'], days=['Monday','Tuesday','Wednesday','Thursday','Friday'];
+  const hhs=Array.from({length:24},(_,i)=>String(i).padStart(2,'0')), mms=['00','15','30','45'];
+  const deliverOpts=['You','Creative Delivery (group)','Finance (group)','PMO (group)','FIFA Reporting (group)'];
+  const second=schForm.freq==='Weekly'
+    ?`<select id="sfDay">${days.map(d=>`<option ${schForm.day===d?'selected':''}>${d}</option>`).join('')}</select>`
+    :`<span class="sd-hint">${schForm.freq==='Daily'?'every day':'on the last day of the month'}</span>`;
+  $('schBody').innerHTML=`
+    <div class="rt-field"><label>Title <span class="rt-asterisk">*</span></label><input id="sfTitle" value="${schForm.title}" placeholder="e.g. FIFA — weekly delivery performance"></div>
+    <div class="rt-field"><label>Report <span class="rt-asterisk">*</span></label><select id="sfReport"><option value="">Select a report…</option>${reportOpts}</select></div>
+    <div class="rt-field"><label>Repeats</label><div class="sd-grid"><select id="sfFreq">${freqs.map(f=>`<option ${schForm.freq===f?'selected':''}>${f}</option>`).join('')}</select>${second}</div></div>
+    <div class="sd-grid">
+      <div class="rt-field"><label>Starts</label><input id="sfStart" value="${schForm.start}"></div>
+      <div class="rt-field"><label>Time</label><div class="sd-time"><select id="sfHH">${hhs.map(h=>`<option ${schForm.hh===h?'selected':''}>${h}</option>`).join('')}</select><span>:</span><select id="sfMM">${mms.map(m=>`<option ${schForm.mm===m?'selected':''}>${m}</option>`).join('')}</select></div></div>
+    </div>
+    <div class="rt-field"><label>Deliver to</label><select id="sfDeliver">${deliverOpts.map(o=>`<option ${schForm.deliver===o?'selected':''}>${o}</option>`).join('')}</select></div>
+    <div class="pm-warn">${ICON_WARN}<span>Recipients receive the emailed file even if they can\u2019t open the report. It runs with the schedule owner\u2019s data scope — check Permissions before scheduling.</span></div>`;
+  $('sfTitle').oninput=e=>schForm.title=e.target.value;
+  $('sfReport').onchange=e=>schForm.report=e.target.value;
+  $('sfFreq').onchange=e=>{schForm.freq=e.target.value;renderSchedDialog();};
+  if($('sfDay'))$('sfDay').onchange=e=>schForm.day=e.target.value;
+  $('sfStart').oninput=e=>schForm.start=e.target.value;
+  $('sfHH').onchange=e=>schForm.hh=e.target.value;
+  $('sfMM').onchange=e=>schForm.mm=e.target.value;
+  $('sfDeliver').onchange=e=>schForm.deliver=e.target.value;
+}
+function openSched(){schForm={title:'',report:'',freq:'Weekly',day:'Monday',hh:'09',mm:'00',start:'18 Jun 2026',deliver:'You'};renderSchedDialog();$('schOverlay').classList.add('show');}
+function closeSched(){$('schOverlay').classList.remove('show');}
+function saveSched(){
+  $('sfTitle').classList.toggle('rt-bad',!schForm.title.trim());
+  $('sfReport').classList.toggle('rt-bad',!schForm.report);
+  if(!schForm.title.trim()||!schForm.report)return;
+  const cad=schForm.freq==='Weekly'?`Weekly · ${schForm.day}s`:schForm.freq==='Monthly'?'Monthly · last day':'Daily';
+  SCHEDULES.unshift({title:schForm.title,type:schForm.report,cadence:cad,time:`${schForm.hh}:${schForm.mm}`,next:`${schForm.start}, ${schForm.hh}:${schForm.mm}`,last:'queued',lastWhen:'—',recipients:schForm.deliver,owner:'James D\u2019Arcy'});
+  closeSched();renderSchedules();toast('Schedule created · first run queued');
+}
+$('newSchedBtn').onclick=openSched;
+$('schSearch').oninput=e=>{sq=e.target.value.toLowerCase();renderSchedules();};
+$('schCancel').onclick=closeSched;
+$('schSave').onclick=saveSched;
+$('schOverlay').onclick=e=>{if(e.target===$('schOverlay'))closeSched();};
+renderSchedules();
+
+</script>
+</body>
+</html>
