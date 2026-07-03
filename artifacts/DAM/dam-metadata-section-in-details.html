@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAM · Metadata demoted to a File-metadata section inside Details</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --stone-50:#fefcfc;--stone-100:#f5f5f4;--stone-200:#e7e5e4;--stone-300:#d6d3d1;
+  --stone-400:#978985;--stone-500:#6b615e;--stone-700:#44403c;--stone-900:#261e1b;
+  --primary:#0b6e8a;--primary-300:#4db5cf;--accent-3:#E4F5FC;--green:#208368;--red:#e54d2e;
+  --surface:#fff;--text:var(--stone-900);--muted:var(--stone-500);--subtle:var(--stone-400);
+  --border:var(--stone-200);--border-sub:var(--stone-100);
+  --r2:4px;--r3:6px;--pill:9999px;--font:'Inter',-apple-system,sans-serif;
+  /* dark editor theme */
+  --ed-bg:#1c1815;--ed-panel:#211c19;--ed-line:rgba(255,255,255,0.08);
+  --ed-label:rgba(255,255,255,0.55);--ed-value:rgba(255,255,255,0.92);--ed-faint:rgba(255,255,255,0.4);
+  --ed-input-bg:rgba(255,255,255,0.05);--ed-input-bd:rgba(255,255,255,0.40);
+}
+*{box-sizing:border-box;}
+body{margin:0;background:#f3f1ef;color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;padding:34px 30px 80px;}
+.wrap{max-width:1000px;margin:0 auto;}
+h1{font-size:16px;font-weight:700;letter-spacing:-.02em;margin:0 0 8px;}
+.lede{color:var(--muted);font-size:14px;margin:0 0 6px;max-width:820px;}
+.principle{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid var(--border);border-left:3px solid var(--primary);border-radius:8px;padding:14px 18px;margin:14px 0 26px;font-size:13px;color:var(--muted);}
+.principle b{color:var(--text);}
+.seclabel{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:30px 0 12px;}
+
+/* lightbox */
+.lb{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 10px 24px -8px rgba(0,0,0,.18);margin-bottom:14px;}
+.lb-top{display:flex;align-items:center;gap:14px;padding:13px 16px;border-bottom:1px solid var(--border);}
+.lb-top .nav{display:flex;gap:4px;color:var(--muted);}
+.lb-top .nav svg{width:18px;height:18px;}
+.lb-top .fn{font-size:14px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lb-top .acts{display:flex;align-items:center;gap:9px;}
+.btn{display:inline-flex;align-items:center;gap:7px;font-family:var(--font);font-size:14px;font-weight:600;border-radius:var(--r2);padding:8px 13px;cursor:default;border:1px solid transparent;}
+.btn svg{width:15px;height:15px;}
+.btn-sec{background:#fff;border-color:var(--border);color:var(--text);}
+.btn-pri{background:var(--primary);color:#fff;}
+.icbtn{color:var(--muted);display:flex;padding:4px;}
+.icbtn svg{width:18px;height:18px;}
+.lb-body{display:flex;min-height:440px;}
+.stage{flex:1;background:var(--stone-100);display:flex;align-items:center;justify-content:center;color:var(--subtle);font-size:12px;border-right:1px solid var(--border);}
+.rail{width:54px;flex:none;border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 0;}
+.rail .ri,.rail .collapse{display:flex;align-items:center;justify-content:center;width:100%;padding:13px 0;cursor:pointer;position:relative;color:var(--muted);}
+.rail .ri svg{width:20px;height:20px;}
+.rail .collapse{color:var(--subtle);padding:4px 0 10px;}
+.rail .collapse svg{width:18px;height:18px;}
+.rail .ri.active{color:var(--primary);background:var(--accent-3);}
+.rail .ri.active::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:3px;background:var(--primary);border-radius:0 2px 2px 0;}
+.rail .ri:hover{background:var(--stone-100);color:var(--text);}
+.rail .ri.active:hover{background:var(--accent-3);color:var(--primary);}
+.rail .ri::after,.rail .collapse::after{content:attr(data-tip);position:absolute;right:calc(100% + 10px);top:50%;transform:translateY(-50%);background:var(--stone-900);color:#fff;font-size:11px;padding:4px 8px;border-radius:var(--r2);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .12s;z-index:5;}
+.rail .ri:hover::after,.rail .collapse:hover::after{opacity:1;}
+.panel{width:308px;flex:none;padding:20px 18px;overflow:auto;}
+.lb-bottom{display:flex;align-items:center;gap:16px;padding:11px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);}
+.kbd{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 5px;border:1px solid var(--border);border-radius:var(--r2);font-size:11px;color:var(--stone-700);background:#fff;margin-right:5px;}
+.lb-bottom .grp{display:flex;align-items:center;gap:5px;}
+.lb-bottom .pos{margin-left:auto;font-weight:600;color:var(--text);}
+.lb-bottom .pos span{color:var(--muted);font-weight:400;}
+
+/* panel content — contract kit */
+.ph{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text);margin-bottom:12px;}
+.dfield{padding:9px 0;border-bottom:1px solid var(--border-sub);}
+.dfield .lab{font-size:12px;color:var(--muted);margin-bottom:3px;}
+.dfield .ro{font-size:14px;color:var(--text);word-break:break-word;}
+.dfield .ro.empty{color:var(--subtle);font-style:italic;}
+.facts{margin-top:6px;}
+.frow{display:grid;grid-template-columns:108px 1fr;gap:12px;padding:8px 0;font-size:12px;border-bottom:1px solid var(--border-sub);align-items:start;}
+.frow .fl{color:var(--muted);}
+.frow .fv{color:var(--text);font-weight:500;word-break:break-word;}
+.frow .fv.link{color:var(--primary);word-break:break-all;font-weight:400;}
+
+/* File-metadata collapsible section — accordion = variant of section (contract §2) */
+.msec{margin-top:16px;border-top:1px solid var(--border);padding-top:14px;}
+.msec-head{display:flex;align-items:center;gap:8px;padding:4px 0 4px 0;font-size:14px;font-weight:600;color:var(--text);cursor:pointer;user-select:none;}
+.msec-head .pico{color:var(--muted);display:flex;}
+.msec-head .pico svg{width:16px;height:16px;}
+.msec-head .ct{font-size:11px;font-weight:600;color:var(--muted);}
+.msec-head .none{font-size:11px;font-weight:500;color:var(--subtle);}
+.msec-head .chev{margin-left:auto;color:var(--subtle);display:flex;transition:transform .18s ease;}
+.msec-head .chev svg{width:10px;height:10px;}
+.msec-head .chev.closed{transform:rotate(-90deg);}
+.msec-body{display:none;padding:4px 0 2px 2px;}
+.msec.open .msec-body{display:block;}
+.msec.open .msec-head{border-left:2px solid var(--primary);padding-left:10px;margin-left:-12px;}
+.empty{text-align:center;padding:22px 12px;color:var(--muted);}
+.empty svg{width:30px;height:30px;color:var(--subtle);margin-bottom:8px;}
+.empty .e1{font-size:12px;color:var(--muted);line-height:1.55;max-width:240px;margin:0 auto;}
+.stub{font-size:12px;color:var(--muted);margin-top:12px;}
+.stub code{font-family:ui-monospace,monospace;font-size:11px;background:var(--stone-100);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--stone-700);}
+
+.cols2{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;}
+.cols2>.card{flex:1 1 300px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;box-shadow:0 6px 16px -10px rgba(0,0,0,.16);}
+.cardcap{font-size:11px;font-weight:600;color:var(--muted);margin-bottom:12px;}
+.pill-note{display:inline-block;font-size:11px;font-weight:600;color:var(--primary);background:var(--accent-3);border-radius:var(--pill);padding:3px 9px;margin-bottom:10px;}
+
+/* dark edit parity */
+.edcard{background:var(--ed-bg);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:18px;}
+.edcard .ph{color:var(--ed-value);}
+.edcap{font-size:11px;font-weight:600;color:var(--ed-faint);margin-bottom:12px;}
+.ed-in{display:block;width:100%;font-family:var(--font);font-size:14px;color:var(--ed-value);background:var(--ed-input-bg);border:1px solid var(--ed-input-bd);border-radius:var(--r2);padding:8px 11px;margin-bottom:12px;}
+.ed-lab{font-size:12px;color:var(--ed-label);margin-bottom:4px;}
+.ed-frow{display:grid;grid-template-columns:108px 1fr;gap:12px;padding:8px 0;font-size:12px;border-bottom:1px solid var(--ed-line);}
+.ed-frow .fl{color:var(--ed-label);}.ed-frow .fv{color:var(--ed-value);font-weight:500;}
+.ed-msec{margin-top:14px;border-top:1px solid var(--ed-line);padding-top:12px;}
+.ed-msec-head{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--ed-value);}
+.ed-msec-head .pico{color:var(--ed-faint);display:flex;}.ed-msec-head .pico svg{width:16px;height:16px;}
+.ed-msec-head .ct{font-size:11px;font-weight:600;color:var(--ed-faint);}
+.ed-msec-head .chev{margin-left:auto;color:var(--ed-faint);display:flex;}.ed-msec-head .chev svg{width:10px;height:10px;}
+.note{background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px 20px;font-size:13px;color:var(--muted);margin-top:26px;}
+.note b{color:var(--text);}
+.tag-no{color:var(--red);font-weight:600;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Metadata → a File-metadata section inside Details</h1>
+  <p class="lede">The standalone Metadata rail item is removed. Its allowlisted, read-only fields fold into a collapsible section at the foot of Details — the same section, in the same order, in both edit and lightbox. Composed from the kit: <b style="color:var(--text)">frow</b> rows, the <b style="color:var(--text)">section header</b> with its filled-triangle disclosure, the <b style="color:var(--text)">empty</b> pattern. No new components.</p>
+  <div class="principle"><span><b>Contract §2:</b> “Accordion is a variant of section — used only when collapsing earns it (long/optional groups).” Embedded metadata is optional and empty for most assets, so it earns the collapse. <b>Rail set drops 6 → 5</b> — this edits the locked Foundations law and must be logged there, not just here.</span></div>
+
+  <!-- ============ 1 · LIGHTBOX (view) — collapsed default ============ -->
+  <div class="seclabel">1 · Lightbox (view) · Details — section collapsed by default</div>
+  <div class="lb">
+    <div class="lb-top">
+      <span class="nav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></span>
+      <span class="fn">gc26_lax_hostcity_poster_reg_4l_pat3_alt_tour_4x3.jpg</span>
+      <span class="acts">
+        <button class="btn btn-sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v14"/></svg>Share</button>
+        <button class="btn btn-pri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Download</button>
+        <span class="icbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+      </span>
+    </div>
+    <div class="lb-body">
+      <div class="stage">asset preview</div>
+      <div class="rail">
+        <span class="collapse" data-tip="Collapse" aria-label="Collapse"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 9l3 3-3 3"/></svg></span>
+        <span class="ri active" data-tab="details" data-tip="Details" aria-label="Details"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>
+        <span class="ri" data-tab="attributes" data-tip="Attributes" aria-label="Attributes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v6M20 4 9 15"/></svg></span>
+        <span class="ri" data-tab="similar" data-tip="Similar" aria-label="Similar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h2l2 10M7 12c4-4 6 4 10 0"/></svg></span>
+        <span class="ri" data-tab="rights" data-tip="Rights" aria-label="Rights"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></span>
+        <span class="ri" data-tab="download" data-tip="Download" aria-label="Download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></span>
+      </div>
+      <div class="panel">
+        <div class="ph">Details</div>
+        <div class="dfield"><div class="lab">Title</div><div class="ro">LA Host City Poster</div></div>
+        <div class="dfield"><div class="lab">Description</div><div class="ro empty">No description</div></div>
+        <div class="facts">
+          <div class="frow"><span class="fl">Original filename</span><span class="fv">gc26_lax_hostcity_poster_reg_4l_pat3_alt_tour_4x3.jpg</span></div>
+          <div class="frow"><span class="fl">Asset type</span><span class="fv">Image</span></div>
+          <div class="frow"><span class="fl">Dimensions</span><span class="fv">1920 × 1440 px</span></div>
+          <div class="frow"><span class="fl">Resolution</span><span class="fv">72 dpi</span></div>
+          <div class="frow"><span class="fl">Colour space</span><span class="fv">sRGB</span></div>
+          <div class="frow"><span class="fl">File size</span><span class="fv">2.4 MB</span></div>
+          <div class="frow"><span class="fl">Owner</span><span class="fv">SD Admin</span></div>
+          <div class="frow"><span class="fl">Uploaded by</span><span class="fv">SD Admin</span></div>
+          <div class="frow"><span class="fl">Upload date</span><span class="fv">29 Jun 2026, 14:25</span></div>
+          <div class="frow" style="border-bottom:none;"><span class="fl">File link</span><span class="fv link">https://damdev.screendragondev.com?inode=107340</span></div>
+        </div>
+
+        <div class="msec" onclick="this.classList.toggle('open')">
+          <div class="msec-head">
+            <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12.5 8 15l2 2.5M14 12.5l2 2.5-2 2.5M14 2v6h6"/><path d="M4 6V4a2 2 0 0 1 2-2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2"/></svg></span>
+            File metadata <span class="ct">4</span>
+            <span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span>
+          </div>
+          <div class="msec-body">
+            <div class="frow"><span class="fl">Orientation</span><span class="fv">Landscape</span></div>
+            <div class="frow"><span class="fl">Creator</span><span class="fv">Screendragon Studio</span></div>
+            <div class="frow"><span class="fl">Credit / Source</span><span class="fv">Global Cup 2026</span></div>
+            <div class="frow" style="border-bottom:none;"><span class="fl">Copyright</span><span class="fv">© Global Cup 2026 — all rights reserved</span></div>
+            <p class="stub" style="border-top:1px solid var(--border-sub);padding-top:10px;">Allowlisted fields only — File Name <code>tmp…jpg</code>, <code>/tmp</code>, <code>100600</code>, MIME/encoding noise suppressed (SCR-155). Dimensions · Resolution · Colour space are Details facts above, not repeated here.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="lb-bottom">
+      <span class="grp"><span class="kbd">←</span><span class="kbd">→</span>Navigate</span>
+      <span class="grp"><span class="kbd">Esc</span>Close</span>
+      <span class="pos">3 <span>/ 148</span></span>
+    </div>
+  </div>
+  <p class="lede" style="font-size:12px;">Rail is 5, not 6 — Metadata is gone. The section sits after the facts, collapsed, with a count so its worth reads before you open it.</p>
+
+  <!-- ============ 2 · EXPANDED — populated vs empty ============ -->
+  <div class="seclabel">2 · Section expanded — populated vs empty</div>
+  <div class="cols2">
+    <div class="card">
+      <div class="pill-note">Camera / studio asset — populated</div>
+      <div class="msec open" style="margin-top:0;border-top:none;padding-top:0;">
+        <div class="msec-head" style="border-left:2px solid var(--primary);padding-left:10px;margin-left:-2px;">
+          <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12.5 8 15l2 2.5M14 12.5l2 2.5-2 2.5M14 2v6h6"/><path d="M4 6V4a2 2 0 0 1 2-2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2"/></svg></span>
+          File metadata <span class="ct">4</span>
+          <span class="chev"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span>
+        </div>
+        <div class="msec-body" style="display:block;">
+          <div class="frow"><span class="fl">Orientation</span><span class="fv">Landscape</span></div>
+          <div class="frow"><span class="fl">Creator</span><span class="fv">Screendragon Studio</span></div>
+          <div class="frow"><span class="fl">Credit / Source</span><span class="fv">Global Cup 2026</span></div>
+          <div class="frow" style="border-bottom:none;"><span class="fl">Copyright</span><span class="fv">© Global Cup 2026 — all rights reserved</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="pill-note">Stripped export — empty</div>
+      <div class="msec open" style="margin-top:0;border-top:none;padding-top:0;">
+        <div class="msec-head" style="border-left:2px solid var(--primary);padding-left:10px;margin-left:-2px;">
+          <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12.5 8 15l2 2.5M14 12.5l2 2.5-2 2.5M14 2v6h6"/><path d="M4 6V4a2 2 0 0 1 2-2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2"/></svg></span>
+          File metadata <span class="none">None embedded</span>
+          <span class="chev"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span>
+        </div>
+        <div class="msec-body" style="display:block;">
+          <div class="empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <div class="e1">No EXIF, IPTC or XMP — this file was exported or stripped on save. File facts are in Details above.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 3 · PARITY — same section, both modes ============ -->
+  <div class="seclabel">3 · Same rows, both modes — mode toggles state, not structure</div>
+  <div class="cols2">
+    <div class="edcard">
+      <div class="edcap">Edit mode · dark · Title + Description editable</div>
+      <div class="ph">Details</div>
+      <div class="ed-lab">Title</div>
+      <input class="ed-in" value="LA Host City Poster">
+      <div class="ed-lab">Description</div>
+      <input class="ed-in" placeholder="Add a description…">
+      <div class="ed-frow"><span class="fl">Dimensions</span><span class="fv">1920 × 1440 px</span></div>
+      <div class="ed-frow"><span class="fl">Colour space</span><span class="fv">sRGB</span></div>
+      <div class="ed-msec">
+        <div class="ed-msec-head">
+          <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12.5 8 15l2 2.5M14 12.5l2 2.5-2 2.5M14 2v6h6"/><path d="M4 6V4a2 2 0 0 1 2-2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2"/></svg></span>
+          File metadata <span class="ct">4</span>
+          <span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span>
+        </div>
+      </div>
+      <p class="stub" style="color:var(--ed-faint);margin-top:12px;">Read-only in edit too — metadata is system-extracted, immutable. Editing never touches it.</p>
+    </div>
+    <div class="card">
+      <div class="cardcap">Lightbox · light · Title + Description static</div>
+      <div class="ph">Details</div>
+      <div class="dfield"><div class="lab">Title</div><div class="ro">LA Host City Poster</div></div>
+      <div class="dfield"><div class="lab">Description</div><div class="ro empty">No description</div></div>
+      <div class="frow"><span class="fl">Dimensions</span><span class="fv">1920 × 1440 px</span></div>
+      <div class="frow"><span class="fl">Colour space</span><span class="fv">sRGB</span></div>
+      <div class="msec" style="margin-top:14px;">
+        <div class="msec-head">
+          <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12.5 8 15l2 2.5M14 12.5l2 2.5-2 2.5M14 2v6h6"/><path d="M4 6V4a2 2 0 0 1 2-2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2"/></svg></span>
+          File metadata <span class="ct">4</span>
+          <span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span>
+        </div>
+      </div>
+      <p class="stub" style="margin-top:12px;">Identical section, identical order. Only Title/Description change state.</p>
+    </div>
+  </div>
+
+  <div class="note"><b>What this changes in the contract.</b> The rail shared set becomes Details · Attributes · Similar · Rights · Download — <b>five, not six</b>. That edits the locked Foundations consistency law (which currently names Metadata as a shared destination) and the closing rail-set line. The Metadata glyph — one of the two the contract already flags as not reading on its own — retires with the tab, removing a legibility debt rather than carrying it. <span class="tag-no">Not</span> a lightbox-only change: the section and its read-only state are identical in edit and lightbox by construction.</div>
+
+</div>
+</body>
+</html>
