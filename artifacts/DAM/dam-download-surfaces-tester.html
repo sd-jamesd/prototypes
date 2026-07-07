@@ -16,11 +16,13 @@
     --color-stone-900: #1c1c19;
 
     --color-red-100: #feebe7;
+    --color-red-300: #FCA5A5; /* Scale-ramp gap: light step for status text on dark surfaces (stone-800). No upstream token — flag as Scale evolution candidate. */
     --color-red-500: #e54d2e;
     --color-red-600: #d13415;
     --color-red-700: #582C29;
 
     --color-amber-100: #ffefd5;
+    --color-amber-300: #FCD34D; /* Scale-ramp gap: light step for status text on dark surfaces (stone-800). No upstream token — flag as Scale evolution candidate. */
     --color-amber-500: #f5a524;
     --color-amber-600: #985b00;
     --color-amber-700: #4E350D;
@@ -616,7 +618,8 @@
   /* Bulk action bar */
   .bulk-bar-context {
     width: 100%;
-    max-width: 580px;
+    max-width: 380px;
+    margin: 0 auto;
     position: relative;
     padding: var(--spacing-7) 0;
   }
@@ -631,24 +634,24 @@
     color: white;
   }
   .bulk-count {
-    background: rgba(255,255,255,0.15);
-    border-radius: var(--radius-full);
-    padding: 4px 10px;
-    font-size: var(--font-size-1);
-    font-weight: var(--font-weight-semibold);
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--spacing-2);
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-medium);
+    color: white;
   }
   .bulk-count-num {
     background: var(--primary-default);
-    border-radius: var(--radius-full);
-    width: 18px;
-    height: 18px;
+    border-radius: var(--radius-2);
+    min-width: 24px;
+    height: 24px;
+    padding: 0 6px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--font-size-0);
+    font-size: var(--font-size-1);
+    font-weight: var(--font-weight-semibold);
   }
   .bulk-divider {
     width: 1px;
@@ -671,115 +674,54 @@
     gap: 6px;
   }
   .bulk-btn:hover { background: rgba(255,255,255,0.18); }
-  .bulk-btn-primary { background: var(--primary-default); }
-  .bulk-btn-primary:hover { background: var(--primary-hover); }
-  .bulk-btn-icon { width: 32px; padding: 0; justify-content: center; }
-  .bulk-btn-destructive { color: #FCA5A5; }
-  .bulk-spacer { flex: 1; }
-  .bulk-queue-badge {
-    background: rgba(255,255,255,0.2);
-    padding: 1px 6px;
-    border-radius: var(--radius-full);
-    font-size: var(--font-size-0);
-    margin-left: 2px;
-  }
-  .bulk-chevron-btn {
-    transition: transform 0.2s;
-  }
-  .bulk-bar-context.tray-open .bulk-chevron-btn svg {
-    transform: rotate(180deg);
-  }
-
-  /* Bulk review tray — opens above the bar */
-  .bulk-tray {
+  /* Actions dropdown — consolidated per the shipped bar. Opens UPWARD (bar sits
+     low) and spans the full bar width so the menu and bar read as one unit.
+     Dark surface to match the bar; rights readiness is scoped to the Download
+     item only, never the bar itself. */
+  .bulk-actions-menu {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    right: 0;
     background: var(--color-stone-800);
+    border: 1px solid rgba(255,255,255,0.12);
     border-radius: var(--radius-3);
     box-shadow: var(--shadow-lg);
-    margin-bottom: var(--spacing-2);
-    overflow: hidden;
-    color: white;
+    padding: var(--spacing-2);
     display: none;
   }
-  .bulk-bar-context.tray-open .bulk-tray {
-    display: block;
-  }
-  .bulk-tray-header {
-    padding: var(--spacing-3) var(--spacing-3);
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    font-size: var(--font-size-1);
-    font-weight: var(--font-weight-semibold);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: rgba(255,255,255,0.7);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .bulk-tray-header-actions {
-    text-transform: none;
-    letter-spacing: 0;
-    font-weight: var(--font-weight-medium);
-    font-size: var(--font-size-1);
-  }
-  .bulk-tray-clear {
-    background: transparent;
-    border: none;
-    color: rgba(255,255,255,0.7);
-    cursor: pointer;
-    padding: 0;
-    font-family: inherit;
-    font-size: var(--font-size-1);
-  }
-  .bulk-tray-clear:hover { color: white; }
-  .bulk-tray-list {
-    max-height: 280px;
-    overflow-y: auto;
-    padding: var(--spacing-2);
-  }
-  .bulk-tray-item {
+  .bulk-bar-context.open .bulk-actions-menu { display: block; }
+  .bulk-bar-context.open .bulk-actions-chevron { transform: rotate(180deg); }
+  .bulk-actions-chevron { transition: transform 0.2s; }
+  .bulk-action-item {
     display: flex;
     align-items: center;
     gap: var(--spacing-3);
-    padding: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-3);
     border-radius: var(--radius-2);
-  }
-  .bulk-tray-item:hover {
-    background: rgba(255,255,255,0.05);
-  }
-  .bulk-tray-thumb {
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-2);
-    background-size: cover;
-    background-position: center;
-    flex-shrink: 0;
-  }
-  .bulk-tray-name {
-    flex: 1;
-    min-width: 0;
-    font-size: var(--font-size-2);
-    font-weight: var(--font-weight-medium);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .bulk-tray-remove {
-    width: 24px;
-    height: 24px;
-    background: transparent;
-    border: none;
-    border-radius: var(--radius-1);
-    cursor: pointer;
-    color: rgba(255,255,255,0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .bulk-tray-remove:hover {
-    background: rgba(255,255,255,0.1);
     color: white;
+    font-size: var(--font-size-2);
+    cursor: pointer;
   }
+  .bulk-action-item:hover { background: rgba(255,255,255,0.08); }
+  .bulk-action-item .overflow-icon { color: rgba(255,255,255,0.7); }
+  .bulk-action-item.destructive { color: var(--color-red-300); }
+  .bulk-action-item.destructive .overflow-icon { color: var(--color-red-300); }
+  .bulk-action-item.disabled { opacity: 0.45; cursor: not-allowed; }
+  .bulk-action-item.disabled:hover { background: transparent; }
+  .bulk-action-body { display: flex; flex-direction: column; gap: 1px; }
+  .bulk-action-sub { font-size: var(--font-size-1); font-weight: var(--font-weight-medium); }
+  .bulk-action-sub.warning { color: var(--color-amber-300); }
+  .bulk-action-sub.blocked { color: var(--color-red-300); }
+  .bulk-actions-divider { height: 1px; background: rgba(255,255,255,0.12); margin: var(--spacing-2) 0; }
+  .bulk-clear-x {
+    background: rgba(255,255,255,0.08);
+    border: none; color: rgba(255,255,255,0.8);
+    width: 28px; height: 28px; border-radius: var(--radius-2);
+    display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .bulk-clear-x:hover { background: rgba(255,255,255,0.16); color: white; }
+  .bulk-spacer { flex: 1; }
 
   /* Queue page */
   /* Downloads peek — global nav dropdown */
@@ -1717,6 +1659,13 @@
         </svg>
         Modal
       </button>
+      <button class="surface-tab" data-surface="request">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M8 1.5l5 2v4c0 3-2.2 5.2-5 6-2.8-.8-5-3-5-6v-4l5-2z"/>
+          <path d="M6 8l1.5 1.5L11 6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Request access
+      </button>
       <button class="surface-tab" data-surface="queue">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M2 4h12M2 8h12M2 12h8" stroke-linecap="round"/>
@@ -1768,7 +1717,7 @@ const SCENARIOS = [
     tag: 'simple',
     tagLabel: 'Simple',
     description: 'Asset has no rights configuration and no format templates. The simplest possible case — no version choice, no format choice, nothing to configure. Menu collapses to a single Download action that triggers the file directly.',
-    outcome: { pill: 'full', label: 'Direct download', title: 'No configuration needed', detail: 'Single Download menu item, no modal. Click to download the file as-is.' },
+    outcome: { pill: 'full', label: 'Downloads directly', title: 'No configuration needed', detail: 'Single Download menu item, no modal. Click to download the file as-is.' },
     asset: {
       name: 'Internal_Team_Photo_2026.jpg',
       type: 'JPG',
@@ -1785,7 +1734,7 @@ const SCENARIOS = [
     short: 'Cleared baseline',
     tag: 'cleared',
     tagLabel: 'Cleared',
-    description: 'Has rights configuration and templates, all cleared for this user. Direct download is available as a shortcut for Original; Configure download opens the modal for full version + format choice.',
+    description: 'Has rights configuration and templates, all cleared for this user. <code>Download</code> delivers Original directly; <code>Download as…</code> opens the modal for full version + format choice.',
     outcome: { pill: 'full', label: 'Full access', title: 'User can download all versions and formats', detail: 'Original, watermarked, and preview available. No banners, no warnings, no friction.' },
     asset: {
       name: 'spring4.jpg',
@@ -1810,6 +1759,23 @@ const SCENARIOS = [
       size: '24 MB',
       thumb: 'img-fill-blocked',
       cardStatus: { label: 'Embargoed', class: 'embargoed' }
+    }
+  },
+  {
+    id: 'embargo-preview',
+    title: 'Embargoed · preview available',
+    short: 'Embargo (preview)',
+    tag: 'embargo',
+    tagLabel: 'Embargo',
+    description: 'Embargoed for external use, but the pre-release policy permits a watermarked preview now for internal drafting. The Original releases automatically on the lift date — no request needed (temporal, not permission-based). Behaves like the restricted-but-downloadable case, not the hard block.',
+    embargoDate: '14 May 2026',
+    outcome: { pill: 'restricted', label: 'Preview · embargoed', title: 'Preview available now · Original releases on lift date', detail: 'Watermarked preview downloadable immediately for drafting. Original locked until the embargo lifts, then unlocks automatically. No request path — it is time-based, not a permission to grant.' },
+    asset: {
+      name: 'WC2026_KitReveal_Hero.jpg',
+      type: 'JPG',
+      size: '22 MB',
+      thumb: 'img-fill-1',
+      cardStatus: { label: 'Preview', class: 'restricted' }
     }
   },
   {
@@ -1872,6 +1838,17 @@ const SCENARIOS = [
     selectionDetail: '3 assets · 1 cleared, 1 watermark only, 1 expired',
     outcome: { pill: 'mixed', label: 'Mixed rights', title: 'Some assets in this selection are restricted', detail: 'Bulk surfaces apply LCD: only versions/formats valid across the whole selection are offered. Banner explains why fewer options are available than expected.' },
     asset: null
+  },
+  {
+    id: 'restricted-bulk',
+    title: 'Restricted (bulk selection)',
+    short: 'Restricted (bulk)',
+    tag: 'restricted',
+    tagLabel: 'Restricted',
+    description: 'Selection of multiple assets that are ALL request-eligible — none downloadable in any form. Tests bulk request access: Download disables and Request access becomes the primary action, scoped to the whole selection.',
+    selectionDetail: '3 assets · all restricted, access required',
+    outcome: { pill: 'restricted', label: 'Request access · 3', title: 'Whole selection needs a request', detail: 'Nothing is downloadable, so Download disables and Request access · 3 is the primary action. One reason from the user, fanned to the right rights manager per asset. This is the state-adaptive second slot scaled to bulk — not a special "all must be restricted" rule.' },
+    asset: null
   }
 ];
 
@@ -1886,14 +1863,14 @@ const SURFACE_BEHAVIOURS = {
     card: {
       notes: [
         'No status badge on the card — the asset has no rights configuration to communicate.',
-        'Single <code>Download</code> menu item with no submenu chevron — there\'s nothing to choose, so nothing to expand.',
-        'Click <code>Download</code> triggers the file directly — no modal, no submenu.',
+        'Single <code>Download</code> menu item — no <code>Download as…</code>, because there are no version tiers or templates to choose from. Offering an "as…" that opens an empty modal would be a dead end.',
+        'Click <code>Download</code> triggers the file directly — no modal.',
         'Add to Queue still works the same way.'
       ],
       qa: [
         { state: 'pass', text: 'No status badge on the card' },
-        { state: 'pass', text: 'Single Download item, NO submenu chevron' },
-        { state: 'pass', text: 'No "Configure download…" because nothing to configure' },
+        { state: 'pass', text: 'Single Download item — no "Download as…"' },
+        { state: 'pass', text: 'No "Download as…" because nothing to configure' },
         { state: 'pass', text: 'No Request access item' },
         { state: 'pass', text: 'Add to Queue still present' }
       ]
@@ -1927,7 +1904,7 @@ const SURFACE_BEHAVIOURS = {
     modal: {
       notes: [
         'Modal does not open for simple-asset single-download flows — the Download menu item triggers directly.',
-        'Modal still opens if user adds to queue and configures from the Downloads page, or if Configure download is reached via a multi-asset selection that includes rights-managed items.'
+        'Modal still opens if user adds to queue and configures from the Downloads page, or if <code>Download as…</code> is reached via a multi-asset selection that includes rights-managed items.'
       ],
       qa: [
         { state: 'warn', text: 'Modal not relevant for single simple download' },
@@ -1967,15 +1944,14 @@ const SURFACE_BEHAVIOURS = {
     card: {
       notes: [
         'Asset card status badge shows <code>Cleared</code> in green.',
-        'Single <code>Download</code> menu item with submenu chevron — click to expand.',
-        'Submenu shows <code>Direct download</code> (system delivers what the user has rights to — Original here) and <code>Configure download…</code> (open the modal for explicit version/format choice).',
-        'The submenu labels are the same across all rights states. The system handles delivering the right version — the user doesn\'t need to know the rules.'
+        'Two sibling download items — flat, no submenu. <code>Download</code> delivers Original directly; <code>Download as…</code> opens the modal for explicit version/format choice.',
+        '<code>Download</code> always delivers the best version the user\'s rights allow — the system handles the rules, the user doesn\'t need to know them. The ellipsis on <code>Download as…</code> signals a dialog follows.'
       ],
       qa: [
-        { state: 'pass', text: 'Single Download item, not split' },
-        { state: 'pass', text: 'Submenu chevron visible' },
-        { state: 'pass', text: 'Click reveals two submenu items' },
-        { state: 'pass', text: 'Direct download label is consistent (not "Download original")' }
+        { state: 'pass', text: 'Two sibling items: Download + Download as…' },
+        { state: 'pass', text: 'No submenu — flat menu' },
+        { state: 'pass', text: 'Download as… opens the modal' },
+        { state: 'pass', text: 'Download delivers best-available by rights (not "Download original")' }
       ]
     },
     lightbox: {
@@ -1993,16 +1969,15 @@ const SURFACE_BEHAVIOURS = {
     },
     bulk: {
       notes: [
-        'Bulk action bar shows count, all 5 actions enabled.',
-        '<code>Download</code> CTA opens the unified modal with full options.',
-        'No rights banner above or below the bar.',
-        '<code>Add to Queue</code> button updates the queue badge count visibly.'
+        'Bar is neutral: <code>[N] files selected</code> + <code>Actions ▾</code>. No rights banner above or below.',
+        'Actions menu: Download / Add to download queue / Add to Collection / Bulk Edit / Delete.',
+        'Two download items: <code>Download</code> acts directly (best version, ZIP for multiple, no modal); <code>Download as…</code> opens the configurator for version + format. No rights sub-line on either — everything is cleared.'
       ],
       qa: [
-        { state: 'pass', text: 'Bar shows count and all actions' },
-        { state: 'pass', text: 'Download CTA highlighted in primary blue' },
-        { state: 'pass', text: 'Add to Queue badge increments on click' },
-        { state: 'pass', text: 'No restriction summary text' }
+        { state: 'pass', text: 'Neutral bar: files selected + Actions dropdown' },
+        { state: 'pass', text: 'Download item opens the unified modal' },
+        { state: 'pass', text: 'No rights sub-line on Download (all cleared)' },
+        { state: 'pass', text: 'No restriction summary text on the bar' }
       ]
     },
         modal: {
@@ -2050,7 +2025,7 @@ const SURFACE_BEHAVIOURS = {
     card: {
       notes: [
         'Asset card status badge shows <code>Embargoed</code> in amber.',
-        'Single <code>Download</code> item, disabled (no submenu opens). Tooltip: "Embargoed until [date]".',
+        'Collapses to a <em>single</em> disabled <code>Download</code> with tooltip "Embargoed until [date]". No second slot — embargo is temporal, so there\'s nothing to request and nothing to configure. Showing a dead <code>Download as…</code> here would tease (§ Disable vs Hide).',
         '<code>Add to Queue</code> remains enabled — user can stage it for later (post-embargo).',
         'No Request access path — embargo is temporal, not permission-based.'
       ],
@@ -2078,14 +2053,14 @@ const SURFACE_BEHAVIOURS = {
     },
     bulk: {
       notes: [
-        'If selection contains only this asset: <code>Download</code> CTA disabled, hover tooltip explains embargo.',
-        'If embargo is in mixed selection: amber banner above modal, embargoed asset listed with "Embargoed until [date]" pill in queue summary.',
-        'Bulk bar itself unchanged — restriction logic surfaces in the modal/queue rather than the bar.'
+        'Bar is neutral (<code>files selected</code> + <code>Actions ▾</code>). Restriction never sits on the bar.',
+        'In the Actions menu the direct <code>Download</code> is disabled with an amber sub-line "Embargoed until [date]". No second slot — embargo is temporal, nothing to request or configure (§ Disable vs Hide: don\'t show a dead <code>Download as…</code>). Every other action (queue, collection, bulk edit, delete) stays enabled — embargo only blocks download.',
+        'If embargo is in a mixed selection: Download stays enabled for the ready assets, embargoed item is listed in the modal/queue with its lift date.'
       ],
       qa: [
-        { state: 'pass', text: 'Download CTA disabled when only embargoed selected' },
-        { state: 'pass', text: 'Tooltip explains embargo on hover' },
-        { state: 'pass', text: 'Other bar actions still enabled' },
+        { state: 'pass', text: 'Download item disabled when only embargoed selected' },
+        { state: 'pass', text: 'Sub-line explains embargo on the Download row' },
+        { state: 'pass', text: 'All other Actions still enabled' },
         { state: 'warn', text: 'Mixed selection: see "Mixed rights" scenario' }
       ]
     },
@@ -2131,19 +2106,82 @@ const SURFACE_BEHAVIOURS = {
       ]
     }
   },
+  'embargo-preview': {
+    card: {
+      notes: [
+        'Status badge shows <code>Preview</code> in amber — downloadable, but not the Original.',
+        'Behaves like the restricted-but-downloadable case, <em>not</em> the hard block. Two sibling items: <code>Download</code> delivers the watermarked preview directly; <code>Download as…</code> opens the configurator (preview selectable, Original locked).',
+        'No <code>Request access</code> — the Original is time-locked, not permission-locked. It releases automatically on the lift date, so there is nothing to request.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Preview badge in amber' },
+        { state: 'pass', text: 'Download enabled — delivers watermarked preview' },
+        { state: 'pass', text: 'Download as… opens configurator' },
+        { state: 'pass', text: 'No Request access (temporal, not permission)' }
+      ]
+    },
+    lightbox: {
+      notes: [
+        'Amber banner above preview: <code>Preview available now · Original releases [date]</code>.',
+        'Header <code>Download</code> stays enabled — opens modal with Watermarked preselected as Best available; Original locked with <code>Releases [date]</code>.',
+        'Image preview shows the watermarked rendition. No request-access component — the lock is temporal.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Preview-now banner with lift date' },
+        { state: 'pass', text: 'Download enabled, opens modal' },
+        { state: 'pass', text: 'Original locked with Releases [date], not Request access' }
+      ]
+    },
+    modal: {
+      notes: [
+        'Amber banner: <code>Preview available now · Original releases [date]</code> — states the pre-release policy plainly.',
+        'Watermarked preselected with <code>Best available</code> pill; Preview selectable; <code>Original file</code> disabled with lock icon and <code>Releases [date]</code> (not "Requires approval").',
+        'No Request access component in the modal — nothing to request; the Original unlocks on the date. Format templates apply to the preview.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Watermarked preselected, Best available pill' },
+        { state: 'pass', text: 'Original locked with Releases [date]' },
+        { state: 'pass', text: 'No Request access component (temporal lock)' }
+      ]
+    },
+    bulk: {
+      notes: [
+        'Single asset — bar reads <code>1 file selected</code> + <code>Actions ▾</code>.',
+        'In the Actions menu, <code>Download</code> is enabled (delivers the watermarked preview) + <code>Download as…</code>. No disabled state, no request slot — the preview is downloadable now.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Download enabled — delivers preview' },
+        { state: 'pass', text: 'Download as… present' },
+        { state: 'pass', text: 'No blocked/request treatment' }
+      ]
+    },
+    queue: {
+      notes: [
+        'Queue row is downloadable now — chip shows <code>Watermarked · Best available</code>, meta line notes <code>Original releases [date]</code>.',
+        'When the embargo lifts, the Original unlocks in place — the staged item upgrades from preview to full without re-queuing.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Row downloadable (preview) — not blocked' },
+        { state: 'pass', text: 'Best available chip on row' },
+        { state: 'pass', text: 'Original unlocks in place on lift date' }
+      ]
+    }
+  },
   expired: {
     card: {
       notes: [
         'Asset card status badge shows <code>Expired</code> in red.',
-        'Single <code>Download</code> item, disabled. Tooltip: "Licence expired [date]".',
-        '<code>Request access</code> appears as a separate menu item — escalation path.',
+        '<code>Download</code> disabled — the state explainer. Tooltip: "Licence expired [date]".',
+        'Second slot is <code>Request access…</code> (the live recovery) → opens the modal, scoped to the request path. <code>Download as…</code> is <em>not shown</em> — a dead download verb on an un-downloadable asset is pure tease (§ Disable vs Hide: hide dead actions, keep the explainer).',
+        'No standalone top-level <code>Request access</code> — the recovery is the second slot, so rights resolution has one home (the modal).',
         '<code>Add to Queue</code> still permitted; queue surface shows the expired state.'
       ],
       qa: [
         { state: 'pass', text: 'Expired badge in red on card' },
-        { state: 'pass', text: 'Single Download item shown as disabled' },
-        { state: 'pass', text: 'Tooltip explains licence expiry' },
-        { state: 'pass', text: 'Request access menu item visible' },
+        { state: 'pass', text: 'Download disabled as the state explainer' },
+        { state: 'pass', text: 'Second slot = Request access… (not Download as…)' },
+        { state: 'pass', text: 'Dead Download as… hidden, not shown disabled' },
+        { state: 'pass', text: 'No standalone top-level Request access' },
         { state: 'pass', text: 'Add to Queue allowed' }
       ]
     },
@@ -2163,13 +2201,13 @@ const SURFACE_BEHAVIOURS = {
     },
     bulk: {
       notes: [
-        'If only expired in selection: <code>Download</code> disabled, with inline note "All assets expired — request access".',
-        'In mixed selection: expired asset surfaces with red chip in queue summary; LCD removes incompatible versions/formats.',
-        'Bar action bar unchanged structurally; restriction surfaces in modal/queue.'
+        'Bar is neutral. The direct <code>Download</code> is disabled with a red sub-line "Licence expired" (the state explainer). The second slot is <code>Request access…</code> (live recovery) → modal. <code>Download as…</code> is not shown — dead action, pure tease. In lockstep with the card. Other actions unaffected.',
+        'In a mixed selection: Download stays enabled for the ready assets; the expired item surfaces with a red chip in the modal/queue and LCD removes incompatible versions/formats.'
       ],
       qa: [
-        { state: 'pass', text: 'Download CTA disabled when only expired' },
-        { state: 'pass', text: 'Inline note suggests request access' },
+        { state: 'pass', text: 'Download item disabled when only expired' },
+        { state: 'pass', text: 'Red sub-line points to request access' },
+        { state: 'pass', text: 'All other Actions still enabled' },
         { state: 'warn', text: 'Mixed selection: see "Mixed rights" scenario' }
       ]
     },
@@ -2220,17 +2258,16 @@ const SURFACE_BEHAVIOURS = {
     card: {
       notes: [
         'Asset card status badge shows <code>Restricted</code> in amber.',
-        'Single <code>Download</code> menu item with submenu chevron.',
-        'Submenu shows <code>Direct download</code> (system delivers Watermarked version, the highest the user has rights to) and <code>Configure download…</code> for explicit choice.',
-        'The submenu labels are the same as for cleared assets — the system handles version selection. User sees the result, not the rules.',
-        '<code>Request access</code> available as a separate top-level menu item — escalation path for the Original.'
+        'Two sibling download items. <code>Download</code> delivers the Watermarked version (the highest the user\'s rights allow); <code>Download as…</code> opens the modal, where the locked Original and the request-access path are shown.',
+        '<code>Download</code> always delivers the best available version — user sees the result, not the rules.',
+        'No standalone <code>Request access</code> item — for a downloadable-restricted asset the request path for the locked Original lives <em>inside</em> the modal (reached via <code>Download as…</code>), where the request is scoped to the specific version. One home for rights resolution.'
       ],
       qa: [
         { state: 'pass', text: 'Restricted badge in amber' },
-        { state: 'pass', text: 'Single Download item with submenu' },
-        { state: 'pass', text: 'Direct download label is consistent across rights states' },
-        { state: 'pass', text: 'Configure download… opens modal' },
-        { state: 'pass', text: 'Request access in separate menu item' }
+        { state: 'pass', text: 'Two sibling items: Download + Download as…' },
+        { state: 'pass', text: 'Download delivers best-available (watermarked)' },
+        { state: 'pass', text: 'Download as… opens modal with locked Original + request access' },
+        { state: 'pass', text: 'No standalone top-level Request access — lives in modal' }
       ]
     },
     lightbox: {
@@ -2307,16 +2344,15 @@ const SURFACE_BEHAVIOURS = {
     card: {
       notes: [
         'Status badge shows <code>Watermark</code> in amber.',
-        'Single <code>Download</code> menu item with submenu chevron.',
-        'Submenu shows <code>Direct download</code> (delivers Watermarked, the highest available) and <code>Configure download…</code> for the full picker view.',
-        '<code>Request access</code> available as a separate top-level menu item.'
+        'Two sibling download items. <code>Download</code> delivers the Watermarked version (the highest available); <code>Download as…</code> opens the full picker, where the geo-locked Original and request-access path are shown.',
+        'No standalone <code>Request access</code> item — the request path for the geo-locked Original lives inside the modal (via <code>Download as…</code>). One home for rights resolution.'
       ],
       qa: [
         { state: 'pass', text: 'Watermark badge visible' },
-        { state: 'pass', text: 'Single Download item with submenu' },
-        { state: 'pass', text: 'Direct download label is consistent across rights states' },
-        { state: 'pass', text: 'Configure download… opens modal' },
-        { state: 'pass', text: 'Request access escalation present' }
+        { state: 'pass', text: 'Two sibling items: Download + Download as…' },
+        { state: 'pass', text: 'Download delivers best-available (watermarked)' },
+        { state: 'pass', text: 'Download as… opens modal' },
+        { state: 'pass', text: 'No standalone top-level Request access — lives in modal' }
       ]
     },
     lightbox: {
@@ -2411,17 +2447,21 @@ const SURFACE_BEHAVIOURS = {
     },
     bulk: {
       notes: [
-        '<code>Download</code> opens modal. Modal shows amber banner: <code>Some assets restricted across selection. Download Original is unavailable for the whole selection.</code>',
-        'Default modal applies LCD: only versions/formats valid for ALL selected assets shown.',
-        'Per-asset toggle exposes which specific assets are which state — user sees expired in red, watermark-only in amber, cleared in green.',
-        '<code>Apply this config to all JPGs</code> shortcut respects rights — won\'t apply Original to a watermark-only asset.'
+        '<strong>The bar is neutral.</strong> It reads <code>[3] files selected</code> + a single <code>Actions ▾</code> dropdown — no rights status on the bar itself. Rights readiness is a property of the <em>download</em> operation, not the selection: every other action (queue, collection, bulk edit, delete) applies to all 3 assets regardless of rights.',
+        '<strong>Two download affordances, mirroring the card.</strong> <code>Download</code> acts directly — hands down the assets cleared right now (2 here), best version rights allow, ZIP for multiple, no modal. <code>Download as…</code> opens the configurator for version/format/per-asset resolution.',
+        '<strong>Readiness rides <code>Download as…</code>, not <code>Download</code>.</strong> The amber sub-line <code>2 of 3 ready · mixed rights</code> sits on <code>Download as…</code> because that is the path where the restricted asset is seen and resolved. The direct action stays clean.',
+        'In the modal: amber banner <code>Some assets restricted across selection. Download Original is unavailable for the whole selection.</code> Default applies LCD (only versions/formats valid for ALL assets); per-asset toggle exposes each state — expired red, watermark-only amber, cleared green.',
+        '<strong>§3.17 is stale.</strong> Scale documents a cerulean inline-buttons bar. The shipped bar is a dark <code>--color-stone-900</code> pill + consolidated <code>Actions</code> dropdown. Update Scale to the ship.',
+        '<strong>Ramp gap flagged:</strong> status sub-lines on the dark menu use <code>--color-amber-300</code> / <code>--color-red-300</code> — light steps Scale\'s ramp doesn\'t expose (tops out at 500, <code>-fg</code> tokens are for light bg). Same class of gap as dark active-nav. Flag as Scale evolution candidate.'
       ],
       qa: [
-        { state: 'pass', text: 'Banner explains mixed rights' },
-        { state: 'pass', text: 'LCD removes incompatible versions in shared mode' },
-        { state: 'pass', text: 'Per-asset mode shows individual states' },
-        { state: 'pass', text: 'Subset shortcut respects rights logic' },
-        { state: 'pass', text: 'CTA reflects "N of M downloadable"' }
+        { state: 'pass', text: 'Bar is neutral: files selected + Actions dropdown' },
+        { state: 'pass', text: 'Two items: Download (direct) + Download as… (modal)' },
+        { state: 'pass', text: 'Readiness sub-line on Download as…, not Download' },
+        { state: 'pass', text: 'Download acts directly — no "sometimes a modal" ambiguity' },
+        { state: 'pass', text: 'Modal shows per-asset states + LCD in shared mode' },
+        { state: 'warn', text: '§3.17 stale — update Scale to shipped Actions bar' },
+        { state: 'warn', text: 'amber-300/red-300 ramp gap — flag to Scale' }
       ]
     },
         modal: {
@@ -2470,6 +2510,25 @@ const SURFACE_BEHAVIOURS = {
         { state: 'pass', text: 'Action bar summary reflects readiness' },
         { state: 'pass', text: 'Inline request access available per-row' },
         { state: 'warn', text: 'Decision: skip expired or hold queue?' }
+      ]
+    }
+  },
+  'restricted-bulk': {
+    bulk: {
+      notes: [
+        '<strong>Whole selection is request-eligible</strong> — nothing is downloadable. <code>Download</code> disables (state explainer) and <code>Request access · 3</code> becomes the primary action in the Actions menu. This is the state-adaptive second slot scaled to bulk, not a special "all must be restricted" rule.',
+        '<strong>Request access rides the eligible SUBSET, not the selection.</strong> It appears whenever ≥1 selected file needs a request, scoped and counted. In a mixed selection it shows as <code>Request access · 1</code> alongside <code>Download</code> — same logic, smaller subset. Never gated on the whole selection being blocked.',
+        '<strong>It is a fan-out, not a loop.</strong> One reason from the user, split and routed to the right rights manager per asset (these 3 belong to 2 owners). Confirmation reports per-manager delivery — the partial-failure-feedback differentiator (competitor-patterns line 121).',
+        'Request type: restricted = access grant, expired = renewal (SCR-178, held). When that lands, a bulk selection mixing the two groups the modal by type. Generic <code>Request access</code> for now.',
+        'Every request feeds SCR-178\'s renewal/demand signal — batch requests aggregate naturally.'
+      ],
+      qa: [
+        { state: 'pass', text: 'Download disabled — none downloadable' },
+        { state: 'pass', text: 'Request access · 3 is the primary action' },
+        { state: 'pass', text: 'Mixed selection shows scoped Request access · 1' },
+        { state: 'pass', text: 'One reason, fanned to the right manager per asset' },
+        { state: 'warn', text: 'Fan-out routing + per-manager confirmation — build' },
+        { state: 'warn', text: 'Request-type split (access vs renewal) — SCR-178' }
       ]
     }
   }
@@ -2524,13 +2583,18 @@ function buildCardMenuItems(scenario) {
   const trashIcon = '<svg class="overflow-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 4h12M5 1h6M5.5 7v5M10.5 7v5M3 4l1 10h8l1-10" stroke-linecap="round"/></svg>';
   const submenuChevron = '<svg class="submenu-chevron" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-  // Three menu modes:
-  // 1. Simple (no rights, no templates) → single "Download" item, no submenu, direct
-  // 2. Has rights/templates, something downloadable → "Download" with submenu (Original + Configure)
-  // 3. Fully blocked → "Download" with submenu containing only Configure (or disabled state)
+  // Three menu modes (flat — no submenu):
+  // Download group modes (§ Disable vs Hide — hide dead actions, keep the explainer):
+  // 1. Simple → single "Download" (direct). Nothing to configure.
+  // 2. Cleared / restricted-downloadable → "Download" (direct) + "Download as…" (modal;
+  //    for geo/watermark the locked Original + request path live inside it).
+  // 3. Expired → "Download" disabled (explains state) + "Request access…" (live recovery).
+  //    "Download as…" hidden — a dead action on an un-downloadable asset is pure tease.
+  // 4. Embargoed → single disabled "Download" with lift date. No recovery to request,
+  //    nothing to configure → no second slot.
   const isSimple = scenario.id === 'simple';
-  const isFullyBlocked = scenario.id === 'embargoed' || scenario.id === 'expired';
-  const showRequest = scenario.id === 'expired' || scenario.id === 'geo' || scenario.id === 'watermark';
+  const isExpired = scenario.id === 'expired';
+  const isEmbargoed = scenario.id === 'embargoed';
 
   let html = `
     <div class="overflow-item">${folderIcon}<span>Add to Collection</span><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-left:auto;color:var(--text-hint);"><path d="M6 4l4 4-4 4" stroke-linecap="round"/></svg></div>
@@ -2541,33 +2605,26 @@ function buildCardMenuItems(scenario) {
   `;
 
   if (isSimple) {
-    // No submenu — just direct Download
+    // Nothing to configure — single direct Download.
     html += `<div class="overflow-item" title="Downloads the file directly">${downloadIcon}<span>Download</span></div>`;
-  } else if (isFullyBlocked) {
-    // Single Download, disabled (the submenu wouldn't have anything useful)
-    const tooltip = scenario.id === 'embargoed' ? `title="Embargoed until ${scenario.embargoDate}"` : `title="Licence expired ${scenario.expiryDate}"`;
-    html += `<div class="overflow-item disabled" ${tooltip}>${downloadIcon}<span>Download</span></div>`;
+  } else if (isExpired) {
+    // Hide the dead "Download as…" (§ Disable vs Hide — don't tease a dead feature).
+    // Keep the disabled Download as the state explainer; put the LIVE recovery in the
+    // second slot: Request access… → modal (scoped request lives there).
+    html += `<div class="overflow-item disabled" title="Licence expired ${scenario.expiryDate}">${downloadIcon}<span>Download</span></div>`;
+    html += `<div class="overflow-item" onclick="selectSurface('modal')">${requestIcon}<span>Request access…</span></div>`;
+  } else if (isEmbargoed) {
+    // Temporal block — no recovery to request, nothing to configure. Collapses to a
+    // single disabled Download carrying the lift date. No dead second slot.
+    html += `<div class="overflow-item disabled" title="Embargoed until ${scenario.embargoDate}">${downloadIcon}<span>Download</span></div>`;
   } else {
-    // Single Download with submenu — opens on click
-    let submenuItems = '';
-
-    // Direct download — same label across all rights states; system delivers LCD/highest-available
-    submenuItems += `<div class="overflow-item">${downloadIcon}<span>Direct download</span></div>`;
-
-    // Configure download — always present
-    submenuItems += `<div class="overflow-item" onclick="selectSurface('modal')">${downloadIcon}<span>Configure download…</span></div>`;
-
-    html += `
-      <div class="overflow-item has-submenu open" onclick="event.stopPropagation()">
-        ${downloadIcon}
-        <span>Download</span>
-        ${submenuChevron}
-        <div class="overflow-submenu">${submenuItems}</div>
-      </div>`;
-  }
-
-  if (showRequest) {
-    html += `<div class="overflow-item" style="color:var(--primary-default);">${requestIcon}<span>Request access</span></div>`;
+    // Cleared / restricted-but-downloadable — two sibling items.
+    // Download    = direct; best version rights allow (Original if cleared, Watermarked
+    //               if that's the ceiling). No dialog.
+    // Download as…= configurator. For geo/watermark, the locked Original and the
+    //               request-access path live inside this modal — not on the card.
+    html += `<div class="overflow-item" title="Delivers the best version your rights allow">${downloadIcon}<span>Download</span></div>`;
+    html += `<div class="overflow-item" onclick="selectSurface('modal')">${downloadIcon}<span>Download as…</span></div>`;
   }
 
   html += `<div class="overflow-divider"></div>
@@ -2636,6 +2693,12 @@ function buildLightboxBanner(scenario) {
       <div>Licensed for: <strong>${scenario.licensedFor}</strong> · Your profile does not meet all criteria. Watermarked version available; original requires access request.</div>
     </div>`;
   }
+  if (scenario.id === 'embargo-preview') {
+    return `<div style="padding:var(--spacing-3) var(--spacing-5);background:var(--color-amber-100);border-bottom:1px solid var(--color-amber-500);font-size:var(--font-size-2);display:flex;align-items:flex-start;gap:var(--spacing-2);color:var(--color-amber-700);">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-top:1px;flex-shrink:0;"><rect x="3" y="6" width="10" height="8" rx="1"/><path d="M5 6V4a3 3 0 016 0v2"/></svg>
+      <div><strong>Preview available now · Original releases ${scenario.embargoDate}</strong> · Watermarked preview downloadable for drafting; Original unlocks automatically on the lift date.</div>
+    </div>`;
+  }
   if (scenario.id === 'watermark') {
     return `<div style="padding:var(--spacing-3) var(--spacing-5);background:var(--color-amber-100);border-bottom:1px solid var(--color-amber-500);font-size:var(--font-size-2);display:flex;align-items:flex-start;gap:var(--spacing-2);color:var(--color-amber-700);">
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-top:1px;flex-shrink:0;"><circle cx="8" cy="8" r="6"/><path d="M8 5v3M8 11v.5" stroke-linecap="round"/></svg>
@@ -2648,93 +2711,126 @@ function buildLightboxBanner(scenario) {
 function renderBulkBar(scenario) {
   const state = getScenarioState(scenario.id);
   const isMixed = scenario.id === 'mixed';
-  const downloadDisabled = scenario.id === 'embargoed' || scenario.id === 'expired';
+  const isRestrictedBulk = scenario.id === 'restricted-bulk';
+  const count = (isMixed || isRestrictedBulk) ? 3 : (scenario.asset ? 1 : 0);
 
-  // Build the items shown in the tray. Mixed = 3 assets; everything else = 1
-  let items;
+  // Icons
+  const dlIcon = '<svg class="overflow-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2v8M5 7l3 3 3-3M2 13h12" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const queueIcon = '<svg class="overflow-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 4h12M2 8h12M2 12h8M11 11l2 2 3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const collectionIcon = '<svg class="overflow-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 4h5l1 1.5h6V13H2V4z" stroke-linejoin="round"/><path d="M11 7v4M9 9h4" stroke-linecap="round"/></svg>';
+  const editIcon = '<svg class="overflow-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M11 3l2 2-7 7-3 1 1-3 7-7z" stroke-linejoin="round"/></svg>';
+  const trashIcon = '<svg class="overflow-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 4h12M5 1h6M5.5 7v5M10.5 7v5M3 4l1 10h8l1-10" stroke-linecap="round"/></svg>';
+
+  // Two download affordances, mirroring the card. Download acts directly (best
+  // version rights allow, ZIP for multiple); Download as… opens the configurator.
+  // Readiness rides Download as… — the path where rights actually get resolved —
+  // never the direct action, and never the bar. Same control always does the
+  // same thing: no state-sniffing, no "sometimes a modal" ambiguity.
+  const isExpired = scenario.id === 'expired';
+  const isEmbargoed = scenario.id === 'embargoed';
+  const fullyBlocked = isExpired || isEmbargoed || isRestrictedBulk;
+  const lockIcon = '<svg class="overflow-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="7" width="10" height="6" rx="1"/><path d="M5 7V5a3 3 0 0 1 6 0v2" stroke-linecap="round"/></svg>';
+
+  // Reason sits on the disabled direct action — the disabled primary is the state
+  // explainer (§ Disable vs Hide keeps the explainer; hides only dead alternates).
+  let downloadSub = '';
+  if (isEmbargoed) {
+    downloadSub = `<div class="bulk-action-sub warning">Embargoed until ${scenario.embargoDate}</div>`;
+  } else if (isExpired) {
+    downloadSub = `<div class="bulk-action-sub blocked">Licence expired</div>`;
+  } else if (isRestrictedBulk) {
+    downloadSub = `<div class="bulk-action-sub blocked">Access required · none downloadable</div>`;
+  }
+
+  // Readiness preview sits on the second slot (mixed selection resolves in the modal).
+  let downloadAsSub = '';
   if (isMixed) {
-    items = [
-      { name: 'spring4.jpg', thumb: 'img-fill-1' },
-      { name: 'KV_Master_Layered.psd', thumb: 'img-fill-4' },
-      { name: 'Qatar22_Retro_Hero.jpg', thumb: 'img-fill-2' }
-    ];
-  } else if (scenario.asset) {
-    items = [{ name: scenario.asset.name, thumb: scenario.asset.thumb }];
-  } else {
-    items = [];
+    downloadAsSub = `<div class="bulk-action-sub warning">2 of 3 ready · mixed rights</div>`;
   }
 
-  const count = items.length;
-
-  let restrictionNote = '';
-  if (scenario.id === 'embargoed') {
-    restrictionNote = `<div style="background:var(--color-amber-100);border:1px solid var(--color-amber-500);border-radius:var(--radius-2);padding:var(--spacing-2) var(--spacing-3);margin-top:var(--spacing-3);font-size:var(--font-size-1);color:var(--color-amber-700);max-width:580px;">⚠ Selected asset embargoed until ${scenario.embargoDate} — Download disabled until lift date.</div>`;
-  } else if (scenario.id === 'expired') {
-    restrictionNote = `<div style="background:var(--color-red-100);border:1px solid var(--color-red-500);border-radius:var(--radius-2);padding:var(--spacing-2) var(--spacing-3);margin-top:var(--spacing-3);font-size:var(--font-size-1);color:var(--color-red-700);max-width:580px;">✕ Selected asset has expired licence — request access to escalate.</div>`;
-  } else if (scenario.id === 'mixed') {
-    restrictionNote = `<div style="background:var(--surface-muted);border:1px solid var(--border-default);border-radius:var(--radius-2);padding:var(--spacing-2) var(--spacing-3);margin-top:var(--spacing-3);font-size:var(--font-size-1);color:var(--text-default);max-width:580px;">⚠ Mixed rights in selection · 2 of 3 ready · Download opens modal with details.</div>`;
-  }
-
-  // Tray content
-  const trayHtml = `
-    <div class="bulk-tray">
-      <div class="bulk-tray-header">
-        <span>Selected · ${count} ${count === 1 ? 'item' : 'items'}</span>
-        <button class="bulk-tray-clear">Clear all</button>
-      </div>
-      <div class="bulk-tray-list">
-        ${items.map(item => `
-          <div class="bulk-tray-item">
-            <div class="bulk-tray-thumb ${item.thumb}"></div>
-            <div class="bulk-tray-name">${item.name}</div>
-            <button class="bulk-tray-remove" title="Deselect">
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg>
-            </button>
-          </div>
-        `).join('')}
+  const downloadItem = `
+    <div class="bulk-action-item ${fullyBlocked ? 'disabled' : ''}" ${fullyBlocked ? '' : 'title="Delivers the best version rights allow — ZIP for multiple"'}>
+      ${dlIcon}
+      <div class="bulk-action-body">
+        <span>Download</span>
+        ${downloadSub}
       </div>
     </div>`;
 
-  const trayOpenClass = state.bulkTrayOpen ? 'tray-open' : '';
+  // Second slot — state-adaptive, in lockstep with the card.
+  let downloadAsItem = '';
+  if (isExpired) {
+    downloadAsItem = `
+    <div class="bulk-action-item" onclick="selectSurface('request')">
+      ${lockIcon}
+      <div class="bulk-action-body"><span>Request access…</span></div>
+    </div>`;
+  } else if (isRestrictedBulk) {
+    // Whole selection is request-eligible → Download disabled, Request access is the
+    // primary action, scoped to and counting the subset (here, all 3).
+    downloadAsItem = `
+    <div class="bulk-action-item" onclick="selectSurface('request')">
+      ${lockIcon}
+      <div class="bulk-action-body"><span>Request access · 3</span></div>
+    </div>`;
+  } else if (!isEmbargoed) {
+    downloadAsItem = `
+    <div class="bulk-action-item" onclick="selectSurface('modal')">
+      ${dlIcon}
+      <div class="bulk-action-body">
+        <span>Download as…</span>
+        ${downloadAsSub}
+      </div>
+    </div>`;
+  }
+
+  // Request access rides the request-eligible SUBSET, exactly as Download rides the
+  // cleared subset — it appears whenever ≥1 selected file needs a request, not only
+  // when the whole selection is blocked. In a mixed selection it's a scoped, counted
+  // item alongside Download; it is NOT folded into Download as… (the restricted assets
+  // are a different subset from the downloadable ones). One reason, fanned to the
+  // right rights manager per asset.
+  let requestItem = '';
+  if (isMixed) {
+    requestItem = `
+    <div class="bulk-action-item" onclick="selectSurface('request')">
+      ${lockIcon}
+      <div class="bulk-action-body"><span>Request access · 1</span></div>
+    </div>`;
+  }
+
+  // Actions menu rendered open by default in the tester so the Download flag is
+  // visible for review. Toggle works too.
+  const actionsOpen = state.bulkActionsOpen !== false ? 'open' : '';
 
   return `
-    <div class="bulk-bar-context ${trayOpenClass}">
-      ${trayHtml}
-      <div class="bulk-bar">
-        <span class="bulk-count">
-          <span class="bulk-count-num">${count}</span>
-          selected
-        </span>
-        <button class="bulk-btn bulk-btn-icon bulk-chevron-btn" title="${state.bulkTrayOpen ? 'Hide selection' : 'Review selection'}" onclick="toggleBulkTray('${scenario.id}')">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6l5 5 5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="bulk-spacer"></div>
-        <button class="bulk-btn">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="3" width="12" height="10" rx="1"/><path d="M5 7h6M5 10h4" stroke-linecap="round"/></svg>
-          Add to collection
-        </button>
-        <button class="bulk-btn">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h10M2 8h10M2 12h6M11 11l2 2 3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Add to Queue
-          <span class="bulk-queue-badge">${count}</span>
-        </button>
-        <div class="bulk-divider"></div>
-        <button class="bulk-btn bulk-btn-destructive bulk-btn-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 4h12M5 1h6M5.5 7v5M10.5 7v5M3 4l1 10h8l1-10" stroke-linecap="round"/></svg></button>
-        <button class="bulk-btn bulk-btn-primary" ${downloadDisabled ? 'style="opacity:0.5;cursor:not-allowed;"' : 'onclick="selectSurface(\'modal\')"'}>
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 7l3 3 3-3M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Download
-        </button>
-        <div class="bulk-divider"></div>
-        <button class="bulk-btn bulk-btn-icon" title="Clear selection"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg></button>
+    <div class="bulk-bar-context ${actionsOpen}">
+      <div class="bulk-actions-menu">
+        ${downloadItem}
+        ${downloadAsItem}
+        ${requestItem}
+        <div class="bulk-action-item">${queueIcon}<span>Add to download queue</span></div>
+        <div class="bulk-action-item">${collectionIcon}<span>Add to Collection</span></div>
+        <div class="bulk-action-item">${editIcon}<span>Bulk Edit</span></div>
+        <div class="bulk-actions-divider"></div>
+        <div class="bulk-action-item destructive">${trashIcon}<span>Delete</span></div>
       </div>
-      ${restrictionNote}
+      <div class="bulk-bar">
+        <span class="bulk-count"><span class="bulk-count-num">${count}</span>${count === 1 ? 'file' : 'files'} selected</span>
+        <button class="bulk-clear-x" title="Clear selection"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg></button>
+        <div class="bulk-spacer"></div>
+        <button class="bulk-btn" onclick="toggleBulkActions('${scenario.id}')">
+          Actions
+          <svg class="bulk-actions-chevron" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6l5 5 5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
     </div>
   `;
 }
 
-function toggleBulkTray(scenarioId) {
+function toggleBulkActions(scenarioId) {
   const state = getScenarioState(scenarioId);
-  state.bulkTrayOpen = !state.bulkTrayOpen;
+  state.bulkActionsOpen = state.bulkActionsOpen === false ? true : false;
   renderSurface();
 }
 
@@ -2886,6 +2982,11 @@ function renderQueuePage(scenario) {
       { name: scenario.asset.name, thumb: scenario.asset.thumb, size: scenario.asset.size, state: 'watermark', config: 'Watermarked · Best available' }
     ];
     summary = '<strong>1 asset ready</strong> · using Best available version';
+  } else if (scenario.id === 'embargo-preview') {
+    rows = [
+      { name: scenario.asset.name, thumb: scenario.asset.thumb, size: scenario.asset.size, state: 'watermark', config: 'Watermarked · Best available · preview' }
+    ];
+    summary = `<strong>1 asset ready</strong> · preview now · Original releases ${scenario.embargoDate}`;
   }
 
   const rowsHtml = rows.map(r => {
@@ -2967,6 +3068,77 @@ function getScenarioState(scenarioId) {
   return modalState.perScenario[scenarioId];
 }
 
+function renderRequestModal(scenario) {
+  // Standalone request-access modal — ONE component (same form + confirmation as
+  // the configurator's inline request path; single source of truth, two shells).
+  // Audit fixes baked in: sentence-case title, straight to form (no "Need the
+  // original file?" intro step), unified "You'll be notified by email." copy.
+  const state = getScenarioState(scenario.id);
+  const bulkReq = scenario.id === 'restricted-bulk' ? 3 : (scenario.id === 'mixed' ? 1 : 0);
+  const hasRequestPath = ['geo', 'watermark', 'expired'].includes(scenario.id) || bulkReq > 0;
+  const assetName = bulkReq > 0
+    ? `${bulkReq} restricted ${bulkReq === 1 ? 'file' : 'files'} selected`
+    : (scenario.asset ? scenario.asset.name : 'F19_ownership-agency_USA_Marketing_Digital.jpg');
+  const shield = '<svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 1.5l5 2v4c0 3-2.2 5.2-5 6-2.8-.8-5-3-5-6v-4l5-2z"/><path d="M6 8l1.5 1.5L11 6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  let body;
+  if (!hasRequestPath) {
+    body = `<div style="font-size:var(--font-size-2);color:var(--text-subtle);line-height:1.5;background:var(--surface-muted);border:1px solid var(--border-default);border-radius:var(--radius-2);padding:var(--spacing-3) var(--spacing-4);">Request access doesn't apply to this state. The asset is either downloadable, or — for an embargo — unlocks automatically on its lift date. This surface is reached only from a restricted or expired asset.</div>`;
+  } else if (state.requestAccess === 'submitted') {
+    const confirmLead = bulkReq > 1
+      ? `<strong>${bulkReq} requests sent</strong> · pending review by 2 rights managers.`
+      : `<strong>Request sent</strong> · Pending review by the rights manager.`;
+    const fanNote = bulkReq > 1
+      ? `<strong style="color:var(--text-default);">Fan-out — build this:</strong> one reason from the user, split and routed to the right rights manager per asset (these 3 belong to 2 owners). The confirmation reports per-manager delivery, not one blob — the "partial-failure feedback" differentiator. Feeds SCR-178's demand signal.`
+      : `<strong style="color:var(--text-default);">Spec note — build this:</strong> after sending, the asset carries a <strong style="color:var(--text-default);">Requested · pending</strong> sub-state on its card so the request is visible and can't be re-sent. This per-asset request record is what SCR-178's renewal demand signal reads from.`;
+    body = `
+      <div class="request-access-confirmed" style="margin:0;">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5l2 1" stroke-linecap="round"/></svg>
+        <div>
+          ${confirmLead}
+          <span style="color:var(--text-subtle);font-weight:400;margin-left:var(--spacing-2);font-size:var(--font-size-1);">You'll be notified by email.</span>
+        </div>
+      </div>
+      <div style="margin-top:var(--spacing-4);font-size:var(--font-size-1);color:var(--text-subtle);line-height:1.5;border-left:2px solid var(--primary-default);padding:var(--spacing-2) var(--spacing-3);background:var(--surface-muted);border-radius:0 var(--radius-2) var(--radius-2) 0;">${fanNote}</div>`;
+  } else {
+    // Straight to the form — no collapsed intro step (audit fix #4).
+    const savedNote = modalState.savedReason
+      ? `<span class="request-access-saved"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8l3 3 7-7"/></svg> Reason from your last request — edit if different</span>` : '';
+    body = `
+      <div class="request-access-form" style="margin:0;">
+        <div>
+          <div style="font-weight:var(--font-weight-semibold);font-size:var(--font-size-2);">Explain why you need access</div>
+          <div style="font-size:var(--font-size-1);color:var(--text-subtle);margin-top:2px;">Sent to ${bulkReq > 1 ? "each asset's rights manager" : "the asset's rights manager"}. You'll be notified by email.</div>
+        </div>
+        <textarea class="request-access-textarea" id="request-textarea-${scenario.id}" placeholder="e.g. Need for Brazil match-day social campaign">${modalState.savedReason}</textarea>
+        <div style="display:flex;align-items:center;gap:var(--spacing-3);">
+          ${savedNote}
+          <div style="margin-left:auto;display:flex;gap:var(--spacing-2);">
+            <button class="btn btn-ghost">Cancel</button>
+            <button class="btn btn-primary" onclick="submitRequestAccess('${scenario.id}')">Send request</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  return `
+    <div class="modal-mock" style="max-width:520px;">
+      <div class="modal-header">
+        <div style="display:flex;align-items:center;gap:var(--spacing-2);">
+          <span style="color:var(--primary-default);display:inline-flex;">${shield}</span>
+          <div class="modal-title">Request access</div>
+        </div>
+        <button class="modal-close" style="margin-left:auto;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="font-size:var(--font-size-1);color:var(--text-subtle);margin-bottom:var(--spacing-4);">${assetName}</div>
+        ${body}
+      </div>
+    </div>`;
+}
+
 function renderModal(scenario) {
   const state = getScenarioState(scenario.id);
 
@@ -3015,6 +3187,15 @@ function renderModal(scenario) {
           <div class="modal-banner-body">Your profile does not meet all criteria. Watermarked version preselected as Best available; original requires access request.</div>
         </div>
       </div>`;
+  } else if (scenario.id === 'embargo-preview') {
+    bannerHtml = `
+      <div class="modal-banner amber">
+        <svg class="modal-banner-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="10" height="8" rx="1"/><path d="M5 6V4a3 3 0 016 0v2"/></svg>
+        <div>
+          <div class="modal-banner-title">Preview available now · Original releases ${scenario.embargoDate}</div>
+          <div class="modal-banner-body">You can download the watermarked preview immediately for drafting. The Original unlocks automatically when the embargo lifts — nothing to request.</div>
+        </div>
+      </div>`;
   } else if (scenario.id === 'mixed') {
     bannerHtml = `
       <div class="modal-banner amber">
@@ -3057,7 +3238,7 @@ function renderModal(scenario) {
           </div>
         </div>
       </div>`;
-  } else if (scenario.id === 'geo' || scenario.id === 'watermark') {
+  } else if (scenario.id === 'geo' || scenario.id === 'watermark' || scenario.id === 'embargo-preview') {
     // Watermarked preselected, Original disabled
     versionsHtml = `
       <div>
@@ -3081,7 +3262,7 @@ function renderModal(scenario) {
             <div class="version-check"></div>
             <div class="version-info">
               <div class="version-title">Original file <svg class="lock-icon" width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="7" width="10" height="7" rx="1"/><path d="M5 7V5a3 3 0 016 0v2"/></svg></div>
-              <div class="version-desc">${scenario.id === 'geo' ? 'Restricted for your profile' : 'Requires approval'}</div>
+              <div class="version-desc">${scenario.id === 'geo' ? 'Restricted for your profile' : scenario.id === 'watermark' ? 'Requires approval' : 'Releases ' + scenario.embargoDate}</div>
             </div>
             <div class="version-specs">Full resolution</div>
           </div>
@@ -3469,6 +3650,7 @@ const SURFACE_RENDERERS = {
   bulk: renderBulkBar,
   peek: renderPeek,
   modal: renderModal,
+  request: renderRequestModal,
   queue: renderQueuePage
 };
 
