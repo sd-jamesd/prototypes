@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rights panel · Pre-release access</title>
+<style>
+  :root {
+    /* Scale tokens (dark surface subset) */
+    --color-stone-950: #1c1714;
+    --color-stone-900: #261e1b;
+    --color-stone-800: #292524;
+    --color-stone-700: #3a3531;
+    --primary-default: #0B6E8A;      /* Cerulean / --color-primary-600 */
+    --primary-subtle: rgba(11,110,138,0.35);
+    --amber-300: #FCD34D;            /* ramp gap-filler, status text on dark */
+    --radius-1: 4px;
+    --radius-2: 6px;
+    --radius-3: 8px;
+    --radius-full: 999px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-7: 32px;
+    --font-size-0: 11px;
+    --font-size-1: 12px;
+    --font-size-2: 13px;
+    --font-size-3: 15px;
+    --font-size-4: 18px;
+    --fw-normal: 400;
+    --fw-medium: 500;
+    --fw-semibold: 600;
+    /* dark text ramp */
+    --t-strong: rgba(255,255,255,0.95);
+    --t-default: rgba(255,255,255,0.82);
+    --t-subtle: rgba(255,255,255,0.55);
+    --t-hint: rgba(255,255,255,0.4);
+    --line: rgba(255,255,255,0.1);
+    --line-strong: rgba(255,255,255,0.16);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--color-stone-950);
+    color: var(--t-default);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .editor {
+    display: grid;
+    grid-template-columns: 92px 420px 1fr;
+    height: 100vh;
+    min-height: 640px;
+  }
+
+  /* ---- header strip ---- */
+  .topbar {
+    grid-column: 1 / -1;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: 0 var(--spacing-5);
+    background: var(--color-stone-900);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar-edit { color: var(--primary-default); display: inline-flex; }
+  .topbar-title { font-size: var(--font-size-3); font-weight: var(--fw-semibold); color: var(--t-strong); }
+  .topbar-sep { color: var(--t-hint); }
+  .topbar-file { font-size: var(--font-size-3); color: var(--t-subtle); font-weight: var(--fw-medium); }
+
+  /* ---- left icon rail ---- */
+  .rail {
+    background: var(--color-stone-950);
+    border-right: 1px solid var(--line);
+    padding: var(--spacing-4) 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+  }
+  .rail-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: var(--spacing-3) 0;
+    color: var(--t-hint);
+    font-size: var(--font-size-0);
+    cursor: pointer;
+  }
+  .rail-item svg { width: 20px; height: 20px; }
+  .rail-item:hover { color: var(--t-subtle); }
+  .rail-item.active { color: var(--primary-default); }
+
+  /* ---- panel ---- */
+  .panel {
+    background: var(--color-stone-900);
+    border-right: 1px solid var(--line);
+    overflow-y: auto;
+    padding: var(--spacing-6) var(--spacing-6) var(--spacing-7);
+  }
+  .panel-title { font-size: var(--font-size-4); font-weight: var(--fw-semibold); color: var(--t-strong); margin: 0; }
+  .panel-file { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: var(--font-size-1); color: var(--t-subtle); margin-top: var(--spacing-2); word-break: break-all; }
+  .panel-rule { height: 1px; background: var(--line); margin: var(--spacing-5) 0; }
+
+  .section-heading {
+    font-size: var(--font-size-0);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--t-subtle);
+    margin-bottom: var(--spacing-4);
+  }
+
+  .field { margin-bottom: var(--spacing-5); }
+  .field-label-row { display: flex; align-items: center; gap: var(--spacing-2); margin-bottom: var(--spacing-1); }
+  .field-label { font-size: var(--font-size-2); font-weight: var(--fw-medium); color: var(--t-strong); }
+  .field-optional {
+    font-size: 9px; font-weight: var(--fw-semibold); letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--t-hint);
+    background: rgba(255,255,255,0.06); padding: 2px 5px; border-radius: var(--radius-1);
+  }
+  .field-help { font-size: var(--font-size-1); color: var(--t-subtle); margin-bottom: var(--spacing-3); line-height: 1.4; }
+
+  .date-row { display: flex; gap: var(--spacing-4); }
+  .date-col { flex: 1; }
+
+  input[type="date"] {
+    width: 100%;
+    background: var(--color-stone-800);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-2);
+    color: var(--t-strong);
+    font-family: inherit;
+    font-size: var(--font-size-2);
+    padding: var(--spacing-3);
+    color-scheme: dark;
+  }
+  input[type="date"]:focus-visible { outline: none; border-color: var(--primary-default); box-shadow: 0 0 0 3px var(--primary-subtle); }
+
+  /* disclosed block */
+  .disclosed { display: none; }
+  .disclosed.show { display: block; animation: slideIn 0.18s ease; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+  .prerelease-block {
+    margin-top: var(--spacing-4);
+    padding: var(--spacing-4);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-3);
+  }
+  .prerelease-eyebrow {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: var(--font-size-0); font-weight: var(--fw-semibold);
+    letter-spacing: 0.04em; text-transform: uppercase; color: var(--amber-300);
+    margin-bottom: var(--spacing-1);
+  }
+  .prerelease-eyebrow svg { width: 12px; height: 12px; }
+
+  /* radio group (dark) */
+  .radio-group { display: flex; flex-direction: column; gap: var(--spacing-1); margin-top: var(--spacing-2); }
+  .radio-opt {
+    display: flex; align-items: flex-start; gap: var(--spacing-3);
+    padding: var(--spacing-3);
+    border: 1px solid transparent; border-radius: var(--radius-2);
+    cursor: pointer; transition: background 0.12s;
+  }
+  .radio-opt:hover { background: rgba(255,255,255,0.04); }
+  .radio-opt.selected { background: rgba(11,110,138,0.12); border-color: rgba(11,110,138,0.5); }
+  .radio-input {
+    appearance: none; width: 16px; height: 16px; margin: 1px 0 0 0;
+    border: 1.5px solid rgba(255,255,255,0.4); border-radius: var(--radius-full);
+    background: transparent; cursor: pointer; flex-shrink: 0; transition: all 0.15s;
+  }
+  .radio-input:checked { border-color: var(--primary-default); border-width: 5px; background: transparent; }
+  .radio-input:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--primary-subtle); }
+  .radio-body { display: flex; flex-direction: column; gap: 2px; }
+  .radio-title { font-size: var(--font-size-2); font-weight: var(--fw-medium); color: var(--t-strong); }
+  .radio-desc { font-size: var(--font-size-1); color: var(--t-subtle); line-height: 1.4; }
+
+  .inline-radio-group { display: flex; gap: var(--spacing-5); }
+  .inline-radio { display: inline-flex; align-items: center; gap: var(--spacing-2); cursor: pointer; font-size: var(--font-size-2); color: var(--t-default); }
+
+  /* grantor sub-field */
+  .grantor {
+    margin-top: var(--spacing-3);
+    padding-top: var(--spacing-3);
+    border-top: 1px solid var(--line);
+  }
+  .grantor-label { font-size: var(--font-size-1); font-weight: var(--fw-medium); color: var(--t-strong); margin-bottom: var(--spacing-1); display: flex; align-items: center; gap: 6px; }
+  .grantor-label svg { width: 12px; height: 12px; color: var(--t-subtle); }
+  select {
+    width: 100%; background: var(--color-stone-800);
+    border: 1px solid var(--line-strong); border-radius: var(--radius-2);
+    color: var(--t-strong); font-family: inherit; font-size: var(--font-size-2);
+    padding: var(--spacing-3); color-scheme: dark; cursor: pointer;
+  }
+  select:focus-visible { outline: none; border-color: var(--primary-default); box-shadow: 0 0 0 3px var(--primary-subtle); }
+
+  /* checkbox (dark) */
+  .check-list { display: flex; flex-direction: column; gap: var(--spacing-3); margin-top: var(--spacing-2); }
+  .check-opt { display: inline-flex; align-items: center; gap: var(--spacing-3); cursor: pointer; font-size: var(--font-size-2); color: var(--t-default); }
+  .check-input {
+    appearance: none; width: 16px; height: 16px;
+    border: 1.5px solid rgba(255,255,255,0.4); border-radius: var(--radius-1);
+    background: transparent; cursor: pointer; flex-shrink: 0; position: relative; transition: all 0.15s;
+  }
+  .check-input:checked { background: var(--primary-default); border-color: var(--primary-default); }
+  .check-input:checked::after { content: '✓'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); color: white; font-size: 11px; font-weight: 700; }
+  .check-input:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--primary-subtle); }
+
+  .notify-group { margin-bottom: var(--spacing-5); }
+  .notify-group-label { font-size: var(--font-size-2); font-weight: var(--fw-medium); color: var(--t-strong); margin-bottom: var(--spacing-1); }
+  .notify-group-help { font-size: var(--font-size-1); color: var(--t-subtle); margin-bottom: var(--spacing-3); }
+
+  .collapse-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: var(--spacing-3) var(--spacing-4);
+    border: 1px solid var(--line-strong); border-radius: var(--radius-2);
+    font-size: var(--font-size-2); font-weight: var(--fw-semibold); color: var(--t-strong);
+    cursor: pointer; margin-top: var(--spacing-3);
+  }
+
+  /* preview stage (right) */
+  .stage { background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .stage img { max-height: 100%; max-width: 100%; object-fit: cover; }
+
+  /* annotation callouts */
+  .note {
+    margin-top: var(--spacing-2);
+    font-size: var(--font-size-1);
+    color: var(--t-subtle);
+    display: flex; gap: 6px; align-items: flex-start;
+    padding: var(--spacing-2) var(--spacing-3);
+    background: rgba(255,255,255,0.03);
+    border-left: 2px solid var(--primary-default);
+    border-radius: 0 var(--radius-1) var(--radius-1) 0;
+    line-height: 1.45;
+  }
+  .note strong { color: var(--t-default); font-weight: var(--fw-semibold); }
+
+  /* build-spec annotation */
+  .spec {
+    margin-top: var(--spacing-6);
+    padding: var(--spacing-4);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--primary-default);
+    border-radius: 0 var(--radius-2) var(--radius-2) 0;
+  }
+  .spec-title {
+    font-size: var(--font-size-0); font-weight: var(--fw-semibold);
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--t-subtle);
+    margin-bottom: var(--spacing-3);
+  }
+  .spec-rule { font-size: var(--font-size-1); color: var(--t-subtle); line-height: 1.5; margin-bottom: var(--spacing-3); display: flex; gap: var(--spacing-3); }
+  .spec-rule:last-child { margin-bottom: 0; }
+  .spec-n { flex: 0 0 74px; color: var(--t-default); font-weight: var(--fw-semibold); }
+  .spec-rule em { color: var(--t-default); font-style: normal; font-weight: var(--fw-medium); }
+
+  /* controls relocating to DAM-wide settings (SCR-175) */
+  .relocating .inline-radio-group,
+  .relocating .check-list { opacity: 0.5; pointer-events: none; }
+  .reloc-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 9px; font-weight: var(--fw-semibold); letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--amber-300); background: rgba(252,211,77,0.12);
+    padding: 2px 6px; border-radius: var(--radius-1);
+    margin-left: var(--spacing-2); vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+<div class="editor">
+  <div class="topbar">
+    <span class="topbar-edit"><svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2l3 3-8 8-4 1 1-4 8-8z" stroke-linejoin="round"/></svg></span>
+    <span class="topbar-title">Editing</span>
+    <span class="topbar-sep">•</span>
+    <span class="topbar-file">FIFA_WC2026_KitReveal_Hero.jpg</span>
+  </div>
+
+  <!-- left rail -->
+  <nav class="rail">
+    <div class="rail-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.5"/><path d="M8 7v4M8 5v.5" stroke-linecap="round"/></svg>Details</div>
+    <div class="rail-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="4" cy="4" r="2"/><circle cx="4" cy="12" r="2"/><path d="M6 4h4M6 12h4M11 4v8"/></svg>Attributes</div>
+    <div class="rail-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 2v9M5 2L2 5M5 2l3 3M11 14V5M11 14l3-3M11 14l-3-3"/></svg>Adjustments</div>
+    <div class="rail-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Template</div>
+    <div class="rail-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="4" cy="4" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="12" cy="12" r="1.5"/><path d="M4 6v4M8 10v0M6 8h4"/></svg>Versions</div>
+    <div class="rail-item active"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="7" width="10" height="7" rx="1"/><path d="M5 7V5a3 3 0 015.5-1.5" stroke-linecap="round"/></svg>Rights</div>
+    <div class="rail-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="6" cy="5" r="2.5"/><path d="M2 13c0-2.2 1.8-4 4-4s4 1.8 4 4M11 6a2 2 0 010 4"/></svg>Access</div>
+  </nav>
+
+  <!-- rights panel -->
+  <div class="panel">
+    <h1 class="panel-title">Rights Management</h1>
+    <div class="panel-file">FIFA_WC2026_KitReveal_Hero.jpg</div>
+    <div class="panel-rule"></div>
+
+    <div class="section-heading">Time-based rights</div>
+
+    <!-- dates -->
+    <div class="field">
+      <div class="date-row">
+        <div class="date-col">
+          <div class="field-label-row"><span class="field-label">Embargo date</span><span class="field-optional">Optional</span></div>
+          <div class="field-help" id="embargo-help">Asset is unusable before this date.</div>
+          <input type="date" id="embargo-date" value="2026-05-14">
+        </div>
+        <div class="date-col">
+          <div class="field-label-row"><span class="field-label">Expiration date</span><span class="field-optional">Optional</span></div>
+          <div class="field-help">Asset is unusable after this date.</div>
+          <input type="date" id="expiry-date" value="2026-11-30">
+        </div>
+      </div>
+
+      <!-- DISCLOSED: pre-release access (appears only when an embargo date is set) -->
+      <div class="disclosed prerelease-block" id="prerelease-block">
+        <div class="prerelease-eyebrow">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="10" height="8" rx="1"/><path d="M5 6V4a3 3 0 016 0v2"/></svg>
+          Pre-release access
+        </div>
+        <div class="field-help">What users can do with this asset while the embargo is active. Defaulted by the applied rights profile.</div>
+        <div class="radio-group" id="prerelease-group">
+          <label class="radio-opt selected" data-val="none">
+            <input type="radio" name="prerelease" class="radio-input" value="none" checked>
+            <span class="radio-body">
+              <span class="radio-title">No pre-release access</span>
+              <span class="radio-desc">Hard block. Nothing downloadable until the embargo lifts. Use for confidential assets.</span>
+            </span>
+          </label>
+          <label class="radio-opt" data-val="preview">
+            <input type="radio" name="prerelease" class="radio-input" value="preview">
+            <span class="radio-body">
+              <span class="radio-title">Watermarked preview</span>
+              <span class="radio-desc">Watermarked version downloadable now for drafting. Original releases automatically on the embargo date.</span>
+            </span>
+          </label>
+          <label class="radio-opt" data-val="grantable">
+            <input type="radio" name="prerelease" class="radio-input" value="grantable">
+            <span class="radio-body">
+              <span class="radio-title">Grant on request</span>
+              <span class="radio-desc">Preview withheld. Named users can be granted early working access.</span>
+            </span>
+          </label>
+        </div>
+
+        <!-- DISCLOSED-within-disclosed: grantor (only for "grant on request") -->
+        <div class="disclosed grantor" id="grantor-field">
+          <div class="grantor-label">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="5" r="2.5"/><path d="M3 14c0-2.5 2.2-4.5 5-4.5s5 2 5 4.5"/></svg>
+            Who can grant access
+          </div>
+          <select id="grantor-select">
+            <option>Rights manager</option>
+            <option>Brand owner (asset)</option>
+            <option>DAM administrator</option>
+            <option>Specific user…</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- DISCLOSED: auto-archive (expiry-only, correctly scoped) -->
+      <div class="disclosed relocating" id="autoarchive-block" style="margin-top:var(--spacing-5);">
+        <div class="field-label" style="margin-bottom:var(--spacing-2);">Auto-archive on expiry<span class="reloc-tag">→ DAM settings · SCR-175</span></div>
+        <div class="inline-radio-group">
+          <label class="inline-radio"><input type="radio" name="autoarchive" class="radio-input" value="yes"> Yes</label>
+          <label class="inline-radio"><input type="radio" name="autoarchive" class="radio-input" value="no" checked> No</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- notify: split by which date is set (was expiry-only, silently) -->
+    <div class="field">
+      <div class="disclosed notify-group" id="notify-embargo">
+        <div class="notify-group-label">Notify before embargo lifts</div>
+        <div class="notify-group-help">Alert the team so the asset is ready to publish the moment it releases.</div>
+        <div class="check-list">
+          <label class="check-opt"><input type="checkbox" class="check-input"> 7 days before</label>
+          <label class="check-opt"><input type="checkbox" class="check-input"> 1 day before</label>
+          <label class="check-opt"><input type="checkbox" class="check-input"> On lift</label>
+        </div>
+      </div>
+      <div class="disclosed notify-group relocating" id="notify-expiry" style="margin-top:var(--spacing-5);">
+        <div class="notify-group-label">Notify before expiry<span class="reloc-tag">→ DAM settings · SCR-175</span></div>
+        <div class="notify-group-help">Alert before the licence ends so it can be renewed or the asset retired.</div>
+        <div class="check-list">
+          <label class="check-opt"><input type="checkbox" class="check-input"> 30 days before</label>
+          <label class="check-opt"><input type="checkbox" class="check-input"> 7 days before</label>
+          <label class="check-opt"><input type="checkbox" class="check-input"> 1 day before</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="collapse-row">
+      Licensing rights
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 10l4-4 4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <div class="spec">
+      <div class="spec-title">Behaviour spec · for build</div>
+      <div class="spec-rule"><span class="spec-n">Disclosure</span><span>Pre-release access is <em>not</em> a standing field. It is hidden until the Embargo Date has a value, then appears directly beneath it. Clearing the date collapses the control and resets it to <em>No pre-release access</em>.</span></div>
+      <div class="spec-rule"><span class="spec-n">Nested</span><span><em>Who can grant access</em> is disclosed one level deeper — only when <em>Grant on request</em> is selected.</span></div>
+      <div class="spec-rule"><span class="spec-n">Helper text</span><span>The Embargo Date help text tracks the selected policy: unusable before the date (<em>none</em>) · watermarked preview usable, Original releases on the date (<em>preview</em>) · usable only by granted users (<em>grantable</em>).</span></div>
+      <div class="spec-rule"><span class="spec-n">Default</span><span>Defaulted by the applied rights profile. Falls back to <em>No pre-release access</em> (compliance-safe) when no profile default exists.</span></div>
+      <div class="spec-rule"><span class="spec-n">Scope</span><span>Expiry-side behaviour (auto-archive, notify before expiry) is <em>moving to DAM-wide rights settings — SCR-175</em>. Shown here greyed for context only; do not build it per-asset. The embargo-side disclosure (pre-release, notify before lift) stays per-asset.</span></div>
+    </div>
+  </div>
+
+  <!-- preview stage -->
+  <div class="stage">
+    <img src="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' width='600' height='800'&gt;&lt;defs&gt;&lt;linearGradient id='g' x1='0' y1='0' x2='0' y2='1'&gt;&lt;stop offset='0' stop-color='%236b8cae'/&gt;&lt;stop offset='0.55' stop-color='%23b8c9d9'/&gt;&lt;stop offset='0.56' stop-color='%23cfc4b0'/&gt;&lt;stop offset='1' stop-color='%23e8e0d2'/&gt;&lt;/linearGradient&gt;&lt;/defs&gt;&lt;rect width='600' height='800' fill='url(%23g)'/&gt;&lt;/svg&gt;" alt="Asset preview">
+  </div>
+</div>
+
+<script>
+  const embargoDate = document.getElementById('embargo-date');
+  const expiryDate = document.getElementById('expiry-date');
+  const prereleaseBlock = document.getElementById('prerelease-block');
+  const grantorField = document.getElementById('grantor-field');
+  const embargoHelp = document.getElementById('embargo-help');
+  const autoarchiveBlock = document.getElementById('autoarchive-block');
+  const notifyEmbargo = document.getElementById('notify-embargo');
+  const notifyExpiry = document.getElementById('notify-expiry');
+
+  const HELP = {
+    none: 'Asset is unusable before this date.',
+    preview: 'Watermarked preview is usable before this date. The Original releases on it.',
+    grantable: 'Usable before this date only by users granted early access.'
+  };
+
+  function show(el, on) { el.classList.toggle('show', on); }
+
+  function syncEmbargo() {
+    const set = !!embargoDate.value;
+    show(prereleaseBlock, set);
+    show(notifyEmbargo, set);
+    if (!set) { embargoHelp.textContent = 'Asset is unusable before this date.'; }
+    else { syncPolicy(); }
+  }
+
+  function syncExpiry() {
+    const set = !!expiryDate.value;
+    show(autoarchiveBlock, set);
+    show(notifyExpiry, set);
+  }
+
+  function syncPolicy() {
+    const val = document.querySelector('input[name="prerelease"]:checked').value;
+    embargoHelp.textContent = HELP[val];
+    show(grantorField, val === 'grantable');
+    document.querySelectorAll('.radio-opt').forEach(o => {
+      o.classList.toggle('selected', o.dataset.val === val);
+    });
+  }
+
+  embargoDate.addEventListener('change', syncEmbargo);
+  expiryDate.addEventListener('change', syncExpiry);
+  document.querySelectorAll('input[name="prerelease"]').forEach(r => r.addEventListener('change', syncPolicy));
+
+  // initial state (embargo prefilled to match a live embargoed asset)
+  syncEmbargo();
+  syncExpiry();
+</script>
+</body>
+</html>
