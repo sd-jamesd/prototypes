@@ -1,0 +1,1430 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>DAM design contracts</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{--stone-50:#fefcfc;--stone-100:#f5f5f4;--stone-200:#e7e5e4;--stone-300:#d6d3d1;
+  --stone-400:#978985;--stone-500:#6b615e;--stone-700:#44403c;--stone-900:#261e1b;
+  --primary:#0b6e8a;--primary-default:var(--primary);--primary-subtle:#e8f6fa;--spacing-1:4px;--spacing-2:8px;--spacing-3:12px;--radius-2:4px;--font-size-1:12px;--primary-tint-dark:rgba(77,181,207,.16);--cerulean-dark:#7ec7dd;--surface-muted:var(--stone-100);--surface-hover-dark:rgba(255,255,255,.05);--primary-300:#4db5cf;--accent-3:#E4F5FC;--accent-9:#0B6E8A;
+  --green:#208368;--red:#e54d2e;
+  --surface:#fff;--text:var(--stone-900);--muted:var(--stone-500);--subtle:var(--stone-400);
+  --border:var(--stone-200);--border-sub:var(--stone-100);
+  --r2:4px;--r3:6px;--pill:9999px;--font:'Inter',-apple-system,sans-serif;}
+:root{--c-primary:#0b6e8a; --c-primary-300:#4db5cf; --accent-9:#0B6E8A;
+  --c-amber:#f5a524; --c-red:#e54d2e; --c-green:#29a383;
+  /* dark editor surfaces (editor theme — extends Scale light defaults) */
+  --ed-bg:#1c1815; --ed-panel:#211c19; --ed-chrome:#161311; --ed-line:rgba(255,255,255,0.08);
+  --ed-label:rgba(255,255,255,0.55); --ed-value:rgba(255,255,255,0.92); --ed-faint:rgba(255,255,255,0.4);
+  --ed-input-bg:rgba(255,255,255,0.05); --ed-input-bd:rgba(255,255,255,0.40); --ed-error:#ec7a6e;
+  --radius-2:4px; --radius-3:6px; --radius-pill:9999px;
+  --font:'Inter',-apple-system,sans-serif;}
+:root{--stone-50:#fefcfc; --stone-100:#f5f5f4; --stone-200:#e7e5e4; --stone-300:#d6d3d1;
+  --stone-400:#978985; --stone-500:#6b615e; --stone-700:#44403c; --stone-900:#261e1b;
+  --primary:#0b6e8a; --primary-300:#4db5cf; --accent-3:#E4F5FC; --accent-9:#0B6E8A;
+  --red:#e54d2e; --green:#208368;
+  --surface:#ffffff; --panel:var(--stone-50);
+  --text:var(--stone-900); --muted:var(--stone-500); --subtle:var(--stone-400);
+  --border:var(--stone-200); --border-sub:var(--stone-100);
+  --radius-2:4px; --radius-3:6px; --pill:9999px;
+  --font:'Inter',-apple-system,sans-serif;}
+:root{--stone-50:#fefcfc;--stone-100:#f5f5f4;--stone-200:#e7e5e4;--stone-300:#d6d3d1;
+  --stone-400:#978985;--stone-500:#6b615e;--stone-700:#44403c;--stone-900:#261e1b;
+  --primary:#0b6e8a;--primary-300:#4db5cf;--accent-3:#E4F5FC;--accent-9:#0B6E8A;
+  --green:#208368;--red:#e54d2e;
+  --surface:#fff;--text:var(--stone-900);--muted:var(--stone-500);--subtle:var(--stone-400);
+  --border:var(--stone-200);--border-sub:var(--stone-100);
+  --r2:4px;--r3:6px;--pill:9999px;--font:'Inter',-apple-system,sans-serif;}
+:root{/* Stone */
+  --color-stone-50:#fefcfc; --color-stone-100:#f5f5f4; --color-stone-200:#e7e5e4;
+  --color-stone-300:#d6d3d1; --color-stone-400:#978985; --color-stone-500:#6b615e; --color-stone-900:#261e1b;
+  /* Primary (Cerulean) */
+  --color-primary-50:#e8f6fa; --color-primary-100:#c4e8f1; --color-primary-600:#0b6e8a;
+  --color-primary-700:#005f7b; --color-primary-800:#1b404e;
+  /* Amber — reserved for the one alert state (public/open) */
+  --color-amber-100:#ffefd5; --color-amber-600:#985b00;
+  /* Semantic */
+  --surface-subtle:var(--color-stone-50); --surface-muted:var(--color-stone-100); --surface-emphasis:var(--color-stone-200);
+  --text-default:var(--color-stone-900); --text-muted:var(--color-stone-500); --text-subtle:var(--color-stone-400);
+  --border-default:var(--color-stone-200); --border-subtle:var(--color-stone-100);
+  --primary-default:var(--color-primary-600); --primary-subtle:var(--color-primary-50); --primary-muted:var(--color-primary-100);
+  /* scale */
+  --spacing-1:4px; --spacing-2:8px; --spacing-3:12px; --spacing-4:16px; --spacing-6:24px;
+  --font-size-1:12px; --font-size-2:14px; --font-size-3:16px;
+  --radius-2:4px; --radius-3:6px; --radius-full:9999px;
+  --shadow-md:0 1px 3px rgba(0,0,0,0.1),0 1px 2px rgba(0,0,0,0.06);
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --ls-1:0.04em; --ls-tight:-0.01em;}
+*{box-sizing:border-box;margin:0;padding:0;}
+.appbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:18px;height:52px;padding:0 22px;background:#17141f;border-bottom:1px solid rgba(255,255,255,.10);}
+*{box-sizing:border-box;} html,body{margin:0;padding:0;} body{font-family:'Inter',sans-serif;background:#0d0b12;}
+.appbar .brand{font-size:12px;font-weight:700;color:#fff;letter-spacing:-.01em;} .appbar .brand .dot{color:#4db5cf;}
+.tabs{display:flex;gap:4px;margin-left:8px;} .tab{font-family:inherit;font-size:12px;font-weight:600;color:rgba(255,255,255,.55);background:transparent;border:none;padding:7px 14px;border-radius:7px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;}
+.tab:hover{color:rgba(255,255,255,.85);background:rgba(255,255,255,.05);} .tab.active{color:#fff;background:rgba(77,181,207,.16);}
+.tab .sw{width:9px;height:9px;border-radius:2px;flex:none;} .tab .sw.dark{background:#211c19;border:1px solid rgba(255,255,255,.3);}
+.tab .sw.light{background:#fefcfc;border:1px solid #d6d3d1;} .tab .sw.found{background:#4db5cf;}
+.view{display:none;} .view.active{display:block;}
+.c-foundations{font-family:var(--font);background:#f3f1ef;color:var(--text);padding:34px 30px 90px;-webkit-font-smoothing:antialiased;line-height:1.5;;min-height:100vh;}
+.c-foundations .wrap{max-width:1000px;margin:0 auto;}
+.c-foundations h1{font-size:16px;font-weight:700;letter-spacing:-.02em;}
+.c-foundations .lede{color:var(--muted);font-size:14px;margin:8px 0 6px;max-width:820px;}
+.c-foundations .thesis{display:inline-flex;gap:8px;align-items:center;background:#fff;border:1px solid var(--border);border-radius:var(--pill);padding:7px 15px;font-size:12px;font-weight:600;margin:14px 0 32px;}
+.c-foundations .thesis .d{width:6px;height:6px;border-radius:50%;background:var(--primary);}
+.c-foundations .block{margin:0 0 34px;}
+.c-foundations .block > h2{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--primary);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.c-foundations /* type ladder */
+.ladder{background:#fff;border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.c-foundations .lrow{display:flex;align-items:baseline;gap:20px;padding:15px 20px;border-bottom:1px solid var(--border-sub);}
+.c-foundations .lrow:last-child{border-bottom:none;}
+.c-foundations .lrow .spec{flex:0 0 230px;font-size:12px;color:var(--muted);}
+.c-foundations .lrow .spec b{color:var(--text);font-weight:600;}
+.c-foundations .lrow .sample{color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.c-foundations /* role table */
+table.roles{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.c-foundations table.roles th{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--subtle);text-align:left;padding:11px 14px;border-bottom:1px solid var(--border);background:var(--stone-50);}
+.c-foundations table.roles td{font-size:12px;padding:10px 14px;border-bottom:1px solid var(--border-sub);color:var(--text);vertical-align:top;}
+.c-foundations table.roles tr:last-child td{border-bottom:none;}
+.c-foundations table.roles td.role{font-weight:600;}
+.c-foundations table.roles td.tok{color:var(--muted);font-family:ui-monospace,monospace;font-size:11px;}
+.c-foundations .mono{font-family:ui-monospace,monospace;font-size:11px;color:var(--muted);}
+.c-foundations /* atoms */
+.atoms{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.c-foundations .atom{background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px 18px;}
+.c-foundations .atom .acap{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--subtle);margin-bottom:12px;}
+.c-foundations .atom .note{font-size:12px;color:var(--muted);margin-top:10px;}
+.c-foundations .atom .note b{color:var(--text);font-weight:600;}
+.c-foundations .frow{display:grid;grid-template-columns:108px 1fr;gap:12px;padding:7px 0;font-size:12px;border-bottom:1px solid var(--border-sub);}
+.c-foundations .frow:last-child{border-bottom:none;}
+.c-foundations .frow .fl{color:var(--muted);font-weight:400;}
+.c-foundations .frow .fv{color:var(--text);font-weight:500;}
+.c-foundations .search{display:flex;align-items:center;gap:9px;background:var(--stone-100);border:1px solid transparent;border-radius:var(--r2);padding:9px 11px;font-size:14px;color:var(--subtle);}
+.c-foundations .search svg{width:15px;height:15px;flex:none;}
+.c-foundations .search.focus{background:#fff;border-color:var(--primary);box-shadow:0 0 0 3px rgba(11,110,138,.18);}
+.c-foundations .sect{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600;color:var(--text);padding:4px 0;}
+.c-foundations .sect svg{width:16px;height:16px;color:var(--muted);}
+.c-foundations .sect .roll{font-size:11px;font-weight:600;color:var(--accent-9);background:var(--accent-3);border-radius:var(--pill);padding:1px 8px;}
+.c-foundations .eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--subtle);}
+.c-foundations .tg{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;padding:4px 10px;border-radius:var(--pill);border:1px solid var(--border);color:var(--text);background:#fff;}
+.c-foundations .badge{font-size:11px;font-weight:600;color:var(--accent-9);background:var(--accent-3);border-radius:var(--pill);padding:1px 8px;}
+.c-foundations /* active-state row */
+.act{display:flex;gap:14px;flex-wrap:wrap;align-items:stretch;}
+.c-foundations .acard{flex:1 1 150px;border:1px solid var(--border);border-radius:var(--r3);overflow:hidden;}
+.c-foundations .ahead{padding:10px 12px;font-size:12px;position:relative;color:var(--text);}
+.c-foundations .acc-sel{border-left:2px solid var(--primary);background:#fff;}
+.c-foundations .rail-sel{background:var(--accent-3);color:var(--primary);border-left:3px solid var(--primary);font-weight:600;}
+.c-foundations .tab-sel{background:rgba(11,110,138,.10);color:var(--primary);font-weight:600;}
+.c-foundations .alabel{font-size:11px;color:var(--muted);padding:7px 12px;border-top:1px solid var(--border-sub);}
+.c-foundations ul.laws{list-style:none;display:flex;flex-direction:column;gap:11px;}
+.c-foundations ul.laws li{font-size:14px;color:var(--muted);padding-left:18px;position:relative;}
+.c-foundations ul.laws li::before{content:'';position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:50%;background:var(--primary);}
+.c-foundations ul.laws li b{color:var(--text);font-weight:600;}
+.c-foundations .no{color:var(--red);font-weight:600;}
+.c-foundations /* button tiers */
+.fbtn{font-family:inherit;font-size:14px;font-weight:600;height:32px;padding:0 14px;border-radius:var(--r2);border:1px solid transparent;display:inline-flex;align-items:center;gap:7px;cursor:pointer;}
+.c-foundations .fbtn.pri{background:var(--primary);color:#fff;}
+.c-foundations .fbtn.sec{background:transparent;color:var(--primary);border-color:var(--primary);}
+.c-foundations .fbtn.ter{background:transparent;color:var(--primary);}
+.c-foundations .fbtn.gho{background:transparent;color:var(--subtle);font-size:16px;padding:0 11px;}
+.c-foundations .fbtn.des{background:var(--red);color:#fff;}
+.c-foundations /* selectable list-item */
+.lirows{display:flex;flex-direction:column;}
+.c-foundations .lirow{position:relative;display:flex;align-items:center;gap:12px;padding:11px 4px 11px 11px;border-bottom:1px solid var(--border-sub);cursor:pointer;}
+.c-foundations .lirow:last-child{border-bottom:none;}
+.c-foundations .lirow.sel{background:var(--accent-3);}
+.c-foundations .lirow.sel::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:2px;background:var(--primary);border-radius:1px;}
+.c-foundations .lirow.dis{opacity:.55;cursor:default;}
+.c-foundations .cbx2{width:16px;height:16px;border-radius:var(--r2);border:1.5px solid var(--stone-300);background:#fff;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;}
+.c-foundations .cbx2.on{background:var(--primary);border-color:var(--primary);}
+.c-foundations .cbx2.d{background:var(--stone-100);border-color:var(--stone-200);}
+.c-foundations .lithumb{width:34px;height:34px;border-radius:var(--r2);background:var(--stone-200);flex:none;}
+.c-foundations .litext{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.c-foundations .lititle{font-size:14px;font-weight:600;color:var(--text);}
+.c-foundations .lispec{font-size:12px;color:var(--muted);}
+.c-foundations .listatus{font-size:11px;color:var(--red);font-weight:500;margin-top:2px;}
+.c-foundations /* rail specimen */
+.rspec-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px;}
+.c-foundations .rspec{display:flex;gap:30px;align-items:flex-start;flex-wrap:wrap;}
+.c-foundations .rspec-col{display:flex;flex-direction:column;gap:8px;}
+.c-foundations .rspec-cap{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+.c-foundations .rspec-rail{display:flex;flex-direction:column;gap:2px;padding:var(--spacing-2) 0;border-radius:10px;}
+.c-foundations .rspec-rail.light{width:56px;align-items:center;background:#fff;border:1px solid var(--border);}
+.c-foundations .rspec-rail.dark{width:88px;background:#26211f;border:1px solid rgba(255,255,255,.08);align-items:stretch;}
+.c-foundations .rspec-ri{position:relative;display:flex;align-items:center;gap:11px;cursor:default;}
+.c-foundations .rspec-rail.light .rspec-ri{justify-content:center;width:100%;padding:var(--spacing-3) 0;color:var(--subtle);border-radius:var(--radius-2);border-left:2px solid transparent;}
+.c-foundations .rspec-rail.dark .rspec-ri{flex-direction:column;gap:var(--spacing-1);padding:var(--spacing-2) var(--spacing-1);color:rgba(255,255,255,.62);font-size:var(--font-size-1);font-weight:500;text-align:center;border-radius:var(--radius-2);border-left:2px solid transparent;}
+.c-foundations .rspec-ri svg{width:20px;height:20px;flex:none;}
+.c-foundations .rspec-rail.light .rspec-ri.on{color:var(--primary-default);background:var(--primary-subtle);}
+.c-foundations .rspec-rail.light .rspec-ri.on::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:3px;background:var(--primary-default);border-radius:0 2px 2px 0;}
+.c-foundations .rspec-rail.dark .rspec-ri.on{color:var(--cerulean-dark);background:var(--primary-tint-dark);}
+.c-foundations .rspec-rail.dark .rspec-ri.on::before{content:'';position:absolute;left:0;top:5px;bottom:5px;width:3px;background:var(--cerulean-dark);border-radius:0 2px 2px 0;}
+.c-foundations .rspec-rail.light .rspec-ri:not(.on):hover{background:var(--surface-muted);color:var(--text);}
+.c-foundations .rspec-rail.dark .rspec-ri:not(.on):hover{background:var(--surface-hover-dark);color:rgba(255,255,255,.85);}
+.c-foundations .rspec-div{height:1px;background:rgba(255,255,255,.09);margin:7px 15px;}
+.c-edit{font-family:var(--font);background:#100d0b;color:var(--ed-value);padding:34px 30px 80px;
+  -webkit-font-smoothing:antialiased;line-height:1.5;;min-height:100vh;}
+.c-edit .wrap{max-width:960px;margin:0 auto;}
+.c-edit h1{font-size:16px;font-weight:700;letter-spacing:-0.02em;}
+.c-edit .lede{color:var(--ed-label);font-size:14px;margin:8px 0 6px;max-width:760px;}
+.c-edit .thesis{display:inline-flex;gap:8px;align-items:center;background:var(--ed-panel);border:1px solid var(--ed-line);
+  border-radius:var(--radius-pill);padding:7px 15px;font-size:12px;font-weight:600;margin:14px 0 30px;}
+.c-edit .thesis .d{width:6px;height:6px;border-radius:50%;background:var(--c-primary-300);}
+.c-edit .block{margin:0 0 30px;}
+.c-edit .block > h2{font-size:12px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--c-primary-300);
+  margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--ed-line);}
+.c-edit .row{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;}
+.c-edit .demo{background:var(--ed-panel);border:1px solid var(--ed-line);border-radius:var(--radius-3);padding:22px 22px 24px;
+  flex:1 1 360px;min-width:320px;}
+.c-edit .note{flex:1 1 280px;min-width:260px;font-size:14px;color:var(--ed-label);}
+.c-edit .note b{color:var(--ed-value);font-weight:600;}
+.c-edit .note ul{list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:4px;}
+.c-edit .note li{padding-left:14px;position:relative;}
+.c-edit .note li::before{content:'';position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:var(--ed-faint);}
+.c-edit .tag-ok{color:var(--c-green);}
+.c-edit .tag-no{color:var(--c-red);}
+.c-edit .lbl{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ed-faint);margin-bottom:9px;}
+.c-edit /* ---- canonical panel header ---- */
+.ph{}
+.c-edit .ph .title{font-size:16px;font-weight:600;color:var(--ed-value);}
+.c-edit .ph .sub{font-size:12px;color:var(--ed-label);margin-top:3px;}
+.c-edit .ph-actions{float:right;display:flex;gap:8px;}
+.c-edit .btn{font-family:var(--font);font-size:14px;font-weight:600;height:30px;padding:0 13px;border-radius:var(--radius-2);
+  cursor:default;display:inline-flex;align-items:center;gap:6px;border:1px solid transparent;}
+.c-edit .btn-pri{background:var(--c-primary);color:#fff;}
+.c-edit .btn-sec{background:transparent;color:var(--ed-value);border-color:var(--ed-input-bd);}
+.c-edit /* ---- section ---- */
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ed-label);margin-bottom:12px;}
+.c-edit .sec + .sec{margin-top:24px;}
+.c-edit /* ---- field row ---- */
+.field{margin-bottom:14px;}
+.c-edit .field .flab{font-size:12px;font-weight:500;color:var(--ed-label);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.c-edit .opt{font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--ed-faint);border:1px solid var(--ed-faint);
+  padding:1px 5px;border-radius:3px;}
+.c-edit .inp{width:100%;background:var(--ed-input-bg);border:1px solid var(--ed-input-bd);border-radius:var(--radius-2);
+  color:var(--ed-value);font-family:var(--font);font-size:14px;padding:9px 11px;}
+.c-edit .inp::placeholder{color:rgba(255,255,255,.35);}
+.c-edit .inp-wrap{position:relative;}
+.c-edit .inp-wrap .inp{padding-right:36px;}
+.c-edit .inp-ico{position:absolute;right:11px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--ed-label);cursor:pointer;}
+.c-edit .inp-ico:hover{color:var(--ed-value);}
+.c-edit .help{font-size:11px;color:var(--ed-faint);margin-top:5px;}
+.c-edit .ro-row{display:grid;grid-template-columns:108px 1fr;gap:12px;padding:7px 0;font-size:12px;align-items:start;border-bottom:1px solid var(--ed-line);}
+.c-edit .ro-row .k{color:var(--ed-label);}
+.c-edit .ro-row .v{color:var(--ed-value);font-weight:500;word-break:break-word;}
+.c-edit /* ---- accordion group ---- */
+.acc-item{position:relative;padding:13px 0 13px 11px;border-bottom:1px solid var(--ed-line);}
+.c-edit .acc-item:last-child{border-bottom:none;}
+.c-edit .acc-head{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--ed-value);position:relative;cursor:pointer;}
+.c-edit .acc-head .chev{margin-left:auto;color:var(--ed-faint);font-weight:400;}
+.c-edit .chev{display:inline-flex;align-items:center;}
+.c-edit .chev svg{width:7px;height:7px;display:block;transition:transform .12s;}
+.c-edit .chev.closed svg{transform:rotate(-90deg);}
+.c-edit .acc-head .count{font-size:11px;color:var(--c-primary-300);font-weight:600;}
+.c-edit .acc-item.sel .acc-head::before{content:'';position:absolute;left:-11px;top:1px;bottom:1px;width:2px;background:var(--c-primary-300);border-radius:1px;}
+.c-edit .acc-body{padding:10px 0 2px;display:flex;flex-direction:column;gap:9px;}
+.c-edit .opt-row{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--ed-value);}
+.c-edit .cbx{width:16px;height:16px;border-radius:var(--radius-2);border:1.5px solid var(--ed-faint);flex:none;position:relative;}
+.c-edit .cbx.on{background:var(--c-primary);border-color:var(--c-primary);}
+.c-edit .cbx.on::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;}
+.c-edit .cbx.ind{background:var(--c-primary);border-color:var(--c-primary);}
+.c-edit .cbx.ind::after{content:'–';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;}
+.c-edit /* ---- chip / token ---- */
+.chip-input{display:flex;gap:8px;align-items:center;background:var(--ed-input-bg);border:1px solid var(--ed-input-bd);
+  border-radius:var(--radius-2);padding:5px 5px 5px 11px;}
+.c-edit .chip-input .tagico{color:var(--ed-faint);flex:none;}
+.c-edit .chip-input input{flex:1;background:transparent;border:none;color:var(--ed-value);font-family:var(--font);font-size:12px;outline:none;}
+.c-edit .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.c-edit .chip{display:inline-flex;align-items:center;gap:7px;background:var(--ed-input-bg);border:1px solid var(--ed-input-bd);
+  border-radius:var(--radius-pill);padding:4px 10px;font-size:12px;}
+.c-edit .chip.ai{border-color:rgba(77,181,207,.5);}
+.c-edit .chip .x{color:var(--ed-faint);font-size:12px;}
+.c-edit .chip .spark{color:var(--c-primary-300);flex:none;}
+.c-edit /* ---- list row ---- */
+.list-row{display:flex;align-items:center;gap:12px;border:1px solid var(--ed-line);border-radius:var(--radius-3);
+  padding:13px 14px;}
+.c-edit .list-row + .list-row{margin-top:-1px;border-radius:0;}
+.c-edit .lr-main{flex:1;}
+.c-edit .lr-main .t{font-size:14px;font-weight:500;}
+.c-edit .lr-main .m{font-size:12px;color:var(--ed-label);margin-top:2px;}
+.c-edit .lr-meta{font-size:12px;color:var(--ed-label);}
+.c-edit .lr-kebab{color:var(--ed-faint);padding:0 4px;}
+.c-edit /* ---- selectable list-item (template / picker) ---- */
+.li2{display:flex;flex-direction:column;}
+.c-edit .li2-row{position:relative;display:flex;align-items:center;gap:12px;padding:10px 4px 10px 11px;border-bottom:1px solid var(--ed-line);cursor:pointer;}
+.c-edit .li2-row:last-child{border-bottom:none;}
+.c-edit .li2-row.sel{background:rgba(77,181,207,.12);}
+.c-edit .li2-row.sel::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:2px;background:var(--c-primary-300);border-radius:1px;}
+.c-edit .li2-row.dis{opacity:.5;cursor:default;}
+.c-edit .li2-cbx{width:16px;height:16px;border-radius:var(--radius-2);border:1.5px solid var(--ed-input-bd);background:transparent;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;}
+.c-edit .li2-cbx.on{background:var(--c-primary);border-color:var(--c-primary);}
+.c-edit .li2-thumb{width:34px;height:34px;border-radius:var(--radius-2);background:rgba(255,255,255,.08);flex:none;}
+.c-edit .li2-text{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.c-edit .li2-title{font-size:14px;font-weight:600;color:var(--ed-value);}
+.c-edit .li2-spec{font-size:12px;color:var(--ed-label);}
+.c-edit .li2-status{font-size:11px;color:var(--ed-error);font-weight:500;margin-top:2px;}
+.c-edit /* ---- empty state ---- */
+.empty{text-align:center;padding:30px 10px;color:var(--ed-label);}
+.c-edit .empty svg{width:26px;height:26px;color:var(--ed-faint);margin-bottom:10px;}
+.c-edit .empty .e1{font-size:14px;}
+.c-edit /* radios / select */
+.radio-row{display:flex;align-items:center;gap:10px;font-size:14px;margin-bottom:8px;}
+.c-edit .radio{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--ed-faint);flex:none;position:relative;}
+.c-edit .radio.on{border-color:var(--c-primary);}
+.c-edit .radio.on::after{content:'';position:absolute;inset:3px;border-radius:50%;background:var(--c-primary);}
+.c-edit .sel-box{display:flex;align-items:center;justify-content:space-between;background:var(--ed-input-bg);border:1px solid var(--ed-input-bd);
+  border-radius:var(--radius-2);padding:9px 11px;font-size:14px;color:rgba(255,255,255,.5);}
+.c-edit .chip.some{background:transparent;border:1px dashed var(--ed-faint);}
+.c-edit .chip .count{font-size:11px;color:var(--ed-faint);background:rgba(255,255,255,.08);border-radius:var(--radius-pill);padding:1px 6px;font-variant-numeric:tabular-nums;}
+.c-edit .inert{display:flex;gap:10px;align-items:flex-start;padding:13px;border:1px dashed var(--ed-line);border-radius:var(--radius-3);background:rgba(255,255,255,.02);margin-top:12px;}
+.c-edit .inert svg{width:17px;height:17px;color:var(--ed-faint);flex:none;margin-top:1px;}
+.c-edit .inert .t2{font-size:12px;color:var(--ed-faint);line-height:17px;}
+.c-edit .inert .t2 b{color:var(--ed-label);font-weight:500;}
+.c-edit .ai-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:var(--radius-pill);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:linear-gradient(135deg,rgba(41,163,131,.22),rgba(91,91,214,.22));border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.82);}
+.c-edit .search{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.045);border:1px solid transparent;border-radius:var(--radius-2);padding:9px 11px;font-size:14px;color:var(--ed-faint);}
+.c-edit .search svg{width:15px;height:15px;color:var(--ed-faint);flex:none;}
+.c-edit .search.focus{border-color:var(--c-primary);box-shadow:0 0 0 3px rgba(11,110,138,.30);color:var(--ed-value);}
+.c-edit .gparent{display:flex;align-items:center;gap:9px;padding:9px 2px;font-size:14px;font-weight:600;color:var(--ed-value);}
+.c-edit .gparent .pico{color:var(--ed-faint);display:flex;}
+.c-edit .gparent .rollup{font-size:11px;font-weight:600;color:var(--c-primary-300);background:rgba(77,181,207,.16);border-radius:var(--radius-pill);padding:1px 8px;}
+.c-edit .gparent .chev{margin-left:auto;color:var(--ed-faint);}
+.c-edit .gchildren{padding-left:13px;margin-left:5px;border-left:1px solid var(--ed-line);}
+.c-edit /* drift / casing tables */
+.drift{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px;}
+.c-edit .drift td{padding:7px 10px;border-bottom:1px solid var(--ed-line);vertical-align:top;}
+.c-edit .drift td:first-child{color:var(--ed-label);width:34%;}
+.c-edit .strike{text-decoration:line-through;color:var(--ed-faint);}
+.c-edit code{background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px;font-size:11px;color:var(--c-primary-300);}
+.c-edit /* conformance map */
+.map{width:100%;border-collapse:collapse;font-size:12px;}
+.c-edit .map th{text-align:left;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ed-faint);
+  padding:8px 10px;border-bottom:1px solid var(--ed-line);font-weight:600;}
+.c-edit .map td{padding:9px 10px;border-bottom:1px solid var(--ed-line);}
+.c-edit .map td:first-child{font-weight:600;color:var(--ed-value);white-space:nowrap;}
+.c-edit .map td:nth-child(2){color:var(--ed-label);}
+.c-edit .divider{height:1px;background:var(--ed-line);margin:24px 0;}
+.c-filter{font-family:var(--font);background:#f3f1ef;color:var(--text);padding:34px 30px 80px;-webkit-font-smoothing:antialiased;line-height:1.5;;min-height:100vh;}
+.c-filter .wrap{max-width:980px;margin:0 auto;}
+.c-filter h1{font-size:16px;font-weight:700;letter-spacing:-.02em;}
+.c-filter .lede{color:var(--muted);font-size:14px;margin:8px 0 6px;max-width:780px;}
+.c-filter .thesis{display:inline-flex;gap:8px;align-items:center;background:#fff;border:1px solid var(--border);border-radius:var(--pill);
+  padding:7px 15px;font-size:12px;font-weight:600;margin:14px 0 30px;}
+.c-filter .thesis .d{width:6px;height:6px;border-radius:50%;background:var(--primary);}
+.c-filter .cols{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap;}
+.c-filter .railwrap{flex:0 0 320px;}
+.c-filter .railcap{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--subtle);margin-bottom:10px;}
+.c-filter .side{flex:1 1 380px;min-width:340px;}
+.c-filter /* ---- the rail ---- */
+.rail{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 16px;box-shadow:0 4px 6px -1px rgba(0,0,0,.06);}
+.c-filter .rhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.c-filter .rhead .t{font-size:16px;font-weight:600;}
+.c-filter .rhead .collapse{color:var(--primary);display:flex;}
+.c-filter .srow{display:flex;align-items:center;gap:10px;padding:9px 2px;font-size:14px;color:var(--text);cursor:default;}
+.c-filter .srow svg{width:17px;height:17px;color:var(--muted);flex:none;}
+.c-filter .srow .chev{margin-left:auto;color:var(--subtle);}
+.c-filter .divider{height:1px;background:var(--border);margin:12px 0;}
+.c-filter .search{display:flex;align-items:center;gap:9px;background:var(--stone-100);border:1px solid transparent;border-radius:var(--radius-2);padding:9px 11px;font-size:14px;color:var(--subtle);margin:4px 0 14px;}
+.c-filter .search svg{width:15px;height:15px;color:var(--subtle);flex:none;}
+.c-filter .gparent{display:flex;align-items:center;gap:9px;padding:9px 2px;font-size:14px;font-weight:600;color:var(--text);}
+.c-filter .gparent .pico{color:var(--muted);display:flex;}
+.c-filter .gparent .rollup{font-size:11px;font-weight:600;color:var(--accent-9);background:var(--accent-3);border-radius:var(--pill);padding:1px 8px;}
+.c-filter .gparent .chev{margin-left:auto;color:var(--subtle);}
+.c-filter .gchildren{padding-left:13px;margin-left:5px;border-left:1px solid var(--border);}
+.c-filter .acc-item{position:relative;padding:13px 0 13px 11px;border-bottom:1px solid var(--border);}
+.c-filter .acc-item:last-child{border-bottom:none;}
+.c-filter .acc-head{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--text);position:relative;cursor:pointer;}
+.c-filter .acc-head .chev{margin-left:auto;color:var(--subtle);font-weight:400;}
+.c-filter .chev{display:inline-flex;align-items:center;}
+.c-filter .chev svg{width:7px;height:7px;display:block;transition:transform .12s;}
+.c-filter .chev.closed svg{transform:rotate(-90deg);}
+.c-filter .acc-head .count{font-size:11px;color:var(--accent-9);font-weight:600;}
+.c-filter .acc-item.sel .acc-head::before{content:'';position:absolute;left:-11px;top:1px;bottom:1px;width:2px;background:var(--primary);border-radius:1px;}
+.c-filter .acc-body{padding:10px 0 2px;display:flex;flex-direction:column;gap:9px;}
+.c-filter .opt{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text);}
+.c-filter .opt .ct{color:var(--subtle);font-size:11px;}
+.c-filter .opt.off{color:var(--subtle);}
+.c-filter .cbx{width:16px;height:16px;border-radius:var(--radius-2);border:1.5px solid var(--stone-300);flex:none;position:relative;background:#fff;}
+.c-filter .cbx.on{background:var(--primary);border-color:var(--primary);}
+.c-filter .cbx.on::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;}
+.c-filter .cbx.dis{background:var(--stone-100);border-color:var(--stone-200);}
+.c-filter .showmore{font-size:12px;color:var(--primary);font-weight:500;padding-top:2px;}
+.c-filter /* ---- diff blocks ---- */
+.block{margin:0 0 26px;}
+.c-filter .block > h2{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.c-filter .block.shared > h2{color:var(--green);}
+.c-filter .block.diff > h2{color:var(--primary);}
+.c-filter ul.pts{list-style:none;display:flex;flex-direction:column;gap:11px;}
+.c-filter ul.pts li{font-size:14px;color:var(--muted);padding-left:16px;position:relative;}
+.c-filter ul.pts li::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;}
+.c-filter .shared ul.pts li::before{background:var(--green);}
+.c-filter .diff ul.pts li::before{background:var(--primary);}
+.c-filter ul.pts li b{color:var(--text);font-weight:600;}
+.c-filter .mini{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-2);padding:3px 8px;font-size:12px;margin:0 2px;vertical-align:middle;}
+.c-filter .fchip{display:inline-flex;align-items:center;gap:7px;background:var(--accent-3);border:1px solid #cfeaf5;color:var(--accent-9);border-radius:var(--pill);padding:3px 10px;font-size:12px;font-weight:500;margin:2px;}
+.c-filter .fchip .x{opacity:.6;}
+.c-filter .clear{font-size:12px;color:var(--primary);font-weight:600;}
+.c-filter .note{margin-top:30px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:18px 22px;font-size:14px;color:var(--muted);}
+.c-filter .note b{color:var(--text);}
+.c-filter .next{margin-top:14px;font-size:12px;color:var(--subtle);}
+.c-lightbox{font-family:var(--font);background:#f3f1ef;color:var(--text);padding:34px 30px 80px;-webkit-font-smoothing:antialiased;line-height:1.5;;min-height:100vh;}
+.c-lightbox .wrap{max-width:1000px;margin:0 auto;}
+.c-lightbox h1{font-size:16px;font-weight:700;letter-spacing:-.02em;}
+.c-lightbox .lede{color:var(--muted);font-size:14px;margin:8px 0 6px;max-width:800px;}
+.c-lightbox .principle{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid var(--border);border-left:3px solid var(--primary);border-radius:8px;
+  padding:13px 17px;font-size:14px;margin:16px 0 28px;}
+.c-lightbox .principle b{color:var(--text);}
+.c-lightbox /* ---- lightbox render ---- */
+.cap{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--subtle);margin:0 0 10px;}
+.c-lightbox .lb{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 10px 24px -8px rgba(0,0,0,.18);margin-bottom:14px;}
+.c-lightbox .lb-top{display:flex;align-items:center;gap:14px;padding:13px 16px;border-bottom:1px solid var(--border);}
+.c-lightbox .lb-top .nav{display:flex;gap:4px;color:var(--muted);}
+.c-lightbox .lb-top .nav svg{width:18px;height:18px;}
+.c-lightbox .lb-top .fn{font-size:14px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.c-lightbox .lb-top .acts{display:flex;align-items:center;gap:9px;}
+.c-lightbox .btn{display:inline-flex;align-items:center;gap:7px;font-family:var(--font);font-size:14px;font-weight:600;border-radius:var(--r2);padding:8px 13px;cursor:default;border:1px solid transparent;}
+.c-lightbox .btn svg{width:15px;height:15px;}
+.c-lightbox .btn-sec{background:#fff;border-color:var(--border);color:var(--text);}
+.c-lightbox .btn-pri{background:var(--primary);color:#fff;}
+.c-lightbox .icbtn{color:var(--muted);display:flex;padding:4px;}
+.c-lightbox .icbtn svg{width:18px;height:18px;}
+.c-lightbox .lb-body{display:flex;min-height:440px;}
+.c-lightbox .stage{flex:1;background:var(--stone-100);display:flex;align-items:center;justify-content:center;color:var(--subtle);font-size:12px;border-right:1px solid var(--border);}
+.c-lightbox .panel{width:300px;flex:none;padding:20px 18px;overflow:auto;transition:width .28s ease,padding .28s ease,opacity .2s ease;}
+.c-lightbox .rail{width:54px;flex:none;border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 0;}
+.c-lightbox .rail .ri{display:flex;align-items:center;justify-content:center;color:var(--muted);width:100%;padding:13px 0;cursor:default;position:relative;}
+.c-lightbox .rail .ri svg{width:20px;height:20px;}
+.c-lightbox .rail .ri.active{color:var(--primary);background:var(--accent-3);}
+.c-lightbox .rail .ri.active::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:3px;background:var(--primary);border-radius:0 2px 2px 0;}
+.c-lightbox .rail .collapse{color:var(--subtle);padding:4px 0 10px;}
+.c-lightbox .rail .ri, .c-lightbox .rail .collapse{position:relative;cursor:pointer;}
+.c-lightbox .rail .ri:hover{background:var(--stone-100);color:var(--text);}
+.c-lightbox .rail .ri.active:hover{background:var(--accent-3);color:var(--primary);}
+.c-lightbox .rail .ri::after, .c-lightbox .rail .collapse::after{content:attr(data-tip);position:absolute;right:calc(100% + 10px);top:50%;transform:translateY(-50%);
+  background:var(--stone-900);color:#fff;font-size:12px;font-weight:600;line-height:1;padding:7px 10px;border-radius:6px;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:opacity .12s ease;z-index:30;box-shadow:0 4px 10px rgba(0,0,0,.18);}
+.c-lightbox .rail .ri:hover::after, .c-lightbox .rail .collapse:hover::after{opacity:1;}
+.c-lightbox .lb-body.collapsed .panel{width:0;padding-left:0;padding-right:0;opacity:0;overflow:hidden;}
+.c-lightbox .lb-body.collapsed .collapse svg{transform:scaleX(-1);}
+.c-lightbox .lb-body .collapse svg{transition:transform .28s ease;}
+.c-lightbox .lb-bottom{display:flex;align-items:center;gap:16px;padding:11px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);}
+.c-lightbox .kbd{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 5px;border:1px solid var(--border);border-radius:var(--r2);font-size:11px;color:var(--stone-700);background:#fff;margin-right:5px;}
+.c-lightbox .lb-bottom .grp{display:flex;align-items:center;gap:5px;}
+.c-lightbox .lb-bottom .pos{margin-left:auto;font-weight:600;color:var(--text);}
+.c-lightbox .lb-bottom .pos span{color:var(--muted);font-weight:400;}
+.c-lightbox /* panel content */
+.ph{font-size:16px;font-weight:600;margin-bottom:16px;}
+.c-lightbox .gparent{display:flex;align-items:center;gap:8px;padding:4px 0 8px;font-size:14px;font-weight:600;color:var(--text);}
+.c-lightbox .gparent .pico{color:var(--muted);display:flex;}
+.c-lightbox .gparent .pico svg{width:16px;height:16px;}
+.c-lightbox .gparent .ct{font-size:11px;font-weight:600;color:var(--muted);}
+.c-lightbox .frow{display:grid;grid-template-columns:108px 1fr;gap:12px;padding:8px 0;font-size:12px;border-bottom:1px solid var(--border-sub);align-items:start;}
+.c-lightbox .frow .fl{color:var(--muted);}
+.c-lightbox .frow .fv{color:var(--text);font-weight:500;word-break:break-word;}
+.c-lightbox .frow .fv.link{color:var(--primary);word-break:break-all;font-weight:400;}
+.c-lightbox .tagcloud{display:flex;flex-wrap:wrap;gap:7px;padding:6px 0 4px;}
+.c-lightbox .tg{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:4px 10px;border-radius:var(--pill);border:1px solid var(--border);color:var(--text);background:#fff;}
+.c-lightbox .tg.ai{background:rgba(77,181,207,.10);border-color:rgba(77,181,207,.35);}
+.c-lightbox .tg.ai svg{width:11px;height:11px;color:var(--primary);}
+.c-lightbox .secgap{height:18px;}
+.c-lightbox .pane{display:none;}
+.c-lightbox .pane.active{display:block;}
+.c-lightbox .dfield{padding:9px 0;border-bottom:1px solid var(--border-sub);}
+.c-lightbox .dfield .lab{font-size:12px;color:var(--muted);margin-bottom:3px;}
+.c-lightbox .dfield .ro{font-size:14px;color:var(--text);word-break:break-word;}
+.c-lightbox .dfield .ro.empty{color:var(--subtle);font-style:italic;}
+.c-lightbox .dfield .ro.link{font-size:12px;color:var(--primary);word-break:break-all;}
+.c-lightbox .facts{margin-top:6px;}
+.c-lightbox .stub{font-size:12px;color:var(--muted);margin-top:4px;}
+.c-lightbox .stub code{font-family:ui-monospace,monospace;font-size:11px;background:var(--stone-100);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--stone-700);}
+.c-lightbox /* ---- diff blocks ---- */
+.block{margin:0 0 24px;}
+.c-lightbox .block>h2{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.c-lightbox .block.shared>h2{color:var(--green);}
+.c-lightbox .block.diff>h2{color:var(--primary);}
+.c-lightbox .block.fix>h2{color:var(--stone-700);}
+.c-lightbox ul.pts{list-style:none;display:flex;flex-direction:column;gap:11px;}
+.c-lightbox ul.pts li{font-size:14px;color:var(--muted);padding-left:16px;position:relative;}
+.c-lightbox ul.pts li::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;}
+.c-lightbox .shared ul.pts li::before{background:var(--green);}
+.c-lightbox .diff ul.pts li::before{background:var(--primary);}
+.c-lightbox .fix ul.pts li::before{background:var(--stone-400);}
+.c-lightbox ul.pts li b{color:var(--text);font-weight:600;}
+.c-lightbox .tag-no{color:var(--red);font-weight:600;}
+.c-lightbox .cols2{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap;}
+.c-lightbox .cols2>.block{flex:1 1 360px;}
+.c-lightbox .callout{background:#fff;border:1px solid var(--border);border-radius:8px;padding:18px 22px;font-size:14px;color:var(--muted);margin-bottom:26px;}
+.c-lightbox .callout b{color:var(--text);}
+.c-lightbox .note{margin-top:8px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:18px 22px;font-size:14px;color:var(--muted);}
+.c-lightbox .note b{color:var(--text);}
+.c-lightbox .msec{margin-top:16px;border-top:1px solid var(--border);padding-top:14px;}
+.c-lightbox .msec-head{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:14px;font-weight:600;color:var(--text);cursor:pointer;user-select:none;}
+.c-lightbox .msec-head .pico{color:var(--muted);display:flex;}
+.c-lightbox .msec-head .pico svg{width:16px;height:16px;}
+.c-lightbox .msec-head .ct{font-size:11px;font-weight:600;color:var(--muted);}
+.c-lightbox .msec-head .chev{margin-left:auto;color:var(--subtle);display:flex;align-items:center;transition:transform .18s ease;}
+.c-lightbox .msec-head .chev svg{width:7px;height:7px;}
+.c-lightbox .msec-head .chev.closed{transform:rotate(-90deg);}
+.c-lightbox .msec-body{display:none;padding:6px 0 2px 2px;}
+.c-lightbox .msec.open .msec-body{display:block;}
+.c-lightbox .msec.open .msec-head{border-left:2px solid var(--primary);padding-left:10px;margin-left:-12px;}
+.c-collections{font-family:var(--font);background:var(--color-stone-200);color:var(--text-default);
+  padding:32px;-webkit-font-smoothing:antialiased;min-height:100vh;}
+.c-collections .stage{display:flex;gap:32px;align-items:flex-start;}
+.c-collections /* ---- Product frame ---- */
+.frame{display:flex;border:1px solid var(--border-default);border-radius:var(--radius-3);
+  overflow:hidden;box-shadow:var(--shadow-md);background:#fff;height:560px;}
+.c-collections /* icon rail */
+.rail{width:56px;background:var(--surface-muted);border-right:1px solid var(--border-default);
+  display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:2px;}
+.c-collections .rail-item{width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+  border-radius:var(--radius-2);color:var(--text-subtle);cursor:pointer;border-left:2px solid transparent;}
+.c-collections .rail-item:hover{background:var(--surface-emphasis);color:var(--text-default);}
+.c-collections .rail-item.active{background:var(--primary-subtle);color:var(--primary-default);border-left-color:var(--primary-default);}
+.c-collections /* collections panel */
+.panel{width:300px;background:var(--surface-subtle);border-right:1px solid var(--border-default);
+  display:flex;flex-direction:column;}
+.c-collections .panel-head{display:flex;align-items:center;justify-content:space-between;
+  padding:var(--spacing-4) var(--spacing-4) var(--spacing-3);}
+.c-collections .panel-title{font-size:var(--font-size-3);font-weight:600;letter-spacing:var(--ls-tight);}
+.c-collections .panel-head .ctrl{color:var(--text-muted);cursor:pointer;display:flex;}
+.c-collections .panel-head .ctrl:hover{color:var(--text-default);}
+.c-collections .search{margin:0 var(--spacing-4) var(--spacing-3);position:relative;}
+.c-collections .search input{width:100%;height:34px;border:1px solid transparent;border-radius:var(--radius-2);
+  background:var(--surface-muted);padding:0 12px 0 32px;font-family:var(--font);font-size:var(--font-size-2);color:var(--text-default);}
+.c-collections .search input::placeholder{color:var(--text-subtle);font-style:italic;}
+.c-collections .search input:focus{outline:none;background:#fff;border-color:var(--primary-default);box-shadow:0 0 0 3px var(--primary-subtle);}
+.c-collections .search svg{position:absolute;left:10px;top:9px;color:var(--text-subtle);pointer-events:none;}
+.c-collections .list{flex:1;overflow-y:auto;padding:0 var(--spacing-2) var(--spacing-3);}
+.c-collections /* rows */
+.row{display:flex;align-items:center;gap:var(--spacing-2);height:36px;padding:0 var(--spacing-3);
+  border-radius:var(--radius-2);cursor:pointer;border-left:2px solid transparent;position:relative;}
+.c-collections .row:hover{background:var(--surface-muted);}
+.c-collections .row.selected{background:var(--primary-subtle);border-left-color:var(--primary-default);}
+.c-collections .row.selected .row-name{color:var(--primary-default);font-weight:600;}
+.c-collections .row.selected .glyph{color:var(--primary-default);}
+.c-collections /* left slot = identity/kind. populated only for distinct kinds (Favourites). empty but reserved on user rows to hold the text column. */
+.glyph{width:16px;height:16px;color:var(--text-muted);flex-shrink:0;display:flex;}
+.c-collections /* right slot = status. visibility is mutable state, .c-collections smaller + muted, .c-collections sits before the count. */
+.status{width:14px;height:14px;color:var(--text-subtle);flex-shrink:0;display:flex;}
+.c-collections .status.open{color:var(--color-amber-600);}
+.c-collections .row-name{flex:1;font-size:var(--font-size-2);color:var(--text-default);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;}
+.c-collections .count{font-size:11px;font-weight:600;color:var(--text-muted);background:var(--surface-emphasis);
+  border-radius:var(--radius-full);padding:1px 8px;min-width:24px;text-align:center;line-height:16px;flex-shrink:0;}
+.c-collections .row.selected .count{background:var(--primary-muted);color:var(--primary-700);}
+.c-collections .chev{width:14px;height:14px;color:var(--text-subtle);flex-shrink:0;}
+.c-collections .owner{font-size:11px;color:var(--text-subtle);font-weight:400;}
+.c-collections /* section divider + group headers */
+.divider{height:1px;background:var(--border-subtle);margin:var(--spacing-2) var(--spacing-3);}
+.c-collections .grp{display:flex;align-items:center;gap:6px;padding:var(--spacing-2) var(--spacing-3) var(--spacing-1);
+  cursor:pointer;color:var(--text-muted);}
+.c-collections .grp:hover{color:var(--text-default);}
+.c-collections .grp-chev{width:7px;height:7px;transition:transform .15s;}
+.c-collections .grp.collapsed .grp-chev{transform:rotate(-90deg);}
+.c-collections .grp-label{font-size:var(--font-size-1);font-weight:700;letter-spacing:var(--ls-1);text-transform:uppercase;}
+.c-collections .grp-num{font-size:11px;color:var(--text-subtle);font-weight:500;}
+.c-collections /* content stub */
+.content{width:230px;background:#fff;padding:var(--spacing-4);}
+.c-collections .content h4{font-size:var(--font-size-2);color:var(--text-subtle);font-weight:500;margin-bottom:8px;}
+.c-collections .thumb-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.c-collections .thumb{aspect-ratio:1;border-radius:var(--radius-2);background:var(--surface-muted);
+  border:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:center;color:var(--text-subtle);}
+.c-collections /* ---- Annotation column ---- */
+.notes{width:340px;font-size:14px;line-height:1.5;color:var(--text-default);}
+.c-collections .notes h2{font-size:16px;font-weight:700;margin-bottom:4px;letter-spacing:var(--ls-tight);}
+.c-collections .notes .sub{color:var(--text-muted);font-size:12px;margin-bottom:16px;}
+.c-collections .note-card{background:#fff;border:1px solid var(--border-default);border-radius:var(--radius-3);
+  padding:14px 16px;margin-bottom:12px;}
+.c-collections .note-card h3{font-size:14px;font-weight:600;margin-bottom:6px;color:var(--primary-700);}
+.c-collections .note-card p{color:var(--text-muted);font-size:12px;}
+.c-collections .legend{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.c-collections .legend:last-child{margin-bottom:0;}
+.c-collections .legend .lg-ic{width:18px;height:18px;color:var(--text-default);flex-shrink:0;display:flex;}
+.c-collections .legend b{font-weight:600;}
+.c-collections .legend span{color:var(--text-muted);}
+.c-collections .flag{background:#fff;border:1px solid var(--color-stone-300);border-left:3px solid var(--color-primary-600);
+  border-radius:var(--radius-2);padding:12px 14px;font-size:12px;color:var(--text-default);}
+.c-collections .flag b{display:block;margin-bottom:3px;color:var(--primary-700);}
+.c-collections code{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--surface-muted);
+  padding:1px 5px;border-radius:3px;color:var(--text-default);}
+</style></head><body>
+<div class="appbar"><span class="brand">DAM design contracts <span class="dot">·</span> one kit, every surface</span><div class="tabs"><button class="tab active" data-view="foundations"><span class="sw found"></span>Foundations</button>
+<button class="tab" data-view="edit"><span class="sw dark"></span>Edit panel</button>
+<button class="tab" data-view="filter"><span class="sw light"></span>Library filters</button>
+<button class="tab" data-view="lightbox"><span class="sw light"></span>Lightbox</button>
+<button class="tab" data-view="collections"><span class="sw light"></span>Collections</button></div></div>
+<section class="view active c-foundations" id="view-foundations">
+<div class="wrap">
+
+  <h1>Foundations</h1>
+  <p class="lede">The type system and shared atoms every section conforms to. Edit, Filters and Lightbox are three contexts of <b style="color:var(--text)">one kit</b> — this page is the layer beneath all of them: the sizes, weights, and components a role must use, identically, wherever it appears.</p>
+  <div class="thesis"><span class="d"></span>One role · one size · one weight — everywhere</div>
+
+  <!-- TYPE LADDER -->
+  <div class="block">
+    <h2>Type ladder — Inter · 16 / 14 / 12 / 11</h2>
+    <div class="ladder">
+      <div class="lrow"><div class="spec"><b>font-size-3 · 16px · 600</b><br>Panel header</div><div class="sample" style="font-size:16px;font-weight:600;">Attributes</div></div>
+      <div class="lrow"><div class="spec"><b>font-size-2 · 14px · 400/600</b><br>Body · section header · search · button</div><div class="sample" style="font-size:14px;">Host City Poster — the reading size</div></div>
+      <div class="lrow"><div class="spec"><b>font-size-1 · 12px · 400/500/700</b><br>Label · value · option · chip · eyebrow</div><div class="sample" style="font-size:12px;">Mark type · Host City Poster</div></div>
+      <div class="lrow"><div class="spec"><b>11px · 600</b><br>Count · badge · kbd · AI badge</div><div class="sample" style="font-size:11px;font-weight:600;">1 of 53 · ESC · AI</div></div>
+    </div>
+    <p class="lede" style="margin-top:10px;font-size:12px;"><b style="color:var(--text)">The DAM uses four type sizes — 16 / 14 / 12, plus 11 for micro-chrome.</b> The 16px panel header is the largest text anywhere in the product. There is no 13px, 15px or 18px — the gaps are deliberate; snap to the nearest rung. Anything off this ladder is a bug, not a decision.</p>
+  </div>
+
+  <!-- ROLE TABLE -->
+  <div class="block">
+    <h2>Role → spec — the lookup the UI team builds against</h2>
+    <table class="roles">
+      <tr><th>Role</th><th>Token</th><th>Size</th><th>Weight</th><th>Case</th><th>Colour</th></tr>
+      <tr><td class="role">Panel header <span style="color:var(--subtle);font-weight:400;">· largest product text</span></td><td class="tok">font-size-3</td><td>16</td><td>600</td><td>Sentence</td><td>text</td></tr>
+      <tr><td class="role">Section header</td><td class="tok">font-size-2</td><td>14</td><td>600</td><td>Sentence</td><td>text</td></tr>
+      <tr><td class="role">Body / prose value</td><td class="tok">font-size-2</td><td>14</td><td>400</td><td>—</td><td>text / muted</td></tr>
+      <tr><td class="role">Search input</td><td class="tok">font-size-2</td><td>14</td><td>400</td><td>—</td><td>text · subtle placeholder</td></tr>
+      <tr><td class="role">Button</td><td class="tok">font-size-2</td><td>14</td><td>600</td><td>—</td><td>per tier</td></tr>
+      <tr><td class="role">Eyebrow / cap</td><td class="tok">font-size-1</td><td>12</td><td>700</td><td>UPPER · +.08em</td><td>subtle</td></tr>
+      <tr><td class="role">Field label</td><td class="tok">font-size-1</td><td>12</td><td>400</td><td>Sentence</td><td>muted</td></tr>
+      <tr><td class="role">Field value (dense)</td><td class="tok">font-size-1</td><td>12</td><td>500</td><td>—</td><td>text</td></tr>
+      <tr><td class="role">Option label</td><td class="tok">font-size-1</td><td>12</td><td>400</td><td>—</td><td>text</td></tr>
+      <tr><td class="role">Chip / tag</td><td class="tok">font-size-1</td><td>12</td><td>500</td><td>—</td><td>text</td></tr>
+      <tr><td class="role">Count / badge</td><td class="tok">—</td><td>11</td><td>600</td><td>—</td><td>accent (cerulean)</td></tr>
+      <tr><td class="role">Kbd hint</td><td class="tok">—</td><td>11</td><td>500</td><td>—</td><td>muted</td></tr>
+      <tr><td class="role">AI badge</td><td class="tok">—</td><td>11</td><td>700</td><td>UPPER</td><td>accent</td></tr>
+    </table>
+    <p class="lede" style="margin-top:10px;font-size:12px;">These are the product roles — every size in this table renders inside the DAM. If an element on a surface doesn't map to a row here, it's off-spec.</p>
+  </div>
+
+  <!-- WEIGHTS -->
+  <div class="block">
+    <h2>Weights — four, role-assigned</h2>
+    <div class="ladder">
+      <div class="lrow"><div class="spec"><b>400 · Regular</b></div><div class="sample" style="font-size:14px;font-weight:400;">Body, field labels, options, search input</div></div>
+      <div class="lrow"><div class="spec"><b>500 · Medium</b></div><div class="sample" style="font-size:14px;font-weight:500;">Field values, chips and tags</div></div>
+      <div class="lrow"><div class="spec"><b>600 · Semibold</b></div><div class="sample" style="font-size:14px;font-weight:600;">Panel + section headers, buttons, counts</div></div>
+      <div class="lrow"><div class="spec"><b>700 · Bold</b></div><div class="sample" style="font-size:14px;font-weight:700;">Page title, eyebrows</div></div>
+    </div>
+    <p class="lede" style="margin-top:10px;font-size:12px;"><b style="color:var(--text)">Hierarchy comes from weight and colour, not extra sizes.</b> A label and its value are the same 12px — the value is distinguished by weight (500 vs 400) and colour, never by a different size.</p>
+  </div>
+
+  <!-- SHARED ATOMS -->
+  <div class="block">
+    <h2>Shared atoms — built once, used in every section</h2>
+    <div class="atoms">
+      <div class="atom">
+        <div class="acap">Field row</div>
+        <div class="frow"><span class="fl">Mark type</span><span class="fv">Host City Poster</span></div>
+        <div class="frow"><span class="fl">Resolution</span><span class="fv">72 dpi</span></div>
+        <div class="note">Label <b>12 / 400 / muted</b>, value <b>12 / 500 / text</b>. Two-column, value left-aligned, wraps when long. One layout for all read-only data.</div>
+      </div>
+      <div class="atom">
+        <div class="acap">Search field</div>
+        <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 5h20"/><path d="M6 12h12"/><path d="M9 19h6"/></svg><span style="font-style:italic;">Find attributes or tags…</span></div>
+        <div class="search focus" style="margin-top:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 5h20"/><path d="M6 12h12"/><path d="M9 19h6"/></svg><span style="color:var(--text);">Host</span></div>
+        <div class="note"><b>14px</b>, borderless on a faint fill at rest; cerulean ring on focus. <b>List-filter icon, never a magnifier.</b> A magnifier here is indistinguishable from the main library search (top bar), and users mistook it for it — running library searches in the filter field. List-filter reads as "narrow this list." The magnifier is reserved for the global library search only. <b>Do not revert</b> — this has regressed once.</div>
+      </div>
+      <div class="atom">
+        <div class="acap">Search affordances — two tiers</div>
+        <div style="margin-bottom:16px;">
+          <div style="font-size:11px;font-weight:600;color:var(--primary);text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px;">Primary · global library search</div>
+          <div style="display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--stone-300);border-radius:var(--r2);padding:11px 13px;font-size:14px;color:var(--subtle);box-shadow:0 1px 2px rgba(38,30,27,.06);max-width:440px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex:none;"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <span style="font-style:italic;">Search the library…</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px;">Secondary · filter rail</div>
+          <div style="background:var(--stone-200);border-radius:var(--r3);padding:10px;max-width:300px;">
+            <div class="search" style="background:var(--stone-100);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 5h20"/><path d="M6 12h12"/><path d="M9 19h6"/></svg><span style="font-style:italic;">Find attributes or tags…</span></div>
+          </div>
+        </div>
+        <div class="note">Two search affordances, two weights — and they must look <b>different</b>. The global search is <b>primary</b>: bordered, elevated, magnifier, full width, top of page. The filter field is <b>secondary</b>: borderless, faint fill, list-filter, docked in the rail. Weight comes from border, size and position — not just surface; a bordered white field out-weighs a borderless faint-fill one, so the filter's fill is safe as long as the global search stays heavier. <b>The global search must always out-weigh the filter field.</b> Making them look alike is what sent users to search the library in the filter — consistency follows role, not appearance.</div>
+      </div>
+      <div class="atom">
+        <div class="acap">Section header</div>
+        <div class="sect"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v6M20 4 9 15"/></svg>Attributes <span class="roll">1</span></div>
+        <div class="note"><b>14 / 600</b>, icon + label + roll-up count (<b>11 / 600 cerulean</b>). No box — the header-vs-list contrast is the hierarchy.</div>
+      </div>
+      <div class="atom">
+        <div class="acap">Eyebrow · chip · count</div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <span class="eyebrow">Canonical</span>
+          <span class="tg">SS26 Campaign</span>
+          <span class="badge">40</span>
+        </div>
+        <div class="note">Eyebrow <b>12 / 700 / UPPER</b>. Chip <b>12 / 500</b> pill. Count <b>11 / 600 / cerulean</b>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVE STATES -->
+  <div class="block">
+    <h2>Active / selected — cerulean only, three forms</h2>
+    <div class="act">
+      <div class="acard">
+        <div class="ahead acc-sel">Official Mark</div>
+        <div class="alabel">Accordion — 2px left bar</div>
+      </div>
+      <div class="acard">
+        <div class="ahead rail-sel">Attributes</div>
+        <div class="alabel">Rail item — fill + bar + icon</div>
+      </div>
+      <div class="acard">
+        <div class="ahead tab-sel">Edit panel</div>
+        <div class="alabel">Tab — tinted fill + text</div>
+      </div>
+    </div>
+    <p class="lede" style="margin-top:12px;font-size:12px;">Every active/selected/focus state is <b style="color:var(--text)">cerulean</b> — <span class="mono">--primary #0b6e8a</span> for bars and fills, <span class="mono">--accent-3 #E4F5FC</span> for tints. <span class="no">Red is never an active state</span> — it's destructive/error only. A red "has-selection" bar anywhere is a bug.</p>
+  </div>
+
+  <!-- BUTTON TIERS -->
+  <div class="block">
+    <h2>Button tiers — by what the action does, not how it looks</h2>
+    <p class="lede" style="margin-bottom:14px;font-size:12px;">One question per button: <b style="color:var(--text)">what happens to the system when it's clicked?</b> The answer is the tier — not how important it feels. Exactly <b style="color:var(--text)">one Primary per visible context</b>; two filled buttons side by side means one of them isn't Primary.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px;">
+      <button class="fbtn pri">Create new</button>
+      <button class="fbtn sec">Edit focus point</button>
+      <button class="fbtn ter">Excel export</button>
+      <button class="fbtn gho">⋯</button>
+      <button class="fbtn des">Delete</button>
+    </div>
+    <table class="roles">
+      <tr><th>Tier</th><th>The action…</th><th>Treatment</th></tr>
+      <tr><td class="role">Primary</td><td>creates data or advances the critical workflow</td><td>cerulean fill, white text — one per context</td></tr>
+      <tr><td class="role">Secondary</td><td>modifies the current view or context; no data created or destroyed</td><td>cerulean text + border, transparent fill</td></tr>
+      <tr><td class="role">Tertiary</td><td>useful but peripheral — once a session, not once a task</td><td>cerulean text, no border, subtle bg on hover</td></tr>
+      <tr><td class="role">Ghost</td><td>contextual, inline on a row / card / item</td><td>neutral text, chrome on hover only; icon-only needs a label</td></tr>
+      <tr><td class="role">Destructive</td><td>permanently or irreversibly removes data</td><td>red — overrides all tiers. Reversible (archive / hide) stays Secondary</td></tr>
+    </table>
+    <div class="note" style="margin-top:12px;font-size:12px;color:var(--muted);"><b style="color:var(--text)">Template tab, resolved:</b> Create New Template is Primary (new data); Edit Focus Point is Secondary (modifies context). Two fills competing was the bug.</div>
+  </div>
+
+  <!-- SELECTABLE LIST-ITEM -->
+  <div class="block">
+    <h2>Selectable list-item — hairline-separated, three states</h2>
+    <div class="lirows">
+      <label class="lirow">
+        <span class="cbx2"></span><span class="lithumb"></span>
+        <span class="litext"><span class="lititle">Instagram Square</span><span class="lispec">aspect 1 · High (85%)</span></span>
+      </label>
+      <label class="lirow sel">
+        <span class="cbx2 on">✓</span><span class="lithumb"></span>
+        <span class="litext"><span class="lititle">Design test</span><span class="lispec">600 × 600 · High (85%)</span></span>
+      </label>
+      <label class="lirow dis">
+        <span class="cbx2 d"></span><span class="lithumb"></span>
+        <span class="litext"><span class="lititle">Linkedin Banner</span><span class="lispec">1200 × 627 · High (85%)</span><span class="listatus">⊘ Image too small</span></span>
+      </label>
+    </div>
+    <div class="note" style="margin-top:12px;font-size:12px;color:var(--muted);">Checkbox + thumbnail + title (<b style="color:var(--text)">14 / 600</b>) + spec (<b style="color:var(--text)">12 / muted</b>). Rows <b style="color:var(--text)">separated by a hairline, never a box each</b> — same call as the filter facets, and it matters more the longer the list. Selected: cerulean tint + 2px left edge + checked box. Unavailable rows stay visible with a red reason (<b style="color:var(--text)">disable, don't hide</b>), never removed. The Template list and any thumbnail picker build from this.</div>
+  </div>
+
+  <!-- DISCLOSURE VS NAVIGATION -->
+  <div class="block">
+    <h2>Disclosure vs navigation — triangle vs chevron</h2>
+    <p class="lede" style="font-size:12px;margin-bottom:14px;">Two glyphs, one meaning each. A control that <b style="color:var(--text)">expands content in place</b> uses a filled triangle; a control that <b style="color:var(--text)">takes you to another view</b> uses a chevron. Never the reverse — and both are SVG, never a Unicode text glyph (text triangles render at inconsistent size and weight, which is exactly the bug this replaced).</p>
+    <table class="roles">
+      <tr><th>Glyph</th><th>Means</th><th>Where</th></tr>
+      <tr><td class="role"><svg viewBox="0 0 96.154 96.154" fill="currentColor" style="width:7px;height:7px;vertical-align:-1px;margin-right:6px;"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg>Triangle</td><td>expand / collapse in place — rotates: right when closed, down when open</td><td>filter facets, edit attributes, collection group headers</td></tr>
+      <tr><td class="role"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-2px;margin-right:6px;"><polyline points="9 18 15 12 9 6"/></svg>Chevron</td><td>navigate — drill into another view; static, points the way you go</td><td>collection rows (open the collection)</td></tr>
+    </table>
+    <div class="note" style="margin-top:12px;font-size:12px;color:var(--muted);">Precedent the users already know: the <b style="color:var(--text)">filled triangle</b> is the macOS / Finder disclosure control (opens in place); the <b style="color:var(--text)">chevron</b> is the iOS row indicator (pushes to a detail screen). A panel may use both — a group header opens with a triangle, its rows navigate with a chevron — and that reads clearly precisely because the two glyphs never swap jobs.</div>
+  </div>
+
+  <!-- NAVIGATION RAIL -->
+  <div class="block">
+    <h2>Navigation rail — one component, two densities</h2>
+    <p class="lede" style="font-size:12px;margin-bottom:14px;">The asset panel's left rail is <b style="color:var(--text)">one component shown at two densities</b>, never two different rails. Which density you see follows the <b style="color:var(--text)">context</b>, not the mode: a viewer recedes so the asset is the hero; an editor scaffolds because it's a work surface. Labels are posture, not function — the panel header names the active destination in both modes, so no label is ever needed for wayfinding.</p>
+    <table class="roles">
+      <tr><th>Density</th><th>Where</th><th>Why it's this density</th></tr>
+      <tr><td class="role">Icon-only</td><td>Lightbox (view)</td><td>Asset is the hero; chrome recedes. Tooltip + aria-label carry the name on hover; the header names where you are.</td></tr>
+      <tr><td class="role">Icon + label</td><td>Edit</td><td>Focused work surface carrying tools the viewer doesn't (Adjustments, Template, AI). The label is scaffolding for a task context — not a functional requirement.</td></tr>
+    </table>
+    <div class="note" style="margin-top:12px;font-size:12px;color:var(--muted);"><b style="color:var(--text)">Locked across both densities</b> — this is what makes it one component: identical icon vocabulary, order and glyph for every shared destination (Details · Attributes · Rights); identical active <i>and</i> hover states — Scale's <b style="color:var(--text)">.icon-nav-item</b> (active: cerulean fill + edge bar; hover: <b style="color:var(--text)">--surface-muted</b>, dark twin tokenised). Functional groups within a rail (destinations | tools) are divided by a <b style="color:var(--text)">single hairline separator</b> — a category boundary, one per group, never per-item. <b style="color:var(--text)">aria-label</b> is always present in both modes for accessibility, but a <b style="color:var(--text)">visible tooltip</b> appears only where the name isn't already shown: the icon-only viewer, yes; the labelled edit rail, no — a tooltip repeating a visible label is redundant (a labelled item earns one only if its label truncates). <b style="color:var(--text)">Similar</b> is a <b style="color:var(--text)">lightbox-only</b> view destination — discovery has no authoring role in edit — so it sits in the viewer rail after Attributes and never in edit; a view-only destination is legal, an <i>undocumented</i> one is the breach. <b style="color:var(--text)">Download</b> is viewer-rail-only too — in edit it is the top-bar action, not a rail stop. <b style="color:var(--text)">AI</b> is no longer a rail destination at all: it lives inside Tags, under Attributes. <b style="color:var(--text)">File metadata</b> is no longer a rail destination at all: it folds into Details as a read-only, collapsible section, identical in edit and lightbox (SCR-174). Edit-only tools (Adjustments · Template · AI · Versions · Embed) follow the same treatment; a tool keeps a label only when its glyph can't carry meaning alone — <b style="color:var(--text)">fix the glyph first, don't add a label per tab</b>. <b style="color:var(--text)">Rejected:</b> "edit gets labels, read-only doesn't" as a mode rule — mode is not the axis. The shared icon set stays identical so muscle memory transfers between modes; the failure this prevents is the two rails silently drifting into different icons or order.</div>
+  </div>
+
+  <!-- RAIL EXAMPLE -->
+  <div class="block">
+    <div class="rspec-title">Worked example — one rail, both densities</div>
+    <div class="rspec">
+      <div class="rspec-col">
+        <div class="rspec-cap">Lightbox · icon-only</div>
+        <div class="rspec-rail light"><span class="rspec-ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><span class="rspec-ri on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v6M20 4 9 15"/></svg></span><span class="rspec-ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h2l2 10M7 12c4-4 6 4 10 0"/></svg></span><span class="rspec-ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></span><span class="rspec-ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></span></div>
+      </div>
+      <div class="rspec-col">
+        <div class="rspec-cap">Edit · icon + label</div>
+        <div class="rspec-rail dark"><span class="rspec-ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><span>Details</span></span><span class="rspec-ri on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v6M20 4 9 15"/></svg><span>Attributes</span></span><div class="rspec-div"></div><span class="rspec-ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span>Adjustments</span></span><span class="rspec-ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span>Template</span></span><div class="rspec-div"></div><span class="rspec-ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg><span>Versions</span></span><span class="rspec-ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg><span>Rights</span></span><span class="rspec-ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Access</span></span></div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:14px;font-size:12px;color:var(--muted);">The <b style="color:var(--text)">three shared destinations</b> (Details · Attributes · Rights) use the same glyph, same order, same active state (cerulean tint + edge bar, on Attributes here) in both. Each mode adds its own outside the shared set: the viewer inserts <b style="color:var(--text)">Similar</b> after Attributes (lightbox-only discovery) and keeps Download as a rail stop; edit instead groups into three bands — <b style="color:var(--text)">describe</b> (Details · Attributes), <b style="color:var(--text)">transform</b> (Adjustments · Template), <b style="color:var(--text)">manage</b> (Versions · Rights · Access) — with Download demoted to the top bar and AI folded into Tags under Attributes. The order is a <b style="color:var(--text)">describe → transform → manage</b> gradient, and roughly descending frequency: identity and catalog first (opened most — Attributes now also carries Tags and AI); the editing tools walled in the centre so edit reads as a workspace, not a menu; lifecycle and governance last (consequential but occasional). Versions groups with Rights and Access because all three concern the asset <i>over time</i> — not its content or its pixels. The viewer drops the labels; edit shows them. Theme (light vs dark) is a separate axis, not the density. The active state is Scale's <b style="color:var(--text)">.icon-nav-item.active</b> — <code>--primary-subtle</code> fill + <code>--primary-default</code> edge on light; on the dark edit rail Scale has no active-tint token, so it uses a tokenised <code>--primary-tint-dark</code> (contrast-checked against stone-800), a gap flagged back to Scale. The shared spine is identical across modes — that's what makes them one component; the per-mode additions are legal precisely because they're documented as view-only or edit-only, not smuggled into the shared set.</div>
+  </div>
+
+  <!-- LAWS -->
+  <div class="block">
+    <h2>The consistency laws</h2>
+    <ul class="laws">
+      <li><b>One role, one size, one weight — everywhere.</b> A field label is 12 / 400 in the lightbox, the edit panel, and the upload preview. A role can't render two ways across surfaces; if it does, it's drift.</li>
+      <li><b>Only ladder sizes.</b> 16 / 14 / 12 / 11. There is no 13px, 15px or 18px — reaching for an in-between size is the first symptom of a panel drifting.</li>
+      <li><b>Dense data is 12px, prose is 14px.</b> Attributes, metadata, options, chips → 12 (font-size-1). Descriptions and reading text → 14 (font-size-2).</li>
+      <li><b>Hierarchy is weight and colour, not size.</b> Don't introduce a size to make something stand out — change its weight or colour, or remove chrome from what's around it.</li>
+      <li><b>Cerulean is the only accent.</b> Active, selected, focus, has-selection — all cerulean. Red is destructive only.</li>
+      <li><b>Inter, nothing else.</b> One typeface across every surface.</li>
+    </ul>
+    <p class="lede" style="margin-top:14px;font-size:12px;"><b style="color:var(--text)">Conformance test:</b> does this element use a ladder size and its role's weight from the table above? If yes, it conforms. If it uses 13px, a second size for emphasis, or a red active state — it doesn't, and that's a bug, not a decision.</p>
+  </div>
+
+</div>
+</section>
+<section class="view c-edit" id="view-edit">
+<div class="wrap">
+
+  <h1>Panel contract & component kit</h1>
+  <p class="lede">Every information/governance tab in edit mode and the lightbox is assembled from one template + a fixed kit — no bespoke layout per tab. Drift dies by construction: the audit becomes "does this tab use the kit," not "does each tab look right."</p>
+  <div class="thesis"><span class="d"></span>Shell · Panel header · Sections · Kit components — nothing else</div>
+
+  <!-- ============ HEADER ============ -->
+  <div class="block">
+    <h2>1 · Panel header — one format</h2>
+    <div class="row">
+      <div class="demo">
+        <div class="lbl">Canonical</div>
+        <div class="ph">
+          <div class="ph-actions"><button class="btn btn-sec">Optional action</button></div>
+          <div class="title">Rights</div>
+        </div>
+      </div>
+      <div class="note">
+        <ul>
+          <li><b>Title only:</b> sentence case, 18px / 600. One token, every tab. No subtitle — the shell top bar already shows "Editing · {file}", so a header subtitle is redundant (Rights repeating the filename is the case to remove).</li>
+          <li><b>Action slot:</b> optional, right-aligned. Global Save stays in the shell, not here.</li>
+          <li><b>No divider rule.</b> Separate header from body with spacing, not a hairline (Rights is the only tab that draws one).</li>
+        </ul>
+        <div class="lbl" style="margin-top:16px;">Today's drift → fix</div>
+        <table class="drift">
+          <tr><td class="strike">File details & meta tags</td><td>Details</td></tr>
+          <tr><td class="strike">Attributes & tags</td><td>Attributes</td></tr>
+          <tr><td class="strike">File Versions</td><td>Versions</td></tr>
+          <tr><td class="strike">Rights Management <br>+ filename + rule</td><td>Rights</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION ============ -->
+  <div class="block">
+    <h2>2 · Section — one pattern</h2>
+    <div class="row">
+      <div class="demo">
+        <div class="lbl">Canonical</div>
+        <div class="sec"><div class="eyebrow">Time-based rights</div>
+          <div class="field"><div class="flab">Embargo date <span class="opt">Optional</span></div><div class="inp-wrap"><input class="inp" placeholder="dd / mm / yyyy"><svg class="inp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg></div><div class="help">Asset unusable before this date.</div></div>
+        </div>
+        <div class="sec"><div class="eyebrow">Licensing rights</div>
+          <div class="field"><div class="flab">Licence type</div><div class="sel-box">Select…<span class="chev"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div></div>
+        </div>
+      </div>
+      <div class="note">
+        <ul>
+          <li><b>Default section</b> = uppercase eyebrow label + body + fixed rhythm. Static, always open.</li>
+          <li><b>Accordion is a variant of section</b> (the collapsible one) — used only when collapsing earns it (long/optional groups), never as default chrome.</li>
+          <li><span class="tag-no">Don't mix</span> static eyebrows and accordions arbitrarily in one panel. Rights does both today (eyebrow for time-based, accordion for licensing) — pick per section by whether it collapses, and be consistent.</li>
+          <li><b>Optional badge + helper text</b> is a kit pattern (born in Rights) — available to any field, not bespoke.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ KIT ============ -->
+  <div class="block">
+    <h2>3 · Body kit — each defined once, composed everywhere</h2>
+
+    <!-- field rows -->
+    <div class="row">
+      <div class="demo">
+        <div class="lbl">Field row — editable + read-only</div>
+        <div class="field"><div class="flab">Title</div><input class="inp" value="Audi_Toyota_Hybrid_8R8V"></div>
+        <div class="ro-row"><span class="k">Dimensions</span><span class="v">259 × 194 px</span></div>
+        <div class="ro-row"><span class="k">File size</span><span class="v">5.4 KB</span></div>
+        <div class="ro-row"><span class="k">Original filename</span><span class="v">Audi_Toyota_Hybrid_DetailShot_Showroom_8R8V_v2.jpg</span></div>
+      </div>
+      <div class="note"><ul>
+        <li>Used by <b>Details</b>, <b>Rights</b>. Editable = input; read-only = static row. Mode toggles state, not which rows exist.</li>
+      </ul></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- search / filter field -->
+    <div class="row">
+      <div class="demo">
+        <div class="lbl">Search / filter field — borderless at rest, ring on focus</div>
+        <div class="search" style="margin-bottom:10px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 5h20"/><path d="M6 12h12"/><path d="M9 19h6"/></svg>
+          <span style="font-style:italic;">Find attributes…</span>
+          <span style="margin-left:auto;font-size:11px;color:var(--ed-faint);">rest</span>
+        </div>
+        <div class="search focus">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 5h20"/><path d="M6 12h12"/><path d="M9 19h6"/></svg>
+          <span>Bra</span>
+          <span style="margin-left:auto;font-size:11px;color:var(--c-primary-300);">focus</span>
+        </div>
+      </div>
+      <div class="note"><ul>
+        <li>Used by the <b>filter rail</b> and the <b>Attributes / Tags</b> panels — <span class="tag-ok">one treatment</span>, both contexts (today it's borderless in the rail, bordered in the panel).</li>
+        <li><b>No resting border</b> — a faint fill seats it (heavier on dark so it doesn't vanish); magnifier icon carries the affordance.</li>
+        <li><b>Border appears on focus only</b> — Scale's existing focus ring. A documented <i>variant</i> of the input, not net-new: a filter affordance isn't a form field and shouldn't carry form-field weight.</li>
+      </ul></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- accordion group + nesting hierarchy -->
+    <div class="row">
+      <div class="demo">
+        <div class="lbl">Group nesting — parent section → child groups → options</div>
+        <div class="gparent">
+          <span class="pico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v6M20 4 9 15"/></svg></span>
+          Attributes <span class="rollup">1</span><span class="chev"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span>
+        </div>
+        <div class="gchildren">
+          <div class="acc">
+            <div class="acc-item"><div class="acc-head">Name <span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div></div>
+            <div class="acc-item sel"><div class="acc-head">Official Mark <span class="count">1 of 53</span><span class="chev"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div>
+              <div class="acc-body">
+                <div class="opt-row"><span class="cbx on"></span>Host City Poster <span style="color:var(--ed-faint);font-size:11px;">(40)</span></div>
+                <div class="opt-row"><span class="cbx"></span>Official Emblem <span style="color:var(--ed-faint);font-size:11px;">(5)</span></div>
+                <div class="opt-row"><span class="cbx ind"></span>Wordmark <span style="color:var(--ed-faint);font-size:11px;">(bulk: 1 of 2)</span></div>
+              </div>
+            </div>
+            <div class="acc-item"><div class="acc-head">Country <span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div></div>
+          </div>
+        </div>
+        <div class="gparent" style="margin-top:6px;">
+          <span class="pico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.6 2.6 21 11a2 2 0 0 1 0 2.8l-6.2 6.2a2 2 0 0 1-2.8 0L3.6 11.6A2 2 0 0 1 3 10.2V4a1 1 0 0 1 1-1h6.2a2 2 0 0 1 1.4.6Z"/><circle cx="7.5" cy="7.5" r="1"/></svg></span>
+          Tags <span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span>
+        </div>
+      </div>
+      <div class="note"><ul>
+        <li><b>Four levels, four treatments</b> — panel header → <b>section header</b> (Attributes/Tags: no box, icon + label + roll-up count + chevron) → <b>child group</b> (border-collapsed accordion rows, indented under a faint neutral nesting rail) → <b>option</b> (checkbox + facet count). Hierarchy from contrast + indentation, not borders.</li>
+        <li>Parent <span class="tag-no">is not a bordered box</span> like its children — that's the whole bug. Demoting it to a header is what creates the hierarchy and removes a border.</li>
+        <li><b>Cerulean only</b> for selection: roll-up count on the parent, header accent + count on the child. Never red (red = destructive in Scale — the filter rail's red bar is a deviation). Neutral rail = nesting, cerulean = selection — two different jobs, two different colours.</li>
+        <li>Scale Accordion + Checkbox (incl. indeterminate, dark). Same component in the <b>filter rail</b> (light theme, adds facet counts + filter behaviour) — one definition, two themes/modes.</li>
+      </ul></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- chips -->
+    <div class="row">
+      <div class="demo">
+        <div class="lbl">Token / chip — Tags (single asset)</div>
+        <div class="chip-input"><svg class="tagico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.6 2.6 21 11a2 2 0 0 1 0 2.8l-6.2 6.2a2 2 0 0 1-2.8 0L3.6 11.6A2 2 0 0 1 3 10.2V4a1 1 0 0 1 1-1h6.2a2 2 0 0 1 1.4.6Z"/><circle cx="7.5" cy="7.5" r="1"/></svg><input placeholder="Add a tag…"><button class="btn btn-pri">Add</button></div>
+        <div class="chips">
+          <span class="chip">Fast Car <span class="x">✕</span></span>
+          <span class="chip ai"><svg class="spark" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.983 21.186a1 1 0 0 1-1.966 0 10 10 0 0 0-8.203-8.203 1 1 0 0 1 0-1.966 10 10 0 0 0 8.203-8.203 1 1 0 0 1 1.966 0 10 10 0 0 0 8.203 8.203 1 1 0 0 1 0 1.966 10 10 0 0 0-8.203 8.203"/></svg>red <span class="x">✕</span></span>
+        </div>
+      </div>
+      <div class="note"><ul>
+        <li>Used by <b>Tags</b>. Input + inline primary Add; chips below with ✕.</li>
+        <li>AI-sourced chips carry a <b>subtle</b> sparkle marker (provenance), per SCR-120 — not a separate AI tab.</li>
+      </ul></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- bulk tri-state chip + inert -->
+    <div class="row">
+      <div class="demo">
+        <div class="lbl">Token / chip — bulk (tri-state delta editor) · 30 selected</div>
+        <div class="chip-input"><svg class="tagico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.6 2.6 21 11a2 2 0 0 1 0 2.8l-6.2 6.2a2 2 0 0 1-2.8 0L3.6 11.6A2 2 0 0 1 3 10.2V4a1 1 0 0 1 1-1h6.2a2 2 0 0 1 1.4.6Z"/><circle cx="7.5" cy="7.5" r="1"/></svg><input placeholder="Add a tag to all 30 selected…"><button class="btn btn-pri">Add</button></div>
+        <div class="chips">
+          <span class="chip">Sponsorship <span class="x">✕</span></span>
+          <span class="chip ai"><svg class="spark" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.983 21.186a1 1 0 0 1-1.966 0 10 10 0 0 0-8.203-8.203 1 1 0 0 1 0-1.966 10 10 0 0 0 8.203-8.203 1 1 0 0 1 1.966 0 10 10 0 0 0 8.203 8.203 1 1 0 0 1 0 1.966 10 10 0 0 0-8.203 8.203"/></svg>Car <span class="x">✕</span></span>
+          <span class="chip some">Rally <span class="count">11/30</span><span class="x">✕</span></span>
+          <span class="chip some ai"><svg class="spark" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.983 21.186a1 1 0 0 1-1.966 0 10 10 0 0 0-8.203-8.203 1 1 0 0 1 0-1.966 10 10 0 0 0 8.203-8.203 1 1 0 0 1 1.966 0 10 10 0 0 0 8.203 8.203 1 1 0 0 1 0 1.966 10 10 0 0 0-8.203 8.203"/></svg>Race Car <span class="count">24/30</span><span class="x">✕</span></span>
+        </div>
+        <div class="inert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <div class="t2"><b>AI suggestions are generated per asset.</b> They can't be reviewed across a multi-selection — open a single asset to accept its suggestions.</div>
+        </div>
+      </div>
+      <div class="note"><ul>
+        <li><b>Solid</b> = on all selected (× removes from all). <b>Dashed + count</b> = on some (tri-state) — click to apply to all, × removes from all.</li>
+        <li>This is the chip's <b>partial state</b>, the Tags equivalent of the accordion's indeterminate checkbox. Bulk across the kit is a <b>delta editor</b>: edits patch the selection (additive), never overwrite.</li>
+        <li>The AI <b>suggestions tray</b> goes <b>inert + explained</b> in bulk (per-asset, can't operate across a selection) — present and self-explaining, <span class="tag-no">not greyed ambiguously, not hidden</span>. Accepted AI tags still bulk-edit like any chip.</li>
+      </ul></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- list row + empty -->
+    <div class="row">
+      <div class="demo">
+        <div class="lbl">List row — Versions / Access / Activity</div>
+        <div class="list-row"><div class="lr-main"><div class="t">Version 1</div><div class="m">By SD Admin</div></div><span class="lr-meta">Today</span><span class="lr-kebab">⋯</span></div>
+        <div class="list-row"><div class="lr-main"><div class="t">Version 2</div><div class="m">By J. D'Arcy</div></div><span class="lr-meta">2 days ago</span><span class="lr-kebab">⋯</span></div>
+        <div style="margin-top:14px;"><button class="btn btn-sec" style="width:100%;justify-content:center;">↑ Upload new version</button></div>
+      </div>
+      <div class="demo" style="flex:0 1 300px;">
+        <div class="lbl">Empty state — one pattern</div>
+        <div class="empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          <div class="e1">This file isn't access-restricted —<br>anyone with library access can use it.</div>
+        </div>
+      </div>
+    </div>
+    <!-- two sections in one tab (template tab, composed from the kit) -->
+    <div class="row">
+      <div class="demo">
+        <div class="lbl">Two sections in one tab — Template, composed from the kit</div>
+        <div class="gparent"><span class="pico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/></svg></span>Focal point</div>
+        <div style="margin:10px 0 24px;"><button class="btn btn-sec" style="width:100%;justify-content:center;">Edit focus point</button></div>
+        <div class="gparent"><span class="pico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="7" x="3" y="3" rx="1"/><rect width="9" height="7" x="3" y="14" rx="1"/><rect width="5" height="7" x="16" y="14" rx="1"/></svg></span>Saved templates</div>
+        <div style="margin-top:10px;">
+          <div class="search" style="margin-bottom:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 5h20"/><path d="M6 12h12"/><path d="M9 19h6"/></svg><span style="font-style:italic;">Find templates…</span></div>
+          <button class="btn btn-pri" style="width:100%;justify-content:center;margin-bottom:14px;">+ Create new template</button>
+          <div class="li2">
+            <div class="li2-row"><span class="li2-cbx"></span><span class="li2-thumb"></span><div class="li2-text"><div class="li2-title">Instagram Square</div><div class="li2-spec">aspect 1 · High (85%)</div></div></div>
+            <div class="li2-row sel"><span class="li2-cbx on">✓</span><span class="li2-thumb"></span><div class="li2-text"><div class="li2-title">Design test</div><div class="li2-spec">600 × 600 · High (85%)</div></div></div>
+            <div class="li2-row dis"><span class="li2-cbx"></span><span class="li2-thumb"></span><div class="li2-text"><div class="li2-title">Linkedin Banner</div><div class="li2-spec">1200 × 627 · High (85%)</div><div class="li2-status">⊘ Image too small</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="note"><ul>
+        <li><b>Two sections, one tab</b> — each is an icon <b>section header</b> (sentence case, 14 / 600) + its body, stacked with spacing. Identical component to Attributes + Tags; the Template tab is no different — only its focus-point canvas and render are bespoke.</li>
+        <li><b>Section header ≠ eyebrow.</b> The icon section header titles a major section (Focal point, Saved templates, Attributes, Tags). The UPPERCASE eyebrow (Time-based rights) is a sub-label <i>inside</i> a section. Don't substitute one for the other.</li>
+        <li><b>Separation is spacing + header contrast</b> — no box, no divider between sections. Create is <b>Primary</b> (new data); Edit focus point is <b>Secondary</b> (modifies context).</li>
+      </ul></div>
+    </div>
+    <div class="row" style="margin-top:14px;"><div class="note" style="flex:1 1 100%;"><ul>
+      <li>List row: title + meta + <code>⋯</code> overflow. Border-collapsed when stacked. Full-width <b>secondary</b> button for the list's add action (Upload new version).</li>
+      <li><b>Selectable list-item</b> (Template / picker): checkbox + thumbnail + title + spec — the same atom as Foundations, dark theme. Hairline-separated, <b>not a box per row</b>; selected = cerulean tint + 2px edge + checked box; unavailable stays visible with its reason (<b>disable, don't hide</b>). Its create action is <b>Primary</b> (new data) — contrast the list row's <b>Secondary</b> upload.</li>
+      <li>Empty state: icon + line + optional action — one pattern. Distinguish states (e.g. unrestricted vs restricted-ungranted), don't reuse a generic "nothing here".</li>
+    </ul></div></div>
+  </div>
+
+  <!-- ============ RULES ============ -->
+  <div class="block">
+    <h2>4 · Cross-cutting rules</h2>
+    <div class="note" style="flex:1 1 100%;"><ul>
+      <li><b>Casing:</b> header = sentence case · section eyebrow = UPPERCASE · field label = sentence case. (Today: "TIME-BASED RIGHTS", "File Versions", "Attributes & tags" all disagree.)</li>
+      <li><b>Borders</b> encode grouping/state, not default chrome. Grouped items use the border-collapsed list; no per-item floating pill. Filter/search fields carry no resting border (ring on focus only) — equal-weight borders on parent, search, and every row are what create the "border, border, border" wall and kill hierarchy.</li>
+      <li><b>Actions & save:</b> field edits stage to the global <b>Save</b> (shell). Structural/immediate actions get their own control + confirm and bypass Save — Upload new version, Transfer ownership, Grant access. Don't let an immediate action masquerade as a staged edit.</li>
+      <li><b>Light/dark parity + one component across contexts:</b> the library filter rail (light) and the edit panel (dark) are the <b>same</b> Attribute-group component — theme is a token swap, filter-vs-edit is a behaviour swap (filter adds facet counts). Same structure, hierarchy, accent and spacing; don't maintain two. Cerulean is the only selection accent in both.</li>
+      <li><b>Tool tabs inherit the chrome kit, not the field body.</b> Adjustments, Template and generative AI share the shell, the header, and <b>all shared chrome</b> — section headers, the five button tiers, list-filter search fields, list separation (hairline, never a box per item), disable-don't-hide. Only the unique tool surface is exempt: the canvas (crop / focus point) and the render output. A tool tab is mostly chrome wrapped around one bespoke surface — govern the chrome, exempt only the surface.</li>
+      <li><b>Bulk is a delta editor, not a form.</b> Every selectable kit component carries a partial state (checkbox → indeterminate, chip → dashed + count). Edits patch the selection (additive / remove), never overwrite. Surfaces that can't operate across a selection — per-asset AI suggestions, single-asset adjustments — go <b>inert + explained</b>, not greyed ambiguously and not hidden.</li>
+    </ul></div>
+  </div>
+
+  <!-- ============ CONFORMANCE ============ -->
+  <div class="block">
+    <h2>5 · Conformance map — every tab = template + kit</h2>
+    <table class="map">
+      <tr><th>Tab</th><th>Body archetype(s) from the kit</th></tr>
+      <tr><td>Details</td><td>Field rows (editable + read-only) + File-metadata section (accordion · allowlisted, read-only) — SCR-174</td></tr>
+      <tr><td>Attributes</td><td>Attribute group (accordion + option)</td></tr>
+      <tr><td>Tags</td><td>Token / chip input + chips · bulk tri-state (delta)</td></tr>
+      <tr><td>Rights</td><td>Sections + field rows + optional-badge fields + radio/checkbox + select + accordion</td></tr>
+      <tr><td>Access</td><td>Field row (search) + list rows + empty state</td></tr>
+      <tr><td>Versions</td><td>List rows + secondary action</td></tr>
+      <tr><td>Activity</td><td>List rows (read-only, filterable)</td></tr>
+      <tr><td>Adjust / Template / AI</td><td>Shell + header + shared chrome (section headers, buttons, search, list rows, disabled states); only the tool canvas / render is bespoke</td></tr>
+      <tr><td>Bulk edit</td><td>Cross-cutting mode, not a tab — kit components render their partial/delta state; incompatible surfaces go inert</td></tr>
+    </table>
+  </div>
+
+</div>
+</section>
+<section class="view c-filter" id="view-filter">
+<div class="wrap">
+
+  <h1>Library filter contract</h1>
+  <p class="lede">The filter rail is the <b style="color:var(--text)">same component kit as the edit panel</b> — light theme, filter mode. This contract is the <b style="color:var(--text)">diff</b>: it doesn't re-derive the kit, it states what's shared (don't rebuild) and what legitimately changes in filter context (don't copy edit behaviour).</p>
+  <div class="thesis"><span class="d"></span>One kit · light theme · filter mode — same component, different props</div>
+
+  <div class="cols">
+    <!-- rendered rail -->
+    <div class="railwrap">
+      <div class="railcap">Canonical — light · filter mode</div>
+      <div class="rail">
+        <div class="rhead">
+          <span class="t">Filters</span>
+          <span class="collapse"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M15 3v18M9 9l-3 3 3 3"/></svg></span>
+        </div>
+        <div class="srow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/><path d="M12 7v6M9 10h6"/></svg>Saved filters<span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div>
+        <div class="divider"></div>
+        <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 5h20"/><path d="M6 12h12"/><path d="M9 19h6"/></svg><span style="font-style:italic;">Find attributes or tags…</span></div>
+
+        <div class="gparent"><span class="pico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v6M20 4 9 15"/></svg></span>Attributes <span class="rollup">1</span><span class="chev"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div>
+        <div class="gchildren">
+          <div class="acc">
+            <div class="acc-item"><div class="acc-head">Name <span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div></div>
+            <div class="acc-item sel"><div class="acc-head">Official Mark <span class="count">1 of 53</span><span class="chev"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div>
+              <div class="acc-body">
+                <div class="opt"><span class="cbx on"></span>Host City Poster <span class="ct">(40)</span></div>
+                <div class="opt"><span class="cbx"></span>Official Emblem <span class="ct">(5)</span></div>
+                <div class="opt"><span class="cbx"></span>Official Hospitality Logo <span class="ct">(1)</span></div>
+                <div class="opt off"><span class="cbx dis"></span>26 Tournament Device <span class="ct">(0)</span></div>
+                <div class="opt off"><span class="cbx dis"></span>Wordmark <span class="ct">(0)</span></div>
+                <div class="showmore">Show more (48 more)</div>
+              </div>
+            </div>
+            <div class="acc-item"><div class="acc-head">Version <span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div></div>
+            <div class="acc-item sel"><div class="acc-head">Language <span class="count">2 of 3</span><span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div></div>
+            <div class="acc-item"><div class="acc-head">Country <span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div></div>
+            <div class="acc-item"><div class="acc-head">Product Level <span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div></div>
+          </div>
+        </div>
+
+        <div class="gparent" style="margin-top:8px;"><span class="pico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.6 2.6 21 11a2 2 0 0 1 0 2.8l-6.2 6.2a2 2 0 0 1-2.8 0L3.6 11.6A2 2 0 0 1 3 10.2V4a1 1 0 0 1 1-1h6.2a2 2 0 0 1 1.4.6Z"/><circle cx="7.5" cy="7.5" r="1"/></svg></span>Tags <span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div>
+      </div>
+    </div>
+
+    <!-- diff -->
+    <div class="side">
+      <div class="block shared">
+        <h2>Shared with the edit contract — must match exactly</h2>
+        <ul class="pts">
+          <li><b>Same components</b> — parent section → child groups → options, search field, accordion, checkbox. Build the kit once.</li>
+          <li><b>Same hierarchy treatment</b> — parent is a header (no box), children indent under a neutral nesting rail. Hierarchy from contrast, not borders.</li>
+          <li><b>Facet groups separated by one hairline + a bold header</b>, never boxes. On a long list grouping must be clear — that is the condition for tolerating density — but a box per group is removable chrome. Bold header anchors, hairline divides, proximity binds. Active groups get a 2px teal edge on the <b>header only</b> + the count pill (SCR-118); a full-height border down an expanded group was rejected as noise on long lists — do not reintroduce it.</li>
+          <li><b>Cerulean is the only selection accent</b> — header-only, has-selection + count. The rail's current <b style="color:var(--red)">red</b> bar is a deviation to remove.</li>
+          <li><b>Borderless search</b>, ring on focus. Same header format: title only ("Filters"), no subtitle.</li>
+          <li><b>Light/dark is a token swap</b> — identical structure, spacing and rhythm to the dark edit panel.</li>
+        </ul>
+      </div>
+
+      <div class="block diff">
+        <h2>Filter-specific — what legitimately changes</h2>
+        <ul class="pts">
+          <li><b>No Save model.</b> Filters apply to the result set live — there's no staged edit, no "unsaved change" pill, no Save button. (Edit stages → Save; filter does not.)</li>
+          <li><b>Facet counts</b> on every option <span class="mini">Host City Poster <span style="color:var(--subtle)">40</span></span> — how many assets match. Edit mode has none.</li>
+          <li><b>Zero-count options</b> <span class="mini" style="color:var(--subtle)">Wordmark <span>0</span></span> render disabled but present (disable, don't hide), not removed.</li>
+          <li><b>Saved Filters</b> — save/recall filter sets. A filter-only section with no edit equivalent.</li>
+          <li><b>Active-filter chips + clear</b> above the results: <span class="fchip">Official Mark: Host City Poster <span class="x">✕</span></span> <span class="clear">Clear all</span></li>
+          <li><b>Rail collapse</b> — the header toggle hides the rail to reclaim grid space.</li>
+          <li><b>Roll-up = active filter count</b> (Attributes <span class="rollup" style="position:relative;top:-1px;">1</span>) — here it counts applied filters, not "facets with a value."</li>
+          <li><b>No tri-state / bulk.</b> Filtering isn't a delta editor — there's no partial state, no indeterminate. (That's an edit-bulk concept only.)</li>
+          <li><b>Tags is a filter facet here</b> — same Tags component, but selecting filters the library rather than writing a tag to an asset.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>One component, three contexts.</b> The UI team builds the Attribute-group / search / accordion kit once. <b>Filter rail</b> = light + filter mode (this doc). <b>Edit panel</b> = dark + edit mode. The differences above are <b>props</b> — theme, counts on/off, save vs live, tri-state on/off — not separate components. If a difference here isn't on the list, it's a bug, not a decision.
+    <div class="next">Next surface: the <b>lightbox</b> (view mode) — read-only, same kit, light theme. Once filter is signed off, that's the last one, and all three converge on the same definition.</div>
+  </div>
+
+</div>
+</section>
+<section class="view c-lightbox" id="view-lightbox">
+<div class="wrap">
+
+  <h1>Lightbox contract</h1>
+  <p class="lede">The lightbox is the same kit as the edit panel and the filter rail — light theme, <b style="color:var(--text)">view mode</b>. This is the third diff: what it inherits, and the one thing that defines it.</p>
+  <div class="principle"><span>👁</span><div><b>Read-only is the whole identity.</b> Every editable kit component renders in its static state — no inputs, chips don't remove, accordions don't toggle to edit. There is nothing to "mode-switch"; the lightbox is the static projection of the edit panel.</div></div>
+
+  <div class="cap">Canonical — Attributes tab, standardised · <span style="color:var(--primary);">interactive: click the collapse ▤ to toggle</span></div>
+  <div class="lb">
+    <div class="lb-top">
+      <div class="nav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+      <div class="fn">gc26_lax_hostcity_poster_reg_4l_pat3_alt_tour_4x3.jpg</div>
+      <div class="acts">
+        <button class="btn btn-sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 12H3M16 6H3M21 18H3M16 6l5 3-5 3"/></svg>Add to Queue</button>
+        <button class="btn btn-pri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Download</button>
+        <span class="icbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>
+        <span class="icbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+      </div>
+    </div>
+    <div class="lb-body">
+      <div class="stage">asset preview</div>
+      <div class="rail">
+        <span class="collapse" data-tip="Collapse" aria-label="Collapse"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 9l3 3-3 3"/></svg></span>
+        <span class="ri" data-tab="details" data-tip="Details" aria-label="Details"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>
+        <span class="ri active" data-tab="attributes" data-tip="Attributes" aria-label="Attributes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v6M20 4 9 15"/></svg></span>
+        <span class="ri" data-tab="similar" data-tip="Similar" aria-label="Similar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h2l2 10M7 12c4-4 6 4 10 0"/></svg></span>
+        <span class="ri" data-tab="rights" data-tip="Rights" aria-label="Rights"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></span>
+        <span class="ri" data-tab="download" data-tip="Download" aria-label="Download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></span>
+      </div>
+      <div class="panel">
+        <div class="pane" data-panel="details">
+          <div class="ph">Details</div>
+          <div class="dfield"><div class="lab">Title</div><div class="ro">LA Host City Poster</div></div>
+          <div class="dfield"><div class="lab">Description</div><div class="ro empty">No description</div></div>
+          <div class="facts">
+            <div class="frow"><span class="fl">Original filename</span><span class="fv">gc26_lax_hostcity_poster_reg_4l_pat3_alt_tour_4x3.jpg</span></div>
+            <div class="frow"><span class="fl">Asset type</span><span class="fv">Image</span></div>
+            <div class="frow"><span class="fl">Dimensions</span><span class="fv">1920 × 1440 px</span></div>
+            <div class="frow"><span class="fl">Resolution</span><span class="fv">72 dpi</span></div>
+            <div class="frow"><span class="fl">Colour space</span><span class="fv">sRGB</span></div>
+            <div class="frow"><span class="fl">File size</span><span class="fv">2.4 MB</span></div>
+            <div class="frow"><span class="fl">Owner</span><span class="fv">SD Admin</span></div>
+            <div class="frow"><span class="fl">Uploaded by</span><span class="fv">SD Admin</span></div>
+            <div class="frow"><span class="fl">Upload date</span><span class="fv">29 Jun 2026, 14:25</span></div>
+            <div class="frow" style="border-bottom:none;"><span class="fl">File link</span><span class="fv link">https://damdev.screendragondev.com?inode=107340</span></div>
+          </div>
+          <div class="msec">
+            <div class="msec-head" onclick="this.closest('.msec').classList.toggle('open')">
+              <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12.5 8 15l2 2.5M14 12.5l2 2.5-2 2.5M14 2v6h6"/><path d="M4 6V4a2 2 0 0 1 2-2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2"/></svg></span>
+              File metadata <span class="ct">4</span>
+              <span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span>
+            </div>
+            <div class="msec-body">
+              <div class="frow"><span class="fl">Orientation</span><span class="fv">Landscape</span></div>
+              <div class="frow"><span class="fl">Creator</span><span class="fv">Screendragon Studio</span></div>
+              <div class="frow"><span class="fl">Credit / Source</span><span class="fv">Global Cup 2026</span></div>
+              <div class="frow" style="border-bottom:none;"><span class="fl">Copyright</span><span class="fv">© Global Cup 2026 — all rights reserved</span></div>
+              <p class="stub" style="border-top:1px solid var(--border-sub);padding-top:10px;margin-top:8px;">Allowlisted fields only — temp-path, permissions and MIME/encoding noise suppressed (SCR-155). Dimensions · Resolution · Colour space are Details facts above, not repeated here.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pane active" data-panel="attributes">
+          <div class="ph">Attributes</div>
+
+          <div class="gparent"><span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v6M20 4 9 15"/></svg></span>Attributes</div>
+          <div class="frow"><span class="fl">Host City</span><span class="fv">Los Angeles</span></div>
+          <div class="frow"><span class="fl">Mark type</span><span class="fv">Host City Poster</span></div>
+          <div class="frow"><span class="fl">Country</span><span class="fv">USA</span></div>
+          <div class="frow"><span class="fl">Licensee</span><span class="fv">Mass</span></div>
+          <div class="frow"><span class="fl">Version</span><span class="fv">Regular Version</span></div>
+          <div class="frow"><span class="fl">Lines</span><span class="fv">4 Liner</span></div>
+          <div class="frow"><span class="fl">Colour</span><span class="fv">Dark Blue Pantone® Solid</span></div>
+          <div class="frow"><span class="fl">Pattern</span><span class="fv">Pattern 3</span></div>
+          <div class="frow"><span class="fl">Fill</span><span class="fv">Alternate Fill</span></div>
+          <div class="frow"><span class="fl">Size</span><span class="fv">Small</span></div>
+          <div class="frow"><span class="fl">Usage</span><span class="fv">Tournament</span></div>
+          <div class="frow"><span class="fl">Set-up</span><span class="fv">4×3</span></div>
+          <div class="frow"><span class="fl">Format</span><span class="fv">Word Template</span></div>
+          <div class="frow"><span class="fl">Competition</span><span class="fv">Global Cup 2026</span></div>
+
+          <div class="secgap"></div>
+
+          <div class="gparent"><span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.6 2.6 21 11a2 2 0 0 1 0 2.8l-6.2 6.2a2 2 0 0 1-2.8 0L3.6 11.6A2 2 0 0 1 3 10.2V4a1 1 0 0 1 1-1h6.2a2 2 0 0 1 1.4.6Z"/><circle cx="7.5" cy="7.5" r="1"/></svg></span>Tags <span class="ct">7</span></div>
+          <div class="tagcloud">
+            <span class="tg">SS26 Campaign</span>
+            <span class="tg">Hospitality</span>
+            <span class="tg ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.983 21.186a1 1 0 0 1-1.966 0 10 10 0 0 0-8.203-8.203 1 1 0 0 1 0-1.966 10 10 0 0 0 8.203-8.203 1 1 0 0 1 1.966 0 10 10 0 0 0 8.203 8.203 1 1 0 0 1 0 1.966 10 10 0 0 0-8.203 8.203"/></svg>Beer</span>
+            <span class="tg ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.983 21.186a1 1 0 0 1-1.966 0 10 10 0 0 0-8.203-8.203 1 1 0 0 1 0-1.966 10 10 0 0 0 8.203-8.203 1 1 0 0 1 1.966 0 10 10 0 0 0 8.203 8.203 1 1 0 0 1 0 1.966 10 10 0 0 0-8.203 8.203"/></svg>Glass</span>
+            <span class="tg ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.983 21.186a1 1 0 0 1-1.966 0 10 10 0 0 0-8.203-8.203 1 1 0 0 1 0-1.966 10 10 0 0 0 8.203-8.203 1 1 0 0 1 1.966 0 10 10 0 0 0 8.203 8.203 1 1 0 0 1 0 1.966 10 10 0 0 0-8.203 8.203"/></svg>Bar</span>
+          </div>
+        </div>
+
+        <div class="pane" data-panel="similar"><div class="ph">Similar</div><p class="stub">Read-only result grid — match-% badge with the astroid. <i>(Prototype stub.)</i></p></div>
+<div class="pane" data-panel="rights"><div class="ph">Rights</div><p class="stub">Read-only — time-based + licensing rights, with status badges (e.g. Archived). <i>(Prototype stub.)</i></p></div>
+        <div class="pane" data-panel="download"><div class="ph">Download</div><p class="stub">The one interactive surface in view mode — version select + CTA. <i>(Prototype stub.)</i></p></div>
+      </div>
+    </div>
+    <div class="lb-bottom">
+      <div class="grp"><span class="kbd">←</span><span class="kbd">→</span>Assets</div>
+      <div class="grp"><span class="kbd">+</span><span class="kbd">−</span>Zoom <span class="kbd" style="margin-left:6px">0</span>Fit</div>
+      <div class="grp"><span class="kbd">Esc</span>Close</div>
+      <div class="pos">38 <span>of 40</span></div>
+    </div>
+  </div>
+  <p class="lede" style="margin-top:0;font-size:12px;">Attributes render as <b style="color:var(--text)">label → value rows</b> (the read-only projection of the edit facets), Tags as a <b style="color:var(--text)">chip cloud</b> with the astroid on AI-sourced tags. Two sections, one tab — the white space is gone and the taxonomy stays intact.</p>
+
+  <div class="callout">
+    <b>The merge you didn't need.</b> Merging Attributes and Tags into one list breaks the taxonomy; two separate full-height tabs is what created the empty panels. The kit's existing answer is neither: <b>one tab, two labelled sections, two treatments</b> — structured rows for Attributes, a chip cloud for Tags. They stay distinct (the form difference <i>is</i> the distinction), and the rail loses two near-empty destinations.
+  </div>
+
+  <div class="block diff" style="margin-bottom:26px;">
+    <h2>Rail behaviour — position, collapse, icon-only</h2>
+    <div style="display:flex;gap:30px;flex-wrap:wrap;align-items:flex-start;">
+      <div style="flex:0 0 300px;">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Expanded — rail docks to the panel's inboard edge</div>
+        <div style="display:flex;height:46px;border:1px solid var(--border);border-radius:6px;overflow:hidden;font-size:11px;font-weight:600;">
+          <div style="flex:1;background:var(--stone-100);color:var(--subtle);display:flex;align-items:center;justify-content:center;">stage</div>
+          <div style="width:30px;background:var(--accent-3);color:var(--accent-9);display:flex;align-items:center;justify-content:center;border-left:1px solid var(--border);border-right:1px solid var(--border);">▤</div>
+          <div style="width:96px;background:#fff;color:var(--text);display:flex;align-items:center;justify-content:center;">panel</div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin:12px 0 6px;">Collapsed — panel closes, rail rides to the edge</div>
+        <div style="display:flex;height:46px;border:1px solid var(--border);border-radius:6px;overflow:hidden;font-size:11px;font-weight:600;">
+          <div style="flex:1;background:var(--stone-100);color:var(--subtle);display:flex;align-items:center;justify-content:center;">stage</div>
+          <div style="width:30px;background:var(--accent-3);color:var(--accent-9);display:flex;align-items:center;justify-content:center;border-left:1px solid var(--border);">▤</div>
+        </div>
+      </div>
+      <ul class="pts" style="flex:1 1 360px;">
+        <li><b>Rail is the panel's spine, not a separate fixture.</b> Order is stage → rail → panel. The rail and panel are one unit; collapse closes the panel and the rail travels with it to rest at the viewport edge, where it becomes the re-open handle. <span class="tag-no">Today they collapse independently</span> — that's the bug.</li>
+        <li><b>Icon-only</b>, no labels. Justified here because the <b>panel header already names the active tab</b> (rail labels are redundant for where you are) and the lightbox is asset-first — chrome recedes.</li>
+        <li><b>Conditions:</b> tooltip <i>and</i> aria-label on every icon; a strong active state (cerulean fill + bar); and a legibility pass on <b>Similar</b> — the one glyph that doesn't read on its own (the Metadata glyph retires with its tab). If a glyph can't carry meaning alone, fix the glyph, don't re-add labels.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cols2">
+    <div class="block shared">
+      <h2>Inherits from edit + filter — must match</h2>
+      <ul class="pts">
+        <li><b>Same components</b> — section header, field/value row, accordion, chip, checkbox-as-value. Build once, render static.</li>
+        <li><b>Unified Details</b> — Title, Description, then the fixed facts list (Original filename, Asset type, Dimensions, Resolution, Colour space, File size, Owner, Uploaded by, Upload date, File link). Same order, same labels as edit — only editability differs.</li>
+        <li><b>Section hierarchy</b> — parent is a header (no box), values/children indent. Same as the edit nesting model.</li>
+        <li><b>Header = title only</b>, sentence case. <b>Cerulean</b> the only accent. Light theme = the filter rail's tokens.</li>
+      </ul>
+    </div>
+
+    <div class="block diff">
+      <h2>Lightbox-specific — what changes</h2>
+      <ul class="pts">
+        <li><b>Every component is read-only</b> — Title/Description are static text, attribute values are rows not editors, tags don't show a remove ✕, accordions open but never reveal inputs.</li>
+        <li><b>View chrome</b> — top bar (prev/next, filename, Add to Queue · Download · ⋯ · close), bottom bar (asset nav, zoom, Esc, "N of M"), and the rail-collapse toggle. None of this exists in edit.</li>
+        <li><b>No AI Tags tab.</b> AI tags fold into the Tags section with the astroid marker (SCR-120). AI is a property of a tag, not a destination.</li>
+        <li><b>Attributes + Tags share one tab</b> as two sections (above). No separate near-empty tabs.</li>
+        <li><b>Similar</b> — read-only result grid, match-% badge with the astroid. <b>Download</b> — the one interactive surface in view mode (version select + CTA). <b>Rights</b> — read-only, with status badges (e.g. <b>Archived</b>) and the auto-archive banner.</li>
+        <li><b>Empty vs absent</b> — a present-but-empty field shows a muted placeholder ("No description"); a field that doesn't apply to the type is omitted, not shown blank.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="block fix">
+    <h2>Carry-over fixes — already specced, must land here too</h2>
+    <ul class="pts">
+      <li><b>Details "1 dpi"</b> (image 3) is the <span class="tag-no">unfixed</span> resolution bug from <b>SCR-154</b> — show DPI only when the file declares a resolution unit, else suppress. The lightbox inherits the fix, it isn't a new decision.</li>
+      <li>The <b>File-metadata section</b> in Details must not leak the temp ingest artifact — <span class="tag-no">tmpxy38n3o5.jpg</span>, <span class="tag-no">/tmp</span>, <span class="tag-no">100600</span>, MIME/encoding noise. That's <b>SCR-155</b>'s allowlist + temp-path fix, and it now governs the section rather than a standalone tab.</li>
+    </ul>
+  </div>
+
+  <div class="block fix" style="margin-bottom:26px;">
+    <h2>Read-only field display — one layout</h2>
+    <ul class="pts">
+      <li><b>One row, every field: a two-column grid.</b> Label column, value column, <b>value left-aligned</b>. Short values sit on one line; long values (filename, URL, GPS, a long copyright) <b>wrap within the value column</b> — the row structure never changes and the value column keeps a single left edge you scan straight down.</li>
+      <li><b>No inline-vs-stacked, no per-field classification.</b> There's nothing to know about a field's length in advance — wrapping handles it. The layout can't "jump" within a list because every row is the same row.</li>
+      <li><b>The editable zone is the only exception</b> — Title and Description render full-width (label above value), because Description is prose and that's how those fields appear as inputs in edit mode. They sit above the facts list, never interleaved into it.</li>
+      <li><b>Scales by construction.</b> Allowlisted metadata (SCR-155) keeps labels short so the label column stays tight; everything else is just rows. Same grid in Details (including the File-metadata section), edit read-only, and upload preview — a field renders identically everywhere it appears.</li>
+      <li><b>Rejected:</b> a per-field "inline if short / stacked if long" rule — it makes one list alternate between two row shapes and flips value alignment, so values stop sharing an edge. Right-aligned values were the only thing that ever forced an exception; left-aligned wrapping removes the need.</li>
+    </ul>
+  </div>
+
+  <div class="note">
+    <b>One component, three contexts — done.</b> Edit (dark · edit) · Filters (light · filter) · Lightbox (light · view). The lightbox adds no new components and no new tabs beyond the rail set <b>Details · Attributes · Similar · Rights · Download</b> — four shared destinations (Details · Attributes · Rights · Download) plus <b>Similar</b> as a lightbox-only view destination. File metadata is no longer a rail tab; it folds into Details as a read-only section (SCR-174). Read-only is a state of the kit, not a separate build.
+  </div>
+
+</div>
+
+</section>
+<section class="view c-collections" id="view-collections"><div class="frame">
+    <!-- icon rail -->
+    <div class="rail">
+      <div class="rail-item" title="Home"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg></div>
+      <div class="rail-item" title="Library"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+      <div class="rail-item active" title="Collections"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="rail-item" title="Rights"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="rail-item" title="Downloads"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+    </div>
+
+    <!-- collections panel -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">Collections</span>
+        <span class="ctrl" title="Sort &amp; group"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="9" y1="18" x2="15" y2="18"/></svg></span>
+      </div>
+      <div class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5h20"/><path d="M6 12h12"/><path d="M9 19h6"/></svg>
+        <input type="text" placeholder="Find collections…">
+      </div>
+
+      <div class="list">
+        <!-- system: favourites — distinct KIND, keeps left identity heart, no visibility status -->
+        <div class="row selected">
+          <span class="glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.7-7.5 1.1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
+          <span class="row-name">My Favourites</span>
+          <span class="count">22</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- MY COLLECTIONS — left slot reserved but empty (same kind); visibility = small status glyph on the right -->
+        <div class="grp">
+          <svg class="grp-chev" viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg>
+          <span class="grp-label">My Collections</span>
+          <span class="grp-num">4</span>
+        </div>
+
+        <div class="row">
+          <span class="glyph"></span>
+          <span class="row-name">Global Cup 2026 Official Marks</span>
+          <span class="status" title="Private"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          <span class="count">124</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <div class="row">
+          <span class="glyph"></span>
+          <span class="row-name">Host City Logos – RGB</span>
+          <span class="status" title="Shared with named people"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+          <span class="count">16</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <div class="row">
+          <span class="glyph"></span>
+          <span class="row-name">Sponsor Activation Kit</span>
+          <span class="status" title="Shared externally · verified guests"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+          <span class="count">8</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- empty (0-count) variant, private default shown explicitly -->
+        <div class="row">
+          <span class="glyph"></span>
+          <span class="row-name" style="color:var(--text-muted);">New collection</span>
+          <span class="status" title="Private"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          <span class="count">0</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- SHARED WITH ME -->
+        <div class="grp" style="margin-top:4px;">
+          <svg class="grp-chev" viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg>
+          <span class="grp-label">Shared with me</span>
+          <span class="grp-num">2</span>
+        </div>
+
+        <div class="row">
+          <span class="glyph"></span>
+          <span class="row-name">Global Cup Brand Guidelines 2026 <span class="owner">· E. Kavanagh</span></span>
+          <span class="status" title="Shared with named people"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+          <span class="count">47</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <div class="row">
+          <span class="glyph"></span>
+          <span class="row-name">Qatar Legacy Archive <span class="owner">· M. Brennan</span></span>
+          <span class="status" title="Shared externally · verified guests"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+          <span class="count">312</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- content stub -->
+    <div class="content">
+      <h4>My Favourites · 22</h4>
+      <div class="thumb-grid">
+        <div class="thumb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.5-3.5L9 20"/></svg></div>
+        <div class="thumb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.5-3.5L9 20"/></svg></div>
+        <div class="thumb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.5-3.5L9 20"/></svg></div>
+        <div class="thumb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.5-3.5L9 20"/></svg></div>
+      </div>
+    </div>
+  </div></section>
+<script>document.querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});document.querySelectorAll('.view').forEach(function(x){x.classList.remove('active');});t.classList.add('active');document.getElementById('view-'+t.dataset.view).classList.add('active');window.scrollTo(0,0);});});
+
+(function(){
+  var body=document.querySelector('#view-lightbox .lb-body');
+  var col=document.querySelector('#view-lightbox .rail .collapse');
+  function setTip(){
+    var t=body.classList.contains('collapsed')?'Expand':'Collapse';
+    col.setAttribute('data-tip',t); col.setAttribute('aria-label',t);
+  }
+  col.addEventListener('click',function(){ body.classList.toggle('collapsed'); setTip(); });
+  document.querySelectorAll('#view-lightbox .rail .ri').forEach(function(ri){
+    ri.addEventListener('click',function(){
+      if(body.classList.contains('collapsed')){ body.classList.remove('collapsed'); setTip(); }
+      var tab=ri.getAttribute('data-tab');
+      document.querySelectorAll('#view-lightbox .rail .ri').forEach(function(x){ x.classList.remove('active'); });
+      ri.classList.add('active');
+      document.querySelectorAll('#view-lightbox .panel .pane').forEach(function(p){
+        p.classList.toggle('active', p.getAttribute('data-panel')===tab);
+      });
+    });
+  });
+})();
+</script></body></html>
