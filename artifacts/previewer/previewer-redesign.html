@@ -49,6 +49,8 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
   /* ── LAYOUT ── */
   .previewer { display: flex; flex-direction: column; height: 100vh; width: 100vw; }
 
@@ -63,8 +65,8 @@
     gap: 16px;
     flex-shrink: 0;
     z-index: 100;
+    position: relative;
   }
-  .top-bar { position: relative; }
   .top-bar-left  { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
   .top-bar-center {
     position: absolute;
@@ -379,9 +381,10 @@
     transition: border-color var(--transition);
     position: relative; /* needed for overlay */
   }
-  .pkg-asset-thumb.active    .pkg-thumb-img { border-color: var(--primary); }
-  .pkg-asset-thumb.approved  .pkg-thumb-img { border-color: var(--green-bright); }
-  .pkg-asset-thumb.rejected  .pkg-thumb-img { border-color: #EF4444; }
+  .pkg-asset-thumb.active        .pkg-thumb-img { border-color: var(--primary); }
+  .pkg-asset-thumb.approved      .pkg-thumb-img { border-color: var(--green-bright); }
+  .pkg-asset-thumb.rejected      .pkg-thumb-img { border-color: #EF4444; }
+  .pkg-asset-thumb.foot-reviewed .pkg-thumb-img { border-color: var(--primary); }
   .pkg-thumb-img img { width: 100%; height: 100%; object-fit: cover; }
 
   /* Decision overlay — sits on top of the image */
@@ -396,13 +399,15 @@
     pointer-events: none;
   }
   .pkg-thumb-overlay svg { width: 18px; height: 18px; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5)); }
-  .pkg-asset-thumb.approved .pkg-thumb-overlay { background: rgba(22,163,74,0.55); opacity: 1; }
-  .pkg-asset-thumb.rejected .pkg-thumb-overlay { background: rgba(220,38,38,0.55); opacity: 1; }
+  .pkg-asset-thumb.approved      .pkg-thumb-overlay { background: rgba(22,163,74,0.55);    opacity: 1; }
+  .pkg-asset-thumb.rejected      .pkg-thumb-overlay { background: rgba(220,38,38,0.55);    opacity: 1; }
+  .pkg-asset-thumb.foot-reviewed .pkg-thumb-overlay { background: rgba(59,119,250,0.42);   opacity: 1; }
 
   .pkg-thumb-name { font-size: 9px; color: var(--text-subtle); max-width: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .pkg-asset-thumb.active    .pkg-thumb-name { color: #60A5FA; }
-  .pkg-asset-thumb.approved  .pkg-thumb-name { color: var(--green-bright); }
-  .pkg-asset-thumb.rejected  .pkg-thumb-name { color: #F87171; }
+  .pkg-asset-thumb.active        .pkg-thumb-name { color: #60A5FA; }
+  .pkg-asset-thumb.approved      .pkg-thumb-name { color: var(--green-bright); }
+  .pkg-asset-thumb.rejected      .pkg-thumb-name { color: #F87171; }
+  .pkg-asset-thumb.foot-reviewed .pkg-thumb-name { color: var(--primary-bright); }
   .pkg-reviewed-dot {
     position: absolute;
     top: 2px; right: 2px;
@@ -483,6 +488,7 @@
   .canvas-wrap.proof-pending  .canvas-inner { outline-color: rgba(217,119,6,0.6);  box-shadow: 0 0 32px rgba(217,119,6,0.10); }
   .canvas-wrap.proof-approved .canvas-inner { outline-color: rgba(34,197,94,0.6);  box-shadow: 0 0 32px rgba(34,197,94,0.10); }
   .canvas-wrap.proof-rejected .canvas-inner { outline-color: rgba(239,68,68,0.6);  box-shadow: 0 0 32px rgba(239,68,68,0.10); }
+  .canvas-wrap.proof-reviewed .canvas-inner { outline-color: rgba(59,119,250,0.7); box-shadow: 0 0 32px rgba(59,119,250,0.12); }
 
   /* proof-frame wraps pkg-asset-bar + canvas — border reflects proof state */
   .proof-frame {
@@ -493,11 +499,40 @@
     box-shadow: inset 0 0 0 2px transparent;
     transition: box-shadow 0.25s ease;
   }
-  .canvas-wrap.proof-pending  .proof-frame { box-shadow: inset 0 0 0 2px rgba(217,119,6,0.7);  }
+  .canvas-wrap.proof-pending  .proof-frame { box-shadow: inset 0 0 0 1px rgba(59,119,250,0.7);  }
   .canvas-wrap.proof-approved .proof-frame { box-shadow: inset 0 0 0 2px rgba(34,197,94,0.7);  }
   .canvas-wrap.proof-rejected .proof-frame { box-shadow: inset 0 0 0 2px rgba(239,68,68,0.75); }
 
   .canvas-inner img { width: 100%; height: 100%; object-fit: contain; border-radius: 2px; display: block; }
+
+  /* ── PROOF REVIEW FOOTER ── */
+  .proof-review-footer {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    background: rgba(59,119,250,0.10);
+    border-top: 1px solid rgba(59,119,250,0.22);
+    flex-shrink: 0;
+    border-color: rgba(59,119,250,0.45);
+  }
+  .canvas-wrap.proof-pending .proof-review-footer { display: flex; }
+  .proof-review-footer-text { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+  .proof-review-footer-text strong { color: var(--primary-bright); font-weight: 600; }
+  .proof-reviewed-btn {
+    display: inline-flex; align-items: center;
+    padding: 5px 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(59,119,250,0.45);
+    background: rgba(59,119,250,0.15);
+    color: var(--primary-bright);
+    font-family: var(--font); font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: var(--transition); white-space: nowrap; flex-shrink: 0;
+    gap: 4px;
+  }
+  .proof-reviewed-btn:hover { background: rgba(59,119,250,0.25); border-color: rgba(59,119,250,0.65); }
+  .proof-reviewed-btn.is-reviewed { background: transparent; border-color: rgba(59,119,250,0.25); color: var(--text-muted); }
   .annotation-marker { position: absolute; pointer-events: none; }
   .ann-circle { border: 2px solid #F59E0B; border-radius: 50%; width: 200px; height: 130px; top: 80px; left: 200px; }
 
@@ -600,6 +635,13 @@
     flex-shrink: 0;
     margin-right: 4px;
   }
+  .mode-toggle-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 0 6px;
+    white-space: nowrap;
+  }
   .mode-toggle-btn {
     padding: 3px 9px;
     border-radius: 4px;
@@ -677,7 +719,7 @@
 
   /* ── RIGHT NOTES PANEL ── */
   .notes-panel {
-    width: 270px;
+    width: 384px;
     background: #1c222e;
     border-left: 1px solid var(--border);
     display: none;
@@ -687,13 +729,42 @@
   .notes-panel.visible { display: flex; }
   .notes-header {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 8px;
     padding: 10px 12px;
-    border-bottom: 1px solid var(--border);;
+    border-bottom: 1px solid var(--border);
     flex-shrink: 0;
   }
-  .notes-title { font-size: 13px; font-weight: 600; color: #ffffff; display: flex; align-items: center; gap: 6px; }
+  .notes-title { font-size: 13px; font-weight: 600; color: #ffffff; display: none; align-items: center; gap: 6px; }
+  .notes-filter-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    color: var(--text-subtle);
+    text-transform: uppercase;
+  }
+  .notes-filter-selects { display: flex; gap: 5px; }
+  .notes-filter-select {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--primary-bright);
+    color: var(--primary-bright);
+    border-radius: var(--radius-md);
+    font-family: var(--font);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 5px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    text-align: center;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='none' viewBox='0 0 10 10'%3E%3Cpath d='M2 3.5l3 3 3-3' stroke='%236b9fff' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 5px center;
+    padding-right: 18px;
+  }
+  .notes-filter-select:focus { outline: none; border-color: var(--primary); }
+  .notes-filter-select option { background: var(--surface-2); color: var(--text); }
   .notes-count {
     background: var(--primary);
     color: #fff;
@@ -718,7 +789,7 @@
   .notes-add-btn:hover { background: rgba(37,99,235,0.25); color: #fff; }
   .notes-add-btn svg { width: 11px; height: 11px; }
   .notes-filter-row {
-    display: flex;
+    display: none;
     gap: 3px;
     padding: 7px 12px;
     border-bottom: 1px solid var(--border);
@@ -1000,6 +1071,10 @@
     </div>
 
     <div class="top-bar-right">
+      <button class="tb-btn" id="printNotesBtn" style="display:none" onclick="window.print()">
+        <svg fill="none" viewBox="0 0 16 16"><path d="M4 6V2h8v4M4 12H3a1 1 0 01-1-1V7a1 1 0 011-1h10a1 1 0 011 1v4a1 1 0 01-1 1h-1m-8 0v2h8v-2M4 12h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Print Notes
+      </button>
       <button class="tb-btn" onclick="downloadFile()">
         <svg fill="none" viewBox="0 0 16 16"><path d="M8 3v7m0 0l-3-3m3 3l3-3M3 13h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Download File
@@ -1153,6 +1228,15 @@
             <div class="annotation-marker ann-circle" id="annMarker" style="display:none;"></div>
           </div>
         </div>
+        <div class="proof-review-footer" id="proofPendingFooter">
+          <p class="proof-review-footer-text">
+            If you have reviewed the <strong id="footerFilename">Approving a Timesheet.pdf</strong>, please mark it as "Reviewed."
+          </p>
+          <button class="proof-reviewed-btn" id="proofReviewedBtn" onclick="toggleReviewed()">
+            <svg fill="none" viewBox="0 0 16 16" width="13" height="13" style="flex-shrink:0"><path d="M1.5 8s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1.5 8 1.5 8z" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
+            Reviewed
+          </button>
+        </div>
       </div><!-- /proof-frame -->
 
       <!-- ── BOTTOM TOOLBAR ── -->
@@ -1160,6 +1244,7 @@
 
         <!-- Mode toggle — moved from top floating pill to here -->
         <div class="mode-toggle" id="modeToggle">
+          <small class="mode-toggle-label">Concept buttons</small>
           <button class="mode-toggle-btn active" onclick="setMode('single', this)">Single</button>
           <button class="mode-toggle-btn" onclick="setMode('package', this)">Proof set</button>
         </div>
@@ -1216,9 +1301,27 @@
     <!-- ── RIGHT NOTES PANEL ── -->
     <div class="notes-panel" id="notesPanel">
       <div class="notes-header">
-        <div class="notes-title">
-          Notes
-          <span class="notes-count" id="notesCount">1</span>
+        <div class="notes-title">Notes <span class="notes-count" id="notesCount">1</span></div>
+        <span class="notes-filter-label">Filter Notes</span>
+        <div class="notes-filter-selects">
+          <label for="notesFilterSort" class="sr-only">Sort</label>
+          <select id="notesFilterSort" class="notes-filter-select">
+      
+            <option>Newest first</option>
+            <option>Oldest first</option>
+          </select>
+          <label for="notesFilterPriority" class="sr-only">Priority</label>
+          <select id="notesFilterPriority" class="notes-filter-select">
+            <option>All</option>
+            <option>Only Priority</option>
+          </select>
+          <label for="notesFilterStatus" class="sr-only">Status</label>
+          <select id="notesFilterStatus" class="notes-filter-select">
+            <option>New</option>
+            <option>In progress</option>
+            <option>Closed</option>
+            <option>Archived</option>
+          </select>
         </div>
       </div>
       <div class="notes-filter-row">
@@ -1284,6 +1387,7 @@
     if (state === 'pending') {
       chip.innerHTML = 'Pending review';
       document.getElementById(currentMode === 'single' ? 'reviewActionsSingle' : 'reviewActionsPackage').style.display = 'flex';
+      resetReviewedBtn();
     } else if (state === 'approved') {
       chip.textContent = 'Approved';
       replaceActionsWithUndo();
@@ -1303,12 +1407,41 @@
     undo.id        = 'reviewUndo';
     undo.className = 'review-btn undo';
     undo.textContent = 'Undo decision';
-    undo.onclick   = () => { undo.remove(); setProofState('pending'); };
+    undo.onclick   = () => {
+      undo.remove();
+      if (currentMode === 'package') {
+        assetDecisions.fill(null);
+        assetReviewed.fill(false);
+        renderPkgAssetBar();
+      }
+      setProofState('pending');
+    };
     document.getElementById('proofActionsGroup').appendChild(undo);
   }
 
   function doApprove() { setProofState('approved'); }
   function doReject()  { setProofState('rejected'); }
+
+  function toggleReviewed() {
+    const btn  = document.getElementById('proofReviewedBtn');
+    const wrap = document.getElementById('canvasWrap');
+    const isReviewed = btn.classList.toggle('is-reviewed');
+    btn.innerHTML = `<svg fill="none" viewBox="0 0 16 16" width="13" height="13" style="flex-shrink:0"><path d="M1.5 8s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1.5 8 1.5 8z" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/></svg> ${isReviewed ? 'Undo Reviewed' : 'Reviewed'}`;
+    wrap.classList.toggle('proof-reviewed', isReviewed);
+    if (currentMode === 'package') {
+      assetReviewed[currentAsset] = isReviewed;
+      renderPkgAssetBar();
+    }
+  }
+  function resetReviewedBtn() {
+    const btn = document.getElementById('proofReviewedBtn');
+    btn.classList.remove('is-reviewed');
+    btn.textContent = 'Reviewed';
+  }
+  function syncFooterFilename() {
+    document.getElementById('footerFilename').textContent =
+      document.getElementById('topFilename').textContent;
+  }
 
   // Updates only the canvas border — used for per-asset state in package mode
   // without touching the top-bar chip or actions.
@@ -1319,22 +1452,19 @@
   }
 
   function doPkgApprove() {
-    assetDecisions[currentAsset] = 'approved';
-    assetReviewed[currentAsset]  = true;
+    assetDecisions.fill('approved');
+    assetReviewed.fill(true);
     setCanvasState('approved');
     renderPkgAssetBar();
-    const allDecided = assetDecisions.every(d => d !== null);
-    const anyRejected = assetDecisions.includes('rejected');
-    if (allDecided) setProofState(anyRejected ? 'rejected' : 'approved');
+    setProofState('approved');
   }
 
   function doPkgReject() {
-    assetDecisions[currentAsset] = 'rejected';
-    assetReviewed[currentAsset]  = true;
+    assetDecisions.fill('rejected');
+    assetReviewed.fill(true);
     setCanvasState('rejected');
     renderPkgAssetBar();
-    const allDecided = assetDecisions.every(d => d !== null);
-    if (allDecided) setProofState('rejected');
+    setProofState('rejected');
   }
 
   // ── PANEL ────────────────────────────────────────────────────────
@@ -1360,17 +1490,19 @@
   // ── NOTES ────────────────────────────────────────────────────────
   function toggleNotes() {
     notesOpen = !notesOpen;
-    const btn   = document.getElementById('notesToggleBtn');
-    const panel = document.getElementById('notesPanel');
-    const annBar = document.getElementById('annotationBar');
-    const label = document.getElementById('notesLabel');
-    const marker = document.getElementById('annMarker');
+    const btn        = document.getElementById('notesToggleBtn');
+    const panel      = document.getElementById('notesPanel');
+    const annBar     = document.getElementById('annotationBar');
+    const label      = document.getElementById('notesLabel');
+    const marker     = document.getElementById('annMarker');
+    const printBtn   = document.getElementById('printNotesBtn');
     if (notesOpen) {
       btn.classList.add('active');
       label.textContent = 'Close Notes';
       panel.classList.add('visible');
       annBar.classList.add('visible');
       marker.style.display = 'block';
+      printBtn.style.display = '';
       renderNotes();
     } else {
       btn.classList.remove('active');
@@ -1378,6 +1510,7 @@
       panel.classList.remove('visible');
       annBar.classList.remove('visible');
       marker.style.display = 'none';
+      printBtn.style.display = 'none';
     }
     updateNotesBadge();
   }
@@ -1533,14 +1666,15 @@
   // ── PACKAGE ASSET BAR ────────────────────────────────────────────
   function renderPkgAssetBar() {
     const bar = document.getElementById('pkgAssetBar');
-    const decidedCount = assetDecisions.filter(d => d !== null).length;
-    const pendingCount = pkgAssets.length - decidedCount;
+    const decidedCount  = assetDecisions.filter(d => d !== null).length;
+    const reviewedCount = assetReviewed.filter(Boolean).length;
+    const pendingCount  = pkgAssets.length - decidedCount;
 
     // Which indices are visible in this filter view
     const visibleIndices = pkgAssets.map((_, i) => i).filter(i => {
-      if (filterMode === 'all')      return true;
-      if (filterMode === 'pending')  return assetDecisions[i] === null;
-      return assetDecisions[i] !== null; // 'reviewed'
+      if (filterMode === 'all')     return true;
+      if (filterMode === 'pending') return assetDecisions[i] === null && !assetReviewed[i];
+      return assetDecisions[i] !== null || assetReviewed[i]; // 'reviewed'
     });
 
     const curPos   = visibleIndices.indexOf(currentAsset);
@@ -1559,12 +1693,15 @@
         const asset    = pkgAssets[i];
         const active   = i === currentAsset;
         const decision = assetDecisions[i];
-        const classes  = ['pkg-asset-thumb', active ? 'active' : '', decision ?? ''].filter(Boolean).join(' ');
+        const isFootReviewed = assetReviewed[i] && !decision;
+        const classes  = ['pkg-asset-thumb', active ? 'active' : '', decision ?? '', isFootReviewed ? 'foot-reviewed' : ''].filter(Boolean).join(' ');
         let overlay = '';
         if (decision === 'approved') {
           overlay = `<svg fill="none" viewBox="0 0 16 16"><path d="M3 8.5L6.5 12l6.5-7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
         } else if (decision === 'rejected') {
           overlay = `<svg fill="none" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>`;
+        } else if (isFootReviewed) {
+          overlay = `<svg fill="none" viewBox="0 0 16 16"><path d="M1.5 8s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1.5 8 1.5 8z" stroke="#fff" stroke-width="1.6"/><circle cx="8" cy="8" r="2" stroke="#fff" stroke-width="1.6"/></svg>`;
         }
         html += `<div class="${classes}" onclick="switchAsset(${i})">
           <div class="pkg-thumb-img">
@@ -1583,8 +1720,8 @@
     bar.innerHTML = html;
 
     // Update top-bar mini progress
-    document.getElementById('pkgReviewProgressLabel').textContent = `${decidedCount} of ${pkgAssets.length} reviewed`;
-    document.getElementById('pkgReviewFill').style.width = `${(decidedCount/pkgAssets.length)*100}%`;
+    document.getElementById('pkgReviewProgressLabel').textContent = `${reviewedCount} of ${pkgAssets.length} reviewed`;
+    document.getElementById('pkgReviewFill').style.width = `${(reviewedCount/pkgAssets.length)*100}%`;
 
     // Update filter toggle button
     const mrBtn = document.getElementById('markReviewedBtn');
@@ -1597,7 +1734,7 @@
         mrBtn.innerHTML = `<svg fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v3.5l2 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg> Needs review · ${pendingCount}`;
       } else {
         mrBtn.className = 'mark-reviewed-btn filter-reviewed';
-        mrBtn.innerHTML = `<svg fill="none" viewBox="0 0 16 16"><path d="M2 8a6 6 0 1012 0A6 6 0 002 8zm4 0l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Reviewed · ${decidedCount}`;
+        mrBtn.innerHTML = `<svg fill="none" viewBox="0 0 16 16"><path d="M2 8a6 6 0 1012 0A6 6 0 002 8zm4 0l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Reviewed · ${reviewedCount}`;
       }
     }
   }
@@ -1608,8 +1745,8 @@
     // If current asset isn't in the new filtered view, jump to the first one that is
     const visibleIndices = pkgAssets.map((_, i) => i).filter(i => {
       if (filterMode === 'all')     return true;
-      if (filterMode === 'pending') return assetDecisions[i] === null;
-      return assetDecisions[i] !== null;
+      if (filterMode === 'pending') return assetDecisions[i] === null && !assetReviewed[i];
+      return assetDecisions[i] !== null || assetReviewed[i];
     });
     if (visibleIndices.length > 0 && !visibleIndices.includes(currentAsset)) {
       switchAsset(visibleIndices[0]);
@@ -1625,10 +1762,18 @@
     document.getElementById('pageTotal').textContent = `of ${asset.pages}`;
     document.getElementById('pageInput').value = 1;
     document.getElementById('topFilename').textContent = asset.name;
+    syncFooterFilename();
     currentPage = 1;
     rotation = 0;
     document.getElementById('canvasInner').style.transform = '';
     setCanvasState(assetDecisions[currentAsset] ?? 'pending');
+    const revBtn = document.getElementById('proofReviewedBtn');
+    if (revBtn) {
+      const rev = assetReviewed[currentAsset];
+      revBtn.classList.toggle('is-reviewed', rev);
+      revBtn.innerHTML = `<svg fill="none" viewBox="0 0 16 16" width="13" height="13" style="flex-shrink:0"><path d="M1.5 8s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1.5 8 1.5 8z" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/></svg> ${rev ? 'Undo Reviewed' : 'Reviewed'}`;
+      document.getElementById('canvasWrap').classList.toggle('proof-reviewed', rev);
+    }
     renderPkgAssetBar();
     if (notesOpen) renderNotes();
   }
