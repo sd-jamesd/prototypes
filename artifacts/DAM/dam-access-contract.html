@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Access contract — public links / CDN</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* ============================================================
+   TOKENS — lifted verbatim from dam-design-contracts.html
+   No new tokens. No shims. The dark editor theme already exists.
+   ============================================================ */
+:root{
+  --stone-50:#fefcfc; --stone-100:#f5f5f4; --stone-200:#e7e5e4; --stone-300:#d6d3d1;
+  --stone-400:#978985; --stone-500:#6b615e; --stone-700:#44403c; --stone-900:#261e1b;
+
+  --c-primary:#0b6e8a; --c-primary-300:#4db5cf; --cerulean-dark:#7ec7dd;
+  --primary-tint-dark:rgba(77,181,207,.16); --surface-hover-dark:rgba(255,255,255,.05);
+  --c-amber:#f5a524; --c-red:#e54d2e; --c-green:#29a383;
+
+  /* dark editor surfaces */
+  --ed-bg:#1c1815; --ed-panel:#211c19; --ed-chrome:#161311; --ed-line:rgba(255,255,255,0.08);
+  --ed-label:rgba(255,255,255,0.55); --ed-value:rgba(255,255,255,0.92); --ed-faint:rgba(255,255,255,0.4);
+  --ed-input-bg:rgba(255,255,255,0.05); --ed-input-bd:rgba(255,255,255,0.40); --ed-error:#ec7a6e;
+
+  --radius-2:4px; --radius-3:6px; --radius-pill:9999px;
+  --spacing-1:4px; --spacing-2:8px; --spacing-3:12px; --spacing-4:16px; --spacing-6:24px;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:#100d0b;color:var(--ed-value);
+  -webkit-font-smoothing:antialiased;line-height:1.5;padding:34px 30px 80px;}
+
+/* ---- doc chrome (mirrors the contract doc) ---- */
+.wrap{max-width:1110px;margin:0 auto;}
+h1{font-size:16px;font-weight:700;letter-spacing:-.02em;}
+.lede{color:var(--ed-label);font-size:14px;margin:8px 0 6px;max-width:800px;}
+.thesis{display:inline-flex;gap:8px;align-items:center;background:var(--ed-panel);border:1px solid var(--ed-line);
+  border-radius:var(--radius-pill);padding:7px 15px;font-size:12px;font-weight:600;margin:14px 0 30px;}
+.thesis .d{width:6px;height:6px;border-radius:50%;background:var(--c-primary-300);}
+.block{margin:0 0 34px;}
+.block > h2{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--c-primary-300);
+  margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--ed-line);}
+.cases{display:flex;flex-wrap:wrap;gap:30px;align-items:flex-start;}
+.case{width:520px;}
+.cap{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ed-faint);margin-bottom:8px;}
+.capnote{font-size:12px;color:var(--ed-label);margin-bottom:12px;min-height:34px;}
+.capnote b{color:var(--ed-value);font-weight:600;}
+.capnote .no{color:var(--ed-error);font-weight:600;}
+
+/* ============================================================
+   PANEL SHELL — rail (88px, icon+label) + panel
+   Rail spec: contract Foundations · "Navigation rail — one component,
+   two densities". Edit = icon + label. Bands: describe | transform | manage.
+   ============================================================ */
+.shell{display:flex;background:var(--ed-panel);border:1px solid var(--ed-line);border-radius:var(--radius-3);
+  overflow:hidden;min-height:460px;}
+.rail{width:88px;flex:none;background:#26211f;border-right:1px solid var(--ed-line);
+  display:flex;flex-direction:column;gap:2px;padding:var(--spacing-2) 0;}
+.ri{position:relative;display:flex;flex-direction:column;align-items:center;gap:var(--spacing-1);
+  padding:var(--spacing-2) var(--spacing-1);color:rgba(255,255,255,.62);
+  font-size:12px;font-weight:500;text-align:center;border-radius:var(--radius-2);
+  border-left:2px solid transparent;cursor:default;}
+.ri svg{width:20px;height:20px;flex:none;stroke-linecap:round;stroke-linejoin:round;}
+.ri:not(.on):hover{background:var(--surface-hover-dark);color:rgba(255,255,255,.85);}
+.ri.on{color:var(--cerulean-dark);background:var(--primary-tint-dark);}
+.ri.on::before{content:'';position:absolute;left:0;top:5px;bottom:5px;width:3px;
+  background:var(--cerulean-dark);border-radius:0 2px 2px 0;}
+.rail-div{height:1px;background:rgba(255,255,255,.09);margin:7px 15px;}
+
+.panel{flex:1;min-width:0;padding:20px 18px;overflow-y:auto;}
+
+/* ---- 1 · Panel header — title only, sentence case, 16/600, no subtitle, no divider ---- */
+.ph{display:flex;align-items:center;margin-bottom:20px;}
+.ph .title{font-size:16px;font-weight:600;color:var(--ed-value);}
+.ph .acts{margin-left:auto;display:flex;gap:8px;}
+
+/* ---- 2 · Section — icon section header (14/600) + roll-up count (11/600 cerulean) ---- */
+.sec + .sec{margin-top:26px;}
+.sec-head{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600;color:var(--ed-value);
+  padding:2px 0 10px;}
+.sec-head > svg{width:16px;height:16px;color:var(--ed-faint);flex:none;}
+.sec-head .count{font-size:11px;font-weight:600;color:var(--c-primary-300);}
+.sec-head .act{margin-left:auto;}
+/* eyebrow — sub-label INSIDE a section, 12/700 UPPER */
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ed-faint);
+  margin:14px 0 9px;}
+
+/* ---- collapsible section (accordion variant) — disclosure = FILLED TRIANGLE ---- */
+.sec-head.coll{cursor:pointer;padding-bottom:10px;border-bottom:1px solid var(--ed-line);}
+.tri{margin-left:auto;color:var(--ed-faint);display:inline-flex;align-items:center;}
+.tri svg{width:8px;height:8px;display:block;transition:transform .12s;}
+.tri.closed svg{transform:rotate(-90deg);}
+
+/* ---- optional-badge field (Rights archetype) ---- */
+.field{margin:0 0 4px;}
+.field .flab{font-size:12px;font-weight:400;color:var(--ed-label);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.opt{font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--ed-faint);border:1px solid var(--ed-faint);
+  padding:1px 5px;border-radius:3px;}
+.inp{width:100%;background:var(--ed-input-bg);border:1px solid var(--ed-input-bd);border-radius:var(--radius-2);
+  color:var(--ed-value);font-family:var(--font);font-size:14px;font-weight:400;padding:9px 11px;}
+.inp.empty{color:rgba(255,255,255,.35);}
+.help{font-size:11px;color:var(--ed-faint);margin-top:5px;}
+
+/* ---- context menu (Scale 3.14, dark theme — composes from --ed tokens) ---- */
+.rowspec{position:relative;width:340px;}
+.menu{position:absolute;right:0;top:calc(100% + 4px);z-index:10;min-width:216px;padding:4px;
+  background:#2a2422;border:1px solid var(--ed-input-bd);border-radius:var(--radius-3);
+  box-shadow:0 12px 28px -8px rgba(0,0,0,.7);}
+.menu-item{display:flex;align-items:center;gap:9px;width:100%;padding:7px 8px;border:none;background:transparent;
+  font-family:var(--font);font-size:12px;font-weight:400;color:var(--ed-label);border-radius:var(--radius-2);text-align:left;cursor:default;}
+.menu-item svg{width:14px;height:14px;flex:none;color:var(--ed-faint);}
+.menu-item:hover{background:var(--surface-hover-dark);color:var(--ed-value);}
+.menu-item.gated{color:var(--ed-faint);}
+.menu-item .tag{margin-left:auto;font-size:11px;font-weight:600;color:var(--ed-faint);}
+.menu-sep{height:1px;background:var(--ed-line);margin:4px 0;}
+.menu-cap{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ed-faint);padding:6px 8px 4px;}
+
+/* row state: eligible but not published — muted, not red. It's a choice, not an error. */
+.lr-main .none{font-size:12px;color:var(--ed-faint);margin-top:4px;font-style:italic;}
+
+/* ---- payload demo ---- */
+.payload{background:var(--ed-chrome);border:1px solid var(--ed-line);border-radius:var(--radius-3);
+  padding:14px 16px;font-size:12px;color:var(--ed-label);line-height:20px;}
+.payload .l{color:var(--ed-value);font-weight:500;}
+.payload .u{color:var(--ed-faint);}
+
+/* ---- search / filter field — borderless at rest, ring on focus, list-filter icon ---- */
+.search{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.045);
+  border:1px solid transparent;border-radius:var(--radius-2);padding:9px 11px;
+  font-size:14px;color:var(--ed-faint);margin-bottom:10px;}
+.search svg{width:15px;height:15px;color:var(--ed-faint);flex:none;}
+
+/* ---- list row — Versions / Access / Activity archetype. Border-collapsed stack. ---- */
+.list-row{display:flex;align-items:center;gap:12px;border:1px solid var(--ed-line);
+  border-radius:var(--radius-3);padding:11px 12px;}
+.list-row + .list-row{margin-top:-1px;border-radius:0;}
+.list-row:first-child{border-radius:var(--radius-3) var(--radius-3) 0 0;}
+.list-row:last-child{border-radius:0 0 var(--radius-3) var(--radius-3);}
+.list-row:only-child{border-radius:var(--radius-3);}
+.lr-main{flex:1;min-width:0;}
+.lr-main .t{font-size:14px;font-weight:500;color:var(--ed-value);}
+.lr-main .m{font-size:12px;color:var(--ed-label);margin-top:2px;}
+.lr-main .u{font-size:12px;font-weight:400;color:var(--ed-faint);margin-top:4px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* disable, don't hide — row stays visible, reason in red (contract: .li2-status / --ed-error) */
+.list-row.dis{opacity:.55;}
+.lr-main .why{font-size:11px;font-weight:500;color:var(--ed-error);margin-top:4px;
+  display:flex;align-items:center;gap:5px;}
+.lr-main .why svg{width:12px;height:12px;flex:none;}
+.lr-acts{display:flex;gap:2px;flex:none;}
+.avatar{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.10);flex:none;
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--ed-label);}
+
+/* ---- button tiers — treatment by what the action does ---- */
+.btn{font-family:var(--font);font-size:14px;font-weight:600;height:32px;padding:0 13px;
+  border-radius:var(--radius-2);cursor:default;display:inline-flex;align-items:center;
+  justify-content:center;gap:7px;border:1px solid transparent;}
+.btn svg{width:14px;height:14px;flex:none;}
+.btn-pri{background:var(--c-primary);color:#fff;}
+.btn-sec{background:transparent;color:var(--cerulean-dark);border-color:var(--cerulean-dark);}
+.btn-ter{background:transparent;color:var(--cerulean-dark);}
+.btn-gho{background:transparent;color:var(--ed-faint);height:28px;padding:0 6px;}
+.btn-gho:hover{background:var(--surface-hover-dark);color:var(--ed-value);}
+.btn-full{width:100%;margin-top:10px;}
+.btn.off{opacity:.4;}
+
+/* ---- amber — the one alert state: public / open ---- */
+.open-alert{display:flex;gap:9px;align-items:flex-start;padding:10px 12px;
+  border:1px solid rgba(245,165,36,.35);background:rgba(245,165,36,.10);
+  border-radius:var(--radius-3);margin-bottom:12px;}
+.open-alert svg{width:15px;height:15px;color:var(--c-amber);flex:none;margin-top:1px;}
+.open-alert .oa{font-size:12px;color:var(--ed-label);}
+.open-alert .oa b{display:block;color:var(--ed-value);font-weight:600;margin-bottom:2px;}
+.open-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;
+  color:var(--c-amber);background:rgba(245,165,36,.14);border-radius:var(--radius-pill);padding:1px 8px;}
+
+/* ---- empty state — icon + line + optional action. Distinguish states. ---- */
+.empty{text-align:center;padding:26px 10px;color:var(--ed-label);}
+.empty svg{width:26px;height:26px;color:var(--ed-faint);margin-bottom:10px;}
+.empty .e1{font-size:14px;}
+.empty .e2{margin-top:14px;}
+
+/* ---- inert + explained (bulk) ---- */
+.inert{display:flex;gap:10px;align-items:flex-start;padding:13px;border:1px dashed var(--ed-line);
+  border-radius:var(--radius-3);background:rgba(255,255,255,.02);}
+.inert svg{width:17px;height:17px;color:var(--ed-faint);flex:none;margin-top:1px;}
+.inert .t2{font-size:12px;color:var(--ed-faint);line-height:17px;}
+.inert .t2 b{color:var(--ed-label);font-weight:500;}
+
+/* ---- read-only field row ---- */
+.ro-row{display:grid;grid-template-columns:108px 1fr;gap:12px;padding:7px 0;font-size:12px;
+  align-items:start;border-bottom:1px solid var(--ed-line);}
+.ro-row:last-child{border-bottom:none;}
+.ro-row .k{color:var(--ed-label);font-weight:400;}
+.ro-row .v{color:var(--ed-value);font-weight:500;word-break:break-word;}
+
+/* ---- confirm modal ---- */
+.modal{width:440px;background:var(--ed-panel);border:1px solid var(--ed-line);border-radius:var(--radius-3);
+  padding:20px;box-shadow:0 20px 44px -12px rgba(0,0,0,.6);}
+.modal .mt{font-size:16px;font-weight:600;margin-bottom:10px;}
+.modal .mb{font-size:14px;color:var(--ed-label);margin-bottom:14px;}
+.modal .mf{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;}
+
+/* ---- scope radio (dark) ---- */
+.scope{flex:1;display:flex;gap:8px;align-items:flex-start;padding:9px 10px;border:1px solid var(--ed-input-bd);
+  border-radius:var(--radius-2);cursor:default;}
+.scope.on{border-color:var(--cerulean-dark);background:var(--primary-tint-dark);}
+.scope .dot{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--ed-faint);flex:none;margin-top:2px;}
+.scope.on .dot{border-color:var(--cerulean-dark);border-width:4px;}
+.scope b{display:block;font-size:12px;font-weight:500;color:var(--ed-value);}
+.scope em{display:block;font-size:11px;font-style:normal;color:var(--ed-faint);margin-top:1px;}
+/* ---- ratio chips ---- */
+.chips{display:flex;gap:6px;flex-wrap:wrap;}
+.chip{font-size:12px;font-weight:500;color:var(--ed-label);border:1px solid var(--ed-line);
+  border-radius:var(--radius-pill);padding:3px 11px;}
+.chip.on{background:var(--primary-tint-dark);border-color:var(--cerulean-dark);color:var(--cerulean-dark);}
+.lock{color:var(--ed-faint);padding-bottom:10px;}
+.lock svg{width:13px;height:13px;}
+/* ---- delivery checkbox (dark) ---- */
+.lchk{display:flex;gap:10px;align-items:flex-start;padding:4px 0 2px;}
+.lbox{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--ed-input-bd);flex:none;margin-top:2px;
+  display:flex;align-items:center;justify-content:center;}
+.lbox.on{background:var(--c-primary);border-color:var(--c-primary);}
+.lbox.on svg{width:10px;height:10px;color:#fff;}
+.lbox.off{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.03);}
+.lc-copy .lc-t{font-size:14px;font-weight:400;color:var(--ed-value);}
+.lc-copy .lc-h{font-size:11px;color:var(--ed-faint);margin-top:4px;line-height:16px;}
+.lc-copy .lc-w{font-size:11px;color:#e0b060;margin-top:7px;line-height:16px;font-weight:500;
+  background:rgba(245,165,36,.12);border:1px solid rgba(245,165,36,.28);border-radius:3px;padding:7px 9px;}
+.lc-copy .lc-w b{color:#f5c37a;font-weight:600;}
+.why{font-size:11px;font-weight:500;color:var(--ed-error);display:flex;align-items:center;gap:5px;}
+.why svg{width:12px;height:12px;flex:none;}
+
+/* ---- LIGHT SURFACE (retired — admin surface does not exist) ---- */
+.lt{background:var(--stone-50);border:1px solid var(--stone-200);border-radius:var(--radius-3);
+  width:440px;padding:20px;color:var(--stone-900);}
+.lt .lph{font-size:16px;font-weight:600;margin-bottom:4px;}
+.lt .lsub{font-size:12px;color:var(--stone-500);margin-bottom:18px;}
+.lt .lsec{font-size:14px;font-weight:600;display:flex;align-items:center;gap:9px;
+  padding:14px 0 10px;border-top:1px solid var(--stone-200);margin-top:6px;}
+.lt .lsec svg{width:16px;height:16px;color:var(--stone-400);}
+.lt .lro{display:grid;grid-template-columns:120px 1fr;gap:12px;padding:7px 0;font-size:12px;}
+.lt .lro .k{color:var(--stone-500);}
+.lt .lro .v{color:var(--stone-900);font-weight:500;}
+.lt .lchk{display:flex;gap:10px;align-items:flex-start;padding:10px 0;}
+.lt .lbox{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--stone-400);flex:none;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;}
+.lt .lbox.on{background:var(--c-primary);border-color:var(--c-primary);}
+.lt .lbox.on svg{width:10px;height:10px;color:#fff;}
+.lt .lbox.dis{border-color:var(--stone-300);background:var(--stone-100);}
+.lt .lc-copy .lc-t{font-size:14px;font-weight:400;color:var(--stone-900);}
+.lt .lc-copy .lc-h{font-size:11px;color:var(--stone-500);margin-top:4px;line-height:16px;}
+.lt .lc-copy .lc-w{font-size:11px;color:#985b00;margin-top:6px;line-height:16px;font-weight:500;
+  background:rgba(245,165,36,.13);border-radius:3px;padding:6px 8px;}
+.lt .lc-copy .lc-no{font-size:11px;color:#b8340f;margin-top:5px;font-weight:500;}
+.lt.dim .lc-copy .lc-t{color:var(--stone-400);}
+.lt .lbtns{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid var(--stone-200);}
+.btn-lt-sec{background:transparent;color:var(--c-primary);border-color:var(--stone-300);}
+.btn-lt-pri{background:var(--c-primary);color:#fff;}
+/* delivery marker chip — read-only in the editor's Template tab */
+.chan{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;
+  color:var(--cerulean-dark);background:var(--primary-tint-dark);border-radius:var(--radius-pill);padding:1px 8px;}
+.chan svg{width:10px;height:10px;}
+
+/* ---- spec tables ---- */
+.map{width:100%;border-collapse:collapse;font-size:12px;}
+.map th{text-align:left;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ed-faint);
+  padding:8px 10px;border-bottom:1px solid var(--ed-line);font-weight:600;}
+.map td{padding:9px 10px;border-bottom:1px solid var(--ed-line);vertical-align:top;color:var(--ed-label);}
+.map td:first-child{font-weight:600;color:var(--ed-value);white-space:nowrap;}
+code{background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px;font-size:11px;color:var(--c-primary-300);}
+ul.laws{list-style:none;display:flex;flex-direction:column;gap:11px;}
+ul.laws li{font-size:14px;color:var(--ed-label);padding-left:18px;position:relative;}
+ul.laws li::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--c-primary-300);}
+ul.laws li b{color:var(--ed-value);font-weight:600;}
+.fix{border-left:3px solid var(--c-amber);background:rgba(245,165,36,.08);padding:13px 16px;
+  border-radius:var(--radius-2);font-size:14px;color:var(--ed-label);margin-bottom:16px;}
+.fix b{color:var(--ed-value);font-weight:600;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Access contract — public links (CDN)</h1>
+<p class="lede">Publish is not a rail stop. It is a section inside Access. Access answers one question — <b style="color:var(--ed-value)">who can reach this asset</b> — across two sections: People &amp; groups (internal principals) and Public links (the anonymous principal). Rights answers a different question and keeps its own tab. Built entirely from the kit; no net-new atoms.</p>
+<div class="thesis"><span class="d"></span>Two sections, one tab — the Template precedent, not a new pattern</div>
+
+<!-- ============================================================
+     THE STATES
+     ============================================================ -->
+<div class="block">
+<h2>Access · public links — the state set</h2>
+<div class="cases">
+
+<!-- ============ 1 · Not published ============ -->
+<div class="case">
+  <div class="cap">1 · Not published</div>
+  <div class="capnote">Empty state is <b>specific, not generic</b> — it distinguishes "no links exist" from "restricted". Publish is <b>Primary</b>: it creates data. It is the only Primary in the tab.</div>
+  <div class="shell">
+    <nav class="rail">
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>Details</span>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v6M20 4 9 15"/></svg>Attributes</span>
+      <div class="rail-div"></div>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>Adjust</span>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Template</span>
+      <div class="rail-div"></div>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></svg>Versions</span>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg>Rights</span>
+      <span class="ri on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 11v6"/><path d="M19 13h2"/><path d="M2 21a8 8 0 0 1 12.868-6.349"/><circle cx="10" cy="8" r="5"/><circle cx="19" cy="19" r="2"/></svg>Access</span>
+    </nav>
+    <div class="panel">
+      <div class="ph"><span class="title">Access</span></div>
+
+      <div class="sec">
+        <div class="sec-head coll">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          People &amp; groups <span class="count">Unrestricted</span>
+          <span class="tri closed"><svg viewBox="0 0 10 10"><path d="M1 2.5l4 5 4-5z" fill="currentColor"/></svg></span>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          Public links
+        </div>
+        <div class="empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/><path d="M2 2l20 20"/></svg>
+          <div class="e1">Not published. No CDN links exist for this asset.</div>
+          <div class="e2"><button class="btn btn-pri">Publish to CDN</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2 · Published, unrestricted ============ -->
+<div class="case">
+  <div class="cap">2 · Published · rights unrestricted</div>
+  <div class="capnote">One list row per public-eligible preset. <b>Amber is the public/open alert</b> — the one state the token is reserved for. Copy all is the list's Secondary action, mirroring Upload new version.</div>
+  <div class="shell">
+    <nav class="rail">
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>Details</span>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v6M20 4 9 15"/></svg>Attributes</span>
+      <div class="rail-div"></div>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>Adjust</span>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Template</span>
+      <div class="rail-div"></div>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></svg>Versions</span>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg>Rights</span>
+      <span class="ri on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 11v6"/><path d="M19 13h2"/><path d="M2 21a8 8 0 0 1 12.868-6.349"/><circle cx="10" cy="8" r="5"/><circle cx="19" cy="19" r="2"/></svg>Access</span>
+    </nav>
+    <div class="panel">
+      <div class="ph"><span class="title">Access</span></div>
+
+      <div class="sec">
+        <div class="sec-head coll">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          People &amp; groups <span class="count">3</span>
+          <span class="tri closed"><svg viewBox="0 0 10 10"><path d="M1 2.5l4 5 4-5z" fill="currentColor"/></svg></span>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          Public links <span class="count">5</span>
+          <span class="act"><button class="btn btn-ter">Unpublish</button></span>
+        </div>
+
+        <div class="open-alert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+          <div class="oa"><b>Publicly available</b>Anyone with a URL can retrieve these files without signing in. Links resolve to the current version.</div>
+        </div>
+
+        <div class="eyebrow">Delivery</div>
+        <div class="ro-row"><span class="k">Rights ceiling</span><span class="v">No expiry — licence is perpetual</span></div>
+        <div class="field" style="margin-top:12px;">
+          <div class="flab">Auto-revoke <span class="opt">OPTIONAL</span></div>
+          <input class="inp empty" value="" placeholder="No auto-revoke — links run until rights end">
+          <div class="help">Schedules revoke + edge purge. Cannot be set later than the rights ceiling.</div>
+        </div>
+
+        <div class="eyebrow">Available outputs</div>
+
+        <div class="list-row">
+          <div class="lr-main">
+            <div class="t">Original</div>
+            <div class="m">JPG · 4096 × 2304 · 8.2 MB</div>
+            <div class="u">cdn.screendragon.com/a/8f3c2a1e/original.jpg</div>
+          </div>
+          <div class="lr-acts">
+            <button class="btn btn-gho" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+            <button class="btn btn-gho">⋯</button>
+          </div>
+        </div>
+        <div class="list-row">
+          <div class="lr-main">
+            <div class="t">Web Large</div>
+            <div class="m">JPG · 1600 × 900 · 240 KB</div>
+            <div class="u">cdn.screendragon.com/a/8f3c2a1e/web-large.jpg</div>
+          </div>
+          <div class="lr-acts">
+            <button class="btn btn-gho" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+            <button class="btn btn-gho">⋯</button>
+          </div>
+        </div>
+        <div class="list-row">
+          <div class="lr-main">
+            <div class="t">Social Square</div>
+            <div class="m">JPG · 1080 × 1080 · 180 KB</div>
+            <div class="u">cdn.screendragon.com/a/8f3c2a1e/social-square.jpg</div>
+          </div>
+          <div class="lr-acts">
+            <button class="btn btn-gho" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+            <button class="btn btn-gho">⋯</button>
+          </div>
+        </div>
+        <div class="list-row">
+          <div class="lr-main">
+            <div class="t">Email Banner</div>
+            <div class="m">WebP · 1200 × 400 · 96 KB</div>
+            <div class="u">cdn.screendragon.com/a/8f3c2a1e/email-banner.webp</div>
+          </div>
+          <div class="lr-acts">
+            <button class="btn btn-gho" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+            <button class="btn btn-gho">⋯</button>
+          </div>
+        </div>
+        <div class="list-row">
+          <div class="lr-main">
+            <div class="t">Thumbnail</div>
+            <div class="m">JPG · 400 × 225 · 22 KB</div>
+            <div class="u">cdn.screendragon.com/a/8f3c2a1e/thumbnail.jpg</div>
+          </div>
+          <div class="lr-acts">
+            <button class="btn btn-gho" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+            <button class="btn btn-gho">⋯</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 3 · Published, rights-constrained ============ -->
+<div class="case">
+  <div class="cap">3 · Published · rights-constrained</div>
+  <div class="capnote"><b>Disable, don't hide.</b> Print High-res stays visible with its reason in red — the Template picker's <code>⊘ Image too small</code> atom. It has no URL row, because no URL was minted. Absence would be silent.</div>
+  <div class="shell">
+    <nav class="rail">
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>Details</span>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v6M20 4 9 15"/></svg>Attributes</span>
+      <div class="rail-div"></div>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>Adjust</span>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Template</span>
+      <div class="rail-div"></div>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></svg>Versions</span>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg>Rights</span>
+      <span class="ri on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 11v6"/><path d="M19 13h2"/><path d="M2 21a8 8 0 0 1 12.868-6.349"/><circle cx="10" cy="8" r="5"/><circle cx="19" cy="19" r="2"/></svg>Access</span>
+    </nav>
+    <div class="panel">
+      <div class="ph"><span class="title">Access</span></div>
+      <div class="sec">
+        <div class="sec-head coll">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          People &amp; groups <span class="count">2</span>
+          <span class="tri closed"><svg viewBox="0 0 10 10"><path d="M1 2.5l4 5 4-5z" fill="currentColor"/></svg></span>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="sec-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          Public links <span class="count">3</span>
+          <span class="act"><button class="btn btn-ter">Unpublish</button></span>
+        </div>
+
+        <div class="open-alert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+          <div class="oa"><b>Publicly available · expires 31 Dec 2026</b>Licence is digital use only. All links are revoked and purged from the edge on expiry.</div>
+        </div>
+
+        <div class="eyebrow">Delivery</div>
+        <div class="ro-row"><span class="k">Rights ceiling</span><span class="v">31 Dec 2026 · digital use only</span></div>
+        <div class="field" style="margin-top:12px;">
+          <div class="flab">Auto-revoke <span class="opt">OPTIONAL</span></div>
+          <input class="inp" value="31 Mar 2026">
+          <div class="help">Campaign ends before the licence does. Max 31 Dec 2026 — the rights ceiling.</div>
+        </div>
+
+        <div class="eyebrow">Available outputs</div>
+
+        <div class="list-row">
+          <div class="lr-main">
+            <div class="t">Web Large</div>
+            <div class="m">JPG · 1600 × 900 · 240 KB</div>
+            <div class="u">cdn.screendragon.com/a/2b71fd90/web-large.jpg</div>
+          </div>
+          <div class="lr-acts">
+            <button class="btn btn-gho" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+            <button class="btn btn-gho">⋯</button>
+          </div>
+        </div>
+        <div class="list-row">
+          <div class="lr-main">
+            <div class="t">Social Square</div>
+            <div class="m">JPG · 1080 × 1080 · 180 KB</div>
+            <div class="u">cdn.screendragon.com/a/2b71fd90/social-square.jpg</div>
+          </div>
+          <div class="lr-acts">
+            <button class="btn btn-gho" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+            <button class="btn btn-gho">⋯</button>
+          </div>
+        </div>
+        <div class="list-row">
+          <div class="lr-main">
+            <div class="t">Email Banner</div>
+            <div class="m">WebP · 1200 × 400 · 96 KB</div>
+            <div class="u">cdn.screendragon.com/a/2b71fd90/email-banner.webp</div>
+          </div>
+          <div class="lr-acts">
+            <button class="btn btn-gho" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+            <button class="btn btn-gho">⋯</button>
+          </div>
+        </div>
+        <div class="list-row">
+          <div class="lr-main">
+            <div class="t">Thumbnail</div>
+            <div class="m">JPG · 400 × 225 · 22 KB</div>
+            <div class="none">Eligible — not published</div>
+          </div>
+          <div class="lr-acts"><button class="btn btn-gho">⋯</button></div>
+        </div>
+        <div class="list-row dis">
+          <div class="lr-main">
+            <div class="t">Print High-res</div>
+            <div class="m">TIFF · 4096 × 2304 · 300 dpi</div>
+            <div class="why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>Not permitted — licence is digital use only</div>
+          </div>
+        </div>
+        <div class="list-row dis">
+          <div class="lr-main">
+            <div class="t">Original</div>
+            <div class="m">TIFF · 4096 × 2304 · 42 MB</div>
+            <div class="why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>Not permitted — master file is not public-eligible</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 4 · Blocked by rights ============ -->
+<div class="case">
+  <div class="cap">4 · Blocked — rights forbid public delivery</div>
+  <div class="capnote">Publish stays visible-disabled with a live recovery path. Every preset row is present with its reason. The user learns <b>why</b>, not just that nothing is there.</div>
+  <div class="shell">
+    <nav class="rail">
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>Details</span>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v6M20 4 9 15"/></svg>Attributes</span>
+      <div class="rail-div"></div>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>Adjust</span>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Template</span>
+      <div class="rail-div"></div>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></svg>Versions</span>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg>Rights</span>
+      <span class="ri on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 11v6"/><path d="M19 13h2"/><path d="M2 21a8 8 0 0 1 12.868-6.349"/><circle cx="10" cy="8" r="5"/><circle cx="19" cy="19" r="2"/></svg>Access</span>
+    </nav>
+    <div class="panel">
+      <div class="ph"><span class="title">Access</span></div>
+      <div class="sec">
+        <div class="sec-head coll">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          People &amp; groups <span class="count">1</span>
+          <span class="tri closed"><svg viewBox="0 0 10 10"><path d="M1 2.5l4 5 4-5z" fill="currentColor"/></svg></span>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="sec-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          Public links
+        </div>
+
+        <div class="inert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <div class="t2"><b>Public delivery not permitted.</b> Licence is internal use only — the talent release doesn't cover public distribution. Change the licence in <b>Rights</b> to enable publishing.</div>
+        </div>
+
+        <div class="eyebrow">Available outputs</div>
+        <div class="list-row dis">
+          <div class="lr-main">
+            <div class="t">Web Large</div><div class="m">JPG · 1600 × 900</div>
+            <div class="why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>Not permitted — internal use only</div>
+          </div>
+        </div>
+        <div class="list-row dis">
+          <div class="lr-main">
+            <div class="t">Social Square</div><div class="m">JPG · 1080 × 1080</div>
+            <div class="why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>Not permitted — internal use only</div>
+          </div>
+        </div>
+        <div class="list-row dis">
+          <div class="lr-main">
+            <div class="t">Print High-res</div><div class="m">TIFF · 300 dpi</div>
+            <div class="why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>Not permitted — internal use only</div>
+          </div>
+        </div>
+
+        <button class="btn btn-pri btn-full off">Publish to CDN</button>
+        <div style="margin-top:10px;text-align:center;"><button class="btn btn-ter">Open Rights <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px;"><path d="m9 18 6-6-6-6"/></svg></button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 5 · Revoked on expiry ============ -->
+<div class="case">
+  <div class="cap">5 · Revoked — rights expired</div>
+  <div class="capnote">The only enforcement an unsigned URL has. Expiry fires <b>revoke → edge purge</b>. The panel reports the purge as a read-only field row, because that's the evidence the audit needs.</div>
+  <div class="shell">
+    <nav class="rail">
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>Details</span>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v6M20 4 9 15"/></svg>Attributes</span>
+      <div class="rail-div"></div>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>Adjust</span>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Template</span>
+      <div class="rail-div"></div>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></svg>Versions</span>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg>Rights</span>
+      <span class="ri on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 11v6"/><path d="M19 13h2"/><path d="M2 21a8 8 0 0 1 12.868-6.349"/><circle cx="10" cy="8" r="5"/><circle cx="19" cy="19" r="2"/></svg>Access</span>
+    </nav>
+    <div class="panel">
+      <div class="ph"><span class="title">Access</span></div>
+      <div class="sec">
+        <div class="sec-head coll">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          People &amp; groups <span class="count">3</span>
+          <span class="tri closed"><svg viewBox="0 0 10 10"><path d="M1 2.5l4 5 4-5z" fill="currentColor"/></svg></span>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="sec-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          Public links
+        </div>
+
+        <div class="inert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <div class="t2"><b>Rights expired 30 Jun 2026.</b> 4 public URLs were revoked and purged. Any embed still pointing at them now returns 404. Record the new licence terms in <b>Rights</b> to republish — the URLs are deterministic and will be identical.</div>
+        </div>
+
+        <div class="eyebrow">Revocation record</div>
+        <div class="ro-row"><span class="k">Triggered by</span><span class="v">Rights expiry job · 30 Jun 2026, 23:59 UTC</span></div>
+        <div class="ro-row"><span class="k">URLs revoked</span><span class="v">4</span></div>
+        <div class="ro-row"><span class="k">Edge purge</span><span class="v">Confirmed 23:59:41 UTC · 41s</span></div>
+        <div class="ro-row"><span class="k">Last published by</span><span class="v">S. Byrne · 04 Jul 2026</span></div>
+
+        <button class="btn btn-pri btn-full off">Publish to CDN</button>
+        <div style="margin-top:10px;text-align:center;"><button class="btn btn-ter">Open Rights <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px;"><path d="m9 18 6-6-6-6"/></svg></button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 6 · Read-only + bulk ============ -->
+<div class="case">
+  <div class="cap">6 · Contributor · bulk selection</div>
+  <div class="capnote">Two rules, one panel. Read-only role: rows and copy stay, publish goes. Bulk: publish is <b>per-asset, not a delta</b> — it goes <b>inert + explained</b>, the same call as the AI suggestions tray.</div>
+  <div class="shell" style="height:auto;padding-bottom:0;">
+    <nav class="rail">
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>Details</span>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v6M20 4 9 15"/></svg>Attributes</span>
+      <div class="rail-div"></div>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>Adjust</span>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Template</span>
+      <div class="rail-div"></div>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></svg>Versions</span>
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg>Rights</span>
+      <span class="ri on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 11v6"/><path d="M19 13h2"/><path d="M2 21a8 8 0 0 1 12.868-6.349"/><circle cx="10" cy="8" r="5"/><circle cx="19" cy="19" r="2"/></svg>Access</span>
+    </nav>
+    <div class="panel">
+      <div class="ph"><span class="title">Access</span></div>
+
+      <div class="eyebrow" style="margin-top:0;">Read-only role · contributor</div>
+      <div class="sec" style="margin-top:0;">
+        <div class="sec-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          Public links <span class="count">2</span>
+        </div>
+        <div class="list-row">
+          <div class="lr-main">
+            <div class="t">Web Large</div><div class="m">JPG · 1600 × 900 · 240 KB</div>
+            <div class="u">cdn.screendragon.com/a/8f3c2a1e/web-large.jpg</div>
+          </div>
+          <div class="lr-acts"><button class="btn btn-gho" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div>
+        </div>
+        <div class="list-row">
+          <div class="lr-main">
+            <div class="t">Social Square</div><div class="m">JPG · 1080 × 1080 · 180 KB</div>
+            <div class="u">cdn.screendragon.com/a/8f3c2a1e/social-square.jpg</div>
+          </div>
+          <div class="lr-acts"><button class="btn btn-gho" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div>
+        </div>
+        <div class="inert" style="margin-top:10px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <div class="t2">Publishing and revoking require the <b>DAM Manager</b> role. Existing links remain copyable.</div>
+        </div>
+      </div>
+
+      <div class="eyebrow">Bulk · 30 selected</div>
+      <div class="sec" style="margin-top:0;padding-bottom:20px;">
+        <div class="sec-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          Public links
+        </div>
+        <div class="inert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <div class="t2"><b>Publishing is per-asset.</b> Eligible presets depend on each asset's rights and file type, so there is no common delta to patch across a selection. Open a single asset to publish it. <b>Bulk copy</b> of already-published links is available from the library action bar.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ============================================================
+     CONFIRM
+     ============================================================ -->
+<div class="block">
+<h2>Publish — structural action, own control + confirm</h2>
+<div class="fix"><b>Publish is not a toggle.</b> The cross-cutting rule says structural / immediate actions get their own control and a confirm, and bypass the global Save — "don't let an immediate action masquerade as a staged edit". A toggle is exactly that masquerade: it reads as a setting that stages. Minting an unsigned, externally-addressable URL is the most consequential immediate action in the panel. It gets a button and a confirm.</div>
+<div style="display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start;">
+  <div class="modal">
+    <div class="mt">Publish to CDN?</div>
+    <div class="mb">4 public URLs will be minted for <b style="color:var(--ed-value);font-weight:600;">GC2026_Mascot_KeyArt_RGB.jpg</b>. Anyone with a URL can retrieve the file without signing in.</div>
+    <div class="ro-row"><span class="k">Outputs</span><span class="v">Web Large, Social Square, Email Banner, Thumbnail</span></div>
+    <div class="ro-row"><span class="k">Excluded</span><span class="v">Print High-res, Original — licence is digital use only</span></div>
+    <div class="ro-row"><span class="k">Rights ceiling</span><span class="v">31 Dec 2026 — links auto-revoke and purge</span></div>
+    <div class="field" style="margin-top:14px;">
+      <div class="flab">Auto-revoke earlier <span class="opt">OPTIONAL</span></div>
+      <input class="inp empty" value="" placeholder="No — run to the rights ceiling">
+    </div>
+    <div class="mf">
+      <button class="btn btn-sec">Cancel</button>
+      <button class="btn btn-pri">Publish 4 links</button>
+    </div>
+  </div>
+  <div style="flex:1 1 320px;min-width:300px;">
+    <ul class="laws">
+      <li><b>The confirm names the exclusions.</b> The panel's disabled rows say <i>what</i> can't publish; the confirm says <i>what will</i>. Both, or the user learns the constraint after the fact.</li>
+      <li><b>Auto-revoke is stated at mint time.</b> The user is told the link has an end date before they paste it into a partner's CMS — not when it 404s.</li>
+      <li><b>Bulk publish gets the same confirm</b>, with the intersection stated: "9 of 12 will publish · 3 blocked by rights · 4 presets common to all 9."</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<!-- ============================================================
+     ROW ACTIONS + WHICH TEMPLATES PUBLISH
+     ============================================================ -->
+<div class="block">
+<h2>Row actions — the ⋯ menu, prototyped</h2>
+<div style="display:flex;gap:34px;flex-wrap:wrap;align-items:flex-start;">
+
+  <div>
+    <div class="cap">Live row · DAM Manager</div>
+    <div class="rowspec" style="margin-bottom:150px;">
+      <div class="list-row" style="border-radius:var(--radius-3);">
+        <div class="lr-main">
+          <div class="t">Web Large</div>
+          <div class="m">JPG · 1600 × 900 · 240 KB</div>
+          <div class="u">cdn.screendragon.com/a/8f3c2a1e/web-large.jpg</div>
+        </div>
+        <div class="lr-acts">
+          <button class="btn btn-gho" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+          <button class="btn btn-gho" style="background:var(--surface-hover-dark);color:var(--ed-value);">⋯</button>
+        </div>
+      </div>
+      <div class="menu">
+        <button class="menu-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Open in new tab</button>
+        <button class="menu-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 16 4-4-4-4M6 8l-4 4 4 4M14.5 4l-5 16"/></svg>Copy as &lt;img&gt; tag</button>
+        <div class="menu-sep"></div>
+        <div class="menu-cap">Manager</div>
+        <button class="menu-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5"/></svg>Force cache purge</button>
+        <button class="menu-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71M2 2l20 20"/></svg>Revoke this link<span class="tag">confirm</span></button>
+      </div>
+    </div>
+
+    <div class="cap">Eligible · not published</div>
+    <div class="rowspec" style="margin-bottom:110px;">
+      <div class="list-row" style="border-radius:var(--radius-3);">
+        <div class="lr-main">
+          <div class="t">Thumbnail</div>
+          <div class="m">JPG · 400 × 225 · 22 KB</div>
+          <div class="none">Eligible — not published</div>
+        </div>
+        <div class="lr-acts">
+          <button class="btn btn-gho" style="background:var(--surface-hover-dark);color:var(--ed-value);">⋯</button>
+        </div>
+      </div>
+      <div class="menu">
+        <button class="menu-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Publish this output<span class="tag">confirm</span></button>
+      </div>
+    </div>
+
+    <div class="cap">Live row · contributor</div>
+    <div class="rowspec">
+      <div class="list-row" style="border-radius:var(--radius-3);">
+        <div class="lr-main">
+          <div class="t">Web Large</div>
+          <div class="m">JPG · 1600 × 900 · 240 KB</div>
+          <div class="u">cdn.screendragon.com/a/8f3c2a1e/web-large.jpg</div>
+        </div>
+        <div class="lr-acts">
+          <button class="btn btn-gho" title="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+          <button class="btn btn-gho" style="background:var(--surface-hover-dark);color:var(--ed-value);">⋯</button>
+        </div>
+      </div>
+      <div class="menu">
+        <button class="menu-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Open in new tab</button>
+        <button class="menu-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 16 4-4-4-4M6 8l-4 4 4 4M14.5 4l-5 16"/></svg>Copy as &lt;img&gt; tag</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="flex:1 1 340px;min-width:320px;">
+    <ul class="laws">
+      <li><b>Copy stays an icon, not a menu item.</b> It's the row's whole job — burying it costs a click on the one thing everyone does.</li>
+      <li><b>Copy as &lt;img&gt; and UTM are per-rendition.</b> This is where the export need lands honestly — one link, one format, one purpose. Not a "copy all" blob.</li>
+      <li><b>UTM tagging is held, not cut.</b> It's in the CDN scope (PRD 4.8.4) but out of this phase. Its slot is the menu, below Copy as &lt;img&gt;. When it lands it opens a small form, appends params, returns a tagged URL — it does not mint a second link, the underlying object is the same.</li>
+      <li><b>Force cache purge</b> is the manual lever for the same machinery the rights-expiry job drives. If the automated purge exists, this is free.</li>
+      <li><b>Revoke this link ≠ Unpublish.</b> Revoking one rendition leaves the others serving. Without it, killing a single bad output means nuking every live embed of that asset. The row falls back to disabled-with-reason: <i>"Revoked by J. D'Arcy · 12 Jul 2026"</i> with Restore in the menu.</li>
+      <li><b>Delivery stats has a slot, not an item.</b> View/download counts per URL are in the CDN scope but not built. It goes here when it exists — a dead menu item is worse than an absent one.</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<div class="block">
+<h2>Which templates publish? — not all of them</h2>
+<div class="fix"><b>Publishing an asset does not mint a URL for every template.</b> It mints one for every <b>shared</b> template an admin has promoted to the <code>public delivery</code> channel, minus the ones the asset's rights forbid. Most templates are download-only — print, working files, masters. The deliverable set is small: three to five.</div>
+
+<table class="map">
+  <thead><tr><th>Gate</th><th>Set by</th><th>Scope</th></tr></thead>
+  <tbody>
+    <tr><td>channel</td><td>Edit template · admin · shared only</td><td>Tenant-wide. Defines the candidate set. Default <b>off</b>. Not settable at creation — a template must exist and be reviewed before it can be promoted. Personal templates cannot be set at all.</td></tr>
+    <tr><td>File-type validity</td><td>System</td><td>A raster preset on an MP4 doesn't exist. No row, no reason — it was never a candidate.</td></tr>
+    <tr><td>Asset rights</td><td>Rights tab</td><td>Prunes the candidate set per asset. Pruned rows stay visible with a red reason.</td></tr>
+    <tr><td>Per-output revoke</td><td>Manager · row ⋯</td><td>The scalpel. Kills one rendition without unpublishing the asset.</td></tr>
+  </tbody>
+</table>
+
+<h2 style="margin-top:30px;">The confirm — flipping <code>channel</code> is a tenant-wide publish event</h2>
+<div style="display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start;margin-top:14px;">
+  <div class="modal" style="width:420px;">
+    <div class="mt">Make "Print 300dpi" publicly deliverable?</div>
+    <div class="mb">This preset will become a public CDN output on every published asset whose rights permit print use.</div>
+    <div class="ro-row"><span class="k">New public URLs</span><span class="v">38,412 across 41,006 published assets</span></div>
+    <div class="ro-row"><span class="k">Excluded by rights</span><span class="v">2,594 — digital-use-only licences</span></div>
+    <div class="ro-row"><span class="k">Reversible</span><span class="v">Yes — unticking revokes and purges all 38,412</span></div>
+    <div class="mf">
+      <button class="btn btn-sec">Cancel</button>
+      <button class="btn btn-pri">Publish 38,412 URLs</button>
+    </div>
+  </div>
+  <div style="flex:1 1 320px;min-width:300px;">
+    <ul class="laws">
+      <li><b>This is the hole.</b> A checkbox in template settings looks like config. It is in fact the single highest-blast-radius action in the DAM — one tick exposes a new public rendition of every published asset in the tenant.</li>
+      <li><b>It needs a blast-radius confirm</b> stating the count, the exclusions, and the reversal cost. Same pattern as the asset-level publish confirm, three orders of magnitude louder.</li>
+      <li><b>Untick is worse than tick.</b> Revoking 38,412 URLs breaks every embed using them — partner websites, CMS templates, email footers. That confirm must be as loud, and it should probably require a reason for the audit log.</li>
+      <li><b>Default off.</b> A new preset is download-only. Public delivery is an opt-in, not something you inherit by creating a crop.</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<!-- ============================================================
+     TEMPLATE SCOPE + CHANNEL
+     ============================================================ -->
+<div class="block">
+<h2>Create a template — no, the channel doesn't go here</h2>
+<div class="fix"><b>The blocker isn't the surface. It's the missing field underneath.</b> A channel needs a <b>scope</b> to hang off, and the create modal has none. Right now "Design test" and "CK T1 Edited 1" sit in the same list as "Instagram Square" — the research called this exactly (<i>"without governance, presets become junk fast"</i>) and it has already happened. Add a public-delivery checkbox to that modal today and anyone can name a crop "Design test" and mint a new public rendition of every published asset in the tenant.</div>
+<ul class="laws" style="margin-bottom:24px;">
+  <li><b>Scope is the prerequisite.</b> Personal vs Shared, with Shared as admin-only. That's already the governance model in the research — it was just never built.</li>
+  <li><b>Create ≠ promote.</b> A new template has never produced a single derivative. Nobody has looked at its output. Committing 38,000 public URLs to an unreviewed crop is an unforced error. You create, you look, then an admin promotes.</li>
+  <li><b>So channel lives on <i>edit</i>, not create</b> — reached from the template row's ⋯ in Saved templates, admin-only. Same surface, different act. No new admin section needed to ship this.</li>
+</ul>
+
+<div style="display:flex;gap:30px;flex-wrap:wrap;align-items:flex-start;">
+
+  <!-- CREATE -->
+  <div>
+    <div class="cap">Create a new template · corrected</div>
+    <div class="capnote" style="width:404px;">Scope added. Aspect-ratio conflict removed. Casing and optional badges brought to contract.</div>
+    <div class="modal" style="width:404px;">
+      <div class="mt">Create a new template</div>
+
+      <div class="field" style="margin-top:16px;">
+        <div class="flab">Template title</div>
+        <input class="inp empty" placeholder="e.g. Instagram Square">
+      </div>
+
+      <div class="field" style="margin-top:14px;">
+        <div class="flab">Scope</div>
+        <div style="display:flex;gap:8px;">
+          <label class="scope on"><span class="dot"></span><span><b>Personal</b><em>Only you see it</em></span></label>
+          <label class="scope"><span class="dot"></span><span><b>Shared</b><em>Admins only</em></span></label>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:14px;">
+        <div class="flab">Output size</div>
+        <div class="chips">
+          <span class="chip">1:1</span><span class="chip on">16:9</span><span class="chip">4:5</span><span class="chip">9:16</span><span class="chip">Custom</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-end;margin-top:9px;">
+          <div style="flex:1;"><div class="flab" style="font-size:11px;">Width</div><input class="inp" value="1600"></div>
+          <span class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          <div style="flex:1;"><div class="flab" style="font-size:11px;">Height</div><input class="inp" value="900"></div>
+        </div>
+        <div class="help">Height follows the ratio. Unlock to set both. No upscaling — outputs are capped at the source resolution.</div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:14px;">
+        <div class="field" style="flex:1;"><div class="flab">Format</div><input class="inp" value="JPEG"></div>
+        <div class="field" style="flex:1;"><div class="flab">Quality</div><input class="inp" value="High (85%)"></div>
+      </div>
+
+      <div class="field" style="margin-top:14px;">
+        <div class="flab">Description <span class="opt">OPTIONAL</span></div>
+        <input class="inp empty" placeholder="What is this template for?">
+      </div>
+
+      <div class="mf"><button class="btn btn-sec">Cancel</button><button class="btn btn-pri">Save template</button></div>
+    </div>
+  </div>
+
+  <!-- EDIT -->
+  <div>
+    <div class="cap">Edit template · admin · shared</div>
+    <div class="capnote" style="width:404px;">Reached from the row ⋯. The channel appears only here, only on Shared, only for admins.</div>
+    <div class="modal" style="width:404px;">
+      <div class="mt">Edit template</div>
+      <div class="mb" style="margin-bottom:4px;">Web Large · shared · v3 · used in 1,204 downloads this quarter</div>
+
+      <div class="ro-row" style="margin-top:12px;"><span class="k">Output</span><span class="v">1600 × 900 · JPEG · High (85%)</span></div>
+      <div class="ro-row"><span class="k">Scope</span><span class="v">Shared · published by SD Admin</span></div>
+
+      <div class="eyebrow">Delivery channel</div>
+      <label class="lchk">
+        <span class="lbox on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M20 6 9 17l-5-5"/></svg></span>
+        <div class="lc-copy">
+          <div class="lc-t">Available as a public CDN link</div>
+          <div class="lc-h">Published assets whose rights permit public distribution will mint a URL for this output. Leave off for print, masters and working files — they stay download-only.</div>
+          <div class="lc-w">Turning this on mints <b>38,412 public URLs</b> across 41,006 published assets. Turning it off later revokes and purges all of them, breaking any live embed.</div>
+        </div>
+      </label>
+
+      <div class="mf"><button class="btn btn-sec">Cancel</button><button class="btn btn-pri">Save template</button></div>
+    </div>
+
+    <div class="cap" style="margin-top:22px;">Same control · personal template</div>
+    <div class="modal" style="width:404px;">
+      <div class="mt">Edit template</div>
+      <div class="mb" style="margin-bottom:4px;">Design test · personal</div>
+      <div class="eyebrow" style="margin-top:14px;">Delivery channel</div>
+      <label class="lchk">
+        <span class="lbox off"></span>
+        <div class="lc-copy" style="opacity:.55;">
+          <div class="lc-t">Available as a public CDN link</div>
+        </div>
+      </label>
+      <div class="why" style="margin:2px 0 0 26px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>Only shared templates can be publicly delivered</div>
+      <div class="help" style="margin-left:26px;">Change scope to Shared first. An admin has to own a format that appears on public URLs across the estate.</div>
+      <div class="mf"><button class="btn btn-sec">Cancel</button><button class="btn btn-pri">Save template</button></div>
+    </div>
+  </div>
+
+  <!-- LIST -->
+  <div style="flex:1 1 320px;min-width:300px;">
+    <div class="cap">Saved templates · list</div>
+    <div class="capnote">Scope is legible at rest. The Public marker is read-only here — it's set on edit.</div>
+    <div style="background:var(--ed-panel);border:1px solid var(--ed-line);border-radius:var(--radius-3);padding:14px;">
+      <div class="eyebrow" style="margin-top:0;">Shared</div>
+      <div class="list-row" style="border-radius:var(--radius-3) var(--radius-3) 0 0;">
+        <div class="lr-main"><div class="t">Instagram Square</div><div class="m">1080 × 1080 · JPEG · High</div></div>
+        <span class="chan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Public</span>
+        <div class="lr-acts"><button class="btn btn-gho">⋯</button></div>
+      </div>
+      <div class="list-row">
+        <div class="lr-main"><div class="t">Web Large</div><div class="m">1600 × 900 · JPEG · High</div></div>
+        <span class="chan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Public</span>
+        <div class="lr-acts"><button class="btn btn-gho">⋯</button></div>
+      </div>
+      <div class="list-row dis" style="border-radius:0;">
+        <div class="lr-main"><div class="t">LinkedIn Banner</div><div class="m">1200 × 627 · JPEG · High</div>
+          <div class="why"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>Image too small</div>
+        </div>
+      </div>
+      <div class="list-row" style="border-radius:0 0 var(--radius-3) var(--radius-3);">
+        <div class="lr-main"><div class="t">Print High-res</div><div class="m">300 dpi · TIFF</div></div>
+        <div class="lr-acts"><button class="btn btn-gho">⋯</button></div>
+      </div>
+
+      <div class="eyebrow">Personal</div>
+      <div class="list-row" style="border-radius:var(--radius-3) var(--radius-3) 0 0;">
+        <div class="lr-main"><div class="t">CK T1 Edited 1</div><div class="m">aspect 0.8 · JPEG · High</div></div>
+        <div class="lr-acts"><button class="btn btn-gho">⋯</button></div>
+      </div>
+      <div class="list-row" style="border-radius:0 0 var(--radius-3) var(--radius-3);">
+        <div class="lr-main"><div class="t">Design test</div><div class="m">600 × 600 · JPEG · High</div></div>
+        <div class="lr-acts"><button class="btn btn-gho">⋯</button></div>
+      </div>
+    </div>
+
+    <ul class="laws" style="margin-top:20px;">
+      <li><b>Two headings do most of the work.</b> Splitting the list by scope is what stops "Design test" reading as a company format. It costs one eyebrow.</li>
+      <li><b>One writer, three readers.</b> Edit-template <i>sets</i> the channel. Saved templates and Access → Public links only <i>show</i> it.</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<div class="block">
+<h2>Other things wrong with that modal</h2>
+<table class="map">
+  <thead><tr><th>Issue</th><th>Fix</th></tr></thead>
+  <tbody>
+    <tr><td>Aspect Ratio <i>and</i> Width <i>and</i> Height</td><td>Three fields, two degrees of freedom. Set aspect 1.777 with W 1080 / H 1080 and the template is self-contradictory — nothing in the UI resolves it. <b>Width × Height is the single source of truth.</b> Ratio becomes a chip row that <i>fills</i> them, with a lock between W and H. Ratio is derived, never stored independently.</td></tr>
+    <tr><td>Title Case throughout</td><td>"Template Title", "Aspect Ratio", "Save New Template". Contract: <b>field labels and buttons are sentence case</b>. Only eyebrows are uppercase. → "Template title", "Save template".</td></tr>
+    <tr><td>No optional badges</td><td>Description is the only optional field and nothing says so; everything else reads equally required. The <code>OPTIONAL</code> badge atom exists — use it, and only on the fields that are.</td></tr>
+    <tr><td>No preview</td><td>You are defining a crop blind. The research is explicit — <i>preview before commit</i>. The focal point is already set on the asset behind the modal; showing the resulting crop is nearly free and it's the difference between a template that works and "CK T1 Edited 1".</td></tr>
+    <tr><td>No no-upscaling guard at creation</td><td>The list enforces it per asset ("Image too small"), but a template is asset-agnostic so nothing stops you defining a 4000px output. State the rule in the modal — outputs are capped at source resolution — so the disabled rows later aren't a surprise.</td></tr>
+    <tr><td>Junk accumulating in a flat list</td><td>Scope split, plus a ⋯ on every row for rename / duplicate / delete. Right now a template can be created and never removed.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ============================================================
+     TWO CUTS
+     ============================================================ -->
+<div class="block">
+<h2>Copy all links — cut</h2>
+<div style="display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start;">
+  <div style="flex:1 1 420px;min-width:380px;">
+    <div class="payload">
+      <div style="color:var(--ed-faint);margin-bottom:8px;">What "copy all" would actually put on the clipboard:</div>
+      <div class="u">https://cdn.screendragon.com/a/8f3c2a1e/web-large.jpg<br>
+      https://cdn.screendragon.com/a/8f3c2a1e/social-square.jpg<br>
+      https://cdn.screendragon.com/a/8f3c2a1e/email-banner.webp</div>
+      <div style="color:var(--ed-error);margin-top:10px;font-size:11px;font-weight:500;">Paste that into Slack and the recipient can't tell which is which without opening all three.</div>
+    </div>
+    <div class="payload" style="margin-top:12px;">
+      <div style="color:var(--ed-faint);margin-bottom:8px;">To be usable it has to be labelled — at which point it isn't a copy button, it's an export:</div>
+      <div><span class="l">Web Large</span> <span class="u">· 1600×900 · https://cdn.screendragon.com/a/…/web-large.jpg</span><br>
+      <span class="l">Social Square</span> <span class="u">· 1080×1080 · https://cdn.screendragon.com/a/…/social-square.jpg</span><br>
+      <span class="l">Email Banner</span> <span class="u">· 1200×400 · https://cdn.screendragon.com/a/…/email-banner.webp</span></div>
+    </div>
+  </div>
+  <div style="flex:1 1 300px;min-width:290px;">
+    <ul class="laws">
+      <li><b>Per-row copy does the job.</b> Nobody needs five renditions of one asset at once. They need <i>one</i>, and they know which.</li>
+      <li><b>The real need is the transpose.</b> One preset across forty assets — a dev building <code>srcset</code>, a producer building a brief. That's a <b>library-level bulk action</b> on a multi-select, not per-asset panel chrome.</li>
+      <li><b>Export ≠ copy.</b> If a structured payload (JSON, <code>&lt;img srcset&gt;</code>, CSV manifest) is genuinely wanted, it's an export with a format choice — and it belongs on the library bulk bar, where the selection is.</li>
+      <li>Cutting it also removes a Secondary button from a dense panel. Nothing is lost.</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<div class="block">
+<h2>Expiry — two clocks, not one</h2>
+<div class="fix"><b>Rights expiry is a ceiling. Auto-revoke is a choice.</b> They are not the same field and conflating them is how you build a liability. Rights expiry lives in Rights, is non-negotiable, and cascades to every link. Auto-revoke lives here, is optional, and can only ever <i>shorten</i> — the picker's max is the rights ceiling. Effective date = <code>min(rights_expiry, auto_revoke)</code>. Same backend either way: revoke → edge purge.</div>
+<table class="map">
+  <thead><tr><th>Field</th><th>Lives in</th><th>Behaviour</th></tr></thead>
+  <tbody>
+    <tr><td>Rights ceiling</td><td>Rights</td><td>Read-only here. Legal limit. Cannot be raised or bypassed from Access.</td></tr>
+    <tr><td>Auto-revoke</td><td>Access · Public links</td><td>Optional, empty by default. Hard-capped at the rights ceiling. Stages to the global Save — it isn't immediate, so it isn't a confirm action.</td></tr>
+  </tbody>
+</table>
+<ul class="laws" style="margin-top:18px;">
+  <li><b>Why it earns a field:</b> a licence can run to 2028 while the campaign ends in March. Without this you leave the asset publicly live for three years because nobody remembered to revoke. Stale public links are the single most common source of leaked assets in DAM.</li>
+  <li><b>What it is not:</b> a share-link expiry. A CDN link exists to be <i>embedded permanently</i> — an expiring embed is a broken partner website. A time-boxed, gated link is a different object, and that's <b>SCR-62</b>. Don't build a third thing here that's neither.</li>
+  <li><b>Set at publish, changed in panel.</b> The confirm carries the field so the decision lands at the moment of consequence; the panel carries it so it can be added later.</li>
+</ul>
+</div>
+
+<!-- ============================================================
+     WHAT THE CONTRACT CHANGED
+     ============================================================ -->
+<div class="block">
+<h2>What the contract changed — corrections to the first pass</h2>
+<table class="map">
+  <thead><tr><th>Was</th><th>Now — and the clause</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Ineligible presets removed</td>
+      <td><b>Ineligible presets stay visible with a red reason.</b> Foundations, selectable list-item: <i>"Unavailable rows stay visible with a red reason (disable, don't hide), never removed."</i> Same atom as <code>⊘ Image too small</code> in the Template picker. Removing them made the constraint silent — the user couldn't learn the print preset exists and why it's off.</td>
+    </tr>
+    <tr>
+      <td>Toggle for Public link</td>
+      <td><b>Button + confirm.</b> Cross-cutting rule 3: structural/immediate actions bypass Save and get their own control + confirm — <i>"don't let an immediate action masquerade as a staged edit."</i></td>
+    </tr>
+    <tr>
+      <td>Accordions with chevrons</td>
+      <td><b>Static sections with icon section headers.</b> Two sections, one tab — the Template precedent (Focal point + Saved templates). Accordion is <i>"used only when collapsing earns it"</i>. And disclosure is a <b>filled triangle</b>, never a chevron — a chevron means navigate.</td>
+    </tr>
+    <tr>
+      <td>Five dark-token "shims" + a Scale ask</td>
+      <td><b>No shims needed.</b> The contract already tokenises the dark editor theme: <code>--ed-panel</code>, <code>--ed-line</code>, <code>--ed-label</code>, <code>--ed-value</code>, <code>--ed-faint</code>, <code>--ed-input-bd</code>, <code>--ed-error</code>, <code>--cerulean-dark</code>, <code>--primary-tint-dark</code>, <code>--surface-hover-dark</code>. I invented a parallel set. Deleted.</td>
+    </tr>
+    <tr>
+      <td>Green "Live" status badge</td>
+      <td><b>Amber.</b> The token block is explicit: <i>"Amber — reserved for the one alert state (public/open)."</i> Public exposure is that state. Green isn't in the panel palette.</td>
+    </tr>
+    <tr>
+      <td>File-type badges on every row</td>
+      <td><b>Dropped.</b> Not a kit atom in any panel. The list-row's meta line already carries type: <i>JPG · 1600 × 900 · 240 KB</i>.</td>
+    </tr>
+    <tr>
+      <td>JetBrains Mono URLs</td>
+      <td><b>Inter, 12/400, faint.</b> Consistency law 6: <i>"Inter, nothing else."</i> Mono was a second typeface smuggled in for a technical string.</td>
+    </tr>
+    <tr>
+      <td>"Renew licence" / "Request a rights change"</td>
+      <td><b>One control, labelled by capability: "Open Rights ›".</b> Two different labels for the same situation was drift I introduced. And the DAM never <i>renews</i> a licence — it records new terms. Chevron because it navigates. Contributors get "Request rights review" instead, which creates a workflow task (structural → confirm).</td>
+    </tr>
+    <tr>
+      <td>Copy all links (Secondary)</td>
+      <td><b>Cut.</b> A newline blob of URLs is unusable; a labelled one is an export, not a copy. The real need is one preset across many assets — a library bulk action, not panel chrome.</td>
+    </tr>
+    <tr>
+      <td>No link-level date control</td>
+      <td><b>Auto-revoke added</b> — optional field row, hard-capped at the rights ceiling, staged to Save. Rights expiry stays read-only in this panel.</td>
+    </tr>
+    <tr>
+      <td>Both sections static</td>
+      <td><b>People &amp; groups is a collapsible section</b> (accordion variant — it's long and optional, so collapsing earns it). Public links stays static: it's the subject of the tab. Disclosure is a <b>filled triangle</b>, rotating; a chevron would mean navigate.</td>
+    </tr>
+    <tr>
+      <td>Panel header with a filename subtitle</td>
+      <td><b>Title only, no subtitle, no divider.</b> Panel contract §1 — the shell top bar already shows "Editing · {file}".</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ============================================================
+     CONFORMANCE + OPEN CALLS
+     ============================================================ -->
+<div class="block">
+<h2>Conformance map — Access</h2>
+<table class="map">
+  <thead><tr><th>Element</th><th>Kit archetype</th></tr></thead>
+  <tbody>
+    <tr><td>Panel header</td><td>Panel header — title only, sentence case, 16 / 600</td></tr>
+    <tr><td>People &amp; groups</td><td>Collapsible section (triangle) + roll-up count · search field (list-filter) · list rows · empty state · full-width Secondary</td></tr>
+    <tr><td>Public links</td><td>Static icon section header + roll-up count · eyebrows · read-only field row (rights ceiling) · optional-badge field (auto-revoke) · list rows incl. disabled-with-reason · empty state · Tertiary unpublish</td></tr>
+    <tr><td>Public / open alert</td><td>Amber — the one alert state. Reserved token, first use.</td></tr>
+    <tr><td>Revocation record</td><td>Read-only field rows (Details archetype)</td></tr>
+    <tr><td>Publish</td><td>Primary + confirm modal. One Primary in the tab.</td></tr>
+    <tr><td>Bulk</td><td>Inert + explained — publish can't operate as a delta across a selection</td></tr>
+  </tbody>
+</table>
+
+<h2 style="margin-top:30px;">Open calls</h2>
+<ul class="laws">
+  <li><b>The contract contradicts itself on the panel header.</b> Foundations says panel header = <code>font-size-3</code> · 16px, and bans 18px outright: <i>"There is no 13px, 15px or 18px."</i> The Panel contract tab says <i>"18px / 600."</i> I built 16. If the merge script's type-ladder assertion isn't catching this, it should be.</li>
+  <li><b>Two Primaries.</b> Grant access and Publish both create data, and the tab allows one Primary. I made Publish the Primary — it's the only action that mints an artefact <i>outside</i> the system — and demoted Grant access to Secondary. That's a call, not a clause. Overrule it if you read it the other way.</li>
+  <li><b>"Embed" is in the rail's tool list.</b> Foundations names edit-only tools as <i>Adjustments · Template · AI · Versions · Embed</i>, but the worked-example rail has no Embed stop. If Embed was the old name for this work, it's now dead — Access absorbed it, and the contract line needs deleting.</li>
+  <li><b>UTM tagging — held.</b> Out of this phase. Slot reserved in the row ⋯ menu, below Copy as &lt;img&gt;. PRD 4.8.4.</li>
+  <li><b>Template scope does not exist yet.</b> Everything here — channel, public delivery, governance — is blocked on adding Personal / Shared to templates. That's the ticket that comes first.</li>
+  <li><b>Purge SLA.</b> Still open, still the thing to take to Mark. Bynder and Brandfolder both market real-time invalidation. ASDA's RFP will ask for a number.</li>
+</ul>
+</div>
+
+</div>
+</body>
+</html>
