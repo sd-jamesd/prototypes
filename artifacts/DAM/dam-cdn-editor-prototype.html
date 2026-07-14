@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAM editor — Adjust · Template · Access</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --c-primary:#0b6e8a; --c-primary-300:#4db5cf; --cerulean-dark:#7ec7dd;
+  --primary-tint-dark:rgba(77,181,207,.16); --surface-hover-dark:rgba(255,255,255,.05);
+  --c-amber:#f5a524;
+  --ed-bg:#1c1815; --ed-panel:#211c19; --ed-chrome:#161311; --ed-line:rgba(255,255,255,0.08);
+  --ed-label:rgba(255,255,255,0.55); --ed-value:rgba(255,255,255,0.92); --ed-faint:rgba(255,255,255,0.4);
+  --ed-input-bg:rgba(255,255,255,0.05); --ed-input-bd:rgba(255,255,255,0.40); --ed-error:#ec7a6e;
+  --radius-2:4px; --radius-3:6px; --pill:9999px;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:#0d0b09;color:var(--ed-value);-webkit-font-smoothing:antialiased;
+  line-height:1.5;padding:20px;}
+button{font-family:var(--font);cursor:pointer;border:none;background:none;color:inherit;}
+input{font-family:var(--font);}
+
+/* ---------- simulator ---------- */
+.sim{max-width:1280px;margin:0 auto 14px;background:#17130f;border:1px solid rgba(255,255,255,.1);
+  border-radius:var(--radius-3);padding:12px 14px;display:flex;gap:22px;flex-wrap:wrap;align-items:center;}
+.sim-g{display:flex;gap:9px;align-items:center;}
+.sim-l{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ed-faint);}
+.seg{display:flex;background:rgba(255,255,255,.05);border:1px solid var(--ed-line);border-radius:var(--radius-2);padding:2px;}
+.seg button{font-size:12px;font-weight:600;color:var(--ed-label);padding:4px 10px;border-radius:3px;white-space:nowrap;}
+.seg button.on{background:var(--primary-tint-dark);color:var(--cerulean-dark);}
+.sw{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ed-label);}
+.sw .tk{width:32px;height:18px;border-radius:var(--pill);background:rgba(255,255,255,.16);position:relative;transition:.15s;}
+.sw .tk::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.15s;}
+.sw.on .tk{background:var(--c-primary);}
+.sw.on .tk::after{transform:translateX(14px);}
+.sim .rst{margin-left:auto;font-size:12px;font-weight:600;color:var(--cerulean-dark);
+  border:1px solid var(--cerulean-dark);border-radius:var(--radius-2);padding:5px 12px;}
+
+/* ---------- app shell ---------- */
+.app{max-width:1280px;margin:0 auto;background:var(--ed-panel);border:1px solid var(--ed-line);
+  border-radius:8px;overflow:hidden;box-shadow:0 20px 50px -20px rgba(0,0,0,.8);}
+.top{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--ed-chrome);
+  border-bottom:1px solid var(--ed-line);}
+.top .ic{color:var(--cerulean-dark);display:flex;}
+.top .ed{font-size:14px;font-weight:700;}
+.top .dot{color:var(--ed-faint);}
+.top .fn{font-size:14px;color:var(--ed-label);}
+.top .ta{margin-left:auto;display:flex;gap:8px;}
+.body{display:flex;height:660px;}
+
+/* rail */
+.rail{width:88px;flex:none;background:#26211f;border-right:1px solid var(--ed-line);
+  display:flex;flex-direction:column;gap:2px;padding:8px 0;overflow-y:auto;}
+.ri{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;
+  color:rgba(255,255,255,.62);font-size:12px;font-weight:500;text-align:center;width:100%;}
+.ri svg{width:20px;height:20px;stroke-linecap:round;stroke-linejoin:round;}
+.ri:hover{background:var(--surface-hover-dark);color:rgba(255,255,255,.88);}
+.ri.on{color:var(--cerulean-dark);background:var(--primary-tint-dark);}
+.ri.on::before{content:'';position:absolute;left:0;top:5px;bottom:5px;width:3px;background:var(--cerulean-dark);border-radius:0 2px 2px 0;}
+.ri.inert{opacity:.42;cursor:default;}
+.ri.inert:hover{background:none;color:rgba(255,255,255,.62);}
+.rail-div{height:1px;background:rgba(255,255,255,.09);margin:7px 15px;flex:none;}
+
+/* panel */
+.panel{width:330px;flex:none;padding:18px 16px;overflow-y:auto;overflow-x:hidden;
+  display:flex;flex-direction:column;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.16) transparent;}
+.panel::-webkit-scrollbar{width:8px;height:0;}
+.panel::-webkit-scrollbar-track{background:transparent;}
+.panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:var(--pill);
+  border:2px solid transparent;background-clip:padding-box;}
+.panel::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.26);background-clip:padding-box;}
+.rail{scrollbar-width:none;} .rail::-webkit-scrollbar{display:none;}
+.ph{font-size:16px;font-weight:600;margin-bottom:16px;flex:none;}
+.sec{margin-bottom:18px;}
+.sh{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600;padding-bottom:10px;}
+.sh > svg{width:16px;height:16px;color:var(--ed-faint);flex:none;}
+.sh .count{font-size:11px;font-weight:600;color:var(--c-primary-300);}
+.sh .act{margin-left:auto;}
+.sh.coll{cursor:pointer;border-bottom:1px solid var(--ed-line);}
+.tri{margin-left:auto;color:var(--ed-faint);display:inline-flex;}
+.tri svg{width:8px;height:8px;transition:transform .12s;}
+.tri.closed svg{transform:rotate(-90deg);}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ed-faint);margin:15px 0 8px;}
+
+/* fields */
+.field{margin-bottom:12px;min-width:0;}
+.inp{max-width:100%;}
+input[type=date].inp{min-width:0;}
+.flab{font-size:12px;color:var(--ed-label);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.opt{font-size:11px;font-weight:700;color:var(--ed-faint);border:1px solid var(--ed-faint);padding:0 5px;border-radius:3px;}
+.inp{width:100%;background:var(--ed-input-bg);border:1px solid var(--ed-input-bd);border-radius:var(--radius-2);
+  color:var(--ed-value);font-size:14px;padding:8px 11px;outline:none;}
+.inp:focus{border-color:var(--cerulean-dark);}
+.inp::placeholder{color:rgba(255,255,255,.32);}
+select.inp{appearance:none;cursor:pointer;}
+.help{font-size:11px;color:var(--ed-faint);margin-top:5px;line-height:16px;}
+.ro{display:grid;grid-template-columns:100px 1fr;gap:10px;padding:6px 0;font-size:12px;border-bottom:1px solid var(--ed-line);}
+.ro:last-of-type{border-bottom:none;}
+.ro{min-width:0;} .ro .k{color:var(--ed-label);} .ro .v{color:var(--ed-value);font-weight:500;min-width:0;overflow-wrap:anywhere;}
+.lockrow{display:flex;gap:8px;align-items:center;}
+.lockrow .inp{flex:1;min-width:0;}
+.lockbtn{width:34px;height:36px;flex:none;border:1px solid var(--ed-input-bd);border-radius:var(--radius-2);
+  display:flex;align-items:center;justify-content:center;color:var(--cerulean-dark);background:var(--primary-tint-dark);}
+.lockbtn svg{width:14px;height:14px;}
+.rot{display:flex;gap:8px;align-items:center;}
+.rbtn{width:34px;height:34px;border:1px solid var(--ed-input-bd);border-radius:var(--radius-2);
+  display:flex;align-items:center;justify-content:center;}
+.rbtn svg{width:15px;height:15px;}
+
+/* date control */
+.datewrap{display:flex;gap:8px;align-items:center;}
+.datewrap .inp{flex:1;min-width:0;}
+input[type=date].inp{cursor:pointer;color-scheme:dark;}
+input[type=date].inp:invalid{border-color:var(--ed-error);}
+.eff{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;margin-top:7px;
+  padding:6px 9px;border-radius:3px;}
+.eff.set{color:#e0b060;background:rgba(245,165,36,.12);border:1px solid rgba(245,165,36,.28);}
+.eff.none{color:var(--ed-faint);background:rgba(255,255,255,.03);border:1px solid var(--ed-line);}
+.eff.bad{color:var(--ed-error);background:rgba(236,122,110,.10);border:1px solid rgba(236,122,110,.32);}
+.eff svg{width:12px;height:12px;flex:none;}
+
+/* buttons */
+.btn{font-size:14px;font-weight:600;height:34px;padding:0 13px;border-radius:var(--radius-2);
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;}
+.btn svg{width:14px;height:14px;flex:none;}
+.btn-pri{background:var(--c-primary);color:#fff;}
+.btn-pri:hover{background:#095c74;}
+.btn-sec{background:transparent;color:var(--cerulean-dark);border-color:var(--cerulean-dark);}
+.btn-sec:hover{background:var(--primary-tint-dark);}
+.btn-ter{background:transparent;color:var(--cerulean-dark);}
+.btn-ter:hover{background:var(--surface-hover-dark);}
+.btn-gho{background:transparent;color:var(--ed-faint);height:28px;padding:0 6px;}
+.btn-gho:hover{background:var(--surface-hover-dark);color:var(--ed-value);}
+.btn-dst{background:transparent;color:var(--ed-error);border-color:var(--ed-error);}
+.btn-full{width:100%;}
+.btn[disabled]{opacity:.4;cursor:not-allowed;}
+.btn-sm{height:28px;font-size:12px;padding:0 9px;}
+.acts{margin-top:auto;padding-top:16px;display:flex;flex-direction:column;gap:8px;flex:none;}
+
+/* list rows (Access) */
+.lr{display:flex;align-items:center;gap:10px;border:1px solid var(--ed-line);padding:10px 11px;}
+.lr:first-of-type{border-radius:var(--radius-3) var(--radius-3) 0 0;}
+.lr:last-of-type{border-radius:0 0 var(--radius-3) var(--radius-3);}
+.lr + .lr{margin-top:-1px;}
+.lr.dis{opacity:.55;}
+.lr-m{flex:1;min-width:0;}
+.lr-t{font-size:14px;font-weight:500;}
+.lr-s{font-size:12px;color:var(--ed-label);margin-top:2px;}
+.lr-u{font-size:12px;color:var(--ed-faint);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lr-a{display:flex;gap:2px;flex:none;position:relative;}
+.why{font-size:11px;font-weight:500;color:var(--ed-error);margin-top:4px;display:flex;align-items:center;gap:5px;}
+.why svg{width:11px;height:11px;flex:none;}
+.gen{font-size:11px;font-weight:500;color:var(--cerulean-dark);margin-top:4px;display:flex;align-items:center;gap:5px;}
+.gen svg{width:11px;height:11px;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.none{font-size:12px;color:var(--ed-faint);font-style:italic;margin-top:4px;}
+.skel{display:inline-block;height:9px;width:42px;border-radius:2px;vertical-align:-1px;
+  background:linear-gradient(90deg,rgba(255,255,255,.07) 25%,rgba(255,255,255,.17) 37%,rgba(255,255,255,.07) 63%);
+  background-size:400% 100%;animation:sh 1.3s ease infinite;}
+@keyframes sh{0%{background-position:100% 50%}100%{background-position:0 50%}}
+
+/* selectable list (Template) */
+.li{display:flex;gap:10px;align-items:center;padding:9px 8px;border-bottom:1px solid var(--ed-line);
+  border-left:2px solid transparent;cursor:pointer;}
+.li:hover{background:var(--surface-hover-dark);}
+.li.on{background:var(--primary-tint-dark);border-left-color:var(--cerulean-dark);}
+.li.dis{opacity:.55;cursor:default;}
+.li.dis:hover{background:none;}
+.cbx{width:15px;height:15px;border-radius:3px;border:1.5px solid rgba(255,255,255,.4);flex:none;
+  display:flex;align-items:center;justify-content:center;}
+.cbx.on{background:var(--c-primary);border-color:var(--c-primary);}
+.cbx.on svg{width:9px;height:9px;color:#fff;}
+.cbx.no{border-color:rgba(255,255,255,.16);background:rgba(255,255,255,.03);}
+.thumb{border-radius:2px;flex:none;background:linear-gradient(135deg,#4a6f82 0%,#8fa6a0 45%,#c9a06a 100%);}
+.li-m{flex:1;min-width:0;}
+.li-t{font-size:14px;font-weight:600;}
+.li-s{font-size:12px;color:var(--ed-label);margin-top:1px;}
+.chan{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--cerulean-dark);
+  background:var(--primary-tint-dark);border-radius:var(--pill);padding:1px 7px;flex:none;}
+.chan svg{width:10px;height:10px;}
+.grp{display:flex;align-items:center;gap:8px;padding:9px 8px;font-size:12px;font-weight:600;color:var(--ed-label);
+  border-top:1px solid var(--ed-line);cursor:pointer;}
+.grp:hover{background:var(--surface-hover-dark);}
+.grp .n{margin-left:auto;font-size:11px;color:var(--ed-faint);font-weight:500;}
+
+/* channel chips — .chip was never defined; the toggles were rendering as plain text */
+.chips{display:flex;gap:9px;flex-wrap:wrap;min-width:0;}
+.chip{font-size:12px;font-weight:500;color:var(--ed-label);border:1px solid var(--ed-input-bd);
+  border-radius:var(--pill);padding:4px 11px;background:transparent;white-space:nowrap;}
+.chip:hover:not([disabled]){border-color:var(--cerulean-dark);color:var(--ed-value);}
+.chip.on{background:var(--primary-tint-dark);border-color:var(--cerulean-dark);color:var(--cerulean-dark);}
+.chip[disabled]{opacity:.45;cursor:not-allowed;}
+
+/* alerts */
+.alert{display:flex;gap:9px;align-items:flex-start;padding:10px 12px;border-radius:var(--radius-3);margin-bottom:12px;}
+.alert svg{width:15px;height:15px;flex:none;margin-top:1px;}
+.alert .at{font-size:12px;color:var(--ed-label);line-height:17px;}
+.alert .at b{display:block;color:var(--ed-value);font-weight:600;margin-bottom:2px;}
+.a-open{border:1px solid rgba(245,165,36,.35);background:rgba(245,165,36,.10);}
+.a-open svg{color:var(--c-amber);}
+.a-info{border:1px dashed var(--ed-line);background:rgba(255,255,255,.02);}
+.a-info svg{color:var(--ed-faint);}
+.a-err{border:1px solid rgba(236,122,110,.35);background:rgba(236,122,110,.10);}
+.a-err svg{color:var(--ed-error);}
+.empty{text-align:center;padding:24px 8px;color:var(--ed-label);}
+.empty svg{width:26px;height:26px;color:var(--ed-faint);margin-bottom:10px;}
+.empty .e1{font-size:14px;} .empty .e2{margin-top:14px;}
+.audit{font-size:11px;color:var(--ed-faint);padding-top:12px;margin-top:10px;border-top:1px solid var(--ed-line);line-height:16px;}
+
+/* stage */
+.stage{flex:1;background:var(--ed-bg);border-left:1px solid var(--ed-line);padding:16px;
+  display:flex;flex-direction:column;gap:12px;min-width:0;overflow:hidden;}
+.acc{display:flex;gap:8px;align-items:center;font-size:11px;color:var(--ed-faint);flex:none;}
+.acc svg{width:13px;height:13px;flex:none;} .acc b{color:var(--ed-label);font-weight:600;}
+.canvas{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;}
+.crop{position:relative;background:linear-gradient(135deg,#4a6f82 0%,#8fa6a0 45%,#c9a06a 100%);
+  outline:1px solid rgba(255,255,255,.85);border-radius:2px;transition:width .18s,height .18s;}
+.crop::before,.crop::after{content:'';position:absolute;inset:0;pointer-events:none;}
+.crop::before{border-left:1px solid rgba(255,255,255,.26);border-right:1px solid rgba(255,255,255,.26);margin:0 33.3%;}
+.crop::after{border-top:1px solid rgba(255,255,255,.26);border-bottom:1px solid rgba(255,255,255,.26);margin:33.3% 0;}
+.hnd{position:absolute;width:8px;height:8px;border-radius:50%;background:#fff;}
+.hnd.a{top:-4px;left:-4px}.hnd.b{top:-4px;right:-4px}.hnd.c{bottom:-4px;left:-4px}.hnd.d{bottom:-4px;right:-4px}
+.focal{position:absolute;width:20px;height:20px;border-radius:50%;border:2px solid var(--c-amber);
+  top:42%;left:57%;box-shadow:0 0 0 3px rgba(0,0,0,.35);}
+.focal::after{content:'';position:absolute;inset:6px;border-radius:50%;background:var(--c-amber);}
+.outs{border-top:1px solid var(--ed-line);padding-top:12px;flex:none;}
+.outs-h{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600;margin-bottom:10px;}
+.outs-h > svg{width:16px;height:16px;color:var(--ed-faint);}
+.outs-h .count{font-size:11px;font-weight:600;color:var(--c-primary-300);}
+.outs-h .act{margin-left:auto;}
+.chips{display:flex;gap:9px;flex-wrap:wrap;}
+.oc{display:flex;gap:9px;align-items:center;padding:7px 10px;border:1px solid var(--ed-line);border-radius:var(--radius-3);min-width:180px;}
+.oc.eph{border-style:dashed;border-color:var(--cerulean-dark);background:var(--primary-tint-dark);}
+.oc.add{border-style:dashed;color:var(--cerulean-dark);font-size:12px;font-weight:600;justify-content:center;cursor:pointer;}
+.oc.add:hover{background:var(--primary-tint-dark);}
+.oc-t{font-size:12px;font-weight:600;} .oc-s{font-size:11px;color:var(--ed-label);margin-top:1px;}
+.eph-x{margin-left:auto;color:var(--ed-faint);font-size:14px;padding:0 2px;}
+
+/* menus */
+.menu{position:absolute;right:0;top:calc(100% + 4px);z-index:60;min-width:224px;padding:4px;
+  background:#2a2422;border:1px solid var(--ed-input-bd);border-radius:var(--radius-3);
+  box-shadow:0 14px 32px -8px rgba(0,0,0,.75);}
+.menu.up{top:auto;bottom:calc(100% + 4px);}
+.mi{display:flex;align-items:center;gap:9px;width:100%;padding:7px 8px;font-size:12px;color:var(--ed-label);
+  border-radius:var(--radius-2);text-align:left;}
+.mi svg{width:14px;height:14px;flex:none;color:var(--ed-faint);}
+.mi:hover{background:var(--surface-hover-dark);color:var(--ed-value);}
+.mi.dst{color:var(--ed-error);} .mi.dst svg{color:var(--ed-error);}
+.mi .tag{margin-left:auto;font-size:11px;font-weight:600;color:var(--ed-faint);display:inline-flex;align-items:center;gap:3px;white-space:nowrap;}
+.mi .tag svg{width:10px;height:10px;}
+.msep{height:1px;background:var(--ed-line);margin:4px 0;}
+.mcap{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ed-faint);padding:6px 8px 4px;}
+
+/* modal */
+.ovl{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;}
+.mdl{width:460px;max-height:88vh;overflow-y:auto;overflow-x:hidden;
+  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.16) transparent;background:var(--ed-panel);border:1px solid var(--ed-line);
+  border-radius:8px;padding:20px;box-shadow:0 26px 60px -14px rgba(0,0,0,.8);}
+.mdl .mt{font-size:16px;font-weight:600;margin-bottom:6px;}
+.mdl .mb{font-size:14px;color:var(--ed-label);margin-bottom:14px;}
+.mdl .mf{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid var(--ed-line);}
+.pv{display:flex;gap:12px;align-items:center;padding:11px;background:var(--ed-chrome);border:1px solid var(--ed-line);
+  border-radius:var(--radius-2);margin-bottom:14px;}
+.pv .px{width:60px;height:60px;border-radius:2px;flex:none;background:linear-gradient(135deg,#4a6f82,#8fa6a0 45%,#c9a06a);}
+.pv .pt{font-size:12px;font-weight:600;} .pv .ps{font-size:11px;color:var(--ed-label);margin-top:3px;line-height:16px;}
+.scope{flex:1;display:flex;gap:8px;align-items:flex-start;padding:9px 10px;border:1px solid var(--ed-input-bd);
+  border-radius:var(--radius-2);cursor:pointer;}
+.scope.on{border-color:var(--cerulean-dark);background:var(--primary-tint-dark);}
+.scope.no{opacity:.42;cursor:not-allowed;}
+.scope .dt{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--ed-faint);flex:none;margin-top:2px;}
+.scope.on .dt{border-color:var(--cerulean-dark);border-width:4px;}
+.scope b{display:block;font-size:12px;font-weight:500;} .scope em{display:block;font-size:11px;font-style:normal;color:var(--ed-faint);margin-top:1px;}
+.dupe{display:flex;gap:9px;padding:11px;border:1px solid rgba(245,165,36,.32);background:rgba(245,165,36,.10);
+  border-radius:var(--radius-2);margin-top:12px;}
+.dupe svg{width:15px;height:15px;color:var(--c-amber);flex:none;margin-top:1px;}
+.dupe .dt2{font-size:12px;color:var(--ed-label);line-height:17px;}
+.dupe .dt2 b{display:block;color:var(--ed-value);font-weight:600;margin-bottom:2px;}
+
+/* ============================================================
+   ORG MANAGER — light surface (the theme the contract uses for
+   library, filters, lightbox and collections)
+   ============================================================ */
+.appnav{max-width:1280px;margin:0 auto 14px;display:flex;gap:2px;align-items:center;
+  background:#17130f;border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-3);padding:6px;}
+.appnav .brand{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ed-faint);padding:0 12px 0 8px;}
+.appnav .nav{font-size:13px;font-weight:600;color:var(--ed-label);padding:7px 14px;border-radius:var(--radius-2);}
+.appnav .nav:hover{background:var(--surface-hover-dark);color:var(--ed-value);}
+.appnav .nav.on{background:var(--primary-tint-dark);color:var(--cerulean-dark);}
+
+.mgr{max-width:1280px;margin:0 auto;background:#fff;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden;
+  color:#261e1b;box-shadow:0 20px 50px -20px rgba(0,0,0,.6);}
+.mgr .mh{padding:18px 22px 0;}
+.mgr .crumb{font-size:12px;color:#978985;margin-bottom:4px;}
+.mgr .mt2{font-size:16px;font-weight:700;letter-spacing:-.01em;}
+.mgr .msub{font-size:12px;color:#6b615e;margin-top:3px;max-width:640px;}
+.capbar{display:flex;align-items:center;gap:14px;margin-top:16px;padding:12px 14px;
+  background:#fefcfc;border:1px solid #e7e5e4;border-radius:var(--radius-3);}
+.capbar.full{border-color:#f0b9ac;background:#fdf3f1;}
+.capbar .cb-t{font-size:12px;font-weight:600;}
+.capbar .cb-s{font-size:11px;color:#6b615e;margin-top:2px;}
+.capbar .cb-m{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.pips{display:flex;gap:4px;}
+.pip{width:22px;height:6px;border-radius:var(--pill);background:#e7e5e4;}
+.pip.on{background:var(--c-primary);}
+.capbar.full .pip.on{background:#d13415;}
+.cb-n{font-size:12px;font-weight:600;white-space:nowrap;}
+.capbar.full .cb-n{color:#d13415;}
+
+.mtabs{display:flex;gap:2px;padding:16px 22px 0;border-bottom:1px solid #e7e5e4;}
+.mtab{font-size:14px;font-weight:600;color:#6b615e;padding:8px 12px;border-radius:var(--radius-2) var(--radius-2) 0 0;
+  display:flex;align-items:center;gap:7px;position:relative;}
+.mtab:hover{background:#f5f5f4;}
+.mtab.on{color:var(--c-primary);background:#E4F5FC;}
+.mtab.on::after{content:'';position:absolute;left:8px;right:8px;bottom:-1px;height:2px;background:var(--c-primary);}
+.mtab .n{font-size:11px;font-weight:600;color:#6b615e;background:#fefcfc;border:1px solid #e7e5e4;border-radius:var(--pill);padding:0 6px;}
+.mtab.on .n{color:var(--c-primary);border-color:#4db5cf;background:#fff;}
+
+.tbl{width:100%;border-collapse:collapse;font-size:14px;}
+.tbl th{text-align:left;font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#978985;
+  padding:10px 22px;border-bottom:1px solid #e7e5e4;}
+.tbl td{padding:11px 22px;border-bottom:1px solid #f5f5f4;vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:#fefcfc;}
+.tn{display:flex;align-items:center;gap:10px;}
+.tmb{border-radius:2px;flex:none;background:linear-gradient(135deg,#4a6f82,#8fa6a0 45%,#c9a06a);}
+.t-name{font-size:14px;font-weight:600;}
+.t-meta{font-size:12px;color:#6b615e;}
+.t-num{font-size:14px;font-weight:500;}
+.t-sub{font-size:11px;color:#978985;}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;border-radius:var(--pill);
+  padding:2px 9px;border:1px solid;white-space:nowrap;}
+.badge svg{width:10px;height:10px;}
+.b-public{color:var(--c-primary);background:#E4F5FC;border-color:#4db5cf;}
+.b-dl{color:#6b615e;background:#f5f5f4;border-color:#e7e5e4;}
+.b-stale{color:#985b00;background:#ffefd5;border-color:#f5a524;}
+.b-never{color:#978985;background:#fff;border-color:#e7e5e4;}
+
+.lbtn{font-size:14px;font-weight:600;height:32px;padding:0 13px;border-radius:var(--radius-2);
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid transparent;white-space:nowrap;}
+.lbtn svg{width:14px;height:14px;}
+.l-pri{background:var(--c-primary);color:#fff;}
+.l-sec{background:transparent;color:var(--c-primary);border-color:var(--c-primary);}
+.l-ter{background:transparent;color:var(--c-primary);}
+.l-dst{background:transparent;color:#d13415;border-color:#d13415;}
+.l-gho{background:transparent;color:#978985;height:28px;padding:0 6px;}
+.l-gho:hover{background:#f5f5f4;color:#261e1b;}
+.lbtn.sm{height:28px;font-size:12px;padding:0 10px;}
+.lbtn[disabled]{opacity:.4;cursor:not-allowed;}
+
+.lmenu{position:absolute;right:0;top:calc(100% + 4px);z-index:60;min-width:246px;padding:4px;
+  background:#fff;border:1px solid #d6d3d1;border-radius:var(--radius-3);
+  box-shadow:0 14px 32px -8px rgba(0,0,0,.22);text-align:left;}
+.lmenu.up{top:auto;bottom:calc(100% + 4px);}
+.lmi{display:flex;align-items:center;gap:9px;width:100%;padding:7px 8px;font-size:12px;color:#6b615e;
+  border-radius:var(--radius-2);text-align:left;}
+.lmi svg{width:14px;height:14px;flex:none;color:#978985;}
+.lmi:hover{background:#f5f5f4;color:#261e1b;}
+.lmi.dst{color:#d13415;} .lmi.dst svg{color:#d13415;}
+.lmi[disabled]{opacity:.45;}
+.lmi .tag{margin-left:auto;font-size:11px;font-weight:600;color:#978985;display:inline-flex;align-items:center;gap:3px;}
+.lmi .tag svg{width:10px;height:10px;}
+.lsep{height:1px;background:#f5f5f4;margin:4px 0;}
+.lcap{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#978985;padding:6px 8px 4px;}
+.rel{position:relative;display:inline-block;}
+
+.prop{display:flex;gap:14px;padding:14px 22px;border-bottom:1px solid #f5f5f4;align-items:flex-start;}
+.prop:last-child{border-bottom:none;}
+.prop .pvx{border-radius:var(--radius-2);flex:none;background:linear-gradient(135deg,#4a6f82,#8fa6a0 45%,#c9a06a);}
+.prop .pm{flex:1;min-width:0;}
+.prop .pn{font-size:14px;font-weight:600;}
+.prop .ps2{font-size:12px;color:#6b615e;margin-top:2px;}
+.prop .pby{font-size:11px;color:#978985;margin-top:4px;}
+.prop .pa{display:flex;gap:7px;flex:none;align-self:center;}
+.flagline{display:flex;gap:7px;align-items:center;margin-top:7px;padding:6px 9px;background:#ffefd5;
+  border:1px solid #f5a524;border-radius:var(--radius-2);font-size:11px;color:#985b00;font-weight:500;}
+.flagline svg{width:12px;height:12px;flex:none;}
+.mempty{text-align:center;padding:44px 20px;color:#6b615e;font-size:14px;}
+
+/* light modal */
+.mdl.lt{background:#fff;border-color:#e7e5e4;color:#261e1b;}
+.mdl.lt .mb{color:#6b615e;}
+.mdl.lt .ro{border-bottom-color:#f5f5f4;}
+.mdl.lt .ro .k{color:#6b615e;} .mdl.lt .ro .v{color:#261e1b;}
+.mdl.lt .mf{border-top-color:#e7e5e4;}
+.mdl.lt .flab{color:#6b615e;}
+.mdl.lt .inp{background:#fff;border-color:#d6d3d1;color:#261e1b;}
+.mdl.lt .eyebrow{color:#978985;}
+.mdl.lt .opt{color:#978985;border-color:#978985;}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:2px 0;}
+.box{width:16px;height:16px;border-radius:3px;border:1.5px solid #978985;flex:none;margin-top:2px;
+  display:flex;align-items:center;justify-content:center;}
+.box.on{background:var(--c-primary);border-color:var(--c-primary);}
+.box.on svg{width:10px;height:10px;color:#fff;}
+.box.no{border-color:#d6d3d1;background:#f5f5f4;}
+.ck-t{font-size:14px;} .ck-h{font-size:11px;color:#6b615e;margin-top:4px;line-height:16px;}
+.ck-w{font-size:11px;color:#985b00;margin-top:7px;line-height:16px;font-weight:500;background:#ffefd5;
+  border:1px solid #f5a524;border-radius:3px;padding:7px 9px;}
+.ck-no{font-size:11px;color:#d13415;margin-top:5px;font-weight:600;display:flex;gap:5px;align-items:center;}
+.ck-no svg{width:11px;height:11px;flex:none;}
+
+/* toast */
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:200;
+  background:#2a2422;border:1px solid var(--ed-input-bd);border-radius:var(--pill);padding:9px 18px;
+  font-size:13px;font-weight:500;box-shadow:0 12px 30px -8px rgba(0,0,0,.7);
+  display:flex;align-items:center;gap:8px;animation:pop .18s ease;}
+.toast svg{width:14px;height:14px;color:var(--cerulean-dark);}
+@keyframes pop{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+</style>
+</head>
+<body>
+
+<!-- ================= SIMULATOR ================= -->
+<div class="sim">
+  <div class="sim-g">
+    <span class="sim-l">Rights preset</span>
+    <select class="inp" id="segRights" style="width:auto;padding:5px 9px;font-size:12px;font-weight:600;"></select>
+  </div>
+  <div class="sim-g">
+    <span class="sim-l">Role</span>
+    <div class="seg" id="segRole">
+      <button data-v="manager">DAM Manager</button>
+      <button data-v="contributor">Contributor</button>
+    </div>
+  </div>
+  <button class="sw" id="swFail"><span class="tk"></span>Simulate render failure</button>
+  <button class="rst" id="btnReset">Reset</button>
+</div>
+
+<!-- ================= APP ================= -->
+<div class="appnav">
+  <span class="brand">Screendragon</span>
+  <button class="nav" data-v="editor">DAM</button>
+  <button class="nav" data-v="manager">Org Manager</button>
+</div>
+
+<div id="mgrView" style="display:none;"><div class="mgr" id="mgr"></div></div>
+
+<div class="app" id="editorView">
+  <div class="top">
+    <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+    <span class="ed">Editing</span><span class="dot">•</span>
+    <span class="fn">GC2026_Trophy_Hero.jpg</span>
+    <span class="ta">
+      <button class="btn btn-sec btn-sm" onclick="toast('Downloads the master file')">Download</button>
+      <button class="btn btn-pri btn-sm" onclick="toast('Staged field edits saved')">Save</button>
+    </span>
+  </div>
+  <div class="body">
+    <nav class="rail" id="rail"></nav>
+    <div class="panel" id="panel"></div>
+    <div class="stage" id="stage"></div>
+  </div>
+</div>
+
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+
+<script>
+/* ============================================================
+   MODEL
+   ============================================================ */
+const SOURCE = { w:2000, h:1333, name:'GC2026_Trophy_Hero.jpg' };
+
+// channel: 'public' = admin has promoted it to public CDN delivery. 'download' = download only.
+const TEMPLATES = [
+  { slug:'original',       name:'Original',                w:2000, h:1333, fmt:'JPG',  q:'High (85%)', channel:'download', scope:'shared', size:'1.4 MB', uses:412,  live:0,     ver:'v1', by:'SD Admin' },
+  { slug:'web-large',      name:'Web Large',               w:1600, h:900,  fmt:'JPG',  q:'High (85%)', channel:'public',   scope:'shared', size:'240 KB', uses:1204, live:38412, ver:'v3', by:'SD Admin' },
+  { slug:'social-square',  name:'Social Square',           w:1080, h:1080, fmt:'JPG',  q:'High (85%)', channel:'public',   scope:'shared', size:'180 KB', uses:2847, live:36880, ver:'v2', by:'SD Admin' },
+  { slug:'email-banner',   name:'Email Banner',            w:1200, h:400,  fmt:'WebP', q:'High (85%)', channel:'public',   scope:'shared', size:'96 KB',  uses:610,  live:31102, ver:'v1', by:'F. Costa' },
+  { slug:'thumbnail',      name:'Thumbnail',               w:400,  h:225,  fmt:'JPG',  q:'High (85%)', channel:'public',   scope:'shared', size:'22 KB',  uses:184,  live:40006, ver:'v1', by:'SD Admin' },
+  { slug:'linkedin-banner',name:'LinkedIn Banner',         w:1200, h:627,  fmt:'JPG',  q:'High (85%)', channel:'download', scope:'shared', size:'150 KB', uses:340,  live:0, ver:'v1', by:'SD Admin' },
+  { slug:'fb-feed',        name:'Facebook Feed Landscape', w:1080, h:566,  fmt:'JPG',  q:'High (85%)', channel:'download', scope:'shared', size:'130 KB', uses:521,  live:0, ver:'v1', by:'SD Admin' },
+  { slug:'print-highres',  name:'Print High-res',          w:4096, h:2304, fmt:'TIFF', q:'Lossless',   channel:'download', scope:'shared', size:'42 MB',  uses:92,   live:0, ver:'v2', by:'SD Admin', note:'300 dpi',
+                           neverPublic:'42 MB TIFF. Too large to serve from a public address, and print resolution should not be openly downloadable.' },
+  { slug:'ig-story',       name:'Instagram Story',         w:1080, h:1920, fmt:'JPG',  q:'High (85%)', channel:'download', scope:'shared', size:'260 KB', uses:0,    live:0, ver:'v1', by:'SD Admin', stale:14 },
+  { slug:'jd-deck',        name:'JD — deck square',        w:600,  h:600,  fmt:'JPG',  q:'High (85%)', channel:'download', scope:'personal', size:'70 KB', uses:47, live:0, ver:'v1', by:'J. D\'Arcy' },
+  { slug:'jd-billboard',   name:'JD — billboard test',     w:6000, h:3000, fmt:'JPG',  q:'High (85%)', channel:'download', scope:'personal', size:'—',    uses:1,  live:0, ver:'v1', by:'J. D\'Arcy' },
+];
+const CAP = 5;
+const publicCount = ()=> S.templates.filter(t=>t.channel==='public' && t.scope==='shared').length;
+const lowestUse   = ()=> S.templates.filter(t=>t.channel==='public').sort((a,b)=>a.uses-b.uses)[0];
+
+const PROPOSALS = [
+  { id:'p1', name:'Pitch deck 16:9', w:1920, h:1080, fmt:'JPEG', q:'High (85%)', by:'C. Kelly', ago:'3 days ago', uses:47 },
+  { id:'p2', name:'FB feed',         w:1080, h:566,  fmt:'JPEG', q:'High (85%)', by:'S. Byrne', ago:'5 days ago', uses:4, dupe:'Facebook Feed Landscape' },
+  { id:'p3', name:'Square 800',      w:800,  h:800,  fmt:'PNG',  q:'High (85%)', by:'A. Moore', ago:'1 day ago',  uses:2 },
+];
+
+// No upscaling. A template is size-valid if the source can supply it after cropping to the target ratio.
+function sizeValid(t){
+  if(t.slug==='original') return true;
+  const tr = t.w / t.h, sr = SOURCE.w / SOURCE.h;
+  const maxW = tr >= sr ? SOURCE.w : Math.round(SOURCE.h * tr);
+  const maxH = tr >= sr ? Math.round(SOURCE.w / tr) : SOURCE.h;
+  return t.w <= maxW && t.h <= maxH;
+}
+
+/* ------------------------------------------------------------------
+   RIGHTS — asset-level, exactly as the Rights tab models them.
+   There is no per-template rights concept. A public link means
+   "anyone, anywhere, no sign-in", so rights answer ONE binary
+   question about the whole asset. They never prune output-by-output.
+   ------------------------------------------------------------------ */
+const TODAY = '2026-07-14';
+const CHANNELS = ['Open web','Digital','Social','Print','Broadcast','OOH'];
+
+const PRESETS = {
+  cleared:   { label:'Cleared · no expiry',        embargo:'', expiry:'',           territories:'Global',
+               type:'Royalty-free', owner:'Global Cup 2026', channels:['Open web','Digital','Social','Print'] },
+  expiring:  { label:'Cleared · expires 31 Dec 26', embargo:'', expiry:'2026-12-31', territories:'Global',
+               type:'Rights-managed', owner:'Getty Images', channels:['Open web','Digital','Social'] },
+  embargo:   { label:'Embargoed until 1 Sep 26',   embargo:'2026-09-01', expiry:'', territories:'Global',
+               type:'Rights-managed', owner:'Global Cup 2026', channels:['Open web','Digital','Social'] },
+  territory: { label:'Territory · UK & IE only',   embargo:'', expiry:'',           territories:'UK, IE',
+               type:'Rights-managed', owner:'Getty Images', channels:['Open web','Digital','Social'] },
+  noweb:     { label:'Not cleared for open web',   embargo:'', expiry:'',           territories:'Global',
+               type:'Rights-managed', owner:'Redwood Agency', channels:['Print','Broadcast'] },
+  expired:   { label:'Expired 30 Jun 26',          embargo:'', expiry:'2026-06-30', territories:'Global',
+               type:'Rights-managed', owner:'Getty Images', channels:['Open web','Digital','Social'] },
+};
+
+/* The single gate. Binary. Asset-level. */
+function gate(){
+  const r = S.rights;
+  if(!r.channels.includes('Open web'))
+    return { ok:false, kind:'channel',
+             reason:'This licence is not cleared for open web use. A public link serves to anyone, anywhere, with no sign-in — that is an open web channel.' };
+  if(r.territories !== 'Global')
+    return { ok:false, kind:'territory',
+             reason:`This licence is limited to ${r.territories}. A public link cannot be geo-restricted — anyone, anywhere, can load it. Public links need a global clearance.` };
+  if(r.expiry && r.expiry < TODAY)
+    return { ok:false, kind:'expired',
+             reason:`Rights expired ${fmtDate(r.expiry)}.` };
+  if(r.embargo && r.embargo > TODAY)
+    return { ok:false, kind:'embargo',
+             reason:`Embargoed until ${fmtDate(r.embargo)}. Links can be created on or after that date, not before.` };
+  return { ok:true, ceiling: r.expiry || null };
+}
+
+/* Loads in the last 30 days. The only signal for "is anyone actually using this link?" */
+const REQUESTS = { 'original':0, 'web-large':14238, 'social-square':2104, 'email-banner':0, 'thumbnail':61903 };
+
+let S = {};
+function reset(){
+  S = { view:'editor', mgrTab:'shared', proposals:PROPOSALS.map(p=>({...p})), retired:[],
+        tab:'access', preset:'cleared', role:'manager', simFail:false,
+        rights:{...PRESETS.cleared},
+        published:false, outputs:{}, autoRevoke:'', peopleOpen:false, unavailOpen:false, revoked:[],
+        selected:new Set(['web-large']), ephemeral:[], menu:null,
+        templates:TEMPLATES.map(t=>({...t})) };
+}
+reset();
+
+/* candidate public outputs for this asset = public channel ∩ size-valid */
+/* candidates = admin-promoted public templates ∩ this source is big enough. Rights are NOT here. */
+function candidates(){ return S.templates.filter(t=>t.channel==='public' && sizeValid(t)); }
+function eligible(){ return candidates(); }
+const isMgr = ()=> S.role==='manager';
+const url = t => `cdn.screendragon.com/a/8f3c2a1e/${t.slug}.${t.fmt.toLowerCase()==='webp'?'webp':t.fmt.toLowerCase()==='tiff'?'tif':'jpg'}`;
+
+/* ============================================================
+   ICONS
+   ============================================================ */
+const I = {
+  details:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
+  attrs:'<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v6M20 4 9 15"/>',
+  adjust:'<path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/>',
+  template:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>',
+  versions:'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/>',
+  rights:'<path d="M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/>',
+  access:'<path d="M19 11v6"/><path d="M19 13h2"/><path d="M2 21a8 8 0 0 1 12.868-6.349"/><circle cx="10" cy="8" r="5"/><circle cx="19" cy="19" r="2"/>',
+  link:'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+  people:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  dl:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
+  warn:'<path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>',
+  lock:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  no:'<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',
+  info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
+  spin:'<path d="M21 12a9 9 0 1 1-6.219-8.56"/>',
+  ext:'<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+  code:'<path d="m18 16 4-4-4-4M6 8l-4 4 4 4M14.5 4l-5 16"/>',
+  refresh:'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5"/>',
+  trash:'<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+  up:'<path d="M12 19V5M5 12l7-7 7 7"/>',
+  pen:'<path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+  focal:'<circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="9"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3"/>',
+  save:'<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/>',
+  filter:'<path d="M3 6h18M7 12h10M11 18h2"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  chart:'<path d="M3 3v18h18M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>',
+  archive:'<rect x="2" y="4" width="20" height="5" rx="1"/><path d="M4 9v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9M10 13h4"/>',
+};
+const svg=(d,w=16,sw=2)=>`<svg viewBox="0 0 24 24" width="${w}" height="${w}" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const tri = open => `<span class="tri ${open?'':'closed'}"><svg viewBox="0 0 10 10"><path d="M1 2.5l4 5 4-5z" fill="currentColor"/></svg></span>`;
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+
+/* ---------- dates: rights is the ceiling, auto-revoke can only shorten ---------- */
+const todayISO = ()=> TODAY;
+const ceilingISO = ()=> S.rights.expiry || null;
+function fmtDate(iso){ if(!iso) return '—';
+  const [y,m,d]=iso.split('-'); const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${+d} ${M[+m-1]} ${y}`; }
+function setRevoke(v){
+  const c = ceilingISO();
+  if(v && c && v > c){ toast(`Rights expire ${fmtDate(c)} — links can't outlive them`); S.autoRevoke = c; }
+  else S.autoRevoke = v;
+  draw();
+}
+/* the value that actually governs = min(rights ceiling, auto-revoke) */
+function effectiveLine(){
+  const c = ceilingISO(), a = S.autoRevoke;
+  if(!c && !a) return `<div class="eff none">${svg(I.info,12)}These links work forever.</div>`;
+  const eff = (c && a) ? (a < c ? a : c) : (a || c);
+  const src = (c && a) ? (a < c ? 'the link expiry' : 'the rights expiry') : (a ? 'the link expiry' : 'the rights expiry');
+  return `<div class="eff set">${svg(I.clock,12)}Links stop working <b style="font-weight:700;">${fmtDate(eff)}</b> — set by ${src}.</div>`;
+}
+function checkEph(){
+  const w=+cw.value, h=+ch.value, box=document.getElementById('ephChk');
+  if(!box) return;
+  const tooBig = w>SOURCE.w || h>SOURCE.h;
+  box.className = 'eff ' + (tooBig?'bad':'none');
+  box.innerHTML = tooBig
+    ? svg(I.no,12)+`Larger than the source (${SOURCE.w} × ${SOURCE.h}). No upscaling.`
+    : svg(I.info,12)+`Source is ${SOURCE.w} × ${SOURCE.h}. Outputs are capped at the source — no upscaling.`;
+}
+
+/* ============================================================
+   RENDER — rail
+   ============================================================ */
+function renderRail(){
+  const stops = [
+    ['details','Details',I.details,1],['attributes','Attributes',I.attrs,1],['div'],
+    ['adjust','Adjustments',I.adjust,0],['template','Template',I.template,0],['div'],
+    ['versions','Versions',I.versions,1],['rights','Rights',I.rights,0],['access','Access',I.access,0],
+  ];
+  rail.innerHTML = stops.map(s=>{
+    if(s[0]==='div') return '<div class="rail-div"></div>';
+    const [id,label,ic,inert]=s;
+    return `<button class="ri ${S.tab===id?'on':''} ${inert?'inert':''}" ${inert?'':`onclick="go('${id}')"`}>${svg(ic,20)}${label}</button>`;
+  }).join('');
+}
+function go(t){ S.tab=t; S.menu=null; draw(); }
+
+/* ============================================================
+   RENDER — ADJUST
+   ============================================================ */
+function drawAdjust(){
+  panel.innerHTML = `
+    <div class="ph">Adjustments</div>
+    <div class="sec">
+      <div class="sh">${svg(I.adjust)}This asset</div>
+      <div class="field"><div class="flab">Aspect ratio</div>
+        <select class="inp"><option>Custom</option><option>1:1</option><option>16:9</option><option>4:3</option></select></div>
+      <div class="field"><div class="flab">Crop</div>
+        <div class="lockrow">
+          <input class="inp" value="2000"><span style="color:var(--ed-faint);font-size:12px;">×</span>
+          <input class="inp" value="1333">
+          <span class="lockbtn">${svg(I.lock,14)}</span>
+        </div></div>
+      <div class="field"><div class="flab">Rotate</div>
+        <div class="rot"><span class="rbtn">${svg(I.refresh,15)}</span><span class="rbtn" style="transform:scaleX(-1)">${svg(I.refresh,15)}</span>
+        <span style="font-size:12px;color:var(--ed-label);">0°</span></div></div>
+      <div class="field"><div class="flab">Focal point</div>
+        <button class="btn btn-sec btn-full" onclick="toast('Focal point editor')">${svg(I.focal,14)}Edit focal point</button>
+        <div class="help">Set once. Every template crop on this asset follows it.</div></div>
+    </div>
+    <div class="sec">
+      <div class="sh">${svg(I.dl)}Output</div>
+      <div class="field"><div class="flab">Format</div>
+        <select class="inp" id="rFmt"><option>JPEG</option><option>WebP</option><option>PNG</option></select></div>
+      <div class="field"><div class="flab">Quality</div>
+        <select class="inp" id="rQ"><option>High (85%)</option><option>Medium (70%)</option><option>Maximum (95%)</option></select></div>
+      <div class="help">These are the settings a template saves. The crop, rotation and focal point stay with this asset — they can\u2019t travel.</div>
+    </div>
+    <div class="acts">
+      <button class="btn btn-pri btn-full" onclick="toast('Downloading 2000 × 1333 JPEG')">${svg(I.dl,14)}Download this output</button>
+      <button class="btn btn-sec btn-full" onclick="openSaveTemplate()">${svg(I.save,14)}Save as template…</button>
+      <button class="btn btn-ter btn-full" onclick="toast('Confirm → creates v2 of this asset')">Save as new version…</button>
+    </div>`;
+  stage.innerHTML = `
+    <div class="acc">${svg(I.info,13)}<span><b>Crop and framing are exact.</b> Compression is approximated — the downloaded file will be sharper.</span></div>
+    <div class="canvas"><div class="crop" style="width:300px;height:200px;">
+      <span class="hnd a"></span><span class="hnd b"></span><span class="hnd c"></span><span class="hnd d"></span>
+      <span class="focal"></span></div></div>`;
+}
+
+/* ============================================================
+   RENDER — TEMPLATE
+   ============================================================ */
+function drawTemplate(){
+  const shared = S.templates.filter(t=>t.scope==='shared');
+  const personal = S.templates.filter(t=>t.scope==='personal');
+  const avail = t=>sizeValid(t);
+  const sharedOK = shared.filter(avail), sharedNo = shared.filter(t=>!avail(t));
+  const personalOK = personal.filter(avail), personalNo = personal.filter(t=>!avail(t));
+  const allNo = [...sharedNo,...personalNo];
+
+  const row = t => {
+    const on = S.selected.has(t.slug);
+    const th = t.w/t.h >= 1.6 ? 'width:38px;height:22px' : t.w===t.h ? 'width:28px;height:28px' : t.w/t.h < 0.8 ? 'width:18px;height:30px' : 'width:34px;height:24px';
+    return `<div class="li ${on?'on':''}" onclick="toggleSel('${t.slug}')">
+      <span class="cbx ${on?'on':''}">${on?svg(I.check,9,3.5):''}</span>
+      <span class="thumb" style="${th}"></span>
+      <div class="li-m"><div class="li-t">${esc(t.name)}</div>
+        <div class="li-s">${t.w} × ${t.h} · ${t.fmt} · ${t.q.split(' ')[0]}${t.note?' · '+t.note:''}</div></div>
+      ${t.channel==='public'?`<span class="chan">${svg(I.link,10)}Public</span>`:''}
+      <div class="lr-a" onclick="event.stopPropagation()">
+        <button class="btn btn-gho" onclick="tmenu('${t.slug}')">⋯</button>
+        ${S.menu==='t:'+t.slug?templateMenu(t):''}
+      </div></div>`;
+  };
+  const deadRow = t => `<div class="li dis"><span class="cbx no"></span>
+      <span class="thumb" style="width:34px;height:24px;"></span>
+      <div class="li-m"><div class="li-t">${esc(t.name)}</div>
+        <div class="li-s">${t.w} × ${t.h} · ${t.fmt}</div>
+        <div class="why">${svg(I.no,11)}Source is too small — no upscaling</div></div></div>`;
+
+  panel.innerHTML = `
+    <div class="ph">Template</div>
+    <div style="display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.045);border-radius:var(--radius-2);
+      padding:9px 11px;font-size:14px;color:var(--ed-faint);margin-bottom:6px;">${svg(I.filter,15)}Filter templates…</div>
+    <div class="eyebrow">Shared</div>
+    ${sharedOK.map(row).join('')}
+    ${allNo.length?`<div class="grp" onclick="S.unavailOpen=!S.unavailOpen;draw()">
+        ${tri(S.unavailOpen)}Unavailable for this asset
+        <span class="n">${allNo.length} · source is ${SOURCE.w} × ${SOURCE.h}</span></div>
+      ${S.unavailOpen?allNo.map(deadRow).join(''):''}`:''}
+    <div class="eyebrow">Personal · ${personal.length} of 20</div>
+    ${personalOK.map(row).join('')}
+    <div class="help" style="margin-top:12px;">Templates are created in Adjustments, where you can see what they produce.</div>`;
+
+  const sel = [...S.selected].map(s=>S.templates.find(t=>t.slug===s)).filter(Boolean);
+  const total = sel.length + S.ephemeral.length;
+  stage.innerHTML = `
+    <div class="acc">${svg(I.info,13)}<span><b>Crop and framing are exact.</b> Compression is approximated.</span></div>
+    <div class="canvas"><div class="crop" style="width:290px;height:163px;"><span class="focal" style="top:38%;left:58%;"></span></div></div>
+    <div class="outs">
+      <div class="outs-h">${svg(I.dl)}Selected outputs <span class="count">${total}</span>
+        <span class="act"><button class="btn btn-pri" ${total?'':'disabled'} onclick="toast('Downloading ${total} output${total===1?'':'s'} as a zip')">${svg(I.dl,14)}Download ${total}</button></span>
+      </div>
+      <div class="chips">
+        ${sel.map(t=>`<div class="oc"><span class="thumb" style="width:34px;height:24px"></span>
+          <div><div class="oc-t">${esc(t.name)}</div><div class="oc-s">${t.w} × ${t.h} · ${t.fmt}</div></div></div>`).join('')}
+        ${S.ephemeral.map((e,i)=>`<div class="oc eph"><span class="thumb" style="width:28px;height:28px"></span>
+          <div><div class="oc-t">${e.w} × ${e.h}</div><div class="oc-s">${e.fmt} · one-off</div></div>
+          <button class="eph-x" onclick="S.ephemeral.splice(${i},1);draw()">×</button></div>`).join('')}
+        <div class="oc add" onclick="openCustomSize()">+ Add custom size</div>
+      </div>
+      <div class="help" style="margin-top:9px;">One-off sizes download with the batch and are discarded. They never enter the library.</div>
+    </div>`;
+}
+function toggleSel(slug){ S.selected.has(slug)?S.selected.delete(slug):S.selected.add(slug); S.menu=null; draw(); }
+function tmenu(slug){ S.menu = S.menu==='t:'+slug ? null : 't:'+slug; draw(); }
+function templateMenu(t){
+  const mine = t.scope==='personal';
+  return `<div class="menu up">
+    <button class="mi" onclick="go('adjust');toast('Opened in Adjustments')">${svg(I.adjust,14)}Edit size &amp; format<span class="tag">Adjustments ${svg('<path d="m9 18 6-6-6-6"/>',11,2.5)}</span></button>
+    <button class="mi" onclick="toast('Duplicated')">${svg(I.copy,14)}Duplicate</button>
+    ${mine?`<button class="mi" onclick="toast('Renamed')">${svg(I.pen,14)}Rename</button>
+      <div class="msep"></div>
+      <button class="mi" onclick="toast('Sent for approval')">${svg(I.up,14)}Propose as a shared template…</button>
+      <div class="msep"></div>
+      <button class="mi dst" onclick="toast('Deleted')">${svg(I.trash,14)}Delete</button>`
+    : isMgr()?`<div class="msep"></div><div class="mcap">Admin</div>
+      <button class="mi" onclick="toast('Opens Org Manager → Templates')">${svg(I.pen,14)}Template settings…</button>`:''}
+  </div>`;
+}
+
+/* ============================================================
+   RENDER — ACCESS
+   ============================================================ */
+function drawAccess(){
+  const G = gate();
+  const cands = candidates();
+  const ready = cands.filter(t=>S.outputs[t.slug]?.status==='ready').length;
+  const pending = cands.filter(t=>['preparing','failed'].includes(S.outputs[t.slug]?.status)).length;
+
+  const peopleSec = `<div class="sec">
+      <div class="sh coll" onclick="S.peopleOpen=!S.peopleOpen;draw()">
+        ${svg(I.people)}People &amp; groups <span class="count">Unrestricted</span>${tri(S.peopleOpen)}
+      </div>
+      ${S.peopleOpen?`<div style="padding-top:10px;">
+        <div class="lr"><div class="lr-m"><div class="lr-t">Brand Team</div><div class="lr-s">Group · Can edit</div></div></div>
+        <div class="lr"><div class="lr-m"><div class="lr-t">J. D'Arcy</div><div class="lr-s">Owner</div></div></div>
+        <button class="btn btn-sec btn-full" style="margin-top:10px;" onclick="toast('Grant access — confirm')">Grant access</button>
+      </div>`:''}
+    </div>`;
+
+  const rightsCTA = isMgr()
+    ? `<button class="btn btn-ter" onclick="go('rights')">Open Rights ${svg('<path d="m9 18 6-6-6-6"/>',11,2.5)}</button>`
+    : `<button class="btn btn-ter" onclick="toast('Rights review requested — routed to the rights approver')">Request rights review</button>`;
+
+  let body = '';
+
+  /* ---------- rights say no. One reason, one gate, for the whole asset. ---------- */
+  if(!G.ok && G.kind!=='expired'){
+    const ic = G.kind==='embargo' ? I.clock : G.kind==='territory' ? I.warn : I.lock;
+    body = `
+      <div class="alert a-info">${svg(ic,15)}<div class="at">
+        <b>${G.kind==='embargo'?'Embargoed':G.kind==='territory'?'Not cleared globally':'Not cleared for public links'}</b>${G.reason}</div></div>
+      ${S.revoked.length?`<div class="alert a-err">${svg(I.warn,15)}<div class="at"><b>${S.revoked.length} link records held</b>
+        This asset had public links before. The current licence doesn't allow them, so they can't be restored. The records stay in the audit trail.</div></div>`:''}
+      <div class="alert a-info" style="border-style:solid;">${svg(I.info,15)}<div class="at">
+        Rights are a single yes-or-no for the whole asset. They never allow some outputs and block others — a public link is anyone, anywhere, with no sign-in, and that is one question.</div></div>
+      <button class="btn btn-pri btn-full" style="margin-top:14px;" disabled>Create public links</button>
+      <div style="text-align:center;margin-top:10px;">${rightsCTA}</div>`;
+  }
+
+  /* ---------- expired: files gone, records banked ---------- */
+  else if(!G.ok && G.kind==='expired'){
+    body = `
+      <div class="alert a-err">${svg(I.clock,15)}<div class="at"><b>Rights expired ${fmtDate(S.rights.expiry)}</b>
+        ${S.revoked.length||5} public links stopped working. The cached copies were cleared from every region and the stored files deleted.</div></div>
+      <div class="eyebrow">Removal record</div>
+      <div class="ro"><span class="k">Triggered by</span><span class="v">Rights expiry job · ${fmtDate(S.rights.expiry)}, 23:59 UTC</span></div>
+      <div class="ro"><span class="k">Links removed</span><span class="v">${S.revoked.length||5}</span></div>
+      <div class="ro"><span class="k">Cached copies</span><span class="v">Cleared from every region · 41s</span></div>
+      <div class="ro"><span class="k">Stored files</span><span class="v">Deleted</span></div>
+      <div class="ro"><span class="k">Link records</span><span class="v">Kept · restoring reuses the same addresses</span></div>
+      <div class="alert a-info" style="margin-top:14px;">${svg(I.info,15)}<div class="at">The files had to go — they must not be servable. The <b style="display:inline;">records</b> stay, so a renewal puts the identical links back and every embed heals on its own.</div></div>
+      <button class="btn btn-pri btn-full" style="margin-top:14px;" disabled>Create public links</button>
+      <div style="text-align:center;margin-top:10px;">${rightsCTA}</div>`;
+  }
+
+  /* ---------- rights renewed, records waiting ---------- */
+  else if(!S.published && S.revoked.length){
+    const back = S.revoked.map(sl=>S.templates.find(t=>t.slug===sl)).filter(Boolean);
+    body = `
+      <div class="alert a-open">${svg(I.clock,15)}<div class="at"><b>${back.length} links are waiting to be restored</b>
+        Removed when the rights expired. The rights are valid again. Restoring reuses the identical addresses — every existing embed starts working again on its own.</div></div>
+      <div class="eyebrow">Held link records</div>
+      ${back.map(t=>`<div class="lr"><div class="lr-m">
+          <div class="lr-t">${esc(t.name)}</div><div class="lr-s">${t.fmt} · ${t.w} × ${t.h}</div>
+          <div class="lr-u">${url(t)}</div></div></div>`).join('')}
+      ${isMgr()?`<button class="btn btn-pri btn-full" style="margin-top:14px;" onclick="openRestore()">Restore ${back.length} link${back.length===1?'':'s'}</button>
+        <div style="text-align:center;margin-top:8px;"><button class="btn btn-ter" onclick="openDiscard()">Don't restore — discard the records</button></div>`
+        : `<div class="alert a-info" style="margin-top:12px;">${svg(I.info,15)}<div class="at">Restoring links requires the <b style="display:inline;">DAM Manager</b> role.</div></div>`}`;
+  }
+
+  /* ---------- not published ---------- */
+  else if(!S.published){
+    body = `<div class="empty">${svg(I.link,26,1.6)}
+        <div class="e1">This asset isn't available on the open web.</div>
+        <div class="e2">${isMgr()
+          ? `<button class="btn btn-pri" onclick="openPublish()">Create public links</button>`
+          : `<div class="alert a-info" style="text-align:left;margin-top:4px;">${svg(I.info,15)}<div class="at">Creating links requires the <b style="display:inline;">DAM Manager</b> role.</div></div>`}</div></div>`;
+  }
+
+  /* ---------- published. Row states are size and render only — never rights. ---------- */
+  else {
+    const rows = cands.map(t=>{
+      const o = S.outputs[t.slug] || {status:'idle'};
+      if(o.status==='preparing') return `<div class="lr"><div class="lr-m">
+          <div class="lr-t">${esc(t.name)}</div><div class="lr-s">${t.fmt} · ${t.w} × ${t.h} · <span class="skel"></span></div>
+          <div class="gen">${svg(I.spin,11)}Preparing</div></div>
+        <div class="lr-a"><button class="btn btn-gho" disabled>${svg(I.copy,14)}</button></div></div>`;
+      if(o.status==='failed') return `<div class="lr"><div class="lr-m">
+          <div class="lr-t">${esc(t.name)}</div><div class="lr-s">${t.fmt} · ${t.w} × ${t.h}</div>
+          <div class="why">${svg(I.no,11)}Couldn't create this output — unsupported colour profile (CMYK)</div></div>
+        <div class="lr-a"><button class="btn btn-ter btn-sm" onclick="retry('${t.slug}')">Retry</button></div></div>`;
+      if(o.status==='idle') return `<div class="lr"><div class="lr-m">
+          <div class="lr-t">${esc(t.name)}</div><div class="lr-s">${t.fmt} · ${t.w} × ${t.h}</div>
+          <div class="none">Eligible — no link yet</div></div>
+        <div class="lr-a">${isMgr()?`<button class="btn btn-gho" onclick="amenu('${t.slug}')">⋯</button>${S.menu==='a:'+t.slug?outMenu(t,'idle'):''}`:''}</div></div>`;
+      const loads = REQUESTS[t.slug]||0;
+      return `<div class="lr"><div class="lr-m">
+          <div class="lr-t">${esc(t.name)}</div><div class="lr-s">${t.fmt} · ${t.w} × ${t.h} · ${t.size}${loads?` · <span style="color:var(--cerulean-dark);font-weight:500;">${loads.toLocaleString()} loads</span>`:''}</div>
+          <div class="lr-u">${url(t)}</div></div>
+        <div class="lr-a">
+          <button class="btn btn-gho" title="Copy link" onclick="copy('${url(t)}')">${svg(I.copy,14)}</button>
+          <button class="btn btn-gho" onclick="amenu('${t.slug}')">⋯</button>
+          ${S.menu==='a:'+t.slug?outMenu(t,'ready'):''}
+        </div></div>`;
+    }).join('');
+
+    body = `
+      <div class="alert a-open">${svg(I.warn,15)}<div class="at"><b>Publicly available${G.ceiling?' · expires '+fmtDate(G.ceiling):''}</b>
+        ${pending?'Outputs are being prepared. A link can be copied once its file exists and has been checked.'
+                 :'Anyone with a link can download these files without signing in. Links resolve to the current version.'}</div></div>
+      <div class="eyebrow">Delivery</div>
+      <div class="ro"><span class="k">Rights expiry</span><span class="v">${G.ceiling?fmtDate(G.ceiling):'None — the licence has no end date'}</span></div>
+      <div class="ro"><span class="k">Cleared for</span><span class="v">${S.rights.territories} · ${S.rights.channels.join(', ')}</span></div>
+      <div class="field" style="margin-top:12px;">
+        <div class="flab">Link expiry <span class="opt">OPTIONAL</span></div>
+        <div class="datewrap">
+          <input type="date" class="inp" id="arv" value="${esc(S.autoRevoke)}" min="${todayISO()}" ${ceilingISO()?`max="${ceilingISO()}"`:''}
+            ${isMgr()?'':'disabled'} onchange="setRevoke(this.value)">
+          ${S.autoRevoke&&isMgr()?`<button class="btn btn-gho" title="Clear" onclick="setRevoke('')">${svg(I.no,14)}</button>`:''}
+        </div>
+        ${effectiveLine()}
+        <div class="help">${ceilingISO()
+          ? `Can't be later than ${fmtDate(ceilingISO())}, when the rights expire. Rights always win.`
+          : `The licence has no end date, so without this the links work forever.`}</div>
+      </div>
+      <div class="eyebrow">Available outputs</div>
+      ${rows}
+      ${isMgr()?'':`<div class="alert a-info" style="margin-top:12px;">${svg(I.info,15)}<div class="at">Creating and removing links requires the <b style="display:inline;">DAM Manager</b> role. Existing links stay copyable.</div></div>`}
+      <div class="audit">${pending?`Preparing ${pending} of ${cands.length} outputs · each region caches its own copy the first time someone loads it`
+        :`Published by S. Byrne · 04 Jul 2026 · ${ready} links created and checked`}</div>`;
+  }
+
+  panel.innerHTML = `<div class="ph">Access</div>${peopleSec}
+    <div class="sec">
+      <div class="sh">${svg(I.link)}Public links
+        ${S.published && G.ok ? `<span class="count">${pending?`${ready} of ${cands.length} ready`:`${ready}`}</span>`:''}
+        ${S.published && G.ok && isMgr() ? `<span class="act"><button class="btn btn-ter btn-sm" onclick="openUnpublish()">Remove links</button></span>`:''}
+      </div>
+      ${body}
+    </div>`;
+
+  stage.innerHTML = `
+    <div class="acc">${svg(I.info,13)}<span><b>Crop and framing are exact.</b> Compression is approximated.</span></div>
+    <div class="canvas"><div class="crop" style="width:330px;height:220px;"><span class="focal"></span></div></div>
+    <div class="outs">
+      <div class="outs-h">${svg(I.link)}What gates a public link</div>
+      <div style="font-size:12px;color:var(--ed-label);line-height:19px;">
+        <b style="color:var(--ed-value);font-weight:600;">Rights</b> — one yes-or-no for the whole asset: cleared for open web, global territory, in date. Never per output.<br>
+        <b style="color:var(--ed-value);font-weight:600;">Governance</b> — an admin decides which templates may be public at all. Print and masters stay download-only.<br>
+        <b style="color:var(--ed-value);font-weight:600;">The source</b> — an output larger than the master is never created. No upscaling.
+      </div>
+    </div>`;
+}
+function amenu(slug){ S.menu = S.menu==='a:'+slug ? null : 'a:'+slug; draw(); }
+function outMenu(t,kind){
+  if(kind==='idle') return `<div class="menu up"><button class="mi" onclick="publishOne('${t.slug}')">${svg(I.link,14)}Create a link for this output<span class="tag">confirm</span></button></div>`;
+  return `<div class="menu up">
+    <button class="mi" onclick="toast('Opens ${url(t)}')">${svg(I.ext,14)}Open in new tab</button>
+    <button class="mi" onclick="copy('&lt;img src=\\'https://${url(t)}\\'&gt;')">${svg(I.code,14)}Copy as &lt;img&gt; tag</button>
+    ${isMgr()?`<div class="msep"></div><div class="mcap">Manager</div>
+      <button class="mi" onclick="retry('${t.slug}')">${svg(I.refresh,14)}Create this output again</button>
+      <button class="mi" onclick="toast('Cached copies refreshed')">${svg(I.refresh,14)}Refresh cached copies</button>
+      <button class="mi dst" onclick="revokeOne('${t.slug}')">${svg(I.no,14)}Remove this link<span class="tag">confirm</span></button>`:''}
+  </div>`;
+}
+
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+function beginRender(slugs){
+  slugs.forEach((s,i)=>{
+    S.outputs[s] = {status:'preparing'};
+    setTimeout(()=>{
+      const fail = S.simFail && s==='email-banner';
+      S.outputs[s] = {status: fail?'failed':'ready'};
+      draw();
+    }, 900 + i*700);
+  });
+  draw();
+}
+function retry(slug){ S.outputs[slug]={status:'preparing'}; draw();
+  setTimeout(()=>{ S.outputs[slug]={status:'ready'}; draw(); toast('Output created again and checked'); },1100); }
+function publishOne(slug){
+  S.menu=null;
+  const t = S.templates.find(x=>x.slug===slug);
+  modal(`
+    <div class="mt">Create a link for ${esc(t.name)}?</div>
+    <div class="mb">This output becomes downloadable by anyone with the address, without signing in.</div>
+    <div class="ro"><span class="k">Output</span><span class="v">${t.w} × ${t.h} · ${t.fmt}</span></div>
+    <div class="ro"><span class="k">Address</span><span class="v" style="word-break:break-all;">${url(t)}</span></div>
+    <div class="ro"><span class="k">Stops working</span><span class="v">${ceilingISO()?fmtDate(ceilingISO())+' — when the rights expire':'Never — the licence has no end date'}</span></div>
+    <div class="mf"><button class="btn btn-sec" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-pri" onclick="closeModal();beginRender(['${slug}']);toast('Link created');">Create link</button></div>`);
+}
+function revokeOne(slug){
+  S.menu=null;
+  const t = S.templates.find(x=>x.slug===slug);
+  const n = REQUESTS[slug] || 0;
+  const used = n > 0;
+  modal(`
+    <div class="mt">Remove the ${esc(t.name)} link?</div>
+    <div class="mb">${used
+      ? `This link has been loaded <b style="color:var(--ed-value);font-weight:600;">${n.toLocaleString()} times in the last 30 days</b>. Something is using it — a partner site, an email, a CMS — and that something will show a broken image.`
+      : `This link has <b style="color:var(--ed-value);font-weight:600;">never been loaded</b>. Nothing is using it, so nothing will break.`}</div>
+    <div class="ro"><span class="k">Address</span><span class="v" style="word-break:break-all;">${url(t)}</span></div>
+    <div class="ro"><span class="k">Loads · 30d</span><span class="v">${used?n.toLocaleString():'None'}</span></div>
+    <div class="ro"><span class="k">Other outputs</span><span class="v">Unaffected — they keep working</span></div>
+    <div class="alert ${used?'a-open':'a-info'}" style="margin-top:14px;">${svg(used?I.warn:I.info,15)}<div class="at">
+      <b>You can put this link back</b>The address is generated from the asset and the output, so recreating it gives the identical address. Anything embedded starts working again. Until then, it is broken.</div></div>
+    ${used?`<div class="field" style="margin-top:14px;">
+      <div class="flab">Reason</div><input class="inp" placeholder="Recorded in the audit log"></div>`:''}
+    <div class="mf">
+      <button class="btn btn-sec" onclick="closeModal()">Cancel</button>
+      <button class="btn ${used?'btn-dst':'btn-pri'}" onclick="doRemoveLink('${slug}')">Remove link</button>
+    </div>`);
+}
+function doRemoveLink(slug){ delete S.outputs[slug]; closeModal(); toast('Link removed · cached copies cleared'); }
+
+function openPublish(){
+  const G = gate(), elig = eligible();
+  const dlOnly = S.templates.filter(t=>t.channel==='download' && t.scope==='shared').map(t=>t.name);
+  modal(`
+    <div class="mt">Create public links?</div>
+    <div class="mb">${elig.length} outputs of <b style="color:var(--ed-value);font-weight:600;">${SOURCE.name}</b> will be available on the open web. Anyone with a link can download them without signing in.</div>
+    <div class="ro"><span class="k">Outputs</span><span class="v">${elig.map(t=>esc(t.name)).join(', ')}</span></div>
+    <div class="ro"><span class="k">Not included</span><span class="v">${dlOnly.join(', ')} — download-only templates, set in Org Manager. Not a rights decision.</span></div>
+    <div class="ro"><span class="k">Rights expiry</span><span class="v">${G.ceiling?fmtDate(G.ceiling)+' — links stop working on this date':'None — the licence has no end date'}</span></div>
+    <div class="field" style="margin-top:14px;">
+      <div class="flab">Link expiry <span class="opt">OPTIONAL</span></div>
+      <input type="date" class="inp" id="pubArv" min="${todayISO()}" ${ceilingISO()?`max="${ceilingISO()}"`:''}>
+      <div class="help">${ceilingISO()
+        ? `Leave empty and the links work until the rights expire on ${fmtDate(ceilingISO())}.`
+        : `Leave empty and the links work forever. The licence has no end date.`}</div>
+    </div>
+    <div class="alert a-info" style="margin-top:12px;">${svg(I.info,15)}<div class="at">Creating links is instant. <b style="display:inline;">Removing</b> them is the slow part — every cached copy has to be cleared from every region.</div></div>
+    <div class="mf">
+      <button class="btn btn-sec" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-pri" onclick="doPublish()">Create ${elig.length} link${elig.length===1?'':'s'}</button>
+    </div>`);
+}
+function setRevokeSilent(v){ const c=ceilingISO(); S.autoRevoke = (v && c && v>c) ? c : v; }
+function doPublish(){
+  const arv = document.getElementById('pubArv'); if(arv && arv.value) setRevokeSilent(arv.value);
+  S.published = true; closeModal();
+  beginRender(eligible().map(t=>t.slug));
+  toast('Public links created · preparing outputs');
+}
+function openRestore(){
+  const G = gate();
+  const back = S.revoked.map(sl=>S.templates.find(t=>t.slug===sl)).filter(Boolean);
+  modal(`
+    <div class="mt">Restore ${back.length} public link${back.length===1?'':'s'}?</div>
+    <div class="mb">The addresses are unchanged. Anything still embedding them — a partner site, an email, a CMS — starts working again as soon as the files are ready.</div>
+    <div class="ro"><span class="k">Restoring</span><span class="v">${back.map(t=>esc(t.name)).join(', ')||'—'}</span></div>
+    <div class="ro"><span class="k">Addresses</span><span class="v">Identical to before. Nothing changes on the partner's side.</span></div>
+    <div class="ro"><span class="k">Rights expiry</span><span class="v">${G.ceiling?fmtDate(G.ceiling):'None — the renewed licence has no end date'}</span></div>
+    <div class="field" style="margin-top:14px;">
+      <div class="flab">Link expiry <span class="opt">OPTIONAL</span></div>
+      <input type="date" class="inp" id="resArv" min="${todayISO()}" ${ceilingISO()?`max="${ceilingISO()}"`:''}>
+    </div>
+    <div class="mf">
+      <button class="btn btn-sec" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-pri" onclick="doRestore()">Restore ${back.length} link${back.length===1?'':'s'}</button>
+    </div>`);
+}
+function doRestore(){
+  const arv = document.getElementById('resArv'); if(arv && arv.value) setRevokeSilent(arv.value);
+  const back = [...S.revoked];
+  S.published = true; S.revoked = []; closeModal();
+  beginRender(back);
+  toast('Links restored \u00b7 same addresses \u00b7 preparing files');
+}
+function openDiscard(){
+  modal(`
+    <div class="mt">Discard ${S.revoked.length} link records?</div>
+    <div class="mb">The addresses stay dead. Anything still embedding them keeps showing a broken image, permanently, unless someone publishes this asset again from scratch.</div>
+    <div class="alert a-info">${svg(I.info,15)}<div class="at">Publishing again later would produce the same addresses anyway \u2014 they\u2019re derived from the asset and the output, not stored. Discarding only removes the prompt.</div></div>
+    <div class="mf"><button class="btn btn-sec" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-dst" onclick="S.revoked=[];closeModal();toast('Records discarded');">Discard records</button></div>`);
+}
+function openUnpublish(){
+  const n = Object.values(S.outputs).filter(o=>o.status==='ready').length;
+  modal(`
+    <div class="mt">Remove all public links?</div>
+    <div class="mb">${n} links will stop working. Anyone using them \u2014 a partner website, an email, a CMS \u2014 will see an error instead of the image.</div>
+    <div class="ro"><span class="k">Links removed</span><span class="v">${n}</span></div>
+    <div class="ro"><span class="k">Cached copies</span><span class="v">Cleared from every region</span></div>
+    <div class="ro"><span class="k">Takes effect</span><span class="v">~4 min — some regions keep serving the image until then</span></div>
+    <div class="field" style="margin-top:14px;">
+      <div class="flab">Reason</div><input class="inp" placeholder="Recorded in the audit log">
+    </div>
+    <div class="mf">
+      <button class="btn btn-sec" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-dst" onclick="S.published=false;S.outputs={};closeModal();toast('${n} public links removed');">Remove links</button>
+    </div>`);
+}
+function openSaveTemplate(){
+  const dupe = S.templates.find(t=>t.w===2000 && t.h===1333 && t.fmt==='JPG');
+  modal(`
+    <div class="mt">Save as template</div>
+    <div class="pv"><span class="px"></span><div>
+      <div class="pt">This is what the template produces</div>
+      <div class="ps">2000 × 1333 · JPEG · High (85%)<br>Crops to focal point on every asset it's applied to.</div></div></div>
+    <div class="field"><div class="flab">Template name</div><input class="inp" id="tName" placeholder="e.g. Web Large"></div>
+    <div class="field"><div class="flab">Scope</div>
+      <div style="display:flex;gap:8px;">
+        <label class="scope on"><span class="dt"></span><span><b>Personal</b><em>Only you · 2 of 20 used</em></span></label>
+        <label class="scope no"><span class="dt"></span><span><b>Shared</b><em>Admins only</em></span></label>
+      </div>
+      <div class="help">Propose it to the shared library from the template's ⋯ menu — an admin reviews and publishes it.</div></div>
+    ${dupe?`<div class="dupe">${svg(I.warn,15)}<div class="dt2"><b>${esc(dupe.name)} already produces this output</b>
+      Same size, format and quality. Saving another copy adds a duplicate to the library.</div></div>`:''}
+    <div class="mf">
+      ${dupe?`<button class="btn btn-ter" onclick="saveTpl()">Save anyway</button>
+              <button class="btn btn-pri" onclick="closeModal();toast('Using ${esc(dupe.name)}')">Use ${esc(dupe.name)}</button>`
+            :`<button class="btn btn-sec" onclick="closeModal()">Cancel</button>
+              <button class="btn btn-pri" onclick="saveTpl()">Save template</button>`}
+    </div>`);
+}
+function saveTpl(){
+  const n = (document.getElementById('tName')||{}).value || 'Untitled template';
+  S.templates.push({slug:'u'+Date.now(),name:n,w:2000,h:1333,fmt:'JPG',q:'High (85%)',channel:'download',scope:'personal',size:'1.4 MB',ar:'3:2'});
+  closeModal(); go('template'); toast('Saved to your personal templates');
+}
+function openCustomSize(){
+  modal(`
+    <div class="mt">Add a one-off size</div>
+    <div class="mb">Downloads with this batch and is discarded. It does not become a template.</div>
+    <div style="display:flex;gap:10px;">
+      <div class="field" style="flex:1"><div class="flab">Width</div>
+        <input type="number" class="inp" id="cw" value="100" min="1" max="${SOURCE.w}" oninput="checkEph()"></div>
+      <div class="field" style="flex:1"><div class="flab">Height</div>
+        <input type="number" class="inp" id="ch" value="100" min="1" max="${SOURCE.h}" oninput="checkEph()"></div>
+      <div class="field" style="flex:1"><div class="flab">Format</div>
+        <select class="inp" id="cf"><option>JPEG</option><option>WebP</option><option>PNG</option></select></div>
+    </div>
+    <div id="ephChk" class="eff none">${svg(I.info,12)}Source is ${SOURCE.w} × ${SOURCE.h}. Outputs are capped at the source — no upscaling.</div>
+    <div class="alert a-info">${svg(I.info,15)}<div class="at">This is the row that stops "New 101 · 100 × 100" ever becoming a permanent, named, tenant-visible object.</div></div>
+    <div class="mf"><button class="btn btn-sec" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-pri" onclick="addEph()">Add to batch</button></div>`);
+}
+function addEph(){
+  const w=+document.getElementById('cw').value||100, h=+document.getElementById('ch').value||100;
+  if(w>SOURCE.w || h>SOURCE.h){ toast('Larger than the source — no upscaling'); return; }
+  S.ephemeral.push({w,h,fmt:document.getElementById('cf').value});
+  closeModal(); draw(); toast('Added as a one-off output');
+}
+
+/* ============================================================
+   CHROME
+   ============================================================ */
+function modal(html, light){ S.menu=null; modalRoot.innerHTML=`<div class="ovl" onclick="if(event.target===this)closeModal()"><div class="mdl ${light?'lt':''}">${html}</div></div>`; }
+function closeModal(){ modalRoot.innerHTML=''; draw(); }
+function copy(t){ try{navigator.clipboard.writeText(t.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&#39;|\\'/g,"'"));}catch(e){} S.menu=null; draw(); toast('Copied to clipboard'); }
+let tt;
+function toast(m){ clearTimeout(tt); toastRoot.innerHTML=`<div class="toast">${svg(I.check,14)}${esc(m)}</div>`;
+  tt=setTimeout(()=>toastRoot.innerHTML='',2200); }
+
+document.querySelectorAll('.appnav .nav').forEach(b=>b.addEventListener('click',()=>{ S.view=b.dataset.v; S.menu=null; draw(); }));
+document.addEventListener('click',e=>{ if(S.menu && !e.target.closest('.lr-a') && !e.target.closest('.menu')
+  && !e.target.closest('.rel') && !e.target.closest('.lmenu')){ S.menu=null; draw(); } });
+
+function drawRights(){
+  const r = S.rights, G = gate();
+  const ro = !isMgr();
+  const chip = c => `<button class="chip ${r.channels.includes(c)?'on':''}" ${ro?'disabled':''} onclick="toggleChannel('${c}')">${c}</button>`;
+  panel.innerHTML = `
+    <div class="ph">Rights</div>
+    ${ro?`<div class="alert a-info">${svg(I.lock,15)}<div class="at">Read-only. Editing rights requires the <b style="display:inline;">Rights Manager</b> role — otherwise the gate on public links would be self-serve.</div></div>`:''}
+    <div class="eyebrow" style="margin-top:0;">Time-based rights</div>
+    <div style="display:flex;gap:10px;min-width:0;">
+      <div class="field" style="flex:1;min-width:0;"><div class="flab">Embargo <span class="opt">OPTIONAL</span></div>
+        <input type="date" class="inp" value="${r.embargo}" ${ro?'disabled':''} onchange="setRight('embargo',this.value)">
+        <div class="help">Unusable before this date.</div></div>
+      <div class="field" style="flex:1;min-width:0;"><div class="flab">Expiry <span class="opt">OPTIONAL</span></div>
+        <input type="date" class="inp" value="${r.expiry}" ${ro?'disabled':''} onchange="setRight('expiry',this.value)">
+        <div class="help">Unusable after this date.</div></div>
+    </div>
+    <div class="eyebrow">Licensing</div>
+    <div class="field"><div class="flab">Licence type</div>
+      <select class="inp" ${ro?'disabled':''} onchange="setRight('type',this.value)">
+        ${['Royalty-free','Rights-managed','Editorial only','Internal use only'].map(t=>`<option ${r.type===t?'selected':''}>${t}</option>`).join('')}
+      </select></div>
+    <div class="field"><div class="flab">Licence owner</div>
+      <input class="inp" value="${esc(r.owner)}" ${ro?'disabled':''} onchange="setRight('owner',this.value)"></div>
+
+    <div class="eyebrow">This licence permits use</div>
+    <div class="field"><div class="flab">In territories</div>
+      <select class="inp" ${ro?'disabled':''} onchange="setRight('territories',this.value)">
+        ${['Global','UK, IE','EU','US'].map(t=>`<option ${r.territories===t?'selected':''}>${t}</option>`).join('')}
+      </select>
+      <div class="help">${r.territories==='Global'?'Cleared for use in all territories.':'A public link cannot be geo-restricted — it will be blocked.'}</div></div>
+    <div class="field"><div class="flab">On channels</div>
+      <div class="chips" style="gap:6px;">${CHANNELS.map(chip).join('')}</div>
+      <div class="help"><b style="color:var(--ed-value);font-weight:600;">Open web</b> is the one that gates public links. It means: anyone, anywhere, no sign-in.</div></div>
+
+    <div class="alert ${G.ok?'a-open':'a-info'}" style="margin-top:6px;">${svg(G.ok?I.link:I.lock,15)}<div class="at">
+      <b>${G.ok?'Public links are permitted':'Public links are blocked'}</b>${G.ok
+        ? `Cleared for open web, global${G.ceiling?`, until ${fmtDate(G.ceiling)}`:', with no end date'}.`
+        : G.reason}</div></div>
+    <div style="text-align:center;margin-top:10px;"><button class="btn btn-ter" onclick="go('access')">Open Access ${svg('<path d="m9 18 6-6-6-6"/>',11,2.5)}</button></div>`;
+
+  stage.innerHTML = `
+    <div class="acc">${svg(I.info,13)}<span>Rights are <b>asset-level</b>. Edit them here and Access reacts immediately.</span></div>
+    <div class="canvas"><div class="crop" style="width:330px;height:220px;"><span class="focal"></span></div></div>
+    <div class="outs">
+      <div class="outs-h">${svg(I.rights)}Why rights can't prune output-by-output</div>
+      <div style="font-size:12px;color:var(--ed-label);line-height:19px;">
+        There is no per-template rights model, and there shouldn't be — templates are output recipes, not permission entities.
+        A public link means <b style="color:var(--ed-value);font-weight:600;">anyone, anywhere, no sign-in</b>. That is a single question about the asset, and the answer is yes or no.
+        Whether the <i>master file</i> should be public is a governance call, not a rights one — an admin sets that template to download-only in Org Manager.
+      </div>
+    </div>`;
+}
+function setRight(k,v){
+  const wasOK = gate().ok;
+  S.rights[k]=v;
+  const c = ceilingISO(); if(S.autoRevoke && c && S.autoRevoke>c) S.autoRevoke=c;
+  const G = gate();
+  if(!G.ok && S.published){                       // rights just closed the gate
+    if(G.kind==='expired'){ S.revoked = Object.keys(S.outputs); }
+    S.published=false; S.outputs={};
+    toast(G.kind==='expired'?'Rights expired — links removed, records kept':'Rights now block public links — links removed');
+  }
+  draw();
+}
+function toggleChannel(c){
+  const i = S.rights.channels.indexOf(c);
+  i<0 ? S.rights.channels.push(c) : S.rights.channels.splice(i,1);
+  setRight('channels', S.rights.channels);
+}
+
+/* ============================================================
+   ORG MANAGER → DAM → TEMPLATES
+   ============================================================ */
+function mgo(t){ S.mgrTab=t; S.menu=null; draw(); }
+function mmenu(slug){ S.menu = S.menu==='m:'+slug ? null : 'm:'+slug; draw(); }
+
+function drawManager(){
+  const pc = publicCount(), full = pc>=CAP;
+  const shared   = S.templates.filter(t=>t.scope==='shared'  && !S.retired.includes(t.slug));
+  const personal = S.templates.filter(t=>t.scope==='personal'&& !S.retired.includes(t.slug));
+  const retired  = S.templates.filter(t=>S.retired.includes(t.slug));
+
+  const th = t => t.w/t.h>=1.6?'width:38px;height:22px':t.w===t.h?'width:26px;height:26px':t.w/t.h<0.8?'width:16px;height:28px':'width:34px;height:24px';
+  const chan = t => t.channel==='public'
+    ? `<span class="badge b-public">${svg(I.link,10)}Public</span><div class="t-sub" style="margin-top:4px;">${t.live.toLocaleString()} live links</div>`
+    : t.neverPublic ? `<span class="badge b-never">Download only</span><div class="t-sub" style="margin-top:4px;">Never eligible</div>`
+    : `<span class="badge b-dl">Download only</span>`;
+
+  const row = t => `<tr>
+    <td><div class="tn"><span class="tmb" style="${th(t)}"></span>
+      <div><div class="t-name">${esc(t.name)}</div><div class="t-meta">Crops to focal point</div></div></div></td>
+    <td><span class="t-num">${t.w} × ${t.h}</span><div class="t-sub">${t.fmt} · ${t.q}</div></td>
+    <td>${chan(t)}</td>
+    <td><span class="t-num">${t.uses.toLocaleString()}</span><div class="t-sub">downloads</div>
+      ${t.stale?`<span class="badge b-stale" style="margin-top:4px;">Unused ${t.stale} months</span>`:''}</td>
+    <td><span class="t-num">${t.ver}</span><div class="t-sub">${esc(t.by)}</div></td>
+    <td style="text-align:right;"><span class="rel">
+      <button class="lbtn l-gho" onclick="mmenu('${t.slug}')">⋯</button>
+      ${S.menu==='m:'+t.slug?mgrMenu(t):''}
+    </span></td></tr>`;
+
+  const tbl = rows => `<table class="tbl"><thead><tr>
+      <th>Template</th><th>Output</th><th>Delivery</th><th>Used · 90d</th><th>Version</th><th></th>
+    </tr></thead><tbody>${rows}</tbody></table>`;
+
+  let body = '';
+  if(S.mgrTab==='shared')        body = tbl(shared.map(row).join(''));
+  else if(S.mgrTab==='personal') body = tbl(personal.map(row).join(''));
+  else if(S.mgrTab==='retired')  body = retired.length ? tbl(retired.map(row).join(''))
+    : `<div class="mempty">Nothing retired yet.</div>`;
+  else body = S.proposals.length ? S.proposals.map(p=>`
+      <div class="prop">
+        <span class="pvx" style="${p.w===p.h?'width:56px;height:56px':'width:56px;height:31px'}"></span>
+        <div class="pm">
+          <div class="pn">${esc(p.name)}</div>
+          <div class="ps2">${p.w} × ${p.h} · ${p.fmt} · ${p.q} · crops to focal point</div>
+          <div class="pby">Proposed by ${esc(p.by)} · ${p.ago} · used ${p.uses} times personally</div>
+          ${p.dupe?`<div class="flagline">${svg(I.warn,12)}Identical output to <b style="font-weight:700;">${esc(p.dupe)}</b> — already shared. Rejecting points the proposer at it.</div>`:''}
+        </div>
+        <div class="pa">
+          ${p.dupe
+            ? `<button class="lbtn l-ter sm" onclick="resolveProp('${p.id}','approve')">Approve anyway</button>
+               <button class="lbtn l-pri sm" onclick="resolveProp('${p.id}','reject')">Reject — duplicate</button>`
+            : `<button class="lbtn l-ter sm" onclick="resolveProp('${p.id}','reject')">Reject</button>
+               <button class="lbtn l-sec sm" onclick="resolveProp('${p.id}','rename')">Rename &amp; approve</button>
+               <button class="lbtn l-pri sm" onclick="resolveProp('${p.id}','approve')">Approve</button>`}
+        </div>
+      </div>`).join('') : `<div class="mempty">No proposals waiting.</div>`;
+
+  mgr.innerHTML = `
+    <div class="mh">
+      <div class="crumb">Org Manager · DAM</div>
+      <div class="mt2">Templates</div>
+      <div class="msub">Output templates available across the library. What each one produces is defined in the asset editor; scope, delivery and retirement are managed here.</div>
+      <div class="capbar ${full?'full':''}">
+        <div>
+          <div class="cb-t">Publicly deliverable templates</div>
+          <div class="cb-s">${full
+            ? 'Cap reached. To make another public, take one off first.'
+            : 'Each one creates a public link on every published asset whose rights allow it.'}</div>
+        </div>
+        <div class="cb-m">
+          <span class="pips">${Array.from({length:CAP},(_,i)=>`<i class="pip ${i<pc?'on':''}"></i>`).join('')}</span>
+          <span class="cb-n">${pc} of ${CAP}</span>
+        </div>
+      </div>
+    </div>
+    <div class="mtabs">
+      <button class="mtab ${S.mgrTab==='shared'?'on':''}"    onclick="mgo('shared')">Shared <span class="n">${shared.length}</span></button>
+      <button class="mtab ${S.mgrTab==='proposals'?'on':''}" onclick="mgo('proposals')">Proposals <span class="n">${S.proposals.length}</span></button>
+      <button class="mtab ${S.mgrTab==='personal'?'on':''}"  onclick="mgo('personal')">Personal <span class="n">${personal.length}</span></button>
+      <button class="mtab ${S.mgrTab==='retired'?'on':''}"   onclick="mgo('retired')">Retired <span class="n">${retired.length}</span></button>
+    </div>
+    ${body}`;
+}
+
+function mgrMenu(t){
+  const isRetired = S.retired.includes(t.slug);
+  const CHEV = svg('<path d="m9 18 6-6-6-6"/>',10,2.5);
+  return `<div class="lmenu up">
+    <button class="lmi" onclick="openTplSettings('${t.slug}')">${svg(I.pen,14)}Template settings…</button>
+    <button class="lmi" onclick="S.view='editor';go('adjust');toast('Opened in Adjustments')">${svg(I.adjust,14)}Edit size &amp; format<span class="tag">Adjustments ${CHEV}</span></button>
+    <button class="lmi" onclick="toast('${t.uses.toLocaleString()} downloads · ${t.live.toLocaleString()} live links')">${svg(I.chart,14)}Usage &amp; live links</button>
+    <button class="lmi" onclick="toast('${esc(t.ver)} · last changed by ${esc(t.by)}')">${svg(I.versions,14)}Version history</button>
+    <div class="lsep"></div>
+    <div class="lcap">Lifecycle</div>
+    ${isRetired
+      ? `<button class="lmi" onclick="S.retired=S.retired.filter(x=>x!=='${t.slug}');S.menu=null;draw();toast('Restored to the library')">${svg(I.up,14)}Restore to the library</button>`
+      : `<button class="lmi" onclick="openRetire('${t.slug}')">${svg(I.archive,14)}Retire<span class="tag">confirm</span></button>`}
+    <button class="lmi dst" onclick="openTplDelete('${t.slug}')">${svg(I.trash,14)}Delete<span class="tag">confirm</span></button>
+  </div>`;
+}
+
+/* ---- template settings: the ONLY place the delivery channel is set ---- */
+function openTplSettings(slug){
+  const t = S.templates.find(x=>x.slug===slug);
+  const pc = publicCount(), full = pc>=CAP && t.channel!=='public';
+  const low = lowestUse();
+  let ch;
+  if(t.neverPublic){
+    ch = `<label class="chk"><span class="box no"></span><div style="opacity:.6;"><div class="ck-t">Available as a public link</div></div></label>
+      <div class="ck-no" style="margin-left:26px;">${svg(I.no,11)}This template can never be public</div>
+      <div class="ck-h" style="margin-left:26px;">${esc(t.neverPublic)}</div>`;
+  } else if(full){
+    ch = `<label class="chk"><span class="box no"></span><div style="opacity:.6;"><div class="ck-t">Available as a public link</div></div></label>
+      <div class="ck-no" style="margin-left:26px;">${svg(I.no,11)}${CAP} of ${CAP} public templates in use</div>
+      <div class="ck-h" style="margin-left:26px;">Every public template multiplies across the whole published library. To add this one, take another off first — <b style="color:#261e1b;font-weight:600;">${esc(low.name)}</b> has the lowest usage at ${low.uses.toLocaleString()} downloads.</div>
+      <div style="margin-left:26px;margin-top:10px;"><button class="lbtn l-sec sm" onclick="openTplSettings('${low.slug}')">Open ${esc(low.name)}</button></div>`;
+  } else {
+    const on = t.channel==='public';
+    ch = `<label class="chk" onclick="flipChannel('${t.slug}')">
+        <span class="box ${on?'on':''}">${on?svg(I.check,10,3.5):''}</span>
+        <div>
+          <div class="ck-t">Available as a public link</div>
+          <div class="ck-h">Published assets whose rights allow public use will get a link for this output. Leave off for print, masters and working files.</div>
+          ${on
+            ? `<div class="ck-w">Currently serving <b>${t.live.toLocaleString()} public links</b>. Turning this off stops every one of them, breaking anything that embeds them. You'll be asked for a reason.</div>`
+            : `<div class="ck-w">Turning this on would create <b>${(41006).toLocaleString()} public links</b> across the published library — one per asset whose rights allow it.</div>`}
+        </div></label>`;
+  }
+  modal(`
+    <div class="mt">Template settings</div>
+    <div class="mb">${esc(t.name)} · ${t.scope} · ${t.ver}</div>
+    <div class="ro"><span class="k">Output</span><span class="v">${t.w} × ${t.h} · ${t.fmt} · ${t.q}</span></div>
+    <div class="ro"><span class="k">Crop</span><span class="v">To focal point</span></div>
+    <div class="ro"><span class="k">Used</span><span class="v">${t.uses.toLocaleString()} downloads · last 90 days</span></div>
+    <div class="field" style="margin-top:14px;"><div class="flab">Name</div><input class="inp" value="${esc(t.name)}"></div>
+    <div class="eyebrow">Delivery</div>
+    ${ch}
+    <div class="mf">
+      <button class="lbtn l-ter" onclick="openRetire('${t.slug}')">Retire</button>
+      <button class="lbtn l-sec" onclick="closeModal()">Cancel</button>
+      <button class="lbtn l-pri" onclick="closeModal();toast('Saved')">Save</button>
+    </div>`, true);
+}
+
+/* ---- the blast-radius confirm ---- */
+function flipChannel(slug){
+  const t = S.templates.find(x=>x.slug===slug);
+  if(t.channel==='public'){
+    modal(`
+      <div class="mt">Stop delivering ${esc(t.name)} publicly?</div>
+      <div class="mb"><b style="color:#261e1b;font-weight:600;">${t.live.toLocaleString()} public links</b> will stop working across the whole library. Every partner site, email and CMS using one of them will show a broken image.</div>
+      <div class="ro"><span class="k">Links stopped</span><span class="v">${t.live.toLocaleString()}</span></div>
+      <div class="ro"><span class="k">Assets affected</span><span class="v">${t.live.toLocaleString()} published assets</span></div>
+      <div class="ro"><span class="k">Cached copies</span><span class="v">Cleared from every region</span></div>
+      <div class="ro"><span class="k">Takes effect</span><span class="v">~4 min — some regions keep serving until then</span></div>
+      <div class="ro"><span class="k">Reversible</span><span class="v">Yes — turning it back on restores the identical addresses</span></div>
+      <div class="field" style="margin-top:14px;"><div class="flab">Reason</div>
+        <input class="inp" placeholder="Recorded in the audit log"></div>
+      <div class="mf">
+        <button class="lbtn l-sec" onclick="openTplSettings('${slug}')">Cancel</button>
+        <button class="lbtn l-dst" onclick="doFlip('${slug}','download')">Stop ${t.live.toLocaleString()} links</button>
+      </div>`, true);
+  } else {
+    modal(`
+      <div class="mt">Make ${esc(t.name)} publicly deliverable?</div>
+      <div class="mb">This template will become a public link on every published asset whose rights allow public use.</div>
+      <div class="ro"><span class="k">New public links</span><span class="v">41,006 across the published library</span></div>
+      <div class="ro"><span class="k">Not included</span><span class="v">Assets not cleared for open web, outside global territory, or expired</span></div>
+      <div class="ro"><span class="k">Cap</span><span class="v">${publicCount()+1} of ${CAP} public templates after this</span></div>
+      <div class="ro"><span class="k">Reversible</span><span class="v">Yes — but turning it off stops all 41,006</span></div>
+      <div class="mf">
+        <button class="lbtn l-sec" onclick="openTplSettings('${slug}')">Cancel</button>
+        <button class="lbtn l-pri" onclick="doFlip('${slug}','public')">Create 41,006 links</button>
+      </div>`, true);
+  }
+}
+function doFlip(slug, ch){
+  const t = S.templates.find(x=>x.slug===slug);
+  t.channel = ch; t.live = ch==='public' ? 41006 : 0;
+  if(ch==='download'){ delete S.outputs[slug]; }
+  closeModal();
+  toast(ch==='public' ? `${t.name} is now a public link on every eligible asset` : `${t.name} links stopped everywhere`);
+}
+
+/* ---- retire vs delete ---- */
+function openRetire(slug){
+  const t = S.templates.find(x=>x.slug===slug);
+  modal(`
+    <div class="mt">Retire "${esc(t.name)}"?</div>
+    <div class="mb">It leaves the template pickers and stops appearing on new assets.${t.live?` Its <b style="color:#261e1b;font-weight:600;">${t.live.toLocaleString()} existing public links keep working</b> — retiring doesn't break anything.`:''}</div>
+    <div class="ro"><span class="k">Pickers</span><span class="v">Hidden</span></div>
+    <div class="ro"><span class="k">Existing links</span><span class="v">${t.live?`${t.live.toLocaleString()} keep working`:'None'}</span></div>
+    <div class="ro"><span class="k">Reversible</span><span class="v">Yes — restore it from the Retired tab</span></div>
+    <div class="mf">
+      <button class="lbtn l-sec" onclick="closeModal()">Cancel</button>
+      <button class="lbtn l-pri" onclick="S.retired.push('${slug}');closeModal();toast('Retired — existing links keep working');">Retire</button>
+    </div>`, true);
+}
+function openTplDelete(slug){
+  const t = S.templates.find(x=>x.slug===slug);
+  if(t.live>0){
+    modal(`
+      <div class="mt">Delete "${esc(t.name)}"?</div>
+      <div class="ck-no" style="margin:6px 0 10px;">${svg(I.lock,11)}Can't delete — ${t.live.toLocaleString()} live public links</div>
+      <div class="ck-h" style="margin-bottom:14px;">Deleting this template would permanently break every link derived from it. The addresses are generated from the template, so once it's gone they can never be restored.</div>
+      <div class="ro"><span class="k">Retire</span><span class="v">Hidden from pickers · links keep working</span></div>
+      <div class="ro"><span class="k">Stop and delete</span><span class="v">Stops ${t.live.toLocaleString()} links · permanent</span></div>
+      <div class="mf">
+        <button class="lbtn l-dst" onclick="doFlip('${slug}','download');S.retired.push('${slug}');toast('Links stopped and template deleted');">Stop and delete</button>
+        <button class="lbtn l-pri" onclick="S.retired.push('${slug}');closeModal();toast('Retired instead — links keep working');">Retire instead</button>
+      </div>`, true);
+  } else {
+    modal(`
+      <div class="mt">Delete "${esc(t.name)}"?</div>
+      <div class="mb">No public links use this template, so nothing breaks. It disappears from every picker.</div>
+      <div class="mf">
+        <button class="lbtn l-sec" onclick="closeModal()">Cancel</button>
+        <button class="lbtn l-dst" onclick="S.templates=S.templates.filter(x=>x.slug!=='${slug}');closeModal();toast('Deleted');">Delete</button>
+      </div>`, true);
+  }
+}
+function resolveProp(id, how){
+  const p = S.proposals.find(x=>x.id===id);
+  S.proposals = S.proposals.filter(x=>x.id!==id);
+  if(how==='reject'){ toast(p.dupe?`Rejected — proposer pointed at ${p.dupe}`:'Rejected'); }
+  else {
+    S.templates.push({slug:'sh'+Date.now(), name:p.name, w:p.w, h:p.h, fmt:p.fmt==='JPEG'?'JPG':p.fmt, q:p.q,
+      channel:'download', scope:'shared', size:'—', uses:0, live:0, ver:'v1', by:p.by});
+    toast(how==='rename'?'Renamed and added to the shared library':'Added to the shared library');
+  }
+  S.menu=null; draw();
+}
+
+function draw(){
+  editorView.style.display = S.view==='editor' ? '' : 'none';
+  mgrView.style.display    = S.view==='manager' ? '' : 'none';
+  document.querySelectorAll('.appnav .nav').forEach(b=>b.classList.toggle('on', b.dataset.v===S.view));
+  if(S.view==='manager'){ drawManager();
+    segRights.innerHTML = Object.entries(PRESETS).map(([k,v])=>`<option value="${k}" ${S.preset===k?'selected':''}>${v.label}</option>`).join('');
+    document.querySelectorAll('#segRole button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.role));
+    swFail.classList.toggle('on',S.simFail);
+    return; }
+  renderRail();
+  if(S.tab==='adjust') drawAdjust();
+  else if(S.tab==='template') drawTemplate();
+  else if(S.tab==='rights') drawRights();
+  else drawAccess();
+  segRights.innerHTML = Object.entries(PRESETS).map(([k,v])=>`<option value="${k}" ${S.preset===k?'selected':''}>${v.label}</option>`).join('');
+  document.querySelectorAll('#segRole button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.role));
+  swFail.classList.toggle('on',S.simFail);
+}
+segRights.addEventListener('change',e=>{
+  const k = e.target.value; S.preset = k;
+  const wasPub = S.published;
+  S.rights = {...PRESETS[k], channels:[...PRESETS[k].channels]};
+  const G = gate();
+  if(k==='expired'){
+    S.revoked = S.templates.filter(t=>t.channel==='public' && sizeValid(t)).map(t=>t.slug);
+    S.published=false; S.outputs={};
+  } else if(S.revoked.length && G.ok){
+    S.published=false; S.outputs={};              // hold the records → restore prompt
+  } else {
+    S.revoked=[];
+    if(wasPub && G.ok) beginRender(eligible().map(t=>t.slug)); else { S.published=false; S.outputs={}; }
+  }
+  const c = ceilingISO(); if(S.autoRevoke && c && S.autoRevoke>c) S.autoRevoke=c;
+  S.tab='access'; draw();
+});
+segRole.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b)return; S.role=b.dataset.v; S.menu=null; draw(); });
+swFail.addEventListener('click',()=>{ S.simFail=!S.simFail; draw(); });
+btnReset.addEventListener('click',()=>{ reset(); draw(); toast('Reset'); });
+
+draw();
+</script>
+</body>
+</html>
