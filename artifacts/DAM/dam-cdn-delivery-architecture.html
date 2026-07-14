@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DAM + Dynamic Media Delivery — Architecture and Commercial Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --color-stone-50:#fefcfc; --color-stone-100:#f5f5f4; --color-stone-200:#e7e5e4;
+  --color-stone-300:#d6d3d1; --color-stone-400:#978985; --color-stone-500:#6b615e;
+  --color-stone-600:#57534e; --color-stone-700:#44403c; --color-stone-800:#292524;
+  --color-stone-900:#261e1b;
+  --color-primary-50:#e8f6fa; --color-primary-100:#c4e8f1; --color-primary-200:#8dd1e3;
+  --color-primary-600:#0b6e8a; --color-primary-700:#005f7b; --color-primary-800:#1b404e;
+  --accent-9:#0B6E8A; --accent-12:#1B404E;
+  --color-red-100:#feebe7; --color-red-500:#e54d2e; --color-red-600:#d13415;
+  --color-amber-100:#ffefd5; --color-amber-500:#f5a524; --color-amber-600:#985b00;
+  --color-green-100:#e6f7ed; --color-green-500:#29a383; --color-green-600:#208368;
+  --surface-default:var(--color-stone-50); --surface-muted:var(--color-stone-100);
+  --surface-emphasis:var(--color-stone-200);
+  --text-default:var(--color-stone-900); --text-muted:var(--color-stone-500);
+  --text-subtle:var(--color-stone-400);
+  --border-default:var(--color-stone-200); --border-emphasis:var(--color-stone-300);
+  --spacing-1:4px; --spacing-2:8px; --spacing-3:12px; --spacing-4:16px; --spacing-5:20px;
+  --spacing-6:24px; --spacing-7:32px; --spacing-8:40px; --spacing-9:48px; --spacing-10:64px;
+  --radius-2:4px; --radius-3:6px; --radius-4:8px; --radius-full:9999px;
+  --font-family-text:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-size-1:12px; --font-size-2:14px; --font-size-3:16px; --font-size-4:18px;
+  --font-size-5:24px; --font-size-6:32px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.05);
+  --shadow-md:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);
+  --letter-spacing-1:.04em; --letter-spacing-tight:-.01em; --letter-spacing-tighter:-.02em;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--font-family-text); background:var(--surface-muted);
+  color:var(--text-default); font-size:var(--font-size-2); line-height:20px;
+  -webkit-font-smoothing:antialiased; padding:var(--spacing-8) var(--spacing-6);
+}
+.wrap{max-width:1520px;margin:0 auto}
+
+.masthead{margin-bottom:var(--spacing-9)}
+.eyebrow{font-size:var(--font-size-1);font-weight:600;letter-spacing:var(--letter-spacing-1);
+  text-transform:uppercase;color:var(--text-muted);margin-bottom:var(--spacing-3)}
+h1{font-size:var(--font-size-6);font-weight:700;letter-spacing:var(--letter-spacing-tighter);
+  line-height:40px;margin-bottom:var(--spacing-3)}
+.standfirst{font-size:var(--font-size-4);line-height:26px;color:var(--color-stone-600);max-width:78ch}
+
+section{margin-bottom:var(--spacing-10)}
+h2{font-size:var(--font-size-5);font-weight:600;letter-spacing:var(--letter-spacing-tight);
+  line-height:32px;margin-bottom:var(--spacing-2)}
+.sec-note{color:var(--text-muted);margin-bottom:var(--spacing-7);max-width:82ch}
+
+/* ============ FLOW ============ */
+.flow{
+  display:grid;
+  grid-template-columns:1fr 40px 1fr 60px 1fr 40px 1fr 40px 1fr;
+  align-items:stretch;
+}
+
+/* --- ownership bands --- */
+.band{
+  border-radius:var(--radius-4) var(--radius-4) 0 0;
+  padding:var(--spacing-3) var(--spacing-4);
+  display:flex; flex-direction:column; gap:2px;
+  border:1px solid; border-bottom:none;
+}
+.band-owner{font-size:var(--font-size-3);font-weight:700;letter-spacing:var(--letter-spacing-tight);line-height:22px}
+.band-note{font-size:var(--font-size-1);font-weight:500;line-height:17px}
+.band-sd{grid-column:1 / 4; background:var(--accent-12); border-color:var(--accent-12); color:#fff}
+.band-sd .band-note{color:var(--color-primary-200)}
+.band-pt{grid-column:5 / 8; background:var(--color-amber-100); border-color:var(--color-amber-500); color:var(--color-amber-600)}
+.band-pt .band-note{color:var(--color-stone-600)}
+.band-as{grid-column:9 / 10; background:var(--surface-emphasis); border-color:var(--border-emphasis); color:var(--color-stone-600)}
+.band-as .band-note{color:var(--text-muted)}
+.band-gap{grid-column:4 / 5}
+.band-gap2{grid-column:8 / 9}
+
+/* --- stage cards --- */
+.stage{display:flex;flex-direction:column;border:1px solid;
+  border-radius:0 0 var(--radius-4) var(--radius-4);padding:var(--spacing-4);gap:var(--spacing-2)}
+.stage-hd{display:flex;align-items:center;gap:var(--spacing-2);margin-bottom:var(--spacing-1)}
+.stage-num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;
+  border-radius:var(--radius-full);font-size:11px;font-weight:700;color:#fff;flex:0 0 auto}
+.stage-title{font-size:var(--font-size-3);font-weight:600;letter-spacing:var(--letter-spacing-tight)}
+.node{background:var(--surface-default);border:1px solid var(--border-default);
+  border-radius:var(--radius-3);padding:var(--spacing-3);font-size:var(--font-size-2);line-height:19px}
+.node b{display:block;font-weight:600;margin-bottom:2px}
+.node span{color:var(--text-muted);font-size:var(--font-size-1);line-height:17px;display:block}
+
+.s1{grid-column:1 / 2; background:var(--color-primary-50); border-color:var(--accent-12)}
+.s2{grid-column:3 / 4; background:var(--color-primary-100); border-color:var(--accent-12)}
+.s1 .stage-num,.s2 .stage-num{background:var(--accent-9)}
+.s1 .node{border-color:var(--color-primary-100)}
+.s2 .node{border-color:var(--color-primary-200)}
+.s3{grid-column:5 / 6; background:var(--color-amber-100); border-color:var(--color-amber-500)}
+.s4{grid-column:7 / 8; background:var(--color-amber-100); border-color:var(--color-amber-500)}
+.s3 .stage-num,.s4 .stage-num{background:var(--color-amber-600)}
+.s3 .node,.s4 .node{border-color:#f0dcb4}
+.s5{grid-column:9 / 10; background:var(--surface-emphasis); border-color:var(--border-emphasis)}
+.s5 .stage-num{background:var(--color-stone-500)}
+.s5 .node{border-color:var(--border-emphasis)}
+
+/* --- the gate control --- */
+.mint{background:var(--accent-12);color:#fff;border-radius:var(--radius-3);
+  padding:var(--spacing-3);box-shadow:var(--shadow-md)}
+.mint b{display:block;font-weight:700;font-size:var(--font-size-2);margin-bottom:2px}
+.mint span{display:block;color:var(--color-primary-200);font-size:var(--font-size-1);line-height:17px}
+.pass{border-left:3px solid var(--color-green-500) !important}
+.block{border-left:3px solid var(--color-red-500) !important;border-style:dashed !important}
+
+/* --- connectors --- */
+.arrow{display:flex;align-items:center;justify-content:center;position:relative}
+.arrow::before{content:"";position:absolute;left:0;right:0;height:2px;background:var(--border-emphasis)}
+.arrow::after{content:"";position:absolute;right:5px;border-left:8px solid var(--border-emphasis);
+  border-top:6px solid transparent;border-bottom:6px solid transparent}
+.a1{grid-column:2 / 3}
+.a3{grid-column:6 / 7}
+.a4{grid-column:8 / 9}
+
+.handover{grid-column:4 / 5;display:flex;align-items:center;justify-content:center;position:relative}
+.handover::before{content:"";position:absolute;left:0;right:0;height:2px;
+  background:repeating-linear-gradient(90deg,var(--accent-9) 0 6px,transparent 6px 12px)}
+.handover::after{content:"";position:absolute;right:3px;border-left:9px solid var(--color-amber-600);
+  border-top:7px solid transparent;border-bottom:7px solid transparent}
+.handover-label{position:absolute;top:calc(50% - 52px);left:50%;transform:translateX(-50%);
+  writing-mode:vertical-rl;font-size:10px;font-weight:700;letter-spacing:var(--letter-spacing-1);
+  text-transform:uppercase;color:var(--accent-9);white-space:nowrap}
+
+/* --- partner chips in the band --- */
+.chips{display:flex;flex-wrap:wrap;gap:var(--spacing-1);margin-top:var(--spacing-2)}
+.chip{font-size:11px;font-weight:600;padding:2px var(--spacing-2);border-radius:var(--radius-full);
+  background:var(--surface-default);border:1px solid var(--color-amber-500);color:var(--color-amber-600)}
+.chip-more{background:transparent;border-style:dashed;color:var(--color-stone-500);border-color:var(--color-stone-400)}
+
+/* --- partner selection panel --- */
+.partners{margin-top:var(--spacing-6);background:var(--surface-default);border:1px solid var(--border-default);
+  border-radius:var(--radius-4);padding:var(--spacing-6);box-shadow:var(--shadow-sm)}
+.partners h3{font-size:var(--font-size-4);font-weight:600;letter-spacing:var(--letter-spacing-tight);
+  margin-bottom:var(--spacing-2)}
+.partners .lead{color:var(--text-muted);margin-bottom:var(--spacing-5);max-width:82ch}
+.p-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--spacing-4);margin-bottom:var(--spacing-5)}
+.p-card{border:1px solid var(--border-default);border-radius:var(--radius-3);padding:var(--spacing-4);
+  background:var(--surface-muted);display:flex;flex-direction:column;gap:var(--spacing-2)}
+.p-name{font-size:var(--font-size-3);font-weight:700;letter-spacing:var(--letter-spacing-tight)}
+.p-for,.p-against{font-size:var(--font-size-1);line-height:17px}
+.p-for{color:var(--color-green-600)}
+.p-against{color:var(--color-stone-600)}
+.p-for b,.p-against b{display:block;font-size:10px;font-weight:700;letter-spacing:var(--letter-spacing-1);
+  text-transform:uppercase;margin-bottom:2px;color:var(--text-subtle)}
+.criteria{border-left:3px solid var(--accent-9);background:var(--color-primary-50);
+  padding:var(--spacing-4) var(--spacing-5);border-radius:0 var(--radius-3) var(--radius-3) 0;
+  font-size:var(--font-size-2);line-height:20px}
+.criteria b{font-weight:600}
+.criteria ul{list-style:none;margin-top:var(--spacing-3);display:flex;flex-direction:column;gap:var(--spacing-2)}
+.criteria li{position:relative;padding-left:var(--spacing-5)}
+.criteria li::before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;
+  border-radius:var(--radius-full);background:var(--accent-9)}
+
+/* --- boundary rule --- */
+.rule{margin-top:var(--spacing-6);background:var(--accent-12);color:#fff;border-radius:var(--radius-4);
+  padding:var(--spacing-5) var(--spacing-6);display:flex;gap:var(--spacing-4);align-items:baseline;flex-wrap:wrap}
+.rule-label{font-size:11px;font-weight:700;letter-spacing:var(--letter-spacing-1);
+  text-transform:uppercase;color:#7fb6cc;flex:0 0 auto}
+.rule-text{font-size:var(--font-size-3);font-weight:500;line-height:24px}
+.rule-text em{font-style:normal;color:var(--color-primary-200);font-weight:600}
+
+/* ============ BILLING ============ */
+.models{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--spacing-5)}
+.model{background:var(--surface-default);border:1px solid var(--border-default);
+  border-radius:var(--radius-4);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-sm)}
+.model-hd{padding:var(--spacing-5) var(--spacing-5) var(--spacing-4);border-bottom:1px solid var(--border-default)}
+.badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:var(--letter-spacing-1);
+  text-transform:uppercase;padding:3px var(--spacing-2);border-radius:var(--radius-2);
+  border:1px solid;margin-bottom:var(--spacing-3)}
+.model h3{font-size:var(--font-size-3);font-weight:600;line-height:22px;letter-spacing:var(--letter-spacing-tight)}
+.model ul{list-style:none;padding:var(--spacing-4) var(--spacing-5);flex:1;display:flex;flex-direction:column;gap:var(--spacing-3)}
+.model li{position:relative;padding-left:var(--spacing-5);font-size:var(--font-size-2);line-height:20px}
+.model li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;
+  border-radius:var(--radius-full);background:var(--color-stone-400)}
+.model li strong{font-weight:600}
+.tradeoff{border-top:1px solid var(--border-default);padding:var(--spacing-4) var(--spacing-5);
+  font-size:var(--font-size-1);line-height:18px;color:var(--text-muted);background:var(--surface-muted)}
+.tradeoff b{color:var(--color-stone-600);font-weight:600;display:block;margin-bottom:2px;
+  font-size:11px;letter-spacing:var(--letter-spacing-1);text-transform:uppercase}
+.m-good .badge{background:var(--color-green-100);border-color:var(--color-green-500);color:var(--color-green-600)}
+.m-good .model-hd{background:var(--color-green-100)}
+.m-good li::before{background:var(--color-green-500)}
+.m-caution .badge{background:var(--color-amber-100);border-color:var(--color-amber-500);color:var(--color-amber-600)}
+.m-caution .model-hd{background:var(--color-amber-100)}
+.m-caution li::before{background:var(--color-amber-500)}
+.m-bad{border-color:var(--color-red-500)}
+.m-bad .badge{background:var(--color-red-100);border-color:var(--color-red-500);color:var(--color-red-600)}
+.m-bad .model-hd{background:var(--color-red-100);border-bottom-color:var(--color-red-500)}
+.m-bad li::before{background:var(--color-red-500)}
+
+/* ============ COST ============ */
+.cost{background:var(--surface-default);border:1px solid var(--border-default);
+  border-radius:var(--radius-4);padding:var(--spacing-6);box-shadow:var(--shadow-sm)}
+.cost-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--spacing-6);margin-bottom:var(--spacing-6)}
+.metric .m-label{font-size:11px;font-weight:600;letter-spacing:var(--letter-spacing-1);
+  text-transform:uppercase;color:var(--text-muted);margin-bottom:var(--spacing-2)}
+.metric .m-value{font-size:var(--font-size-5);font-weight:700;letter-spacing:var(--letter-spacing-tighter);
+  line-height:30px;margin-bottom:var(--spacing-1)}
+.metric .m-sub{font-size:var(--font-size-1);color:var(--text-muted);line-height:17px}
+.caveat{border-left:3px solid var(--color-amber-500);background:var(--color-amber-100);
+  padding:var(--spacing-4) var(--spacing-5);border-radius:0 var(--radius-3) var(--radius-3) 0;
+  font-size:var(--font-size-2);line-height:20px}
+.caveat b{font-weight:600}
+
+footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px solid var(--border-default);
+  font-size:var(--font-size-1);color:var(--text-subtle)}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:1280px){
+  .flow{grid-template-columns:1fr}
+  .band,.stage,.arrow,.handover{grid-column:1 / -1 !important}
+  .band{border-radius:var(--radius-4);border-bottom:1px solid;margin-top:var(--spacing-4)}
+  .band-sd{margin-top:0}
+  .stage{border-radius:var(--radius-4);margin-top:var(--spacing-3)}
+  .arrow,.handover{height:40px}
+  .arrow::before,.handover::before{left:50%;right:auto;top:0;bottom:0;width:2px;height:auto;transform:translateX(-50%)}
+  .handover::before{background:repeating-linear-gradient(180deg,var(--accent-9) 0 6px,transparent 6px 12px)}
+  .arrow::after{right:auto;bottom:2px;left:50%;transform:translateX(-50%);
+    border-left:6px solid transparent;border-right:6px solid transparent;
+    border-top:8px solid var(--border-emphasis);border-bottom:none}
+  .handover::after{right:auto;bottom:0;left:50%;transform:translateX(-50%);
+    border-left:7px solid transparent;border-right:7px solid transparent;
+    border-top:9px solid var(--color-amber-600);border-bottom:none}
+  .handover-label{writing-mode:horizontal-tb;top:50%;left:50%;transform:translate(-50%,-50%);
+    background:var(--surface-muted);padding:2px var(--spacing-3)}
+  .band-gap,.band-gap2{display:none}
+  .models,.cost-grid{grid-template-columns:1fr}
+  .p-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+  body{padding:var(--spacing-5) var(--spacing-4)}
+  h1{font-size:var(--font-size-5);line-height:32px}
+  .p-grid{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff;padding:0}
+  section{break-inside:avoid;page-break-inside:avoid}
+  .stage,.model,.cost{box-shadow:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Screendragon &middot; ASDA RFP &middot; DAM, dynamic media and CDN</div>
+    <h1>We govern the asset. We control the gate. A partner delivers it.</h1>
+    <p class="standfirst">Screendragon is the system of record for masters, rights, versions and approvals &mdash; and it owns the gate that decides what is allowed out. Transformation and global delivery sit with a specialist partner downstream. Nothing crosses without our signature.</p>
+  </header>
+
+  <section>
+    <h2>How dynamic media delivery works</h2>
+    <p class="sec-note">One master is stored. Every derivative is generated on demand and cached at the edge &mdash; no renditions are created, stored or managed. The ownership boundary is not a gap in the architecture; it is the control point.</p>
+
+    <div class="flow">
+
+      <div class="band band-sd">
+        <span class="band-owner">Screendragon owns this</span>
+        <span class="band-note">The governed origin and the gate. Every rights decision is made inside this band.</span>
+      </div>
+      <div class="band-gap"></div>
+      <div class="band band-pt">
+        <span class="band-owner">Delivery partner owns this</span>
+        <span class="band-note">Transformation and global edge delivery. Best-in-class, and swappable without touching the origin.</span>
+        <div class="chips">
+          <span class="chip">imgix</span>
+          <span class="chip">Cloudinary</span>
+          <span class="chip">Akamai</span>
+          <span class="chip">Cloudflare</span>
+          <span class="chip chip-more">or ASDA's existing provider</span>
+        </div>
+      </div>
+      <div class="band-gap2"></div>
+      <div class="band band-as">
+        <span class="band-owner">ASDA</span>
+        <span class="band-note">Consumption</span>
+      </div>
+
+      <div class="stage s1">
+        <div class="stage-hd"><span class="stage-num">1</span><span class="stage-title">Governed origin</span></div>
+        <div class="node"><b>Master assets</b><span>Single source of truth</span></div>
+        <div class="node"><b>Rights and licence</b><span>Usage scope, embargo, expiry</span></div>
+        <div class="node"><b>Metadata and versions</b><span>Taxonomy, attributes, full history</span></div>
+        <div class="node"><b>Workflow and approvals</b><span>Brief, proof, sign-off</span></div>
+        <div class="node"><b>Template workbench</b><span>Human-initiated output</span></div>
+      </div>
+
+      <div class="arrow a1"></div>
+
+      <div class="stage s2">
+        <div class="stage-hd"><span class="stage-num">2</span><span class="stage-title">The gate &mdash; ours</span></div>
+        <div class="mint"><b>Signed URL mint</b><span>Screendragon decides what is allowed out. Nothing renders downstream without our signature.</span></div>
+        <div class="node pass"><b>Cleared, so published</b><span>Approved, rights-cleared assets only. Rights are enforced once, here &mdash; which is why public traffic can be served hot without a per-request check.</span></div>
+        <div class="node block"><b>Restricted or expired, so held back</b><span>Never reaches the public origin. Stays on the authenticated Screendragon path, where rights are enforced at read.</span></div>
+      </div>
+
+      <div class="handover"><span class="handover-label">Handover</span></div>
+
+      <div class="stage s3">
+        <div class="stage-hd"><span class="stage-num">3</span><span class="stage-title">Dynamic media</span></div>
+        <div class="node"><b>Pulls the master</b><span>Fetched from our origin on first request</span></div>
+        <div class="node"><b>Transforms in real time</b><span>Resize, crop, quality &mdash; set by URL parameters</span></div>
+        <div class="node"><b>Adapts to the viewer</b><span>Device, DPR and bandwidth aware. WebP and AVIF served automatically.</span></div>
+        <div class="node"><b>Caches the derivative</b><span>No renditions stored anywhere</span></div>
+      </div>
+
+      <div class="arrow a3"></div>
+
+      <div class="stage s4">
+        <div class="stage-hd"><span class="stage-num">4</span><span class="stage-title">Global CDN edge</span></div>
+        <div class="node"><b>Global points of presence</b><span>Low latency wherever the shopper is</span></div>
+        <div class="node"><b>TLS, DDoS, hotlink protection</b><span>Edge security and abuse prevention</span></div>
+        <div class="node"><b>Scales on demand</b><span>Absorbs peak trading without pre-provisioning</span></div>
+      </div>
+
+      <div class="arrow a4"></div>
+
+      <div class="stage s5">
+        <div class="stage-hd"><span class="stage-num">5</span><span class="stage-title">Endpoints</span></div>
+        <div class="node"><b>Web and eCommerce</b><span>Approximately 9.6bn page views a year</span></div>
+        <div class="node"><b>CMS, PIM and apps</b><span>Assets consumed by URL, no integration lift</span></div>
+        <div class="node"><b>Email and social</b><span>Same master, any output</span></div>
+      </div>
+
+    </div>
+
+    <div class="partners">
+      <h3>Who delivers it is a choice, not a lock-in</h3>
+      <p class="lead">The delivery layer is a competitive market of mature, interchangeable providers. Because Screendragon holds the origin and mints the URLs, the provider underneath can be selected on merit and changed later without re-platforming the asset library. This is what composable actually means in practice.</p>
+
+      <div class="p-grid">
+        <div class="p-card">
+          <div class="p-name">imgix</div>
+          <div class="p-for"><b>Strength</b>The most mature URL transformation API. Image-first, and the closest like-for-like replacement for Adobe Dynamic Media.</div>
+          <div class="p-against"><b>Watch</b>Weaker on video than the others. Consumption-credit pricing is hard to forecast.</div>
+        </div>
+        <div class="p-card">
+          <div class="p-name">Cloudinary</div>
+          <div class="p-for"><b>Strength</b>The strongest combined image and video capability of the four. Broad format support.</div>
+          <div class="p-against"><b>Watch</b>Also credit-based. Storage costs compound if the origin is duplicated.</div>
+        </div>
+        <div class="p-card">
+          <div class="p-name">Akamai</div>
+          <div class="p-for"><b>Strength</b>Image and video, on an enterprise CDN with the scale and security posture ASDA already expects.</div>
+          <div class="p-against"><b>Watch</b>Enterprise commercials and a heavier implementation than the pure image CDNs.</div>
+        </div>
+        <div class="p-card">
+          <div class="p-name">Cloudflare</div>
+          <div class="p-for"><b>Strength</b>Leanest commercial model and simple, predictable bandwidth pricing at scale.</div>
+          <div class="p-against"><b>Watch</b>Fewer transformation operations than imgix or Cloudinary.</div>
+        </div>
+      </div>
+
+      <div class="criteria">
+        <b>What should decide it</b>
+        <ul>
+          <li>How much <b>video</b> ASDA's library actually carries. This is the single biggest differentiator between these providers, and it rules imgix in or out.</li>
+          <li>Whether the <b>multi-CDN</b> requirement is a live operational need or an inherited one. True multi-CDN adds a routing layer, cost and complexity, and the incumbent does not provide it today either.</li>
+          <li>ASDA's <b>actual delivery volume</b>, which is on their current invoice. Pricing at this scale is negotiated, not listed.</li>
+          <li>Whether ASDA would rather <b>retain a provider they already hold</b> a contract with. The architecture supports that without change.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="rule">
+      <div class="rule-label">The boundary</div>
+      <div class="rule-text">The CDN makes <em>no</em> rights decisions. It renders only what Screendragon has signed.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>How this gets billed</h2>
+    <p class="sec-note">Delivery is a variable cost that scales with traffic. The software is not. Keeping those two apart in the commercial model is the single most important decision in this part of the bid.</p>
+
+    <div class="models">
+
+      <div class="model m-good">
+        <div class="model-hd">
+          <span class="badge">Recommended</span>
+          <h3>Model A &mdash; ASDA contracts delivery directly</h3>
+        </div>
+        <ul>
+          <li>ASDA holds the delivery contract and pays the provider directly</li>
+          <li>Screendragon charges a <strong>fixed fee</strong> for integration, the publish pipeline and signed-URL minting</li>
+          <li>Screendragon carries <strong>no egress cost</strong> and <strong>no public uptime liability</strong></li>
+          <li>ASDA negotiates delivery on their own volume &mdash; a better rate, with no reseller margin on top</li>
+          <li>Delivery can be swapped later without touching Screendragon</li>
+        </ul>
+        <div class="tradeoff"><b>Trade-off</b>Two suppliers, two invoices.</div>
+      </div>
+
+      <div class="model m-caution">
+        <div class="model-hd">
+          <span class="badge">Viable, with conditions</span>
+          <h3>Model B &mdash; Screendragon primes, partner disclosed</h3>
+        </div>
+        <ul>
+          <li>One contract, one invoice, with the delivery partner named as a disclosed subcontractor under RFP clause 2.3</li>
+          <li>Delivery is an <strong>itemised pass-through</strong> line &mdash; not bundled, not fixed</li>
+          <li>A stated volume assumption, with a defined mechanism for what happens above it</li>
+          <li>Screendragon takes a management fee for the wrapper, <strong>not the delivery risk</strong></li>
+        </ul>
+        <div class="tradeoff"><b>Trade-off</b>Only works with a watertight volume and overage clause. Without one, this quietly becomes Model C.</div>
+      </div>
+
+      <div class="model m-bad">
+        <div class="model-hd">
+          <span class="badge">Do not do this</span>
+          <h3>Model C &mdash; all-inclusive fixed bundle</h3>
+        </div>
+        <ul>
+          <li>Delivery absorbed into a single fixed, all-inclusive price</li>
+          <li>A <strong>six-figure variable bill</strong> sitting underneath a <strong>fixed fee</strong></li>
+          <li>Overage is charged at a premium and unused capacity is forfeited &mdash; the cost only moves one way</li>
+          <li>Payment terms are 120 days, so the bill is fronted for four months</li>
+          <li>One bad peak-trading forecast eats the margin on the whole deal</li>
+        </ul>
+        <div class="tradeoff"><b>Why it is on this page</b>Procurement will ask for it. Name it and rule it out before they do.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>What delivery is likely to cost</h2>
+    <div class="cost">
+      <div class="cost-grid">
+        <div class="metric">
+          <div class="m-label">Traffic to serve</div>
+          <div class="m-value">9.6bn</div>
+          <div class="m-sub">Page views a year, per ASDA. Roughly 800m a month.</div>
+        </div>
+        <div class="metric">
+          <div class="m-label">Estimated delivery volume</div>
+          <div class="m-value">250&ndash;400 TB</div>
+          <div class="m-sub">Per month, assuming a well-optimised retail page weight.</div>
+        </div>
+        <div class="metric">
+          <div class="m-label">Indicative annual cost</div>
+          <div class="m-value">&pound;150k&ndash;&pound;500k</div>
+          <div class="m-sub">Order of magnitude only. Not a quote.</div>
+        </div>
+      </div>
+      <div class="caveat">
+        <b>The range is wide for a reason.</b> Leading image CDNs now price on consumption credits drawn across storage, delivery and transformation, and the transformation rate is not published. The bill cannot be derived from a public pricing page. Two things close the gap fast: ASDA's actual bandwidth figure, which sits on their current Adobe invoice, and an enterprise quote from the delivery partner. Neither should be estimated in the response.
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Screendragon &middot; Prepared for the ASDA RFP response &middot; Cost figures are indicative and must be validated against a supplier quote before submission.
+  </footer>
+
+</div>
+</body>
+</html>
