@@ -52,7 +52,7 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
 .region{display:flex;flex-direction:column;border-right:1px solid var(--border-default);min-height:0;height:100%;}
 .region:last-child{border-right:none;}
 .region.lk,.field.lk{opacity:0.45;pointer-events:none;}
-.r-setup{flex:0 0 300px;} .r-cols{flex:0 0 300px;} .r-meta{flex:0 0 280px;}
+.r-setup{flex:0 0 300px;} .r-cols{flex:0 0 400px;} .r-meta{flex:0 0 300px;}
 .region-head{padding:13px var(--spacing-4);border-bottom:1px solid var(--border-subtle);font-size:11px;font-weight:var(--font-weight-semibold);
   text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .region-body{padding:var(--spacing-4);overflow-y:auto;flex:1;min-height:0;}
@@ -276,6 +276,93 @@ td.num{text-align:right;}
 .est .mgrp{display:flex;flex-direction:column;gap:4px;}
 .est .mgrp+.mgrp{margin-top:9px;}
 .bd-hint{font-size:var(--font-size-1);color:var(--text-subtle);margin-top:7px;line-height:1.4;}
+/* locked report identity + driver */
+.rpt-id{margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--border-default);}
+.rpt-top{display:flex;gap:9px;align-items:flex-start;}
+.rpt-lock{color:var(--text-subtle);flex:0 0 auto;margin-top:3px;}
+.rpt-main{min-width:0;}
+.rpt-name{font-size:var(--font-size-3,16px);font-weight:var(--font-weight-semibold);color:var(--text-default);line-height:1.2;}
+.rpt-driver{font-size:var(--font-size-1);color:var(--primary-default);font-weight:var(--font-weight-medium);margin-top:3px;}
+.rpt-grain{font-weight:var(--font-weight-semibold);}
+.rpt-consq{font-size:11px;color:var(--text-subtle);margin-top:10px;line-height:1.45;background:var(--surface-muted);border-left:2px solid var(--border-emphasis);padding:7px 10px;border-radius:0 var(--radius-2) var(--radius-2) 0;}
+.rpt-change{margin-top:11px;border:none;background:none;color:var(--primary-default);font-family:inherit;font-size:var(--font-size-1);cursor:pointer;padding:0;font-weight:var(--font-weight-medium);}
+.rpt-change:hover{text-decoration:underline;}
+.adv-toggle{margin-top:8px;color:var(--text-muted);font-size:var(--font-size-1);cursor:pointer;font-weight:var(--font-weight-medium);user-select:none;}
+.adv-toggle:hover{color:var(--primary-default);}
+#buildSurface[data-pers="user"] #card-cols{display:none;}
+#buildSurface:not(.adv) #f-group,
+#buildSurface:not(.adv) #f-sort{display:none;}
+/* template gallery */
+.tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(244px,1fr));gap:12px;margin-bottom:6px;}
+.tpl-card{border:1px solid var(--border-default);border-radius:var(--radius-3);padding:14px;cursor:pointer;background:var(--surface-default);transition:border-color .12s,box-shadow .12s;display:flex;flex-direction:column;gap:7px;}
+.tpl-card:hover{border-color:var(--primary-default);box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.tpl-driver{font-size:10px;font-weight:var(--font-weight-semibold);text-transform:uppercase;letter-spacing:.03em;color:var(--primary-default);background:var(--primary-subtle);border-radius:var(--radius-full);padding:2px 9px;align-self:flex-start;}
+.tpl-top{display:flex;align-items:center;gap:8px;}
+.tpl-pin{margin-left:auto;color:var(--text-subtle);display:flex;flex:0 0 auto;}
+.tpl-name{font-size:var(--font-size-2);font-weight:var(--font-weight-semibold);color:var(--text-default);}
+.tpl-desc{font-size:var(--font-size-1);color:var(--text-muted);line-height:1.4;}
+.sec-sub{font-weight:var(--font-weight-regular);color:var(--text-subtle);font-size:var(--font-size-1);text-transform:none;letter-spacing:0;}
+.scratch-dialog{width:min(640px,94vw);}
+.build-tile{border-style:dashed;border-color:var(--border-emphasis);background:none;}
+.build-tile:hover{border-color:var(--primary-default);background:var(--surface-default);}
+.build-plus{font-size:20px;line-height:1;color:var(--text-muted);font-weight:300;margin-bottom:6px;}
+.scratch-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 4px;}
+.scratch-card{display:flex;align-items:flex-start;gap:11px;border:1px solid var(--border-default);border-radius:var(--radius-3);padding:12px;cursor:pointer;transition:border-color .12s,box-shadow .12s;}
+.scratch-card:hover{border-color:var(--primary-default);box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.scratch-card .start-ico{flex:0 0 auto;}
+.scratch-card .t{font-size:var(--font-size-2);font-weight:var(--font-weight-semibold);color:var(--text-default);}
+.scratch-card .d{font-size:var(--font-size-1);color:var(--text-muted);margin-top:2px;line-height:1.35;}
+.persona{display:flex;align-items:center;gap:2px;background:var(--surface-muted);border:1px solid var(--border-default);border-radius:var(--radius-full);padding:2px;margin-right:10px;}
+.persona-lbl{font-size:9px;font-weight:var(--font-weight-semibold);color:var(--text-subtle);text-transform:uppercase;letter-spacing:.05em;padding:0 6px 0 8px;}
+.persona-opt{position:relative;border:none;background:none;font-family:inherit;font-size:11px;font-weight:var(--font-weight-medium);color:var(--text-muted);padding:4px 11px;border-radius:var(--radius-full);cursor:pointer;}
+.persona-opt.on{background:var(--surface-default);color:var(--primary-default);box-shadow:0 1px 2px rgba(0,0,0,.1);}
+.persona-opt[data-tip]:hover::after{content:attr(data-tip);position:absolute;top:calc(100% + 9px);left:50%;transform:translateX(-50%);width:max-content;max-width:210px;background:var(--surface-default);color:var(--text-default);border:1px solid var(--border-default);border-radius:var(--radius-3);box-shadow:var(--shadow-lg,0 10px 26px rgba(0,0,0,.16));padding:8px 10px;font-size:11px;font-weight:var(--font-weight-regular);line-height:1.35;white-space:normal;text-align:left;z-index:90;pointer-events:none;}
+.persona-opt[data-tip]:hover::before{content:'';position:absolute;top:calc(100% + 3px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-bottom-color:var(--border-default);z-index:91;pointer-events:none;}
+.meta-divider{font-size:10px;font-weight:var(--font-weight-semibold);text-transform:uppercase;letter-spacing:.04em;color:var(--text-subtle);padding:11px 12px 5px;border-top:1px solid var(--border-subtle);margin-top:6px;}
+.split{display:inline-flex;}
+.split-main{border-top-right-radius:0;border-bottom-right-radius:0;}
+.split-caret{border-top-left-radius:0;border-bottom-left-radius:0;padding:0 10px;border-left:1px solid rgba(255,255,255,.32);font-size:11px;}
+.ctx-menu{position:fixed;z-index:80;min-width:184px;background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-3);box-shadow:var(--shadow-lg,0 12px 30px rgba(0,0,0,.18));padding:5px;display:none;}
+.ctx-menu.show{display:block;}
+.ctx-item{font-size:var(--font-size-2);color:var(--text-default);padding:8px 10px;border-radius:var(--radius-2);cursor:pointer;white-space:nowrap;}
+.ctx-item:hover{background:var(--primary-default);color:#fff;}
+.ctx-item.disabled{color:var(--text-subtle);opacity:.55;cursor:default;}
+.ctx-item.disabled:hover{background:none;color:var(--text-subtle);}
+.ctx-separator{height:1px;background:var(--border-subtle);margin:5px 4px;}
+.fetag{font-size:9px;font-weight:var(--font-weight-semibold);text-transform:uppercase;letter-spacing:.03em;border-radius:var(--radius-full);padding:1px 6px;margin-left:6px;border:1px solid var(--border-default);color:var(--text-subtle);background:var(--surface-muted);}
+.tpl-top .fetag{margin-left:auto;}
+.tpl-top .fetag+.tpl-pin,.tpl-top .fetag+.fetag{margin-left:6px;}
+.rpt-driverpick{display:flex;align-items:center;gap:9px;margin-top:11px;}
+.rpt-dp-lbl{font-size:10px;font-weight:var(--font-weight-semibold);text-transform:uppercase;letter-spacing:.04em;color:var(--text-subtle);}
+.rpt-pending{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:11px;font-weight:var(--font-weight-medium);color:var(--color-amber-700);background:var(--color-amber-100);border:1px solid var(--color-amber-500);border-radius:var(--radius-2);padding:5px 9px;}
+.opt.na{opacity:.5;}
+.opt.na input{cursor:default;}
+.pt-hint{font-size:var(--font-size-1);color:var(--text-subtle);margin-top:7px;line-height:1.4;}
+.authrow{cursor:default;}
+.authrow .col-lbl{flex:0 1 auto;min-width:36px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.col-was{font-size:10px;color:var(--text-subtle);font-style:italic;flex:0 0 auto;}
+.col-edit{border:none;background:none;cursor:pointer;color:var(--text-subtle);font-size:11px;padding:0 2px;flex:0 0 auto;line-height:1;}
+.col-edit:hover{color:var(--primary-default);}
+.auth-sp{flex:1;}
+.avail-pill{flex:0 0 auto;font-size:10px;font-weight:var(--font-weight-medium);border:1px solid var(--border-emphasis);background:var(--surface-default);color:var(--text-muted);border-radius:var(--radius-full);padding:2px 9px;cursor:pointer;font-family:inherit;}
+.avail-pill.lvl-guided{border-color:var(--border-default);color:var(--text-subtle);}
+.avail-pill.lvl-builder{border-color:var(--border-emphasis);color:var(--text-default);}
+.avail-pill.lvl-author{border-color:var(--primary-default);color:var(--primary-default);background:var(--primary-subtle);}
+.alias-in{flex:1;min-width:0;height:26px;font-size:var(--font-size-1);padding:0 8px;border:1px solid var(--primary-default);border-radius:var(--radius-2);font-family:inherit;background:var(--surface-default);}
+.col-auth-hint{font-size:11px;color:var(--text-subtle);line-height:1.4;padding:0 2px 9px;border-bottom:1px solid var(--border-subtle);margin-bottom:6px;}
+.cov-lbl{font-size:10px;font-weight:var(--font-weight-semibold);text-transform:uppercase;letter-spacing:.04em;color:var(--text-subtle);margin:2px 0 10px;}
+.field+.cov-lbl{margin-top:20px;padding-top:16px;border-top:1px solid var(--border-subtle);}
+.cov-btn{width:100%;display:flex;align-items:center;gap:9px;border:1px solid var(--border-emphasis);border-radius:var(--radius-2);background:var(--surface-default);padding:9px 11px;cursor:pointer;font-family:inherit;text-align:left;}
+.cov-btn:hover{background:var(--surface-muted);}
+.cov-ic{color:var(--text-muted);flex:0 0 auto;display:flex;}
+.cov-main{flex:1;min-width:0;}
+.cov-sub{font-size:var(--font-size-2);color:var(--text-default);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;}
+.cov-edit{flex:0 0 auto;font-size:11px;color:var(--primary-default);font-weight:var(--font-weight-medium);}
+.cov-sub.unset{color:var(--text-subtle);font-style:italic;}
+.scope-note{font-size:11px;color:var(--text-subtle);margin-top:7px;line-height:1.4;}
+.calc-lbl{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-top:6px;border-top:1px solid var(--border-subtle);padding-top:11px;}
+.calc-sub{font-size:10px;font-weight:var(--font-weight-regular);text-transform:none;letter-spacing:0;color:var(--text-subtle);}
+.col-needs{font-size:10px;color:var(--text-subtle);font-style:italic;flex:0 0 auto;}
 .est .cap{font-size:11px;color:var(--text-muted);margin-top:7px;}
 /* scope & filters slide-over */
 .so-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:55;}
@@ -469,7 +556,7 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
 
 /* responsive */
 @media (max-width:1180px){
-  .r-setup{flex:0 0 264px;} .r-cols{flex:0 0 252px;} .r-meta{flex:0 0 240px;}
+  .r-setup{flex:0 0 264px;} .r-cols{flex:0 0 344px;} .r-meta{flex:0 0 240px;}
   .preview{max-width:540px;}
 }
 @media (max-width:920px){
@@ -491,6 +578,12 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
   <button class="nav-back" id="navBack" aria-label="Back to Reports" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
   <span class="crumb" id="crumb">/ Reports</span>
   <span class="spacer"></span>
+  <div class="persona" id="persona" title="Demo only — switch the user this UI is built for">
+    <span class="persona-lbl">View as</span>
+    <button class="persona-opt" data-persona="user" type="button" data-tip="Run a ready-made report — pick a couple of options and go.">Guided</button>
+    <button class="persona-opt" data-persona="pm" type="button" data-tip="Assemble a report from the columns the author has made available.">Build</button>
+    <button class="persona-opt" data-persona="admin" type="button" data-tip="Define the tile that builders and guided users consume.">Author</button>
+  </div>
   <span class="scope-chip">Creative Delivery</span>
   <div class="avatar" id="navAvatar">JD</div>
 </div>
@@ -506,16 +599,18 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
   </aside>
 
   <main class="main">
-    <div class="sec-head">Start a new report</div>
-    <div class="start-row" id="startRow"></div>
-
-    <div class="sec-head sec-recent">Recent reports</div>
+    <div class="sec-head">Start from a template</div>
     <div class="list-bar">
-      <div class="tabs" id="tabs"></div>
+      <div class="tabs" id="tplTabs"></div>
       <span class="spacer"></span>
-      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="search" placeholder="Search reports"></div>
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="tplSearch" placeholder="Search templates"></div>
     </div>
-    <div class="list" id="list"></div>
+    <div class="tpl-grid" id="tplGrid"></div>
+
+    <div class="my-section" id="mySection" style="display:none">
+      <div class="sec-head sec-recent">My reports</div>
+      <div class="list" id="myList"></div>
+    </div>
   </main>
 </div>
 
@@ -523,29 +618,37 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
 <div id="view-builder">
 <div class="builder">
   <!-- ============ BUILD SURFACE ============ -->
-  <div class="build-surface">
+  <div class="build-surface" id="buildSurface">
     <div class="region r-setup">
       <div class="region-head">Report setup</div>
       <div class="region-body">
-        <div class="field">
-          <label>Report type</label>
-          <select class="select" id="reportSelect"></select>
-        </div>
+        <div class="rpt-id" id="rptId"></div>
+        <div class="cov-lbl">Coverage</div>
         <div class="field lk" id="f-period">
-          <label>Reporting period <span class="gate" id="g-period">— pick a report first</span></label>
+          <label>Reporting period</label>
           <select class="select" id="periodSelect">
-            <option value="">Select period…</option>
-            <option value="1">Last month</option>
-            <option value="3">Last 3 months</option>
+            <option value="1">This month</option>
+            <option value="3">This quarter</option>
             <option value="6">Last 6 months</option>
-            <option value="12">Last 12 months</option>
+            <option value="12">This year</option>
+            <option value="custom">Custom range…</option>
           </select>
         </div>
+        <div class="field lk" id="f-scope">
+          <label>Scope</label>
+          <button class="cov-btn" id="scopeBtn" type="button">
+            <span class="cov-ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg></span>
+            <span class="cov-main"><span class="cov-sub" id="scopeSub">All projects in your access</span></span>
+            <span class="cov-edit">Edit</span>
+          </button>
+        </div>
+        <div class="cov-lbl">Shape</div>
         <div class="field lk" id="f-breakdown">
           <label>Breakdown</label>
           <div class="bd-opts" id="bdOpts"></div>
           <div class="bd-hint" id="bdHint"></div>
         </div>
+        <div class="adv-toggle" id="advToggle" style="display:none">▸ Advanced options</div>
         <div class="field lk" id="f-group">
           <label>Group by <span class="gate">— optional · sections rows</span></label>
           <select class="select" id="groupSelect"></select>
@@ -595,6 +698,14 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
     <div class="sch-table" id="schTable"></div>
   </div>
 </div>
+<div class="rt-overlay" id="scratchOverlay">
+  <div class="rt-dialog scratch-dialog" role="dialog" aria-modal="true" aria-labelledby="scratchHead">
+    <div class="rt-head" id="scratchHead">Build a report</div>
+    <div class="rt-sub">Pick a report type to build from. The type sets the grain, columns and rules — and locks once you start.</div>
+    <div class="scratch-grid" id="scratchGrid"></div>
+    <div class="rt-foot"><button class="btn btn-md btn-ghost" id="scratchCancel" type="button">Cancel</button></div>
+  </div>
+</div>
 <div class="rt-overlay" id="lgOverlay">
   <div class="rt-dialog" role="dialog" aria-modal="true" aria-labelledby="lgHead">
     <div class="rt-head" id="lgHead">Large report</div>
@@ -606,25 +717,34 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
   <div class="fpop-head"><span class="fpop-name"></span><button class="fpop-x" id="fpopX" type="button">✕</button></div>
   <div class="fpop-body"></div>
 </div>
+<div class="ctx-menu" id="actionMenu"></div>
 <div class="toast" id="toast"></div>
 <div class="so-overlay" id="soOverlay">
-  <div class="so-panel" role="dialog" aria-modal="true" aria-label="Scope and filters">
-    <div class="so-head"><span class="t">Scope &amp; filters</span><button class="so-x" id="soClose" type="button">✕</button></div>
+  <div class="so-panel" role="dialog" aria-modal="true" aria-label="Scope">
+    <div class="so-head"><span class="t">Scope</span><button class="so-x" id="soClose" type="button">✕</button></div>
     <div class="so-body">
       <div class="so-sec">
-        <div class="so-sec-lbl">Scope — what data is included</div>
+        <div class="so-sec-lbl">What data this report covers</div>
         <div class="field lk" id="f-client"><label>Client</label><select class="select" id="clientSelect"></select></div>
-        <div class="field lk" id="f-project"><label>Projects <span class="gate">— constrained to client</span></label><div class="optlist" id="projList"></div></div>
+        <div class="field lk" id="f-ptype"><label>Project type <span class="gate">— constrained to client</span></label><div class="optlist" id="ptypeList"></div><div class="scope-note">Refine to individual projects in Filters.</div></div>
         <div class="field lk" id="f-role"><label>Roles <span class="gate">— constrained to projects</span></label><div class="optlist" id="roleList"></div></div>
         <div id="anchorBox"></div>
       </div>
+    </div>
+    <div class="so-foot"><button class="btn btn-md btn-primary" id="soDone" type="button">Done</button></div>
+  </div>
+</div>
+<div class="so-overlay" id="filtersOverlay">
+  <div class="so-panel" role="dialog" aria-modal="true" aria-label="Filters">
+    <div class="so-head"><span class="t">Filters</span><button class="so-x" id="filtersClose" type="button">✕</button></div>
+    <div class="so-body">
       <div class="so-sec">
-        <div class="so-sec-lbl">Filters — narrow within scope</div>
+        <div class="so-sec-lbl">Narrow within the report’s scope</div>
         <div id="filterList"></div>
         <div class="f-add"><select class="select" id="addFilter"><option value="">+ Add filter…</option></select></div>
       </div>
     </div>
-    <div class="so-foot"><button class="btn btn-md btn-primary" id="soDone" type="button">Done</button></div>
+    <div class="so-foot"><button class="btn btn-md btn-primary" id="filtersDone" type="button">Done</button></div>
   </div>
 </div>
 <div class="rt-overlay" id="rtOverlay">
@@ -637,7 +757,7 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
 </div>
 <div class="rt-overlay" id="permOverlay">
   <div class="rt-dialog wide" role="dialog" aria-modal="true" aria-labelledby="permHead">
-    <div class="rt-head" id="permHead">Permissions</div>
+    <div class="rt-head" id="permHead">Share report</div>
     <div class="rt-sub">Who can open this report, and whose data it shows when it runs.</div>
     <div class="rt-body" id="permBody"></div>
     <div class="rt-foot"><button class="btn btn-md btn-ghost" id="permCancel" type="button">Cancel</button><button class="btn btn-md btn-primary" id="permSave" type="button">Save access</button></div>
@@ -655,94 +775,202 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
 
 /* ---------------- Data ---------------- */
 const REPORTS = {
-  pps:{ name:'Project Performance Summary', grain:'Project', grainNote:'one row per project',
-    groupBy:[['','None'],['role','Role'],['ptype','Project type'],['month','Month']],
+  r1:{ name:'Project P&L Snapshot', domain:'Financial', grain:'Project', grainNote:'one row per project — where the money is', applies:'both',
+    groupBy:[['','None'],['client','Client'],['owner','Owner']],
     cols:[
       {id:'project',label:'Project',type:'name',locked:true,on:true},
-      {id:'client',label:'Client',type:'name',on:true},
+      {id:'psysid',label:'Project System ID',type:'text',on:false},
+      {id:'client',label:'Client',type:'name',meta:true,on:true},
       {id:'status',label:'Status',type:'status',on:true},
-      {id:'estHours',label:'Estimated hours',type:'num',on:true},
-      {id:'actHours',label:'Actual hours',type:'num',on:true},
-      {id:'hoursVar',label:'Hours variance %',type:'num',on:true},
-      {id:'revenue',label:'Actual revenue',type:'num',on:true},
-      {id:'gm',label:'Gross margin %',type:'num',on:true},
-      {id:'ptype',label:'Project type',type:'text',on:false},
-      {id:'pm',label:'Project manager',type:'name',on:false},
-      {id:'cost',label:'Actual cost',type:'num',on:false},
-      {id:'gp',label:'Gross profit',type:'num',on:false},
-      {id:'estRev',label:'Estimated revenue',type:'num',on:false},
-      {id:'scoping',label:'Scoping accuracy',type:'num',on:false},
-      {id:'dept',label:'Department',type:'text',on:false},
-      {id:'startDate',label:'Start date',type:'date',on:false},
-      {id:'endDate',label:'End date',type:'date',on:false},
+      {id:'owner',label:'Owner',type:'name',meta:true,on:false},
+      {id:'ptype',label:'Project type',type:'text',on:true},
+      {id:'currency',label:'Currency',type:'text',on:false},
+      {id:'estTotal',label:'Total estimate',type:'num',on:true},
+      {id:'feeMarginPct',label:'Fee margin %',type:'num',applies:'fe',on:false},
+      {id:'oopEst',label:'OOP total (est)',type:'num',on:false},
+      {id:'oopAct',label:'OOP total (actual)',type:'num',on:false},
+      {id:'forecastCost',label:'Forecasted cost',type:'num',applies:'tb',on:false},
+      {id:'resourcedCost',label:'Resourced cost to date',type:'num',on:true},
+      {id:'actualCost',label:'Actual cost to date',type:'num',on:true},
+      {id:'eac',label:'Estimate to completion',type:'num',on:true},
+      {id:'varPct',label:'Est vs actual variance %',type:'num',on:true},
+      {id:'marginPct',label:'Margin %',type:'num',applies:'fe',on:false},
     ]},
-  rea:{ name:'Role Estimation Accuracy', grain:'Role', grainNote:'across selected projects',
-    groupBy:[['','None'],['ptype','Project type']],
+  r2:{ name:'Estimate vs Resourced vs Actual — by Role', domain:'Financial', grain:'Project / Role', grainNote:'which roles blow their estimate', applies:'both',
+    groupBy:[['','None'],['role','Role']],
     cols:[
-      {id:'role',label:'Role',type:'name',locked:true,on:true},
-      {id:'projects',label:'Projects',type:'num',on:true},
+      {id:'project',label:'Project',type:'name',locked:true,on:true},
+      {id:'role',label:'Role',type:'name',on:true},
       {id:'estHours',label:'Estimated hours',type:'num',on:true},
-      {id:'tsHours',label:'Timesheet hours',type:'num',on:true},
-      {id:'hoursVar',label:'Hours variance %',type:'num',on:true},
-      {id:'resourced',label:'Resourced hours',type:'num',on:false},
-      {id:'scoping',label:'Scoping accuracy',type:'num',on:false},
-      {id:'util',label:'Utilisation %',type:'num',on:false},
-      {id:'billRate',label:'Bill rate',type:'num',on:false},
-      {id:'costRate',label:'Cost rate',type:'num',on:false},
+      {id:'resHours',label:'Resourced hours',type:'num',on:true},
+      {id:'actHours',label:'Actual hours',type:'num',on:true},
+      {id:'estCost',label:'Estimated cost',type:'num',applies:'fe',on:false},
+      {id:'resCost',label:'Resourced cost',type:'num',on:false},
+      {id:'actCost',label:'Actual cost',type:'num',on:true},
+      {id:'varPct',label:'Variance %',type:'num',on:true},
     ]},
-  cpa:{ name:'Client Profitability Analysis', grain:'Client', grainNote:'rolled up from projects',
-    groupBy:[['','None'],['ptype','Project type']],
+  r3:{ name:'Estimate vs Resourced vs Actual — by User', domain:'Financial', grain:'Project / User', grainNote:"who's over-servicing", applies:'both',
+    groupBy:[['','None'],['user','User']],
+    cols:[
+      {id:'project',label:'Project',type:'name',locked:true,on:true},
+      {id:'user',label:'User',type:'name',on:true},
+      {id:'role',label:'Role',type:'name',on:true},
+      {id:'dept',label:'Department',type:'text',meta:true,on:false},
+      {id:'estHours',label:'Estimated hours',type:'num',on:true},
+      {id:'resHours',label:'Resourced hours',type:'num',on:true},
+      {id:'actHours',label:'Actual hours',type:'num',on:true},
+      {id:'actCost',label:'Actual cost',type:'num',on:false},
+      {id:'varPct',label:'Variance %',type:'num',on:true},
+    ]},
+  r4:{ name:'OOP Tracker', domain:'Financial', grain:'Project', grainNote:'projects near their OOP budget', applies:'fe',
+    groupBy:[['','None'],['client','Client']],
+    cols:[
+      {id:'project',label:'Project',type:'name',locked:true,on:true},
+      {id:'client',label:'Client',type:'name',meta:true,on:true},
+      {id:'oopBudget',label:'OOP budget',type:'num',on:true},
+      {id:'oopActual',label:'OOP actual',type:'num',on:true},
+      {id:'oopConsumed',label:'% consumed',type:'num',on:true},
+      {id:'oopRemaining',label:'OOP remaining',type:'num',on:true},
+      {id:'oopForecast',label:'OOP forecast',type:'num',on:false},
+    ]},
+  r5:{ name:'Retainer Performance', domain:'Financial', grain:'Retainer', grainNote:'retainers over/under-delivering', applies:'fe',
+    groupBy:[['','None'],['client','Client']],
+    cols:[
+      {id:'retainer',label:'Retainer',type:'name',locked:true,on:true},
+      {id:'client',label:'Client',type:'name',meta:true,on:true},
+      {id:'retValue',label:'Retainer value',type:'num',on:true},
+      {id:'consumed',label:'Consumed to date',type:'num',on:true},
+      {id:'eac',label:'Forecast at completion',type:'num',on:true},
+      {id:'perfStatus',label:'Performance status',type:'status',on:true},
+    ]},
+  r6:{ name:'Client Portfolio Financials', domain:'Financial', grain:'Client', grainNote:'which clients are profitable', applies:'both',
+    groupBy:[['','None']],
     cols:[
       {id:'client',label:'Client',type:'name',locked:true,on:true},
       {id:'projects',label:'Projects',type:'num',on:true},
-      {id:'revenue',label:'Actual revenue',type:'num',on:true},
-      {id:'cost',label:'Actual cost',type:'num',on:true},
+      {id:'currency',label:'Currency',type:'text',on:false},
+      {id:'revenue',label:'Revenue',type:'num',on:true},
+      {id:'cost',label:'Cost',type:'num',on:true},
       {id:'gp',label:'Gross profit',type:'num',on:true},
-      {id:'gm',label:'Gross margin %',type:'num',on:true},
-      {id:'estRev',label:'Estimated revenue',type:'num',on:false},
-      {id:'oop',label:'Out-of-pocket',type:'num',on:false},
-      {id:'feeMargin',label:'Fee margin %',type:'num',on:false},
+      {id:'gmPct',label:'Gross margin %',type:'num',on:true},
+      {id:'oop',label:'OOP total',type:'num',on:false},
     ]},
-  sca:{ name:'Scoping Accuracy', grain:'Project', grainNote:'estimate vs actual ratio',
-    groupBy:[['','None'],['ptype','Project type']],
+  r7:{ name:'Utilisation Report', domain:'Resourcing', grain:'User', grainNote:'over/under-utilised vs target', applies:'both',
+    drivers:[['user','User','users'],['role','Role','roles'],['dept','Department','departments']], driverDef:'user',
+    groupBy:[['','None']],
     cols:[
-      {id:'project',label:'Project',type:'name',locked:true,on:true},
-      {id:'client',label:'Client',type:'name',on:true},
-      {id:'estHours',label:'Estimated hours',type:'num',on:true},
-      {id:'actHours',label:'Actual hours',type:'num',on:true},
-      {id:'scoping',label:'Scoping accuracy',type:'num',on:true},
-      {id:'variance',label:'Variance %',type:'num',on:true},
-      {id:'ptype',label:'Project type',type:'text',on:false},
-      {id:'pm',label:'Project manager',type:'name',on:false},
-      {id:'dept',label:'Department',type:'text',on:false},
+      {id:'grp',label:'User',type:'name',locked:true,on:true},
+      {id:'userCount',label:'User count',type:'num',variants:['role','dept'],on:true},
+      {id:'roleCount',label:'Role count',type:'num',variants:['dept'],on:true},
+      {id:'role',label:'Role',type:'name',variants:['user'],on:true},
+      {id:'dept',label:'Department',type:'text',meta:true,variants:['user','role'],on:false},
+      {id:'manager',label:'Manager',type:'name',variants:['user'],on:false},
+      {id:'fte',label:'FTE',type:'num',on:true},
+      {id:'targetPct',label:'Target billable %',type:'num',on:false},
+      {id:'availHours',label:'Available hours',type:'num',on:true},
+      {id:'resTotal',label:'Resourced hours',type:'num',on:true},
+      {id:'resBillable',label:'Resourced billable',type:'num',on:false},
+      {id:'resUnassigned',label:'Resourced unassigned',type:'num',variants:['role','dept'],on:false},
+      {id:'actTotal',label:'Actual hours',type:'num',on:true},
+      {id:'utilPct',label:'Utilisation %',type:'num',on:true},
+      {id:'billUtilPct',label:'Billable utilisation %',type:'num',on:false},
+      {id:'deltaPct',label:'Delta vs target %',type:'num',on:true},
+      {id:'cost',label:'Cost',type:'num',variants:['dept'],on:false},
     ]},
-  rpa:{ name:'Resource Planning Accuracy', grain:'Project / Role', grainNote:'plan vs actual',
-    groupBy:[['','None'],['ptype','Project type']],
+  r9:{ name:'Task Status', domain:'Task', grain:'Task', grainNote:"what's overdue, due, complete or upcoming", applies:'both',
+    groupBy:[['','None'],['project','Project'],['assignee','Assignee']],
     cols:[
-      {id:'project',label:'Project',type:'name',locked:true,on:true},
-      {id:'role',label:'Role',type:'name',on:true},
-      {id:'resourced',label:'Resourced hours',type:'num',on:true},
-      {id:'timesheet',label:'Timesheet hours',type:'num',on:true},
-      {id:'util',label:'Utilisation %',type:'num',on:true},
-      {id:'user',label:'Resource',type:'name',on:false},
-      {id:'ptype',label:'Project type',type:'text',on:false},
-    ]},
-  tbd:{ name:'Timesheet Breakdown', grain:'Resource / Week', grainNote:'logged hours by week',
-    groupBy:[['','None'],['project','Project'],['role','Role']],
-    cols:[
-      {id:'resource',label:'Resource',type:'name',locked:true,on:true},
-      {id:'role',label:'Role',type:'name',on:true},
+      {id:'task',label:'Task',type:'name',locked:true,on:true},
       {id:'project',label:'Project',type:'name',on:true},
-      {id:'week',label:'Week ending',type:'date',on:true},
-      {id:'logged',label:'Logged hours',type:'num',on:true},
+      {id:'client',label:'Client',type:'name',meta:true,on:false},
+      {id:'assignee',label:'Assignee',type:'name',on:true},
       {id:'status',label:'Status',type:'status',on:true},
-      {id:'billable',label:'Billable hours',type:'num',on:false},
+      {id:'priority',label:'Priority',type:'text',on:true},
+      {id:'startDate',label:'Start date',type:'date',on:false},
+      {id:'dueDate',label:'Due date',type:'date',on:true},
+      {id:'completionDate',label:'Completion date',type:'date',on:false},
+      {id:'pctComplete',label:'% complete',type:'num',on:true},
+      {id:'estHours',label:'Estimated hours',type:'num',on:false},
+      {id:'actHours',label:'Actual hours',type:'num',on:false},
+      {id:'taskVar',label:'Hours variance',type:'num',on:false},
+    ]},
+  r10:{ name:'Task Delivery vs Baseline', domain:'Task', grain:'Task', grainNote:'where slippage is happening, by how much', applies:'both',
+    groupBy:[['','None'],['project','Project']],
+    cols:[
+      {id:'task',label:'Task',type:'name',locked:true,on:true},
+      {id:'project',label:'Project',type:'name',on:true},
+      {id:'client',label:'Client',type:'name',meta:true,on:false},
+      {id:'assignee',label:'Assignee',type:'name',on:true},
+      {id:'status',label:'Status',type:'status',on:true},
+      {id:'baseStart',label:'Baseline start',type:'date',on:true},
+      {id:'baseEnd',label:'Baseline end',type:'date',on:true},
+      {id:'actStart',label:'Actual start',type:'date',on:false},
+      {id:'actEnd',label:'Actual end',type:'date',on:true},
+      {id:'startSlip',label:'Start slippage (days)',type:'num',on:false},
+      {id:'endSlip',label:'End slippage (days)',type:'num',on:true},
+      {id:'durBase',label:'Baseline duration',type:'num',on:false},
+      {id:'durAct',label:'Actual duration',type:'num',on:false},
+      {id:'pctComplete',label:'% complete',type:'num',on:true},
+    ]},
+  r11:{ name:'Timesheet Detail', domain:'Timesheet', grain:'Timesheet entry', grainNote:'one row per logged entry — for reconciliation and audit', applies:'both',
+    groupBy:[['','None'],['user','User'],['project','Project']],
+    cols:[
+      {id:'user',label:'User',type:'name',locked:true,on:true},
+      {id:'date',label:'Date',type:'date',on:true},
+      {id:'project',label:'Project',type:'name',on:true},
+      {id:'client',label:'Client',type:'name',meta:true,on:false},
+      {id:'task',label:'Task',type:'name',on:true},
+      {id:'hours',label:'Hours',type:'num',on:true},
+      {id:'billable',label:'Billable',type:'status',on:true},
+      {id:'subStatus',label:'Submission status',type:'status',on:false},
       {id:'approver',label:'Approved by',type:'name',on:false},
-      {id:'userid',label:'User ID',type:'text',on:false},
-      {id:'ustatus',label:'User status',type:'status',on:false},
-      {id:'urate',label:'Resourced rate',type:'num',on:false},
-      {id:'fte',label:'FTE (calculated)',type:'num',on:false},
-      {id:'daysavail',label:'Days available',type:'num',on:false},
+      {id:'cost',label:'Cost',type:'num',on:false},
+      {id:'notes',label:'Notes',type:'text',on:false},
+    ]},
+  r12:{ name:'Timesheet Compliance', domain:'Timesheet', grain:'User', grainNote:"who hasn't submitted, who's chronically late", applies:'both',
+    groupBy:[['','None'],['dept','Department'],['manager','Manager']],
+    cols:[
+      {id:'user',label:'User',type:'name',locked:true,on:true},
+      {id:'role',label:'Role',type:'name',on:true},
+      {id:'dept',label:'Department',type:'text',meta:true,on:false},
+      {id:'manager',label:'Manager',type:'name',on:false},
+      {id:'expectedHours',label:'Expected hours',type:'num',on:true},
+      {id:'submittedHours',label:'Submitted hours',type:'num',on:true},
+      {id:'missingHours',label:'Missing hours',type:'num',on:true},
+      {id:'periodsExpected',label:'Periods expected',type:'num',on:false},
+      {id:'periodsLate',label:'Periods late',type:'num',on:true},
+      {id:'periodsMissing',label:'Periods missing',type:'num',on:true},
+      {id:'compliancePct',label:'Compliance %',type:'num',on:true},
+      {id:'lastSubmission',label:'Last submission',type:'date',on:false},
+      {id:'compStatus',label:'Status',type:'status',on:true},
+    ]},
+  r13:{ name:'Timesheet Approval Status', domain:'Timesheet', grain:'Submission', grainNote:"what's stuck in approval, where the bottleneck is", applies:'both', pending:'Approval data model pending — columns provisional until the approver-side view is confirmed (Decision #5).',
+    groupBy:[['','None'],['approver','Approver']],
+    cols:[
+      {id:'user',label:'User',type:'name',locked:true,on:true},
+      {id:'dept',label:'Department',type:'text',meta:true,on:false},
+      {id:'approver',label:'Approver',type:'name',on:true},
+      {id:'submittedDate',label:'Submitted date',type:'date',on:true},
+      {id:'period',label:'Period',type:'text',on:true},
+      {id:'hoursSubmitted',label:'Hours submitted',type:'num',on:true},
+      {id:'apprStatus',label:'Approval status',type:'status',on:true},
+      {id:'daysAwaiting',label:'Days awaiting',type:'num',on:true},
+      {id:'lastAction',label:'Last action',type:'date',on:false},
+    ]},
+  r14:{ name:'Billable vs Non-billable Breakdown', domain:'Timesheet', grain:'User', grainNote:'where non-billable time actually goes', applies:'both', pending:'Category columns depend on whether non-billable categorisation exists today — collapses to the first five columns if not (Decision #6).',
+    drivers:[['user','User','users'],['role','Role','roles'],['dept','Department','departments']], driverDef:'user',
+    groupBy:[['','None']],
+    cols:[
+      {id:'grp',label:'User',type:'name',locked:true,on:true},
+      {id:'userCount',label:'User count',type:'num',variants:['role','dept'],on:false},
+      {id:'totalHours',label:'Total hours',type:'num',on:true},
+      {id:'billableHours',label:'Billable hours',type:'num',on:true},
+      {id:'nonBillHours',label:'Non-billable hours',type:'num',on:true},
+      {id:'nonBillPct',label:'Non-billable %',type:'num',on:true},
+      {id:'catAdmin',label:'Admin',type:'num',on:false},
+      {id:'catBizDev',label:'Business dev',type:'num',on:false},
+      {id:'catTraining',label:'Training',type:'num',on:false},
+      {id:'catLeave',label:'Leave',type:'num',on:false},
     ]},
 };
 const CLIENTS=[{id:'fifa',name:'FIFA'},{id:'uefa',name:'UEFA'},{id:'rb',name:'Red Bull'},{id:'pl',name:'Premier League'},{id:'adidas',name:'Adidas — Global',locked:true}];
@@ -763,32 +991,74 @@ const PROJECT_ROLES={
   rbgr:{'Senior Designer':1,'Designer':1,'Copywriter':1},
   plmd:{'Motion Designer':1,'Designer':2,'Developer':1},
 };
-const PERIOD_LABEL={'1':'Last month','3':'Last 3 months','6':'Last 6 months','12':'Last 12 months'};
+const PERIOD_LABEL={'1':'This month','3':'This quarter','6':'Last 6 months','12':'This year','custom':'Custom range'};
 const META={
-  project:{label:'Project',fields:['Campaign region','Brand','Budget holder','Cost centre','Confidentiality','Project tier','Client code']},
-  role:{label:'Role',fields:['Discipline','Seniority band','Role meta 1','Role meta 2','Expertise']},
-  client:{label:'Client',fields:['Industry','Region','Client tier','Account director','Client code']},
+  project:{label:'Project',core:['Brand','Campaign region','Client code'],fields:['Campaign region','Brand','Budget holder','Cost centre','Confidentiality','Project tier','Client code']},
+  role:{label:'Role',core:['Discipline','Seniority band'],fields:['Discipline','Seniority band','Role meta 1','Role meta 2','Expertise']},
+  client:{label:'Client',core:['Industry','Region','Client tier'],fields:['Industry','Region','Client tier','Account director','Client code']},
 };
-const REPORT_META={pps:'project',rea:'role',cpa:'client',sca:'project',rpa:'project',tbd:'role'};
-const DEFAULT_SORT={pps:{col:'hoursVar',dir:'desc'},sca:{col:'variance',dir:'desc'},rea:{col:'hoursVar',dir:'desc'},rpa:{col:'util',dir:'desc'},cpa:{col:'gm',dir:'asc'},tbd:{col:'logged',dir:'desc'}};
+const COMMON_META=['Cost centre','Purchase order','Approval stage','Deliverable type','Channel','Business unit','Fiscal quarter','Agency of record','Confidentiality','Project tier','Budget holder','Workflow stage'];
+const CLIENT_META={
+  fifa:['Tournament','Confederation','Venue tier','Rights window','Kit supplier','Match series','Host nation','Federation'],
+  uefa:['Competition','Coefficient band','Market','Broadcast partner','Club licence','Matchday tier','Association'],
+  rb:['Property','Athlete tier','Region','Activation type','Event series','Content pillar','Discipline'],
+  pl:['Matchweek','Broadcast slot','Club tier','Fixture category','Sponsor tier','Season phase'],
+  adidas:['Franchise','Season','Category','Territory','Product line','Collection','Launch phase','SKU family'],
+};
+function metaStd(){return (META[REPORT_META[S.report]]||{}).core||[];}
+function metaCustom(){return S.client?COMMON_META.concat(CLIENT_META[S.client]||[]):[];}
+function metaId(l){return 'm_'+l.replace(/[^a-z0-9]/gi,'').toLowerCase();}
+function metaLevel(m){return m.avail||(m.core?'guided':'builder');}
+function metaVisible(m){return personaRank()>=levelRank(metaLevel(m));}
+function syncMeta(){
+  const prev={}; S.meta.forEach(m=>prev[m.id]={on:m.on,avail:m.avail});
+  const mk=(f,core)=>{const id=metaId(f);const p=prev[id]||{};return {id,label:f,type:'text',meta:true,core,on:!!p.on,avail:p.avail||(core?'guided':'builder')};};
+  S.meta=metaStd().map(f=>mk(f,true)).concat(metaCustom().map(f=>mk(f,false)));
+}
+const REPORT_META={r1:'project',r2:'project',r3:'project',r4:'project',r5:'project',r6:'client',r7:'role',r9:'project',r10:'project',r11:'project',r12:'role',r13:'role',r14:'role'};
+const CALC=(id,label)=>({id:'c_'+id,label,type:'num',insight:true,avail:'author',on:false});
+const CALCS={
+  r1:['Gross margin %','Fee margin %','Est vs actual variance %','Cost recovery %','OOP consumed %','Budget burn %','Profit per project','Estimate accuracy %','Forecast at completion','Overrun risk %'].map((l,i)=>CALC('r1_'+i,l)),
+  r2:['Estimate accuracy %','Estimate vs resourced variance %','Resourced vs actual variance %','Hours variance (actual − est)','Cost variance (actual − est)','Burn rate (actual ÷ est)','Effort completion %','Resourced utilisation %','Actual cost per hour','Estimated cost per hour','Blended rate variance','Margin impact %','Forecast hours at completion'].map((l,i)=>CALC('r2_'+i,l)),
+  r3:['Estimate accuracy %','Resourced vs actual variance %','Hours variance (actual − est)','Over-servicing %','Actual cost per hour','Effort completion %','Utilisation vs target %','Forecast hours at completion'].map((l,i)=>CALC('r3_'+i,l)),
+  r6:['Gross margin %','Revenue per project','Cost recovery %','Margin trend %','Revenue concentration %','Average project margin %','YoY revenue change %'].map((l,i)=>CALC('r6_'+i,l)),
+  r7:['Utilisation %','Billable utilisation %','Delta vs target %','Available vs resourced %','Realisation %','Idle capacity %','Billable ratio %'].map((l,i)=>CALC('r7_'+i,l)),
+};
+function buildCols(rep){const assign=c=>{const x={...c};if(!x.avail)x.avail=x.insight?'author':(x.on?'guided':'builder');return x;};const base=REPORTS[rep].cols.map(assign);if(CALCS[rep])base.push(...CALCS[rep].map(assign));return base;}
+CALCS.r2[0].needs=['estHours','actHours'];
+const DEFAULT_SORT={r1:{col:'varPct',dir:'desc'},r2:{col:'varPct',dir:'desc'},r3:{col:'varPct',dir:'desc'},r4:{col:'oopConsumed',dir:'desc'},r5:{col:'consumed',dir:'desc'},r6:{col:'gmPct',dir:'asc'},r7:{col:'utilPct',dir:'desc'},r9:{col:'dueDate',dir:'asc'},r10:{col:'endSlip',dir:'desc'},r11:{col:'date',dir:'desc'},r12:{col:'compliancePct',dir:'asc'},r13:{col:'daysAwaiting',dir:'desc'},r14:{col:'nonBillPct',dir:'desc'}};
 const BREAKDOWNS={total:{label:'Total'},day:{label:'Day'},weekending:{label:'Weekending'},week:{label:'Week breakdown'},monthly:{label:'Monthly'}};
 const REPORT_BD={
-  pps:{valid:['total','monthly','week'],def:'total'},
-  sca:{valid:['total','monthly'],def:'total'},
-  rea:{valid:['total','monthly','week'],def:'total'},
-  rpa:{valid:['total','monthly','week'],def:'total'},
-  cpa:{valid:['total','monthly'],def:'total'},
-  tbd:{valid:['total','day','weekending','week','monthly'],def:'week'},
+  r1:{valid:['total','monthly'],def:'total'},
+  r2:{valid:['total','monthly'],def:'total'},
+  r3:{valid:['total','monthly'],def:'total'},
+  r4:{valid:['total','monthly'],def:'total'},
+  r5:{valid:['total','monthly'],def:'total'},
+  r6:{valid:['total','monthly'],def:'total'},
+  r7:{valid:['total','week','monthly'],def:'total'},
+  r9:{valid:['total'],def:'total'},
+  r10:{valid:['total'],def:'total'},
+  r11:{valid:['total'],def:'total'},
+  r12:{valid:['total','week','monthly'],def:'total'},
+  r13:{valid:['total'],def:'total'},
+  r14:{valid:['total','week','monthly'],def:'total'},
 };
 const COL_SOFT=30;
 const COL_CEILING=48;
 const REPORT_ANCHOR={
-  pps:{def:'entity',toggle:true,noun:'projects'},
-  sca:{def:'fact',toggle:true,noun:'projects'},
-  rea:{def:'entity',toggle:true,noun:'roles'},
-  rpa:{def:'entity',toggle:false,noun:'resources'},
-  cpa:{def:'fact',toggle:true,noun:'clients'},
-  tbd:{def:'fact',toggle:false,noun:'resources'},
+  r1:{def:'entity',toggle:true,noun:'projects'},
+  r2:{def:'fact',toggle:true,noun:'roles'},
+  r3:{def:'fact',toggle:true,noun:'users'},
+  r4:{def:'entity',toggle:false,noun:'projects'},
+  r5:{def:'entity',toggle:false,noun:'retainers'},
+  r6:{def:'entity',toggle:true,noun:'clients'},
+  r7:{def:'entity',toggle:true,noun:'users'},
+  r9:{def:'entity',toggle:true,noun:'tasks'},
+  r10:{def:'entity',toggle:true,noun:'tasks'},
+  r11:{def:'fact',toggle:false,noun:'entries'},
+  r12:{def:'entity',toggle:false,noun:'users'},
+  r13:{def:'fact',toggle:false,noun:'submissions'},
+  r14:{def:'entity',toggle:true,noun:'users'},
 };
 function anchorMult(){return S.anchor==='entity'?1.35:1;}
 function colMult(bd,m){if(bd==='week')return 7;if(bd==='monthly')return Math.max(1,m);return 1;}
@@ -822,15 +1092,10 @@ const $=id=>document.getElementById(id);
 const clientName=id=>CLIENTS.find(c=>c.id===id).name;
 
 /* ---------------- State ---------------- */
-const S={report:'',months:0,periodLabel:'',client:'',projects:new Set(),roles:new Set(),group:'',cols:[],meta:[],sort:{col:'',dir:'desc'},filters:[],perm:{grants:[],scope:'viewer'},breakdown:'total',expandedFilter:null,anchor:'fact'};
+const S={report:'',months:0,periodLabel:'',client:'',ptypes:new Set(),projects:new Set(),roles:new Set(),group:'',cols:[],meta:[],sort:{col:'',dir:'desc'},filters:[],perm:{grants:[],scope:'viewer'},breakdown:'total',expandedFilter:null,anchor:'fact',guided:false,template:'',persona:'user',driver:'',projType:'both'};
 let queueId=52672;
 
 /* ---------------- Init ---------------- */
-(function(){
-  const sel=$('reportSelect');
-  sel.innerHTML='<option value="">Select report…</option>';
-  Object.entries(REPORTS).forEach(([id,r])=>{const o=document.createElement('option');o.value=id;o.textContent=r.name;sel.appendChild(o);});
-})();
 (function(){
   const sel=$('clientSelect'); sel.innerHTML='<option value="">Select client…</option>';
   CLIENTS.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.locked?c.name+'  — outside your scope':c.name;if(c.locked)o.disabled=true;sel.appendChild(o);});
@@ -838,12 +1103,26 @@ let queueId=52672;
 
 /* ---------------- Helpers ---------------- */
 function lock(id,locked){$(id).classList.toggle('lk',locked);}
-function activeCols(){return S.cols.filter(c=>c.on);}
-function activeMeta(){return S.meta.filter(c=>c.on);}
+function curDriver(){const r=REPORTS[S.report];return r&&r.drivers?(r.drivers.find(d=>d[0]===S.driver)||r.drivers[0]):null;}
+function curGrain(){const d=curDriver();return d?d[1]:(REPORTS[S.report]?REPORTS[S.report].grain:'');}
+function curNoun(){const d=curDriver();return d?d[2]:(REPORT_ANCHOR[S.report]?REPORT_ANCHOR[S.report].noun:'rows');}
+function colLabel(c){return c.alias||c.label;}
+function colLevel(c){return c.avail||'builder';}
+function levelRank(l){return l==='guided'?0:l==='builder'?1:2;}
+function personaRank(){return S.persona==='user'?0:S.persona==='pm'?1:2;}
+function colVisible(c){return personaRank()>=levelRank(colLevel(c));}
+function colAvail(c){return !c.variants||c.variants.includes(S.driver);}
+function colModelOk(c){return S.projType==='both'||!c.applies||c.applies===S.projType;}
+function activeCols(){return S.cols.filter(c=>c.on&&colAvail(c)&&colModelOk(c)&&colVisible(c));}
+function activeMeta(){return S.meta.filter(c=>c.on&&metaVisible(c));}
 function rolesForSelection(){const m={};S.projects.forEach(pid=>Object.entries(PROJECT_ROLES[pid]).forEach(([r,n])=>m[r]=(m[r]||0)+n));return m;}
 function effectiveRoles(pid){const present=Object.keys(PROJECT_ROLES[pid]);return S.roles.size===0?present:present.filter(r=>S.roles.has(r));}
-function estimateRows(){if(!S.months||S.projects.size===0)return 0;let d=0;S.projects.forEach(pid=>effectiveRoles(pid).forEach(r=>d+=PROJECT_ROLES[pid][r]));return d*S.months;}
-function isReady(){return S.report&&S.months>0&&S.projects.size>0&&projRowsFor(S.breakdown)<=CEILING&&projColsFor(S.breakdown)<=COL_CEILING;}
+function clientTypes(cid){return cid&&PROJECTS[cid]?[...new Set(PROJECTS[cid].map(p=>p.type))]:[];}
+function syncProjects(){S.projects.clear();if(S.client&&PROJECTS[S.client])PROJECTS[S.client].forEach(p=>{if(S.ptypes.size===0||S.ptypes.has(p.type))S.projects.add(p.id);});}
+function scopeProjects(){if(S.client&&PROJECTS[S.client])return PROJECTS[S.client].filter(p=>S.ptypes.size===0||S.ptypes.has(p.type)).map(p=>p.id);return (PROJECTS.fifa||[]).map(p=>p.id);}
+function scopeReady(){return S.persona==='user'||S.client!=='';}
+function estimateRows(){if(!S.months||!scopeReady())return 0;let d=0;scopeProjects().forEach(pid=>{const pr=PROJECT_ROLES[pid];if(pr)effectiveRoles(pid).forEach(r=>d+=pr[r]);});return d*S.months;}
+function isReady(){return S.report&&S.months>0&&scopeReady()&&projRowsFor(S.breakdown)<=CEILING&&projColsFor(S.breakdown)<=COL_CEILING;}
 function renderBreakdown(){
   const set=REPORT_BD[S.report];
   if(!S.report||!set){$('bdOpts').innerHTML='';return;}
@@ -867,23 +1146,72 @@ function renderBreakdown(){
 }
 
 /* ---------------- Renderers ---------------- */
+let editCol=null;
 function renderColumns(){
   const list=$('colList'); const r=REPORTS[S.report];
-  const def=S.cols.filter(c=>r.cols.find(x=>x.id===c.id&&x.on));
-  const opt=S.cols.filter(c=>!r.cols.find(x=>x.id===c.id&&x.on));
-  const rowHtml=c=>`<label class="opt"><input type="checkbox" class="checkbox-input" data-col="${c.id}" ${c.on?'checked':''} ${c.locked?'disabled':''}><span>${c.label}</span>${c.locked?'<span class="meta">required</span>':''}</label>`;
-  list.innerHTML='<div class="col-group-lbl">Default columns</div>'+def.map(rowHtml).join('')+
-    (opt.length?'<div class="col-group-lbl">Optional columns</div>'+opt.map(rowHtml).join(''):'');
+  const author=S.persona==='admin';
+  const avail=S.cols.filter(c=>colAvail(c)&&colVisible(c));
+  const cols=avail.filter(c=>!c.insight);
+  const insights=avail.filter(c=>c.insight);
+  const def=cols.filter(c=>r.cols.find(x=>x.id===c.id&&x.on));
+  const opt=cols.filter(c=>!r.cols.find(x=>x.id===c.id&&x.on));
+  const tag=c=>(c.insight?'<span class="fetag">Calc</span>':'')+(c.applies==='fe'?'<span class="fetag">FE</span>':c.applies==='tb'?'<span class="fetag">TB</span>':'');
+  const needNote=c=>c.needs?`<span class="col-needs">needs ${c.needs.map(id=>{const d=S.cols.find(x=>x.id===id);return d?colLabel(d):id;}).join(' + ')}</span>`:'';
+  const rowHtml=c=>{
+    const na=!colModelOk(c);
+    if(author){
+      const editing=editCol===c.id;
+      const lvl=colLevel(c);
+      const lvlLabel={guided:'Guided',builder:'Builder',author:'Author only'}[lvl];
+      const pill=c.locked?'<span class="meta">required</span>':`<button type="button" class="avail-pill lvl-${lvl}" data-avail="${c.id}" title="Who can access this column — click to change">${lvlLabel}</button>`;
+      const lbl=editing
+        ? `<input class="alias-in" data-alias="${c.id}" value="${(c.alias||c.label).replace(/"/g,'&quot;')}" placeholder="${c.label}">`
+        : `<span class="col-lbl">${colLabel(c)}</span>${c.alias?`<span class="col-was">was ${c.label}</span>`:''}<button type="button" class="col-edit" data-edit="${c.id}" title="Rename for the client">✎</button>`;
+      return `<div class="opt authrow ${na?'na':''}"><input type="checkbox" class="checkbox-input" data-col="${c.id}" ${c.on&&!na?'checked':''} ${(c.locked||na)?'disabled':''}>${lbl}${tag(c)}${needNote(c)}<span class="auth-sp"></span>${pill}</div>`;
+    }
+    const note=na?`<span class="meta">${c.applies==='fe'?'Fixed Estimate':'Traditional Budget'} only</span>`:c.locked?'<span class="meta">required</span>':'';
+    return `<label class="opt ${na?'na':''}"><input type="checkbox" class="checkbox-input" data-col="${c.id}" ${c.on&&!na?'checked':''} ${(c.locked||na)?'disabled':''}><span>${colLabel(c)}</span>${tag(c)}${needNote(c)}${note}</label>`;
+  };
+  const hint=author?'<div class="col-auth-hint">Tick = pre-selected in the tile · access cascades up (Guided → Builder → Author) · rename ✎ for the client’s language.</div>':(S.persona==='pm'?'<div class="col-auth-hint">These are the columns the author shipped for builders — tick the ones you need.</div>':'');
+  list.innerHTML=hint+'<div class="col-group-lbl">Default columns</div>'+def.map(rowHtml).join('')+
+    (opt.length?'<div class="col-group-lbl">Optional columns</div>'+opt.map(rowHtml).join(''):'')+
+    (insights.length?`<div class="col-group-lbl calc-lbl">Insights &amp; calculations<span class="calc-sub">${author?'expose the ones relevant to this report':'derived metrics the author has enabled'}</span></div>`+insights.map(rowHtml).join(''):'');
   list.querySelectorAll('[data-col]').forEach(cb=>cb.onchange=e=>{
-    const c=S.cols.find(x=>x.id===e.target.dataset.col); c.on=e.target.checked; renderSort(); renderFilters(); renderPreview();
+    const c=S.cols.find(x=>x.id===e.target.dataset.col); c.on=e.target.checked;
+    let dep=false;
+    if(c.on&&c.needs)c.needs.forEach(id=>{const d=S.cols.find(x=>x.id===id);if(d&&!d.on){d.on=true;dep=true;}});
+    if(dep)renderColumns();
+    renderSort(); renderFilters(); renderPreview();
+  });
+  list.querySelectorAll('[data-avail]').forEach(b=>b.onclick=()=>{const c=S.cols.find(x=>x.id===b.dataset.avail);const CYCLE={guided:'builder',builder:'author',author:'guided'};c.avail=CYCLE[colLevel(c)];renderColumns();renderPreview();});
+  list.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{editCol=b.dataset.edit;renderColumns();const inp=list.querySelector('[data-alias]');if(inp){inp.focus();inp.select();}});
+  list.querySelectorAll('[data-alias]').forEach(inp=>{
+    const commit=()=>{const c=S.cols.find(x=>x.id===inp.dataset.alias);const v=inp.value.trim();c.alias=(v&&v!==c.label)?v:'';editCol=null;renderColumns();renderSort();renderFilters();renderPreview();};
+    inp.onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();commit();}else if(ev.key==='Escape'){editCol=null;renderColumns();}};
+    inp.onblur=commit;
   });
 }
 function renderMeta(){
-  const ent=REPORT_META[S.report];
-  $('metaScope').textContent='Site-configured · scoped to '+META[ent].label+' · '+S.meta.length+' fields available';
+  const author=S.persona==='admin';
+  const guided=S.persona==='user';
+  const clientNm=S.client?clientName(S.client):'';
+  const vis=S.meta.filter(metaVisible);
+  const coreRows=vis.filter(m=>m.core), customRows=vis.filter(m=>!m.core);
+  $('metaScope').textContent = guided
+    ? `${vis.length} field${vis.length!==1?'s':''} available`
+    : (S.client?`Reportable fields · scoped to ${clientNm} · ${vis.length} available`:`Standard fields · set a scope to load custom metadata`);
+  const pill=m=>{const lvl=metaLevel(m);const lbl={guided:'Guided',builder:'Builder',author:'Author only'}[lvl];return `<button type="button" class="avail-pill lvl-${lvl}" data-mavail="${m.id}" title="Who can pick this field — click to change">${lbl}</button>`;};
+  const row=m=>author
+    ? `<div class="opt authrow"><input type="checkbox" class="checkbox-input" data-meta="${m.id}" ${m.on?'checked':''}><span class="col-lbl">${m.label}</span><span class="auth-sp"></span>${pill(m)}</div>`
+    : `<label class="opt"><input type="checkbox" class="checkbox-input" data-meta="${m.id}" ${m.on?'checked':''}><span>${m.label}</span></label>`;
+  let html=author?'<div class="col-auth-hint">Tick = pre-selected · access cascades up (Guided → Builder → Author).</div>':'';
+  html+='<div class="col-group-lbl">Standard fields</div>'+coreRows.map(row).join('');
+  if(customRows.length) html+=`<div class="meta-divider">${S.client?clientNm+' custom fields — scoped':'Custom fields'}</div>`+customRows.map(row).join('');
+  else if(!S.client&&!guided) html+='<div class="scope-note">Set a scope to load a client’s custom metadata — you only ever see what exists for the selected client.</div>';
   const list=$('metaList');
-  list.innerHTML=S.meta.map(c=>`<label class="opt"><input type="checkbox" class="checkbox-input" data-meta="${c.id}" ${c.on?'checked':''}><span>${c.label}</span></label>`).join('');
+  list.innerHTML=html;
   list.querySelectorAll('[data-meta]').forEach(cb=>cb.onchange=e=>{const c=S.meta.find(x=>x.id===e.target.dataset.meta);c.on=e.target.checked;renderSort();renderPreview();});
+  list.querySelectorAll('[data-mavail]').forEach(b=>b.onclick=()=>{const c=S.meta.find(x=>x.id===b.dataset.mavail);const CYCLE={guided:'builder',builder:'author',author:'guided'};c.avail=CYCLE[metaLevel(c)];renderMeta();renderPreview();});
 }
 function sortableFields(){return activeCols().concat(activeMeta());}
 function dirLabel(type,dir){
@@ -1063,37 +1391,53 @@ function closeFilterPop(){popFilter=null;$('filterPop').classList.remove('show')
 function renderAnchor(){
   const box=$('anchorBox'); if(!box)return;
   if(!S.report){box.innerHTML='';return;}
-  const a=REPORT_ANCHOR[S.report];
+  const a=REPORT_ANCHOR[S.report]; const noun=curNoun();
   const body = a.toggle
-    ? `<label class="anchor-opt"><input type="checkbox" id="anchorChk" ${S.anchor==='entity'?'checked':''}><span>Include ${a.noun} with no logged time</span></label>`
-    : `<div class="anchor-note">${a.def==='entity'?`Shows every one of the ${a.noun} in scope, including those with no activity in the period.`:`Shows only ${a.noun} with logged activity — none are invented.`}</div>`;
+    ? `<label class="anchor-opt"><input type="checkbox" id="anchorChk" ${S.anchor==='entity'?'checked':''}><span>Include ${noun} with no logged time</span></label>`
+    : `<div class="anchor-note">${a.def==='entity'?`Shows every one of the ${noun} in scope, including those with no activity in the period.`:`Shows only ${noun} with logged activity — none are invented.`}</div>`;
   box.innerHTML=`<div class="anchor-hd">Row coverage</div>${body}`;
   if(a.toggle)$('anchorChk').onchange=e=>{S.anchor=e.target.checked?'entity':'fact';renderPreview();};
 }
-function openScopeFilters(){$('soOverlay').classList.add('show');}
-function closeScopeFilters(){$('soOverlay').classList.remove('show');}
+function openScope(){$('soOverlay').classList.add('show');}
+function closeScope(){$('soOverlay').classList.remove('show');}
+function openFilters(){$('filtersOverlay').classList.add('show');}
+function closeFilters(){$('filtersOverlay').classList.remove('show');}
+function renderScopeBtn(){
+  const sub=$('scopeSub'); if(!sub)return;
+  if(!S.client){
+    sub.textContent=S.persona==='user'?'All projects in your access':'Choose scope — required';
+    sub.classList.toggle('unset',S.persona!=='user');
+    return;
+  }
+  sub.classList.remove('unset');
+  const parts=[clientName(S.client)];
+  if(S.ptypes.size)parts.push(`${S.ptypes.size} type${S.ptypes.size>1?'s':''}`);
+  if(S.roles.size)parts.push(`${S.roles.size} role${S.roles.size>1?'s':''}`);
+  sub.textContent=parts.join(' · ');
+}
 function renderGroup(){
   const sel=$('groupSelect'); const r=REPORTS[S.report];
   sel.innerHTML=r.groupBy.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
   sel.value=S.group;
 }
-function renderProjects(){
-  const list=$('projList');
+function renderProjTypes(){
+  const list=$('ptypeList'); if(!list)return;
   if(!S.client){list.innerHTML='';return;}
-  const ps=PROJECTS[S.client];
-  list.innerHTML=ps.map(p=>`<label class="opt"><input type="checkbox" class="checkbox-input" data-proj="${p.id}" ${S.projects.has(p.id)?'checked':''}><span>${p.name}</span><span class="meta">${p.type}</span></label>`).join('');
-  list.querySelectorAll('[data-proj]').forEach(cb=>cb.onchange=e=>{const id=e.target.dataset.proj;e.target.checked?S.projects.add(id):S.projects.delete(id);afterProjects();});
+  const types=clientTypes(S.client);
+  const count=t=>PROJECTS[S.client].filter(p=>p.type===t).length;
+  list.innerHTML=types.map(t=>`<label class="opt"><input type="checkbox" class="checkbox-input" data-ptype="${t}" ${S.ptypes.has(t)?'checked':''}><span>${t}</span><span class="meta">${count(t)} project${count(t)>1?'s':''}</span></label>`).join('');
+  list.querySelectorAll('[data-ptype]').forEach(cb=>cb.onchange=e=>{const t=e.target.dataset.ptype;e.target.checked?S.ptypes.add(t):S.ptypes.delete(t);afterTypes();});
 }
 function renderRoles(){
   const list=$('roleList');
   if(S.projects.size===0){list.innerHTML='';return;}
   const m=rolesForSelection(); const roles=Object.keys(m).sort();
   [...S.roles].forEach(r=>{if(!roles.includes(r))S.roles.delete(r);});
-  list.innerHTML='<div class="col-group-lbl">'+roles.length+' roles on selected projects — leave empty for all</div>'+
+  list.innerHTML='<div class="col-group-lbl">'+roles.length+' roles in this scope — leave empty for all</div>'+
     roles.map(role=>`<label class="opt"><input type="checkbox" class="checkbox-input" data-role="${role}" ${S.roles.has(role)?'checked':''}><span>${role}</span><span class="meta">${m[role]}</span></label>`).join('');
-  list.querySelectorAll('[data-role]').forEach(cb=>cb.onchange=e=>{const r=e.target.dataset.role;e.target.checked?S.roles.add(r):S.roles.delete(r);renderPreview();});
+  list.querySelectorAll('[data-role]').forEach(cb=>cb.onchange=e=>{const r=e.target.dataset.role;e.target.checked?S.roles.add(r):S.roles.delete(r);renderScopeBtn();renderPreview();});
 }
-function afterProjects(){renderProjects();lock('f-role',S.projects.size===0);renderRoles();renderPreview();}
+function afterTypes(){syncProjects();lock('f-role',S.projects.size===0);renderRoles();renderScopeBtn();renderPreview();}
 
 function barW(type,i){
   const base={name:74,text:58,status:52,date:54,num:44}[type]||50;
@@ -1128,10 +1472,10 @@ function renderPreview(){
   const def=`<div class="pv-def">
     ${defRow('Period', S.periodLabel||'Not set', !S.periodLabel)}
     ${defRow('Breakdown', bdText, !S.report)}
-    ${defRow('Client', S.client?clientName(S.client):'Not selected', !S.client, true)}
-    ${defRow('Projects', S.projects.size?pills(projNames):'None selected', !S.projects.size, true)}
+    ${defRow('Client', S.client?clientName(S.client):(S.persona==='user'?'All projects in your access':'Choose scope — required'), !S.client&&S.persona!=='user', true)}
+    ${defRow('Project types', S.ptypes.size?pills([...S.ptypes]):(S.client?'All types in client':'—'), false, true)}
     ${defRow('Roles', S.roles.size?pills([...S.roles]):'All roles', false, true)}
-    ${defRow('Includes', S.report?(S.anchor==='entity'?`All ${REPORT_ANCHOR[S.report].noun} · incl. zero-activity`:`${REPORT_ANCHOR[S.report].noun.replace(/^./,c=>c.toUpperCase())} with activity`):'—', false, true)}
+    ${defRow('Includes', S.report?(S.anchor==='entity'?`All ${curNoun()} · incl. zero-activity`:`${curNoun().replace(/^./,c=>c.toUpperCase())} with activity`):'—', false, true)}
     ${filterChips?defRow('Filters', filterChips, false):''}
     ${defRow('Sort', sortText, !fcur)}
   </div>`;
@@ -1141,7 +1485,7 @@ function renderPreview(){
     const sorted=c.id===S.sort.col;
     const unit=unitOf(c);
     const showUnit=!(unit==='%'&&c.label.includes('%'));
-    return `<span class="col-tag ${tagClass(c)}${sorted?' ct-sort':''}">${c.grp?'<span class="ct-pre">group</span>':''}${c.label}${showUnit?`<span class="ct-unit">${unit}</span>`:''}${sorted?`<span class="cm-arr">${S.sort.dir==='desc'?'↓':'↑'}</span>`:''}${c.meta?'<span class="ct-pre">meta</span>':''}</span>`;
+    return `<span class="col-tag ${tagClass(c)}${sorted?' ct-sort':''}">${c.grp?'<span class="ct-pre">group</span>':''}${colLabel(c)}${showUnit?`<span class="ct-unit">${unit}</span>`:''}${sorted?`<span class="cm-arr">${S.sort.dir==='desc'?'↓':'↑'}</span>`:''}${c.meta?'<span class="ct-pre">meta</span>':''}</span>`;
   };
   const dimCols=cols.filter(c=>!c.meta&&c.type!=='num');
   const measCols=cols.filter(c=>!c.meta&&c.type==='num');
@@ -1160,9 +1504,9 @@ function renderPreview(){
 
   $('preview').innerHTML=`
     <div class="pv-head">
-      <div><div class="title">${r.name}</div><div class="sub">Grain: ${r.grain} · ${r.grainNote}</div></div>
+      <div><div class="title">${r.name}</div><div class="sub">Grain: ${curGrain()} · ${r.grainNote}</div></div>
       <span class="pv-spacer"></span>
-      <button class="pv-sf" id="sfBtn" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg> Scope &amp; filters${S.filters.length?`<span class="sf-count">${S.filters.length}</span>`:''}</button>
+      <button class="pv-sf" id="sfBtn" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg> Filters${S.filters.length?`<span class="sf-count">${S.filters.length}</span>`:''}</button>
     </div>
     <div class="pv-note">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
@@ -1186,18 +1530,36 @@ function renderPreview(){
       </div>
       ${over?`<span class="guard">Over the ${CEILING}-row cap — narrow the period, projects or roles.</span>`:cOver?`<span class="guard">Over the ${COL_CEILING}-column cap — choose a coarser breakdown or fewer metrics.</span>`:'<span class="spacer"></span>'}
       <span class="spacer"></span>
-      <button class="btn btn-md btn-secondary" id="accessBtn">${accessLabel()}</button>
-      <button class="btn btn-md btn-tertiary" id="exportBtn" ${isReady()?'':'disabled'}>Export .xlsx</button>
-      <button class="btn btn-md btn-primary" id="runBtn" ${isReady()?'':'disabled'}>Run report</button>
+      ${S.persona==='admin'?`<button class="btn btn-md btn-secondary" id="saveMenuBtn" ${isReady()?'':'disabled'}>Save ▾</button>`:S.persona==='pm'?`<button class="btn btn-md btn-secondary" id="saveBtn" ${isReady()?'':'disabled'}>Save report</button>`:''}
+      ${S.persona!=='user'?`<button class="btn btn-md btn-secondary" id="accessBtn">${accessLabel()}</button>`:''}
+      <div class="split">
+        <button class="btn btn-md btn-primary split-main" id="runBtn" ${isReady()?'':'disabled'}>Run report</button>
+        <button class="btn btn-md btn-primary split-caret" id="runMore" ${isReady()?'':'disabled'} aria-label="More run options">▾</button>
+      </div>
     </div>`;
   $('runBtn').onclick=()=>startRun('Run');
-  $('exportBtn').onclick=()=>startRun('Export');
-  $('accessBtn').onclick=openPerm;
+  $('runMore').onclick=()=>openActionMenu($('runMore'),[
+    {label:'Export as .xlsx', disabled:!isReady(), onClick:()=>startRun('Export')},
+    {label:'Schedule…', onClick:()=>toast('Sets this report to run on a schedule — opens schedule setup')}
+  ]);
+  if($('accessBtn'))$('accessBtn').onclick=openPerm;
+  if($('saveBtn'))$('saveBtn').onclick=()=>toast('Saved to your reports — pinned to your own list');
+  if($('saveMenuBtn'))$('saveMenuBtn').onclick=()=>openActionMenu($('saveMenuBtn'),[
+    {label:'Save report', onClick:()=>toast('Saved to your reports — pinned to your own list')},
+    {label:'Publish as template…', onClick:()=>openActionMenu($('saveMenuBtn'),[
+      {label:'Publish to Guided users', onClick:()=>toast('Published as a Guided template — canned, ready to run')},
+      {label:'Publish to Build users', onClick:()=>toast('Published as a Build template — builders can extend it')},
+      {label:'Publish to both', onClick:()=>toast('Published to Guided and Build users')}
+    ])}
+  ]);
   renderBreakdown();
   renderAnchor();
-  $('sfBtn').onclick=openScopeFilters;
+  renderReportId();
+  renderScopeBtn();
+  $('sfBtn').onclick=openFilters;
+  const scb=$('scopeBtn'); if(scb)scb.onclick=openScope;
   $('preview').querySelectorAll('.pill.filt[data-fi]').forEach(ch=>ch.onclick=ev=>{ev.stopPropagation();openFilterPop(+ch.dataset.fi,ch);});
-  $('preview').querySelectorAll('[data-openscope]').forEach(row=>row.onclick=openScopeFilters);
+  $('preview').querySelectorAll('[data-openscope]').forEach(row=>row.onclick=openScope);
 }
 let rtKind='Run';
 function startRun(kind){ if(projColsFor(S.breakdown)>=COL_SOFT) openLargeConfirm(kind); else proceedRun(kind); }
@@ -1237,11 +1599,10 @@ let permSnap=null;
 function openPerm(){permSnap=JSON.stringify(S.perm);renderPerm();$('permOverlay').classList.add('show');}
 function closePerm(){$('permOverlay').classList.remove('show');}
 function renderPerm(){
-  const lvlSel=(g,i)=>`<select class="select pm-lvl" data-lvl="${i}"><option value="view" ${g.level==='view'?'selected':''}>Can view</option><option value="edit" ${g.level==='edit'?'selected':''}>Can edit</option><option value="admin" ${g.level==='admin'?'selected':''}>Admin</option></select>`;
-  const ownerRow=`<div class="pm-row"><span class="pm-av" style="background:${avatarBg('James D\u2019Arcy')}">${initials('James D\u2019Arcy')}</span><div class="pm-meta"><div class="pm-name">James D\u2019Arcy (you)</div><div class="pm-sub">Owner</div></div><span class="pm-fixed">Admin</span></div>`;
+  const ownerRow=`<div class="pm-row"><span class="pm-av" style="background:${avatarBg('James D\u2019Arcy')}">${initials('James D\u2019Arcy')}</span><div class="pm-meta"><div class="pm-name">James D\u2019Arcy (you)</div><div class="pm-sub">Owner</div></div><span class="pm-fixed">Owner</span></div>`;
   const grantRows=S.perm.grants.map((g,i)=>{
     const av=g.kind==='group'?`<span class="pm-av grp">${ICON_PPL}</span>`:`<span class="pm-av" style="background:${avatarBg(g.name)}">${initials(g.name)}</span>`;
-    return `<div class="pm-row">${av}<div class="pm-meta"><div class="pm-name">${g.name}</div><div class="pm-sub">${g.kind==='group'?'Group':'Person'}</div></div>${lvlSel(g,i)}<button class="pm-x" data-prm="${i}" type="button" aria-label="Remove">✕</button></div>`;
+    return `<div class="pm-row">${av}<div class="pm-meta"><div class="pm-name">${g.name}</div><div class="pm-sub">${g.kind==='group'?'Group':'Person'} · sees what they\u2019re entitled to</div></div><button class="pm-x" data-prm="${i}" type="button" aria-label="Remove">✕</button></div>`;
   }).join('');
   const used=new Set(S.perm.grants.map(g=>g.id));
   const users=PEOPLE.filter(p=>p.kind==='user'&&!used.has(p.id));
@@ -1251,10 +1612,9 @@ function renderPerm(){
     <label class="pm-opt ${S.perm.scope==='viewer'?'sel':''}"><input type="radio" name="pmscope" value="viewer" ${S.perm.scope==='viewer'?'checked':''}><span class="pm-otext"><span class="pm-omain">Each viewer\u2019s own data</span><span class="pm-osub">They see only what they\u2019re entitled to. Recommended.</span></span></label>
     <label class="pm-opt ${S.perm.scope==='author'?'sel':''}"><input type="radio" name="pmscope" value="author" ${S.perm.scope==='author'?'checked':''}><span class="pm-otext"><span class="pm-omain">Your data scope</span><span class="pm-osub">Everyone who runs it sees what you can see.</span></span></label>
   </div>${S.perm.scope==='author'?`<div class="pm-warn">${ICON_WARN}<span>This can expose data a viewer couldn\u2019t otherwise access — client financials, resource rates, or projects outside their remit.</span></div>`:''}`;
-  $('permBody').innerHTML=`<div class="pm-section">People &amp; groups with access</div>${picker}<div class="pm-list">${ownerRow}${grantRows}</div><div class="pm-section">When this report runs, it shows</div>${scope}<div class="pm-note">Scheduled email recipients are set when you schedule the report.</div>`;
+  $('permBody').innerHTML=`<div class="pm-section">People &amp; groups with access</div>${picker}<div class="pm-list">${ownerRow}${grantRows}</div><div class="pm-note">Each recipient opens it with their own access — a Build user can adjust what they\u2019re allowed to; a Guided user runs it as-is.</div><div class="pm-section">When this report runs, it shows</div>${scope}<div class="pm-note">Scheduled email recipients are set when you schedule the report.</div>`;
   $('permAdd').onchange=e=>{if(!e.target.value)return;const p=PEOPLE.find(x=>x.id===e.target.value);S.perm.grants.push({id:p.id,name:p.name,kind:p.kind,level:'view'});renderPerm();};
   $('permBody').querySelectorAll('[data-prm]').forEach(b=>b.onclick=()=>{S.perm.grants.splice(+b.dataset.prm,1);renderPerm();});
-  $('permBody').querySelectorAll('[data-lvl]').forEach(s=>s.onchange=e=>{S.perm.grants[+e.target.dataset.lvl].level=e.target.value;});
   $('permBody').querySelectorAll('input[name="pmscope"]').forEach(r=>r.onchange=e=>{S.perm.scope=e.target.value;renderPerm();});
 }
 function queue(kind){
@@ -1265,17 +1625,18 @@ function queue(kind){
 }
 
 /* ---------------- Wiring ---------------- */
-$('reportSelect').onchange=e=>{
-  S.report=e.target.value;
-  if(!S.report){['f-period','f-breakdown','f-client','f-project','f-role','f-group','f-sort','card-cols','card-meta'].forEach(i=>lock(i,true));renderPreview();return;}
-  S.cols=REPORTS[S.report].cols.map(c=>({...c})); S.group='';
-  S.meta=META[REPORT_META[S.report]].fields.map((f,i)=>({id:'m'+i,label:f,type:'text',meta:true,on:false}));
+function applyReport(){
+  if(!S.report){['f-period','f-breakdown','f-client','f-ptype','f-role','f-group','f-sort','card-cols','card-meta'].forEach(i=>lock(i,true));renderPreview();return;}
+  S.cols=buildCols(S.report); S.group='';
+  syncMeta();
   S.sort={...DEFAULT_SORT[S.report]}; S.filters=[]; S.expandedFilter=null; S.perm={grants:[],scope:'viewer'}; S.breakdown=REPORT_BD[S.report].def; S.anchor=REPORT_ANCHOR[S.report].def;
-  ['f-period','f-breakdown','card-cols','card-meta','f-group','f-sort'].forEach(i=>lock(i,false));
-  renderColumns(); renderMeta(); renderGroup(); renderSort(); renderFilters(); renderPreview();
-};
-$('periodSelect').onchange=e=>{S.months=+e.target.value||0;S.periodLabel=PERIOD_LABEL[e.target.value]||'';lock('f-client',!S.months);renderPreview();};
-$('clientSelect').onchange=e=>{S.client=e.target.value;S.projects.clear();S.roles.clear();lock('f-project',!S.client);lock('f-role',true);renderProjects();renderRoles();renderPreview();};
+  S.driver=REPORTS[S.report].drivers?REPORTS[S.report].driverDef:''; S.projType='both';
+  const dp=REPORTS[S.report].domain==='Financial'?'3':'1'; S.months=+dp; S.periodLabel=PERIOD_LABEL[dp];
+  if(REPORTS[S.report].drivers)S.cols[0].label=curGrain();
+  ['f-period','f-breakdown','card-cols','card-meta','f-group','f-sort','f-scope','f-client'].forEach(i=>lock(i,false));
+}
+$('periodSelect').onchange=e=>{const v=e.target.value;S.months=v==='custom'?3:+v;S.periodLabel=PERIOD_LABEL[v]||'';renderPreview();};
+$('clientSelect').onchange=e=>{S.client=e.target.value;S.ptypes.clear();S.projects.clear();S.roles.clear();lock('f-ptype',!S.client);lock('f-role',true);renderProjTypes();renderRoles();renderScopeBtn();syncMeta();renderMeta();renderPreview();};
 $('groupSelect').onchange=e=>{S.group=e.target.value;renderPreview();};
 $('sortSelect').onchange=e=>{S.sort.col=e.target.value;renderSort();renderPreview();};
 $('dirBtn').onclick=()=>{S.sort.dir=S.sort.dir==='desc'?'asc':'desc';renderSort();renderPreview();};
@@ -1293,12 +1654,20 @@ $('addFilter').onchange=e=>{
   S.expandedFilter=f.id;
   renderFilters(); renderPreview();
 };
-$('soClose').onclick=closeScopeFilters;
+$('soClose').onclick=closeScope;
+$('advToggle').onclick=()=>{
+  const bs=$('buildSurface'), open=!bs.classList.contains('adv');
+  bs.classList.toggle('adv',open);
+  $('advToggle').textContent=(open?'▾':'▸')+' Advanced options';
+};
 $('lgCancel').onclick=closeLg;
 $('lgGo').onclick=()=>{closeLg();proceedRun(lgKind);};
 $('lgOverlay').onclick=e=>{if(e.target===$('lgOverlay'))closeLg();};
-$('soDone').onclick=closeScopeFilters;
-$('soOverlay').onclick=e=>{if(e.target===$('soOverlay'))closeScopeFilters();};
+$('soDone').onclick=closeScope;
+$('soOverlay').onclick=e=>{if(e.target===$('soOverlay'))closeScope();};
+$('filtersClose').onclick=closeFilters;
+$('filtersDone').onclick=closeFilters;
+$('filtersOverlay').onclick=e=>{if(e.target===$('filtersOverlay'))closeFilters();};
 $('fpopX').onclick=closeFilterPop;
 document.addEventListener('mousedown',e=>{
   if(!$('filterPop').classList.contains('show'))return;
@@ -1307,7 +1676,7 @@ document.addEventListener('mousedown',e=>{
   closeFilterPop();
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeFilterPop();});
-$('resetCols').onclick=()=>{S.cols=REPORTS[S.report].cols.map(c=>({...c}));renderColumns();renderSort();renderFilters();renderPreview();};
+$('resetCols').onclick=()=>{S.cols=buildCols(S.report);renderColumns();renderSort();renderFilters();renderPreview();};
 $('rtRun').onclick=()=>{
   const fs=S.filters.filter(f=>f.mode==='prompt');let bad=false;
   $('rtBody').querySelectorAll('[data-rt]').forEach(el=>{const f=fs[+el.dataset.rt];if(f&&f.required&&!el.value.trim()){bad=true;el.classList.add('rt-bad');}else el.classList.remove('rt-bad');});
@@ -1330,24 +1699,46 @@ const ICONS={
   cash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg>',
   clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
 };
-const STARTS=[
-  {id:'pps',name:'Project Performance Summary',d:'Delivery vs estimate, margin · by project',ico:'bars',tone:'ico-teal'},
-  {id:'sca',name:'Scoping Accuracy',d:'Estimate vs actual · by project',ico:'target',tone:'ico-green'},
-  {id:'rea',name:'Role Estimation Accuracy',d:'Over/under-estimated roles · by role',ico:'users',tone:'ico-purple'},
-  {id:'rpa',name:'Resource Planning Accuracy',d:'Plan vs actual · by project & user',ico:'calendar',tone:'ico-blue'},
-  {id:'cpa',name:'Client Profitability',d:'Revenue, cost, margin · by client',ico:'cash',tone:'ico-amber'},
-  {id:'tbd',name:'Timesheet Breakdown',d:'Logged hours · by resource & week',ico:'clock',tone:'ico-teal'},
+const TEMPLATES=[
+  {id:'t-role-eva', report:'r2', pinned:true, name:'Estimate vs Actual — by Role', desc:'Which roles consistently blow their estimate.', preset:{breakdown:'total'}},
+  {id:'t-pnl', report:'r1', pinned:true, name:'Project P&L Snapshot', desc:'Where the money is — estimate, cost, margin and variance per project.', preset:{breakdown:'total'}},
+  {id:'t-user-eva', report:'r3', name:'Estimate vs Actual — by User', desc:'Who is over-servicing and who is under-delivering.', preset:{breakdown:'total'}},
+  {id:'t-oop', report:'r4', name:'OOP Tracker', desc:'Projects close to blowing their out-of-pocket budget.', preset:{breakdown:'total'}},
+  {id:'t-retainer', report:'r5', name:'Retainer Performance', desc:'Retainers overdelivering and losing us margin.', preset:{breakdown:'total'}},
+  {id:'t-portfolio', report:'r6', pinned:true, name:'Client Portfolio Financials', desc:'Which clients are profitable and which are not.', preset:{breakdown:'total'}},
+  {id:'t-util', report:'r7', pinned:true, name:'Utilisation Report', desc:'Over/under-utilised vs target — by user, role or department.', preset:{breakdown:'total'}},
+  {id:'t-taskstatus', report:'r9', pinned:true, name:'Task Status', desc:"What's overdue, due, complete or upcoming.", preset:{breakdown:'total'}},
+  {id:'t-taskbaseline', report:'r10', name:'Task Delivery vs Baseline', desc:'Where slippage is happening, and by how much.', preset:{breakdown:'total'}},
+  {id:'t-tsdetail', report:'r11', name:'Timesheet Detail', desc:'Raw timesheet data for reconciliation and audit.', preset:{breakdown:'total'}},
+  {id:'t-tscompliance', report:'r12', pinned:true, name:'Timesheet Compliance', desc:"Who hasn't submitted, who's chronically late.", preset:{breakdown:'total'}},
+  {id:'t-tsapproval', report:'r13', name:'Timesheet Approval Status', desc:"What's stuck in approval, where the bottleneck is.", preset:{breakdown:'total'}},
+  {id:'t-billable', report:'r14', name:'Billable vs Non-billable', desc:'Where non-billable time actually goes.', preset:{breakdown:'total'}},
 ];
-const TYPE_ICON={pps:['bars','ico-teal'],sca:['target','ico-green'],rea:['users','ico-purple'],rpa:['calendar','ico-blue'],cpa:['cash','ico-amber'],tbd:['clock','ico-teal']};
-const TYPE_NAME={pps:'Project Performance Summary',sca:'Scoping Accuracy',rea:'Role Estimation Accuracy',rpa:'Resource Planning Accuracy',cpa:'Client Profitability',tbd:'Timesheet Breakdown'};
+const STARTS=[
+  {id:'r1',name:'Project P&L Snapshot',d:'Financial · one row per project',ico:'cash',tone:'ico-amber'},
+  {id:'r2',name:'Est vs Resourced vs Actual — by Role',d:'Financial · project × role',ico:'bars',tone:'ico-teal'},
+  {id:'r3',name:'Est vs Resourced vs Actual — by User',d:'Financial · project × user',ico:'users',tone:'ico-purple'},
+  {id:'r4',name:'OOP Tracker',d:'Financial · Fixed Estimate only',ico:'target',tone:'ico-green'},
+  {id:'r5',name:'Retainer Performance',d:'Financial · Fixed Estimate only',ico:'cash',tone:'ico-amber'},
+  {id:'r6',name:'Client Portfolio Financials',d:'Financial · by client',ico:'cash',tone:'ico-amber'},
+  {id:'r7',name:'Utilisation Report',d:'Resourcing · user / role / department',ico:'calendar',tone:'ico-blue'},
+  {id:'r9',name:'Task Status',d:'Task · overdue, due, complete, upcoming',ico:'target',tone:'ico-green'},
+  {id:'r10',name:'Task Delivery vs Baseline',d:'Task · slippage vs baseline',ico:'target',tone:'ico-purple'},
+  {id:'r11',name:'Timesheet Detail',d:'Timesheet · raw entries for audit',ico:'clock',tone:'ico-teal'},
+  {id:'r12',name:'Timesheet Compliance',d:'Timesheet · who submitted, who is late',ico:'clock',tone:'ico-blue'},
+  {id:'r13',name:'Timesheet Approval Status',d:'Timesheet · what is stuck in approval',ico:'clock',tone:'ico-purple'},
+  {id:'r14',name:'Billable vs Non-billable',d:'Timesheet · user / role / department',ico:'bars',tone:'ico-amber'},
+];
+const TYPE_ICON={r1:['cash','ico-amber'],r2:['bars','ico-teal'],r3:['users','ico-purple'],r4:['target','ico-green'],r5:['cash','ico-amber'],r6:['cash','ico-amber'],r7:['calendar','ico-blue'],r9:['target','ico-green'],r10:['target','ico-purple'],r11:['clock','ico-teal'],r12:['clock','ico-blue'],r13:['clock','ico-purple'],r14:['bars','ico-amber']};
+const TYPE_NAME={r1:'Project P&L Snapshot',r2:'Est vs Resourced vs Actual — by Role',r3:'Est vs Resourced vs Actual — by User',r4:'OOP Tracker',r5:'Retainer Performance',r6:'Client Portfolio Financials',r7:'Utilisation Report',r9:'Task Status',r10:'Task Delivery vs Baseline',r11:'Timesheet Detail',r12:'Timesheet Compliance',r13:'Timesheet Approval Status',r14:'Billable vs Non-billable Breakdown'};
 const SAVED=[
-  {name:'FIFA — Project performance, Q2 2026',type:'pps',owner:'James D\u2019Arcy',oi:'JD',last:'2 hours ago',scope:'mine',sched:true,status:'completed'},
-  {name:'Creative Delivery — role estimation',type:'rea',owner:'James D\u2019Arcy',oi:'JD',last:'Yesterday',scope:'mine',status:'completed'},
-  {name:'Client profitability — all clients YTD',type:'cpa',owner:'Aisling O\u2019Connor',oi:'AO',last:'2 days ago',scope:'shared',status:'completed'},
-  {name:'World Cup 2026 — timesheet breakdown',type:'tbd',owner:'James D\u2019Arcy',oi:'JD',last:'3 days ago',scope:'mine',status:'failed'},
-  {name:'UEFA — scoping accuracy, H1',type:'sca',owner:'Marco Rossi',oi:'MR',last:'5 days ago',scope:'shared',status:'completed'},
-  {name:'Resource planning — APAC studio',type:'rpa',owner:'James D\u2019Arcy',oi:'JD',last:'1 week ago',scope:'mine',sched:true,status:'queued'},
-  {name:'Red Bull — project performance',type:'pps',owner:'Aisling O\u2019Connor',oi:'AO',last:'2 weeks ago',scope:'shared',status:'completed'},
+  {name:'FIFA — Project P&L, Q2 2026',type:'r1',owner:'James D\u2019Arcy',oi:'JD',last:'2 hours ago',scope:'mine',sched:true,status:'completed'},
+  {name:'Creative Delivery — estimate vs actual by role',type:'r2',owner:'James D\u2019Arcy',oi:'JD',last:'Yesterday',scope:'mine',status:'completed'},
+  {name:'Client portfolio financials — YTD',type:'r6',owner:'Aisling O\u2019Connor',oi:'AO',last:'2 days ago',scope:'shared',status:'completed'},
+  {name:'Studio — utilisation by department',type:'r7',owner:'James D\u2019Arcy',oi:'JD',last:'3 days ago',scope:'mine',status:'failed'},
+  {name:'UEFA — OOP tracker',type:'r4',owner:'Marco Rossi',oi:'MR',last:'5 days ago',scope:'shared',status:'completed'},
+  {name:'FIFA Brand Retainer — performance',type:'r5',owner:'James D\u2019Arcy',oi:'JD',last:'1 week ago',scope:'mine',sched:true,status:'queued'},
+  {name:'Red Bull — estimate vs actual by user',type:'r3',owner:'Aisling O\u2019Connor',oi:'AO',last:'2 weeks ago',scope:'shared',status:'completed'},
 ];
 const TABS=[['all','All'],['mine','Owned by me'],['shared','Shared with me']];
 // Run status (Completed/Failed/Queued) belongs on the Schedules page, not the recent list — kept here for that surface.
@@ -1358,35 +1749,100 @@ const STATUS_BADGE={
 };
 const AVATAR_COLORS=['#0B6E8A','#208368','#0E7490','#5B5BD6','#7C3AED','#BE185D','#C2410C','#475569'];
 const SCHEDULES=[
-  {title:'FIFA — weekly delivery performance', type:'pps', cadence:'Weekly · Mondays', time:'09:00', next:'Mon 22 Jun, 09:00', last:'completed', lastWhen:'15 Jun', recipients:'FIFA Reporting (group)', owner:'James D\u2019Arcy'},
-  {title:'Creative Delivery — role estimation', type:'rea', cadence:'Every weekday', time:'08:00', next:'Tomorrow, 08:00', last:'completed', lastWhen:'Today', recipients:'You', owner:'James D\u2019Arcy'},
-  {title:'Client profitability — month-end', type:'cpa', cadence:'Monthly · last day', time:'18:00', next:'30 Jun, 18:00', last:'failed', lastWhen:'31 May', recipients:'Finance (group)', owner:'Aisling O\u2019Connor'},
-  {title:'World Cup 2026 — timesheet export', type:'tbd', cadence:'Weekly · Fridays', time:'17:30', next:'Fri 19 Jun, 17:30', last:'queued', lastWhen:'—', recipients:'PMO (group) +2', owner:'James D\u2019Arcy'},
-  {title:'Resource planning — APAC studio', type:'rpa', cadence:'Daily', time:'07:00', next:'Paused', last:'completed', lastWhen:'10 Jun', recipients:'You', owner:'James D\u2019Arcy', paused:true},
+  {title:'FIFA — weekly P&L snapshot', type:'r1', cadence:'Weekly · Mondays', time:'09:00', next:'Mon 22 Jun, 09:00', last:'completed', lastWhen:'15 Jun', recipients:'FIFA Reporting (group)', owner:'James D\u2019Arcy'},
+  {title:'Creative Delivery — estimate vs actual by role', type:'r2', cadence:'Every weekday', time:'08:00', next:'Tomorrow, 08:00', last:'completed', lastWhen:'Today', recipients:'You', owner:'James D\u2019Arcy'},
+  {title:'Client portfolio — month-end', type:'r6', cadence:'Monthly · last day', time:'18:00', next:'30 Jun, 18:00', last:'failed', lastWhen:'31 May', recipients:'Finance (group)', owner:'Aisling O\u2019Connor'},
+  {title:'Studio — timesheet compliance', type:'r12', cadence:'Weekly · Fridays', time:'17:30', next:'Fri 19 Jun, 17:30', last:'queued', lastWhen:'—', recipients:'PMO (group) +2', owner:'James D\u2019Arcy'},
+  {title:'APAC studio — utilisation', type:'r7', cadence:'Daily', time:'07:00', next:'Paused', last:'completed', lastWhen:'10 Jun', recipients:'You', owner:'James D\u2019Arcy', paused:true},
 ];
 let sq='';
 let schForm={title:'',report:'',freq:'Weekly',day:'Monday',hh:'09',mm:'00',start:'18 Jun 2026',deliver:'You'};
 function avatarBg(name){let h=5381;for(let i=0;i<name.length;i++)h=((h*33)^name.charCodeAt(i))>>>0;return AVATAR_COLORS[h%AVATAR_COLORS.length];}
 let tab='all', q='';
+let tplTab='all', tplQ='';
 
 function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window._t);window._t=setTimeout(()=>t.classList.remove('show'),3200);}
 
-function renderStarts(){
-  $('startRow').innerHTML=STARTS.map(s=>`
-    <div class="start-card" onclick="openBuilder('${s.id}')">
-      <div class="start-ico ${s.tone}">${ICONS[s.ico]}</div>
-      <div class="t">${s.name}</div><div class="d">${s.d}</div>
-    </div>`).join('')+
-    `<div class="start-card browse" onclick="toast('Opens the full report-type picker, grouped by subject')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      <div>Browse all report types</div></div>`;
+function tplAnchor(t){return REPORTS[t.report].domain;}
+function tplTabDefs(){
+  const order=['Financial','Resourcing','Task','Timesheet'];
+  const present=order.filter(n=>TEMPLATES.some(t=>tplAnchor(t)===n));
+  return [['all','All']].concat(present.map(n=>[n,n]));
 }
+function tplCount(key){return TEMPLATES.filter(t=>key==='all'||tplAnchor(t)===key).length;}
+function renderTplTabs(){
+  $('tplTabs').innerHTML=tplTabDefs().map(([id,lbl])=>`<button class="tab ${tplTab===id?'active':''}" data-tpltab="${id}">${lbl}<span class="ct">${tplCount(id)}</span></button>`).join('');
+  $('tplTabs').querySelectorAll('[data-tpltab]').forEach(b=>b.onclick=()=>{tplTab=b.dataset.tpltab;renderTplTabs();renderGallery();});
+}
+function renderMyReports(){
+  const sec=$('mySection'); if(!sec)return;
+  if(S.persona==='user'){sec.style.display='none';return;}
+  sec.style.display='';
+  const rows=SAVED.filter(r=>r.scope==='mine');
+  if(!rows.length){$('myList').innerHTML=`<div class="empty"><h3>No saved reports yet</h3><p>Reports you save will appear here.</p></div>`;return;}
+  const head=`<div class="list-head"><span>Name</span><span>Report type</span><span>Owner</span><span>Last run</span><span></span></div>`;
+  const body=rows.map(r=>{
+    const [ic,tone]=TYPE_ICON[r.type];
+    return `<div class="list-row" onclick="openBuilder('${r.type}')">
+      <div class="r-name"><div class="r-ico ${tone}">${ICONS[ic]}</div>
+        <div style="min-width:0"><div class="r-title">${r.name}</div>
+          <div class="r-sub">${r.sched?'<span class="badge sched">Scheduled</span>':''}</div></div></div>
+      <div class="r-type">${TYPE_NAME[r.type]}</div>
+      <div class="r-owner"><span class="r-av" style="background:${avatarBg(r.owner)};color:#fff">${r.oi}</span><span class="r-cell">${r.owner}</span></div>
+      <div class="r-cell">${r.last}</div>
+      <button class="kebab" onclick="event.stopPropagation();toast('Run · Duplicate · Schedule · Share · Delete')"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+    </div>`;}).join('');
+  $('myList').innerHTML=head+body;
+}
+function renderGallery(){
+  const rows=TEMPLATES.filter(t=>(tplTab==='all'||tplAnchor(t)===tplTab)&&(t.name+' '+t.desc).toLowerCase().includes(tplQ))
+    .slice().sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
+  const showBuild=S.persona!=='user'&&!tplQ;
+  if(!rows.length&&!showBuild){
+    $('tplGrid').innerHTML=`<div class="empty" style="grid-column:1/-1"><h3>No templates${tplQ?' for “'+tplQ+'”':' in this category yet'}</h3><p>${S.persona!=='user'?'Build one from a report type, or try another category.':'Try another category, or ask an author to publish one.'}</p></div>`;
+    return;
+  }
+  let html=rows.map(t=>{
+    const r=REPORTS[t.report];
+    return `<div class="tpl-card" onclick="openTemplate('${t.id}')">
+      <div class="tpl-top"><span class="tpl-driver">${r.grain}</span>${r.applies==='fe'?'<span class="fetag">FE only</span>':''}${r.pending?'<span class="fetag">Draft</span>':''}${t.pinned?`<span class="tpl-pin" title="Pinned by Screendragon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="16" x2="12" y2="22"/><path d="M9 3h6l-1 5 3 3v2H7v-2l3-3-1-5z"/></svg></span>`:''}</div>
+      <div class="tpl-name">${t.name}</div>
+      <div class="tpl-desc">${t.desc}</div>
+    </div>`;
+  }).join('');
+  if(showBuild) html+=`<div class="tpl-card build-tile" onclick="openScratch()"><div class="build-plus">+</div><div class="tpl-name">Build a report</div><div class="tpl-desc">Pick a report type and build it yourself.</div></div>`;
+  $('tplGrid').innerHTML=html;
+}
+function renderScratch(){
+  $('scratchGrid').innerHTML=STARTS.map(s=>`
+    <div class="scratch-card" onclick="openBuilder('${s.id}');closeScratch();">
+      <div class="start-ico ${s.tone}">${ICONS[s.ico]}</div>
+      <div><div class="t">${s.name}</div><div class="d">${s.d}</div></div>
+    </div>`).join('');
+}
+function openScratch(){renderScratch();$('scratchOverlay').classList.add('show');}
+function closeScratch(){$('scratchOverlay').classList.remove('show');}
+function openActionMenu(anchor,items){
+  const m=$('actionMenu');
+  m.innerHTML=items.map((it,i)=>it.sep?'<div class="ctx-separator"></div>':`<div class="ctx-item ${it.disabled?'disabled':''}" data-mi="${i}">${it.label}</div>`).join('');
+  m.querySelectorAll('[data-mi]').forEach(el=>el.onclick=()=>{const it=items[+el.dataset.mi];if(it.disabled)return;closeActionMenu();it.onClick&&it.onClick();});
+  m.classList.add('show');
+  const r=anchor.getBoundingClientRect(), mw=m.offsetWidth||190, mh=m.offsetHeight||100;
+  let left=Math.max(12,Math.min(r.left,window.innerWidth-mw-12));
+  let top=r.top-mh-6; if(top<12)top=r.bottom+6;
+  m.style.left=left+'px'; m.style.top=top+'px';
+}
+function closeActionMenu(){$('actionMenu').classList.remove('show');}
+document.addEventListener('mousedown',e=>{const m=$('actionMenu');if(!m.classList.contains('show'))return;if(m.contains(e.target))return;if(e.target.closest('#runMore,#saveMenuBtn'))return;closeActionMenu();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeActionMenu();});
 function counts(scope){return SAVED.filter(r=>scope==='all'||r.scope===scope).length;}
 function renderTabs(){
+  if(!$('tabs'))return;
   $('tabs').innerHTML=TABS.map(([id,lbl])=>`<button class="tab ${tab===id?'active':''}" data-tab="${id}">${lbl}<span class="ct">${counts(id)}</span></button>`).join('');
   $('tabs').querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;renderTabs();renderList();});
 }
 function renderList(){
+  if(!$('list'))return;
   let rows=SAVED.filter(r=>(tab==='all'||r.scope===tab)&&r.name.toLowerCase().includes(q));
   if(!rows.length){$('list').innerHTML=`<div class="empty"><h3>No reports here yet</h3><p>${tab==='shared'?'Reports shared with you will appear here.':'Start a new report from the row above.'}</p></div>`;return;}
   const head=`<div class="list-head"><span>Name</span><span>Report type</span><span>Owner</span><span>Last run</span><span></span></div>`;
@@ -1403,8 +1859,8 @@ function renderList(){
     </div>`;}).join('');
   $('list').innerHTML=head+body;
 }
-$('search').oninput=e=>{q=e.target.value.toLowerCase();renderList();};
-renderStarts();renderTabs();renderList();
+$('tplSearch').oninput=e=>{tplQ=e.target.value.toLowerCase();renderGallery();};
+renderTplTabs();renderGallery();applyPersona('user');
 (()=>{const a=$('navAvatar');if(a){a.style.background=avatarBg('James D\u2019Arcy');a.style.color='#fff';}})();
 
 /* ---- router ---- */
@@ -1417,14 +1873,70 @@ function showView(v){
   document.getElementById('crumb').textContent=v==='builder'?'/ Reports / New report':v==='schedules'?'/ Reports / Schedules':'/ Reports';
   window.scrollTo(0,0);
 }
-function openBuilder(typeId){
-  $('periodSelect').value=''; $('clientSelect').value='';
-  S.months=0; S.periodLabel=''; S.client=''; S.projects.clear(); S.roles.clear();
-  ['f-client','f-project','f-role'].forEach(i=>lock(i,true));
-  $('projList').innerHTML=''; $('roleList').innerHTML='';
-  const sel=$('reportSelect'); sel.value=typeId; sel.dispatchEvent(new Event('change'));
+const LOCK_ICON='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+function singular(n){return n.replace(/s$/,'');}
+function driverConsq(){
+  const noun=curNoun();
+  return S.anchor==='entity'
+    ? `Every ${singular(noun)} in scope appears as a row — including those with no activity in the period.`
+    : `Only ${noun} with activity appear — ${noun} without won't show as rows.`;
+}
+function renderReportId(){
+  const box=$('rptId'); if(!box)return;
+  if(!S.report){box.innerHTML='';return;}
+  const r=REPORTS[S.report];
+  const driverSel = r.drivers ? `<div class="rpt-driverpick"><span class="rpt-dp-lbl">Driver</span><div class="f-seg">${r.drivers.map(d=>`<button type="button" data-drv="${d[0]}" class="${S.driver===d[0]?'on':''}">${d[1]}</button>`).join('')}</div></div>` : '';
+  box.innerHTML=`
+    <div class="rpt-top">
+      <span class="rpt-lock" title="The report type is fixed while you build">${LOCK_ICON}</span>
+      <div class="rpt-main">
+        <div class="rpt-name">${r.name}</div>
+        <div class="rpt-driver"><span class="rpt-grain">${curGrain()} report</span> · anchored on ${curNoun()}</div>
+      </div>
+    </div>
+    ${driverSel}
+    <div class="rpt-consq">${driverConsq()}</div>
+    ${r.pending?`<div class="rpt-pending" title="${r.pending.replace(/"/g,'&quot;')}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Columns pending sign-off</div>`:''}
+    <button class="rpt-change" id="rptChange" type="button">‹ Choose another report</button>`;
+  $('rptChange').onclick=()=>showView('home');
+  box.querySelectorAll('[data-drv]').forEach(b=>b.onclick=()=>{
+    S.driver=b.dataset.drv;
+    if(REPORTS[S.report].drivers)S.cols[0].label=curGrain();
+    renderColumns(); renderSort(); renderFilters(); renderPreview();
+  });
+}
+function openBuilder(typeId, opts={}){
+  $('clientSelect').value='';
+  S.client=''; S.ptypes.clear(); S.projects.clear(); S.roles.clear();
+  ['f-ptype','f-role'].forEach(i=>lock(i,true));
+  $('ptypeList').innerHTML=''; $('roleList').innerHTML='';
+  S.report=typeId; S.guided=!!opts.guided; S.template=opts.template||'';
+  applyReport();
+  if(opts.preset){ if(opts.preset.breakdown)S.breakdown=opts.preset.breakdown; if(opts.preset.anchor)S.anchor=opts.preset.anchor; }
+  $('periodSelect').value=String(S.months);
+  const bs=$('buildSurface');
+  bs.dataset.pers=S.persona; bs.classList.toggle('adv',S.persona==='admin');
+  $('advToggle').style.display=(S.persona==='user')?'none':''; $('advToggle').textContent=(S.persona==='admin'?'▾':'▸')+' Advanced options';
+  renderColumns(); renderMeta(); renderGroup(); renderSort(); renderFilters(); renderPreview();
   showView('builder');
 }
+function openTemplate(tid){
+  const t=TEMPLATES.find(x=>x.id===tid); if(!t)return;
+  openBuilder(t.report,{guided:true,template:tid,preset:t.preset||{}});
+}
+function applyPersona(p){
+  S.persona=p;
+  document.querySelectorAll('#persona [data-persona]').forEach(b=>b.classList.toggle('on',b.dataset.persona===p));
+  renderGallery();
+  renderMyReports();
+  const bs=$('buildSurface');
+  if(bs){bs.dataset.pers=p; bs.classList.toggle('adv',p==='admin');}
+  if($('advToggle')){$('advToggle').style.display=(p==='user')?'none':''; $('advToggle').textContent=(p==='admin'?'▾':'▸')+' Advanced options';}
+  if(S.report){editCol=null;renderColumns();renderMeta();renderReportId();renderPreview();}
+}
+document.querySelectorAll('#persona [data-persona]').forEach(b=>b.onclick=()=>applyPersona(b.dataset.persona));
+$('scratchCancel').onclick=closeScratch;
+$('scratchOverlay').onclick=e=>{if(e.target===$('scratchOverlay'))closeScratch();};
 document.getElementById('navBack').onclick=()=>showView('home');
 showView('home');
 
