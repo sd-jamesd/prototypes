@@ -302,16 +302,20 @@ td.num{text-align:right;}
 .tpl-name{font-size:var(--font-size-2);font-weight:var(--font-weight-semibold);color:var(--text-default);}
 .tpl-desc{font-size:var(--font-size-1);color:var(--text-muted);line-height:1.4;}
 .sec-sub{font-weight:var(--font-weight-regular);color:var(--text-subtle);font-size:var(--font-size-1);text-transform:none;letter-spacing:0;}
-.scratch-dialog{width:min(640px,94vw);}
+.scratch-dialog{width:min(880px,94vw);max-width:880px;max-height:88vh;display:flex;flex-direction:column;}
+.scratch-dialog .rt-head,.scratch-dialog .rt-sub,.scratch-dialog .rt-foot{flex:0 0 auto;}
+.scratch-body{overflow-y:auto;padding:14px 20px 8px;flex:1 1 auto;}
+.scratch-group+.scratch-group{margin-top:16px;}
+.scratch-group-lbl{font-size:10px;font-weight:var(--font-weight-semibold);text-transform:uppercase;letter-spacing:.05em;color:var(--text-subtle);margin-bottom:8px;}
 .build-tile{border-style:dashed;border-color:var(--border-emphasis);background:none;}
 .build-tile:hover{border-color:var(--primary-default);background:var(--surface-default);}
 .build-plus{font-size:20px;line-height:1;color:var(--text-muted);font-weight:300;margin-bottom:6px;}
-.scratch-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 4px;}
-.scratch-card{display:flex;align-items:flex-start;gap:11px;border:1px solid var(--border-default);border-radius:var(--radius-3);padding:12px;cursor:pointer;transition:border-color .12s,box-shadow .12s;}
+.scratch-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.scratch-card{display:flex;align-items:flex-start;gap:12px;border:1px solid var(--border-default);border-radius:var(--radius-3);padding:13px 15px;cursor:pointer;transition:border-color .12s,box-shadow .12s;}
 .scratch-card:hover{border-color:var(--primary-default);box-shadow:0 1px 3px rgba(0,0,0,.08);}
 .scratch-card .start-ico{flex:0 0 auto;}
-.scratch-card .t{font-size:var(--font-size-2);font-weight:var(--font-weight-semibold);color:var(--text-default);}
-.scratch-card .d{font-size:var(--font-size-1);color:var(--text-muted);margin-top:2px;line-height:1.35;}
+.scratch-card .t{font-size:var(--font-size-2);font-weight:var(--font-weight-semibold);color:var(--text-default);line-height:1.25;}
+.scratch-card .d{font-size:var(--font-size-1);color:var(--text-muted);margin-top:3px;line-height:1.35;}
 .persona{display:flex;align-items:center;gap:2px;background:var(--surface-muted);border:1px solid var(--border-default);border-radius:var(--radius-full);padding:2px;margin-right:10px;}
 .persona-lbl{font-size:9px;font-weight:var(--font-weight-semibold);color:var(--text-subtle);text-transform:uppercase;letter-spacing:.05em;padding:0 6px 0 8px;}
 .persona-opt{position:relative;border:none;background:none;font-family:inherit;font-size:11px;font-weight:var(--font-weight-medium);color:var(--text-muted);padding:4px 11px;border-radius:var(--radius-full);cursor:pointer;}
@@ -702,7 +706,7 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
   <div class="rt-dialog scratch-dialog" role="dialog" aria-modal="true" aria-labelledby="scratchHead">
     <div class="rt-head" id="scratchHead">Build a report</div>
     <div class="rt-sub">Pick a report type to build from. The type sets the grain, columns and rules — and locks once you start.</div>
-    <div class="scratch-grid" id="scratchGrid"></div>
+    <div class="scratch-body" id="scratchGrid"></div>
     <div class="rt-foot"><button class="btn btn-md btn-ghost" id="scratchCancel" type="button">Cancel</button></div>
   </div>
 </div>
@@ -1814,10 +1818,17 @@ function renderGallery(){
   $('tplGrid').innerHTML=html;
 }
 function renderScratch(){
-  $('scratchGrid').innerHTML=STARTS.map(s=>`
-    <div class="scratch-card" onclick="openBuilder('${s.id}');closeScratch();">
-      <div class="start-ico ${s.tone}">${ICONS[s.ico]}</div>
-      <div><div class="t">${s.name}</div><div class="d">${s.d}</div></div>
+  const order=['Financial','Resourcing','Task','Timesheet'];
+  const byDom={};
+  STARTS.forEach(s=>{const d=REPORTS[s.id].domain;(byDom[d]=byDom[d]||[]).push(s);});
+  $('scratchGrid').innerHTML=order.filter(d=>byDom[d]).map(d=>`
+    <div class="scratch-group">
+      <div class="scratch-group-lbl">${d}</div>
+      <div class="scratch-grid">${byDom[d].map(s=>`
+        <div class="scratch-card" onclick="openBuilder('${s.id}');closeScratch();">
+          <div class="start-ico ${s.tone}">${ICONS[s.ico]}</div>
+          <div><div class="t">${s.name}</div><div class="d">${s.d}</div></div>
+        </div>`).join('')}</div>
     </div>`).join('');
 }
 function openScratch(){renderScratch();$('scratchOverlay').classList.add('show');}
