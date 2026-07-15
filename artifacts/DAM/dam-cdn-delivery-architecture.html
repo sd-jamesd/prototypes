@@ -142,7 +142,11 @@ h2{font-size:var(--font-size-5);font-weight:600;letter-spacing:var(--letter-spac
 .partners h3{font-size:var(--font-size-4);font-weight:600;letter-spacing:var(--letter-spacing-tight);
   margin-bottom:var(--spacing-2)}
 .partners .lead{color:var(--text-muted);margin-bottom:var(--spacing-5);max-width:82ch}
-.p-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--spacing-4);margin-bottom:var(--spacing-5)}
+.p-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--spacing-4);margin-bottom:var(--spacing-5)}
+.p-card.p-native{background:var(--color-primary-50);border-color:var(--color-primary-200)}
+.p-card.p-native .p-name{color:var(--accent-9)}
+.p-tag{font-size:10px;font-weight:700;letter-spacing:var(--letter-spacing-1);text-transform:uppercase;
+  color:var(--accent-9);margin-top:-2px}
 .p-card{border:1px solid var(--border-default);border-radius:var(--radius-3);padding:var(--spacing-4);
   background:var(--surface-muted);display:flex;flex-direction:column;gap:var(--spacing-2)}
 .p-name{font-size:var(--font-size-3);font-weight:700;letter-spacing:var(--letter-spacing-tight)}
@@ -167,6 +171,49 @@ h2{font-size:var(--font-size-5);font-weight:600;letter-spacing:var(--letter-spac
   text-transform:uppercase;color:#7fb6cc;flex:0 0 auto}
 .rule-text{font-size:var(--font-size-3);font-weight:500;line-height:24px}
 .rule-text em{font-style:normal;color:var(--color-primary-200);font-weight:600}
+
+/* ============ RESPONSIBILITIES ============ */
+.resp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--spacing-5)}
+.resp-col{border:1px solid;border-radius:var(--radius-4);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-sm)}
+.resp-hd{padding:var(--spacing-4) var(--spacing-5);border-bottom:1px solid}
+.resp-verb{font-size:11px;font-weight:700;letter-spacing:var(--letter-spacing-1);text-transform:uppercase;margin-bottom:var(--spacing-1);display:block}
+.resp-who{font-size:var(--font-size-3);font-weight:600;letter-spacing:var(--letter-spacing-tight);line-height:20px}
+.resp-col ul{list-style:none;padding:var(--spacing-4) var(--spacing-5);flex:1;display:flex;flex-direction:column;gap:var(--spacing-3)}
+.resp-col li{position:relative;padding-left:var(--spacing-5);font-size:var(--font-size-2);line-height:19px}
+.resp-col li::before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:var(--radius-full)}
+.resp-col li b{font-weight:600}
+.resp-col li span{display:block;color:var(--text-muted);font-size:var(--font-size-1);line-height:16px;margin-top:1px}
+.resp-foot{border-top:1px solid;padding:var(--spacing-4) var(--spacing-5);font-size:var(--font-size-1);line-height:17px}
+.r-build{border-color:var(--accent-12);background:var(--color-primary-50)}
+.r-build .resp-hd{background:var(--accent-12);border-bottom-color:var(--accent-12)}
+.r-build .resp-verb{color:var(--color-primary-200)} .r-build .resp-who{color:#fff}
+.r-build li::before{background:var(--accent-9)}
+.r-build .resp-foot{color:var(--accent-9);border-top-color:var(--color-primary-100)}
+.r-rent{border-color:var(--color-amber-500);background:var(--surface-default)}
+.r-rent .resp-hd{background:var(--color-amber-100);border-bottom-color:var(--color-amber-500)}
+.r-rent .resp-verb{color:var(--color-amber-600)} .r-rent .resp-who{color:var(--color-stone-900)}
+.r-rent li::before{background:var(--color-amber-500)}
+.r-rent .resp-foot{color:var(--color-stone-600);border-top-color:var(--border-default);background:var(--surface-muted)}
+.r-operate{border-color:var(--border-emphasis);border-style:dashed;background:var(--surface-default)}
+.r-operate .resp-hd{background:var(--surface-emphasis);border-bottom-color:var(--border-emphasis)}
+.r-operate .resp-verb{color:var(--color-stone-500)} .r-operate .resp-who{color:var(--color-stone-700)}
+.r-operate li::before{background:var(--color-stone-400)}
+.r-operate .resp-foot{color:var(--color-stone-600);border-top-color:var(--border-default);background:var(--surface-muted)}
+
+/* reporting join */
+.report{margin-top:var(--spacing-6);background:var(--surface-default);border:1px solid var(--border-default);
+  border-radius:var(--radius-4);padding:var(--spacing-6);box-shadow:var(--shadow-sm)}
+.report h3{font-size:var(--font-size-4);font-weight:600;letter-spacing:var(--letter-spacing-tight);margin-bottom:var(--spacing-2)}
+.report .lead{color:var(--text-muted);margin-bottom:var(--spacing-5);max-width:82ch}
+.join{display:grid;grid-template-columns:1fr 40px 1fr 40px 1fr;align-items:stretch;margin-bottom:var(--spacing-5)}
+.join-box{border:1px solid var(--border-default);border-radius:var(--radius-3);padding:var(--spacing-4);background:var(--surface-muted)}
+.join-box .src{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:var(--letter-spacing-1);color:var(--text-subtle);margin-bottom:var(--spacing-2);display:block}
+.join-box b{display:block;font-weight:700;font-size:var(--font-size-3);margin-bottom:var(--spacing-1);letter-spacing:var(--letter-spacing-tight)}
+.join-box .d{display:block;font-size:var(--font-size-1);color:var(--text-muted);line-height:17px}
+.join-box.edge{border-color:var(--color-amber-500)}
+.join-box.gate{border-color:var(--accent-12)}
+.join-box.out{border-color:var(--color-green-500);background:var(--color-green-100)}
+.join-op{display:flex;align-items:center;justify-content:center;font-size:var(--font-size-6);font-weight:600;color:var(--text-subtle)}
 
 /* ============ BILLING ============ */
 .models{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--spacing-5)}
@@ -234,6 +281,12 @@ footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px s
     background:var(--surface-muted);padding:2px var(--spacing-3)}
   .band-gap,.band-gap2{display:none}
   .models,.cost-grid{grid-template-columns:1fr}
+  .p-grid{grid-template-columns:repeat(3,1fr)}
+  .resp-grid{grid-template-columns:1fr}
+  .join{grid-template-columns:1fr}
+  .join-op{padding:var(--spacing-2) 0}
+}
+@media (max-width:840px){
   .p-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:640px){
@@ -276,6 +329,7 @@ footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px s
           <span class="chip">Cloudinary</span>
           <span class="chip">Akamai</span>
           <span class="chip">Cloudflare</span>
+          <span class="chip">AWS-native</span>
           <span class="chip chip-more">or ASDA's existing provider</span>
         </div>
       </div>
@@ -358,6 +412,12 @@ footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px s
           <div class="p-for"><b>Strength</b>Leanest commercial model and simple, predictable bandwidth pricing at scale.</div>
           <div class="p-against"><b>Watch</b>Fewer transformation operations than imgix or Cloudinary.</div>
         </div>
+        <div class="p-card p-native">
+          <div class="p-name">AWS-native</div>
+          <div class="p-tag">Best architectural fit</div>
+          <div class="p-for"><b>Strength</b>S3 origin, CloudFront edge, Lambda transform. Signed URLs are how CloudFront already gates access, so our "nothing renders unsigned" model is native, not bolted on. Pay AWS directly, no vendor margin or credit trap.</div>
+          <div class="p-against"><b>Watch</b>A reference architecture we deploy and operate, not a managed product. No dashboard, SLA or support out of the box &mdash; that engineering sits with us.</div>
+        </div>
       </div>
 
       <div class="criteria">
@@ -367,6 +427,7 @@ footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px s
           <li>Whether the <b>multi-CDN</b> requirement is a live operational need or an inherited one. True multi-CDN adds a routing layer, cost and complexity, and the incumbent does not provide it today either.</li>
           <li>ASDA's <b>actual delivery volume</b>, which is on their current invoice. Pricing at this scale is negotiated, not listed.</li>
           <li>Whether ASDA would rather <b>retain a provider they already hold</b> a contract with. The architecture supports that without change.</li>
+          <li><b>Buy or build.</b> A managed SaaS partner runs the delivery layer for a margin; the AWS-native route removes that margin but we deploy and operate it. The right answer depends on ASDA's AWS footprint and how much operational load Screendragon should carry.</li>
         </ul>
       </div>
     </div>
@@ -374,6 +435,88 @@ footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px s
     <div class="rule">
       <div class="rule-label">The boundary</div>
       <div class="rule-text">The CDN makes <em>no</em> rights decisions. It renders only what Screendragon has signed.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>What we build, what we rent, what we operate</h2>
+    <p class="sec-note">A common misread is that the AWS route means building all the tooling. It doesn't. The surfaces the client actually uses &mdash; the library, link management, reporting &mdash; are Screendragon's, and we build them once whichever delivery layer sits underneath. The delivery choice changes what we rent versus operate beneath that UI, not the UI itself.</p>
+
+    <div class="resp-grid">
+
+      <div class="resp-col r-build">
+        <div class="resp-hd"><span class="resp-verb">Build once</span><span class="resp-who">Screendragon &mdash; any delivery choice</span></div>
+        <ul>
+          <li><b>Asset library and search</b></li>
+          <li><b>Link management</b><span>Publish, unpublish, expire, replace</span></li>
+          <li><b>Rights and lifecycle states</b><span>Cleared, restricted, expired</span></li>
+          <li><b>Signed-URL mint</b><span>The gate &mdash; the enforcement point</span></li>
+          <li><b>Template and adjustments workbench</b><span>Emits the transform parameters the delivery layer executes</span></li>
+          <li><b>Usage and delivery reporting</b><span>Traffic crossed with governance state</span></li>
+        </ul>
+        <div class="resp-foot">Built regardless. Choosing a SaaS partner over AWS saves none of this.</div>
+      </div>
+
+      <div class="resp-col r-rent">
+        <div class="resp-hd"><span class="resp-verb">Rent</span><span class="resp-who">Delivery partner</span></div>
+        <ul>
+          <li><b>Real-time transformation</b><span>Executes the workbench's parameters</span></li>
+          <li><b>Global edge delivery and caching</b></li>
+          <li><b>Edge monitoring</b><span>Packaged dashboard (SaaS) or raw metrics (AWS)</span></li>
+          <li><b>Delivery telemetry</b><span>Exposed via API or logs &mdash; feeds our report</span></li>
+        </ul>
+        <div class="resp-foot">Rented and run by the partner. Not our code, not our uptime.</div>
+      </div>
+
+      <div class="resp-col r-operate">
+        <div class="resp-hd"><span class="resp-verb">Operate &mdash; only if AWS-native</span><span class="resp-who">Screendragon DevOps</span></div>
+        <ul>
+          <li><b>Cache and Lambda configuration</b><span>Tuning hit rates and transform performance</span></li>
+          <li><b>Egress and error monitoring</b><span>Configured in CloudWatch, not built</span></li>
+          <li><b>Incident response</b><span>Peak-day edge issues</span></li>
+          <li><b>Security patching</b><span>The transform function</span></li>
+        </ul>
+        <div class="resp-foot">With a managed partner this column is theirs. This is the real AWS trade &mdash; operational load, not UI to build.</div>
+      </div>
+
+    </div>
+
+    <div class="report">
+      <h3>The report the client sees is ours &mdash; and it's a differentiator</h3>
+      <p class="lead">"Which URLs get the most hits, which are live, which are dead" is a Screendragon output. It is assembled by joining two data sources, and only one of them belongs to the delivery layer. The value is in the join &mdash; which is why a standalone CDN cannot produce this report.</p>
+
+      <div class="join">
+        <div class="join-box edge">
+          <span class="src">From the edge</span>
+          <b>Delivery traffic</b>
+          <span class="d">Requests per URL, geography, cache hit rate. From the partner's analytics API, or aggregated from CloudFront logs on AWS.</span>
+        </div>
+        <div class="join-op">&times;</div>
+        <div class="join-box gate">
+          <span class="src">From the gate</span>
+          <b>Governance state</b>
+          <span class="d">Published or unpublished, rights cleared or lapsed, expiry, version. Only Screendragon holds this.</span>
+        </div>
+        <div class="join-op">=</div>
+        <div class="join-box out">
+          <span class="src">The report</span>
+          <b>Views worth paying for</b>
+          <span class="d">Delivery traffic understood in the context of rights and lifecycle.</span>
+        </div>
+      </div>
+
+      <div class="criteria">
+        <b>The views that fall out of the join &mdash; none of which delivery traffic alone can show</b>
+        <ul>
+          <li><b>High traffic, near expiry.</b> Renew these before they lapse.</li>
+          <li><b>Still being served, but should be dead.</b> Rights lapsed while the edge kept serving from cache &mdash; a live compliance exposure.</li>
+          <li><b>Published, but zero traffic.</b> Dead weight and decay.</li>
+        </ul>
+      </div>
+
+      <div class="caveat" style="margin-top:var(--spacing-5)">
+        <b>One precision point.</b> "Dead" has several distinct causes &mdash; an expired URL signature, an asset unpublished in the DAM, rights that have lapsed, or simply no traffic. Different states, different fixes, and the reliable liveness signal comes from the gate, not the edge. Also worth knowing: on AWS, per-URL traffic comes from exporting and aggregating CloudFront logs rather than a single packaged analytics call, so that reporting pipeline is a little more to build than with imgix. The differentiating join, though, is ours to build either way.
+      </div>
     </div>
   </section>
 
@@ -451,7 +594,28 @@ footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px s
         </div>
       </div>
       <div class="caveat">
-        <b>The range is wide for a reason.</b> Leading image CDNs now price on consumption credits drawn across storage, delivery and transformation, and the transformation rate is not published. The bill cannot be derived from a public pricing page. Two things close the gap fast: ASDA's actual bandwidth figure, which sits on their current Adobe invoice, and an enterprise quote from the delivery partner. Neither should be estimated in the response.
+        <b>The range is wide for a reason.</b> Leading image CDNs price on consumption credits drawn across storage, delivery and transformation, and the transformation rate is not published. The bill cannot be derived from a public pricing page. Two things close the gap fast: ASDA's actual bandwidth figure, which sits on their current Adobe invoice, and an enterprise quote from the delivery partner. Neither should be estimated in the response.
+      </div>
+
+      <div class="cost-grid" style="margin-top:var(--spacing-6);margin-bottom:var(--spacing-4)">
+        <div class="metric">
+          <div class="m-label">Managed SaaS partner</div>
+          <div class="m-value">&pound;150k&ndash;&pound;500k</div>
+          <div class="m-sub">imgix, Cloudinary et al. Priced on bandwidth and transformation. Vendor runs it; you pay the margin.</div>
+        </div>
+        <div class="metric">
+          <div class="m-label">AWS-native, build and operate</div>
+          <div class="m-value">&pound;60k&ndash;&pound;180k</div>
+          <div class="m-sub">CloudFront egress and Lambda compute at ASDA scale, once egress is properly modelled. No vendor margin.</div>
+        </div>
+        <div class="metric">
+          <div class="m-label">Plus, for AWS-native</div>
+          <div class="m-value">Build + run</div>
+          <div class="m-sub">A reference architecture we operate. The saving trades a vendor margin for engineering and support we own.</div>
+        </div>
+      </div>
+      <div class="caveat">
+        <b>Do not quote the headline AWS figure.</b> AWS documents this solution at roughly $1,200/month, but that carries a flat $1,000 CloudFront placeholder, not modelled egress. At hundreds of TB a month the real delivery cost is materially higher, which is why the band above starts at &pound;60k. The AWS route is genuinely cheaper because it strips the vendor margin, not because delivery is nearly free. ASDA likely already holds an AWS agreement with negotiated egress rates, which would push this down further.
       </div>
     </div>
   </section>
