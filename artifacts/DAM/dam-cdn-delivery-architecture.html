@@ -216,7 +216,7 @@ h2{font-size:var(--font-size-5);font-weight:600;letter-spacing:var(--letter-spac
 .join-op{display:flex;align-items:center;justify-content:center;font-size:var(--font-size-6);font-weight:600;color:var(--text-subtle)}
 
 /* ============ BILLING ============ */
-.models{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--spacing-5)}
+.models{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--spacing-5)}
 .model{background:var(--surface-default);border:1px solid var(--border-default);
   border-radius:var(--radius-4);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-sm)}
 .model-hd{padding:var(--spacing-5) var(--spacing-5) var(--spacing-4);border-bottom:1px solid var(--border-default)}
@@ -243,6 +243,10 @@ h2{font-size:var(--font-size-5);font-weight:600;letter-spacing:var(--letter-spac
 .m-bad .badge{background:var(--color-red-100);border-color:var(--color-red-500);color:var(--color-red-600)}
 .m-bad .model-hd{background:var(--color-red-100);border-bottom-color:var(--color-red-500)}
 .m-bad li::before{background:var(--color-red-500)}
+.m-native{border-color:var(--accent-9)}
+.m-native .badge{background:var(--color-primary-50);border-color:var(--accent-9);color:var(--accent-9)}
+.m-native .model-hd{background:var(--color-primary-50);border-bottom-color:var(--accent-9)}
+.m-native li::before{background:var(--accent-9)}
 
 /* ============ COST ============ */
 .cost{background:var(--surface-default);border:1px solid var(--border-default);
@@ -257,6 +261,35 @@ h2{font-size:var(--font-size-5);font-weight:600;letter-spacing:var(--letter-spac
   padding:var(--spacing-4) var(--spacing-5);border-radius:0 var(--radius-3) var(--radius-3) 0;
   font-size:var(--font-size-2);line-height:20px}
 .caveat b{font-weight:600}
+
+/* ============ COMPARISON ============ */
+.cmp-wrap{background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-4);
+  padding:var(--spacing-6);box-shadow:var(--shadow-sm);overflow-x:auto}
+.cmp-legend{display:flex;gap:var(--spacing-5);margin-bottom:var(--spacing-5);flex-wrap:wrap;font-size:var(--font-size-1);color:var(--text-muted)}
+.cmp-legend .lg{display:flex;align-items:center;gap:var(--spacing-2)}
+.cmp-legend .sw{width:14px;height:14px;border-radius:var(--radius-2);border:1px solid}
+.cmp-legend .sw.aws{background:var(--color-primary-50);border-color:var(--accent-9)}
+.cmp-legend .sw.imgix{background:var(--color-amber-100);border-color:var(--color-amber-500)}
+.cmp{width:100%;border-collapse:collapse;font-size:var(--font-size-2);min-width:660px}
+.cmp th{text-align:left;padding:var(--spacing-3) var(--spacing-4);font-size:11px;font-weight:700;
+  letter-spacing:var(--letter-spacing-1);text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border-emphasis)}
+.cmp th.c-imgix{color:var(--color-amber-600)} .cmp th.c-aws{color:var(--accent-9)}
+.cmp td{padding:var(--spacing-4);border-bottom:1px solid var(--border-default);vertical-align:top;line-height:19px}
+.cmp tr:last-child td{border-bottom:none}
+.cmp .cap{width:26%}
+.cmp .cap b{display:block;font-weight:600;margin-bottom:2px}
+.cmp .cap span{display:block;font-size:var(--font-size-1);color:var(--text-muted);line-height:16px}
+.cmp .lead-imgix{background:var(--color-amber-100)}
+.cmp .lead-aws{background:var(--color-primary-50)}
+.cmp tr.trade td{background:var(--surface-muted)}
+.cmp-note{font-size:var(--font-size-1);color:var(--text-muted);margin-top:var(--spacing-4);line-height:17px}
+.bottomline{margin-top:var(--spacing-6);background:var(--accent-12);color:#fff;border-radius:var(--radius-4);
+  padding:var(--spacing-5) var(--spacing-6)}
+.bottomline .bl-label{display:block;font-size:11px;font-weight:700;letter-spacing:var(--letter-spacing-1);
+  text-transform:uppercase;color:#7fb6cc;margin-bottom:var(--spacing-2)}
+.bottomline p{font-size:var(--font-size-3);line-height:24px;margin-bottom:var(--spacing-3)}
+.bottomline p:last-child{margin-bottom:0}
+.bottomline em{font-style:normal;color:var(--color-primary-200);font-weight:600}
 
 footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px solid var(--border-default);
   font-size:var(--font-size-1);color:var(--text-subtle)}
@@ -280,7 +313,8 @@ footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px s
   .handover-label{writing-mode:horizontal-tb;top:50%;left:50%;transform:translate(-50%,-50%);
     background:var(--surface-muted);padding:2px var(--spacing-3)}
   .band-gap,.band-gap2{display:none}
-  .models,.cost-grid{grid-template-columns:1fr}
+  .models{grid-template-columns:repeat(2,1fr)}
+  .cost-grid{grid-template-columns:1fr}
   .p-grid{grid-template-columns:repeat(3,1fr)}
   .resp-grid{grid-template-columns:1fr}
   .join{grid-template-columns:1fr}
@@ -293,6 +327,7 @@ footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px s
   body{padding:var(--spacing-5) var(--spacing-4)}
   h1{font-size:var(--font-size-5);line-height:32px}
   .p-grid{grid-template-columns:1fr}
+  .models{grid-template-columns:1fr}
 }
 @media print{
   body{background:#fff;padding:0}
@@ -305,8 +340,8 @@ footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px s
 <div class="wrap">
 
   <header class="masthead">
-    <div class="eyebrow">Screendragon &middot; ASDA RFP &middot; DAM, dynamic media and CDN</div>
-    <h1>We govern the asset. We control the gate. A partner delivers it.</h1>
+    <div class="eyebrow">Screendragon &middot; Client RFP &middot; DAM, dynamic media and CDN</div>
+    <h1>We govern the asset. We control the gate. Delivery happens downstream.</h1>
     <p class="standfirst">Screendragon is the system of record for masters, rights, versions and approvals &mdash; and it owns the gate that decides what is allowed out. Transformation and global delivery sit with a specialist partner downstream. Nothing crosses without our signature.</p>
   </header>
 
@@ -330,12 +365,12 @@ footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px s
           <span class="chip">Akamai</span>
           <span class="chip">Cloudflare</span>
           <span class="chip">AWS-native</span>
-          <span class="chip chip-more">or ASDA's existing provider</span>
+          <span class="chip chip-more">or the client's existing provider</span>
         </div>
       </div>
       <div class="band-gap2"></div>
       <div class="band band-as">
-        <span class="band-owner">ASDA</span>
+        <span class="band-owner">The client</span>
         <span class="band-note">Consumption</span>
       </div>
 
@@ -404,7 +439,7 @@ footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px s
         </div>
         <div class="p-card">
           <div class="p-name">Akamai</div>
-          <div class="p-for"><b>Strength</b>Image and video, on an enterprise CDN with the scale and security posture ASDA already expects.</div>
+          <div class="p-for"><b>Strength</b>Image and video, on an enterprise CDN with the scale and security posture the client already expects.</div>
           <div class="p-against"><b>Watch</b>Enterprise commercials and a heavier implementation than the pure image CDNs.</div>
         </div>
         <div class="p-card">
@@ -423,11 +458,11 @@ footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px s
       <div class="criteria">
         <b>What should decide it</b>
         <ul>
-          <li>How much <b>video</b> ASDA's library actually carries. This is the single biggest differentiator between these providers, and it rules imgix in or out.</li>
+          <li>How much <b>video</b> the client's library actually carries. This is the single biggest differentiator between these providers, and it rules imgix in or out.</li>
           <li>Whether the <b>multi-CDN</b> requirement is a live operational need or an inherited one. True multi-CDN adds a routing layer, cost and complexity, and the incumbent does not provide it today either.</li>
-          <li>ASDA's <b>actual delivery volume</b>, which is on their current invoice. Pricing at this scale is negotiated, not listed.</li>
-          <li>Whether ASDA would rather <b>retain a provider they already hold</b> a contract with. The architecture supports that without change.</li>
-          <li><b>Buy or build.</b> A managed SaaS partner runs the delivery layer for a margin; the AWS-native route removes that margin but we deploy and operate it. The right answer depends on ASDA's AWS footprint and how much operational load Screendragon should carry.</li>
+          <li>The client's <b>actual delivery volume</b>, which is on their current invoice. Pricing at this scale is negotiated, not listed.</li>
+          <li>Whether the client would rather <b>retain a provider they already hold</b> a contract with. The architecture supports that without change.</li>
+          <li><b>Buy or build.</b> A managed SaaS partner runs the delivery layer for a margin; the AWS-native route removes that margin but we deploy and operate it. The right answer depends on the client's AWS footprint and how much operational load Screendragon should carry.</li>
         </ul>
       </div>
     </div>
@@ -522,20 +557,20 @@ footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px s
 
   <section>
     <h2>How this gets billed</h2>
-    <p class="sec-note">Delivery is a variable cost that scales with traffic. The software is not. Keeping those two apart in the commercial model is the single most important decision in this part of the bid.</p>
+    <p class="sec-note">Delivery is a variable cost that scales with traffic. The software is not. Keeping those two apart in the commercial model is the single most important decision in this part of the bid. Models A to C are three ways to hold a SaaS delivery contract; Model D is the AWS-native alternative, where there is no vendor to contract and Screendragon operates the layer instead.</p>
 
     <div class="models">
 
       <div class="model m-good">
         <div class="model-hd">
           <span class="badge">Recommended</span>
-          <h3>Model A &mdash; ASDA contracts delivery directly</h3>
+          <h3>Model A &mdash; the client contracts delivery directly</h3>
         </div>
         <ul>
-          <li>ASDA holds the delivery contract and pays the provider directly</li>
+          <li>The client holds the delivery contract and pays the provider directly</li>
           <li>Screendragon charges a <strong>fixed fee</strong> for integration, the publish pipeline and signed-URL minting</li>
           <li>Screendragon carries <strong>no egress cost</strong> and <strong>no public uptime liability</strong></li>
-          <li>ASDA negotiates delivery on their own volume &mdash; a better rate, with no reseller margin on top</li>
+          <li>The client negotiates delivery on their own volume &mdash; a better rate, with no reseller margin on top</li>
           <li>Delivery can be swapped later without touching Screendragon</li>
         </ul>
         <div class="tradeoff"><b>Trade-off</b>Two suppliers, two invoices.</div>
@@ -570,6 +605,21 @@ footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px s
         <div class="tradeoff"><b>Why it is on this page</b>Procurement will ask for it. Name it and rule it out before they do.</div>
       </div>
 
+      <div class="model m-native">
+        <div class="model-hd">
+          <span class="badge">AWS-native &middot; operate model</span>
+          <h3>Model D &mdash; AWS-native, Screendragon operates</h3>
+        </div>
+        <ul>
+          <li>The client holds the AWS account and pays AWS directly for consumption &mdash; <strong>no reseller margin</strong>, and likely inside their existing AWS commitment</li>
+          <li>Screendragon charges a <strong>fixed build fee</strong> for the deployment, publish pipeline and signed-URL minting</li>
+          <li>Plus a <strong>recurring managed-service fee</strong> to operate it &mdash; cache tuning, monitoring, patching, incident response</li>
+          <li>Screendragon carries <strong>operational responsibility, not cost exposure</strong> &mdash; the variable bill stays on the client's AWS meter</li>
+          <li>Cheapest delivery for the client, single accountable operator, and recurring revenue for us instead of a one-off fee</li>
+        </ul>
+        <div class="tradeoff"><b>Trade-off</b>An SRE and operate commitment we don't carry with a SaaS partner. The recurring fee must be sized to cover real peak-day support.</div>
+      </div>
+
     </div>
   </section>
 
@@ -580,7 +630,7 @@ footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px s
         <div class="metric">
           <div class="m-label">Traffic to serve</div>
           <div class="m-value">9.6bn</div>
-          <div class="m-sub">Page views a year, per ASDA. Roughly 800m a month.</div>
+          <div class="m-sub">Page views a year, per the client's own figure. Roughly 800m a month.</div>
         </div>
         <div class="metric">
           <div class="m-label">Estimated delivery volume</div>
@@ -594,7 +644,7 @@ footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px s
         </div>
       </div>
       <div class="caveat">
-        <b>The range is wide for a reason.</b> Leading image CDNs price on consumption credits drawn across storage, delivery and transformation, and the transformation rate is not published. The bill cannot be derived from a public pricing page. Two things close the gap fast: ASDA's actual bandwidth figure, which sits on their current Adobe invoice, and an enterprise quote from the delivery partner. Neither should be estimated in the response.
+        <b>The range is wide for a reason.</b> Leading image CDNs price on consumption credits drawn across storage, delivery and transformation, and the transformation rate is not published. The bill cannot be derived from a public pricing page. Two things close the gap fast: the client's actual bandwidth figure, which sits on their current Adobe invoice, and an enterprise quote from the delivery partner. Neither should be estimated in the response.
       </div>
 
       <div class="cost-grid" style="margin-top:var(--spacing-6);margin-bottom:var(--spacing-4)">
@@ -606,7 +656,7 @@ footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px s
         <div class="metric">
           <div class="m-label">AWS-native, build and operate</div>
           <div class="m-value">&pound;60k&ndash;&pound;180k</div>
-          <div class="m-sub">CloudFront egress and Lambda compute at ASDA scale, once egress is properly modelled. No vendor margin.</div>
+          <div class="m-sub">CloudFront egress and Lambda compute at the client's scale, once egress is properly modelled. No vendor margin.</div>
         </div>
         <div class="metric">
           <div class="m-label">Plus, for AWS-native</div>
@@ -615,13 +665,92 @@ footer{margin-top:var(--spacing-9);padding-top:var(--spacing-5);border-top:1px s
         </div>
       </div>
       <div class="caveat">
-        <b>Do not quote the headline AWS figure.</b> AWS documents this solution at roughly $1,200/month, but that carries a flat $1,000 CloudFront placeholder, not modelled egress. At hundreds of TB a month the real delivery cost is materially higher, which is why the band above starts at &pound;60k. The AWS route is genuinely cheaper because it strips the vendor margin, not because delivery is nearly free. ASDA likely already holds an AWS agreement with negotiated egress rates, which would push this down further.
+        <b>Do not quote the headline AWS figure.</b> AWS documents this solution at roughly $1,200/month, but that carries a flat $1,000 CloudFront placeholder, not modelled egress. At hundreds of TB a month the real delivery cost is materially higher, which is why the band above starts at &pound;60k. The AWS route is genuinely cheaper because it strips the vendor margin, not because delivery is nearly free. The client likely already holds an AWS agreement with negotiated egress rates, which would push this down further.
       </div>
     </div>
   </section>
 
+  <section>
+    <h2>imgix or AWS-native: the feature call</h2>
+    <p class="sec-note">Both options transform on the fly and both cover everyday catalogue work. This is really a comparison between a finished product and a toolkit. The transform gap is narrow; the differences that matter are in the operational surface, purge, commercial shape and how well each fits our governance model.</p>
+
+    <div class="cmp-wrap">
+      <div class="cmp-legend">
+        <span class="lg"><span class="sw imgix"></span>Shaded = imgix is stronger here</span>
+        <span class="lg"><span class="sw aws"></span>Shaded = AWS-native is stronger here</span>
+        <span class="lg">No shading = broadly level</span>
+      </div>
+
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th class="cap">Capability</th>
+            <th class="c-imgix">imgix</th>
+            <th class="c-aws">AWS-native</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cap"><b>Core transforms</b><span>Resize, crop, fit, format, quality, DPR &mdash; everyday catalogue work</span></td>
+            <td>Full set</td>
+            <td>Full set &mdash; same underlying Sharp engine</td>
+          </tr>
+          <tr>
+            <td class="cap"><b>Advanced transforms</b><span>Content-aware crop, watermarking, colour and ICC handling</span></td>
+            <td class="lead-imgix">Large built-in library, including automatic face and entity-aware cropping</td>
+            <td>Core only; anything advanced is a custom build</td>
+          </tr>
+          <tr>
+            <td class="cap"><b>Auto format and quality</b><span>Pick the best format and compression per browser and connection</span></td>
+            <td class="lead-imgix">Automatic, via a single parameter</td>
+            <td>Possible, but thinner and more configuration</td>
+          </tr>
+          <tr>
+            <td class="cap"><b>Cache purge and invalidation</b><span>Clear the edge when an asset expires or changes &mdash; matters for our rights model</span></td>
+            <td class="lead-imgix">Fast, granular, first-class</td>
+            <td>CloudFront invalidations &mdash; slower, coarser, rate-limited; engineered around with versioned URLs</td>
+          </tr>
+          <tr>
+            <td class="cap"><b>Operational surface</b><span>Dashboard, analytics, rendition previewer, support SLA</span></td>
+            <td class="lead-imgix">Full managed product, out of the box</td>
+            <td>CloudWatch and a demo UI; we assemble and run the surface ourselves</td>
+          </tr>
+          <tr>
+            <td class="cap"><b>Video</b><span>Transform and deliver video assets</span></td>
+            <td>Limited</td>
+            <td>Image-only</td>
+          </tr>
+          <tr>
+            <td class="cap"><b>Commercial shape</b><span>How the delivery cost behaves</span></td>
+            <td>Variable, margin-loaded, consumption-credit model</td>
+            <td class="lead-aws">Consumption billed direct to AWS, no reseller margin, likely inside the client's existing commitment</td>
+          </tr>
+          <tr>
+            <td class="cap"><b>Fit with our governance model</b><span>How signed-URL enforcement is delivered</span></td>
+            <td>Signing bolted on around the product</td>
+            <td class="lead-aws">Signed URLs are native to CloudFront &mdash; our gate is how it already works</td>
+          </tr>
+          <tr class="trade">
+            <td class="cap"><b>Who operates it</b><span>Day-to-day run, tuning, incident response</span></td>
+            <td>The vendor carries it</td>
+            <td>Screendragon carries it &mdash; this is the trade, not a win for either side</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="cmp-note">On video, neither is the answer &mdash; if the client's library carries real video weight, that needs a separate path (Cloudinary, or AWS MediaConvert), independent of this image-delivery choice.</p>
+    </div>
+
+    <div class="bottomline">
+      <span class="bl-label">Bottom line for the demo</span>
+      <p>Lead with <em>AWS-native as the confident default</em>. It fits our governed-origin model natively, it is the stronger commercial shape for both sides, and we can show it working live rather than describe a brochure. Hold imgix as the managed option that drops into the same architecture &mdash; richer dashboard and a support SLA, with no change upstream.</p>
+      <p>Two things would flip that: <em>meaningful video</em> in the client's library, or the client wanting a name-brand provider to <em>operate the layer under SLA</em>. Both are discovery questions for the room.</p>
+      <p>One to verify before the demo: whether our trial build includes <em>content-aware cropping</em>. At 2 million SKUs, auto-centring the product in frame is the single imgix feature that would actually be missed.</p>
+    </div>
+  </section>
+
   <footer>
-    Screendragon &middot; Prepared for the ASDA RFP response &middot; Cost figures are indicative and must be validated against a supplier quote before submission.
+    Screendragon &middot; Prepared for the client RFP response &middot; Cost figures are indicative and must be validated against a supplier quote before submission.
   </footer>
 
 </div>
