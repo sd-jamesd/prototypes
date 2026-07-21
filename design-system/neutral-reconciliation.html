@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Converging our neutrals</title>
+<style>
+  :root {
+    --a9:#0B6E8A; --a10:#005F7B; --a11:#197592; --a3:#E4F5FC; --a4:#D5EFF9;
+    --s1:#fdfdfc; --s2:#f9f9f8; --s3:#f1f0ef; --s4:#e9e8e6; --s6:#dad9d6; --s7:#d0ceca; --s11:#64635e; --s12:#21201c;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:"Inter",-apple-system,system-ui,"Segoe UI",sans-serif;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--s2); color:var(--s12); font-family:var(--sans); line-height:1.55; font-size:16px; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:940px; margin:0 auto; padding:0 24px 96px; }
+
+  header { padding:64px 0 40px; border-bottom:1px solid var(--s4); }
+  .eyebrow { font-family:var(--mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--a11); margin-bottom:20px; }
+  h1 { font-size:clamp(30px,4.6vw,48px); line-height:1.08; letter-spacing:-0.02em; font-weight:700; margin:0 0 20px; max-width:20ch; }
+  h1 .em { color:var(--a9); }
+  .thesis { font-size:clamp(17px,2.3vw,21px); line-height:1.5; color:var(--s11); max-width:56ch; margin:0; }
+  .meta { margin-top:28px; font-family:var(--mono); font-size:12px; color:var(--s11); display:flex; gap:20px; flex-wrap:wrap; }
+  .meta span::before { content:"·"; margin-right:20px; color:var(--s6); }
+  .meta span:first-child::before { content:none; }
+
+  section { padding:56px 0; border-bottom:1px solid var(--s4); }
+  h2 { font-size:13px; font-family:var(--mono); letter-spacing:0.1em; text-transform:uppercase; color:var(--a11); margin:0 0 8px; }
+  .lead { font-size:25px; line-height:1.28; letter-spacing:-0.01em; font-weight:600; margin:0 0 26px; max-width:28ch; }
+  p { max-width:66ch; }
+  strong { font-weight:650; }
+  code { font-family:var(--mono); font-size:0.86em; background:var(--s3); padding:1px 5px; border-radius:4px; }
+
+  /* Hero: today -> target convergence */
+  .converge { display:grid; grid-template-columns:1fr 56px 1fr; gap:0; align-items:center; margin-top:8px; }
+  .colhead { font-family:var(--mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--s11); margin-bottom:12px; }
+  .today { display:flex; flex-direction:column; gap:10px; }
+  .sysbox { background:#fff; border:1px solid var(--s4); border-radius:10px; padding:12px 14px; }
+  .sysbox .tk { font-family:var(--mono); font-weight:600; font-size:14px; color:var(--a10); }
+  .sysbox .wh { font-size:12px; color:var(--s11); margin-top:1px; }
+  .arrow { text-align:center; color:var(--a9); font-size:26px; }
+  .target .sysbox { border:1.5px solid var(--a9); background:var(--a3); padding:18px; }
+  .target .tk { font-size:15px; color:var(--a10); }
+  .target .serves { font-size:12px; color:var(--a10); margin-top:8px; line-height:1.5; }
+  .undernote { font-family:var(--mono); font-size:11px; color:var(--s11); margin-top:10px; text-align:center; }
+
+  /* system map cards */
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .card { background:#fff; border:1px solid var(--s4); border-radius:12px; padding:22px; position:relative; }
+  .card .tok { font-family:var(--mono); font-weight:600; font-size:16px; color:var(--a10); }
+  .card .where { font-size:13px; color:var(--s11); margin:4px 0 14px; }
+  .card .stat { position:absolute; top:18px; right:18px; font-family:var(--mono); font-size:10px; letter-spacing:0.05em; text-transform:uppercase; padding:3px 9px; border-radius:999px; background:var(--s3); color:var(--s11); border:1px solid var(--s6); }
+  .card .stat.tgt { background:var(--a3); color:var(--a10); border-color:#B7E0EE; }
+  .card .mini { display:flex; gap:2px; margin:0 0 14px; }
+  .card .mini span { width:22px; height:16px; border-radius:2px; border:1px solid rgba(0,0,0,0.06); }
+  .card p { font-size:14px; margin:0; color:var(--s12); }
+  .card .inv { font-family:var(--mono); font-size:12px; color:var(--s11); margin-top:12px; }
+
+  table { width:100%; border-collapse:collapse; font-size:14px; margin-top:8px; }
+  th, td { text-align:left; padding:12px 14px; border-bottom:1px solid var(--s4); vertical-align:top; }
+  thead th { font-family:var(--mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--s11); }
+  td.dim { font-weight:600; width:24%; }
+  td.now { color:var(--s11); }
+  td.tgt { color:var(--a10); }
+  tbody tr:last-child td { border-bottom:none; }
+
+  .win { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:16px; }
+  .win li { padding-left:28px; position:relative; max-width:66ch; }
+  .win li::before { content:"→"; position:absolute; left:0; top:0; color:var(--a9); font-weight:700; }
+
+  .callout { background:var(--a3); border:1px solid #B7E0EE; border-radius:12px; padding:24px 26px; }
+  .callout .k { font-family:var(--mono); font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--a10); margin-bottom:8px; }
+  .callout p { margin:0; }
+
+  /* demoted hue strip */
+  .huebox { background:#fff; border:1px solid var(--s4); border-radius:12px; padding:22px 24px; }
+  .splitramp { display:flex; gap:8px; margin:6px 0 4px; }
+  .sc { text-align:center; }
+  .split { display:inline-flex; border-radius:5px; overflow:hidden; border:1px solid rgba(0,0,0,0.08); }
+  .split span { display:block; width:34px; height:40px; }
+  .scl { display:block; font-family:var(--mono); font-size:9px; color:var(--s11); margin-top:4px; }
+  .huecap { font-size:13.5px; color:var(--s11); margin:14px 0 0; max-width:64ch; }
+  .huecap b { color:var(--s12); }
+
+  .ev { background:var(--s12); color:#d7d4cf; border-radius:12px; padding:22px 24px; font-family:var(--mono); font-size:12.5px; line-height:1.7; overflow-x:auto; }
+  .ev .c { color:#8b877f; } .ev .g { color:#8ec7dc; } .ev .w { color:#f0c579; }
+
+  ol.q { counter-reset:q; list-style:none; padding:0; margin:0; }
+  ol.q li { counter-increment:q; padding:16px 0 16px 46px; border-bottom:1px solid var(--s4); position:relative; max-width:72ch; }
+  ol.q li:last-child { border-bottom:none; }
+  ol.q li::before { content:counter(q,decimal-leading-zero); position:absolute; left:0; top:16px; font-family:var(--mono); font-size:13px; color:var(--a9); font-weight:600; }
+
+  footer { padding:40px 0 0; font-family:var(--mono); font-size:12px; color:var(--s11); }
+  @media (max-width:680px) { .grid { grid-template-columns:1fr; } .converge { grid-template-columns:1fr; gap:16px; } .arrow { transform:rotate(90deg); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Scale · Neutral convergence · Discussion draft</div>
+  <h1>Our neutrals live in a few places. Let's get them onto <span class="em">one</span>.</h1>
+  <p class="thesis">Our grays are spread across the product and the design system, light and dark. Here's where they sit today, why one system is better, and why the move is nearly free.</p>
+  <div class="meta"><span>Screendragon internal</span><span>v0.1 — for the UI team</span><span>Discussion draft</span></div>
+</header>
+
+<section>
+  <h2>Where our neutrals live today</h2>
+  <p class="lead">A few scales, split across doc and product, light and dark — none reading from each other.</p>
+  <div class="converge">
+    <div class="today">
+      <div class="colhead">Today</div>
+      <div class="sysbox"><div class="tk">--gray-*</div><div class="wh">Product · light mode</div></div>
+      <div class="sysbox"><div class="tk">--cv-*</div><div class="wh">Product · dark mode (Unity/Vue)</div></div>
+      <div class="sysbox"><div class="tk">--sand-*</div><div class="wh">Product · present, unused</div></div>
+      <div class="sysbox"><div class="tk">--neutral-* (Sand)</div><div class="wh">Design system · specified</div></div>
+      <div class="undernote">four scales · no shared source</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="target">
+      <div class="colhead">Where we'd converge</div>
+      <div class="sysbox">
+        <div class="tk">One neutral — Sand on Radix</div>
+        <div class="serves">Serves product light + dark and the design system, all from one ramp. Inverts for dark by role; documented and shipped in step.</div>
+      </div>
+      <div class="undernote">one source · inverts by role</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>How it stands</h2>
+  <p class="lead">Neutrals accumulate wherever there isn't a single source of truth.</p>
+  <p>The product runs on the scales that were already wired in. Sand landed partway — the tokens exist, but nothing themes on them yet. Dark mode is handled per component in the tokens Unity already had. The design system defines the target. Four scales, arrived at one reasonable step at a time.</p>
+  <p>The token names stay as they are. <code>--gray-*</code> and <code>--cv-*</code> are referenced throughout the product, so we keep them and change only what they resolve to — which is what makes the move cheap, below.</p>
+</section>
+
+<section>
+  <h2>The four systems, plainly</h2>
+  <div class="grid">
+    <div class="card">
+      <span class="stat">Live · light</span>
+      <div class="tok">--gray-*</div>
+      <div class="where">Product · light mode</div>
+      <div class="mini"><span style="background:#e8e8e8"></span><span style="background:#8d8d8d"></span><span style="background:#646464"></span><span style="background:#202020"></span></div>
+      <p>Stock Radix Gray — what users see in light mode. Doesn't invert for dark.</p>
+      <div class="inv">Inverts in dark: no</div>
+    </div>
+    <div class="card">
+      <span class="stat">Present, unused</span>
+      <div class="tok">--sand-*</div>
+      <div class="where">Product · defined, not themed on</div>
+      <div class="mini"><span style="background:#e9e8e6"></span><span style="background:#8e8d86"></span><span style="background:#64635e"></span><span style="background:#21201c"></span></div>
+      <p>Sand tokens exist and resolve (<code>--sand-1</code> → #fdfdfc), but components read <code>--gray-*</code>, so they don't drive anything yet.</p>
+      <div class="inv">Inverts in dark: no</div>
+    </div>
+    <div class="card">
+      <span class="stat">Live · dark</span>
+      <div class="tok">--cv-*</div>
+      <div class="where">Product · dark mode (Unity/Vue)</div>
+      <div class="mini"><span style="background:#1a1918"></span><span style="background:#3a3733"></span><span style="background:#6b6660"></span><span style="background:#bab2b0"></span></div>
+      <p>What paints dark today, via the Vue tokens already in place, scoped per component (<code>body.dark</code> + <code>.mask.dark-mode</code>).</p>
+      <div class="inv">Inverts in dark: it is the dark</div>
+    </div>
+    <div class="card">
+      <span class="stat tgt">Specified</span>
+      <div class="tok">--neutral-* (Sand)</div>
+      <div class="where">Design system · the target</div>
+      <div class="mini"><span style="background:#e9e8e6"></span><span style="background:#8e8d86"></span><span style="background:#64635e"></span><span style="background:#21201c"></span></div>
+      <p>Radix 12-step, warm, with a full light + dark that inverts by role. One coherent, themeable system — the shape everything else can fold into.</p>
+      <div class="inv">Inverts in dark: yes, by role</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The target, and why this one</h2>
+  <p class="lead">One neutral: Sand on the Radix 12-step scale.</p>
+  <p>It's the natural convergence point for three practical reasons, not aesthetic ones. It <strong>inverts for dark by role</strong> — the same step means the same thing in both modes — which none of the flat product scales can do. It's <strong>already half-present</strong> in the product as the <code>--sand-*</code> tokens, so we're finishing a migration, not starting one. And it's what the design system already documents, so doc and product finally describe the same thing.</p>
+  <table>
+    <thead><tr><th>Dimension</th><th>Today (spread)</th><th>Converged</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Scales in play</td><td class="now">Three in product + one in doc</td><td class="tgt">One</td></tr>
+      <tr><td class="dim">Dark neutral</td><td class="now">Per-component <code>--cv-*</code></td><td class="tgt">Same ramp, inverts by role</td></tr>
+      <tr><td class="dim">Dark trigger</td><td class="now"><code>body.dark</code> + <code>.mask.dark-mode</code></td><td class="tgt">One agreed trigger</td></tr>
+      <tr><td class="dim">Doc vs product</td><td class="now">Describe different neutrals</td><td class="tgt">Describe the same one</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Why it's nearly free</h2>
+  <div class="callout">
+    <div class="k">A value swap, not a rename</div>
+    <p>We keep every token name — <code>--gray-*</code>, <code>--cv-*</code> — exactly as they are, so nothing in the product breaks. We only change the <em>values</em> they resolve to: <code>--gray-12: #202020</code> → <code>#21201c</code>, and so on. And because Sand and Gray share the same lightness at every step, <strong>every contrast ratio is preserved</strong> — no accessibility regression, no layout shift. The grays just warm up. The names stay slightly-imperfect forever; that's cosmetic debt, not a functional one.</p>
+  </div>
+</section>
+
+<section>
+  <h2>One honest note on the hue</h2>
+  <p>We're not doing this because the warmer grays will be visible — they mostly won't. Sand and Gray are near-identical: below the just-noticeable-difference threshold (&Delta;E &lt; 2.3) on seven of twelve steps, and only marginal on the dark end, shown here (left half Sand, right half Gray, touching):</p>
+  <div class="huebox">
+    <div class="splitramp"><div class="sc"><span class="split"><span style="background:#bcbbb6"></span><span style="background:#bbbbbb"></span></span><span class="scl">8</span></div><div class="sc"><span class="split"><span style="background:#8e8d86"></span><span style="background:#8d8d8d"></span></span><span class="scl">9</span></div><div class="sc"><span class="split"><span style="background:#83827c"></span><span style="background:#838383"></span></span><span class="scl">10</span></div><div class="sc"><span class="split"><span style="background:#64635e"></span><span style="background:#646464"></span></span><span class="scl">11</span></div><div class="sc"><span class="split"><span style="background:#21201c"></span><span style="background:#202020"></span></span><span class="scl">12</span></div></div>
+    <p class="huecap">Even at steps 8&ndash;12, where the difference is largest, it's &Delta;E&nbsp;~3&ndash;4 &mdash; noticeable only side by side. <b>That near-invisibility is the point: it's exactly why the swap carries zero visual risk.</b> The reason to converge isn't a warmer look &mdash; it's one system instead of four, and dark mode that works by role.</p>
+  </div>
+</section>
+
+<section>
+  <h2>What converging gets us</h2>
+  <ul class="win">
+    <li><strong>One system to maintain, not four.</strong> Doc, product light, product dark all read from the same ramp — change it once, everything follows.</li>
+    <li><strong>Dark mode by role, centrally.</strong> Instead of maintaining dark per component in <code>--cv-*</code>, a step means the same thing in both modes and inverts on its own.</li>
+    <li><strong>Doc and product finally agree.</strong> The design system stops describing a neutral the product doesn't run — which is what's made it hard to trust as a reference.</li>
+    <li><strong>A cleaner footing for the FIFA DAM audit.</strong> One ratified neutral foundation with one dark convention is a calmer thing to put in front of an external accessibility review.</li>
+  </ul>
+  <p style="margin-top:24px;">Worth flagging, gently: while we're split, the <code>--sand-*</code> tokens are easy to trip on — they resolve, so it looks like Sand is live, but building on them renders gray. Converging removes that footgun.</p>
+</section>
+
+<section>
+  <h2>How we know — pulled live from the product</h2>
+  <div class="ev">
+getComputedStyle(html).getPropertyValue(<span class="g">'--gray-12'</span>) <span class="c">→</span> <span class="w">#202020</span> <span class="c">(same in light & dark — ramp doesn't invert)</span><br>
+...getPropertyValue(<span class="g">'--sand-1'</span>) <span class="c">→</span> <span class="w">#fdfdfc</span> <span class="c">(resolves, but nothing themes on it)</span><br>
+body.className <span class="c">→</span> <span class="w">"hl-2 option5 header-brand dark"</span><br>
+.mask.dark-mode { background: var(<span class="g">--cv-g-500</span>); } <span class="c">→</span> body bg <span class="w">#1a1918</span><br>
+  </div>
+  <p style="font-size:13px;color:var(--s11);margin-top:12px;">The <code>--cv-*</code> read is from one dark-mode component. Mapping the full Unity dark surface is a quick codebase pass (question&nbsp;2 below), not a console check.</p>
+</section>
+
+<section>
+  <h2>Decisions to make together</h2>
+  <ol class="q">
+    <li><b>Is Sand a decision we've committed to shipping,</b> or has it lived as design-system intent so far? That tells us whether this is a ticket to schedule or a call to make first.</li>
+    <li><b>What's the real blast radius of the value swap</b> across Unity's Vue components? A short pass over <code>--cv-*</code> / <code>--gray-*</code> usage sizes it — happy to run that with whoever owns that code.</li>
+    <li><b>Which dark trigger do we standardise on</b> — <code>.dark</code> on a root, or the existing <code>body.dark</code>? Whatever we pick, doc and product should name the same one.</li>
+    <li><b>Does folding this into the DAM dark-mode work make sense,</b> given the FIFA audit is coming either way — or is it better as its own small piece first?</li>
+  </ol>
+</section>
+
+<footer>
+  Screendragon · Neutral convergence · v0.1 discussion draft · reference: scale-design-system-v1.html (v1.3.0)
+</footer>
+
+</div>
+</body>
+</html>
