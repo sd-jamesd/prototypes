@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAM Event Taxonomy — capture specification</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-stone-50:#fefcfc; --color-stone-100:#f5f5f4; --color-stone-200:#e7e5e4;
+    --color-stone-300:#d6d3d1; --color-stone-400:#978985; --color-stone-500:#6b615e;
+    --color-stone-600:#57534e; --color-stone-700:#44403c; --color-stone-800:#292524;
+    --color-stone-900:#261e1b;
+    --accent-2:#F3FAFD; --accent-3:#E4F5FC; --accent-9:#0B6E8A; --accent-11:#197592; --accent-12:#1B404E;
+    --accent-alpha-3:rgba(0,145,171,0.08); --accent-alpha-6:rgba(0,145,171,0.2);
+    --color-red-100:#feebe7; --color-red-500:#e54d2e; --color-red-600:#d13415; --color-red-700:#582C29;
+    --color-amber-100:#ffefd5; --color-amber-500:#f5a524; --color-amber-600:#985b00; --color-amber-700:#4E350D;
+    --color-green-100:#e6f7ed; --color-green-600:#208368; --color-green-700:#1E442D;
+    --text-default:var(--color-stone-900); --text-muted:var(--color-stone-500); --text-subtle:var(--color-stone-400);
+    --border-default:var(--color-stone-200); --border-subtle:var(--color-stone-100); --border-emphasis:var(--color-stone-300);
+    --spacing-1:4px; --spacing-2:8px; --spacing-3:12px; --spacing-4:16px; --spacing-5:20px;
+    --spacing-6:24px; --spacing-7:32px; --spacing-9:48px;
+    --radius-2:4px; --radius-3:6px; --radius-4:8px; --radius-full:9999px;
+    --shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+    --font-size-1:12px; --font-size-2:14px; --font-size-3:16px; --font-size-4:18px; --font-size-5:24px; --font-size-6:32px;
+    --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font);font-size:var(--font-size-2);line-height:1.55;color:var(--text-default);background:var(--color-stone-50);padding:var(--spacing-7) var(--spacing-6) var(--spacing-9)}
+  .wrap{max-width:1100px;margin:0 auto}
+
+  header{border-bottom:1px solid var(--border-default);padding-bottom:var(--spacing-5);margin-bottom:var(--spacing-6)}
+  h1{font-size:var(--font-size-5);font-weight:700;letter-spacing:-0.01em}
+  .lede{color:var(--color-stone-600);margin-top:var(--spacing-2);max-width:76ch}
+  .stamps{display:flex;flex-wrap:wrap;gap:var(--spacing-2);margin-top:var(--spacing-4)}
+  .stamp{font-family:var(--mono);font-size:11px;color:var(--color-stone-600);background:var(--color-stone-100);border:1px solid var(--border-default);border-radius:var(--radius-2);padding:2px 8px}
+
+  h2{font-size:var(--font-size-4);font-weight:600;letter-spacing:-0.005em;margin:var(--spacing-7) 0 var(--spacing-2);padding-top:var(--spacing-5);border-top:1px solid var(--border-subtle)}
+  h2:first-of-type{border-top:none;padding-top:0}
+  h3{font-size:var(--font-size-3);font-weight:600;margin:var(--spacing-6) 0 var(--spacing-2)}
+  p{max-width:82ch;margin-bottom:var(--spacing-3);color:var(--color-stone-700)}
+  .sec-note{color:var(--text-muted);font-size:var(--font-size-2);max-width:82ch;margin-bottom:var(--spacing-4)}
+
+  .callout{background:var(--accent-alpha-3);border:1px solid var(--accent-alpha-6);border-left:3px solid var(--accent-9);border-radius:var(--radius-4);padding:var(--spacing-4);margin:var(--spacing-4) 0}
+  .callout p{color:var(--color-stone-700);margin:0}
+  .callout p + p{margin-top:var(--spacing-2)}
+  .callout strong{color:var(--accent-12);font-weight:600}
+
+  .warn{background:var(--color-amber-100);border:1px solid rgba(152,91,0,0.22);border-left:3px solid var(--color-amber-500);border-radius:var(--radius-4);padding:var(--spacing-4);margin:var(--spacing-4) 0}
+  .warn p{color:var(--color-amber-700);margin:0}
+  .warn p + p{margin-top:var(--spacing-2)}
+  .warn strong{font-weight:600}
+
+  table{width:100%;border-collapse:collapse;margin:var(--spacing-3) 0 var(--spacing-5);background:#fff;border:1px solid var(--border-default);border-radius:var(--radius-3);overflow:hidden}
+  th{text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);background:var(--color-stone-100);padding:var(--spacing-2) var(--spacing-3);border-bottom:1px solid var(--border-default);white-space:nowrap}
+  td{padding:var(--spacing-3);border-bottom:1px solid var(--border-subtle);vertical-align:top;font-size:13px;color:var(--color-stone-700)}
+  tr:last-child td{border-bottom:none}
+  td:first-child{white-space:nowrap}
+  code{font-family:var(--mono);font-size:12px;background:var(--color-stone-100);border:1px solid var(--border-subtle);border-radius:var(--radius-2);padding:1px 5px;color:var(--accent-12);white-space:nowrap}
+  td code{background:transparent;border:none;padding:0;color:var(--accent-12);font-weight:500}
+
+  .badge{display:inline-block;font-size:11px;font-weight:500;padding:1px 7px;border-radius:var(--radius-full);border:1px solid transparent;white-space:nowrap}
+  .b-oneshot{background:var(--color-amber-100);color:var(--color-amber-600);border-color:rgba(152,91,0,0.22)}
+  .b-ongoing{background:var(--color-stone-100);color:var(--color-stone-600);border-color:var(--border-default)}
+  .b-audit{background:#fff;color:var(--color-green-600);border-color:rgba(32,131,104,0.3)}
+  .b-analytics{background:#fff;color:var(--color-stone-500);border-color:var(--border-emphasis)}
+  .b-blocker{background:var(--color-red-100);color:var(--color-red-600);border-color:rgba(209,52,21,0.22)}
+  .b-open{background:var(--color-stone-100);color:var(--color-stone-600);border-color:var(--border-default)}
+
+  ul{margin:0 0 var(--spacing-4) var(--spacing-5);max-width:82ch}
+  li{margin-bottom:var(--spacing-2);color:var(--color-stone-700)}
+  li::marker{color:var(--text-subtle)}
+
+  .q{border:1px solid var(--border-default);border-radius:var(--radius-3);padding:var(--spacing-3) var(--spacing-4);margin-bottom:var(--spacing-3);background:#fff}
+  .q-head{display:flex;align-items:center;gap:var(--spacing-2);margin-bottom:var(--spacing-1)}
+  .q-title{font-weight:600;font-size:var(--font-size-2)}
+  .q p{margin:0;font-size:13px}
+  .q .owner{font-size:12px;color:var(--text-muted);margin-top:var(--spacing-2)}
+
+  footer{margin-top:var(--spacing-9);padding-top:var(--spacing-4);border-top:1px solid var(--border-subtle);font-size:var(--font-size-1);color:var(--text-muted)}
+  @media(max-width:720px){td:first-child{white-space:normal}body{padding:var(--spacing-4)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>DAM Event Taxonomy</h1>
+  <p class="lede">The capture contract for the DAM event store. Defines the envelope, the event type registry, and the payload per event. This is the write side only — the audit trail, activity views, and reporting surfaces are read paths built over this stream and are specified elsewhere.</p>
+  <div class="stamps">
+    <span class="stamp">v0.1 — draft for build</span>
+    <span class="stamp">Owner: Product</span>
+    <span class="stamp">Implements: DAM event capture (parent)</span>
+  </div>
+</header>
+
+<h2>Principle</h2>
+<div class="callout">
+  <p><strong>Capture and display are separate concerns.</strong> Record everything append-only, filter at read time. A display requirement never constrains the schema, and a display decision that has not been made yet never blocks capture.</p>
+  <p>One store, many reads. The asset audit trail is one filtered read of this stream. An activity dashboard view is a different read. Compliance export is a third. Building it the other way round — a log per feature — produces three overlapping stores that cannot answer a question spanning any two of them.</p>
+</div>
+<ul>
+  <li>Events are immutable. Never updated, never deleted, corrected only by a subsequent compensating event.</li>
+  <li>The store is separate from the asset index. Confirmed in the metadata architecture: the <code>assets</code> index does not carry audit or event data.</li>
+  <li>Capture breadth is cheap now and impossible later. When uncertain whether an event is worth recording, record it — the retention policy is the place to manage volume, not the schema.</li>
+</ul>
+
+<h2>What cannot be retrofitted</h2>
+<div class="warn">
+  <p><strong>Three items have no recovery path.</strong> Everything else in this document can start late and accept a gap in the data. These cannot.</p>
+  <p><strong>1. Provenance at promotion or upload.</strong> Originating workflow, form, approval chain, and instigating actor exist only at the moment the asset enters the DAM. An asset that arrives before capture is live is permanently missing its lineage — which is the workflow-provenance claim the product is positioned on.</p>
+  <p><strong>2. The correlation key.</strong> Events written without <code>unity_context_id</code> are permanently unjoinable to workflow events. Retrofitting means re-deriving relationships from data that was never recorded.</p>
+  <p><strong>3. Mint-endpoint logging.</strong> CDN edge logs give bytes, not meaning — by design, since the CDN makes no rights decisions. If delivery ships without structured mint logging, download reporting has no source.</p>
+</div>
+
+<h2>Event envelope</h2>
+<p class="sec-note">Present on every event regardless of category. Category-specific payload sits on top of this.</p>
+<table>
+  <thead><tr><th>Field</th><th>Type</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td><code>event_id</code></td><td>uuid</td><td>Immutable, server-generated.</td></tr>
+    <tr><td><code>event_type</code></td><td>enum</td><td>Dot notation, <code>domain.action</code>, past tense. Registry below.</td></tr>
+    <tr><td><code>asset_id</code></td><td>uuid</td><td>Nullable only for events with no asset subject (e.g. <code>search.executed</code>).</td></tr>
+    <tr><td><code>actor_id</code></td><td>uuid</td><td>Null where <code>actor_type</code> is <code>system</code>.</td></tr>
+    <tr><td><code>actor_type</code></td><td>enum</td><td><code>user</code> · <code>system</code> · <code>service</code> · <code>external</code> (guest via share link).</td></tr>
+    <tr><td><code>timestamp</code></td><td>timestamptz</td><td>UTC, server time. Not client-supplied.</td></tr>
+    <tr><td><code>source_context</code></td><td>enum</td><td><code>dam</code> · <code>workflow</code> · <code>form</code> · <code>api</code> · <code>share</code>.</td></tr>
+    <tr><td><code>unity_context_id</code></td><td>uuid</td><td><strong>The join key.</strong> Carried in from the wrapper. Null only where genuinely no workflow context exists.</td></tr>
+    <tr><td><code>retention_class</code></td><td>enum</td><td><code>audit</code> · <code>analytics</code>. Stamped at write, drives retention. See policy below.</td></tr>
+    <tr><td><code>payload</code></td><td>jsonb</td><td>Event-specific. Schema per event type.</td></tr>
+  </tbody>
+</table>
+
+<h2>Naming convention</h2>
+<ul>
+  <li><code>domain.action</code>, lower case, past tense: <code>rights.changed</code>, <code>asset.downloaded</code>.</li>
+  <li>One event type per meaningful state transition, not per field written. A bulk edit touching six attributes emits one <code>attributes.changed</code> with all six in the payload, not six events.</li>
+  <li>Change events carry <code>before</code> and <code>after</code> in the payload. Absence of <code>before</code> means creation.</li>
+  <li>New types are additive. Existing type semantics never change — that would silently reinterpret history.</li>
+</ul>
+
+<h2>Category 1 — Provenance</h2>
+<p class="sec-note">One-shot, written once at the moment an asset enters the DAM. Highest priority in the whole specification: unrecoverable after the fact.</p>
+<table>
+  <thead><tr><th>Event type</th><th>Payload</th><th>Timing</th><th>Retention</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><code>asset.promoted</code></td>
+      <td>Originating workflow (ID, name, type) · originating form ID · triggering action (approval complete / manual push / other) · instigating user · promotion timestamp · approval chain (per reviewer: identity, decision, timestamp, review stage) · source rendition reference · rights state at ingest · auto-attributed metadata carried in. Review stage stored as data, never a fixed label.</td>
+      <td><span class="badge b-oneshot">One-shot · unrecoverable</span></td>
+      <td><span class="badge b-audit">audit</span></td>
+    </tr>
+    <tr>
+      <td><code>asset.uploaded</code></td>
+      <td>Upload origin (direct / draft area / bulk / API) · uploading actor · original filename · file hash · initial rights state · attributes and tags applied at upload · duplicate-check signal where one was raised.</td>
+      <td><span class="badge b-oneshot">One-shot · unrecoverable</span></td>
+      <td><span class="badge b-audit">audit</span></td>
+    </tr>
+  </tbody>
+</table>
+<div class="callout">
+  <p><strong>Addition to the original taxonomy.</strong> The earlier draft was written entirely around promotion from workflow. Direct upload into the DAM is the other origin path and needs its own provenance event, otherwise every directly-uploaded asset has a blank origin record. Draft-area uploads resolve to this event on commit, not on drop.</p>
+</div>
+
+<h2>Category 2 — Lifecycle</h2>
+<p class="sec-note">One event per state change, ongoing for the life of the asset. Change events carry before and after.</p>
+<table>
+  <thead><tr><th>Event type</th><th>Payload</th><th>Timing</th><th>Retention</th></tr></thead>
+  <tbody>
+    <tr><td><code>rights.changed</code></td><td>Rights state before → after · actor · reason where supplied · affected policy fields.</td><td><span class="badge b-ongoing">Ongoing</span></td><td><span class="badge b-audit">audit</span></td></tr>
+    <tr><td><code>lifecycle.changed</code></td><td>Lifecycle state before → after (e.g. active → archived) · actor.</td><td><span class="badge b-ongoing">Ongoing</span></td><td><span class="badge b-audit">audit</span></td></tr>
+    <tr><td><code>approval.changed</code></td><td>In-DAM approval state before → after · actor · decision note. Feeds the in-DAM approvals surface.</td><td><span class="badge b-ongoing">Ongoing</span></td><td><span class="badge b-audit">audit</span></td></tr>
+    <tr><td><code>attributes.changed</code></td><td>Per field: name, before → after · actor · whether part of a bulk operation, with the batch reference.</td><td><span class="badge b-ongoing">Ongoing</span></td><td><span class="badge b-audit">audit</span></td></tr>
+    <tr><td><code>tags.changed</code></td><td>Tags added and removed · per tag <code>source</code> (<code>manual</code> / <code>ai</code>) · <code>accepted_by</code> and confidence where AI-origin · actor.</td><td><span class="badge b-ongoing">Ongoing</span></td><td><span class="badge b-audit">audit</span></td></tr>
+    <tr><td><code>asset.renamed</code></td><td>Name before → after · actor.</td><td><span class="badge b-ongoing">Ongoing</span></td><td><span class="badge b-audit">audit</span></td></tr>
+    <tr><td><code>version.created</code></td><td>Version reference · replaced version · actor · whether the binary differs by hash.</td><td><span class="badge b-ongoing">Ongoing</span></td><td><span class="badge b-audit">audit</span></td></tr>
+    <tr><td><code>asset.deleted</code></td><td>Deletion or archival · actor · reason · whether recoverable.</td><td><span class="badge b-ongoing">Ongoing</span></td><td><span class="badge b-audit">audit</span></td></tr>
+    <tr><td><code>link.severed</code></td><td>Severed link reference · trigger (e.g. source form deleted) · confirmation the asset persists.</td><td><span class="badge b-ongoing">Ongoing</span></td><td><span class="badge b-audit">audit</span></td></tr>
+  </tbody>
+</table>
+<p class="sec-note"><code>link.severed</code> is the audit proof that cascade reversal works — that deleting an upstream form archives the link without destroying the asset. It exists to be produced as evidence, not to be read casually.</p>
+
+<h2>Category 3 — Usage and attachment</h2>
+<p class="sec-note">The workflow ledger. This is the substrate under any "where is this asset being used" question, and under all download reporting.</p>
+<table>
+  <thead><tr><th>Event type</th><th>Payload</th><th>Timing</th><th>Retention</th></tr></thead>
+  <tbody>
+    <tr><td><code>workflow.attached</code></td><td>Workflow or form reference · attaching actor · attachment point. Marks the beginning of workflow status.</td><td><span class="badge b-ongoing">Ongoing</span></td><td><span class="badge b-audit">audit</span></td></tr>
+    <tr><td><code>workflow.detached</code></td><td>Workflow reference · actor or system · reason (detached / workflow completed). Marks the end of workflow status.</td><td><span class="badge b-ongoing">Ongoing</span></td><td><span class="badge b-audit">audit</span></td></tr>
+    <tr><td><code>url.minted</code></td><td>Rendition template · output format and dimensions · rights state evaluated at mint · requesting actor · expiry · delivery target.</td><td><span class="badge b-ongoing">Ongoing</span></td><td><span class="badge b-audit">audit</span></td></tr>
+    <tr><td><code>asset.downloaded</code></td><td>Rendition or format delivered · actor · whether part of a bulk download, with batch reference · originating surface.</td><td><span class="badge b-ongoing">Ongoing</span></td><td><span class="badge b-audit">audit</span></td></tr>
+    <tr><td><code>asset.shared</code></td><td>Share type (collection / link) · recipient context · expiry · actor. External recipients recorded as context, not as identified users.</td><td><span class="badge b-ongoing">Ongoing</span></td><td><span class="badge b-audit">audit</span></td></tr>
+  </tbody>
+</table>
+<div class="warn">
+  <p><strong><code>url.minted</code> and <code>asset.downloaded</code> are not the same event.</strong> A minted URL is authorisation; a download is delivery. They diverge — minted and never fetched, or minted once and fetched repeatedly. Collapsing them makes both numbers wrong. Mint is the rights-enforcement record; download is the usage record.</p>
+</div>
+
+<h2>Category 4 — Access</h2>
+<p class="sec-note">High volume in aggregate, so the split between compliance signal and engagement noise matters more here than anywhere else.</p>
+<table>
+  <thead><tr><th>Event type</th><th>Payload</th><th>Timing</th><th>Retention</th></tr></thead>
+  <tbody>
+    <tr><td><code>restricted.accessed</code></td><td>Asset · actor · rights state at access · surface. Scoped to rights-gated assets only.</td><td><span class="badge b-ongoing">Ongoing</span></td><td><span class="badge b-audit">audit</span></td></tr>
+    <tr><td><code>access.denied</code></td><td>Asset · actor · attempted action · denial reason.</td><td><span class="badge b-ongoing">Ongoing</span></td><td><span class="badge b-audit">audit</span></td></tr>
+    <tr><td><code>permissions.changed</code></td><td>Asset or scope · permission set before → after · actor.</td><td><span class="badge b-ongoing">Ongoing</span></td><td><span class="badge b-audit">audit</span></td></tr>
+    <tr><td><code>asset.viewed</code></td><td>Asset · actor · surface. Aggregate counter, sampled.</td><td><span class="badge b-ongoing">Ongoing</span></td><td><span class="badge b-analytics">analytics</span></td></tr>
+  </tbody>
+</table>
+<div class="callout">
+  <p><strong>Two things hide inside "view" and they belong in different places.</strong> Access to a rights-restricted asset is a compliance signal — low volume, high value, exactly what an audit asks about. A generic view is an engagement metric wearing an audit-event costume. Keeping generic views out of the audit ledger is what keeps the ledger readable.</p>
+</div>
+
+<h2>Category 5 — Product telemetry</h2>
+<p class="sec-note">Analytics-class from the outset. Same envelope, same store, different retention. Included here so it rides the existing pipe rather than becoming a second instrumentation project.</p>
+<table>
+  <thead><tr><th>Event type</th><th>Payload</th><th>Notes</th><th>Retention</th></tr></thead>
+  <tbody>
+    <tr><td><code>tag.suggested</code></td><td>Suggested tags · confidence per tag · model reference.</td><td>Written when AI suggestions are produced.</td><td><span class="badge b-analytics">analytics</span></td></tr>
+    <tr><td><code>tag.accepted</code></td><td>Tag · confidence at acceptance · whether auto-accepted or user-accepted · actor.</td><td>Acceptance is a conversion event — the tag becomes first-class with <code>source: ai</code> provenance.</td><td><span class="badge b-analytics">analytics</span></td></tr>
+    <tr><td><code>tag.rejected</code></td><td>Tag · confidence · actor.</td><td>Direct precision signal for user-reviewed suggestions.</td><td><span class="badge b-analytics">analytics</span></td></tr>
+    <tr><td><code>tag.auto_accepted_removed</code></td><td>Tag · confidence at auto-accept · time between accept and removal · actor.</td><td><strong>The honest precision signal once auto-accept is live.</strong> At that point "correct" and "unnoticed" look identical in accept data; post-hoc deletion is the only reliable correction signal.</td><td><span class="badge b-analytics">analytics</span></td></tr>
+    <tr><td><code>search.executed</code></td><td>Query · filters applied · result count · surface (quick / full) · latency.</td><td>Result count of zero is the KPI — a search returning nothing is a failed job. Also catches quick-vs-full parity bugs before a client does.</td><td><span class="badge b-analytics">analytics</span></td></tr>
+  </tbody>
+</table>
+
+<h2>Retention policy</h2>
+<p class="sec-note">Decided before events flow, not after. Deciding late means either over-retaining view spam or under-retaining evidence.</p>
+<table>
+  <thead><tr><th>Class</th><th>Contains</th><th>Retention</th><th>Read paths</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><span class="badge b-audit">audit</span></td>
+      <td>Provenance, lifecycle, usage/attachment, restricted access, permission changes.</td>
+      <td>Long. Full fidelity, no sampling, no aggregation. Retention period is a governance decision.</td>
+      <td>Asset audit trail · compliance export · provenance lineage.</td>
+    </tr>
+    <tr>
+      <td><span class="badge b-analytics">analytics</span></td>
+      <td>Generic views, search telemetry, AI tagging telemetry.</td>
+      <td>Short at full fidelity, then rolled up. Sampling permitted.</td>
+      <td>Adoption dashboard · AI quality reporting · search health.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Display scope</h2>
+<p class="sec-note">Retention class is not the display filter. Retention governs how long an event is kept; display governs whether a user ever sees it. The asset audit trail shows a subset of audit-class events — being audit-class is necessary but not sufficient.</p>
+<table>
+  <thead><tr><th>Surface</th><th>Shows</th><th>Never shows</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Asset audit trail<br><span style="font-size:12px;color:var(--text-muted)">User-facing panel</span></td>
+      <td><code>asset.promoted</code> · <code>asset.uploaded</code> · <code>rights.changed</code> · <code>lifecycle.changed</code> · <code>approval.changed</code> · <code>attributes.changed</code> · <code>tags.changed</code> · <code>asset.renamed</code> · <code>version.created</code> · <code>workflow.attached</code> · <code>workflow.detached</code> · <code>asset.downloaded</code> · <code>asset.shared</code></td>
+      <td>Everything in Category 5. Plus <code>url.minted</code>, <code>access.denied</code>, <code>restricted.accessed</code>, <code>permissions.changed</code>, <code>link.severed</code>, <code>asset.viewed</code>.</td>
+    </tr>
+    <tr>
+      <td>Admin / compliance view</td>
+      <td>All audit-class events, including <code>url.minted</code>, <code>access.denied</code>, <code>restricted.accessed</code>, <code>permissions.changed</code>, <code>link.severed</code>, <code>asset.deleted</code>.</td>
+      <td>Category 5 in full.</td>
+    </tr>
+    <tr>
+      <td>Reporting and dashboards</td>
+      <td>Aggregates over both classes. Never individual audit rows.</td>
+      <td>Identified actors in analytics aggregates.</td>
+    </tr>
+  </tbody>
+</table>
+<div class="warn">
+  <p><strong><code>url.minted</code> is captured but never displayed to users.</strong> Mint, purge, revoke, derivative, and edge are infrastructure terms and do not appear in user-facing copy. The event is recorded because it is the rights-enforcement record; it surfaces only in the admin and compliance view.</p>
+</div>
+<div class="callout">
+  <p><strong>Deliberate exception to one-event-per-transition: tag acceptance writes two events.</strong> <code>tags.changed</code> records the state change — long retention, shown on the panel in plain language. <code>tag.accepted</code> records model quality — confidence, model reference, auto versus user acceptance — rolled up and never displayed.</p>
+  <p>These answer different questions with different lifespans, and <code>retention_class</code> is a single field, so one event cannot serve both. The alternative is a compliance ledger carrying model version numbers. Do not merge them.</p>
+</div>
+
+<h2>Out of scope</h2>
+<ul>
+  <li><strong>The audit trail UI.</strong> A read path over this stream, specified and built separately.</li>
+  <li><strong>Dashboard views.</strong> The dashboard container and its first views read the asset index, not this stream. An event-backed activity view comes later — the view contract should reserve room for it, but it is not part of capture.</li>
+  <li><strong>Compliance export format.</strong> Downstream of retention policy.</li>
+  <li><strong>Role-based display scoping.</strong> Which roles see the admin and compliance view is a read-time permission question, deferred. The surface-level split is specified above; the role mapping is not.</li>
+</ul>
+
+<h2>Open questions</h2>
+
+<div class="q">
+  <div class="q-head"><span class="badge b-blocker">Blocker</span><span class="q-title">Who mints <code>unity_context_id</code>, and when?</span></div>
+  <p>The join key has to originate on the Unity side and be passed across the iframe boundary. Same contract question as the breadcrumb postMessage work. Until it is answered, the envelope cannot be finalised and no emitter can be written.</p>
+  <p class="owner">Blocks: event schema. Needs the Unity-side contract confirmed.</p>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="badge b-blocker">Blocker</span><span class="q-title">When does "on a workflow" begin and end?</span></div>
+  <p>The attach and detach events are only meaningful once that boundary is defined, and it is the same question that gates workflow-locking. Without it the usage ledger records transitions whose semantics are undecided.</p>
+  <p class="owner">Blocks: usage and attachment emitters. Outstanding consult.</p>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="badge b-open">Open</span><span class="q-title">Retention period for the audit class</span></div>
+  <p>Needs a number, driven by client contractual commitments rather than by storage cost. Analytics rollup thresholds follow from it.</p>
+  <p class="owner">Governance decision, with infrastructure input.</p>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="badge b-open">Open</span><span class="q-title">Field overlap with auto-attribution</span></div>
+  <p>Auto-attributed metadata is carried into the asset at promotion and is also listed in the provenance payload. Confirm whether the event records the attribution decision or merely references the attributed values, so the two do not duplicate.</p>
+  <p class="owner">Confirm against the auto-attribution scope before build.</p>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="badge b-open">Open</span><span class="q-title">External actors on shared links</span></div>
+  <p>A guest downloading via an external share link is an <code>external</code> actor with no user record. Decide what identifies them in the payload — share token reference is the conservative answer, but it needs confirming against data-protection posture before it is written into an append-only store.</p>
+  <p class="owner">Needs a governance answer, not an engineering one.</p>
+</div>
+
+<footer>
+  Draft for build. The audit and analytics split, the four-category structure, and the capture-and-display principle are settled. Event type names, payload fields, and the two blockers above are open to change until the schema issue is closed.
+</footer>
+
+</div>
+</body>
+</html>
