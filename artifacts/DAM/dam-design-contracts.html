@@ -8,6 +8,7 @@
   --surface:#fff;--text:var(--stone-900);--muted:var(--stone-500);--subtle:var(--stone-400);
   --border:var(--stone-200);--border-sub:var(--stone-100);
   --r2:4px;--r3:6px;--pill:9999px;--font:'Inter',-apple-system,sans-serif;}
+:root{--bg:#faf9f8;--text:#1c1917;--muted:#6b615e;--subtle:#978985;--border:#e7e5e4;--stone-100:#f5f5f4;}
 :root{--c-primary:#0b6e8a; --c-primary-300:#4db5cf; --accent-9:#0B6E8A;
   --c-amber:#f5a524; --c-red:#e54d2e; --c-green:#29a383;
   /* dark editor surfaces (editor theme — extends Scale light defaults) */
@@ -56,10 +57,10 @@
 .appbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:18px;height:52px;padding:0 22px;background:#17141f;border-bottom:1px solid rgba(255,255,255,.10);}
 *{box-sizing:border-box;} html,body{margin:0;padding:0;} body{font-family:'Inter',sans-serif;background:#0d0b12;}
 .appbar .brand{font-size:12px;font-weight:700;color:#fff;letter-spacing:-.01em;} .appbar .brand .dot{color:#4db5cf;}
-.tabs{display:flex;gap:4px;margin-left:8px;} .tab{font-family:inherit;font-size:12px;font-weight:600;color:rgba(255,255,255,.55);background:transparent;border:none;padding:7px 14px;border-radius:7px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;}
+.tabs{display:flex;gap:4px;margin-left:8px;flex-wrap:wrap;} .tab{font-family:inherit;font-size:12px;font-weight:600;color:rgba(255,255,255,.55);background:transparent;border:none;padding:7px 14px;border-radius:7px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;}
 .tab:hover{color:rgba(255,255,255,.85);background:rgba(255,255,255,.05);} .tab.active{color:#fff;background:rgba(77,181,207,.16);}
 .tab .sw{width:9px;height:9px;border-radius:2px;flex:none;} .tab .sw.dark{background:#211c19;border:1px solid rgba(255,255,255,.3);}
-.tab .sw.light{background:#fefcfc;border:1px solid #d6d3d1;} .tab .sw.found{background:#4db5cf;}
+.tab .sw.light{background:#fefcfc;border:1px solid #d6d3d1;} .tab .sw.found{background:#4db5cf;} .tab .sw.nav{background:linear-gradient(135deg,#fefcfc 50%,#211c19 50%);border:1px solid #999;}
 .view{display:none;} .view.active{display:block;}
 .c-foundations{font-family:var(--font);background:#f3f1ef;color:var(--text);padding:34px 30px 90px;-webkit-font-smoothing:antialiased;line-height:1.5;;min-height:100vh;}
 .c-foundations .wrap{max-width:1000px;margin:0 auto;}
@@ -157,6 +158,44 @@ table.roles{width:100%;border-collapse:collapse;background:#fff;border:1px solid
 .c-foundations .rspec-rail.light .rspec-ri:not(.on):hover{background:var(--surface-muted);color:var(--text);}
 .c-foundations .rspec-rail.dark .rspec-ri:not(.on):hover{background:var(--surface-hover-dark);color:rgba(255,255,255,.85);}
 .c-foundations .rspec-div{height:1px;background:rgba(255,255,255,.09);margin:7px 15px;}
+.c-navigation{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);padding:34px 40px 60px;-webkit-font-smoothing:antialiased;;min-height:100vh;}
+.c-navigation code{background:var(--stone-100);border-radius:4px;padding:1px 5px;font-size:.86em;color:#0b6e8a;}
+.c-navigation .block{margin-bottom:40px;}
+.c-navigation h2{font-size:16px;font-weight:600;margin-bottom:6px;}
+.c-navigation .lede{font-size:12px;color:var(--muted);max-width:660px;line-height:1.55;margin-bottom:16px;}
+.c-navigation .note{font-size:12px;color:var(--muted);line-height:1.55;margin-top:14px;max-width:660px;}
+.c-navigation .mut{color:var(--subtle);font-weight:400;}
+.c-navigation table.roles{border-collapse:collapse;font-size:12px;margin-bottom:6px;}
+.c-navigation table.roles th{text-align:left;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.04em;font-size:11px;padding:0 22px 8px 0;}
+.c-navigation table.roles td{padding:7px 22px 7px 0;border-top:1px solid var(--border);vertical-align:top;}
+.c-navigation table.roles .role{font-weight:600;}
+.c-navigation .specrow{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;margin-top:4px;}
+.c-navigation .spec{display:flex;flex-direction:column;gap:9px;}
+.c-navigation .cap{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+.c-navigation /* nav specimen */
+.nav{display:flex;flex-direction:column;border:1px solid var(--nline);border-radius:12px;padding:8px;gap:2px;background:var(--nbg);}
+.c-navigation .nav.icons{width:56px;align-items:stretch;padding:8px 0;}
+.c-navigation .nav.wide{width:212px;}
+.c-navigation .nav.light{--nbg:#fafaf9;--nline:#e7e5e4;--fg:#57534e;--fgh:#1c1917;--hov:rgba(0,0,0,.04);--a9:#0d7f9c;--a11:#0b6e8a;--a3:rgba(13,127,156,.10);}
+.c-navigation .nav.dark{--nbg:#101012;--nline:rgba(255,255,255,.08);--fg:rgba(255,255,255,.62);--fgh:rgba(255,255,255,.92);--hov:rgba(255,255,255,.06);--a9:#2ab7db;--a11:#7ad3ec;--a3:rgba(56,190,225,.16);}
+.c-navigation .ni{position:relative;display:flex;align-items:center;gap:12px;height:40px;border-radius:8px;color:var(--fg);font-size:14px;font-weight:500;cursor:default;}
+.c-navigation .nav.wide .ni{padding:0 12px;}
+.c-navigation .nav.icons .ni{justify-content:center;height:44px;}
+.c-navigation .ni svg{width:20px;height:20px;flex:none;}
+.c-navigation .ni.on{background:var(--a3);color:var(--a11);font-weight:600;}
+.c-navigation .ni.on::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:3px;background:var(--a9);border-radius:0 2px 2px 0;}
+.c-navigation .nav.icons .ni.on::before{top:10px;bottom:10px;left:0;}
+.c-navigation .ni.hov{background:var(--hov);color:var(--fgh);}
+.c-navigation .kbd{margin-left:auto;font-size:11px;font-weight:600;color:var(--fg);border:1px solid currentColor;border-radius:4px;padding:0 5px;opacity:.55;line-height:16px;}
+.c-navigation .toggle{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:7px;color:var(--fg);margin:0 auto 4px;}
+.c-navigation .toggle svg{width:19px;height:19px;}
+.c-navigation .thead{display:flex;justify-content:flex-end;margin-bottom:4px;}
+.c-navigation .thead .toggle{margin:0;}
+.c-navigation a{color:#0b6e8a;text-decoration:none;border-bottom:1px solid rgba(11,110,138,.3);}
+.c-navigation a:hover{border-bottom-color:#0b6e8a;}
+.c-navigation .callout{margin-top:16px;font-size:12px;line-height:1.55;background:#fdf6e6;border:1px solid #f0d69a;border-radius:8px;padding:11px 14px;color:#7a5a12;max-width:660px;}
+.c-navigation .callout code{background:#f6e6c2;color:#7a5a12;}
+.c-navigation table.ico td:first-child{font-weight:600;}
 .c-edit{font-family:var(--font);background:#100d0b;color:var(--ed-value);padding:34px 30px 80px;
   -webkit-font-smoothing:antialiased;line-height:1.5;;min-height:100vh;}
 .c-edit .wrap{max-width:960px;margin:0 auto;}
@@ -544,6 +583,7 @@ table.roles{width:100%;border-collapse:collapse;background:#fff;border:1px solid
   padding:1px 5px;border-radius:3px;color:var(--text-default);}
 </style></head><body>
 <div class="appbar"><span class="brand">DAM design contracts <span class="dot">·</span> one kit, every surface</span><div class="tabs"><button class="tab active" data-view="foundations"><span class="sw found"></span>Foundations</button>
+<button class="tab" data-view="navigation"><span class="sw nav"></span>Navigation</button>
 <button class="tab" data-view="edit"><span class="sw dark"></span>Edit panel</button>
 <button class="tab" data-view="filter"><span class="sw light"></span>Library filters</button>
 <button class="tab" data-view="lightbox"><span class="sw light"></span>Lightbox</button>
@@ -768,6 +808,43 @@ table.roles{width:100%;border-collapse:collapse;background:#fff;border:1px solid
   </div>
 
 </div>
+</section>
+<section class="view c-navigation" id="view-navigation">
+  <div class="block">
+    <h2>Navigation</h2>
+    <p class="lede">Two navigation levels, one component. The <b>application shell</b> moves you between DAM areas; the <b>asset-panel rail</b> (its own tab) moves you between panels of one asset. Both are built on <code>.icon-nav-item</code> and its state tokens, so a fix to one lands on both.</p>
+    <table class="roles">
+      <tr><th>Nav</th><th>Behaviour</th><th>Collapse control</th></tr>
+      <tr><td class="role">Global <span class="mut">(platform, client-themed)</span></td><td>Overlays content</td><td>Dismiss with &times;, top-right</td></tr>
+      <tr><td class="role">DAM <span class="mut">(our design system)</span></td><td>Pushes content</td><td>Edge toggle that travels</td></tr>
+    </table>
+    <div class="note">Dashboard uses the <b>layout-dashboard</b> glyph, not a house — the global nav owns Home, so a second house reads as a second home.</div>
+    <p class="lede" style="margin-top:18px;"><b>Icons — Lucide, named and linked.</b> Use these exact glyphs; do not hand-draw or approximate.</p>
+    <table class="roles ico"><tr><th>Destination</th><th>Lucide icon</th></tr><tr><td class="role">Dashboard</td><td><a href="https://lucide.dev/icons/layout-dashboard" target="_blank"><code>layout-dashboard</code></a></td></tr><tr><td class="role">Library</td><td><a href="https://lucide.dev/icons/library" target="_blank"><code>library</code></a></td></tr><tr><td class="role">Collections</td><td><a href="https://lucide.dev/icons/bookmark" target="_blank"><code>bookmark</code></a></td></tr><tr><td class="role">Approvals</td><td><a href="https://lucide.dev/icons/shield-check" target="_blank"><code>shield-check</code></a></td></tr><tr><td class="role">Downloads</td><td><a href="https://lucide.dev/icons/download" target="_blank"><code>download</code></a></td></tr><tr><td class="role">Collapse toggle &middot; collapsed</td><td><a href="https://lucide.dev/icons/panel-left-open" target="_blank"><code>panel-left-open</code></a></td></tr><tr><td class="role">Collapse toggle &middot; expanded</td><td><a href="https://lucide.dev/icons/panel-left-close" target="_blank"><code>panel-left-close</code></a></td></tr></table>
+    <div class="callout">&#9888; <b>Updated — build must reflect.</b> The nav icon set is now specified. <b>Build action:</b> Dashboard currently renders a <b>house</b>; swap to <code>layout-dashboard</code>. Confirm the remaining glyphs match the linked icons.</div>
+  </div>
+
+  <div class="block">
+    <h2>Active state — three cues, both themes</h2>
+    <p class="lede">The active item never leans on fill alone. A 3px <b>edge bar</b> (<code>--accent-9</code>) carries the signal, <b>icon + label</b> in <code>--accent-11</code> at 600 supports it, and an alpha <b>fill</b> (<code>--accent-a3</code>, not <code>--accent-3</code>) tints behind. The same tokens resolve per theme — which is exactly why the state must ride tokens, not hardcoded colour.</p>
+    <div class="specrow">
+      <div class="spec"><div class="cap">Light &middot; expanded</div><div class="nav wide light"><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span>Dashboard</span></div><div class="ni on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 6 4 14M12 6v14M8 8v12M4 4v16"/></svg><span>Library</span></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg><span>Collections</span></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><span>Approvals</span></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg><span>Downloads</span></div></div></div>
+      <div class="spec"><div class="cap">Dark &middot; expanded</div><div class="nav wide dark"><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span>Dashboard</span></div><div class="ni on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 6 4 14M12 6v14M8 8v12M4 4v16"/></svg><span>Library</span></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg><span>Collections</span></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><span>Approvals</span></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg><span>Downloads</span></div></div></div>
+      <div class="spec"><div class="cap">Light &middot; collapsed</div><div class="nav icons light"><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></div><div class="ni on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 6 4 14M12 6v14M8 8v12M4 4v16"/></svg></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div></div></div>
+      <div class="spec"><div class="cap">Dark &middot; collapsed</div><div class="nav icons dark"><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></div><div class="ni on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 6 4 14M12 6v14M8 8v12M4 4v16"/></svg></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div></div></div>
+    </div>
+    <div class="note"><b>Why:</b> a low-alpha fill over a near-black surface barely reads, which is why the current dark state is weak. Moving the load onto the bar and the text — both bright on dark — makes the active item legible in either theme. Maps onto the build tokens: <code>--icon-nav-active-bar</code> &rarr; accent-9, <code>-active-fg</code> &rarr; accent-11, <code>-active-bg</code> &rarr; accent-a3.<br><br><b>Hover</b> stays neutral (<code>--gray-a3</code> / white-alpha), never accent — accent means active, neutral means hovered.</div>
+  </div>
+
+  <div class="block">
+    <h2>Collapse &amp; expand — the edge toggle</h2>
+    <p class="lede">A panel toggle, not a bare chevron: <code>panel-left-open</code> collapsed, <code>panel-left-close</code> expanded — the same family as the filter-panel collapse, so one collapse language across the product.</p>
+    <div class="specrow">
+      <div class="spec"><div class="cap">Collapsed &middot; toggle at the rail head</div><div class="nav icons light"><div class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="m14 9 3 3-3 3"/></svg></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></div><div class="ni on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 6 4 14M12 6v14M8 8v12M4 4v16"/></svg></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div></div></div>
+      <div class="spec"><div class="cap">Expanded &middot; toggle rides the right edge, with hover + shortcut</div><div class="nav wide light"><div class="thead"><div class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="m16 15-3-3 3-3"/></svg></div></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span>Dashboard</span></div><div class="ni on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 6 4 14M12 6v14M8 8v12M4 4v16"/></svg><span>Library</span></div><div class="ni hov"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg><span>Collections</span><span class="kbd">3</span></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><span>Approvals</span></div><div class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg><span>Downloads</span></div></div></div>
+    </div>
+    <div class="note"><b>The toggle travels with the edge it moves.</b> Because the DAM nav pushes, the nav/content seam is a real moving boundary. Collapsed, the toggle sits at the rail head; expanded, it rides the right edge pointing inward, so position and chevron direction reinforce each other and it reads as grabbing the edge, not hunting a fixed button.<br><br><b>Push-nav rule.</b> The global nav overlays, so it dismisses with &times; top-right and has no seam to ride. Behaviour picks the control: push navs collapse via a travelling edge toggle, overlay navs dismiss via &times;.<br><br><b>Rejected:</b> the lone &raquo;/&laquo; — ambiguous, weak, stuck top-left whether open or closed.</div>
+  </div>
 </section>
 <section class="view c-edit" id="view-edit">
 <div class="wrap">
