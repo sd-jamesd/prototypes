@@ -1373,6 +1373,27 @@
     color: var(--text-subtle);
     margin-top: 2px;
   }
+  .format-tile.disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    background: var(--surface-muted);
+    border-style: dashed;
+  }
+  .format-tile-reason {
+    font-size: var(--font-size-0);
+    color: var(--color-amber-700);
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .format-tile-channel {
+    font-size: var(--font-size-0);
+    color: var(--text-subtle);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
 
   /* Selection panel — combined summary + config toggle for bulk modal */
   .selection-panel {
@@ -1826,6 +1847,23 @@ const SCENARIOS = [
       size: '412 MB',
       thumb: 'img-fill-4',
       cardStatus: { label: 'Watermark', class: 'restricted' }
+    }
+  },
+  {
+    id: 'channel-restricted',
+    title: 'Channel-restricted (Social only)',
+    short: 'Channel-restricted',
+    tag: 'restricted',
+    tagLabel: 'Restricted',
+    description: 'Asset licensed for Social/Digital channels only. The Original is channel-gated — it is channel-agnostic once downloaded and the system can\'t track where it ends up, so getting it requires a request that attests the intended channel (creating the accountability record). Channel-valid templates are offered; Print/OOH templates are disabled.',
+    licensedChannels: 'Social · Web',
+    outcome: { pill: 'restricted', label: 'Channel-gated Original', title: 'Original gated behind a channel attestation', detail: 'Watermarked downloads freely. The Original needs a channel attestation — a licensed channel is a logged download (nothing to approve), an unlicensed one is a reviewed request. No "grant": in-scope use is already licensed, so the record — not a permission — is the product (usage lineage / SCR-178). Print and OOH templates are disabled — not on this licence.' },
+    asset: {
+      name: 'F19_ownership-agency_USA_Marketing_Digital.jpg',
+      type: 'JPG',
+      size: '18 MB',
+      thumb: 'img-fill-2',
+      cardStatus: { label: 'Restricted', class: 'restricted' }
     }
   },
   {
@@ -2597,10 +2635,10 @@ function buildCardMenuItems(scenario) {
   const isEmbargoed = scenario.id === 'embargoed';
 
   let html = `
-    <div class="overflow-item">${folderIcon}<span>Add to Collection</span><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-left:auto;color:var(--text-hint);"><path d="M6 4l4 4-4 4" stroke-linecap="round"/></svg></div>
+    <div class="overflow-item">${folderIcon}<span>Add to collection</span><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-left:auto;color:var(--text-hint);"><path d="M6 4l4 4-4 4" stroke-linecap="round"/></svg></div>
     <div class="overflow-item">${shareIcon}<span>Share</span></div>
-    <div class="overflow-item">${editIcon}<span>Edit Details</span></div>
-    <div class="overflow-item">${queueIcon}<span>Add to Queue</span></div>
+    <div class="overflow-item">${editIcon}<span>Edit details</span></div>
+    <div class="overflow-item">${queueIcon}<span>Add to download queue</span></div>
     <div class="overflow-divider"></div>
   `;
 
@@ -2690,7 +2728,7 @@ function buildLightboxBanner(scenario) {
   if (scenario.id === 'geo') {
     return `<div style="padding:var(--spacing-3) var(--spacing-5);background:var(--surface-muted);border-bottom:1px solid var(--border-default);font-size:var(--font-size-2);display:flex;align-items:flex-start;gap:var(--spacing-2);color:var(--text-default);">
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-top:1px;flex-shrink:0;color:var(--text-subtle);"><circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2c2 2 3 4 3 6s-1 4-3 6c-2-2-3-4-3-6s1-4 3-6"/></svg>
-      <div>Licensed for: <strong>${scenario.licensedFor}</strong> · Your profile does not meet all criteria. Watermarked version available; original requires access request.</div>
+      <div>Licensed for: <strong>${scenario.licensedFor}</strong> · Your profile doesn't meet all criteria — Watermarked is available. Request access for the Original.</div>
     </div>`;
   }
   if (scenario.id === 'embargo-preview') {
@@ -2702,7 +2740,7 @@ function buildLightboxBanner(scenario) {
   if (scenario.id === 'watermark') {
     return `<div style="padding:var(--spacing-3) var(--spacing-5);background:var(--color-amber-100);border-bottom:1px solid var(--color-amber-500);font-size:var(--font-size-2);display:flex;align-items:flex-start;gap:var(--spacing-2);color:var(--color-amber-700);">
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-top:1px;flex-shrink:0;"><circle cx="8" cy="8" r="6"/><path d="M8 5v3M8 11v.5" stroke-linecap="round"/></svg>
-      <div><strong>Watermarked version available</strong> · Original requires approval via Request access.</div>
+      <div><strong>Watermarked available</strong> · request access for the Original.</div>
     </div>`;
   }
   return '';
@@ -2810,8 +2848,8 @@ function renderBulkBar(scenario) {
         ${downloadAsItem}
         ${requestItem}
         <div class="bulk-action-item">${queueIcon}<span>Add to download queue</span></div>
-        <div class="bulk-action-item">${collectionIcon}<span>Add to Collection</span></div>
-        <div class="bulk-action-item">${editIcon}<span>Bulk Edit</span></div>
+        <div class="bulk-action-item">${collectionIcon}<span>Add to collection</span></div>
+        <div class="bulk-action-item">${editIcon}<span>Bulk edit</span></div>
         <div class="bulk-actions-divider"></div>
         <div class="bulk-action-item destructive">${trashIcon}<span>Delete</span></div>
       </div>
@@ -3075,7 +3113,8 @@ function renderRequestModal(scenario) {
   // original file?" intro step), unified "You'll be notified by email." copy.
   const state = getScenarioState(scenario.id);
   const bulkReq = scenario.id === 'restricted-bulk' ? 3 : (scenario.id === 'mixed' ? 1 : 0);
-  const hasRequestPath = ['geo', 'watermark', 'expired'].includes(scenario.id) || bulkReq > 0;
+  const isChannelGate = scenario.id === 'channel-restricted';
+  const hasRequestPath = ['geo', 'watermark', 'expired'].includes(scenario.id) || isChannelGate || bulkReq > 0;
   const assetName = bulkReq > 0
     ? `${bulkReq} restricted ${bulkReq === 1 ? 'file' : 'files'} selected`
     : (scenario.asset ? scenario.asset.name : 'F19_ownership-agency_USA_Marketing_Digital.jpg');
@@ -3085,6 +3124,33 @@ function renderRequestModal(scenario) {
   if (!hasRequestPath) {
     body = `<div style="font-size:var(--font-size-2);color:var(--text-subtle);line-height:1.5;background:var(--surface-muted);border:1px solid var(--border-default);border-radius:var(--radius-2);padding:var(--spacing-3) var(--spacing-4);">Request access doesn't apply to this state. The asset is either downloadable, or — for an embargo — unlocks automatically on its lift date. This surface is reached only from a restricted or expired asset.</div>`;
   } else if (state.requestAccess === 'submitted') {
+    if (isChannelGate) {
+      const ch = state.requestChannel || 'Social';
+      const inScope = state.requestScope !== 'outscope';
+      if (inScope) {
+        // Licensed channel → logged download, not a grant. Nothing to approve.
+        body = `
+          <div class="request-access-confirmed" style="margin:0;">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 8l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div>
+              <strong>Download ready</strong> · logged for ${ch}.
+              <span style="color:var(--text-subtle);font-weight:400;margin-left:var(--spacing-2);font-size:var(--font-size-1);">Your download will start automatically.</span>
+            </div>
+          </div>
+          <div style="margin-top:var(--spacing-4);font-size:var(--font-size-1);color:var(--text-subtle);line-height:1.5;border-left:2px solid var(--primary-default);padding:var(--spacing-2) var(--spacing-3);background:var(--surface-muted);border-radius:0 var(--radius-2) var(--radius-2) 0;"><strong style="color:var(--text-default);">Model note:</strong> in-scope use is a <em>logged download, not a grant</em> — the asset is licensed for ${ch}, so there is nothing to approve. The channel + user + date is the record (usage lineage / SCR-178). Copy never says "approved."</div>`;
+      } else {
+        // Unlicensed channel → the only genuine request. A human decides.
+        body = `
+          <div style="display:flex;gap:var(--spacing-3);align-items:flex-start;background:var(--color-amber-100);border:1px solid var(--color-amber-500);border-radius:var(--radius-2);padding:var(--spacing-3) var(--spacing-4);color:var(--color-amber-700);">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="flex-shrink:0;margin-top:1px;"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5l2 1" stroke-linecap="round"/></svg>
+            <div>
+              <strong>Request sent</strong> · pending review.
+              <span style="color:var(--color-amber-700);font-weight:400;margin-left:var(--spacing-2);font-size:var(--font-size-1);">${ch} isn't covered by this asset's licence, so it's gone to the rights manager. You'll be notified by email.</span>
+            </div>
+          </div>
+          <div style="margin-top:var(--spacing-4);font-size:var(--font-size-1);color:var(--text-subtle);line-height:1.5;border-left:2px solid var(--primary-default);padding:var(--spacing-2) var(--spacing-3);background:var(--surface-muted);border-radius:0 var(--radius-2) var(--radius-2) 0;"><strong style="color:var(--text-default);">Model note:</strong> out-of-scope is the <em>only</em> genuine request — the use is outside the licence, so a human allows the exception or extends the licence. In-scope is never reviewed (rubber-stamping breeds approval fatigue and buries the requests that matter).</div>`;
+      }
+    } else {
     const confirmLead = bulkReq > 1
       ? `<strong>${bulkReq} requests sent</strong> · pending review by 2 rights managers.`
       : `<strong>Request sent</strong> · Pending review by the rights manager.`;
@@ -3100,12 +3166,26 @@ function renderRequestModal(scenario) {
         </div>
       </div>
       <div style="margin-top:var(--spacing-4);font-size:var(--font-size-1);color:var(--text-subtle);line-height:1.5;border-left:2px solid var(--primary-default);padding:var(--spacing-2) var(--spacing-3);background:var(--surface-muted);border-radius:0 var(--radius-2) var(--radius-2) 0;">${fanNote}</div>`;
+    }
   } else {
     // Straight to the form — no collapsed intro step (audit fix #4).
+    const channelAttest = isChannelGate ? `
+        <div>
+          <div style="font-weight:var(--font-weight-semibold);font-size:var(--font-size-2);">Which channel is this for?</div>
+          <div style="font-size:var(--font-size-1);color:var(--text-subtle);margin-top:2px;">The Original is licensed by channel. Confirm where you'll use it — this is recorded with the download.</div>
+          <select id="channel-select-${scenario.id}" style="width:100%;margin-top:var(--spacing-2);padding:var(--spacing-2) var(--spacing-3);border:1px solid var(--border-default);border-radius:var(--radius-2);font-family:inherit;font-size:var(--font-size-2);background:white;color:var(--text-default);">
+            <option>Social</option>
+            <option>Web</option>
+            <option>Print</option>
+            <option>OOH</option>
+            <option>Broadcast</option>
+          </select>
+        </div>` : '';
     const savedNote = modalState.savedReason
       ? `<span class="request-access-saved"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8l3 3 7-7"/></svg> Reason from your last request — edit if different</span>` : '';
     body = `
       <div class="request-access-form" style="margin:0;">
+        ${channelAttest}
         <div>
           <div style="font-weight:var(--font-weight-semibold);font-size:var(--font-size-2);">Explain why you need access</div>
           <div style="font-size:var(--font-size-1);color:var(--text-subtle);margin-top:2px;">Sent to ${bulkReq > 1 ? "each asset's rights manager" : "the asset's rights manager"}. You'll be notified by email.</div>
@@ -3166,7 +3246,7 @@ function renderModal(scenario) {
         <svg class="modal-banner-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="10" height="8" rx="1"/><path d="M5 6V4a3 3 0 016 0v2"/></svg>
         <div>
           <div class="modal-banner-title">Embargoed until ${scenario.embargoDate}</div>
-          <div class="modal-banner-body">Final downloads are not available until this date. Asset stays in your queue and becomes downloadable when the embargo lifts.</div>
+          <div class="modal-banner-body">Available from this date. It stays in your queue and unlocks automatically when the embargo lifts.</div>
         </div>
       </div>`;
   } else if (scenario.id === 'expired') {
@@ -3175,7 +3255,7 @@ function renderModal(scenario) {
         <svg class="modal-banner-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 5l6 6M11 5l-6 6" stroke-linecap="round"/></svg>
         <div>
           <div class="modal-banner-title">Licence expired on ${scenario.expiryDate}</div>
-          <div class="modal-banner-body">Final downloads are not available. Use Request access below to escalate to the rights manager.</div>
+          <div class="modal-banner-body">This licence has expired. Request access from the rights manager below.</div>
         </div>
       </div>`;
   } else if (scenario.id === 'geo') {
@@ -3184,7 +3264,7 @@ function renderModal(scenario) {
         <svg class="modal-banner-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2c2 2 3 4 3 6s-1 4-3 6c-2-2-3-4-3-6s1-4 3-6"/></svg>
         <div>
           <div class="modal-banner-title">Licensed for: ${scenario.licensedFor}</div>
-          <div class="modal-banner-body">Your profile does not meet all criteria. Watermarked version preselected as Best available; original requires access request.</div>
+          <div class="modal-banner-body">Your profile doesn't meet all criteria, so the Watermarked version is preselected. Request access for the Original.</div>
         </div>
       </div>`;
   } else if (scenario.id === 'embargo-preview') {
@@ -3196,13 +3276,22 @@ function renderModal(scenario) {
           <div class="modal-banner-body">You can download the watermarked preview immediately for drafting. The Original unlocks automatically when the embargo lifts — nothing to request.</div>
         </div>
       </div>`;
+  } else if (scenario.id === 'channel-restricted') {
+    bannerHtml = `
+      <div class="modal-banner amber">
+        <svg class="modal-banner-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2c2 2 3 4 3 6s-1 4-3 6c-2-2-3-4-3-6s1-4 3-6"/></svg>
+        <div>
+          <div class="modal-banner-title">Licensed for Social / Digital only</div>
+          <div class="modal-banner-body">Watermarked is preselected. The Original is channel-gated — we can't track where a downloaded Original ends up, so getting it needs a request with the intended channel attested. Print and OOH formats are unavailable on this licence.</div>
+        </div>
+      </div>`;
   } else if (scenario.id === 'mixed') {
     bannerHtml = `
       <div class="modal-banner amber">
         <svg class="modal-banner-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v6M8 11v.5" stroke-linecap="round"/><circle cx="8" cy="8" r="6"/></svg>
         <div>
           <div class="modal-banner-title">Some options unavailable</div>
-          <div class="modal-banner-body">One asset in this selection is restricted. Original file is hidden because it's not licensed across all selected assets.</div>
+          <div class="modal-banner-body">One asset is restricted, so the Original is unavailable for the whole selection.</div>
         </div>
       </div>`;
   }
@@ -3238,7 +3327,7 @@ function renderModal(scenario) {
           </div>
         </div>
       </div>`;
-  } else if (scenario.id === 'geo' || scenario.id === 'watermark' || scenario.id === 'embargo-preview') {
+  } else if (scenario.id === 'geo' || scenario.id === 'watermark' || scenario.id === 'embargo-preview' || scenario.id === 'channel-restricted') {
     // Watermarked preselected, Original disabled
     versionsHtml = `
       <div>
@@ -3262,7 +3351,7 @@ function renderModal(scenario) {
             <div class="version-check"></div>
             <div class="version-info">
               <div class="version-title">Original file <svg class="lock-icon" width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="7" width="10" height="7" rx="1"/><path d="M5 7V5a3 3 0 016 0v2"/></svg></div>
-              <div class="version-desc">${scenario.id === 'geo' ? 'Restricted for your profile' : scenario.id === 'watermark' ? 'Requires approval' : 'Releases ' + scenario.embargoDate}</div>
+              <div class="version-desc">${scenario.id === 'geo' ? 'Restricted for your profile' : scenario.id === 'watermark' ? 'Requires approval' : scenario.id === 'channel-restricted' ? 'Channel-gated · request + attest' : 'Releases ' + scenario.embargoDate}</div>
             </div>
             <div class="version-specs">Full resolution</div>
           </div>
@@ -3402,7 +3491,43 @@ function renderModal(scenario) {
 
   // Format section (skip for fully blocked)
   let formatHtml = '';
-  if (scenario.id !== 'embargoed' && scenario.id !== 'expired') {
+  if (scenario.id === 'channel-restricted') {
+    // Channel gate: templates are offered only where the target channel is in the
+    // asset's Licensed Channels. This asset is Social/Digital only, so print and OOH
+    // crops are disabled — offering them would be a point-of-use rights breach.
+    // (Tiles render from the permitted version — here Watermarked, since Original is gated.)
+    formatHtml = `
+      <div>
+        <div class="modal-section-heading">Available formats <span class="modal-section-heading-counter">1 selected · Social/Digital licensed</span></div>
+        <div class="format-grid">
+          <div class="format-tile selected">
+            <div class="format-tile-name">Instagram Square</div>
+            <div class="format-tile-spec">1:1 ratio</div>
+            <div class="format-tile-channel">Social</div>
+          </div>
+          <div class="format-tile">
+            <div class="format-tile-name">Facebook Feed</div>
+            <div class="format-tile-spec">1080 × 566</div>
+            <div class="format-tile-channel">Social</div>
+          </div>
+          <div class="format-tile">
+            <div class="format-tile-name">Web Hero</div>
+            <div class="format-tile-spec">1920 × 800</div>
+            <div class="format-tile-channel">Web</div>
+          </div>
+          <div class="format-tile disabled" title="Not licensed for OOH">
+            <div class="format-tile-name">Billboard 48-sheet</div>
+            <div class="format-tile-spec">6096 × 3048</div>
+            <div class="format-tile-reason">⚠ Not licensed for OOH</div>
+          </div>
+          <div class="format-tile disabled" title="Not licensed for Print">
+            <div class="format-tile-name">Print A4</div>
+            <div class="format-tile-spec">300dpi CMYK</div>
+            <div class="format-tile-reason">⚠ Not licensed for Print</div>
+          </div>
+        </div>
+      </div>`;
+  } else if (scenario.id !== 'embargoed' && scenario.id !== 'expired') {
     formatHtml = `
       <div>
         <div class="modal-section-heading">Available formats <span class="modal-section-heading-counter">1 selected</span></div>
@@ -3531,7 +3656,7 @@ function renderPerAssetAccordion(scenario, state) {
         `;
       }).join('')}
       <div style="font-size:var(--font-size-1);color:var(--text-subtle);text-align:center;padding:var(--spacing-2);">
-        Each asset configured independently. Try clicking a row to expand.
+        Each asset is configured independently.
       </div>
     </div>
   `;
@@ -3627,7 +3752,15 @@ function submitRequestAccess(scenarioId) {
   if (textarea && textarea.value.trim()) {
     modalState.savedReason = textarea.value.trim();
   }
-  getScenarioState(scenarioId).requestAccess = 'submitted';
+  const st = getScenarioState(scenarioId);
+  // Channel gate: the attested channel decides the path — a licensed channel is a
+  // logged download (nothing to approve), an unlicensed one is a reviewed request.
+  const chSel = document.getElementById(`channel-select-${scenarioId}`);
+  if (chSel) {
+    st.requestChannel = chSel.value;
+    st.requestScope = (chSel.value === 'Social' || chSel.value === 'Web') ? 'inscope' : 'outscope';
+  }
+  st.requestAccess = 'submitted';
   renderSurface();
 }
 
