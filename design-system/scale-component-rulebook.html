@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scale Component Rulebook v0.1 — Screendragon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   LAYER 1 — PRIMITIVES (mirrored from Scale, do not author here)
+   ============================================================ */
+:root {
+  --neutral-1: #fdfdfc;
+  --neutral-2: #f9f9f8;
+  --neutral-3: #f1f0ef;
+  --neutral-4: #e9e8e6;
+  --neutral-5: #e2e1de;
+  --neutral-6: #dad9d6;
+  --neutral-7: #d0ceca;
+  --neutral-8: #bcbbb6;
+  --neutral-9: #8e8d86;
+  --neutral-10: #83827c;
+  --neutral-11: #64635e;
+  --neutral-12: #21201c;
+
+  --neutral-alpha-3: rgba(32, 16, 0, 0.06);
+  --neutral-alpha-5: rgba(31, 24, 0, 0.13);
+  --neutral-alpha-7: rgba(29, 20, 0, 0.21);
+
+  /* Cerulean — accent. Step 11 is HAND-CORRECTED. See Law 1. */
+  --accent-1:  #FAFEFF;
+  --accent-2:  #F3FAFD;
+  --accent-3:  #E4F5FC;
+  --accent-4:  #D5EFF9;
+  --accent-5:  #C4E5F3;
+  --accent-6:  #B0D9E9;
+  --accent-7:  #95C9DD;
+  --accent-8:  #6CB3CE;
+  --accent-9:  #0B6E8A;
+  --accent-10: #005F7B;
+  --accent-11: #0d5266;   /* was #197592 — corrected, non-monotonic */
+  --accent-12: #1B404E;
+
+  /* State hues — tomato / amber / jade. Steps 3, 7, 11, 12.
+     Step 7 is NEW (border role). Warning step 7 is hand-tuned. */
+  --tomato-3:  #feebe7;
+  --tomato-7:  #ffac94;   /* new */
+  --tomato-11: #cf3716;
+  --tomato-12: #5c281c;
+
+  --amber-3:  #fff0cb;
+  --amber-7:  #eeb95f;    /* new, hand-tuned — see Law 1 note */
+  --amber-11: #a96600;
+  --amber-12: #4d3618;
+
+  --jade-3:  #e4f7f0;
+  --jade-7:  #8bceb6;     /* new */
+  --jade-11: #008062;
+  --jade-12: #1d3b31;
+}
+
+/* ============================================================
+   LAYER 2 — SEMANTIC
+   ============================================================ */
+:root {
+  --surface-default: var(--neutral-1);
+  --surface-subtle:  var(--neutral-2);
+  --surface-muted:   var(--neutral-3);
+
+  --text-default: var(--neutral-12);
+  --text-muted:   var(--neutral-11);
+  --text-subtle:  var(--neutral-10);
+
+  --border-default:  var(--neutral-6);
+  --border-subtle:   var(--neutral-3);
+  --border-emphasis: var(--neutral-7);
+
+  --primary-default: var(--accent-9);
+  --primary-hover:   var(--accent-10);
+  --primary-text:    var(--accent-11);
+  --primary-border:  var(--accent-7);
+
+  /* --- STATE ROLE TOKENS — the four-role model. Law 2. ---
+     Note the role names. There is no -bg and no -fg, because those
+     names are what let one value do three jobs. */
+  --state-error-surface: var(--tomato-3);
+  --state-error-border:  var(--tomato-7);
+  --state-error-icon:    var(--tomato-11);
+  --state-error-text:    var(--tomato-12);
+
+  --state-warning-surface: var(--amber-3);
+  --state-warning-border:  var(--amber-7);
+  --state-warning-icon:    var(--amber-11);
+  --state-warning-text:    var(--amber-12);
+
+  --state-success-surface: var(--jade-3);
+  --state-success-border:  var(--jade-7);
+  --state-success-icon:    var(--jade-11);
+  --state-success-text:    var(--jade-12);
+
+  --state-info-surface: var(--accent-3);
+  --state-info-border:  var(--accent-7);
+  --state-info-icon:    var(--accent-11);
+  --state-info-text:    var(--accent-12);
+
+  --focus-ring-color: var(--accent-9);
+
+  /* Hue-neutral interaction overlays — legal on any surface, tinted or not */
+  --overlay-hover:  var(--neutral-alpha-3);
+  --overlay-active: var(--neutral-alpha-5);
+
+  --radius-1: 3px; --radius-2: 5px; --radius-3: 8px; --radius-4: 12px; --radius-full: 9999px;
+  --spacing-1: 4px; --spacing-2: 8px; --spacing-3: 12px; --spacing-4: 16px;
+  --spacing-5: 20px; --spacing-6: 24px; --spacing-7: 32px; --spacing-8: 40px; --spacing-9: 48px;
+  --font-family-text: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-family-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-size-0: 12px; --font-size-1: 13px; --font-size-2: 14px; --font-size-3: 16px;
+  --font-size-4: 20px; --font-size-5: 26px; --font-size-6: 34px;
+  --font-weight-medium: 500; --font-weight-semibold: 600; --font-weight-bold: 700;
+  --shadow-sm: 0 1px 2px rgba(33,32,28,.06), 0 1px 3px rgba(33,32,28,.05);
+  --shadow-md: 0 2px 4px rgba(33,32,28,.06), 0 4px 12px rgba(33,32,28,.07);
+}
+
+/* ============================================================
+   DOCUMENT CHROME (not part of the spec)
+   ============================================================ */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--surface-default); color: var(--text-default);
+  font-family: var(--font-family-text); font-size: var(--font-size-2); line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.doc-wrapper { display: flex; min-height: 100vh; }
+
+.doc-nav {
+  width: 268px; flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  background: var(--surface-subtle); border-right: 1px solid var(--border-subtle);
+  padding: var(--spacing-6) 0 var(--spacing-9);
+}
+.doc-nav-title {
+  font-size: var(--font-size-2); font-weight: var(--font-weight-bold);
+  padding: 0 var(--spacing-6) var(--spacing-1); letter-spacing: -0.01em;
+}
+.doc-nav-version {
+  font-family: var(--font-family-mono); font-size: 11px; color: var(--text-subtle);
+  padding: 0 var(--spacing-6) var(--spacing-5);
+}
+.doc-nav-section {
+  font-size: 11px; font-weight: var(--font-weight-semibold); text-transform: uppercase;
+  letter-spacing: .07em; color: var(--text-subtle);
+  padding: var(--spacing-5) var(--spacing-6) var(--spacing-2);
+}
+.doc-nav a {
+  display: block; padding: 5px var(--spacing-6); color: var(--text-muted);
+  text-decoration: none; font-size: var(--font-size-1); border-left: 2px solid transparent;
+}
+.doc-nav a:hover { color: var(--text-default); background: var(--neutral-alpha-3); }
+.doc-nav a.pending { color: var(--text-subtle); }
+.doc-nav a.pending::after {
+  content: 'stub'; float: right; font-family: var(--font-family-mono);
+  font-size: 10px; color: var(--text-subtle); opacity: .7;
+}
+
+.doc-main { flex: 1; min-width: 0; padding: var(--spacing-9) var(--spacing-9) 120px; max-width: 1020px; }
+
+h1 { font-size: var(--font-size-6); font-weight: var(--font-weight-bold); letter-spacing: -.025em; margin: 0 0 var(--spacing-3); }
+h2 {
+  font-size: var(--font-size-5); font-weight: var(--font-weight-bold); letter-spacing: -.02em;
+  margin: var(--spacing-9) 0 var(--spacing-4); padding-top: var(--spacing-5);
+  border-top: 1px solid var(--border-subtle);
+}
+h3 { font-size: var(--font-size-4); font-weight: var(--font-weight-semibold); letter-spacing: -.012em; margin: var(--spacing-7) 0 var(--spacing-3); }
+h4 { font-size: var(--font-size-3); font-weight: var(--font-weight-semibold); margin: var(--spacing-6) 0 var(--spacing-2); }
+p { margin: 0 0 var(--spacing-4); max-width: 74ch; }
+ul, ol { max-width: 74ch; padding-left: var(--spacing-5); }
+li { margin-bottom: var(--spacing-2); }
+code {
+  font-family: var(--font-family-mono); font-size: .88em;
+  background: var(--surface-muted); padding: 1px 5px; border-radius: var(--radius-1);
+}
+.lede { font-size: var(--font-size-3); color: var(--text-muted); max-width: 70ch; }
+
+table { border-collapse: collapse; width: 100%; margin: var(--spacing-4) 0 var(--spacing-6); font-size: var(--font-size-1); }
+th, td { text-align: left; padding: var(--spacing-2) var(--spacing-3); border-bottom: 1px solid var(--border-subtle); vertical-align: top; }
+th { font-weight: var(--font-weight-semibold); color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; border-bottom-color: var(--border-default); }
+td.mono, th.mono { font-family: var(--font-family-mono); font-size: 12px; }
+.chip { display: inline-block; width: 13px; height: 13px; border-radius: 3px; border: 1px solid var(--neutral-alpha-7); vertical-align: -2px; margin-right: 6px; }
+.pass { color: #008062; font-weight: var(--font-weight-semibold); }
+.fail { color: #cf3716; font-weight: var(--font-weight-semibold); }
+
+.example-block { border: 1px solid var(--border-default); border-radius: var(--radius-3); overflow: hidden; margin: var(--spacing-5) 0 var(--spacing-6); }
+.example-label {
+  font-size: 11px; font-weight: var(--font-weight-semibold); text-transform: uppercase;
+  letter-spacing: .06em; color: var(--text-muted); padding: var(--spacing-3) var(--spacing-4);
+  background: var(--surface-subtle); border-bottom: 1px solid var(--border-subtle);
+}
+.example-render { padding: var(--spacing-6); background: var(--surface-default); display: flex; flex-direction: column; gap: var(--spacing-4); }
+.example-code {
+  font-family: var(--font-family-mono); font-size: 12px; line-height: 1.65; white-space: pre;
+  overflow-x: auto; padding: var(--spacing-4); background: var(--neutral-12); color: #eeedea;
+  border-top: 1px solid var(--border-subtle);
+}
+.example-code .c { color: #8e8d86; }
+.example-code .k { color: #6CB3CE; }
+
+.callout { border: 1px solid var(--border-default); border-left: 3px solid var(--primary-default); border-radius: var(--radius-2); padding: var(--spacing-4) var(--spacing-5); margin: var(--spacing-5) 0; background: var(--surface-subtle); }
+.callout-title { font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-1); font-size: var(--font-size-2); }
+.callout p:last-child { margin-bottom: 0; }
+.callout.warn { border-left-color: var(--amber-11); }
+.callout.stop { border-left-color: var(--tomato-11); }
+
+.law { border: 1px solid var(--border-default); border-radius: var(--radius-3); padding: var(--spacing-5); margin: var(--spacing-4) 0; background: var(--surface-default); }
+.law-no { font-family: var(--font-family-mono); font-size: 11px; color: var(--text-subtle); letter-spacing: .08em; text-transform: uppercase; }
+.law-statement { font-size: var(--font-size-3); font-weight: var(--font-weight-semibold); letter-spacing: -.01em; margin: 4px 0 var(--spacing-3); max-width: 62ch; }
+
+.rules { counter-reset: rule; list-style: none; padding: 0; max-width: 78ch; }
+.rules li { counter-increment: rule; position: relative; padding-left: 46px; margin-bottom: var(--spacing-4); }
+.rules li::before {
+  content: counter(rule, decimal-leading-zero); position: absolute; left: 0; top: 1px;
+  font-family: var(--font-family-mono); font-size: 11px; font-weight: var(--font-weight-medium);
+  color: var(--text-subtle); border: 1px solid var(--border-default); border-radius: var(--radius-1);
+  padding: 2px 6px; background: var(--surface-subtle);
+}
+.must { font-weight: var(--font-weight-semibold); }
+.mustnot { font-weight: var(--font-weight-semibold); color: var(--tomato-11); }
+
+.stub { border: 1px dashed var(--border-emphasis); border-radius: var(--radius-3); padding: var(--spacing-5); color: var(--text-muted); background: var(--surface-subtle); margin: var(--spacing-4) 0; }
+.stub-h { font-weight: var(--font-weight-semibold); color: var(--text-default); margin-bottom: var(--spacing-1); }
+
+.status-bar { display: flex; gap: var(--spacing-6); flex-wrap: wrap; padding: var(--spacing-4) var(--spacing-5); border: 1px solid var(--border-default); border-radius: var(--radius-3); background: var(--surface-subtle); margin-bottom: var(--spacing-7); font-size: var(--font-size-1); }
+.status-bar dt { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-subtle); }
+.status-bar dd { margin: 2px 0 0; font-weight: var(--font-weight-medium); }
+
+.ramp { display: flex; border-radius: var(--radius-2); overflow: hidden; border: 1px solid var(--border-default); }
+.ramp div { flex: 1; height: 52px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; font-family: var(--font-family-mono); font-size: 10px; }
+
+/* ============================================================
+   LAYER 3 — COMPONENT TOKENS + COMPONENT CSS
+   This block is the reference implementation. It is the spec.
+   ============================================================ */
+
+/* ---------- INLINE ALERT ---------- */
+.sd-alert {
+  /* Component tokens. A variant sets these four and nothing else. */
+  --alert-surface: var(--state-info-surface);
+  --alert-border:  var(--state-info-border);
+  --alert-icon:    var(--state-info-icon);
+  --alert-text:    var(--state-info-text);
+
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--spacing-3);
+  align-items: start;
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--alert-surface);
+  border: 1px solid var(--alert-border);
+  border-radius: var(--radius-2);
+  color: var(--alert-text);
+  font-size: var(--font-size-2);
+  line-height: 1.5;
+}
+.sd-alert[data-state="error"]   { --alert-surface: var(--state-error-surface);   --alert-border: var(--state-error-border);   --alert-icon: var(--state-error-icon);   --alert-text: var(--state-error-text); }
+.sd-alert[data-state="warning"] { --alert-surface: var(--state-warning-surface); --alert-border: var(--state-warning-border); --alert-icon: var(--state-warning-icon); --alert-text: var(--state-warning-text); }
+.sd-alert[data-state="success"] { --alert-surface: var(--state-success-surface); --alert-border: var(--state-success-border); --alert-icon: var(--state-success-icon); --alert-text: var(--state-success-text); }
+.sd-alert[data-state="info"]    { --alert-surface: var(--state-info-surface);    --alert-border: var(--state-info-border);    --alert-icon: var(--state-info-icon);    --alert-text: var(--state-info-text); }
+
+.sd-alert__icon { width: 18px; height: 18px; flex-shrink: 0; color: var(--alert-icon); margin-top: 1px; }
+.sd-alert__body { min-width: 0; }
+.sd-alert__title { font-weight: var(--font-weight-semibold); margin: 0 0 2px; }
+.sd-alert__message { margin: 0; max-width: 68ch; }
+.sd-alert__message a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.sd-alert__actions { display: flex; gap: var(--spacing-4); margin-top: var(--spacing-3); }
+.sd-alert__action {
+  background: none; border: 0; padding: 0; font: inherit; color: inherit;
+  font-weight: var(--font-weight-semibold); text-decoration: underline;
+  text-underline-offset: 3px; cursor: pointer; border-radius: var(--radius-1);
+}
+.sd-alert__dismiss {
+  width: 24px; height: 24px; display: grid; place-items: center; flex-shrink: 0;
+  background: none; border: 0; padding: 0; cursor: pointer;
+  color: var(--alert-icon); border-radius: var(--radius-1); position: relative;
+}
+/* 44px hit target without a 44px box */
+.sd-alert__dismiss::after { content: ''; position: absolute; inset: -10px; }
+.sd-alert__dismiss:hover { background: var(--overlay-hover); }
+.sd-alert__dismiss:active { background: var(--overlay-active); }
+.sd-alert :is(.sd-alert__dismiss, .sd-alert__action):focus-visible {
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 2px;
+}
+.sd-alert--quiet { border-color: transparent; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+@media (prefers-reduced-motion: reduce) { * { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+@media (max-width: 900px) { .doc-nav { display: none; } .doc-main { padding: var(--spacing-6) var(--spacing-5) 80px; } }
+</style>
+</head>
+<body>
+<div class="doc-wrapper">
+
+<nav class="doc-nav">
+  <div class="doc-nav-title">Scale Component Rulebook</div>
+  <div class="doc-nav-version">v0.1 · draft · unreleased</div>
+
+  <div class="doc-nav-section">Part 0 — Front matter</div>
+  <a href="#how-to-read">0.1 How to read this book</a>
+  <a href="#laws">0.2 The four laws</a>
+  <a href="#layers">0.3 Token layers and reach</a>
+  <a href="#roles">0.4 The role model</a>
+  <a href="#pairing">0.5 The pairing contract</a>
+  <a href="#shared">0.6 Shared baselines</a>
+  <a href="#conformance">0.7 Conformance method</a>
+
+  <div class="doc-nav-section">Part 1 — State-bearing</div>
+  <a href="#alert">1.1 Inline alert</a>
+  <a href="#toast" class="pending">1.2 Toast</a>
+  <a href="#banner" class="pending">1.3 Banner</a>
+
+  <div class="doc-nav-section">Part 2 — Overlays</div>
+  <a href="#modal" class="pending">2.1 Modal</a>
+  <a href="#drawer" class="pending">2.2 Drawer</a>
+
+  <div class="doc-nav-section">Part 3 — Anchored</div>
+  <a href="#tooltip" class="pending">3.1 Tooltip</a>
+  <a href="#popover" class="pending">3.2 Popover</a>
+
+  <div class="doc-nav-section">Appendices</div>
+  <a href="#a-new-tokens" class="pending">A. Tokens this book adds</a>
+  <a href="#b-migration" class="pending">B. Migration mapping</a>
+</nav>
+
+<main class="doc-main">
+
+<h1>Scale Component Rulebook</h1>
+<p class="lede">How Scale components are built, so that the React migration and the tenant migration build the same thing from one spec. This book is normative. Where it disagrees with Unity, Unity is wrong.</p>
+
+<dl class="status-bar">
+  <div><dt>Version</dt><dd>0.1 — draft, unreleased</dd></div>
+  <div><dt>Status</dt><dd>Front matter + 1.1 written. Rest stubbed.</dd></div>
+  <div><dt>Source of truth</dt><dd>Scale tokens · this book for component rules</dd></div>
+  <div><dt>Framework</dt><dd>None. HTML + CSS custom properties.</dd></div>
+  <div><dt>Derived from</dt><dd>Unity conformance audit</dd></div>
+</dl>
+
+<!-- =========================================================
+     PART 0
+     ========================================================= -->
+
+<h2 id="how-to-read">0.1 How to read this book</h2>
+
+<p>Every component section has the same eight parts, in the same order. If you are implementing, you can read parts 3, 5 and 8 and ignore the rest.</p>
+
+<table>
+  <thead><tr><th style="width:38px">#</th><th style="width:190px">Part</th><th>What it is for</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">1</td><td>Purpose and boundary</td><td>What it is, and which component to use instead when it is the wrong one. Boundaries are why we ended up with three modal systems.</td></tr>
+    <tr><td class="mono">2</td><td>Anatomy</td><td>Named parts. The names are the class names.</td></tr>
+    <tr><td class="mono">3</td><td>Token map by role</td><td>Every part, its token, what it resolves to, and its measured contrast against <em>its own surface</em>. Normative.</td></tr>
+    <tr><td class="mono">4</td><td>Required states</td><td>Variants and interaction states. If it is listed here, shipping without it is incomplete, not minimal.</td></tr>
+    <tr><td class="mono">5</td><td>Accessibility — hard rules</td><td>Numbered MUST / MUST NOT. Each one is testable by a human in under ten seconds.</td></tr>
+    <tr><td class="mono">6</td><td>Behaviour</td><td>Timing, stacking, dismissal, focus movement, announcement.</td></tr>
+    <tr><td class="mono">7</td><td>Rendered example</td><td>Live, in this page, using only tokens. If it renders here it is buildable anywhere.</td></tr>
+    <tr><td class="mono">8</td><td>Markup contract</td><td>The DOM that Vue 2 and React must both produce. This is what makes the spec framework-agnostic and what makes conformance greppable.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-title">Why a rendered example and a markup contract, rather than a component library</div>
+  <p>A library commits to a framework and dates immediately — Unity is Vue 2, Scale targets React. A contract does not. Both implementations produce the same DOM and consume the same tokens, so a tenant stylesheet, a QA script and a designer's eye all target one thing. The library follows the contract; the contract does not follow the library.</p>
+</div>
+
+<h2 id="laws">0.2 The four laws</h2>
+
+<p>Four rules govern every component in this book. Everything downstream is application. Laws 1 and 2 are locked outputs of the conformance audit. Laws 3 and 4 are what the audit numbers force once you try to apply 1 and 2 to real components.</p>
+
+<div class="law">
+  <div class="law-no">Law 1</div>
+  <div class="law-statement">Fill, text and border are different steps of one colour. A hex is never reused across roles.</div>
+  <p>One value cannot satisfy three contrast obligations at once. The audit found the current skins using the same state hex as background 1,289 times, as text 1,193 times and as border 593 times — which is why warning sits at 1.81:1 and success at 3.39:1.</p>
+  <p><strong>Accent step 11 is hand-corrected to <code>#0d5266</code>.</strong> Verified in OKLCH: L 0.409, C 0.071, H 223.1° — between step 10 (L 0.453) and step 12 (L 0.351), hue drift under 1°, chroma tapering correctly toward 12. Monotonic. 8.69:1 on white, up from 5.25:1. The generator produced a lighter step 11 than step 9 because <code>#0B6E8A</code> is an unusually dark step 9 anchor; the ramp is now documented as hand-tuned, not generator output.</p>
+  <div class="ramp" style="margin-top:var(--spacing-4)">
+    <div style="background:var(--accent-7);color:var(--accent-12)">7</div>
+    <div style="background:var(--accent-8);color:var(--accent-12)">8</div>
+    <div style="background:var(--accent-9);color:#fff">9</div>
+    <div style="background:var(--accent-10);color:#fff">10</div>
+    <div style="background:var(--accent-11);color:#fff">11 ✓</div>
+    <div style="background:var(--accent-12);color:#fff">12</div>
+  </div>
+  <p style="margin-top:var(--spacing-3); font-size:var(--font-size-1); color:var(--text-muted)">A second hand-correction exists, for the same class of reason in the opposite direction: <strong>warning step 7</strong> (<code>#eeb95f</code>). Amber's anchor is unusually <em>light</em>, so a generated step 7 lands at 1.23:1 against its own step 3 and is invisible as a border. Both corrections belong in the ramp documentation as anchor-outlier fixes.</p>
+</div>
+
+<div class="law">
+  <div class="law-no">Law 2</div>
+  <div class="law-statement">A state is a set of roles, not a colour. It resolves to four ramp positions from one hue, contrast-correct by construction.</div>
+  <p>Surface, border, icon, text. Four roles, one hue, no judgement calls at the call site. A developer choosing a state never chooses a value.</p>
+</div>
+
+<div class="law">
+  <div class="law-no">Law 3</div>
+  <div class="law-statement">Contrast is a property of a pair, not of a step. Every token declares the surface it is legal against.</div>
+  <p>This is the correction that makes Law 1 survive contact with a tinted surface. "Step 11 is accessible text" is true on white and false on a state surface: on step 3, the three state step-11s measure 4.33, 4.05 and 4.42:1 — all under AA. On a tinted surface, text moves to step 12. See 0.5.</p>
+  <p>The same applies to borders. Accent step 7 on white is 1.80:1, so it is a legal container hairline and an <em>illegal</em> focus ring or sole state indicator, both of which owe 3:1.</p>
+</div>
+
+<div class="law">
+  <div class="law-no">Law 4</div>
+  <div class="law-statement">Step 9 has no role in a state-bearing surface. There is no solid state fill.</div>
+  <p>White text on step 9 measures 3.87:1 on error, 3.15:1 on success and 2.04:1 on warning. Three of four fail AA. Making solid state surfaces safe requires a per-hue on-fill token, which reintroduces exactly the judgement call Law 2 removes — and the audit shows what happens to judgement calls at 62,235 call sites.</p>
+  <p>So: no solid alerts, no solid toasts, no solid banners. Step 9 stays where it earns its contrast — accent fills and primary actions on white. Hue in the state group is carried by surface, border and icon.</p>
+</div>
+
+<div class="callout stop">
+  <div class="callout-title">Status and state are different things and must not share a namespace</div>
+  <p>Scale already ships <code>--status-active-*</code>, <code>--status-pending-*</code>, <code>--status-cancelled-*</code>. Those describe <em>a property of a record</em> — a job is on hold, a review is pending. They persist, they are filterable, they belong to data.</p>
+  <p>This book's <code>--state-*</code> tokens describe <em>a system response to an event</em> — the save failed, the export finished. They are ephemeral and belong to the interface.</p>
+  <p>They currently collide on hue: green means both "complete" and "success", amber means both "pending" and "warning". That collision is survivable, but sharing a token namespace is not — it guarantees someone eventually styles a toast with <code>--status-cancelled-bg</code> and nobody catches it in review. Keep the two vocabularies separate and the ambiguity stays visible.</p>
+</div>
+
+<h2 id="layers">0.3 Token layers and reach</h2>
+
+<p>Three layers. The rule that matters is not what each layer contains, it is <strong>how far into the stack each layer is allowed to reach.</strong></p>
+
+<table>
+  <thead><tr><th style="width:130px">Layer</th><th>Contains</th><th>May reference</th><th>May be referenced by</th></tr></thead>
+  <tbody>
+    <tr><td><strong>1 · Primitive</strong></td><td class="mono">--accent-9, --amber-11</td><td>Nothing. Literal values.</td><td>Layer 2 only.</td></tr>
+    <tr><td><strong>2 · Semantic</strong></td><td class="mono">--state-warning-icon, --text-default</td><td>Layer 1.</td><td>Layer 3, and application CSS.</td></tr>
+    <tr><td><strong>3 · Component</strong></td><td class="mono">--alert-surface, --modal-backdrop</td><td>Layer 2. Never layer 1.</td><td>The component's own rules only.</td></tr>
+  </tbody>
+</table>
+
+<p><strong>A component stylesheet that references a primitive is non-conformant, even when the value is right.</strong> This is the single check with the highest leverage in the book: it is one grep, it has no false negatives, and it catches the failure mode the audit found in the chatbot widget — a step 11 value pinned into the step 9 slot, where the instinct was correct, the slot was wrong, and the review passed because the value looked reasonable.</p>
+
+<div class="callout warn">
+  <div class="callout-title">Layer 3 is not optional decoration</div>
+  <p>Variants set component tokens and nothing else. The alert has one background declaration in the entire component; the four variants each set four custom properties. That is what makes a fifth state a four-line change instead of a new rule block, and it is why the audit's finding that no overlay has any state variant is a cheap fix rather than a rewrite — once the layer exists.</p>
+</div>
+
+<h2 id="roles">0.4 The role model</h2>
+
+<p>Four roles. They are named for what they colour, not for the CSS property they land in, because <code>-bg</code> and <code>-fg</code> are the names that let one value do three jobs.</p>
+
+<table>
+  <thead><tr><th style="width:110px">Role</th><th style="width:80px">Step</th><th>Obligation</th><th>Applies to</th></tr></thead>
+  <tbody>
+    <tr><td><strong>surface</strong></td><td class="mono">3</td><td>None — it is the reference, not the referent</td><td><code>background</code></td></tr>
+    <tr><td><strong>border</strong></td><td class="mono">7</td><td>1.5–1.7:1 against its own surface. Decorative: it may not be the sole carrier of meaning, so it owes no 3:1.</td><td><code>border-color</code>, dividers</td></tr>
+    <tr><td><strong>icon</strong></td><td class="mono">11</td><td>≥3:1 against its own surface (WCAG 1.4.11 — it <em>is</em> a carrier of meaning)</td><td>glyph <code>color</code>, <code>fill</code></td></tr>
+    <tr><td><strong>text</strong></td><td class="mono">12</td><td>≥4.5:1 against its own surface — in practice ≥9.9:1</td><td>body <code>color</code>, links</td></tr>
+  </tbody>
+</table>
+
+<p>Note what is absent. There is no <code>fill</code> role in this group, per Law 4. And <strong>step 12 as text is not a compromise, it is the point</strong>: hue is carried by the surface, border and icon, so the text is free to be a hue-tinted near-black and simply be readable. Every state, every theme, no exceptions to remember.</p>
+
+<h2 id="pairing">0.5 The pairing contract</h2>
+
+<p>All values measured against the surface each is used on, not against page white. Sources: tomato, amber and jade at steps 3/7/11/12; Cerulean at 3/7/11/12 with the corrected step 11.</p>
+
+<table>
+  <thead>
+    <tr><th>State</th><th class="mono">surface</th><th class="mono">border</th><th>border : surface</th><th class="mono">icon</th><th>icon : surface</th><th class="mono">text</th><th>text : surface</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Error</strong></td>
+      <td class="mono"><span class="chip" style="background:#feebe7"></span>#feebe7</td>
+      <td class="mono"><span class="chip" style="background:#ffac94"></span>#ffac94</td><td>1.58 <span class="pass">✓</span></td>
+      <td class="mono"><span class="chip" style="background:#cf3716"></span>#cf3716</td><td>4.33 <span class="pass">✓</span></td>
+      <td class="mono"><span class="chip" style="background:#5c281c"></span>#5c281c</td><td>10.28 <span class="pass">✓</span></td>
+    </tr>
+    <tr>
+      <td><strong>Warning</strong></td>
+      <td class="mono"><span class="chip" style="background:#fff0cb"></span>#fff0cb</td>
+      <td class="mono"><span class="chip" style="background:#eeb95f"></span>#eeb95f</td><td>1.58 <span class="pass">✓</span></td>
+      <td class="mono"><span class="chip" style="background:#a96600"></span>#a96600</td><td>4.05 <span class="pass">✓</span></td>
+      <td class="mono"><span class="chip" style="background:#4d3618"></span>#4d3618</td><td>10.01 <span class="pass">✓</span></td>
+    </tr>
+    <tr>
+      <td><strong>Success</strong></td>
+      <td class="mono"><span class="chip" style="background:#e4f7f0"></span>#e4f7f0</td>
+      <td class="mono"><span class="chip" style="background:#8bceb6"></span>#8bceb6</td><td>1.63 <span class="pass">✓</span></td>
+      <td class="mono"><span class="chip" style="background:#008062"></span>#008062</td><td>4.42 <span class="pass">✓</span></td>
+      <td class="mono"><span class="chip" style="background:#1d3b31"></span>#1d3b31</td><td>10.95 <span class="pass">✓</span></td>
+    </tr>
+    <tr>
+      <td><strong>Info</strong></td>
+      <td class="mono"><span class="chip" style="background:#E4F5FC"></span>#E4F5FC</td>
+      <td class="mono"><span class="chip" style="background:#95C9DD"></span>#95C9DD</td><td>1.61 <span class="pass">✓</span></td>
+      <td class="mono"><span class="chip" style="background:#0d5266"></span>#0d5266</td><td>7.77 <span class="pass">✓</span></td>
+      <td class="mono"><span class="chip" style="background:#1B404E"></span>#1B404E</td><td>9.93 <span class="pass">✓</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Border sits in a 1.58–1.63 band across all four hues. Icon clears 3:1 everywhere. Text clears 9.9:1 everywhere. There is no value in this table that fails its obligation, and no call site where a developer picks between two of them.</p>
+
+<h4>What this table replaces</h4>
+<table>
+  <thead><tr><th>Legacy value</th><th>Used as</th><th>Measured</th><th>Verdict</th></tr></thead>
+  <tbody>
+    <tr><td class="mono"><span class="chip" style="background:#fdb302"></span>#fdb302 warning</td><td>surface, text and border — 17 skins</td><td>1.81:1 on white</td><td class="fail">Fails everything except a decorative border</td></tr>
+    <tr><td class="mono"><span class="chip" style="background:#0da141"></span>#0da141 success</td><td>surface, text and border — 16 skins</td><td>3.39:1 on white</td><td class="fail">Legal as a non-text fill. Illegal as body copy.</td></tr>
+    <tr><td class="mono"><span class="chip" style="background:#D10E0E"></span>#D10E0E error</td><td>surface, text and border</td><td>5.56:1 on white</td><td class="pass">Passes as text. Still wrong as a surface.</td></tr>
+  </tbody>
+</table>
+<p>Error passing on white is the trap. It made the pattern look sound and let it spread to two hues where it is not.</p>
+
+<h4>Illegal pairings — memorise these three</h4>
+<ol class="rules">
+  <li><span class="mustnot">Never</span> step 11 as body text on a step 3 surface. It measures 4.05–4.42:1. This is the pairing that looks correct in review, because on white step 11 is exactly right.</li>
+  <li><span class="mustnot">Never</span> step 7 as a focus ring or as a lone state indicator. 1.6:1. It is a hairline, not a signal.</li>
+  <li><span class="mustnot">Never</span> white text on any state step 9. Three of four hues fail. Warning fails at 2.04:1 — the exact defect in production today.</li>
+</ol>
+
+<h2 id="shared">0.6 Shared baselines</h2>
+
+<p>Cross-component defaults. Component sections override these only by explicitly naming the override and the reason.</p>
+
+<table>
+  <thead><tr><th style="width:170px">Concern</th><th>Baseline</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Focus ring</strong></td><td><code>outline: 2px solid var(--accent-9)</code> with <code>outline-offset: 2px</code>. <code>:focus-visible</code>, never <code>:focus</code>. Never removed, never replaced by a background change alone.</td></tr>
+    <tr><td><strong>Hit target</strong></td><td>24px minimum visible, 44×44 minimum interactive area. Expand with a pseudo-element, not with padding — padding changes the layout, the pseudo-element does not.</td></tr>
+    <tr><td><strong>Radius</strong></td><td>Inline surfaces <code>--radius-2</code>. Overlays <code>--radius-3</code>. Anchored <code>--radius-2</code>. Full-bleed banners: 0.</td></tr>
+    <tr><td><strong>Motion</strong></td><td>150ms enter, 100ms exit, <code>ease-out</code>. Anything above 250ms is a bug. All of it disabled under <code>prefers-reduced-motion</code>; opacity may remain.</td></tr>
+    <tr><td><strong>Elevation</strong></td><td>Inline components carry none. Shadow is reserved for things that float. See Part 2.</td></tr>
+    <tr><td><strong>Density</strong></td><td>One density. If a surface needs a compact variant, that is a layout problem being solved in the wrong place.</td></tr>
+    <tr><td><strong>Dark mode</strong></td><td>Step 9 is pinned across modes for brand recognition; steps 10–12 shift. Every pairing in 0.5 is re-measured per mode — the pairing contract is per-theme, and this table is the light-mode instance. Dark values are open.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="conformance">0.7 Conformance method</h2>
+
+<p>Every component section ends with checks that a script can run. This is the part that closes the loop: the audit that produced this book took six scripted passes over 890,000 lines. The next one should be a CI job.</p>
+
+<p><strong>A rule that cannot be grepped is a preference.</strong> If a rule in this book has no check, either it needs one or it does not belong in the book.</p>
+
+<table>
+  <thead><tr><th style="width:230px">Check</th><th>Passing result</th></tr></thead>
+  <tbody>
+    <tr><td>Layer violation</td><td>No component stylesheet references a layer 1 primitive.</td></tr>
+    <tr><td>Literal violation</td><td>No hex literal from 0.5 appears outside the token declaration block.</td></tr>
+    <tr><td>Role violation</td><td>No <code>--state-*-surface</code> in a <code>color:</code>; no <code>--state-*-text</code> in a <code>background:</code>.</td></tr>
+    <tr><td>Contract violation</td><td>Every <code>.sd-alert</code> carries <code>data-state</code>. Every dismiss control has an accessible name.</td></tr>
+    <tr><td>Adoption</td><td>Count of legacy calls remaining. Conformance and adoption are different numbers and are reported separately.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-title">Conformance is not adoption</div>
+  <p>The audit's central finding was that <code>sd-modal</code> is used 5 times against 1,484 legacy calls. A component can be perfectly conformant and reach nobody. Every section reports both numbers, because the remediation for each is completely different: conformance is a pull request, adoption is a programme.</p>
+</div>
+
+<!-- =========================================================
+     PART 1
+     ========================================================= -->
+
+<h2 id="alert">1.1 Inline alert</h2>
+
+<p class="lede">The base component of the state-bearing group. Toast and banner are this plus ephemerality and this plus persistence — so this is where the state model is settled.</p>
+
+<h3>1 · Purpose and boundary</h3>
+
+<p>A message bound to a region of the page, in the document flow, persisting until the condition that caused it changes. It does not move, it does not time out, and it does not take focus.</p>
+
+<table>
+  <thead><tr><th style="width:220px">Use an inline alert when</th><th>Use something else when</th></tr></thead>
+  <tbody>
+    <tr><td>The message is about a specific region and belongs beside it</td><td>The message is about a background operation the user has moved on from → <strong>Toast</strong></td></tr>
+    <tr><td>The user must still be able to see and act on the underlying content</td><td>The message is about the whole application or account and outlives the page → <strong>Banner</strong></td></tr>
+    <tr><td>The condition persists until something changes it</td><td>The message blocks progress and needs a decision now → <strong>Modal</strong></td></tr>
+    <tr><td>The message can carry a link or a secondary action</td><td>The message is about one specific field → <strong>field-level validation</strong>, not this</td></tr>
+  </tbody>
+</table>
+
+<p>Field-level validation is the boundary most often crossed. An alert summarising six invalid fields is correct; an alert standing in for the message under the field is not, and it costs the user the pointer to where the problem is.</p>
+
+<h3>2 · Anatomy</h3>
+<table>
+  <thead><tr><th style="width:200px">Part</th><th style="width:90px">Required</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">.sd-alert</td><td>yes</td><td>Container. Carries <code>data-state</code> and the four component tokens.</td></tr>
+    <tr><td class="mono">.sd-alert__icon</td><td>yes</td><td>18px. One glyph per state, fixed. <code>aria-hidden</code>.</td></tr>
+    <tr><td class="mono">.sd-alert__title</td><td>no</td><td>One line. Omit when the message is one sentence — a title that restates the message is noise.</td></tr>
+    <tr><td class="mono">.sd-alert__message</td><td>yes</td><td>Body copy. May contain links.</td></tr>
+    <tr><td class="mono">.sd-alert__actions</td><td>no</td><td>Maximum two. Text buttons only — see rule 09.</td></tr>
+    <tr><td class="mono">.sd-alert__dismiss</td><td>no</td><td>Only when dismissal is meaningful. See rule 10.</td></tr>
+  </tbody>
+</table>
+
+<h3>3 · Token map by role</h3>
+
+<table>
+  <thead><tr><th style="width:180px">Part</th><th style="width:210px">Component token</th><th>Resolves to</th><th>Contrast vs alert surface</th></tr></thead>
+  <tbody>
+    <tr><td>Container background</td><td class="mono">--alert-surface</td><td class="mono">--state-{s}-surface → step 3</td><td>reference surface</td></tr>
+    <tr><td>Container border</td><td class="mono">--alert-border</td><td class="mono">--state-{s}-border → step 7</td><td>1.58–1.63 <span class="pass">✓</span></td></tr>
+    <tr><td>Icon</td><td class="mono">--alert-icon</td><td class="mono">--state-{s}-icon → step 11</td><td>4.05–7.77 <span class="pass">✓</span> ≥3:1</td></tr>
+    <tr><td>Title and message</td><td class="mono">--alert-text</td><td class="mono">--state-{s}-text → step 12</td><td>9.93–10.95 <span class="pass">✓</span> ≥4.5:1</td></tr>
+    <tr><td>Inline link</td><td class="mono">--alert-text</td><td>same as body, underlined</td><td>9.93–10.95 <span class="pass">✓</span></td></tr>
+    <tr><td>Action label</td><td class="mono">--alert-text</td><td>same as body, underlined, semibold</td><td>9.93–10.95 <span class="pass">✓</span></td></tr>
+    <tr><td>Dismiss glyph</td><td class="mono">--alert-icon</td><td class="mono">--state-{s}-icon → step 11</td><td>4.05–7.77 <span class="pass">✓</span></td></tr>
+    <tr><td>Dismiss hover / active</td><td class="mono">--overlay-hover / --overlay-active</td><td class="mono">--neutral-alpha-3 / -5</td><td>n/a — overlay</td></tr>
+    <tr><td>Focus ring</td><td class="mono">--focus-ring-color</td><td class="mono">--accent-9</td><td>≥3:1 on all four surfaces</td></tr>
+  </tbody>
+</table>
+
+<p>Two decisions in that table are worth stating out loud.</p>
+
+<p><strong>Links and actions take body colour, not icon colour.</strong> Every instinct says a link should be the accent or the state hue. On a tinted surface both fail: step 11 lands at 4.05:1 on warning. The link is distinguished by underline and weight, which is a stronger affordance than hue anyway and survives the greyscale test.</p>
+
+<p><strong>Dismiss hover is a neutral alpha overlay, not a state step.</strong> Using a state step would need four more tokens and four more measurements to add nothing. The overlay works identically on all four surfaces and on any fifth we add later.</p>
+
+<div class="callout warn">
+  <div class="callout-title">Known asymmetry — the info icon is darker than the other three</div>
+  <p>Info's icon resolves to corrected accent step 11 at 7.77:1, against 4.05–4.42:1 for the other three, so it reads visually heavier. This is downstream of the same dark anchor that broke the ramp. Using accent step 9 for the info icon would balance it at 5.20:1 — but it puts step 9 back in the state group and reopens Law 4 for one glyph's sake. <strong>Recommendation: keep step 11 and accept the asymmetry.</strong> Flagged so it is recognised as a known trade rather than rediscovered as a bug.</p>
+</div>
+
+<h3>4 · Required states</h3>
+
+<table>
+  <thead><tr><th style="width:150px">Variant</th><th style="width:100px">Attribute</th><th>Meaning</th><th>Announcement</th></tr></thead>
+  <tbody>
+    <tr><td>Error</td><td class="mono">data-state="error"</td><td>The operation failed. Something is broken now.</td><td>assertive</td></tr>
+    <tr><td>Warning</td><td class="mono">data-state="warning"</td><td>The operation will succeed with a consequence, or is about to fail.</td><td>assertive</td></tr>
+    <tr><td>Success</td><td class="mono">data-state="success"</td><td>The operation completed. Only where completion is not otherwise visible.</td><td>polite</td></tr>
+    <tr><td>Info</td><td class="mono">data-state="info"</td><td>Context the user did not ask for and needs anyway. The default.</td><td>polite</td></tr>
+  </tbody>
+</table>
+
+<p><em>Interaction states:</em> default; dismiss hover; dismiss active; <code>:focus-visible</code> on dismiss and on each action; and <code>--quiet</code>, which drops the border where alerts stack inside an already-bordered container. There is no disabled alert — an alert that should not be read should not be rendered.</p>
+
+<h3>5 · Accessibility — hard rules</h3>
+
+<ol class="rules">
+  <li><span class="must">MUST</span> resolve every colour through <code>--alert-*</code>. A variant sets four custom properties and declares no other colour. <span class="mustnot">MUST NOT</span> reference a layer 1 primitive anywhere in component CSS.</li>
+  <li><span class="must">MUST</span> carry an icon and a text message. Hue is never the sole carrier of state (WCAG 1.4.1). The alert must survive a greyscale screenshot.</li>
+  <li><span class="must">MUST</span> mark the icon <code>aria-hidden="true"</code> and convey state in text — either in the copy or in a visually hidden prefix. A screen reader user gets "Error:", not a described glyph.</li>
+  <li><span class="must">MUST</span> use step 12 for all text on the alert surface. <span class="mustnot">MUST NOT</span> use step 11 for body copy, links or action labels. 4.05:1 fails AA.</li>
+  <li><span class="mustnot">MUST NOT</span> render a solid state fill or place white text on any state step 9. Law 4.</li>
+  <li><span class="must">MUST</span> announce dynamically inserted alerts via a live region: <code>role="alert"</code> for error and warning, <code>role="status"</code> for success and info. <span class="mustnot">MUST NOT</span> put a live region on an alert that is present at page load — it is read in document order, and a live region makes it interrupt or duplicate.</li>
+  <li><span class="must">MUST</span> keep the live region container in the DOM before the message is inserted. A live region added and populated in the same tick is not announced in most screen readers.</li>
+  <li><span class="must">MUST</span> keep the focus ring at 2px accent-9, 2px offset, on <code>:focus-visible</code>. <span class="mustnot">MUST NOT</span> replace it with a background change — the offset ring is the only indicator that clears 3:1 on all four tinted surfaces.</li>
+  <li><span class="mustnot">MUST NOT</span> place a filled button inside an alert. Actions are underlined text buttons. A filled button needs an on-fill colour, which reopens Law 4, and it competes with the page's one primary action.</li>
+  <li><span class="mustnot">MUST NOT</span> offer dismissal on an error whose condition is unresolved. Dismissing an alert the user cannot act on hides a live problem and leaves no way to recover it. Errors bound to a persistent condition are not dismissible.</li>
+  <li><span class="must">MUST</span> give the dismiss control a specific accessible name — "Dismiss error message", not "Close" — and a 44×44 interactive area via pseudo-element, not padding.</li>
+  <li><span class="must">MUST</span> move focus to a sensible destination when a focused alert is removed: the triggering control if it still exists, otherwise the container heading. <span class="mustnot">MUST NOT</span> let focus fall to <code>&lt;body&gt;</code>.</li>
+</ol>
+
+<h3>6 · Behaviour</h3>
+<ul>
+  <li><strong>Lifetime.</strong> Until the condition changes. No timers.</li>
+  <li><strong>Placement.</strong> Directly above the region it describes, inside that region's bounds. A form alert sits inside the form.</li>
+  <li><strong>Stacking.</strong> Maximum two per region. A third means the messages should be one alert with a list.</li>
+  <li><strong>Replacement.</strong> A new alert in the same slot replaces rather than appends, and re-announces.</li>
+  <li><strong>Entry.</strong> 150ms opacity fade. No slide, no height animation — inline alerts change layout, and animating that costs a reflow and a jump under the pointer.</li>
+</ul>
+
+<h3>7 · Rendered example</h3>
+
+<div class="example-block">
+  <div class="example-label">Four states · title + message · borders and text resolved per role</div>
+  <div class="example-render">
+
+    <div class="sd-alert" data-state="error" role="alert">
+      <svg class="sd-alert__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <circle cx="10" cy="10" r="7.5"/><path d="M10 6.2v4.6" stroke-linecap="round"/><circle cx="10" cy="13.7" r=".9" fill="currentColor" stroke="none"/>
+      </svg>
+      <div class="sd-alert__body">
+        <p class="sd-alert__title"><span class="sr-only">Error: </span>Upload failed for 3 of 24 assets</p>
+        <p class="sd-alert__message">The files exceed the 2&nbsp;GB per-asset limit for this workspace. <a href="#alert">Review the affected files</a> or raise the limit in workspace settings.</p>
+        <div class="sd-alert__actions">
+          <button type="button" class="sd-alert__action">Retry upload</button>
+          <button type="button" class="sd-alert__action">View files</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sd-alert" data-state="warning" role="alert">
+      <svg class="sd-alert__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <path d="M10 2.8 18 16.4H2z" stroke-linejoin="round"/><path d="M10 8v3.4" stroke-linecap="round"/><circle cx="10" cy="13.9" r=".9" fill="currentColor" stroke="none"/>
+      </svg>
+      <div class="sd-alert__body">
+        <p class="sd-alert__title"><span class="sr-only">Warning: </span>Rights expire in 14 days</p>
+        <p class="sd-alert__message">6 assets in this collection lose usage rights on 11 August. They will be hidden from search when they expire.</p>
+      </div>
+      <button type="button" class="sd-alert__dismiss" aria-label="Dismiss warning message">
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="sd-alert" data-state="success" role="status">
+      <svg class="sd-alert__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <circle cx="10" cy="10" r="7.5"/><path d="M6.6 10.3l2.3 2.3 4.5-4.9" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="sd-alert__body">
+        <p class="sd-alert__message"><span class="sr-only">Success: </span>Brand kit published to 4 workspaces.</p>
+      </div>
+      <button type="button" class="sd-alert__dismiss" aria-label="Dismiss success message">
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="sd-alert" data-state="info" role="status">
+      <svg class="sd-alert__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <circle cx="10" cy="10" r="7.5"/><path d="M10 9.4v4.4" stroke-linecap="round"/><circle cx="10" cy="6.4" r=".9" fill="currentColor" stroke="none"/>
+      </svg>
+      <div class="sd-alert__body">
+        <p class="sd-alert__message"><span class="sr-only">Information: </span>Metadata changes apply to all 118 assets in this collection. <a href="#alert">See what will change</a>.</p>
+      </div>
+    </div>
+
+  </div>
+  <div class="example-code"><span class="c">/* One background declaration in the whole component. */</span>
+<span class="k">.sd-alert</span> {
+  --alert-surface: var(--state-info-surface);
+  --alert-border:  var(--state-info-border);
+  --alert-icon:    var(--state-info-icon);
+  --alert-text:    var(--state-info-text);
+
+  background: var(--alert-surface);
+  border: 1px solid var(--alert-border);
+  color: var(--alert-text);
+}
+
+<span class="c">/* A variant sets four custom properties. Nothing else. */</span>
+<span class="k">.sd-alert[data-state="warning"]</span> {
+  --alert-surface: var(--state-warning-surface);
+  --alert-border:  var(--state-warning-border);
+  --alert-icon:    var(--state-warning-icon);
+  --alert-text:    var(--state-warning-text);
+}</div>
+</div>
+
+<div class="example-block">
+  <div class="example-label">Quiet variant · stacked inside an already-bordered container</div>
+  <div class="example-render" style="background:var(--surface-default); border:0;">
+    <div style="border:1px solid var(--border-default); border-radius:var(--radius-3); padding:var(--spacing-4); display:flex; flex-direction:column; gap:var(--spacing-2);">
+      <div class="sd-alert sd-alert--quiet" data-state="warning">
+        <svg class="sd-alert__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10 2.8 18 16.4H2z" stroke-linejoin="round"/><path d="M10 8v3.4" stroke-linecap="round"/><circle cx="10" cy="13.9" r=".9" fill="currentColor" stroke="none"/></svg>
+        <div class="sd-alert__body"><p class="sd-alert__message"><span class="sr-only">Warning: </span>2 assets have no usage rights recorded.</p></div>
+      </div>
+      <div class="sd-alert sd-alert--quiet" data-state="info">
+        <svg class="sd-alert__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9.4v4.4" stroke-linecap="round"/><circle cx="10" cy="6.4" r=".9" fill="currentColor" stroke="none"/></svg>
+        <div class="sd-alert__body"><p class="sd-alert__message"><span class="sr-only">Information: </span>Ingest completes in about 4 minutes.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="example-block">
+  <div class="example-label">Rejected — what the current skins do, shown so it is recognisable in review</div>
+  <div class="example-render">
+    <div style="display:grid; grid-template-columns:auto 1fr; gap:var(--spacing-3); align-items:center; padding:var(--spacing-3) var(--spacing-4); background:#fdb302; border:1px solid #fdb302; border-radius:var(--radius-2); color:#fff; font-size:var(--font-size-2);">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10 2.8 18 16.4H2z" stroke-linejoin="round"/><path d="M10 8v3.4" stroke-linecap="round"/></svg>
+      <div><strong>Rights expire in 14 days</strong> — white on <code style="background:rgba(255,255,255,.25);color:#fff">#fdb302</code> at <strong>1.81:1</strong>. One value used as surface, border and text.</div>
+    </div>
+    <div style="display:grid; grid-template-columns:auto 1fr; gap:var(--spacing-3); align-items:center; padding:var(--spacing-3) var(--spacing-4); background:#0da141; border:1px solid #0da141; border-radius:var(--radius-2); color:#fff; font-size:var(--font-size-2);">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M6.6 10.3l2.3 2.3 4.5-4.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div><strong>Brand kit published</strong> — white on <code style="background:rgba(255,255,255,.25);color:#fff">#0da141</code> at <strong>3.39:1</strong>. Passes 3:1 for graphics, fails 4.5:1 for the text it is carrying.</div>
+    </div>
+  </div>
+</div>
+
+<h3>8 · Markup contract</h3>
+
+<p>Both implementations produce this DOM. Nothing below is framework-specific.</p>
+
+<div class="example-block">
+  <div class="example-label">Canonical DOM</div>
+  <div class="example-code">&lt;div class=<span class="k">"sd-alert"</span> data-state=<span class="k">"error"</span> role=<span class="k">"alert"</span>&gt;
+  &lt;svg class=<span class="k">"sd-alert__icon"</span> aria-hidden=<span class="k">"true"</span>&gt;…&lt;/svg&gt;
+  &lt;div class=<span class="k">"sd-alert__body"</span>&gt;
+    &lt;p class=<span class="k">"sd-alert__title"</span>&gt;&lt;span class=<span class="k">"sr-only"</span>&gt;Error: &lt;/span&gt;Title&lt;/p&gt;
+    &lt;p class=<span class="k">"sd-alert__message"</span>&gt;Message&lt;/p&gt;
+    &lt;div class=<span class="k">"sd-alert__actions"</span>&gt;
+      &lt;button type=<span class="k">"button"</span> class=<span class="k">"sd-alert__action"</span>&gt;Action&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;button type=<span class="k">"button"</span> class=<span class="k">"sd-alert__dismiss"</span> aria-label=<span class="k">"Dismiss error message"</span>&gt;…&lt;/button&gt;
+&lt;/div&gt;
+
+<span class="c">role: "alert" for error|warning, "status" for success|info,
+      omitted entirely when present at page load.</span></div>
+</div>
+
+<h4>Why <code>data-state</code> and not a modifier class</h4>
+<p>A class is additive: <code>sd-alert-error sd-alert-warning</code> is valid HTML and renders whichever rule wins the cascade. An attribute holds one value. The state becomes an enumerable, greppable, mutually exclusive property that a linter can validate against a list of four — and it prevents the specific defect the audit found, where the overlay system has no state layer and the toast classes that do exist are applied without ever being styled.</p>
+
+<h4>Conformance checks</h4>
+<table>
+  <thead><tr><th style="width:210px">Check</th><th>Pass</th></tr></thead>
+  <tbody>
+    <tr><td>No primitive in component CSS</td><td><code>grep -E "\-\-(accent|neutral|amber|jade|tomato)-[0-9]" alert.css</code> → 0</td></tr>
+    <tr><td>No state literal outside tokens</td><td><code>grep -E "#(feebe7|ffac94|cf3716|5c281c|fff0cb|eeb95f|a96600|4d3618|e4f7f0|8bceb6|008062|1d3b31)"</code> outside the token block → 0</td></tr>
+    <tr><td>Every alert declares state</td><td><code>grep "sd-alert\"" src | grep -v "data-state"</code> → 0</td></tr>
+    <tr><td>Every dismiss is named</td><td><code>grep "sd-alert__dismiss" src | grep -v "aria-label"</code> → 0</td></tr>
+    <tr><td>No filled button inside</td><td><code>grep -A6 "sd-alert__actions" src | grep "btn-primary"</code> → 0</td></tr>
+    <tr><td>Adoption</td><td>Count of hand-rolled inline messages remaining. Reported, not gated.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-title">Conformance and adoption for this component</div>
+  <p><strong>Conformance:</strong> no <code>sd-alert</code> exists in Unity today. There is nothing to bring into conformance — this is a build, not a fix, which makes it the cheapest component in the book to get right.</p>
+  <p><strong>Adoption:</strong> inline messaging is currently hand-rolled per site. The count is unknown and should be established before Part 1 closes, because it sizes the tenant migration and it is the number that tells us whether this component reaches anyone.</p>
+</div>
+
+<h2 id="toast">1.2 Toast</h2>
+<div class="stub">
+  <div class="stub-h">Not yet written — awaiting approval of 0.x and 1.1</div>
+  <p>Inherits the entire state model from 1.1 and adds: ephemerality and timing, portal and stacking order, live-region politeness under rapid succession, pause-on-hover and pause-on-focus, and the interaction with <code>prefers-reduced-motion</code>. Audit dependencies: three toast classes are applied and never styled, so the current state colour is <code>vue-toasted</code>'s vendor default; and two sites call <code>Vue.toasted.show</code> directly, bypassing the wrapper — so the wrapper is not a chokepoint and the contract cannot assume it is.</p>
+</div>
+
+<h2 id="banner">1.3 Banner</h2>
+<div class="stub">
+  <div class="stub-h">Not yet written — awaiting approval of 0.x and 1.1</div>
+  <p>Inherits the state model and adds: full-bleed layout at zero radius, persistence across navigation, precedence when more than one qualifies, and the relationship to the left nav rail and page chrome. No banner component exists in <code>sdcore/src/pattern/</code> — this is a build. Open question this section must answer: whether a banner may ever be solid, given Law 4. Current position is no.</p>
+</div>
+
+<h2 id="modal">2.1 Modal</h2>
+<div class="stub">
+  <div class="stub-h">Not yet written — Part 2</div>
+  <p>The highest-stakes component in the book: it has to justify replacing 1,484 legacy calls across two systems. Covers backdrop, elevation, header, dismissal, focus trap, scroll containment, and the one-filled-primary rule. Deliberately sequenced after the state-bearing group, so the state layer it needs already exists rather than being invented under pressure.</p>
+</div>
+
+<h2 id="drawer">2.2 Drawer</h2>
+<div class="stub"><div class="stub-h">Not yet written — Part 2</div><p>Shares backdrop, elevation, header and dismiss with 2.1. Adds edge anchoring, size steps and the rules for when a drawer beats a modal.</p></div>
+
+<h2 id="tooltip">3.1 Tooltip</h2>
+<div class="stub"><div class="stub-h">Not yet written — Part 3</div><p>Positioning, arrow, collision handling, trigger contract, delay in and out, touch behaviour, and the hard rule that a tooltip never carries information required to complete a task.</p></div>
+
+<h2 id="popover">3.2 Popover</h2>
+<div class="stub"><div class="stub-h">Not yet written — Part 3</div><p>Shares positioning, arrow and trigger with 3.1. Adds focus management, interactive content and dismissal.</p></div>
+
+</main>
+</div>
+</body>
+</html>
