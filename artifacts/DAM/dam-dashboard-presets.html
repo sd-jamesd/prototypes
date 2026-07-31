@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DAM Dashboard — shipping presets (SCR-7)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   SCALE v1 TOKENS — extracted from scale-design-system-v1.html
+   Do not invent values. Every declaration below is sourced.
+   ============================================================ */
+:root{
+  /* ============================================================
+     LIVE BUILD VOCABULARY
+     Read from index-1LAPLyxY.css on sd-feature-dam.screendragondev.com,
+     24 Jul 2026. Names match the running app. Do not rename.
+     ============================================================ */
+  --scaling:1;
+
+  /* Type ladder — pair every size with its line. type-0..3 ONLY in-product. */
+  --type-0-size:11px; --type-0-line:16px;
+  --type-1-size:12px; --type-1-line:16px;
+  --type-2-size:14px; --type-2-line:20px;
+  --type-3-size:16px; --type-3-line:24px;
+  --type-4-size:18px; --type-4-line:28px;   /* not for in-product */
+  --type-5-size:24px; --type-5-line:32px;   /* not for in-product */
+  --type-6-size:32px; --type-6-line:40px;   /* not for in-product */
+
+  --weight-regular:400; --weight-medium:500; --weight-semibold:600; --weight-bold:700;
+
+  /* Spacing — note there is NO 20px step */
+  --space-1:calc(4px * var(--scaling));  --space-2:calc(8px * var(--scaling));
+  --space-3:calc(12px * var(--scaling)); --space-4:calc(16px * var(--scaling));
+  --space-5:calc(24px * var(--scaling)); --space-6:calc(32px * var(--scaling));
+  --space-7:calc(40px * var(--scaling)); --space-8:calc(48px * var(--scaling));
+  --space-9:calc(64px * var(--scaling));
+
+  --radius-1:3px; --radius-2:4px; --radius-3:6px; --radius-4:8px; --radius-6:16px; --radius-full:9999px;
+  --ls-1:0.04em; --ls-tight:-0.01em; --ls-tighter:-0.02em;
+
+  /* Neutral ramp (aliases --gray-1..12 in Radix) */
+  --neutral-1:#fdfdfc; --neutral-2:#f9f9f8; --neutral-3:#f1f0ef; --neutral-4:#e9e8e6;
+  --neutral-5:#e2e1de; --neutral-6:#dad9d6; --neutral-7:#d0ceca; --neutral-8:#bcbbb6;
+  --neutral-9:#8e8d86; --neutral-10:#83827c; --neutral-11:#64635e; --neutral-12:#21201c;
+
+  /* Alpha greys — borders composite, they are not opaque */
+  --gray-a3:rgba(0,0,0,.06); --gray-a4:rgba(0,0,0,.09);
+  --gray-a5:rgba(0,0,0,.122); --gray-a6:rgba(0,0,0,.153);
+  --gray-a7:rgba(0,0,0,.192); --gray-a8:rgba(0,0,0,.267); --gray-a9:rgba(0,0,0,.44);
+
+  /* Accent ramp */
+  --accent-3:#E4F5FC; --accent-4:#D5EFF9; --accent-5:#C4E5F3; --accent-7:#95C9DD;
+  --accent-9:#0B6E8A; --accent-10:#005F7B; --accent-11:#197592; --accent-12:#1B404E;
+  --accent-contrast:#ffffff;
+  /* Alpha accent fill — survives dark where a fixed tint collapses (contract 2.1). */
+  --accent-a3:rgba(13,127,156,0.16);  /* dark-twin active fill only */
+
+  /* Semantic layer — never reach past this to a raw step */
+  --primary-default:var(--accent-9);
+  --primary-hover:var(--accent-10);
+  --primary-text:var(--accent-11);
+  --primary-subtle:var(--accent-3);
+  --primary-subtle-hover:var(--accent-4);
+  --primary-border:var(--accent-7);
+  --primary-contrast:var(--accent-contrast);
+
+  --text-default:var(--neutral-12);
+  --text-subtle:var(--neutral-10);
+  --text-disabled:var(--gray-a9);
+  --text-on-solid:var(--accent-contrast);
+  --text-on-media:#fff;
+
+  --border-subtle:var(--gray-a5);
+  --border-default:var(--gray-a6);
+  --border-emphasis:var(--gray-a7);
+  --border-strong:var(--gray-a8);
+
+  --surface-default:var(--neutral-1);
+  --surface-subtle:var(--neutral-2);
+  --surface-muted:var(--neutral-3);
+  --surface-hover:var(--gray-a3);
+  --surface-active:var(--gray-a4);
+  --surface-emphasis:var(--neutral-4);
+
+  /* Rail state tokens — live, themeable per surface */
+  --icon-nav-fg:var(--text-subtle);
+  --icon-nav-bg-hover:var(--surface-muted);
+  --icon-nav-fg-hover:var(--text-default);
+  --icon-nav-active-bg:var(--accent-3);   /* SOLID tint on light (contract canonical .ri.active) */
+  --icon-nav-active-fg:var(--accent-11);
+  --icon-nav-active-bar:var(--primary-default);
+
+  --text-field-height:var(--space-7);
+
+  /* Status */
+  --color-green-100:#e4f7f0; --color-green-500:#29a383; --color-green-600:#008062;
+  --color-amber-100:#fff0cb; --color-amber-500:#f5a524; --color-amber-600:#a96600;
+  --color-red-100:#feebe7;   --color-red-500:#e54d2e;   --color-red-600:#cf3716;
+  --color-purple-100:#f3f0ff;--color-purple-500:#7c3aed;--color-purple-600:#7139d6;
+  --color-orange-100:#ffeadd;--color-orange-500:#f76707;--color-orange-600:#d44a00;
+
+  --status-active-bg:var(--color-green-100);   --status-active-border:var(--color-green-500);   --status-active-fg:var(--color-green-600);
+  --status-pending-bg:var(--color-amber-100);  --status-pending-border:var(--color-amber-500);  --status-pending-fg:var(--color-amber-600);
+  --status-cancelled-bg:var(--color-red-100);  --status-cancelled-border:var(--color-red-500);  --status-cancelled-fg:var(--color-red-600);
+  --status-review-bg:var(--color-purple-100);  --status-review-border:var(--color-purple-500);  --status-review-fg:var(--color-purple-600);
+  --status-progress-bg:var(--color-orange-100);--status-progress-border:var(--color-orange-500);--status-progress-fg:var(--color-orange-600);
+  --status-draft-bg:var(--neutral-2);          --status-draft-border:var(--neutral-4);          --status-draft-fg:var(--neutral-9);
+  --status-onhold-bg:var(--neutral-2);         --status-onhold-border:var(--neutral-6);         --status-onhold-fg:var(--neutral-11);
+
+  --filetype-badge-bg:rgba(28,28,25,0.62);
+  --filetype-badge-fg:#ffffff;
+  --error-9:#e54d2e; --error-10:#cf3716;
+
+  /* ---- SHIM 3: approval-flow blue. asset-state-tester specs raw #3b82f6.
+         No Scale semantic exists for it. Its own rule says never invent a
+         colour without updating the spec — so this needs a Scale home. ---- */
+  --state-approval:#3b82f6;
+
+  /* Card grid track — ONE source of truth for browse-card width.
+     Width is a surface decision, not a per-widget one. */
+  --card-min:200px;
+
+  --font-family-text:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-lg:0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+
+  /* ---- SHIM 1: mid-tier text. Build ships only default/subtle/disabled.
+         Scale defines --text-muted; the build does not. Flagged, not hidden. ---- */
+  --text-muted:var(--neutral-11);
+
+  /* ---- SHIM 2: categorical data ramp. Present in scale-design-system.html,
+         ABSENT from the build. Charts have no live palette until this lands. ---- */
+  --data-1:#0B6E8A; --data-2:#29A383; --data-3:#00A2C7; --data-4:#5B5BD6;
+  --data-5:#F76B15; --data-6:#E54D2E; --data-9:#B0D9E9; --data-25:#D5EFF9;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--font-family-text);
+  font-size:var(--type-2-size); line-height:var(--type-2-line);
+  color:var(--text-default); background:var(--neutral-4);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ============================================================
+   HARNESS — not part of the product. Scaffolding to switch states.
+   ============================================================ */
+.harness{
+  position:sticky; top:0; z-index:100;
+  background:var(--neutral-12); color:#fff;
+  padding:var(--space-3) var(--space-5);
+  display:flex; gap:var(--space-6); align-items:center; flex-wrap:wrap;
+  box-shadow:var(--shadow-lg);
+}
+.harness-group{display:flex; align-items:center; gap:var(--space-2)}
+.harness-label{
+  font-size:var(--type-1-size); line-height:var(--type-1-line);
+  letter-spacing:var(--ls-1); text-transform:uppercase;
+  color:rgba(255,255,255,0.55); font-weight:var(--weight-medium);
+}
+.seg{display:flex; background:rgba(255,255,255,0.09); border-radius:var(--radius-3); padding:2px}
+.seg button{
+  font-family:inherit; font-size:var(--type-1-size); line-height:var(--type-1-line);
+  font-weight:var(--weight-medium);
+  border:0; background:transparent; color:rgba(255,255,255,0.72);
+  padding:6px var(--space-3); border-radius:var(--radius-2); cursor:pointer;
+}
+.seg button[aria-pressed="true"]{background:var(--primary-default); color:#fff}
+.harness-note{
+  margin-left:auto; font-size:var(--type-1-size); line-height:var(--type-1-line);
+  color:rgba(255,255,255,0.45); max-width:340px;
+}
+
+/* ============================================================
+   IFRAME FRAME — the DAM as it sits inside Unity
+   ============================================================ */
+.stage{padding:var(--space-5); display:flex; justify-content:center}
+
+/* ============================================================
+   UNITY HOST SHELL — outside the DAM iframe. Fixed, unchangeable.
+   Blue rail (left) + breadcrumb bar (top). The DAM renders inside.
+   ============================================================ */
+.unity{
+  width:100%; max-width:1440px; margin:0 auto;
+  background:var(--surface-default); border-radius:var(--radius-4); overflow:hidden;
+  box-shadow:var(--shadow-lg); display:flex;
+}
+.unity-rail{
+  width:56px; flex:0 0 56px; background:#0b3a5c;
+  display:flex; flex-direction:column; align-items:center;
+  padding:var(--space-3) 0; gap:var(--space-1);
+}
+.unity-logo{
+  width:40px; height:40px; margin-bottom:var(--space-2);
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-weight:var(--weight-bold); font-size:22px; letter-spacing:-.02em;
+}
+.ur-item{
+  width:40px; height:40px; border-radius:var(--radius-2);
+  display:flex; align-items:center; justify-content:center;
+  color:rgba(255,255,255,.75); cursor:pointer;
+}
+.ur-item:hover{background:rgba(255,255,255,.10); color:#fff}
+.ur-item svg{width:20px;height:20px}
+.ur-spacer{flex:1}
+.ur-avatar{width:30px;height:30px;border-radius:50%;background:#c98b5e;margin:var(--space-2) 0;
+  background-image:radial-gradient(circle at 50% 38%, #e8b98f, #a86a3e);}
+
+.unity-body{flex:1; min-width:0; display:flex; flex-direction:column}
+/* Unity breadcrumb bar — top, fixed. DAM cannot change this. */
+.unity-crumb{
+  height:48px; flex:0 0 48px; display:flex; align-items:center;
+  padding:0 var(--space-5); border-bottom:1px solid var(--border-subtle);
+  background:var(--surface-default);
+  font-size:var(--type-2-size); color:var(--text-subtle);
+}
+.unity-crumb b{color:var(--text-default); font-weight:var(--weight-semibold)}
+.unity-crumb .c-sep{margin:0 var(--space-2); opacity:.5}
+
+/* The DAM iframe area — real height. 644px measured, below the 48px + host padding. */
+.dam-iframe{
+  height:644px; position:relative;
+  display:flex; background:var(--surface-subtle);
+  border-top:1px solid var(--border-default);
+}
+/* DEFAULT = framed 644px view: real viewport, DAM scrolls its own content, fold line drawn. */
+.dam-iframe{overflow:hidden}
+.frame{overflow:hidden}
+.main{overflow-y:auto}
+/* RELEASED = full page: expand the area so everything is visible, no fold line. */
+body.fold-released .dam-iframe{height:auto; min-height:900px; overflow:visible}
+body.fold-released .frame{overflow:visible}
+body.fold-released .main{overflow-y:visible}
+
+/* the DAM frame lives INSIDE .dam-iframe, no outer chrome of its own */
+.frame{
+  flex:1; min-width:0; background:var(--surface-default);
+  display:flex;
+}
+
+/* DAM's own nav rail */
+.toolbar{
+  background:var(--surface-default); border-right:1px solid var(--border-default);
+  display:flex; flex-direction:column;
+  padding:var(--space-2); gap:2px;
+  width:200px; flex:0 0 200px;
+  transition:width .16s ease, flex-basis .16s ease;
+}
+/* Collapsed = icon-only rail. Push-nav: the whole column narrows. */
+.frame.nav-collapsed .toolbar{width:56px; flex-basis:56px}
+
+/* §2.2 one component, two densities — stacked here (labels visible) */
+.icon-nav-item{
+  position:relative;
+  display:flex; align-items:center; gap:var(--space-3);
+  height:40px; padding:0 var(--space-3);
+  border-radius:var(--radius-2);
+  color:var(--icon-nav-fg); cursor:pointer; text-decoration:none;
+  white-space:nowrap; overflow:hidden;
+}
+.icon-nav-item svg{width:20px; height:20px; flex:0 0 20px}
+.ni-label{
+  font-size:var(--type-2-size); line-height:var(--type-2-line);
+  font-weight:var(--weight-medium); flex:1; min-width:0;
+  overflow:hidden; text-overflow:ellipsis;
+}
+.ni-key{
+  font-size:var(--type-0-size); line-height:1; font-weight:var(--weight-semibold);
+  color:var(--text-subtle); background:var(--surface-muted);
+  border:1px solid var(--border-subtle); border-radius:var(--radius-1);
+  padding:2px 5px; opacity:0; transition:opacity .1s ease;
+}
+.icon-nav-item:hover .ni-key{opacity:1}
+
+/* Collapsed: labels + keys gone, item centres to a square */
+.frame.nav-collapsed .ni-label,
+.frame.nav-collapsed .ni-key{display:none}
+.frame.nav-collapsed .icon-nav-item{justify-content:center; padding:0; width:40px; gap:0}
+
+/* HOVER = neutral (§2.1). Accent means active, neutral means hovered. */
+.icon-nav-item:hover{background:var(--gray-a3); color:var(--text-default)}
+
+/* ACTIVE = three cues, all token-driven (§2.1):
+   3px accent bar · accent-11 icon+label @600 · accent-a3 fill (support). */
+.icon-nav-item.active{
+  background:var(--icon-nav-active-bg);
+  color:var(--icon-nav-active-fg);
+  font-weight:var(--weight-semibold);
+}
+/* 3px edge bar — inset from top/bottom, rounded outer edge (contract canonical) */
+.icon-nav-item.active::before{
+  content:''; position:absolute; left:0; top:6px; bottom:6px; width:3px;
+  background:var(--icon-nav-active-bar); border-radius:0 2px 2px 0;
+}
+.icon-nav-item.active .ni-label{font-weight:var(--weight-semibold)}
+
+/* Disable-don't-hide (§1.6 / structural nav): state-unavailable stays visible */
+.icon-nav-item.is-disabled{color:var(--neutral-8); cursor:not-allowed}
+.icon-nav-item.is-disabled:hover{background:transparent; color:var(--neutral-8)}
+.icon-nav-item.is-disabled .ni-label{color:var(--neutral-8)}
+
+/* Tooltip: shown collapsed (icon-only), suppressed when label already shows (§2.6) */
+.icon-nav-item[data-tip]{}
+.frame.nav-collapsed .icon-nav-item[data-tip]:hover::after,
+.icon-nav-item.is-disabled[data-tip]:hover::after{
+  content:attr(data-tip); position:absolute; left:calc(100% + 10px); top:50%; transform:translateY(-50%);
+  white-space:nowrap; z-index:60;
+  background:var(--neutral-12); color:#fff;
+  font-size:var(--type-1-size); line-height:var(--type-1-line); font-weight:var(--weight-medium);
+  padding:5px var(--space-2); border-radius:var(--radius-2); box-shadow:var(--shadow-md);
+}
+
+.toolbar-spacer{flex:1}
+
+/* §2.1 collapse toggle — panel-left glyph, rides the edge, travels with it */
+.nav-collapse{
+  display:flex; align-items:center; justify-content:center;
+  height:36px; margin-top:var(--space-1);
+  border:0; background:transparent; color:var(--text-subtle);
+  border-radius:var(--radius-2); cursor:pointer;
+}
+.nav-collapse:hover{background:var(--gray-a3); color:var(--text-default)}
+.nav-collapse svg{width:20px; height:20px}
+.nav-collapse .pc-open{display:none}
+.frame.nav-collapsed .nav-collapse .pc-close{display:none}
+.frame.nav-collapsed .nav-collapse .pc-open{display:block}
+
+.main{flex:1; min-width:0; display:flex; flex-direction:column; background:var(--surface-subtle); position:relative; min-height:0}
+
+/* Measured fold: iframe is 644px tall, starting 101px below the top of the host. */
+.fold-line{display:none; position:absolute; left:0; right:0; top:644px; z-index:40; pointer-events:none}
+.fold-line{display:block}
+body.fold-released .fold-line{display:none}
+.fold-line::before{
+  content:''; position:absolute; left:0; right:0; top:0;
+  border-top:2px dashed var(--error-9); opacity:.85;
+}
+.fold-line span{
+  position:absolute; right:var(--space-4); top:4px;
+  background:var(--error-9); color:#fff;
+  font-size:var(--type-0-size); line-height:var(--type-0-line);
+  font-weight:var(--weight-medium); letter-spacing:var(--ls-1);
+  padding:2px var(--space-2); border-radius:var(--radius-2);
+}
+body.fold-released .dam-iframe{border-bottom:1px solid var(--border-default)}
+
+/* ============================================================
+   DASHBOARD CHROME — header, scoped search, title
+   ============================================================ */
+/* No header band — the scope title sits directly on the dashboard surface.
+   Unity's breadcrumb bar already establishes the top of the page. */
+.chrome{
+  padding:var(--space-4) var(--space-6) var(--space-3);
+  background:transparent;
+}
+.chrome-top{display:flex; align-items:center; gap:var(--space-4)}
+.chrome-titles{min-width:0; flex:1}
+.eyebrow{
+  font-size:var(--type-1-size); line-height:var(--type-1-line);
+  color:var(--text-muted); display:flex; align-items:center; gap:var(--space-2);
+  margin-bottom:var(--space-1);
+}
+.eyebrow .sep{color:var(--text-subtle)}
+h1{
+  font-size:var(--type-3-size); line-height:var(--type-3-line);
+  font-weight:var(--weight-semibold); letter-spacing:var(--ls-tight);
+  display:flex; align-items:center; gap:var(--space-3); flex-wrap:wrap;
+}
+.scope-block{display:flex; align-items:center; gap:var(--space-2); min-width:0}
+.chrome-right{display:flex; align-items:center; gap:var(--space-4); margin-left:auto}
+/* Scope reads as a switchable TITLE, not a form field. Chevron = the only "more here" hint. */
+.scope-title{
+  font-family:inherit; font-size:var(--type-4-size); line-height:var(--type-4-line);
+  font-weight:var(--weight-bold); letter-spacing:var(--ls-tighter); color:var(--text-default);
+  background:transparent; border:0; padding:var(--space-1) var(--space-2);
+  margin-left:calc(var(--space-2) * -1);
+  display:inline-flex; align-items:center; gap:var(--space-1); cursor:pointer; border-radius:var(--radius-2);
+}
+.scope-title:hover{background:var(--surface-hover)}
+.scope-title.is-static{cursor:default; background:transparent; padding-left:0; margin-left:0}
+.scope-chev{width:20px; height:20px; color:var(--text-subtle); flex:0 0 20px}
+/* native select sits invisibly over the styled title button, keeping it accessible */
+.scope-wrap{position:relative; display:inline-flex}
+.scope-native{position:absolute; inset:0; opacity:0; cursor:pointer; font-size:var(--type-3-size)}
+.scope-context{display:flex; align-items:center; gap:var(--space-4); font-size:var(--type-2-size); line-height:var(--type-2-line); color:var(--text-muted)}
+.scope-context span{display:flex; align-items:center; gap:5px}
+.title-meta{
+  margin-top:var(--space-2); font-size:var(--type-2-size); line-height:var(--type-2-line);
+  color:var(--text-muted); display:flex; gap:var(--space-4); flex-wrap:wrap;
+}
+.title-meta span{display:flex; align-items:center; gap:6px}
+
+.search{
+  position:relative; flex:0 0 380px; max-width:380px;
+}
+.search input, .rt-TextFieldInput{
+  width:100%; height:var(--space-7);
+  font-family:inherit; font-size:var(--type-2-size); color:var(--text-default);
+  background:#fff; border:1px solid var(--border-emphasis); border-radius:var(--radius-3);
+  padding:0 var(--space-3) 0 38px;
+}
+.search input::placeholder{color:var(--text-subtle)}
+.search input:focus{outline:0; border-color:var(--primary-default); box-shadow:0 0 0 3px var(--primary-subtle)}
+.search svg{position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-subtle)}
+.search-scope{
+  margin-top:var(--space-2); font-size:var(--type-1-size); line-height:var(--type-1-line);
+  color:var(--text-muted); display:flex; align-items:center; gap:6px;
+}
+
+/* Buttons */
+.btn, .rt-BaseButton{
+  font-family:inherit; font-weight:var(--weight-medium);
+  display:inline-flex; align-items:center; gap:var(--space-2);
+  border-radius:var(--radius-3); cursor:pointer; border:1px solid transparent;
+  white-space:nowrap; transition:background .12s ease;
+}
+.btn-md{height:var(--space-7); padding:0 var(--space-4); font-size:var(--type-2-size)}
+.btn-sm{height:var(--space-6); padding:0 var(--space-3); font-size:var(--type-1-size)}
+.btn-lg{height:var(--space-8); padding:0 var(--space-5); font-size:var(--type-3-size)}
+.btn-primary{background:var(--primary-default); color:var(--text-on-solid)}
+.btn-primary:hover{background:var(--primary-hover)}
+.btn-secondary{background:transparent; color:var(--primary-default); border-color:var(--primary-default)}
+.btn-secondary:hover{background:var(--primary-subtle)}
+.btn-tertiary{background:transparent; color:var(--primary-default)}
+.btn-tertiary:hover{background:var(--neutral-3)}
+.btn-ghost{background:transparent; color:var(--text-subtle); padding:0; width:32px; height:32px; justify-content:center}
+.btn-ghost:hover{background:var(--neutral-3); color:var(--text-muted)}
+
+/* ============================================================
+   WIDGET GRID — 12 col, 24px gutter
+   ============================================================ */
+.grid{
+  padding:var(--space-2) var(--space-6) var(--space-7);
+  display:grid; grid-template-columns:repeat(12,1fr); gap:var(--space-4);
+  align-content:start; flex:1;
+}
+.w-4{grid-column:span 4} .w-6{grid-column:span 6}
+.w-8{grid-column:span 8} .w-12{grid-column:span 12}
+
+/* Widget container — shared chrome, per-type body */
+.widget{
+  background:var(--surface-default); border:1px solid var(--border-default); border-radius:var(--radius-4);
+  display:flex; flex-direction:column; min-width:0; position:relative;
+}
+/* No separator — spacing carries header→body. Steep contrast ramp: loud title, defined actions. */
+.widget-header{
+  display:flex; align-items:center; gap:var(--space-2);
+  padding:var(--space-4) var(--space-4) var(--space-2);
+}
+.widget-title{
+  font-size:var(--type-3-size); line-height:var(--type-3-line);
+  font-weight:var(--weight-bold); letter-spacing:var(--ls-tight); color:var(--text-default);
+  text-decoration:none; display:flex; align-items:center; gap:var(--space-2);
+}
+.widget-count{
+  font-size:var(--type-0-size); line-height:1;
+  color:var(--text-subtle); background:var(--surface-muted);
+  padding:3px var(--space-2); border-radius:var(--radius-full);
+  font-weight:var(--weight-semibold);
+}
+.widget-actions{margin-left:auto; display:flex; align-items:center; gap:var(--space-2)}
+/* Actions have PRESENCE — defined pills, dark text, clearly interactive (ref: Filter/Sort/Weekly). */
+.widget-actions .btn-sm.btn-tertiary,
+.widget-actions .btn-sm.btn-secondary{
+  border:1px solid var(--border-emphasis); color:var(--text-default); font-weight:var(--weight-medium);
+  background:var(--surface-default);
+}
+.widget-actions .btn-sm.btn-tertiary:hover,
+.widget-actions .btn-sm.btn-secondary:hover{background:var(--surface-subtle); border-color:var(--border-strong)}
+.nav-search{position:relative; width:200px}
+.nav-search svg{position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--text-subtle); width:15px; height:15px}
+.nav-search input{width:100%; height:var(--space-6); font-family:inherit; font-size:var(--type-1-size); color:var(--text-default);
+  background:var(--surface-default); border:1px solid var(--border-emphasis); border-radius:var(--radius-2); padding:0 var(--space-3) 0 32px}
+.nav-search input::placeholder{color:var(--text-subtle)}
+.nav-search input:focus{outline:0; border-color:var(--primary-default); box-shadow:0 0 0 3px var(--primary-subtle)}
+.nav-filter{height:var(--space-6); font-family:inherit; font-size:var(--type-1-size); color:var(--text-default);
+  background:var(--surface-default); border:1px solid var(--border-emphasis); border-radius:var(--radius-2); padding:0 var(--space-2); cursor:pointer}
+.widget-body{padding:var(--space-2) var(--space-4) var(--space-4); flex:1; min-width:0}
+.widget-body.flush{padding:0}
+
+/* Contract overlay */
+.manifest{
+  display:none; position:absolute; inset:0; z-index:5;
+  background:rgba(38,30,27,0.94); color:#fff; border-radius:var(--radius-4);
+  padding:var(--space-4); overflow:auto;
+  font-size:var(--type-1-size); line-height:var(--type-2-line);
+}
+body.show-contract .manifest{display:block}
+.manifest dt{color:rgba(255,255,255,0.5); font-weight:var(--weight-medium)}
+.manifest dd{margin-bottom:var(--space-2); font-family:'JetBrains Mono',ui-monospace,monospace; word-break:break-word}
+
+/* ============================================================
+   FOLDER NAVIGATOR
+   ============================================================ */
+/* Groups separate by rhythm + a strong heading, not a rule.
+   The gap ABOVE a group is larger than the gap within it — that size step reads as "new group". */
+.folder-group{padding:0 var(--space-4)}
+.folder-group + .folder-group{margin-top:var(--space-6)}
+.folder-group-head{
+  display:flex; align-items:center; gap:var(--space-2);
+  margin-bottom:var(--space-3);
+}
+.grp-pin{display:inline-flex; color:var(--accent-9)}
+.folder-group-head h3{
+  font-size:var(--type-2-size); line-height:var(--type-2-line);
+  font-weight:var(--weight-bold); color:var(--text-default);
+}
+.folder-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(var(--card-min), 1fr));
+  gap:var(--space-4);
+}
+/* One-row clip: row 1 sizes to content, implicit rows collapse to 0 and are hidden.
+   Pure CSS — no column count needed, so it survives any tenant width. */
+.folder-grid.is-clipped{
+  grid-template-rows:max-content;
+  grid-auto-rows:0;
+  overflow:hidden;
+}
+.folder-card{
+  border:1px solid var(--border-default);
+  /* Concentric corners: inner = outer − padding.
+     16 − 8 = 8, so radius-6 outside, space-2 padding, radius-4 inside. */
+  border-radius:var(--radius-6);
+  background:var(--surface-default); cursor:pointer; min-width:0;
+  padding:var(--space-2);
+  transition:border-color .12s ease, box-shadow .12s ease;
+}
+.folder-card:hover{border-color:var(--border-emphasis); box-shadow:var(--shadow-md)}
+/* Asset thumbs bleed to the card edge — the card IS the image.
+   Folder thumbs sit inset on a surface — the card CONTAINS things,
+   and the hero is its cover. The margin is where the stack shows. */
+.folder-stack{position:relative; padding-bottom:9px}
+.folder-stack::before,
+.folder-stack::after{
+  content:''; position:absolute; left:7px; right:7px; bottom:5px; height:22px;
+  background:var(--neutral-5); border-radius:var(--radius-4);
+}
+.folder-stack::after{left:16px; right:16px; bottom:0; background:var(--neutral-4); border-radius:var(--radius-4)}
+/* No contents, no stack — the layers ARE the assets. */
+.folder-stack.is-empty::before,
+.folder-stack.is-empty::after{display:none}
+.folder-thumb{
+  aspect-ratio:16/9; position:relative; overflow:hidden; z-index:2;
+  border-radius:var(--radius-4);   /* = --radius-6 minus --space-2 */
+  background:var(--surface-muted); display:flex; align-items:center; justify-content:center;
+}
+.folder-meta{padding:var(--space-3) var(--space-1) var(--space-1)}
+
+/* ============================================================
+   COLLECTION CARD — a curated SET. Bento face: no single cover
+   is truthful, so show the set. Inset like a folder (it is a
+   container), but tiled not single-hero (it is many, chosen).
+   ============================================================ */
+.coll-card{
+  border:1px solid var(--border-default); border-radius:var(--radius-6);
+  background:var(--surface-default); cursor:pointer; min-width:0; padding:var(--space-2);
+  transition:border-color .12s ease, box-shadow .12s ease;
+}
+.coll-card:hover{border-color:var(--border-emphasis); box-shadow:var(--shadow-md)}
+/* Bento: one lead tile + a 2x2 of the rest. 3px gutters, concentric 8px inner. */
+.bento{
+  aspect-ratio:16/9; display:grid; gap:3px;
+  grid-template-columns:1.6fr 1fr 1fr;
+  grid-template-rows:1fr 1fr;
+  border-radius:var(--radius-4); overflow:hidden;
+}
+.bento i{display:block; position:relative}
+.bento i:nth-child(1){grid-row:1 / span 2}   /* lead tile spans both rows */
+.bento .more{
+  display:flex; align-items:center; justify-content:center;
+  background:var(--neutral-3); color:var(--text-subtle);
+  font-size:var(--type-1-size); line-height:var(--type-1-line); font-weight:var(--weight-semibold);
+}
+.bento .empty-cell{background:var(--surface-muted)}
+.coll-meta{padding:var(--space-3) var(--space-1) var(--space-1)}
+.coll-name{
+  font-size:var(--type-2-size); line-height:var(--type-2-line);
+  font-weight:var(--weight-medium); color:var(--text-default);
+  height:calc(var(--type-2-line) * 2);
+  overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; word-break:break-word;
+}
+.coll-sub{margin-top:var(--space-1); font-size:var(--type-1-size); line-height:var(--type-1-line); color:var(--text-subtle)}
+/* Collection visibility (panel §2/§3): mutable STATUS → right slot, muted.
+   Private/internal recede; external (left the org) is the trust boundary you scan for. */
+.vis{display:inline-flex; align-items:center; gap:5px; font-size:var(--type-1-size); line-height:var(--type-1-line); color:var(--text-subtle)}
+.vis.is-external{color:var(--status-pending-fg)}
+.coll-foot{margin-top:var(--space-2); display:flex; align-items:center; justify-content:space-between; gap:var(--space-2)}
+.folder-name{
+  font-size:var(--type-2-size); line-height:var(--type-2-line);
+  font-weight:var(--weight-medium); color:var(--text-default);
+  height:calc(var(--type-2-line) * 2);
+  overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+  word-break:break-word;
+}
+.folder-sub{
+  margin-top:var(--space-1); font-size:var(--type-1-size); line-height:var(--type-1-line);
+  color:var(--text-muted); display:flex; align-items:center; gap:6px;
+}
+/* Dates are opt-in metadata, not chrome. Absent = no row, no reserved gap.
+   The count is the spine; the date sits above it only when the folder has one. */
+.folder-foot{
+  margin-top:var(--space-2); display:flex; align-items:center; justify-content:space-between; gap:var(--space-2);
+}
+.folder-count{font-size:var(--type-1-size); line-height:var(--type-1-line); color:var(--text-subtle)}
+
+/* Status badge — light bg + border, per Scale status tokens */
+.badge, .rt-Badge{
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:var(--type-1-size); line-height:var(--type-1-line);
+  font-weight:var(--weight-medium); letter-spacing:var(--ls-1);
+  padding:2px var(--space-2); border-radius:var(--radius-2);
+  border:1px solid; white-space:nowrap;
+}
+.badge-active{background:var(--status-active-bg); border-color:var(--status-active-border); color:var(--status-active-fg)}
+.badge-pending{background:var(--status-pending-bg); border-color:var(--status-pending-border); color:var(--status-pending-fg)}
+.badge-expired{background:var(--status-cancelled-bg); border-color:var(--status-cancelled-border); color:var(--status-cancelled-fg)}
+.badge-restricted{background:var(--status-review-bg); border-color:var(--status-review-border); color:var(--status-review-fg)}
+.badge-archived{background:var(--neutral-4); border-color:var(--neutral-7); color:var(--neutral-11)}
+.badge-draft{background:var(--accent-3); border-color:var(--accent-7); color:var(--accent-11)}
+.badge-progress{background:var(--status-progress-bg); border-color:var(--status-progress-border); color:var(--status-progress-fg)}
+
+/* ============================================================
+   ASSET CARD
+   ============================================================ */
+.asset-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(var(--min,var(--card-min)), 1fr)); gap:var(--space-4)}
+.asset-card{
+  border:2px solid var(--border-default); border-radius:var(--radius-3);
+  overflow:hidden; background:var(--surface-default); cursor:pointer; min-width:0; position:relative;
+}
+.asset-card:hover{border-color:var(--border-emphasis)}
+.asset-thumb{
+  aspect-ratio:1/1; position:relative; overflow:hidden; background:var(--surface-muted);
+  display:flex; align-items:center; justify-content:center;
+}
+/* SLOT MAP — asset-state-tester.html is canonical.
+   top-left select · top-right actions · bottom-right filetype
+   bottom-left thumb = RIGHTS (loud, gates download)
+   detail-row right  = state dots (lifecycle / approval / workflow)   */
+
+/* Bottom-left thumb pill — rights only. Assets only; folders carry no rights. */
+.rights-pill{
+  position:absolute; left:var(--space-2); bottom:var(--space-2);
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:var(--type-0-size); line-height:var(--type-0-line);
+  font-weight:var(--weight-semibold); letter-spacing:var(--ls-1);
+  padding:3px var(--space-2); border-radius:var(--radius-2);
+  border:1px solid; background:#fff;
+}
+.rights-pill::before{content:''; width:6px; height:6px; border-radius:50%; background:currentColor}
+.rights-pill.expired{color:var(--status-cancelled-fg); border-color:var(--status-cancelled-border); background:var(--status-cancelled-bg)}
+.rights-pill.embargoed{color:var(--status-pending-fg); border-color:var(--status-pending-border); background:var(--status-pending-bg)}
+.rights-pill.restricted{color:var(--status-review-fg); border-color:var(--status-review-border); background:var(--status-review-bg)}
+
+/* Detail-row state dots — 10px, colour is the only signal, tooltip required */
+.state-dots{display:flex; align-items:center; gap:5px; flex:0 0 auto}
+.state-badge{
+  width:10px; height:10px; border-radius:50%; flex-shrink:0; cursor:pointer;
+  box-shadow:0 0 0 2px #fff, 0 0 0 3px rgba(0,0,0,0.08);
+}
+.state-badge.archived{background:var(--neutral-11)}
+.state-badge.approval{background:var(--state-approval)}
+.state-badge.workflow{background:var(--color-purple-500)}
+
+/* Identity chip — bottom-right. Filetype for assets, count for folders. */
+.idchip{
+  position:absolute; right:var(--space-2); bottom:var(--space-2);
+  background:var(--filetype-badge-bg); color:var(--filetype-badge-fg);
+  font-size:var(--type-0-size); line-height:var(--type-0-line);
+  font-weight:var(--weight-medium); letter-spacing:var(--ls-1);
+  padding:2px 6px; border-radius:var(--radius-2);
+  display:inline-flex; align-items:center; gap:4px;
+}
+/* No cover set → glyph fill. One rule for empty AND populated-but-uncovered:
+   the folder has no chosen hero, so we show a folder, not a faked cover.
+   No tiling — a grid would collide with the collection bento. */
+.folder-glyph{
+  width:100%; height:100%;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--surface-muted); color:var(--neutral-8);
+}
+/* Empty is a state worth seeing: quieter fill + no stack (handled by is-empty).
+   The open-folder glyph is the secondary cue; the flatter card is the primary one. */
+.folder-glyph.is-empty{background:var(--neutral-2); color:var(--neutral-7)}
+.state-row{display:flex; align-items:center; justify-content:space-between; gap:var(--space-2); margin-top:var(--space-2)}
+.asset-meta{padding:var(--space-3)}
+.asset-name{
+  font-size:var(--type-1-size); line-height:var(--type-1-line);
+  font-weight:var(--weight-medium); color:var(--text-default);
+  height:calc(var(--type-1-line) * 2);
+  overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+  word-break:break-word;
+}
+.asset-sub{margin-top:var(--space-1); font-size:var(--type-1-size); line-height:var(--type-1-line); color:var(--text-subtle)}
+
+/* ============================================================
+   LIST ROWS (downloads, uploads, needs-metadata)
+   ============================================================ */
+.rows{display:flex; flex-direction:column}
+.row{
+  display:flex; align-items:center; gap:var(--space-3);
+  padding:var(--space-3) var(--space-4); cursor:pointer;
+  border-bottom:1px solid var(--border-subtle);
+}
+.row:last-child{border-bottom:0}
+.row:hover{background:var(--surface-muted)}
+.row-thumb{
+  width:40px; height:40px; flex:0 0 40px; border-radius:var(--radius-2);
+  background:var(--surface-muted); overflow:hidden; position:relative;
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; font-weight:var(--weight-semibold); color:var(--text-subtle);
+}
+.row-main{min-width:0; flex:1}
+.row-name{
+  font-size:var(--type-2-size); line-height:var(--type-2-line);
+  font-weight:var(--weight-medium);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.row-sub{font-size:var(--type-1-size); line-height:var(--type-1-line); color:var(--text-muted); margin-top:2px}
+.row-end{display:flex; align-items:center; gap:var(--space-2); flex:0 0 auto}
+.widget-footer{
+  padding:var(--space-1) var(--space-4) var(--space-3);
+  display:flex; justify-content:flex-start; align-items:center;
+}
+
+/* ============================================================
+   ANNOUNCEMENT — replaces the 300px hero carousel
+   ============================================================ */
+.announce{
+  display:flex; align-items:center; gap:var(--space-5);
+  padding:var(--space-4) var(--space-5);
+  background:var(--primary-subtle); border:1px solid var(--primary-border);
+  border-radius:var(--radius-4);
+}
+.announce-icon{
+  width:40px; height:40px; flex:0 0 40px; border-radius:var(--radius-3);
+  background:#fff; border:1px solid var(--primary-border);
+  display:flex; align-items:center; justify-content:center; color:var(--primary-default);
+}
+.announce-body{flex:1; min-width:0}
+.announce-body h4{
+  font-size:var(--type-2-size); line-height:var(--type-2-line);
+  font-weight:var(--weight-semibold); color:var(--accent-12);
+}
+.announce-body p{font-size:var(--type-2-size); line-height:var(--type-2-line); color:var(--accent-12); margin-top:2px}
+
+/* ============================================================
+   EMPTY / SKELETON
+   ============================================================ */
+.empty{
+  padding:var(--space-8) var(--space-5); text-align:center;
+  display:flex; flex-direction:column; align-items:center; gap:var(--space-2);
+}
+.empty-icon{
+  width:44px; height:44px; border-radius:var(--radius-full);
+  background:var(--surface-muted); display:flex; align-items:center; justify-content:center;
+  color:var(--text-subtle); margin-bottom:var(--space-2);
+}
+.empty h4{font-size:var(--type-3-size); line-height:var(--type-3-line); font-weight:var(--weight-medium)}
+.empty p{font-size:var(--type-2-size); line-height:var(--type-2-line); color:var(--text-muted); max-width:340px}
+.empty .btn, .rt-BaseButton{margin-top:var(--space-3)}
+
+@keyframes shimmer{0%{background-position:-500px 0}100%{background-position:500px 0}}
+.skel{
+  background:linear-gradient(90deg,var(--surface-muted) 0px,var(--neutral-4) 200px,var(--surface-muted) 400px);
+  background-size:1000px 100%; animation:shimmer 1.4s linear infinite;
+  border-radius:var(--radius-2);
+}
+
+/* Annotation callouts */
+.note{
+  grid-column:span 12;
+  background:#fff; border:1px dashed var(--border-emphasis); border-left:3px solid var(--primary-default);
+  border-radius:var(--radius-3); padding:var(--space-3) var(--space-4);
+  font-size:var(--type-1-size); line-height:var(--type-2-line); color:var(--text-muted);
+}
+.note b{color:var(--text-default); font-weight:var(--weight-semibold)}
+
+/* ============================================================
+   QUEUE ROWS — actionable, unlike navigational list rows
+   ============================================================ */
+.band{
+  display:flex; align-items:center; gap:var(--space-2);
+  padding:var(--space-2) var(--space-4);
+  background:var(--surface-muted); border-bottom:1px solid var(--border-subtle);
+  font-size:var(--type-1-size); line-height:var(--type-1-line);
+  font-weight:var(--weight-medium); letter-spacing:var(--ls-1);
+  text-transform:uppercase; color:var(--text-muted);
+}
+.band.is-urgent{background:var(--status-cancelled-bg); color:var(--status-cancelled-fg)}
+.band.is-soon{background:var(--status-pending-bg); color:var(--status-pending-fg)}
+.row-actions{display:flex; align-items:center; gap:2px}
+.row-actions .btn-ghost{opacity:0; transition:opacity .12s ease}
+.row:hover .row-actions .btn-ghost{opacity:1}
+.act-approve:hover{background:var(--status-active-bg)!important; color:var(--status-active-fg)!important}
+.act-reject:hover{background:var(--status-cancelled-bg)!important; color:var(--status-cancelled-fg)!important}
+.act-changes:hover{background:var(--status-pending-bg)!important; color:var(--status-pending-fg)!important}
+.who{
+  display:flex; align-items:center; gap:6px;
+  font-size:var(--type-1-size); line-height:var(--type-1-line); color:var(--text-muted);
+}
+.av{
+  width:20px; height:20px; border-radius:var(--radius-full);
+  background:var(--primary-border); color:var(--accent-12);
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; font-weight:var(--weight-semibold); flex:0 0 20px;
+}
+
+/* ============================================================
+   CHART PRIMITIVES — aggregate widgets, not navigational
+   ============================================================ */
+.chart-head{
+  display:flex; align-items:baseline; gap:var(--space-3); margin-bottom:var(--space-4);
+}
+.metric{
+  font-size:var(--type-3-size); line-height:var(--type-3-line);
+  font-weight:var(--weight-semibold); letter-spacing:var(--ls-tighter);
+}
+.delta{font-size:var(--type-1-size); line-height:var(--type-1-line); font-weight:var(--weight-medium)}
+.delta.up{color:var(--status-active-fg)} .delta.down{color:var(--status-cancelled-fg)}
+.chart-sub{font-size:var(--type-1-size); line-height:var(--type-1-line); color:var(--text-muted)}
+
+.cols{display:flex; align-items:flex-end; gap:6px; height:132px; margin-bottom:var(--space-2)}
+.cols .col{flex:1; display:flex; flex-direction:column; justify-content:flex-end; height:100%; cursor:pointer}
+.cols .col i{display:block; background:var(--primary-border); border-radius:var(--radius-1) var(--radius-1) 0 0}
+.cols .col:hover i{background:var(--primary-default)}
+.cols .col.is-current i{background:var(--primary-default)}
+.axis{display:flex; gap:6px; font-size:10px; color:var(--text-subtle)}
+.axis span{flex:1; text-align:center}
+
+.stack{display:flex; height:28px; border-radius:var(--radius-2); overflow:hidden; margin-bottom:var(--space-3)}
+.stack i{display:block; cursor:pointer}
+.legend{display:flex; flex-wrap:wrap; gap:var(--space-2) var(--space-4)}
+.legend span{display:flex; align-items:center; gap:6px; font-size:var(--type-1-size); line-height:var(--type-1-line); color:var(--text-muted)}
+.legend b{width:8px; height:8px; border-radius:2px; display:block}
+.legend em{font-style:normal; color:var(--text-default); font-weight:var(--weight-medium)}
+
+.hbars{display:flex; flex-direction:column; gap:var(--space-3)}
+.hbar{cursor:pointer}
+.hbar-top{display:flex; justify-content:space-between; gap:var(--space-3); margin-bottom:5px}
+.hbar-name{
+  font-size:var(--type-1-size); line-height:var(--type-1-line); color:var(--text-default);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;
+}
+.hbar-val{font-size:var(--type-1-size); line-height:var(--type-1-line); color:var(--text-muted); flex:0 0 auto}
+.hbar-track{height:6px; background:var(--surface-muted); border-radius:var(--radius-full); overflow:hidden}
+.hbar-track i{display:block; height:100%; background:var(--primary-default); border-radius:var(--radius-full)}
+.hbar:hover .hbar-track i{background:var(--primary-hover)}
+
+.donut{display:flex; align-items:center; gap:var(--space-5)}
+.donut-figure{position:relative; flex:0 0 116px}
+.donut-centre{
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:0;
+}
+.donut-centre b{font-size:var(--type-3-size); line-height:var(--type-3-line); font-weight:var(--weight-semibold)}
+.donut-centre span{font-size:10px; color:var(--text-muted)}
+
+/* Field-level redaction */
+.redacted{
+  color:var(--text-subtle); background:var(--surface-muted);
+  border-radius:var(--radius-2); padding:1px 6px;
+  font-size:var(--type-1-size); line-height:var(--type-1-line);
+  display:inline-flex; align-items:center; gap:4px;
+}
+
+/* Time range control — dashboard-level, not per-widget */
+.range{display:flex; align-items:center; gap:var(--space-2)}
+.range .seg2{display:flex; border:1px solid var(--border-emphasis); border-radius:var(--radius-3); overflow:hidden; background:#fff}
+.range .seg2 button{
+  font-family:inherit; font-size:var(--type-1-size); font-weight:var(--weight-medium);
+  border:0; background:transparent; color:var(--text-muted);
+  padding:0 var(--space-3); height:var(--space-6); cursor:pointer;
+}
+.range .seg2 button + button{border-left:1px solid var(--border-subtle)}
+.range .seg2 button[aria-pressed="true"]{background:var(--primary-subtle); color:var(--primary-default)}
+
+/* Photographic stand-ins */
+.ph{width:100%; height:100%}
+.ph-a{background:linear-gradient(135deg,#1b404e,#0d7f9c 55%,#4db5cf)}
+.ph-b{background:linear-gradient(140deg,#44403c,#978985 60%,#d6d3d1)}
+.ph-c{background:linear-gradient(160deg,#005f7b,#29a383)}
+.ph-d{background:linear-gradient(120deg,#292524,#57534e 70%,#985b00)}
+.ph-e{background:linear-gradient(150deg,#053642,#1a95b3)}
+.ph-f{background:linear-gradient(135deg,#6b615e,#e7e5e4)}
+.ph-g{background:linear-gradient(200deg,#7C3AED,#0b6e8a)}
+.ph-h{background:linear-gradient(135deg,#cc4e00,#f5a524)}
+.ph-i{background:linear-gradient(135deg,#fefcfc,#d6d3d1)}
+</style>
+</head>
+<body>
+
+<div class="harness">
+  <div class="harness-group">
+    <span class="harness-label">Preset</span>
+    <div class="seg" id="seg-preset">
+      <button data-v="consumer" aria-pressed="true">Consumer</button>
+      <button data-v="contributor" aria-pressed="false">Contributor</button>
+      <button data-v="approvals" aria-pressed="false">Approvals</button>
+      <button data-v="governance" aria-pressed="false">Governance</button>
+    </div>
+  </div>
+  <div class="harness-group">
+    <span class="harness-label">Scope</span>
+    <div class="seg" id="seg-scope">
+      <button data-v="all" aria-pressed="true">All folders (n&gt;1)</button>
+      <button data-v="single" aria-pressed="false">Single folder (n=1)</button>
+      <button data-v="permission" aria-pressed="false">n=1 by permission</button>
+    </div>
+  </div>
+  <div class="harness-group">
+    <span class="harness-label">State</span>
+    <div class="seg" id="seg-state">
+      <button data-v="populated" aria-pressed="true">Populated</button>
+      <button data-v="loading" aria-pressed="false">Loading</button>
+      <button data-v="empty" aria-pressed="false">Empty</button>
+      <button data-v="denied" aria-pressed="false">Access denied</button>
+    </div>
+  </div>
+  <div class="harness-group">
+    <span class="harness-label">Fold</span>
+    <div class="seg" id="seg-fold">
+      <button data-v="framed" aria-pressed="true">644px view</button>
+      <button data-v="full" aria-pressed="false">Full page</button>
+    </div>
+  </div>
+  <div class="harness-group">
+    <span class="harness-label">Contract</span>
+    <div class="seg" id="seg-contract">
+      <button data-v="off" aria-pressed="true">Off</button>
+      <button data-v="on" aria-pressed="false">Show manifest</button>
+    </div>
+  </div>
+  <div class="harness-note">Harness only — not product chrome. Scope is resolved once at load from permission-filtered visible folder count.</div>
+</div>
+
+<div class="stage">
+  <div class="unity">
+    <!-- UNITY BLUE RAIL — host, fixed, unchangeable -->
+    <nav class="unity-rail" aria-label="Unity global navigation">
+      <div class="unity-logo">F</div>
+      <div class="ur-item" title="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-8h6v8"/></svg></div>
+      <div class="ur-item" title="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg></div>
+      <div class="ur-spacer"></div>
+      <div class="ur-avatar" title="SD Admin"></div>
+      <div class="ur-item" title="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
+      <div class="ur-item" title="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 6 3 7 3 7H3s3-1 3-7"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div>
+      <div class="ur-item" title="Help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></div>
+      <div class="ur-item" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+    </nav>
+    <div class="unity-body">
+      <!-- UNITY BREADCRUMB BAR — host, fixed -->
+      <div class="unity-crumb"><b>Home</b><span class="c-sep">/</span><span id="unityCrumbLeaf">Digital Archive</span></div>
+      <!-- DAM IFRAME AREA — 644px real viewport -->
+      <div class="dam-iframe">
+        <div class="frame nav-collapsed" id="damFrame">
+    <nav class="toolbar toolbar--stacked" id="damNav" aria-label="DAM navigation">
+      <a class="icon-nav-item active" role="tab" aria-selected="true" data-nav="dashboard" data-key="1" data-label="Dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+        <span class="ni-label">Dashboard</span><span class="ni-key">1</span>
+      </a>
+      <a class="icon-nav-item" role="tab" data-nav="library" data-key="2" data-label="Library">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/></svg>
+        <span class="ni-label">Library</span><span class="ni-key">2</span>
+      </a>
+      <a class="icon-nav-item" role="tab" data-nav="collections" data-key="3" data-label="Collections">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        <span class="ni-label">Collections</span><span class="ni-key">3</span>
+      </a>
+      <a class="icon-nav-item" role="tab" data-nav="approvals" data-key="4" data-label="Approvals">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.7 8.9a1 1 0 0 1-.6 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.2-2.7a1 1 0 0 1 1.5 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+        <span class="ni-label">Approvals</span><span class="ni-key">4</span>
+      </a>
+      <a class="icon-nav-item" role="tab" data-nav="downloads" data-key="5" data-label="Downloads">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+        <span class="ni-label">Downloads</span><span class="ni-key">5</span>
+      </a>
+      <div class="toolbar-spacer"></div>
+      <button class="nav-collapse" id="navCollapse" aria-label="Expand navigation" title="Expand navigation  [0]">
+        <svg class="pc-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m16 15-3-3 3-3"/></svg>
+        <svg class="pc-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m14 9 3 3-3 3"/></svg>
+      </button>
+    </nav>
+
+    <div class="main">
+      <div class="fold-line"><span>FOLD · 644px measured</span></div>
+      <div class="chrome" id="chrome"></div>
+      <div class="grid" id="grid"></div>
+    </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   STATE
+   ============================================================ */
+const S = { preset:'consumer', scope:'all', state:'populated', contract:false, folder:'FIFA World Cup 2026' };
+
+// Folder registry. dates/status/count are OPT-IN metadata (event-shaped, FIFA has them).
+// A brand-library tenant's folders would carry none — header would be title only.
+const FOLDER_META = {
+  'FIFA World Cup 2026':      {dates:'11 Jun 2026 – 19 Jul 2026', status:'active', count:'4,812'},
+  'FIFA Club World Cup 2025': {dates:'14 Jun 2025 – 13 Jul 2025', status:'archived', count:'2,140'},
+  'Trophy Tour 2026':         {dates:null, status:'active', count:'642'},
+  'Brand Identity Master':    {dates:null, status:null, count:'389'}   // no dates, no lifecycle — non-event folder
+};
+const FOLDER_LIST = Object.keys(FOLDER_META);
+
+/* ---------- ICONS ---------- */
+const I = {
+  search:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
+  more:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>',
+  folder:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',
+  cal:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>',
+  down:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>',
+  up:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 9 5-5 5 5"/><path d="M12 4v12"/></svg>',
+  tag:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.6 2.6 21 11a2 2 0 0 1 0 2.8l-7.2 7.2a2 2 0 0 1-2.8 0L2.6 12.6A2 2 0 0 1 2 11.2V4a2 2 0 0 1 2-2h7.2a2 2 0 0 1 1.4.6z"/><circle cx="7.5" cy="7.5" r="1"/></svg>',
+  lock:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>',
+  bell:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 6 3 7 3 7H3s3-1 3-7"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>',
+  star:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.9 5.9 6.6 1-4.8 4.6 1.2 6.5L12 18l-5.9 3 1.2-6.5L2.5 9.9l6.6-1z"/></svg>',
+  clock:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'
+};
+
+/* ---------- DATA ---------- */
+const FOLDERS = {
+  Featured:[
+    {n:'FIFA World Cup 2026', d:'11 Jun 2026 – 19 Jul 2026', s:'active', c:'4,812', ph:'ph-a'},
+    {n:'Brand Identity Master', d:null, s:'active', c:'389', ph:'ph-i'},
+    {n:'Trophy Tour 2026', d:'12 Jan 2026 – 24 Apr 2026', s:'active', c:'642', ph:'ph-e'},
+    {n:'Partner & Sponsor Toolkits', d:null, s:'active', c:'822', ph:null},
+    {n:"FIFA U-20 World Cup 2025", d:'27 Sep 2025 – 19 Oct 2025', s:'active', c:'1,102', ph:'ph-f'},
+    {n:'Sustainability Reports', d:null, s:'active', c:'214', ph:'ph-c'}
+  ],
+  Event:[
+    {n:'FIFA World Cup 2026', d:'11 Jun 2026 – 19 Jul 2026', s:'active', c:'4,812', ph:'ph-a'},
+    {n:'FIFA Club World Cup 2025', d:'14 Jun 2025 – 13 Jul 2025', s:'archived', c:'2,140', ph:'ph-b'},
+    {n:"FIFA Women's World Cup 2027", d:'24 Jun 2027 – 25 Jul 2027', s:'draft', c:'318', ph:'ph-c'},
+    {n:'FIFA World Cup Qatar 2022', d:'20 Nov 2022 – 18 Dec 2022', s:'archived', c:'6,903', ph:'ph-d'},
+    {n:'FIFA World Cup 2030', d:'12 Jun 2030 – 14 Jul 2030', s:'draft', c:'0', ph:null},
+    {n:'FIFA World Cup 2018 Archive', d:'14 Jun 2018 – 15 Jul 2018', s:'archived', c:'5,421', ph:'ph-e'},
+    {n:"FIFA U-20 World Cup 2025", d:'27 Sep 2025 – 19 Oct 2025', s:'active', c:'1,102', ph:'ph-f'},
+    {n:'FIFA Arab Cup 2025', d:'01 Dec 2025 – 18 Dec 2025', s:'active', c:'738', ph:'ph-g'},
+    {n:'FIFA Beach Soccer 2026', d:'05 May 2026 – 12 May 2026', s:'draft', c:'44', ph:'ph-h'},
+    {n:'FIFA Futsal World Cup 2028', d:null, s:'draft', c:'0', ph:null}
+  ],
+  Trophies:[
+    {n:'Trophy Tour 2026', d:'12 Jan 2026 – 24 Apr 2026', s:'active', c:'642', ph:'ph-e'},
+    {n:'Trophy Photography Master', d:null, s:'active', c:'1,204', ph:'ph-f'},
+    {n:'Trophy Tour 2022 Archive', d:'09 Feb 2022 – 28 Mar 2022', s:'archived', c:'487', ph:'ph-g'},
+    {n:'Trophy Studio Renders', d:null, s:'active', c:'318', ph:'ph-a'},
+    {n:'Trophy Tour 2018 Archive', d:'18 Jan 2018 – 20 May 2018', s:'archived', c:'402', ph:'ph-d'},
+    {n:'Trophy Engraving Records', d:null, s:'active', c:'56', ph:null},
+    {n:'Trophy Broadcast Cutaways', d:null, s:'active', c:'890', ph:'ph-c'}
+  ],
+  Corporate:[
+    {n:'Brand Identity Master', d:null, s:'active', c:'389', ph:'ph-i'},
+    {n:'Corporate Communications', d:null, s:'active', c:'156', ph:'ph-h'},
+    {n:'Partner & Sponsor Toolkits', d:null, s:'active', c:'822', ph:null},
+    {n:'Legacy Programmes', d:'22 Sep 2025 – 24 Oct 2025', s:'archived', c:'93', ph:'ph-b'},
+    {n:'Sustainability Reports', d:null, s:'active', c:'214', ph:'ph-e'},
+    {n:'Governance & Compliance', d:null, s:'active', c:'77', ph:null},
+    {n:'Media Accreditation Kits', d:null, s:'draft', c:'31', ph:'ph-g'},
+    {n:'Investor Relations', d:null, s:'active', c:'168', ph:'ph-f'}
+  ]
+};
+
+const ASSETS = [
+  {n:'FIFA_WC2026_Logo_Primary_RGB.svg', t:'SVG', sz:'48 KB', r:'cleared', ph:'ph-i'},
+  {n:'WC2026_Trophy_Hero_4000x2250.jpg', t:'JPG', sz:'8.2 MB', r:'cleared', ph:'ph-a'},
+  {n:'WC2026_Emblem_Mono_Black.ai', t:'AI', sz:'1.1 MB', r:'cleared', ph:'ph-f'},
+  {n:'WC2026_Opening_Reel_Master.mp4', t:'MP4', sz:'842 MB', r:'restricted', ph:'ph-d'},
+  {n:'WC2026_Brand_Guidelines_v4.pdf', t:'PDF', sz:'22 MB', r:'cleared', ph:'ph-b'},
+  {n:'WC2026_Mascot_Fullbody_CMYK.png', t:'PNG', sz:'6.4 MB', r:'pending', ph:'ph-h'},
+  {n:'WC2026_Stadium_Toronto_Ext_01.jpg', t:'JPG', sz:'11 MB', r:'cleared', ph:'ph-e'},
+  {n:'WC2026_Typography_Specimen.pdf', t:'PDF', sz:'3.9 MB', r:'expired', ph:'ph-c'},
+  {n:'WC2026_Anthem_Broadcast_Mix.mp3', t:'MP3', sz:'18 MB', r:'restricted', ph:'ph-g'},
+  {n:'WC2026_Ticketing_Keyvisual.psd', t:'PSD', sz:'340 MB', r:'cleared', ph:'ph-a'},
+  {n:'WC2026_Host_Cities_Map.svg', t:'SVG', sz:'126 KB', r:'cleared', ph:'ph-c'},
+  {n:'WC2026_Social_Story_Template.fig', t:'FIG', sz:'4.2 MB', r:'pending', ph:'ph-f'}
+];
+
+/* Four INDEPENDENT axes per asset-state-tester. They co-occur; one badge cannot carry them.
+   rights: cleared(default) | embargoed | expired | restricted
+   arch/appr/wf: booleans. Default states render nothing. */
+const AXES = {
+  'FIFA_WC2026_Logo_Primary_RGB.svg':{arch:false,appr:false,wf:false},
+  'WC2026_Trophy_Hero_4000x2250.jpg':{arch:false,appr:true, wf:false},
+  'WC2026_Emblem_Mono_Black.ai':{arch:true, appr:false,wf:false},
+  'WC2026_Opening_Reel_Master.mp4':{arch:false,appr:true, wf:true},
+  'WC2026_Brand_Guidelines_v4.pdf':{arch:false,appr:false,wf:true},
+  'WC2026_Mascot_Fullbody_CMYK.png':{arch:false,appr:true, wf:false},
+  'WC2026_Typography_Specimen.pdf':{arch:true, appr:false,wf:true},
+  'WC2026_Stadium_Toronto_Ext_01.jpg':{arch:false,appr:false,wf:false}
+};
+function axesFor(n){ return AXES[n] || {arch:false,appr:false,wf:false}; }
+function stateDots(n){
+  const a = axesFor(n); let o='';
+  if(a.arch) o+='<span class="state-badge archived" title="Archived"></span>';
+  if(a.appr) o+='<span class="state-badge approval" title="In approval"></span>';
+  if(a.wf)   o+='<span class="state-badge workflow" title="On a workflow"></span>';
+  return o ? `<span class="state-dots">${o}</span>` : '';
+}
+const FEATURED_FOLDERS = [
+  {n:'FIFA World Cup 2026', d:'11 Jun 2026 – 19 Jul 2026', s:'active', c:'4,812', ph:'ph-a'},
+  {n:'Brand Identity Master', d:null, s:'active', c:'389', ph:'ph-i'},
+  {n:'FIFA Club World Cup 2025', d:'14 Jun 2025 – 13 Jul 2025', s:'archived', c:'2,140', ph:'ph-b'},
+  {n:'Partner & Sponsor Toolkits', d:null, s:'active', c:'822', ph:null}
+];
+const COLLECTIONS = [
+  {n:'Tournament Key Visuals', c:'48', tiles:['ph-a','ph-e','ph-c','ph-h'], curator:'Brand team', vis:'internal'},
+  {n:'Broadcast-Ready Clips', c:'23', tiles:['ph-d','ph-g','ph-b','ph-f'], curator:'D. Moran', vis:'private'},
+  {n:'Sponsor Handover Pack', c:'6', tiles:['ph-i','ph-f'], curator:'S. Murphy', vis:'external'},
+  {n:'Social — Matchday', c:'112', tiles:['ph-h','ph-c','ph-a','ph-e'], curator:'Social team', vis:'internal'}
+];
+const VIS = {
+  private:  {i:'visPrivate',  t:'Private'},
+  internal: {i:'visInternal', t:'Shared internally'},
+  external: {i:'visExternal', t:'Shared externally'}
+};
+const RIGHTS_LABEL = {cleared:'Cleared', pending:'Embargoed', restricted:'Restricted', expired:'Expired'};
+const RIGHTS_CLASS = {cleared:'badge-active', pending:'badge-pending', restricted:'badge-restricted', expired:'badge-expired'};
+const FOLDER_LABEL = {active:'Active', archived:'Archived', draft:'Draft'};
+const FOLDER_CLASS = {active:'badge-active', archived:'badge-archived', draft:'badge-draft'};
+
+const DOWNLOADS = [
+  {n:'FIFA_WC2026_Logo_Primary_RGB.svg', t:'SVG', when:'Today, 09:41', r:'cleared', ph:'ph-i', folder:'FIFA World Cup 2026'},
+  {n:'WC2026_Brand_Guidelines_v4.pdf', t:'PDF', when:'Yesterday, 16:08', r:'cleared', ph:'ph-b', folder:'Brand Identity Master'},
+  {n:'WC2026_Trophy_Hero_4000x2250.jpg', t:'JPG', when:'21 Jul, 11:22', r:'cleared', ph:'ph-a', folder:'FIFA World Cup 2026'},
+  {n:'Trophy_Tour_Kit_v2.pdf', t:'PDF', when:'18 Jul, 14:55', r:'expired', ph:'ph-c', folder:'Trophy Tour 2026'},
+  {n:'WC2026_Host_Cities_Map.svg', t:'SVG', when:'17 Jul, 08:30', r:'cleared', ph:'ph-c', folder:'FIFA World Cup 2026'}
+];
+
+// Upload drafts = uploaded, not yet publish-ready. No 'uploading' state — uploads finish instantly.
+const DRAFTS = [
+  {n:'WC2026_Stadium_Toronto_Ext_01.jpg', t:'JPG', st:'incomplete', sub:'Missing: Rights holder, Territory', act:'Complete'},
+  {n:'WC2026_Ticketing_Keyvisual.psd', t:'PSD', st:'incomplete', sub:'Missing: Expiry date', act:'Complete'},
+  {n:'WC2026_Social_Story_Template.fig', t:'FIG', st:'incomplete', sub:'Missing: Rights holder, Usage, Credit', act:'Complete'},
+  {n:'WC2026_Press_Kit_EN.zip', t:'ZIP', st:'failed', sub:'Unsupported archive — 2 files could not be read', act:'Retry'},
+  {n:'WC2026_Anthem_Broadcast_Mix.mp3', t:'MP3', st:'awaiting', sub:'Awaiting rights clearance before publish', act:'Review'},
+  {n:'WC2026_Mascot_Fullbody_CMYK.png', t:'PNG', st:'ready', sub:'Metadata complete · ready to publish', act:'Publish'}
+];
+
+
+/* ---------- APPROVALS ---------- */
+const AWAITING = [
+  {band:'overdue', n:'WC2026_Opening_Reel_Master.mp4', t:'MP4', who:'DM', whoN:'D. Moran',
+   sub:'Rights clearance · submitted 6 days ago', due:'Overdue by 2 days', origin:'Unity · Broadcast Approval'},
+  {band:'overdue', n:'WC2026_Ticketing_Keyvisual.psd', t:'PSD', who:'AC', whoN:'A. Chen',
+   sub:'Brand review · submitted 5 days ago', due:'Overdue by 1 day', origin:'Unity · Creative Review'},
+  {band:'soon', n:'WC2026_Mascot_Fullbody_CMYK.png', t:'PNG', who:'RK', whoN:'R. Kelly',
+   sub:'Rights clearance · submitted 2 days ago', due:'Due tomorrow', origin:'Unity · Rights Sign-off'},
+  {band:'soon', n:'WC2026_Social_Story_Template.fig', t:'FIG', who:'SM', whoN:'S. Murphy',
+   sub:'Brand review · submitted yesterday', due:'Due in 2 days', origin:'Unity · Creative Review'},
+  {band:'none', n:'WC2026_Host_Cities_Map.svg', t:'SVG', who:'JL', whoN:'J. Lynch',
+   sub:'Metadata review · submitted today', due:'No deadline', origin:'DAM · Metadata QA'},
+  {band:'none', n:'WC2026_Anthem_Broadcast_Mix.mp3', t:'MP3', who:'DM', whoN:'D. Moran',
+   sub:'Rights clearance · submitted today', due:'No deadline', origin:'Unity · Rights Sign-off'}
+];
+
+const SUBMITTED = [
+  {n:'WC2026_Stadium_Toronto_Ext_01.jpg', t:'JPG', st:'pending', sub:'With A. Chen · 1 day', lbl:'Awaiting'},
+  {n:'WC2026_Brand_Guidelines_v4.pdf', t:'PDF', st:'active', sub:'Approved by P. Doyle · today', lbl:'Approved'},
+  {n:'WC2026_Press_Kit_EN.zip', t:'ZIP', st:'expired', sub:'Changes requested by S. Murphy', lbl:'Returned'},
+  {n:'WC2026_Emblem_Mono_Black.ai', t:'AI', st:'active', sub:'Approved by P. Doyle · 21 Jul', lbl:'Approved'}
+];
+
+const DECIDED = [
+  {n:'FIFA_WC2026_Logo_Primary_RGB.svg', t:'SVG', act:'Approved', st:'active', when:'Today, 10:04'},
+  {n:'WC2026_Typography_Specimen.pdf', t:'PDF', act:'Rejected', st:'expired', when:'Today, 09:52'},
+  {n:'WC2026_Trophy_Hero_4000x2250.jpg', t:'JPG', act:'Approved', st:'active', when:'Yesterday, 17:31'}
+];
+
+/* ---------- GOVERNANCE ---------- */
+const EXPIRING = [
+  {band:'0-30', n:'WC2026_Opening_Reel_Master.mp4', t:'MP4', d:'Expires 09 Aug 2026', holder:'Getty Images', terr:'Global'},
+  {band:'0-30', n:'WC2026_Anthem_Broadcast_Mix.mp3', t:'MP3', d:'Expires 14 Aug 2026', holder:'Sony Music', terr:'EU only'},
+  {band:'0-30', n:'WC2026_Stadium_Toronto_Ext_01.jpg', t:'JPG', d:'Expires 21 Aug 2026', holder:'Staff photographer', terr:'Global'},
+  {band:'30-60', n:'WC2026_Ticketing_Keyvisual.psd', t:'PSD', d:'Expires 12 Sep 2026', holder:'Agency — Wolff', terr:'Global'},
+  {band:'30-60', n:'WC2026_Mascot_Fullbody_CMYK.png', t:'PNG', d:'Expires 30 Sep 2026', holder:'In-house', terr:'Global'},
+  {band:'60-90', n:'WC2026_Social_Story_Template.fig', t:'FIG', d:'Expires 18 Oct 2026', holder:'Agency — Wolff', terr:'Global'}
+];
+
+const ACTIVITY = [
+  {l:'Feb',v:38},{l:'Mar',v:52},{l:'Apr',v:47},{l:'May',v:61},{l:'Jun',v:74},
+  {l:'Jul',v:69},{l:'Aug',v:88},{l:'Sep',v:96},{l:'Oct',v:83},{l:'Nov',v:110},
+  {l:'Dec',v:127},{l:'Jan',v:142}
+];
+
+const TOPASSETS = [
+  {n:'FIFA_WC2026_Logo_Primary_RGB.svg', v:1284},
+  {n:'WC2026_Brand_Guidelines_v4.pdf', v:962},
+  {n:'WC2026_Emblem_Mono_Black.ai', v:747},
+  {n:'WC2026_Trophy_Hero_4000x2250.jpg', v:511},
+  {n:'WC2026_Host_Cities_Map.svg', v:388}
+];
+
+const COVERAGE = [
+  {k:'Cleared', v:11842, c:'var(--color-green-500)'},
+  {k:'Pending', v:3106,  c:'var(--color-amber-500)'},
+  {k:'Restricted', v:2418, c:'var(--color-purple-500)'},
+  {k:'Expired', v:1376,  c:'var(--color-red-500)'}
+];
+
+const BLOCKED = [
+  {n:'WC2026_Opening_Reel_Master.mp4', who:'external.partner@…', when:'Today, 11:02', why:'Territory: US requested, EU only'},
+  {n:'WC2026_Anthem_Broadcast_Mix.mp3', who:'agency.user@…', when:'Today, 08:44', why:'Licence expired 14 Jul'},
+  {n:'WC2026_Typography_Specimen.pdf', who:'press.desk@…', when:'Yesterday, 19:20', why:'Audience: Press excluded'}
+];
+
+/* extra icons */
+I.visPrivate='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>';
+I.visInternal='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>';
+I.visExternal='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18"/></svg>';
+I.folderOpen='<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v1"/><path d="M3.5 21h15.4a1 1 0 0 0 .97-.76l1.8-7.2A1 1 0 0 0 20.7 12H6.3a1 1 0 0 0-.97.76L3.5 20"/></svg>';
+I.folderLg='<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>';
+I.folderMini='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>';
+I.check='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>';
+I.x='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+I.msg='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+I.inbox='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12h-6l-2 3h-2l-2-3H3"/><path d="M5.4 5.1 3 12v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6l-2.4-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.9 1.1z"/></svg>';
+I.shield='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.4 8.3-8 9-4.6-.7-8-4-8-9V6z"/></svg>';
+I.chart='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 15l4-5 3 3 5-7"/></svg>';
+I.eyeoff='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.7 5.1A9.7 9.7 0 0 1 12 5c6 0 10 7 10 7a17 17 0 0 1-3 3.7M6.6 6.6A17 17 0 0 0 2 12s4 7 10 7a9.7 9.7 0 0 0 5.4-1.6"/><path d="m2 2 20 20"/></svg>';
+
+const BAND_LABEL = {
+  overdue:'Past deadline', soon:'Approaching deadline', none:'No deadline',
+  '0-30':'Expiring within 30 days', '30-60':'31 – 60 days', '60-90':'61 – 90 days'
+};
+const BAND_CLASS = {overdue:'is-urgent', soon:'is-soon', none:'', '0-30':'is-urgent', '30-60':'is-soon', '60-90':''};
+
+/* ============================================================
+   MANIFEST — the widget container contract, rendered
+   ============================================================ */
+function manifest(m){
+  return `<div class="manifest"><dl>
+    <dt>id</dt><dd>${m.id}</dd>
+    <dt>type</dt><dd>${m.type}</dd>
+    <dt>scope</dt><dd>${m.scope}</dd>
+    <dt>slotSize</dt><dd>${m.slot}</dd>
+    <dt>dataSource</dt><dd>${m.src}</dd>
+    <dt>permissionGate</dt><dd>${m.gate}</dd>
+    <dt>states</dt><dd>empty · loading · error · denied</dd>
+    <dt>presets</dt><dd>${m.presets}</dd>
+  </dl></div>`;
+}
+
+/* ============================================================
+   SHARED WIDGET SHELL
+   ============================================================ */
+function widget(o){
+  const count = o.count ? `<span class="widget-count">${o.count}</span>` : '';
+  const foot  = o.footer ? `<div class="widget-footer">${o.footer}</div>` : '';
+  return `<section class="widget ${o.span}">
+    <header class="widget-header">
+      <a class="widget-title" href="#">${o.title}</a>${count}
+      <div class="widget-actions">${o.actions||''}<button class="btn btn-ghost" title="Widget options">${I.more}</button></div>
+    </header>
+    <div class="widget-body ${o.flush?'flush':''}">${o.body}</div>
+    ${foot}
+    ${manifest(o.m)}
+  </section>`;
+}
+
+function emptyState(icon,h,p,cta){
+  return `<div class="empty"><div class="empty-icon">${icon}</div><h4>${h}</h4><p>${p}</p>${cta||''}</div>`;
+}
+function deniedState(p){
+  return emptyState(I.lock,'Access denied', p, `<button class="btn btn-md btn-secondary">Request access</button>`);
+}
+function skelRows(n,h){
+  let o='';
+  for(let i=0;i<n;i++) o += `<div class="skel" style="height:${h}px;margin:${i?'12px':'0'} 0 0"></div>`;
+  return o;
+}
+function skelGrid(n,min){ min = min || null;
+  let o=`<div class="asset-grid"${min?` style="--min:${min}px"`:''}>`;
+  for(let i=0;i<n;i++) o+=`<div><div class="skel" style="aspect-ratio:1/1"></div><div class="skel" style="height:12px;margin-top:12px;width:80%"></div><div class="skel" style="height:10px;margin-top:6px;width:45%"></div></div>`;
+  return o+'</div>';
+}
+
+/* ============================================================
+   WIDGETS
+   ============================================================ */
+function wFolderNav(){
+  const m={id:'folder-navigator',type:'navigator',scope:'global',slot:'12 × 3 (min 6 × 2)',src:'folders.list({visibleTo:user})',gate:'folder.read',presets:'consumer, contributor'};
+  if(S.state==='loading')  return widget({span:'w-12',title:'Browse folders',body:skelRows(3,120),m});
+  if(S.state==='denied')   return widget({span:'w-12',title:'Browse folders',body:deniedState('You don\u2019t have access to any folders in this library. Contact your DAM administrator.'),m});
+  if(S.state==='empty')    return widget({span:'w-12',title:'Browse folders',body:emptyState(I.folder,'No folders yet','Folders are created in Event Manager. Once one exists, it will appear here.','<button class="btn btn-md btn-primary">Open Event Manager</button>'),m});
+
+  let body='';
+  for(const [group,items] of Object.entries(FOLDERS)){
+    body += `<div class="folder-group">
+      <div class="folder-group-head">
+        ${group==='Featured' ? `<span class="grp-pin" title="Admin-curated">${I.star.replace('width="20" height="20"','width="15" height="15"')}</span>` : ''}
+        <h3>${group}</h3><span class="widget-count">${items.length}</span>
+        <div style="margin-left:auto"><button class="btn btn-sm btn-tertiary" data-expand="${group}">View all ${items.length}</button></div>
+      </div>
+      <div class="folder-grid is-clipped" data-group="${group}">${items.map(f=>`
+        <article class="folder-card">
+          <div class="folder-stack ${parseInt(String(f.c).replace(/,/g,''),10) > 0 ? '' : 'is-empty'}">
+          <div class="folder-thumb">
+            ${f.ph
+              ? `<div class="ph ${f.ph}"></div>`
+              : (parseInt(String(f.c).replace(/,/g,''),10) > 0
+                  ? `<div class="folder-glyph">${I.folderLg}</div>`
+                  : `<div class="folder-glyph is-empty">${I.folderOpen}</div>`)}
+          </div>
+          </div>
+          <div class="folder-meta">
+            <div class="folder-name" title="${f.n}">${f.n}</div>
+            ${f.d ? `<div class="folder-sub">${I.cal}${f.d}</div>` : ''}
+            <div class="folder-foot">
+              <span class="folder-count">${f.c} assets</span>
+              ${f.s==='active' ? '' : `<span class="badge ${FOLDER_CLASS[f.s]}">${FOLDER_LABEL[f.s]}</span>`}
+            </div>
+          </div>
+        </article>`).join('')}</div>
+    </div>`;
+  }
+  // Folder-scoped controls live ON the widget, not in the page header.
+  // A search here obviously searches FOLDERS — no global-vs-contextual ambiguity.
+  // Folder SEARCH stays on the widget (searching folders is a widget op).
+  // Folder FILTER moved to the header scope control (selecting a folder = scoping the page).
+  const controls = `
+    <div class="nav-search">
+      ${I.search}
+      <input type="text" placeholder="Search folders…">
+    </div>`;
+  const totalFolders = Object.entries(FOLDERS).filter(([g])=>g!=='Featured').reduce((n,[,items])=>n+items.length,0);
+  return widget({span:'w-12',title:'Browse folders',count:totalFolders+'',body,flush:true,m,
+    actions:controls});
+}
+
+function wCollections(){
+  const m={id:'collections',type:'bento-grid',scope:'either',slot:'12 x 2 (min 6 x 2)',
+    src:'collections.list({scope})',gate:'collection.read',presets:'consumer'};
+  if(S.state==='loading') return widget({span:'w-12',title:'Collections',body:skelGrid(4,220),m});
+  if(S.state==='denied')  return widget({span:'w-12',title:'Collections',body:deniedState('Collections in this scope are restricted.'),m});
+  if(S.state==='empty')   return widget({span:'w-12',title:'Collections',body:emptyState(I.star,'No collections yet','Group assets you use together into a collection so your team can grab the whole set at once.','<button class="btn btn-md btn-secondary">Create a collection</button>'),m});
+
+  const single = S.scope!=='all';
+  // Multi-folder: only org-level (shared) collections bubble up. Personal (private) stay in-folder.
+  // Single-folder: the folder's full set, including private.
+  const shown = single ? COLLECTIONS : COLLECTIONS.filter(c => c.vis !== 'private');
+  const hiddenCount = single ? 0 : COLLECTIONS.filter(c => c.vis === 'private').length;
+
+  if(!shown.length) return widget({span:'w-12',title:'Collections',
+    body:emptyState(I.star,'No shared collections here','Shared collections appear across folders. Open a folder to see its own collections.'),m});
+
+  const body = `<div class="asset-grid">${shown.map(c=>{
+    const shown = c.tiles.slice(0,4);
+    const extra = parseInt(c.c.replace(/,/g,''),10) - shown.length;
+    let cells = shown.map(t=>`<i class="ph ${t}"></i>`);
+    while(cells.length<4) cells.push('<i class="empty-cell"></i>');
+    if(extra>0) cells[3] = `<i class="more">+${extra}</i>`;
+    return `<article class="coll-card">
+      <div class="bento">${cells.join('')}</div>
+      <div class="coll-meta">
+        <div class="coll-name" title="${c.n}">${c.n}</div>
+        <div class="coll-foot">
+          <span class="coll-sub">${c.c} assets</span>
+          <span class="vis ${c.vis==='external'?'is-external':''}" title="${VIS[c.vis].t}">${I[VIS[c.vis].i]}${c.vis==='external'?'<span>External</span>':''}</span>
+        </div>
+      </div>
+    </article>`;}).join('')}</div>`;
+  const foot = single
+    ? `<button class="btn btn-sm btn-tertiary">View all collections</button>`
+    : `<span style="font-size:var(--type-1-size);color:var(--text-subtle)">Showing shared collections${hiddenCount?` · ${hiddenCount} personal in their folders`:''}</span>`;
+  return widget({span:'w-12',title:single?'Collections':'Shared collections',count:shown.length+'',body,m,
+    footer:foot});
+}
+
+function wFeatured(){
+  const m={id:'featured-folders',type:'folder-grid',scope:'global',slot:'12 x 2 (min 6 x 2)',
+    src:'folders.list({filter:featured})  ADMIN-CURATED',gate:'folder.read',presets:'consumer'};
+  const single = S.scope!=='all';
+  // Featured is a cross-folder admin surface. In a single-folder scope it has no meaning.
+  if(single) return '';
+  if(S.state==='loading') return widget({span:'w-12',title:'Featured',body:skelRows(2,120),m});
+  if(S.state==='denied')  return widget({span:'w-12',title:'Featured',body:deniedState('Featured folders are restricted in this library.'),m});
+  if(S.state==='empty')   return widget({span:'w-12',title:'Featured',body:emptyState(I.star,'Nothing featured yet','An administrator can promote folders here so your team lands on them first.','<button class="btn btn-md btn-secondary">Learn about featuring</button>'),m});
+
+  const feat = FEATURED_FOLDERS;
+  const body = `<div class="folder-grid">${feat.map(f=>`
+    <article class="folder-card">
+      <div class="folder-stack ${parseInt(String(f.c).replace(/,/g,''),10) > 0 ? '' : 'is-empty'}">
+      <div class="folder-thumb">
+        ${f.ph
+          ? `<div class="ph ${f.ph}"></div>`
+          : (parseInt(String(f.c).replace(/,/g,''),10) > 0
+              ? `<div class="folder-glyph">${I.folderLg}</div>`
+              : `<div class="folder-glyph is-empty">${I.folderOpen}</div>`)}
+      </div>
+      </div>
+      <div class="folder-meta">
+        <div class="folder-name" title="${f.n}">${f.n}</div>
+        ${f.d ? `<div class="folder-sub">${I.cal}${f.d}</div>` : ''}
+        <div class="folder-foot">
+          <span class="folder-count">${f.c} assets</span>
+          ${f.s==='active' ? '' : `<span class="badge ${FOLDER_CLASS[f.s]}">${FOLDER_LABEL[f.s]}</span>`}
+        </div>
+      </div>
+    </article>`).join('')}</div>`;
+  return widget({span:'w-12',title:'Featured',count:feat.length+'',body,flush:false,m});
+}
+
+function wRecent(span){
+  const m={id:'recently-added',type:'asset-grid',scope:'either',slot:`${span==='w-12'?'12':'8'} × 2 (min 4 × 2)`,src:'assets.list({sort:createdAt,scope})',gate:'asset.read',presets:'consumer, contributor'};
+  if(S.state==='loading') return widget({span,title:'Recently added',body:skelGrid(6,200),m});
+  if(S.state==='denied')  return widget({span,title:'Recently added',body:deniedState('You don\u2019t have read access to assets in this scope.'),m});
+  if(S.state==='empty')   return widget({span,title:'Recently added',body:emptyState(I.clock,'No assets yet','Upload your first assets and they will appear here as they finish processing.','<button class="btn btn-md btn-primary">Upload assets</button>'),m});
+
+  const items = ASSETS.slice(2, span==='w-12' ? 12 : 8);
+  const body = `<div class="asset-grid" style="--min:150px">${items.map(a=>`
+    <article class="asset-card">
+      <div class="asset-thumb">
+        <div class="ph ${a.ph}"></div>
+        ${a.r!=='cleared' ? `<span class="rights-pill ${a.r==='pending'?'embargoed':a.r}">${RIGHTS_LABEL[a.r]}</span>` : ''}
+        <span class="idchip">${a.t}</span>
+      </div>
+      <div class="asset-meta">
+        <div class="asset-name" title="${a.n}">${a.n}</div>
+        <div class="state-row">
+          <span class="asset-sub">${a.sz}</span>
+          ${stateDots(a.n)}
+        </div>
+      </div>
+    </article>`).join('')}</div>`;
+  return widget({span,title:'Recently added',body,m,
+    footer:`<button class="btn btn-sm btn-tertiary">View all</button>`});
+}
+
+function wDownloads(){
+  const m={id:'my-downloads',type:'list',scope:'either',slot:'4 × 2 (min 4 × 2)',src:'events.downloads({actor:user,scope})',gate:'always',presets:'consumer'};
+  if(S.state==='loading') return widget({span:'w-4',title:'My recent downloads',body:skelRows(5,40),m});
+  if(S.state==='denied')  return widget({span:'w-4',title:'My recent downloads',body:deniedState('Download history is unavailable for guest accounts.'),m});
+  if(S.state==='empty')   return widget({span:'w-4',title:'My recent downloads',body:emptyState(I.down,'Nothing downloaded yet','Assets you download will be listed here so you can find them again fast.'),m});
+
+  const body = `<div class="rows">${DOWNLOADS.map(d=>`
+    <div class="row">
+      <div class="row-thumb"><div class="ph ${d.ph}"></div></div>
+      <div class="row-main">
+        <div class="row-name" title="${d.n}">${d.n}</div>
+        <div class="row-sub">${d.when}${S.scope==='all'?` · <span style="color:var(--text-subtle)">${d.folder}</span>`:''}</div>
+      </div>
+      <div class="row-end">
+        ${d.r==='expired'?`<span class="badge badge-expired">Expired</span>`:`<button class="btn btn-ghost" title="Download again">${I.down}</button>`}
+      </div>
+    </div>`).join('')}</div>`;
+  return widget({span:'w-4',title:'My recent downloads',body,flush:true,m,
+    footer:`<button class="btn btn-sm btn-tertiary">View full history</button>`});
+}
+
+function wDrafts(){
+  const m={id:'upload-drafts',type:'queue',scope:'either',slot:'12 x 2 (min 6 x 2)',
+    src:'assets.list({filter:draft, actor:user, scope})',gate:'asset.create',presets:'contributor'};
+  if(S.state==='loading') return widget({span:'w-12',title:'Upload drafts',body:skelRows(6,48),m});
+  if(S.state==='denied')  return widget({span:'w-12',title:'Upload drafts',body:deniedState('You don\u2019t have upload rights in this folder.'),m});
+  if(S.state==='empty')   return widget({span:'w-12',title:'Upload drafts',body:emptyState(I.up,'Nothing in progress','Assets you upload land here until they\u2019re published. Drag files anywhere in the library to start.','<button class="btn btn-md btn-primary">Upload assets</button>'),m});
+
+  const STCLS = {failed:'badge-expired', incomplete:'badge-pending', awaiting:'badge-restricted', ready:'badge-active'};
+  const STLBL = {failed:'Failed', incomplete:'Incomplete', awaiting:'Awaiting rights', ready:'Ready'};
+  const body = `<div class="rows">${DRAFTS.map(d=>{
+    let sub = `<div class="row-sub">${d.sub}</div>`;
+    const action = d.act
+      ? `<button class="btn btn-sm ${d.st==='ready'?'btn-primary':'btn-secondary'}">${d.act}</button>`
+      : '';
+    return `<div class="row">
+      <div class="row-thumb">${d.t}</div>
+      <div class="row-main"><div class="row-name" title="${d.n}">${d.n}</div>${sub}</div>
+      <div class="row-end"><span class="badge ${STCLS[d.st]}">${STLBL[d.st]}</span>${action}</div>
+    </div>`;}).join('')}</div>`;
+  return widget({span:'w-12',title:'Upload drafts',count:DRAFTS.length+'',body,flush:true,m,
+    actions:`<button class="btn btn-sm btn-primary">Upload</button>`,
+    footer:`<button class="btn btn-sm btn-tertiary">Open bulk editor</button>`});
+}
+
+function bandedRows(items, rowFn){
+  let out='', last=null;
+  items.forEach(it=>{
+    if(it.band!==last){ out += `<div class="band ${BAND_CLASS[it.band]}">${BAND_LABEL[it.band]}</div>`; last=it.band; }
+    out += rowFn(it);
+  });
+  return `<div class="rows">${out}</div>`;
+}
+
+function wAwaiting(){
+  const m={id:'awaiting-my-approval',type:'queue',scope:'either',slot:'8 × 3 (min 6 × 2)',
+    src:'unity.approvals.assigned({actor:user,scope}) \u2b21 CROSS-IFRAME',gate:'approval.act',
+    presets:'approvals, contributor'};
+  if(S.state==='loading') return widget({span:'w-8',title:'Awaiting my approval',body:skelRows(6,48),m});
+  if(S.state==='denied')  return widget({span:'w-8',title:'Awaiting my approval',body:deniedState('You are not an assigned approver on any workflow in this scope.'),m});
+  if(S.state==='empty')   return widget({span:'w-8',title:'Awaiting my approval',body:emptyState(I.check,'Queue is clear','Nothing is waiting on you. Items assigned to you will appear here, past deadline first.'),m});
+
+  const body = bandedRows(AWAITING, a=>`
+    <div class="row">
+      <div class="row-thumb">${a.t}</div>
+      <div class="row-main">
+        <div class="row-name" title="${a.n}">${a.n}</div>
+        <div class="row-sub">${a.sub} · <span style="color:var(--text-subtle)">${a.origin}</span></div>
+      </div>
+      <div class="row-end">
+        <span class="who"><span class="av">${a.who}</span>${a.whoN}</span>
+        <div class="row-actions">
+          <button class="btn btn-ghost act-approve" title="Approve">${I.check}</button>
+          <button class="btn btn-ghost act-changes" title="Request changes">${I.msg}</button>
+          <button class="btn btn-ghost act-reject" title="Reject">${I.x}</button>
+          <button class="btn btn-ghost" title="More">${I.more}</button>
+        </div>
+      </div>
+    </div>`);
+  return widget({span:'w-8',title:'Awaiting my approval',count:'6 · 2 overdue',body,flush:true,m,
+    footer:`<button class="btn btn-sm btn-primary">Open review queue</button>`});
+}
+
+function wSubmitted(){
+  const m={id:'my-submissions',type:'list',scope:'either',slot:'4 × 2 (min 4 × 2)',
+    src:'unity.approvals.submittedBy({actor:user}) \u2b21 CROSS-IFRAME',gate:'always',presets:'approvals'};
+  if(S.state==='loading') return widget({span:'w-4',title:'My submissions',body:skelRows(4,44),m});
+  if(S.state==='denied')  return widget({span:'w-4',title:'My submissions',body:deniedState('Submission history is unavailable for this account.'),m});
+  if(S.state==='empty')   return widget({span:'w-4',title:'My submissions',body:emptyState(I.inbox,'Nothing submitted','Assets you send for approval will show their status here.'),m});
+
+  const cls={pending:'badge-pending',active:'badge-active',expired:'badge-expired'};
+  const body = `<div class="rows">${SUBMITTED.map(s=>`
+    <div class="row">
+      <div class="row-thumb">${s.t}</div>
+      <div class="row-main"><div class="row-name" title="${s.n}">${s.n}</div><div class="row-sub">${s.sub}</div></div>
+      <div class="row-end"><span class="badge ${cls[s.st]}">${s.lbl}</span></div>
+    </div>`).join('')}</div>`;
+  return widget({span:'w-4',title:'My submissions',count:'4',body,flush:true,m});
+}
+
+function wDecided(){
+  const m={id:'my-decisions',type:'list',scope:'either',slot:'6 × 2 (min 4 × 2)',
+    src:'unity.approvals.decidedBy({actor:user}) \u2b21 CROSS-IFRAME',gate:'approval.act',presets:'approvals'};
+  if(S.state==='loading') return widget({span:'w-6',title:'My recent decisions',body:skelRows(3,44),m});
+  if(S.state==='denied')  return widget({span:'w-6',title:'My recent decisions',body:deniedState('Decision history requires approver rights.'),m});
+  if(S.state==='empty')   return widget({span:'w-6',title:'My recent decisions',body:emptyState(I.clock,'No decisions yet','Approvals and rejections you make appear here, with a window to undo.'),m});
+
+  const cls={active:'badge-active',expired:'badge-expired'};
+  const body = `<div class="rows">${DECIDED.map(d=>`
+    <div class="row">
+      <div class="row-thumb">${d.t}</div>
+      <div class="row-main"><div class="row-name" title="${d.n}">${d.n}</div><div class="row-sub">${d.when}</div></div>
+      <div class="row-end">
+        <span class="badge ${cls[d.st]}">${d.act}</span>
+        <div class="row-actions"><button class="btn btn-ghost" title="Undo decision">${I.more}</button></div>
+      </div>
+    </div>`).join('')}</div>`;
+  return widget({span:'w-6',title:'My recent decisions',body,flush:true,m,
+    footer:`<button class="btn btn-sm btn-tertiary">View full audit trail</button>`});
+}
+
+function wTurnaround(){
+  const m={id:'approval-turnaround',type:'chart.metric',scope:'either',slot:'6 × 2 (min 4 × 2)',
+    src:'unity.approvals.aggregate({metric:turnaround,range}) \u2b21 CROSS-IFRAME \u00b7 AGGREGATE',
+    gate:'approval.act',presets:'approvals'};
+  if(S.state==='loading') return widget({span:'w-6',title:'Turnaround time',body:skelRows(1,132),m});
+  if(S.state==='denied')  return widget({span:'w-6',title:'Turnaround time',body:deniedState('Team-level metrics require a manager role.'),m});
+  if(S.state==='empty')   return widget({span:'w-6',title:'Turnaround time',body:emptyState(I.chart,'No data in this period','No approvals were completed between Feb and Jul 2026. Widen the range to see history.'),m});
+
+  const vals=[4.2,3.8,4.6,3.1,2.9,3.4,2.6,2.2,2.8,1.9,2.1,1.7];
+  const max=Math.max(...vals);
+  const body = `
+    <div class="chart-head"><span class="metric">1.7</span><span class="chart-sub">days median</span>
+      <span class="delta up">↓ 19% vs previous period</span></div>
+    <div class="cols">${vals.map((v,i)=>`<div class="col ${i===vals.length-1?'is-current':''}" title="${ACTIVITY[i].l}: ${v} days"><i style="height:${(v/max)*100}%"></i></div>`).join('')}</div>
+    <div class="axis">${ACTIVITY.map(a=>`<span>${a.l}</span>`).join('')}</div>`;
+  return widget({span:'w-6',title:'Turnaround time',body,m,
+    footer:`<button class="btn btn-sm btn-tertiary">Break down by reviewer</button>`});
+}
+
+/* ============================================================
+   GOVERNANCE WIDGETS
+   ============================================================ */
+function wExpiring(){
+  const m={id:'rights-expiring',type:'queue',scope:'either',slot:'12 × 3 (min 6 × 2)',
+    src:'assets.list({filter:rightsExpiry<90d, sort:expiry, scope})',gate:'rights.read',presets:'governance'};
+  if(S.state==='loading') return widget({span:'w-12',title:'Rights expiring',body:skelRows(6,48),m});
+  if(S.state==='denied')  return widget({span:'w-12',title:'Rights expiring',body:deniedState('Rights data is restricted to governance roles.'),m});
+  if(S.state==='empty')   return widget({span:'w-12',title:'Rights expiring',body:emptyState(I.shield,'Nothing expiring in 90 days','Every licence in this scope runs beyond the current window.'),m});
+
+  const body = bandedRows(EXPIRING, e=>`
+    <div class="row">
+      <div class="row-thumb">${e.t}</div>
+      <div class="row-main">
+        <div class="row-name" title="${e.n}">${e.n}</div>
+        <div class="row-sub">${e.d} · ${e.holder} · ${e.terr}</div>
+      </div>
+      <div class="row-end">
+        <button class="btn btn-sm btn-secondary">Renew</button>
+        <div class="row-actions"><button class="btn btn-ghost" title="More">${I.more}</button></div>
+      </div>
+    </div>`);
+  return widget({span:'w-12',title:'Rights expiring',count:'142 in 90 days',body,flush:true,m,
+    actions:`<button class="btn btn-sm btn-secondary">Filter</button>`,
+    footer:`<button class="btn btn-sm btn-tertiary">Export list</button>`});
+}
+
+function wActivity(){
+  const m={id:'download-activity',type:'chart.timeseries',scope:'either',slot:'8 × 2 (min 6 × 2)',
+    src:'events.aggregate({event:download, bucket:month, range, scope}) \u00b7 AGGREGATE \u00b7 NO CAPTURE TODAY',
+    gate:'analytics.read',presets:'governance'};
+  if(S.state==='loading') return widget({span:'w-8',title:'Download activity',body:skelRows(1,150),m});
+  if(S.state==='denied')  return widget({span:'w-8',title:'Download activity',body:deniedState('Usage analytics require an analytics role.'),m});
+  if(S.state==='empty')   return widget({span:'w-8',title:'Download activity',body:emptyState(I.chart,'No data in this period','No downloads were recorded in the selected range. Try a wider period.'),m});
+
+  const max=Math.max(...ACTIVITY.map(a=>a.v));
+  const body = `
+    <div class="chart-head"><span class="metric">1,087</span><span class="chart-sub">downloads</span>
+      <span class="delta up">↑ 12% vs previous period</span></div>
+    <div class="cols">${ACTIVITY.map((a,i)=>`<div class="col ${i===ACTIVITY.length-1?'is-current':''}" title="${a.l}: ${a.v}"><i style="height:${(a.v/max)*100}%"></i></div>`).join('')}</div>
+    <div class="axis">${ACTIVITY.map(a=>`<span>${a.l}</span>`).join('')}</div>`;
+  return widget({span:'w-8',title:'Download activity',body,m,
+    footer:`<button class="btn btn-sm btn-tertiary">Open full report</button>`});
+}
+
+function wCoverage(){
+  const m={id:'rights-coverage',type:'chart.composition',scope:'either',slot:'4 × 2 (min 4 × 2)',
+    src:'assets.aggregate({groupBy:rightsState, scope}) \u00b7 AGGREGATE',gate:'rights.read',presets:'governance'};
+  if(S.state==='loading') return widget({span:'w-4',title:'Rights coverage',body:skelRows(1,132),m});
+  if(S.state==='denied')  return widget({span:'w-4',title:'Rights coverage',body:deniedState('Rights data is restricted to governance roles.'),m});
+  if(S.state==='empty')   return widget({span:'w-4',title:'Rights coverage',body:emptyState(I.shield,'No assets in scope','Once assets are added, their rights split will show here.'),m});
+
+  const total=COVERAGE.reduce((s,c)=>s+c.v,0);
+  const body = `
+    <div class="chart-head"><span class="metric">${Math.round(COVERAGE[0].v/total*100)}%</span><span class="chart-sub">cleared for use</span></div>
+    <div class="stack">${COVERAGE.map(c=>`<i style="width:${c.v/total*100}%;background:${c.c}" title="${c.k}: ${c.v.toLocaleString()}"></i>`).join('')}</div>
+    <div class="legend">${COVERAGE.map(c=>`<span><b style="background:${c.c}"></b>${c.k} <em>${c.v.toLocaleString()}</em></span>`).join('')}</div>`;
+  return widget({span:'w-4',title:'Rights coverage',body,m});
+}
+
+function wTopAssets(){
+  const m={id:'most-downloaded',type:'chart.rank',scope:'either',slot:'6 × 2 (min 4 × 2)',
+    src:'events.aggregate({event:download, groupBy:asset, limit:5, range, scope}) \u00b7 NO CAPTURE TODAY',
+    gate:'analytics.read',presets:'governance'};
+  if(S.state==='loading') return widget({span:'w-6',title:'Most downloaded',body:skelRows(5,26),m});
+  if(S.state==='denied')  return widget({span:'w-6',title:'Most downloaded',body:deniedState('Usage analytics require an analytics role.'),m});
+  if(S.state==='empty')   return widget({span:'w-6',title:'Most downloaded',body:emptyState(I.chart,'No data in this period','Nothing was downloaded in the selected range.'),m});
+
+  const max=TOPASSETS[0].v;
+  const body = `<div class="hbars">${TOPASSETS.map(a=>`
+    <div class="hbar">
+      <div class="hbar-top"><span class="hbar-name" title="${a.n}">${a.n}</span><span class="hbar-val">${a.v.toLocaleString()}</span></div>
+      <div class="hbar-track"><i style="width:${a.v/max*100}%"></i></div>
+    </div>`).join('')}</div>`;
+  return widget({span:'w-6',title:'Most downloaded',body,m,
+    footer:`<button class="btn btn-sm btn-tertiary">View all assets by usage</button>`});
+}
+
+function wBlocked(){
+  const m={id:'blocked-downloads',type:'queue',scope:'either',slot:'6 × 2 (min 4 × 2)',
+    src:'events.list({event:downloadDenied, range, scope}) \u00b7 NO CAPTURE TODAY',
+    gate:'analytics.read + identity.read',presets:'governance'};
+  if(S.state==='loading') return widget({span:'w-6',title:'Blocked downloads',body:skelRows(3,48),m});
+  if(S.state==='denied')  return widget({span:'w-6',title:'Blocked downloads',body:deniedState('Enforcement events require a compliance role.'),m});
+  if(S.state==='empty')   return widget({span:'w-6',title:'Blocked downloads',body:emptyState(I.shield,'No blocked attempts','Every download in this period was within licence. Enforcement is holding.'),m});
+
+  const body = `<div class="rows">${BLOCKED.map(b=>`
+    <div class="row">
+      <div class="row-thumb">${I.shield}</div>
+      <div class="row-main">
+        <div class="row-name" title="${b.n}">${b.n}</div>
+        <div class="row-sub">${b.why} · ${b.when}</div>
+      </div>
+      <div class="row-end">
+        <span class="redacted">${I.eyeoff} Identity hidden</span>
+      </div>
+    </div>`).join('')}</div>`;
+  return widget({span:'w-6',title:'Blocked downloads',count:'3',body,flush:true,m,
+    footer:`<button class="btn btn-sm btn-tertiary">Open audit log</button>`});
+}
+
+
+function wBanner(){
+  const m={id:'event-banner',type:'banner',scope:'either',slot:'12 x 2',
+    src:'event.visualIdentity.bannerImage  FIFA-ONLY',gate:'folder.read',presets:'(fifa template only)'};
+  if(S.state!=='populated') return '';
+  return `<section class="widget w-12" style="overflow:hidden">
+    <div style="position:relative; aspect-ratio:48/9; background:linear-gradient(120deg,#1b404e,#0d7f9c 55%,#4db5cf)">
+      <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:flex-end; padding:var(--space-5); background:linear-gradient(to top, rgba(0,0,0,.45), transparent 60%)">
+        <div style="font-size:var(--type-4-size); line-height:var(--type-4-line); font-weight:var(--weight-bold); color:#fff">FIFA World Cup 2026</div>
+        <div style="font-size:var(--type-2-size); color:rgba(255,255,255,.85); margin-top:2px">11 Jun – 19 Jul 2026 · 4,812 assets</div>
+      </div>
+      <span style="position:absolute; top:var(--space-3); right:var(--space-3); background:rgba(0,0,0,.4); color:#fff; font-size:var(--type-0-size); font-weight:var(--weight-medium); letter-spacing:var(--ls-1); text-transform:uppercase; padding:3px 8px; border-radius:var(--radius-2)">Banner · FIFA only</span>
+    </div>
+    ${manifest(m)}
+  </section>`;
+}
+
+function wAnnounce(){
+  if(S.state!=='populated') return '';
+  return `<div class="w-12">
+    <div class="announce">
+      <div class="announce-icon">${I.bell}</div>
+      <div class="announce-body">
+        <h4>Rights renewal window opens 1 August</h4>
+        <p>142 assets across three folders have licences expiring before the tournament. Review before the window closes.</p>
+      </div>
+      <button class="btn btn-md btn-secondary">Review assets</button>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   CHROME — permanent scope header
+   ============================================================ */
+function renderChrome(){
+  const single = S.scope!=='all';
+  const byPerm = S.scope==='permission';
+  const isWork = S.preset==='approvals' || S.preset==='governance';
+  const f = FOLDER_META[S.folder] || {};
+
+  // Unity breadcrumb (host) carries identity; deepens to the folder at single scope.
+  const leaf = document.getElementById('unityCrumbLeaf');
+  if(leaf){
+    leaf.innerHTML = single
+      ? `<a href="#" id="crumbBack" style="color:var(--text-subtle);text-decoration:none">Digital Archive</a> <span class="c-sep">/</span> <b>${S.folder}</b>`
+      : `<b>Digital Archive</b>`;
+    const back = document.getElementById('crumbBack');
+    if(back) back.addEventListener('click', e=>{ e.preventDefault(); S.scope='all'; render(); });
+  }
+
+  const chromeEl = document.getElementById('chrome');
+  chromeEl.style.display = '';
+
+  // ---- SCOPE CONTROL ----
+  // Switchable (picker) when a choice exists; STATIC (no chevron) when it doesn't.
+  const chev = `<svg class="scope-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`;
+  const opts = ['All folders', ...FOLDER_LIST];
+  let scopeControl;
+  if(byPerm){
+    // Genuinely one folder — no list to open. Static, no chevron.
+    scopeControl = `<span class="scope-title is-static">${S.folder}</span>`;
+  } else {
+    // Always a dropdown — whether "All folders" or a folder name. Same list either way,
+    // with "All folders" as the top item. Selecting it clears scope. No ✕, no inline crumb:
+    // it's a selector, and "everything" is just one of the values.
+    const current = single ? S.folder : 'All folders';
+    scopeControl = `
+      <div class="scope-wrap">
+        <button class="scope-title" aria-haspopup="listbox">${current}${chev}</button>
+        <select class="scope-native" id="scopeSelect" aria-label="Folder scope">
+          ${opts.map(o=>`<option ${o===current?'selected':''}>${o}</option>`).join('')}
+        </select>
+      </div>`;
+  }
+
+  // ---- CONTEXT — conditional per folder. dates/status/count are opt-in (FIFA-shaped). ----
+  let context = '';
+  if(isWork){
+    context = S.preset==='approvals'
+      ? `<span>6 assigned to you</span><span style="color:var(--status-cancelled-fg)">2 past deadline</span>`
+      : `<span>142 licences expiring in 90 days</span>`;
+  } else if(single){
+    const bits = [];
+    if(f.dates)  bits.push(`<span>${I.cal} ${f.dates}</span>`);
+    if(f.count)  bits.push(`<span>${f.count} assets</span>`);
+    if(f.status) bits.push(`<span class="badge ${FOLDER_CLASS[f.status]}">${FOLDER_LABEL[f.status]}</span>`);
+    context = bits.join('');   // empty for a folder with no event metadata
+  } else {
+    context = `<span>${FOLDER_LIST.length} folders</span>`;
+  }
+
+  const hasAggregate = S.preset==='governance' || S.preset==='approvals';
+  const rangeCtl = hasAggregate ? `
+    <div class="range">
+      <span style="font-size:var(--type-1-size);color:var(--text-muted)">Period</span>
+      <div class="seg2">
+        <button aria-pressed="false">30d</button>
+        <button aria-pressed="false">90d</button>
+        <button aria-pressed="true">12m</button>
+        <button aria-pressed="false">Custom</button>
+      </div>
+    </div>` : '';
+
+  chromeEl.innerHTML = `
+    <div class="chrome-top">
+      <div class="scope-block">${scopeControl}</div>
+      <div class="chrome-right">
+        ${context ? `<div class="scope-context">${context}</div>` : ''}
+        ${rangeCtl}
+      </div>
+    </div>`;
+
+  // ---- wire the picker so scope actually changes the dashboard ----
+  const sel = document.getElementById('scopeSelect');
+  if(sel){
+    sel.addEventListener('change', e=>{
+      const v = e.target.value;
+      if(v==='All folders'){ S.scope='all'; }
+      else { S.scope='single'; S.folder=v; }
+      render();
+    });
+  }
+
+}
+
+/* ============================================================
+   PRESET LAYOUTS
+   ============================================================ */
+function renderGrid(){
+  const single = S.scope!=='all';
+  let out = '';
+
+  if(S.preset==='consumer'){
+    if(!single) out += wBanner();   // FIFA-only widget, shown here to demo placement
+    if(!single) out += wFolderNav();   // Featured is now the first group INSIDE this
+    out += wCollections();
+    out += wRecent('w-8');
+    out += wDownloads();
+  } else if(S.preset==='contributor'){
+    out += wDrafts();
+    if(!single) out += wFolderNav();
+    out += wRecent('w-12');
+  } else if(S.preset==='approvals'){
+    out += wAwaiting();
+    out += wSubmitted();
+    out += wDecided();
+    out += wTurnaround();
+  } else {
+    out += wExpiring();
+    out += wActivity();
+    out += wCoverage();
+    out += wTopAssets();
+    out += wBlocked();
+  }
+
+  /* annotations */
+  if(S.preset==='approvals' && S.state==='populated'){
+    out += `<div class="note"><b>Contract stress — approvals.</b> Three additions this preset forces and the first two didn\u2019t. <b>(1) Cross-iframe dataSource:</b> every widget here reads Unity workflow state, marked <code>\u2b21 CROSS-IFRAME</code> in the manifest. <b>(2) rowActions:</b> queues mutate state in-tile. Approve / request changes / reject render as tier-4 ghost icons, not tier-1 buttons \u2014 Scale caps Primary at one per visible context, and six rows would mean six primaries. The one Primary is <em>Open review queue</em> in the footer. <b>(3) Mutation states:</b> approve-in-tile needs optimistic removal plus rollback, so the contract needs a fifth state beyond empty / loading / error / denied.</div>`;
+  }
+  if(S.preset==='governance' && S.state==='populated'){
+    out += `<div class="note"><b>Contract stress \u2014 aggregates.</b> Charts break four assumptions the landing widgets never tested. <b>(1) Range is dashboard-level</b>, not per-widget \u2014 note the Period control in the header, which must never appear on Consumer or Contributor. <b>(2) dataSource returns buckets, not records</b>, so the interface needs an aggregate shape alongside the list shape. <b>(3) Drill-down goes to a filtered report</b>, not an asset \u2014 hyperlinked-title-as-nav doesn\u2019t cover a clicked bar. <b>(4) Field-level permission:</b> see <em>Blocked downloads</em> \u2014 this user may see that a download was denied but not who attempted it. Permission is per-field, not per-widget.</div>`;
+    out += `<div class="note" style="border-left-color:var(--error-9)"><b>None of this is buildable today.</b> Three of these five widgets read from an event stream that does not exist \u2014 marked <code>NO CAPTURE TODAY</code> in the manifest. There are no Linear issues for event capture, and no join key between DAM events and Unity workflow events. Treat this preset as the requirements spec for instrumentation, not a build candidate.</div>`;
+  }
+  const isLanding = S.preset==='consumer' || S.preset==='contributor';
+  if(isLanding && single && S.state==='populated'){
+    out += `<div class="note"><b>Scope resolved to a single folder.</b> The Folder Navigator widget is not rendered — there was nothing to pick. The folder name is the page title, search is folder-scoped, and every remaining widget received <code>scope: folder</code> from the same resolution. ${S.scope==='permission' ? 'Here n=1 is caused by <b>permissions</b>, not tenant shape: the tenant has 12 folders, this user can see one. Same code path, no special case.' : 'The day this tenant creates a second folder, the Navigator appears and nothing else changes.'}</div>`;
+  }
+  if(isLanding && !single && S.state==='populated'){
+    out += `<div class="note"><b>Scope resolved to all folders.</b> The Folder Navigator is one widget in the grid, not the surface. Grouping (Event / Trophies / Corporate) is widget config, not a hardcoded section list — which is what removes the “ALL ITEMS” remainder row from the current build.</div>`;
+  }
+
+  document.getElementById('grid').innerHTML = out;
+}
+
+function renderRail(){
+  // Folder-scoped destinations need a folder to resolve against.
+  // Multi-folder scope = no folder context (contract 1.6 disable-don't-hide: structural, live recovery).
+  const contextless = (S.scope==='all');
+  ['library','collections'].forEach(nav=>{
+    const el = document.querySelector(`.icon-nav-item[data-nav="${nav}"]`);
+    if(!el) return;
+    if(contextless){
+      el.classList.add('is-disabled');
+      el.setAttribute('data-tip', 'Open a folder to view its '+nav);
+      el.setAttribute('aria-disabled','true');
+      el.setAttribute('tabindex','-1');
+    } else {
+      el.classList.remove('is-disabled');
+      el.removeAttribute('data-tip'); el.removeAttribute('aria-disabled'); el.removeAttribute('tabindex');
+    }
+  });
+  // Collapsed rail: every item gets a tooltip (label is hidden). Expanded: none (label shows).
+  document.querySelectorAll('.icon-nav-item[data-label]').forEach(el=>{
+    if(!el.classList.contains('is-disabled')) el.setAttribute('data-tip', el.dataset.label);
+  });
+}
+
+function render(){ renderChrome(); renderGrid(); wireExpand(); renderRail(); }
+
+/* One row by default; View all releases the clip. Column count is never
+   computed in JS — CSS auto-fill decides it from whatever width the tenant has. */
+function wireExpand(){
+  document.querySelectorAll('[data-expand]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const g = document.querySelector(`.folder-grid[data-group="${btn.dataset.expand}"]`);
+      if(!g) return;
+      const clipped = g.classList.toggle('is-clipped');
+      btn.textContent = clipped ? `View all ${g.children.length}` : 'Show less';
+    });
+  });
+}
+
+/* ============================================================
+   HARNESS WIRING
+   ============================================================ */
+function wire(id,key,after){
+  const el=document.getElementById(id);
+  el.addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b) return;
+    [...el.querySelectorAll('button')].forEach(x=>x.setAttribute('aria-pressed', String(x===b)));
+    S[key]=b.dataset.v; if(after) after(); render();
+  });
+}
+wire('seg-preset','preset');
+wire('seg-scope','scope');
+wire('seg-state','state');
+document.getElementById('seg-fold').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  const el=document.getElementById('seg-fold');
+  [...el.querySelectorAll('button')].forEach(x=>x.setAttribute('aria-pressed', String(x===b)));
+  document.body.classList.toggle('fold-released', b.dataset.v==='full');
+});
+document.getElementById('seg-contract').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  const el=document.getElementById('seg-contract');
+  [...el.querySelectorAll('button')].forEach(x=>x.setAttribute('aria-pressed', String(x===b)));
+  document.body.classList.toggle('show-contract', b.dataset.v==='on');
+});
+
+// §2.1 edge toggle — push nav narrows/expands
+document.getElementById('navCollapse').addEventListener('click', ()=>{
+  const f = document.getElementById('damFrame');
+  const collapsed = f.classList.toggle('nav-collapsed');
+  const btn = document.getElementById('navCollapse');
+  btn.setAttribute('aria-label', collapsed ? 'Expand navigation' : 'Collapse navigation');
+  btn.setAttribute('title', (collapsed ? 'Expand navigation' : 'Collapse navigation') + '  [0]');
+});
+
+// nav destination selection (visual only in the mock)
+document.querySelectorAll('.icon-nav-item[data-nav]').forEach(el=>{
+  el.addEventListener('click', e=>{
+    if(el.classList.contains('is-disabled')){ e.preventDefault(); return; }
+    document.querySelectorAll('.icon-nav-item').forEach(x=>{x.classList.remove('active'); x.setAttribute('aria-selected','false');});
+    el.classList.add('active'); el.setAttribute('aria-selected','true');
+  });
+});
+
+render();
+</script>
+</body>
+</html>

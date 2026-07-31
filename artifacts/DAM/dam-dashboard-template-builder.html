@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DAM Config — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* ============================================================
+     LIVE BUILD VOCABULARY
+     Read from index-1LAPLyxY.css on sd-feature-dam.screendragondev.com,
+     24 Jul 2026. Names match the running app. Do not rename.
+     ============================================================ */
+  --scaling:1;
+
+  /* Type ladder — pair every size with its line. type-0..3 ONLY in-product. */
+  --type-0-size:11px; --type-0-line:16px;
+  --type-1-size:12px; --type-1-line:16px;
+  --type-2-size:14px; --type-2-line:20px;
+  --type-3-size:16px; --type-3-line:24px;
+  --type-4-size:18px; --type-4-line:28px;   /* not for in-product */
+  --type-5-size:24px; --type-5-line:32px;   /* not for in-product */
+  --type-6-size:32px; --type-6-line:40px;   /* not for in-product */
+
+  --weight-regular:400; --weight-medium:500; --weight-semibold:600; --weight-bold:700;
+
+  /* Spacing — note there is NO 20px step */
+  --space-1:calc(4px * var(--scaling));  --space-2:calc(8px * var(--scaling));
+  --space-3:calc(12px * var(--scaling)); --space-4:calc(16px * var(--scaling));
+  --space-5:calc(24px * var(--scaling)); --space-6:calc(32px * var(--scaling));
+  --space-7:calc(40px * var(--scaling)); --space-8:calc(48px * var(--scaling));
+  --space-9:calc(64px * var(--scaling));
+
+  --radius-1:3px; --radius-2:4px; --radius-3:6px; --radius-4:8px; --radius-6:16px; --radius-full:9999px;
+  --ls-1:0.04em; --ls-tight:-0.01em; --ls-tighter:-0.02em;
+
+  /* Neutral ramp (aliases --gray-1..12 in Radix) */
+  --neutral-1:#fdfdfc; --neutral-2:#f9f9f8; --neutral-3:#f1f0ef; --neutral-4:#e9e8e6;
+  --neutral-5:#e2e1de; --neutral-6:#dad9d6; --neutral-7:#d0ceca; --neutral-8:#bcbbb6;
+  --neutral-9:#8e8d86; --neutral-10:#83827c; --neutral-11:#64635e; --neutral-12:#21201c;
+
+  /* Alpha greys — borders composite, they are not opaque */
+  --gray-a3:rgba(0,0,0,.06); --gray-a4:rgba(0,0,0,.09);
+  --gray-a5:rgba(0,0,0,.122); --gray-a6:rgba(0,0,0,.153);
+  --gray-a7:rgba(0,0,0,.192); --gray-a8:rgba(0,0,0,.267); --gray-a9:rgba(0,0,0,.44);
+
+  /* Accent ramp */
+  --accent-3:#E4F5FC; --accent-4:#D5EFF9; --accent-5:#C4E5F3; --accent-7:#95C9DD;
+  --accent-9:#0B6E8A; --accent-10:#005F7B; --accent-11:#197592; --accent-12:#1B404E;
+  --accent-contrast:#ffffff;
+  /* Alpha accent fill — survives dark where a fixed tint collapses (contract 2.1). */
+  --accent-a3:rgba(13,127,156,0.16);  /* dark-twin active fill only */
+
+  /* Semantic layer — never reach past this to a raw step */
+  --primary-default:var(--accent-9);
+  --primary-hover:var(--accent-10);
+  --primary-text:var(--accent-11);
+  --primary-subtle:var(--accent-3);
+  --primary-subtle-hover:var(--accent-4);
+  --primary-border:var(--accent-7);
+  --primary-contrast:var(--accent-contrast);
+
+  --text-default:var(--neutral-12);
+  --text-subtle:var(--neutral-10);
+  --text-disabled:var(--gray-a9);
+  --text-on-solid:var(--accent-contrast);
+  --text-on-media:#fff;
+
+  --border-subtle:var(--gray-a5);
+  --border-default:var(--gray-a6);
+  --border-emphasis:var(--gray-a7);
+  --border-strong:var(--gray-a8);
+
+  --surface-default:var(--neutral-1);
+  --surface-subtle:var(--neutral-2);
+  --surface-muted:var(--neutral-3);
+  --surface-hover:var(--gray-a3);
+  --surface-active:var(--gray-a4);
+  --surface-emphasis:var(--neutral-4);
+
+  /* Rail state tokens — live, themeable per surface */
+  --icon-nav-fg:var(--text-subtle);
+  --icon-nav-bg-hover:var(--surface-muted);
+  --icon-nav-fg-hover:var(--text-default);
+  --icon-nav-active-bg:var(--accent-3);   /* SOLID tint on light (contract canonical .ri.active) */
+  --icon-nav-active-fg:var(--accent-11);
+  --icon-nav-active-bar:var(--primary-default);
+
+  --text-field-height:var(--space-7);
+
+  /* Status */
+  --color-green-100:#e4f7f0; --color-green-500:#29a383; --color-green-600:#008062;
+  --color-amber-100:#fff0cb; --color-amber-500:#f5a524; --color-amber-600:#a96600;
+  --color-red-100:#feebe7;   --color-red-500:#e54d2e;   --color-red-600:#cf3716;
+  --color-purple-100:#f3f0ff;--color-purple-500:#7c3aed;--color-purple-600:#7139d6;
+  --color-orange-100:#ffeadd;--color-orange-500:#f76707;--color-orange-600:#d44a00;
+
+  --status-active-bg:var(--color-green-100);   --status-active-border:var(--color-green-500);   --status-active-fg:var(--color-green-600);
+  --status-pending-bg:var(--color-amber-100);  --status-pending-border:var(--color-amber-500);  --status-pending-fg:var(--color-amber-600);
+  --status-cancelled-bg:var(--color-red-100);  --status-cancelled-border:var(--color-red-500);  --status-cancelled-fg:var(--color-red-600);
+  --status-review-bg:var(--color-purple-100);  --status-review-border:var(--color-purple-500);  --status-review-fg:var(--color-purple-600);
+  --status-progress-bg:var(--color-orange-100);--status-progress-border:var(--color-orange-500);--status-progress-fg:var(--color-orange-600);
+  --status-draft-bg:var(--neutral-2);          --status-draft-border:var(--neutral-4);          --status-draft-fg:var(--neutral-9);
+  --status-onhold-bg:var(--neutral-2);         --status-onhold-border:var(--neutral-6);         --status-onhold-fg:var(--neutral-11);
+
+  --filetype-badge-bg:rgba(28,28,25,0.62);
+  --filetype-badge-fg:#ffffff;
+  --error-9:#e54d2e; --error-10:#cf3716;
+
+  /* ---- SHIM 3: approval-flow blue. asset-state-tester specs raw #3b82f6.
+         No Scale semantic exists for it. Its own rule says never invent a
+         colour without updating the spec — so this needs a Scale home. ---- */
+  --state-approval:#3b82f6;
+
+  /* Card grid track — ONE source of truth for browse-card width.
+     Width is a surface decision, not a per-widget one. */
+  --card-min:200px;
+
+  --font-family-text:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-lg:0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+
+  /* ---- SHIM 1: mid-tier text. Build ships only default/subtle/disabled.
+         Scale defines --text-muted; the build does not. Flagged, not hidden. ---- */
+  --text-muted:var(--neutral-11);
+
+  /* ---- SHIM 2: categorical data ramp. Present in scale-design-system.html,
+         ABSENT from the build. Charts have no live palette until this lands. ---- */
+  --data-1:#0B6E8A; --data-2:#29A383; --data-3:#00A2C7; --data-4:#5B5BD6;
+  --data-5:#F76B15; --data-6:#E54D2E; --data-9:#B0D9E9; --data-25:#D5EFF9;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-family-text); font-size:var(--type-2-size); line-height:var(--type-2-line);
+  color:var(--text-default); background:var(--surface-default); -webkit-font-smoothing:antialiased}
+
+/* ===== config shell (matches DAM Config) ===== */
+.cfg-head{display:flex; align-items:center; padding:var(--space-5) var(--space-7);
+  border-bottom:1px solid var(--border-subtle)}
+.cfg-head h1{font-size:var(--type-4-size); line-height:var(--type-4-line); font-weight:var(--weight-bold)}
+.cfg-head .spacer{flex:1}
+.btn{font-family:inherit; font-weight:var(--weight-medium); display:inline-flex; align-items:center; gap:var(--space-2);
+  border-radius:var(--radius-3); cursor:pointer; border:1px solid transparent; white-space:nowrap}
+.btn svg{width:16px;height:16px}
+.btn-md{height:var(--space-7); padding:0 var(--space-5); font-size:var(--type-2-size)}
+.btn-sm{height:var(--space-6); padding:0 var(--space-3); font-size:var(--type-1-size)}
+.btn-primary{background:var(--accent-12); color:#fff}
+.btn-primary:hover{background:var(--accent-11)}
+.btn-outline{background:transparent; color:var(--accent-11); border-color:var(--border-emphasis)}
+.btn-outline:hover{background:var(--surface-subtle)}
+.btn-tertiary{background:transparent; color:var(--accent-11)}
+.btn-tertiary:hover{background:var(--surface-muted)}
+.btn-ghost{background:transparent; color:var(--text-subtle); width:28px; height:28px; justify-content:center; padding:0; border-radius:var(--radius-2)}
+.btn-ghost:hover{background:var(--surface-muted); color:var(--text-default)}
+
+.cfg-body{display:grid; grid-template-columns:248px 1fr; align-items:start}
+/* left nav — matches the real one exactly */
+.cfg-nav{padding:var(--space-5) var(--space-4); display:flex; flex-direction:column; gap:2px; position:sticky; top:0}
+.cn-item{display:flex; align-items:center; gap:var(--space-2); height:38px; padding:0 var(--space-3);
+  border-radius:var(--radius-2); color:var(--text-default); cursor:pointer; font-size:var(--type-2-size); position:relative}
+.cn-item .ico{width:16px;height:16px;color:var(--text-subtle);flex:0 0 16px;display:flex;align-items:center;justify-content:center}
+.cn-item.child{padding-left:var(--space-6)}
+.cn-item:hover{background:var(--gray-a3)}
+.cn-item.active{background:var(--accent-3); color:var(--accent-11); font-weight:var(--weight-semibold)}
+.cn-item.active .ico{color:var(--accent-11)}
+.cn-item.active::before{content:''; position:absolute; left:0; top:7px; bottom:7px; width:3px; background:var(--accent-9); border-radius:0 2px 2px 0}
+
+.cfg-main{padding:var(--space-5) var(--space-7) var(--space-9); max-width:1360px}
+.section-tabs{display:flex; gap:var(--space-1); margin-bottom:var(--space-5); border-bottom:1px solid var(--border-subtle)}
+.stab{padding:var(--space-3) var(--space-4); font-size:var(--type-2-size); font-weight:var(--weight-medium);
+  color:var(--text-subtle); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px}
+.stab:hover{color:var(--text-default)}
+.stab.active{color:var(--accent-11); border-bottom-color:var(--accent-9)}
+
+/* card + column headers (matches real settings) */
+.col-head{display:grid; grid-template-columns:1fr; padding:0 var(--space-5) var(--space-3); }
+.col-head .t{font-size:var(--type-2-size); font-weight:var(--weight-semibold)}
+.card{border:1px solid var(--border-default); border-radius:var(--radius-4); overflow:hidden; background:var(--surface-default)}
+.setting-row{display:grid; grid-template-columns:1fr auto auto; align-items:center; gap:var(--space-5);
+  padding:var(--space-4) var(--space-5); border-bottom:1px solid var(--border-subtle)}
+.setting-row:last-child{border-bottom:0}
+.sr-label{font-size:var(--type-2-size); font-weight:var(--weight-semibold); color:var(--text-default)}
+.sr-desc{font-size:var(--type-1-size); line-height:var(--type-1-line); color:var(--text-subtle); margin-top:3px}
+
+/* toggle — matches teal pill */
+.tgl{width:40px; height:22px; border-radius:var(--radius-full); background:var(--neutral-6); position:relative;
+  cursor:pointer; transition:background .14s; flex:0 0 40px}
+.tgl::after{content:''; position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%;
+  background:#fff; transition:transform .14s; box-shadow:var(--shadow-sm)}
+.tgl.on{background:var(--accent-9)}
+.tgl.on::after{transform:translateX(18px)}
+.perm-select{height:var(--space-7); border:1px solid var(--border-emphasis); border-radius:var(--radius-2);
+  background:var(--surface-default); color:var(--accent-11); font-family:inherit; font-size:var(--type-2-size);
+  padding:0 var(--space-3); cursor:pointer; min-width:130px}
+
+/* ===== dashboard template builder — lives INSIDE the config main ===== */
+.builder-intro{font-size:var(--type-2-size); line-height:var(--type-2-line); color:var(--text-subtle); margin-bottom:var(--space-4)}
+.tpl-switch{display:flex; gap:var(--space-1); background:var(--surface-muted); padding:3px; border-radius:var(--radius-3);
+  margin-bottom:var(--space-5); width:fit-content}
+.tpl-switch button{font-family:inherit; font-size:var(--type-1-size); font-weight:var(--weight-medium); border:0;
+  background:transparent; color:var(--text-subtle); padding:6px var(--space-3); border-radius:var(--radius-2); cursor:pointer}
+.tpl-switch button.on{background:var(--surface-default); color:var(--accent-11); box-shadow:var(--shadow-sm)}
+
+.bcols{display:grid; grid-template-columns:1fr 1px 1fr 1.1fr; gap:var(--space-5); align-items:start}
+.bcol-sep{align-self:stretch; background:var(--border-default); width:1px; min-height:220px}
+.bcol-title{font-size:var(--type-2-size); font-weight:var(--weight-semibold); margin-bottom:var(--space-1)}
+.bcol-hint{font-size:var(--type-1-size); line-height:var(--type-1-line); color:var(--text-subtle); margin-bottom:var(--space-3)}
+
+/* chosen list — kit list rows w/ grip */
+.chosen{display:flex; flex-direction:column; gap:var(--space-2)}
+.crow{display:flex; align-items:center; gap:var(--space-2); border:1px solid var(--border-default);
+  border-radius:var(--radius-3); padding:var(--space-2) var(--space-3); background:var(--surface-default)}
+.crow.dragging{opacity:.4}
+.crow.drop-target{border-color:var(--accent-9); box-shadow:0 0 0 2px var(--accent-3)}
+.grip{width:20px;height:20px;color:var(--text-subtle);cursor:grab;flex:0 0 20px;display:flex;align-items:center;justify-content:center}
+.crow-main{flex:1; min-width:0}
+.crow-name{font-size:var(--type-2-size); font-weight:var(--weight-medium); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.crow-sub{font-size:var(--type-0-size); line-height:var(--type-0-line); color:var(--text-subtle); margin-top:1px}
+.span-select{height:var(--space-6); border:1px solid var(--border-emphasis); border-radius:var(--radius-2);
+  background:var(--surface-default); font-family:inherit; font-size:var(--type-1-size); color:var(--text-default); padding:0 var(--space-2); cursor:pointer}
+.chosen-empty{border:1px dashed var(--border-emphasis); border-radius:var(--radius-3); padding:var(--space-6);
+  text-align:center; color:var(--text-subtle); font-size:var(--type-1-size); line-height:var(--type-2-line)}
+
+/* add-widget menu = kit rows */
+.add-list{display:flex; flex-direction:column; gap:var(--space-2)}
+.add-item{display:flex; align-items:center; gap:var(--space-3); border:1px solid var(--border-default);
+  border-radius:var(--radius-3); padding:var(--space-3); cursor:pointer; transition:border-color .12s, background .12s}
+.add-item:hover{border-color:var(--border-emphasis); background:var(--surface-subtle)}
+.add-item.disabled{opacity:.45; cursor:not-allowed}
+.add-item.disabled:hover{border-color:var(--border-default); background:transparent}
+.add-item.added{opacity:.5; cursor:default}
+.ai-main{flex:1; min-width:0}
+.ai-name{font-size:var(--type-2-size); font-weight:var(--weight-medium)}
+.ai-desc{font-size:var(--type-1-size); line-height:var(--type-1-line); color:var(--text-subtle); margin-top:2px}
+.ai-dep{font-size:var(--type-0-size); line-height:var(--type-1-line); color:var(--status-pending-fg); margin-top:3px; display:flex; align-items:center; gap:4px}
+.ai-dep svg{width:11px;height:11px}
+/* User-permission dependency — INFORMATIONAL, not a warning. Neutral, states the audience. */
+.ai-perm{font-size:var(--type-0-size); line-height:var(--type-1-line); color:var(--text-subtle); margin-top:3px; display:flex; align-items:center; gap:4px}
+.ai-perm svg{width:11px;height:11px; flex:0 0 11px}
+.ai-perm b{color:var(--text-default); font-weight:var(--weight-medium)}
+.ai-btn{width:24px;height:24px;border-radius:var(--radius-full);border:1px solid var(--border-emphasis);
+  color:var(--accent-11);display:flex;align-items:center;justify-content:center;flex:0 0 24px}
+.ai-btn svg{width:14px;height:14px}
+.add-item.added .ai-btn{border-color:var(--status-active-border); background:var(--status-active-bg); color:var(--status-active-fg)}
+
+/* preview */
+.pv-wrap{margin-top:var(--space-5)}
+.pv-frame{border:1px solid var(--border-default); border-radius:var(--radius-3); overflow:hidden; background:var(--surface-subtle)}
+.pv-chrome{background:var(--surface-default); border-bottom:1px solid var(--border-subtle); padding:var(--space-3) var(--space-4)}
+.pv-title{font-size:var(--type-2-size); font-weight:var(--weight-semibold)}
+.pv-sub{font-size:var(--type-0-size); color:var(--text-subtle); margin-top:2px}
+.pv-grid{display:grid; grid-template-columns:repeat(12,1fr); gap:6px; padding:var(--space-3)}
+.pv-w{background:var(--surface-default); border:1px solid var(--border-default); border-radius:var(--radius-2);
+  min-height:44px; padding:var(--space-2) var(--space-3); display:flex; flex-direction:column; justify-content:center}
+.pv-w .n{font-size:var(--type-0-size); line-height:var(--type-0-line); font-weight:var(--weight-semibold)}
+.pv-w .b{margin-top:5px; display:flex; gap:3px}
+.pv-w .b i{height:5px; flex:1; background:var(--surface-muted); border-radius:2px}
+.readonly-note{margin-top:var(--space-2); font-size:var(--type-0-size); line-height:var(--type-1-line);
+  color:var(--text-subtle); display:flex; align-items:center; gap:6px}
+.readonly-note svg{width:12px;height:12px}
+
+/* assignment */
+.assign{margin-top:var(--space-6)}
+.assign h3{font-size:var(--type-3-size); line-height:var(--type-3-line); font-weight:var(--weight-medium); margin-bottom:var(--space-1)}
+.assign p{font-size:var(--type-1-size); color:var(--text-subtle); margin-bottom:var(--space-4)}
+.arow{display:grid; grid-template-columns:1.4fr 220px auto; align-items:center; gap:var(--space-4);
+  padding:var(--space-3) var(--space-5); border-bottom:1px solid var(--border-subtle)}
+.arow:last-child{border-bottom:0}
+.arole{font-size:var(--type-2-size); font-weight:var(--weight-medium)}
+.arole .w{font-size:var(--type-0-size); color:var(--text-subtle); font-weight:var(--weight-regular); margin-top:1px}
+.aselect{height:var(--space-7); border:1px solid var(--border-emphasis); border-radius:var(--radius-2);
+  background:var(--surface-default); font-family:inherit; font-size:var(--type-2-size); color:var(--text-default); padding:0 var(--space-3); cursor:pointer; width:100%}
+</style>
+</head>
+<body>
+
+<div class="cfg-head">
+  <h1>DAM Config</h1>
+  <div class="spacer"></div>
+  <button class="btn btn-md btn-outline">Cancel</button>
+  <button class="btn btn-md btn-primary" style="margin-left:12px">Save</button>
+</div>
+
+<div class="cfg-body">
+  <nav class="cfg-nav" id="cnav"></nav>
+  <div class="cfg-main">
+    <div style="display:flex; align-items:center; gap:var(--space-2); background:var(--accent-3); border:1px solid var(--accent-7); border-radius:var(--radius-3); padding:var(--space-2) var(--space-3); margin-bottom:var(--space-4); font-size:var(--type-1-size); color:var(--accent-11)">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.4 8.3-8 9-4.6-.7-8-4-8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>
+      <span><b>Screendragon admin.</b> Template creation is restricted to Screendragon admins in phase 1. Tenant admins assign templates to roles below; end users receive a template and can\'t edit it.</span>
+    </div>
+    <div class="builder-intro">Compose the dashboards each role sees. Only widgets whose feature is on in <b style="color:var(--text-default)">Main Settings</b> — and that suit the template\'s archetype — can be added.</div>
+
+    <div style="display:flex; align-items:center; gap:var(--space-3); margin-bottom:var(--space-5)">
+      <div class="tpl-switch" id="tplSwitch"></div>
+      <button class="btn btn-sm btn-outline" id="newTplBtn">+ New template</button>
+      <div class="spacer" style="flex:1"></div>
+      <button class="btn btn-sm btn-tertiary" id="dupBtn">Duplicate</button>
+      <button class="btn btn-sm btn-tertiary" id="renameBtn">Rename</button>
+    </div>
+
+    <!-- new-template dialog -->
+    <div id="newDlg" style="display:none; position:fixed; inset:0; z-index:80; background:rgba(38,30,27,.28); align-items:center; justify-content:center">
+      <div style="background:var(--surface-default); border-radius:var(--radius-4); box-shadow:var(--shadow-lg); width:440px; max-width:92vw; padding:var(--space-6)">
+        <h3 style="font-size:var(--type-3-size); line-height:var(--type-3-line); font-weight:var(--weight-semibold); margin-bottom:var(--space-1)">New dashboard template</h3>
+        <p style="font-size:var(--type-1-size); line-height:var(--type-2-line); color:var(--text-subtle); margin-bottom:var(--space-4)">Every template extends an archetype — it sets which widgets are eligible and how scope resolves. You can add, remove and reorder from there.</p>
+        <label style="font-size:var(--type-1-size); font-weight:var(--weight-medium); display:block; margin-bottom:6px">Template name</label>
+        <input id="newName" type="text" placeholder="e.g. Broadcast partners" style="width:100%; height:var(--space-7); border:1px solid var(--border-emphasis); border-radius:var(--radius-2); padding:0 var(--space-3); font-family:inherit; font-size:var(--type-2-size); margin-bottom:var(--space-4)">
+        <label style="font-size:var(--type-1-size); font-weight:var(--weight-medium); display:block; margin-bottom:6px">Based on archetype</label>
+        <select id="newArch" style="width:100%; height:var(--space-7); border:1px solid var(--border-emphasis); border-radius:var(--radius-2); padding:0 var(--space-3); font-family:inherit; font-size:var(--type-2-size); margin-bottom:var(--space-6)">
+          <option value="Consumer">Consumer — browse, find, download</option>
+          <option value="Contributor" selected>Contributor — upload, tag, complete</option>
+          <option value="Approvals">Approvals — review queue</option>
+          <option value="Governance">Governance — rights & oversight</option>
+          <option value="__blank">Blank — start with no widgets</option>
+        </select>
+        <div style="display:flex; justify-content:flex-end; gap:var(--space-3)">
+          <button class="btn btn-md btn-outline" id="newCancel">Cancel</button>
+          <button class="btn btn-md btn-primary" id="newCreate">Create template</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bcols">
+      <div>
+        <div class="bcol-title">Add a widget</div>
+        <div class="bcol-hint">Screendragon-defined. Greyed = feature off in Main Settings.</div>
+        <div class="add-list" id="addList"></div>
+      </div>
+      <div class="bcol-sep"></div>
+      <div>
+        <div class="bcol-title">Widgets in this template</div>
+        <div class="bcol-hint">Drag to reorder. Top renders first, above the fold. Span sets column width.</div>
+        <div class="chosen" id="chosenList"></div>
+      </div>
+      <div>
+        <div class="bcol-title">Preview</div>
+        <div class="bcol-hint">Live mirror - what an assigned user sees.</div>
+        <div class="pv-frame" id="preview"></div>
+        <div class="readonly-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          Read-only. Users can't rearrange it in v1.
+        </div>
+      </div>
+    </div>
+
+    <div class="assign">
+      <h3>Assign templates to roles</h3>
+      <p>Which role lands on which dashboard. Single vs multi-folder scope resolves per user at load.</p>
+      <div class="card" id="assignRows"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const IC = {
+  cog:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+  dash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
+  lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>',
+  tick:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+  grip:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg>',
+  person:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>',
+  warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2 18a1 1 0 0 0 .9 1.5h18.2A1 1 0 0 0 22 18L13.7 3.9a1 1 0 0 0-1.7 0z"/></svg>'
+};
+
+// Which features are ON in Main Settings — the dependency gate (from the real screenshot: Approvals OFF)
+const FEATURES = { approvals:false, collections:true, versioning:true, rights:true, events:false };
+
+const CATALOG = [
+  {id:'folder-nav', name:'Folder Navigator', desc:'Browse accessible folders, grouped.'},
+  {id:'featured', name:'Featured', desc:'Admin-promoted folders pinned to the top.'},
+  {id:'collections', name:'Collections', desc:'Curated asset sets.', needs:'collections', needsLabel:'Requires “Has Collections” on', perm:'Collection access'},
+  {id:'recent', name:'Recently added', desc:'Newest assets in scope.'},
+  {id:'drafts', name:'Upload drafts', desc:'Uploaded but not publish-ready — incomplete, failed, awaiting rights.', arch:'Contributor', archLabel:'Contributor templates only', perm:'Upload rights'},
+  {id:'banner', name:'Event banner', desc:'Event Visual Identity image. FIFA only.', fifa:true, archLabel:'FIFA template only'},
+  {id:'downloads', name:'My recent downloads', desc:'This user\'s download history.'}, // no gate — everyone
+  {id:'awaiting', name:'Awaiting my approval', desc:'Items assigned to review.', needs:'approvals', needsLabel:'Requires “Has Approvals” on', perm:'Approval access'},
+  {id:'expiring', name:'Rights expiring', desc:'Licences expiring in 90 days.', needs:'rights', needsLabel:'Requires Rights Management on', perm:'Rights management'},
+  {id:'coverage', name:'Rights coverage', desc:'Cleared / pending / expired split.', needs:'rights', needsLabel:'Requires Rights Management on', perm:'Rights management'},
+  {id:'activity', name:'Download activity', desc:'Downloads over time.', needs:'events', needsLabel:'Requires usage events (not yet available)', perm:'Analytics access'}
+];
+const SPAN = {'folder-nav':12,'featured':12,'collections':12,'recent':8,'drafts':12,'banner':12,'downloads':4,'awaiting':8,'expiring':12,'coverage':4,'activity':8};
+
+const ARCHETYPES = {
+  Consumer:    ['featured','collections','recent','downloads'],
+  Contributor: ['drafts','folder-nav','recent'],
+  Approvals:   ['awaiting','downloads'],
+  Governance:  ['expiring','activity','coverage']
+};
+// A template = a name + the archetype it extends + its widget list.
+// Archetype (not name) drives eligibility & scope, so custom templates stay valid.
+let TEMPLATES = [
+  {name:'Consumer',    arch:'Consumer',    widgets:[...ARCHETYPES.Consumer]},
+  {name:'Contributor', arch:'Contributor', widgets:[...ARCHETYPES.Contributor]},
+  {name:'Approvals',   arch:'Approvals',   widgets:[...ARCHETYPES.Approvals]},
+  {name:'Governance',  arch:'Governance',  widgets:[...ARCHETYPES.Governance]},
+  {name:'FIFA Consumer', arch:'Consumer', widgets:['banner','featured','collections','recent','downloads']}
+];
+let current='Contributor';
+const tpl = name => TEMPLATES.find(t=>t.name===name);
+let chosen = tpl(current).widgets.map(id=>({id, span:SPAN[id]}));
+const meta = id => CATALOG.find(w=>w.id===id);
+const featureOn = w => !w.needs || FEATURES[w.needs];
+// widget may be restricted to a specific archetype (drafts->Contributor) or FIFA
+const archOk = w => {
+  const a = tpl(current).arch;
+  if(w.arch && w.arch !== a) return false;
+  if(w.fifa && !(tpl(current).name||'').toLowerCase().includes('fifa')) return false;
+  return true;
+};
+const eligible = w => featureOn(w) && archOk(w);
+
+const NAV = [
+  ['cog','Main Settings', false, false],
+  ['','View Settings', true, false],
+  ['','Upload Settings', true, false],
+  ['','File Actions', true, false],
+  ['','Onboarding Tour', true, false],
+  ['dash','Dashboard', false, true],
+  ['search','Search', false, false],
+  ['lock','Rights Management', false, false]
+];
+function renderNav(){
+  document.getElementById('cnav').innerHTML = NAV.map(([ic,label,child,active])=>
+    `<div class="cn-item ${child?'child':''} ${active?'active':''}">${ic?`<span class="ico">${IC[ic]}</span>`:''}<span>${label}</span></div>`).join('');
+}
+function renderSwitch(){
+  document.getElementById('tplSwitch').innerHTML = TEMPLATES.map(t=>
+    `<button class="${t.name===current?'on':''}" data-tpl="${t.name}">${t.name}</button>`).join('');
+}
+function renderChosen(){
+  const el=document.getElementById('chosenList');
+  if(!chosen.length){ el.innerHTML=`<div class="chosen-empty">No widgets yet.<br>Add from the right.</div>`; return; }
+  el.innerHTML = chosen.map((c,i)=>{ const w=meta(c.id); return `
+    <div class="crow" draggable="true" data-i="${i}">
+      <div class="grip">${IC.grip}</div>
+      <div class="crow-main">
+        <div class="crow-name">${w.name}${w.perm?` <span style="font-size:var(--type-0-size);font-weight:var(--weight-regular);color:var(--text-subtle)">· permissioned</span>`:''}</div>
+        <div class="crow-sub">${i===0?'Renders first · above fold':'Position '+(i+1)}${w.perm?` · shown to users with ${w.perm}`:''}</div>
+      </div>
+      <select class="span-select" data-span="${i}">${[4,6,8,12].map(s=>`<option value="${s}" ${c.span===s?'selected':''}>${s} col</option>`).join('')}</select>
+      <button class="btn btn-ghost" data-remove="${i}">${IC.x}</button>
+    </div>`;}).join('');
+}
+function renderAdd(){
+  const added=new Set(chosen.map(c=>c.id));
+  document.getElementById('addList').innerHTML = CATALOG
+    // Archetype/FIFA restriction is permanent for this template → hide, don't show greyed.
+    .filter(w => archOk(w))
+    .map(w=>{
+      const on=featureOn(w), isAdded=added.has(w.id);
+      const cls = !on?'disabled':(isAdded?'added':'');
+      return `<div class="add-item ${cls}" data-add="${w.id}">
+        <div class="ai-main">
+          <div class="ai-name">${w.name}</div>
+          <div class="ai-desc">${w.desc}</div>
+          ${!on?`<div class="ai-dep">${IC.warn}${w.needsLabel}</div>`:''}
+          ${w.perm?`<div class="ai-perm">${IC.person}Shown to users with <b>${w.perm}</b></div>`:''}
+        </div>
+        <div class="ai-btn">${isAdded?IC.tick:IC.plus}</div>
+      </div>`;}).join('');
+}
+function renderPreview(){
+  const rows = chosen.map(c=>{ const w=meta(c.id); return `
+    <div class="pv-w" style="grid-column:span ${c.span}">
+      <div class="n">${w.name}</div><div class="b"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </div>`;}).join('');
+  document.getElementById('preview').innerHTML = `
+    <div class="pv-chrome"><div class="pv-title">${current} dashboard</div><div class="pv-sub">${chosen.length} widgets</div></div>
+    <div class="pv-grid">${rows||'<div style="grid-column:span 12;padding:20px;text-align:center;color:var(--text-subtle);font-size:12px">Empty</div>'}</div>`;
+}
+function renderAssign(){
+  const opts=TEMPLATES.map(t=>t.name);
+  const ROLES=[['Federation staff','Read & download','Consumer'],['Content team','Upload & tag','Contributor'],
+    ['Rights & legal','Clearance & oversight','Governance'],['Approvers','Sign-off','Approvals'],['Agency partners','External · restricted','Consumer']];
+  document.getElementById('assignRows').innerHTML = ROLES.map(([r,w,d])=>`
+    <div class="arow"><div class="arole">${r}<div class="w">${w}</div></div>
+      <select class="aselect">${opts.map(o=>`<option ${o===d?'selected':''}>${o}</option>`).join('')}</select>
+      <button class="btn btn-sm btn-tertiary">Preview as role</button></div>`).join('');
+}
+function renderAll(){ renderChosen(); renderAdd(); renderPreview(); renderSwitch(); }
+
+document.getElementById('addList').addEventListener('click',e=>{
+  const el=e.target.closest('[data-add]'); if(!el) return;
+  const w=meta(el.dataset.add); if(!eligible(w)) return;
+  if(chosen.some(c=>c.id===w.id)) return;
+  chosen.push({id:w.id, span:SPAN[w.id]}); commit(); renderAll();
+});
+document.getElementById('chosenList').addEventListener('click',e=>{
+  const rm=e.target.closest('[data-remove]'); if(rm){ chosen.splice(+rm.dataset.remove,1); commit(); renderAll(); }
+});
+document.getElementById('chosenList').addEventListener('change',e=>{
+  const sp=e.target.closest('[data-span]'); if(sp){ chosen[+sp.dataset.span].span=+sp.value; renderPreview(); }
+});
+document.getElementById('tplSwitch').addEventListener('click',e=>{
+  const b=e.target.closest('[data-tpl]'); if(!b) return;
+  current=b.dataset.tpl; chosen=tpl(current).widgets.map(id=>({id,span:SPAN[id]})); renderAll();
+});
+// persist edits back to the current template as you go (mock)
+function commit(){ tpl(current).widgets = chosen.map(c=>c.id); }
+
+// new-template flow
+const dlg=document.getElementById('newDlg');
+document.getElementById('newTplBtn').addEventListener('click',()=>{ dlg.style.display='flex'; document.getElementById('newName').focus(); });
+document.getElementById('newCancel').addEventListener('click',()=>dlg.style.display='none');
+dlg.addEventListener('click',e=>{ if(e.target===dlg) dlg.style.display='none'; });
+document.getElementById('newCreate').addEventListener('click',()=>{
+  let name=(document.getElementById('newName').value||'').trim();
+  const arch=document.getElementById('newArch').value;
+  if(!name) name = arch==='__blank' ? 'Untitled template' : arch+' copy';
+  let n=name, i=2; while(tpl(n)){ n=name+' '+i; i++; } name=n;
+  const seed = arch==='__blank' ? [] : [...ARCHETYPES[arch]];
+  const realArch = arch==='__blank' ? 'Consumer' : arch;
+  TEMPLATES.push({name, arch:realArch, widgets:seed});
+  current=name; chosen=seed.map(id=>({id,span:SPAN[id]}));
+  dlg.style.display='none'; document.getElementById('newName').value='';
+  renderAll(); renderAssign();
+});
+document.getElementById('dupBtn').addEventListener('click',()=>{
+  const src=tpl(current); let name=src.name+' copy', i=2; while(tpl(name)){ name=src.name+' copy '+i; i++; }
+  TEMPLATES.push({name, arch:src.arch, widgets:[...chosen.map(c=>c.id)]});
+  current=name; renderAll(); renderAssign();
+});
+let dragI=null;
+const cl=document.getElementById('chosenList');
+cl.addEventListener('dragstart',e=>{const r=e.target.closest('.crow');if(!r)return;dragI=+r.dataset.i;r.classList.add('dragging');});
+cl.addEventListener('dragend',()=>document.querySelectorAll('.crow').forEach(r=>r.classList.remove('dragging','drop-target')));
+cl.addEventListener('dragover',e=>{e.preventDefault();const r=e.target.closest('.crow');if(!r)return;document.querySelectorAll('.crow').forEach(x=>x.classList.remove('drop-target'));r.classList.add('drop-target');});
+cl.addEventListener('drop',e=>{e.preventDefault();const r=e.target.closest('.crow');if(!r||dragI===null)return;const to=+r.dataset.i;const[m]=chosen.splice(dragI,1);chosen.splice(to,0,m);dragI=null;commit();renderAll();});
+
+renderNav(); renderAssign(); renderAll();
+</script>
+</body>
+</html>
