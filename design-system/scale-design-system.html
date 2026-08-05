@@ -23,31 +23,19 @@
   --color-sand-800: #292825;
   --color-sand-900: #21201c;
 
-  /* ---- Cerulean (primary action) scale ---- */
-  --color-primary-50: #e8f6fa;
-  --color-primary-100: #c4e8f1;
-  --color-primary-200: #8dd1e3;
-  --color-primary-300: #4db5cf;
-  --color-primary-400: #1a95b3;
-  --color-primary-500: #0d7f9c;
-  --color-primary-600: #0b6e8a;
-  --color-primary-700: #005f7b;
-  --color-primary-800: #1b404e;
-  --color-primary-900: #053642;
-
   /* ---- Cerulean 12-step Radix scale ---- */
-  --accent-1: #FAFEFF;
-  --accent-2: #F3FAFD;
-  --accent-3: #E4F5FC;
-  --accent-4: #D5EFF9;
-  --accent-5: #C4E5F3;
-  --accent-6: #B0D9E9;
-  --accent-7: #95C9DD;
-  --accent-8: #6CB3CE;
-  --accent-9: #0B6E8A;
-  --accent-10: #005F7B;
-  --accent-11: #197592;
-  --accent-12: #1B404E;
+  --accent-1: #fafdfd;
+  --accent-2: #f4fafb;
+  --accent-3: #e3f5f8;
+  --accent-4: #d3eff3;
+  --accent-5: #c1e6ec;
+  --accent-6: #addae2;
+  --accent-7: #92cbd4;
+  --accent-8: #65b5c2;
+  --accent-9: #0c818f;
+  --accent-10: #007381;
+  --accent-11: #006c78; /* hand-corrected from generator #007d8b (non-monotonic) — re-apply on any regenerate */
+  --accent-12: #1b3c41;
 
   /* ---- Neutral 12-step Radix scale ---- */
   --neutral-1: #fdfdfc;
@@ -64,11 +52,18 @@
   --neutral-12: #21201c;
 
   /* ---- Accent Alpha ---- */
-  --accent-alpha-3: rgba(0, 145, 171, 0.08);
-  --accent-alpha-4: rgba(0, 145, 171, 0.12);
-  --accent-alpha-6: rgba(0, 145, 171, 0.2);
-  --accent-alpha-7: rgba(0, 145, 171, 0.3);
-  --accent-alpha-11: #0b6e8a;
+  --accent-alpha-1:  #00999905;
+  --accent-alpha-2:  #008ca30b;
+  --accent-alpha-3:  #00a4c01c;
+  --accent-alpha-4:  #00a3ba2c;
+  --accent-alpha-5:  #0099b13e;
+  --accent-alpha-6:  #008ca552;
+  --accent-alpha-7:  #00869b6d;
+  --accent-alpha-8:  #00859a9a;
+  --accent-alpha-9:  #007b89f3;
+  --accent-alpha-10: #007381;
+  --accent-alpha-11: #006c78;   /* CORRECTED to match hand-fixed solid step 11. Generator emitted #007d8b (non-monotonic). */
+  --accent-alpha-12: #00252be4;
 
   /* ---- Neutral Alpha ---- */
   /* Regenerated from sand-12 #21201c — Radix gray-a. Replaces stale Stone-era red-brown base (~15°). */
@@ -124,6 +119,7 @@
   --surface-subtle: var(--neutral-2);
   --surface-muted: var(--neutral-3);
   --surface-emphasis: var(--neutral-4);
+  --surface-brand-deep: #1b3c41; /* fixed deep brand teal (nav, press surfaces) — does NOT invert */
   --text-default: var(--neutral-12);
   --text-muted: var(--neutral-11);
   --text-subtle: var(--neutral-10); /* below Radix text range — reserve for non-essential (timestamps, counts) */
@@ -139,7 +135,7 @@
   --primary-hover: var(--accent-10);
   --primary-subtle: var(--accent-3);
   --primary-muted: var(--accent-5);
-  --nav-bg: var(--color-primary-800); /* fixed dark brand bar — intentionally does NOT invert; review for dark */
+  --nav-bg: var(--surface-brand-deep); /* fixed dark brand bar */
 
   /* ---- Semantic: Status ---- */
   --status-active-bg: var(--color-green-100);
@@ -250,7 +246,7 @@
      Tier 3 (9–16):  Step 6 lightened
      Tier 4 (17–24): Step 11 darkened
      Tier 5 (25–32): Step 4 pale fills */
-  --data-1:  #0B6E8A;  --data-2:  #29A383;  --data-3:  #00A2C7;  --data-4:  #5B5BD6;
+  --data-1:  #0c818f;  --data-2:  #29A383;  --data-3:  #00A2C7;  --data-4:  #5B5BD6;
   --data-5:  #F76B15;  --data-6:  #E54D2E;  --data-7:  #0090FF;  --data-8:  #AB4ABA;
   --data-9:  #B0D9E9;  --data-10: #ABE0BC;  --data-11: #A9DAED;  --data-12: #C4C1FF;
   --data-13: #F8C886;  --data-14: #FFB9B2;  --data-15: #96C7F2;  --data-16: #D7A5DF;
@@ -290,25 +286,32 @@
   --neutral-alpha-7: rgba(255, 247, 221, 0.24);
   --neutral-alpha-11: rgba(255, 252, 241, 0.69);
 
-  /* Accent (Cerulean) — step 9 #0b6e8a constant across modes; 11/12 become on-dark text */
-  --accent-1: #071317;
-  --accent-2: #0d1b20;
-  --accent-3: #032b38;
-  --accent-4: #00394b;
-  --accent-5: #00465c;
-  --accent-6: #00556d;
-  --accent-7: #006884;
-  --accent-8: #0080a3;
-  --accent-9: #0b6e8a;
-  --accent-10: #005f7b;
-  --accent-11: #62c9ed;
-  --accent-12: #baedff;
+  /* Accent (Cerulean) — step 9 #0c818f constant across modes; 11/12 become on-dark text */
+  --accent-1: #091315;
+  --accent-2: #0f1b1d;
+  --accent-3: #072c31;
+  --accent-4: #003941;
+  --accent-5: #004750;
+  --accent-6: #02565f;
+  --accent-7: #0e6874;
+  --accent-8: #0c818f;
+  --accent-9: #0c818f;
+  --accent-10: #1d717d;
+  --accent-11: #6acad9;
+  --accent-12: #b3ecf6;
   /* Accent alpha — dark (Radix blue-a dark) */
-  --accent-alpha-3: rgba(0, 175, 254, 0.16);
-  --accent-alpha-4: rgba(0, 179, 252, 0.25);
-  --accent-alpha-6: rgba(0, 193, 254, 0.39);
-  --accent-alpha-7: rgba(0, 196, 253, 0.49);
-  --accent-alpha-11: #62c9ed;
+  --accent-alpha-1:  #0078de05;
+  --accent-alpha-2:  #00d6fd0d;
+  --accent-alpha-3:  #00d6fb23;
+  --accent-alpha-4:  #00d5fc34;
+  --accent-alpha-5:  #00dcfe44;
+  --accent-alpha-6:  #00e3fe54;
+  --accent-alpha-7:  #0ae1fd6b;
+  --accent-alpha-8:  #08e5ff87;
+  --accent-alpha-9:  #08e5ff87;
+  --accent-alpha-10: #2ce5ff74;
+  --accent-alpha-11: #7aecfed7;
+  --accent-alpha-12: #b9f4fef6;
 
   /* Feedback colours — dark (Radix dark ramps; step-9 solids hold constant across modes) */
   --color-red-100: #381710;    --color-red-500: #e54d2e;    --color-red-600: #ff9277;    --color-red-700: #fbd3ca;
@@ -862,7 +865,7 @@ pre code {
 
 .btn-lg{height:var(--btn-height-4);padding:12px 24px;font-size:var(--font-size-3);}
 .btn-xs{height:var(--btn-height-1);padding:2px 6px;font-size:var(--font-size-1);}
-.btn-primary:active{background:var(--color-primary-800);}
+.btn-primary:active{background:var(--surface-brand-deep);}
 .btn-secondary{background:var(--surface-default);color:var(--text-default);border-color:var(--border-emphasis);}
 .btn-destructive{background:var(--error-9);color:var(--text-on-primary);}
 .btn-destructive:hover{background:var(--error-10);}
@@ -1236,7 +1239,7 @@ pre code {
   .matrix { font-size: 11px; }
   .matrix td, .matrix th { padding: var(--spacing-2); }
 </style>
-<meta name="scale-version" content="1.3.0">
+<meta name="scale-version" content="1.4.0">
 <meta name="scale-build-date" content="2026-07-21">
 </head>
 <body>
@@ -1340,7 +1343,7 @@ pre code {
 <!-- ======================== SECTION 1: INTRO ======================== -->
 <h1>Scale Design System</h1>
 <p style="font-size: var(--font-size-3); color: var(--text-subtle); margin-bottom: var(--spacing-7);">
-  Version 1.3.0 · Built 2026-07-21 · Screendragon · Internal Documentation
+  Version 1.4.0 · Built 2026-08-04 · Screendragon · Internal Documentation
 </p>
 
 <h2 id="what-is-scale">What Scale Is</h2>
@@ -1367,7 +1370,7 @@ pre code {
     <div style="display:flex; align-items:center; gap:8px;">
       <span class="swatch" style="background: var(--accent-9);"></span>
       <code>--accent-9</code>
-      <span style="color:var(--text-subtle); font-size:12px;">#0B6E8A</span>
+      <span style="color:var(--text-subtle); font-size:12px;">#0c818f</span>
     </div>
     <div style="display:flex; align-items:center; gap:8px;">
       <span class="swatch" style="background: var(--neutral-12);"></span>
@@ -1377,12 +1380,12 @@ pre code {
     <div style="display:flex; align-items:center; gap:8px;">
       <span class="swatch" style="background: var(--accent-3);"></span>
       <code>--accent-3</code>
-      <span style="color:var(--text-subtle); font-size:12px;">#E4F5FC</span>
+      <span style="color:var(--text-subtle); font-size:12px;">#e3f5f8</span>
     </div>
   </div>
-  <div class="example-code">--accent-9: #0B6E8A;   /* Cerulean — step 9 */
+  <div class="example-code">--accent-9: #0c818f;   /* Cerulean — step 9 */
 --neutral-12: #21201c;  /* Warm neutral — step 12 */
---accent-3: #E4F5FC;   /* Cerulean — step 3 */
+--accent-3: #e3f5f8;   /* Cerulean — step 3 */
 --spacing-2: 8px;
 --radius-2: 4px;</div>
 </div>
@@ -1461,9 +1464,9 @@ pre code {
 
 <p>Blue owns the action layer in enterprise work management. Across eight direct competitors analysed, seven use blue as their in-product CTA colour — regardless of their brand hue. Asana (coral brand, blue CTAs), monday.com (purple brand, blue CTAs), Wrike (green brand, blue CTAs), and Adobe Workfront (red brand, blue CTAs) all deliberately separate brand identity from functional action colour. Only when the brand <em>is</em> blue (Atlassian, Smartsheet) does CTA equal brand.</p>
 
-<p>Screendragon's brand green (#006B5C) passes WCAG AA at 6.45:1 — technically safe as a button colour. But using green as the primary action colour creates semantic collision with universal "success/on-track" patterns that enterprise users carry across products. Every competitor uses green to mean "done," "active," or "on track." Making green also mean "click here" creates an unnecessary cognitive tax.</p>
+<p>Screendragon's brand green (#028854) sits at 4.51:1 on white — clears the 3:1 bar for fills and large text, so it's safe as a button colour. But using green as the primary action colour creates semantic collision with universal "success/on-track" patterns that enterprise users carry across products. Every competitor uses green to mean "done," "active," or "on track." Making green also mean "click here" creates an unnecessary cognitive tax.</p>
 
-<p>The decision: <strong>Cerulean (#0B6E8A)</strong> — a deep teal-blue at ~195° hue. It sits precisely between Screendragon's green identity (~160°) and the standard SaaS blue (~220°), occupying a hue space no competitor claims. It reads unambiguously as an action colour while carrying enough teal warmth to feel connected to the brand's green DNA.</p>
+<p>The decision: <strong>Cerulean (#0c818f)</strong> — a deep teal-blue at 208° hue, the true midpoint of Screendragon's brand green (SD Green Deep #028854) and the standard SaaS blue. It occupies a hue space no competitor claims, reads unambiguously as an action colour, and carries enough teal warmth to stay connected to the brand's green DNA. <em>The prior anchor #0b6e8a had drifted ~15° off this documented midpoint; when the brand refresh retired the green it was originally derived from, the accent was re-derived from SD Green Deep to land back on 208°.</em></p>
 
 <div class="example-block">
   <div class="example-label">Teal hue positioning — competitive landscape</div>
@@ -1472,8 +1475,8 @@ pre code {
 <defs>
 <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
 <linearGradient id="wedge-grad" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="translate(-173.2, 0)">
-<stop offset="0%" stop-color="#006B5C"/>
-<stop offset="50%" stop-color="#0B6E8A"/>
+<stop offset="0%" stop-color="#028854"/>
+<stop offset="50%" stop-color="#0c818f"/>
 <stop offset="100%" stop-color="#0C66E4"/>
 </linearGradient>
 <mask id="imagine-text-gaps-76scmc" maskUnits="userSpaceOnUse"><rect x="0" y="0" width="680" height="560" fill="white"/><rect x="103.48175048828125" y="16.496219635009766" width="473.0364990234375" height="21.36200523376465" fill="black" rx="2"/><rect x="142.7798614501953" y="38.425331115722656" width="394.4402770996094" height="18.468338012695312" fill="black" rx="2"/><rect x="-207.42526245117188" y="-83.5037841796875" width="68.45052337646484" height="21.36200523376465" fill="black" rx="2"/><rect x="-218.06552124023438" y="-67.57466888427734" width="89.73104095458984" height="18.468338012695312" fill="black" rx="2"/><rect x="-87.1477279663086" y="-265.5037841796875" width="174.2954559326172" height="21.36200523376465" fill="black" rx="2"/><rect x="-46.24453353881836" y="-249.5746612548828" width="92.48906707763672" height="18.468338012695312" fill="black" rx="2"/><rect x="137.151123046875" y="-83.5037841796875" width="72.09774780273438" height="21.36200523376465" fill="black" rx="2"/><rect x="114.8909912109375" y="-67.57466888427734" width="116.61803436279297" height="18.532442092895508" fill="black" rx="2"/><rect x="-122.87639617919922" y="-177.57467651367188" width="65.75278091430664" height="18.468338012695312" fill="black" rx="2"/><rect x="57.123619079589844" y="-177.57467651367188" width="65.75278091430664" height="18.468338012695312" fill="black" rx="2"/><rect x="-200.03578186035156" y="6.42533016204834" width="94.07154083251953" height="18.468338012695312" fill="black" rx="2"/><rect x="-197.20993041992188" y="22.42533302307129" width="88.41984558105469" height="18.468338012695312" fill="black" rx="2"/><rect x="-53.177276611328125" y="6.42533016204834" width="106.35455322265625" height="18.468338012695312" fill="black" rx="2"/><rect x="-59.183143615722656" y="22.42533302307129" width="118.36628723144531" height="18.468338012695312" fill="black" rx="2"/><rect x="111.20901489257812" y="6.42533016204834" width="83.58199310302734" height="18.468338012695312" fill="black" rx="2"/><rect x="100.17688751220703" y="22.42533302307129" width="105.64620971679688" height="18.468338012695312" fill="black" rx="2"/><rect x="16" y="-2.574669897556305" width="412.5859680175781" height="18.532443046569824" fill="black" rx="2"/><rect x="16" y="19.425331115722656" width="430.8673095703125" height="18.532442092895508" fill="black" rx="2"/><rect x="16" y="41.425331115722656" width="448.4101867675781" height="18.468338012695312" fill="black" rx="2"/></mask></defs>
@@ -1487,40 +1490,40 @@ pre code {
 
 <path d="M -173.2,-100 A 200,200 0 0,1 173.2,-100 L 0,0 Z" fill="url(#wedge-grad)" opacity="0.12" style="stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.12;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 
-<path d="M -173.2,-100 A 200,200 0 0,1 -145.1,-134.7" fill="none" stroke="#006B5C" stroke-width="18" stroke-linecap="butt" opacity="0.4" style="fill:none;stroke:rgb(0, 107, 92);color:rgb(0, 0, 0);stroke-width:18px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<path d="M -173.2,-100 A 200,200 0 0,1 -145.1,-134.7" fill="none" stroke="#028854" stroke-width="18" stroke-linecap="butt" opacity="0.4" style="fill:none;stroke:rgb(2, 136, 84);color:rgb(0, 0, 0);stroke-width:18px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 <path d="M -145.1,-134.7 A 200,200 0 0,1 -112.6,-162.8" fill="none" stroke="#00766A" stroke-width="18" stroke-linecap="butt" opacity="0.4" mask="url(#imagine-text-gaps-76scmc)" style="fill:none;stroke:rgb(0, 118, 106);color:rgb(0, 0, 0);stroke-width:18px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 <path d="M -112.6,-162.8 A 200,200 0 0,1 -74.5,-185.5" fill="none" stroke="#007D76" stroke-width="18" stroke-linecap="butt" opacity="0.4" mask="url(#imagine-text-gaps-76scmc)" style="fill:none;stroke:rgb(0, 125, 118);color:rgb(0, 0, 0);stroke-width:18px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 <path d="M -74.5,-185.5 A 200,200 0 0,1 -38.2,-196.3" fill="none" stroke="#068580" stroke-width="18" stroke-linecap="butt" opacity="0.4" style="fill:none;stroke:rgb(6, 133, 128);color:rgb(0, 0, 0);stroke-width:18px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-<path d="M -38.2,-196.3 A 200,200 0 0,1 0,-200" fill="none" stroke="#0B6E8A" stroke-width="18" stroke-linecap="butt" opacity="0.4" style="fill:none;stroke:rgb(11, 110, 138);color:rgb(0, 0, 0);stroke-width:18px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-<path d="M 0,-200 A 200,200 0 0,1 38.2,-196.3" fill="none" stroke="#0B6E8A" stroke-width="18" stroke-linecap="butt" opacity="0.4" style="fill:none;stroke:rgb(11, 110, 138);color:rgb(0, 0, 0);stroke-width:18px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<path d="M -38.2,-196.3 A 200,200 0 0,1 0,-200" fill="none" stroke="#0c818f" stroke-width="18" stroke-linecap="butt" opacity="0.4" style="fill:none;stroke:rgb(12, 129, 143);color:rgb(0, 0, 0);stroke-width:18px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<path d="M 0,-200 A 200,200 0 0,1 38.2,-196.3" fill="none" stroke="#0c818f" stroke-width="18" stroke-linecap="butt" opacity="0.4" style="fill:none;stroke:rgb(12, 129, 143);color:rgb(0, 0, 0);stroke-width:18px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 <path d="M 38.2,-196.3 A 200,200 0 0,1 74.5,-185.5" fill="none" stroke="#0960A0" stroke-width="18" stroke-linecap="butt" opacity="0.4" style="fill:none;stroke:rgb(9, 96, 160);color:rgb(0, 0, 0);stroke-width:18px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 <path d="M 74.5,-185.5 A 200,200 0 0,1 112.6,-162.8" fill="none" stroke="#0856B8" stroke-width="18" stroke-linecap="butt" opacity="0.4" mask="url(#imagine-text-gaps-76scmc)" style="fill:none;stroke:rgb(8, 86, 184);color:rgb(0, 0, 0);stroke-width:18px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 <path d="M 112.6,-162.8 A 200,200 0 0,1 145.1,-134.7" fill="none" stroke="#0A4FCC" stroke-width="18" stroke-linecap="butt" opacity="0.4" mask="url(#imagine-text-gaps-76scmc)" style="fill:none;stroke:rgb(10, 79, 204);color:rgb(0, 0, 0);stroke-width:18px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 <path d="M 145.1,-134.7 A 200,200 0 0,1 173.2,-100" fill="none" stroke="#0C66E4" stroke-width="18" stroke-linecap="butt" opacity="0.4" style="fill:none;stroke:rgb(12, 102, 228);color:rgb(0, 0, 0);stroke-width:18px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 
-<path d="M -173.2,-100 A 200,200 0 0,1 0,-200" fill="none" stroke="#006B5C" stroke-width="4" stroke-linecap="round" opacity="0.35" mask="url(#imagine-text-gaps-76scmc)" style="fill:none;stroke:rgb(0, 107, 92);color:rgb(0, 0, 0);stroke-width:4px;stroke-linecap:round;stroke-linejoin:miter;opacity:0.35;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<path d="M -173.2,-100 A 200,200 0 0,1 0,-200" fill="none" stroke="#028854" stroke-width="4" stroke-linecap="round" opacity="0.35" mask="url(#imagine-text-gaps-76scmc)" style="fill:none;stroke:rgb(2, 136, 84);color:rgb(0, 0, 0);stroke-width:4px;stroke-linecap:round;stroke-linejoin:miter;opacity:0.35;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 <path d="M 0,-200 A 200,200 0 0,1 173.2,-100" fill="none" stroke="#0C66E4" stroke-width="4" stroke-linecap="round" opacity="0.35" mask="url(#imagine-text-gaps-76scmc)" style="fill:none;stroke:rgb(12, 102, 228);color:rgb(0, 0, 0);stroke-width:4px;stroke-linecap:round;stroke-linejoin:miter;opacity:0.35;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 
 <path d="M -173.2,-100 A 200,200 0 0,1 173.2,-100" fill="none" stroke="var(--color-border-secondary)" stroke-width="2" stroke-linecap="round" mask="url(#imagine-text-gaps-76scmc)" style="fill:none;stroke:rgba(31, 30, 29, 0.3);color:rgb(0, 0, 0);stroke-width:2px;stroke-linecap:round;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 
-<circle cx="-173.2" cy="-100" r="20" fill="#006B5C" stroke="var(--color-background-primary)" stroke-width="3" style="fill:rgb(0, 107, 92);stroke:rgb(255, 255, 255);color:rgb(0, 0, 0);stroke-width:3px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-<circle cx="0" cy="-200" r="24" fill="#0B6E8A" stroke="var(--color-background-primary)" stroke-width="3" style="fill:rgb(11, 110, 138);stroke:rgb(255, 255, 255);color:rgb(0, 0, 0);stroke-width:3px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="-173.2" cy="-100" r="20" fill="#028854" stroke="var(--color-background-primary)" stroke-width="3" style="fill:rgb(2, 136, 84);stroke:rgb(255, 255, 255);color:rgb(0, 0, 0);stroke-width:3px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="0" cy="-200" r="24" fill="#0c818f" stroke="var(--color-background-primary)" stroke-width="3" style="fill:rgb(12, 129, 143);stroke:rgb(255, 255, 255);color:rgb(0, 0, 0);stroke-width:3px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 <circle cx="173.2" cy="-100" r="20" fill="#0C66E4" stroke="var(--color-background-primary)" stroke-width="3" style="fill:rgb(12, 102, 228);stroke:rgb(255, 255, 255);color:rgb(0, 0, 0);stroke-width:3px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 
 <text x="-173.2" y="-68" text-anchor="middle" style="fill:rgb(20, 20, 19);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:auto">SD green</text>
-<text x="-173.2" y="-54" text-anchor="middle" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:auto">#006B5C · 171°</text>
+<text x="-173.2" y="-54" text-anchor="middle" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:auto">#028854 · 157°</text>
 
-<text x="0" y="-250" text-anchor="middle" fill="#0B6E8A" style="fill:rgb(20, 20, 19);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:auto">Screendragon Cerulean</text>
-<text x="0" y="-236" text-anchor="middle" fill="#0B6E8A" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:auto">#0B6E8A · 193°</text>
+<text x="0" y="-250" text-anchor="middle" fill="#0c818f" style="fill:rgb(20, 20, 19);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:auto">Screendragon Cerulean</text>
+<text x="0" y="-236" text-anchor="middle" fill="#0c818f" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:auto">#0c818f · 186°</text>
 
 <text x="173.2" y="-68" text-anchor="middle" style="fill:rgb(20, 20, 19);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:14px;font-weight:500;text-anchor:middle;dominant-baseline:auto">SaaS blue</text>
 <text x="173.2" y="-54" text-anchor="middle" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Industry avg · ~215°</text>
 
 <path d="M -90,-156 L -86,-150 L -94,-150 Z" fill="var(--color-text-secondary)" opacity="0.5" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.5;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-<text x="-90" y="-164" text-anchor="middle" opacity="0.6" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.6;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:auto">22° of hue</text>
+<text x="-90" y="-164" text-anchor="middle" opacity="0.6" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.6;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:auto">29° of hue</text>
 
 <path d="M 90,-156 L 86,-150 L 94,-150 Z" fill="var(--color-text-secondary)" opacity="0.5" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.5;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-<text x="90" y="-164" text-anchor="middle" opacity="0.6" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.6;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:auto">22° of hue</text>
+<text x="90" y="-164" text-anchor="middle" opacity="0.6" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.6;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:auto">29° of hue</text>
 
 <line x1="-140" y1="-150" x2="-40" y2="-150" stroke="var(--color-border-tertiary)" stroke-width="0.5" opacity="0.5" style="fill:rgb(0, 0, 0);stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.5;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 <line x1="40" y1="-150" x2="140" y2="-150" stroke="var(--color-border-tertiary)" stroke-width="0.5" opacity="0.5" style="fill:rgb(0, 0, 0);stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.5;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
@@ -1528,8 +1531,8 @@ pre code {
 <g transform="translate(0, 46)" style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
 <rect x="-230" y="0" width="460" height="50" rx="25" fill="none" stroke="var(--color-border-tertiary)" stroke-width="0.5" stroke-dasharray="4 4" style="fill:none;stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-dasharray:4px, 4px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 
-<rect x="-230" y="0" width="153" height="50" rx="25" fill="#006B5C" opacity="0.08" style="clip-path: inset(0 50% 0 0 round 25px);fill:rgb(0, 107, 92);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.08;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-<rect x="-77" y="0" width="154" height="50" fill="#0B6E8A" opacity="0.1" style="fill:rgb(11, 110, 138);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<rect x="-230" y="0" width="153" height="50" rx="25" fill="#028854" opacity="0.08" style="clip-path: inset(0 50% 0 0 round 25px);fill:rgb(2, 136, 84);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.08;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<rect x="-77" y="0" width="154" height="50" fill="#0c818f" opacity="0.1" style="fill:rgb(12, 129, 143);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 <rect x="77" y="0" width="153" height="50" rx="25" fill="#0C66E4" opacity="0.08" style="clip-path: inset(0 0 0 50% round 25px);fill:rgb(12, 102, 228);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.08;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 
 <line x1="-77" y1="4" x2="-77" y2="46" stroke="var(--color-border-tertiary)" stroke-width="0.5" stroke-dasharray="2 2" opacity="0.4" style="fill:rgb(0, 0, 0);stroke:rgba(31, 30, 29, 0.15);color:rgb(0, 0, 0);stroke-width:0.5px;stroke-dasharray:2px, 2px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
@@ -1537,8 +1540,8 @@ pre code {
 
 <text x="-153" y="20" text-anchor="middle" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Green territory</text>
 <text x="-153" y="36" text-anchor="middle" opacity="0.5" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.5;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Brand identity</text>
-<text x="0" y="20" text-anchor="middle" fill="#0B6E8A" style="font-weight:500;fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:500;text-anchor:middle;dominant-baseline:auto">Teal — unclaimed</text>
-<text x="0" y="36" text-anchor="middle" fill="#0B6E8A" opacity="0.7" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.7;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:auto">No competitor here</text>
+<text x="0" y="20" text-anchor="middle" fill="#0c818f" style="font-weight:500;fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:500;text-anchor:middle;dominant-baseline:auto">Teal — unclaimed</text>
+<text x="0" y="36" text-anchor="middle" fill="#0c818f" opacity="0.7" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.7;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:auto">No competitor here</text>
 <text x="153" y="20" text-anchor="middle" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Blue territory</text>
 <text x="153" y="36" text-anchor="middle" opacity="0.5" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.5;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Every competitor</text>
 </g>
@@ -1546,10 +1549,10 @@ pre code {
 </g>
 
 <g transform="translate(70, 496)" style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
-<rect x="0" y="0" width="14" height="14" rx="3" fill="#006B5C" style="fill:rgb(0, 107, 92);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-<text x="20" y="11" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">Screendragon brand green — 171° hue (nav, illustrations, brand surfaces)</text>
-<rect x="0" y="22" width="14" height="14" rx="3" fill="#0B6E8A" style="fill:rgb(11, 110, 138);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-<text x="20" y="33" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">Screendragon Cerulean — 193° hue (CTAs, links, focus rings, active states)</text>
+<rect x="0" y="0" width="14" height="14" rx="3" fill="#028854" style="fill:rgb(2, 136, 84);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="20" y="11" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">Screendragon brand green — 157° hue (nav, illustrations, brand surfaces)</text>
+<rect x="0" y="22" width="14" height="14" rx="3" fill="#0c818f" style="fill:rgb(12, 129, 143);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<text x="20" y="33" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">Screendragon Cerulean — 186° HSL · 208° OKLCH (CTAs, links, focus rings, active states)</text>
 <rect x="0" y="44" width="14" height="14" rx="3" fill="#0C66E4" style="fill:rgb(12, 102, 228);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
 <text x="20" y="55" style="fill:rgb(61, 61, 58);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">Industry SaaS blue — ~215° hue (Atlassian, Smartsheet, monday, Asana, Wrike)</text>
 </g>
@@ -1560,7 +1563,7 @@ pre code {
 
 <h3>The Green Question — Where Brand Colour Lives</h3>
 
-<p>The question isn't whether Screendragon keeps its green — it's where green lives. Brand green (#006B5C) dominates the <strong>personality layer</strong> of the product while the <strong>action layer</strong> runs on Cerulean (#0B6E8A). This mirrors the Asana playbook (coral for personality, blue for action) and the Wrike approach (green for brand, blue for interaction).</p>
+<p>The question isn't whether Screendragon keeps its green — it's where green lives. Brand green (#028854) dominates the <strong>personality layer</strong> of the product while the <strong>action layer</strong> runs on Cerulean (#0c818f). This mirrors the Asana playbook (coral for personality, blue for action) and the Wrike approach (green for brand, blue for interaction).</p>
 
 <div class="do-dont">
   <div class="do-card">
@@ -1572,7 +1575,7 @@ pre code {
   <div class="dont-card">
     <div class="dd-header">✗ Brand green stays away from</div>
     <div class="dd-body">
-      Primary CTA buttons, text links, focus rings, toggle/checkbox active states, selected tabs. These belong to Cerulean (#0B6E8A). Success states use the separate semantic green, not brand green.
+      Primary CTA buttons, text links, focus rings, toggle/checkbox active states, selected tabs. These belong to Cerulean (#0c818f). Success states use the separate semantic green, not brand green.
     </div>
   </div>
 </div>
@@ -1673,12 +1676,20 @@ pre code {
     </div>
     <div style="flex:1;min-width:200px;padding:16px;border-radius:var(--radius-3);border:1px solid var(--border-default);">
       <div style="display:flex;gap:6px;margin-bottom:12px;">
-        <div style="width:32px;height:32px;border-radius:var(--radius-2);background:#006B5C;"></div>
-        <div style="width:32px;height:32px;border-radius:var(--radius-2);background:#57C1A5;"></div>
-        <div style="width:32px;height:32px;border-radius:var(--radius-2);background:#6DC067;"></div>
+        <div>
+          <div style="width:44px;height:32px;border-radius:var(--radius-2);background:#00D880;"></div>
+          <div style="font-size:11px;font-weight:600;margin-top:5px;">Vibrant</div>
+          <div style="font-size:10px;color:var(--text-subtle);line-height:1.35;">#00D880<br>dark canvas · decorative</div>
+        </div>
+        <div style="margin-left:8px;">
+          <div style="width:44px;height:32px;border-radius:var(--radius-2);background:#028854;"></div>
+          <div style="font-size:11px;font-weight:600;margin-top:5px;">Deep</div>
+          <div style="font-size:10px;color:var(--text-subtle);line-height:1.35;">#028854<br>light canvas · functional</div>
+        </div>
       </div>
       <div style="font-weight:600;font-size:13px;margin-bottom:2px;">Brand Green</div>
       <div style="font-size:12px;color:var(--text-subtle);">The personality layer — sidebar accents, illustrations, empty states. Recognition without function.</div>
+      <div style="font-size:11px;color:var(--text-subtle);margin-top:8px;line-height:1.4;">Both are decorative / fill colours here. Deep (#028854, 4.51:1 on white) clears large-text and fill thresholds; Vibrant (#00D880, 1.89:1) is fill-only. Neither is body text.</div>
     </div>
   </div>
 </div>
@@ -1822,73 +1833,73 @@ pre code {
       <tbody>
         <tr>
           <td style="font-weight:600;color:var(--primary-default);">1</td>
-          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-1);margin:0;"></span><code style="font-size:11px;">#FAFEFF</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-1);margin:0;"></span><code style="font-size:11px;">#fafdfd</code></div></td>
           <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-1);margin:0;"></span><code style="font-size:11px;">#fdfdfc</code></div></td>
           <td>App background</td>
         </tr>
         <tr>
           <td style="font-weight:600;color:var(--primary-default);">2</td>
-          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-2);margin:0;"></span><code style="font-size:11px;">#F3FAFD</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-2);margin:0;"></span><code style="font-size:11px;">#f4fafb</code></div></td>
           <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-2);margin:0;"></span><code style="font-size:11px;">#f9f9f8</code></div></td>
           <td>Subtle background</td>
         </tr>
         <tr>
           <td style="font-weight:600;color:var(--primary-default);">3</td>
-          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-3);margin:0;"></span><code style="font-size:11px;">#E4F5FC</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-3);margin:0;"></span><code style="font-size:11px;">#e3f5f8</code></div></td>
           <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-3);margin:0;"></span><code style="font-size:11px;">#f1f0ef</code></div></td>
           <td>UI element background</td>
         </tr>
         <tr>
           <td style="font-weight:600;color:var(--primary-default);">4</td>
-          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-4);margin:0;"></span><code style="font-size:11px;">#D5EFF9</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-4);margin:0;"></span><code style="font-size:11px;">#d3eff3</code></div></td>
           <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-4);margin:0;"></span><code style="font-size:11px;">#e9e8e6</code></div></td>
           <td>Hovered UI element background</td>
         </tr>
         <tr>
           <td style="font-weight:600;color:var(--primary-default);">5</td>
-          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-5);margin:0;"></span><code style="font-size:11px;">#C4E5F3</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-5);margin:0;"></span><code style="font-size:11px;">#c1e6ec</code></div></td>
           <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-5);margin:0;"></span><code style="font-size:11px;">#e2e1de</code></div></td>
           <td>Active / Selected UI element background</td>
         </tr>
         <tr>
           <td style="font-weight:600;color:var(--primary-default);">6</td>
-          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-6);margin:0;"></span><code style="font-size:11px;">#B0D9E9</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-6);margin:0;"></span><code style="font-size:11px;">#addae2</code></div></td>
           <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-6);margin:0;"></span><code style="font-size:11px;">#dad9d6</code></div></td>
           <td>Subtle borders and separators</td>
         </tr>
         <tr>
           <td style="font-weight:600;color:var(--primary-default);">7</td>
-          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-7);margin:0;"></span><code style="font-size:11px;">#95C9DD</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-7);margin:0;"></span><code style="font-size:11px;">#92cbd4</code></div></td>
           <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-7);margin:0;"></span><code style="font-size:11px;">#d0ceca</code></div></td>
           <td>UI element border and focus rings</td>
         </tr>
         <tr>
           <td style="font-weight:600;color:var(--primary-default);">8</td>
-          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-8);margin:0;"></span><code style="font-size:11px;">#6CB3CE</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-8);margin:0;"></span><code style="font-size:11px;">#65b5c2</code></div></td>
           <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-8);margin:0;"></span><code style="font-size:11px;">#bcbbb6</code></div></td>
           <td>Hovered UI element border</td>
         </tr>
         <tr>
           <td style="font-weight:600;color:var(--primary-default);">9</td>
-          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-9);margin:0;"></span><code style="font-size:11px;">#0B6E8A</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-9);margin:0;"></span><code style="font-size:11px;">#0c818f</code></div></td>
           <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-9);margin:0;"></span><code style="font-size:11px;">#8e8d86</code></div></td>
           <td>Solid backgrounds</td>
         </tr>
         <tr>
           <td style="font-weight:600;color:var(--primary-default);">10</td>
-          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-10);margin:0;"></span><code style="font-size:11px;">#005F7B</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-10);margin:0;"></span><code style="font-size:11px;">#007381</code></div></td>
           <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-10);margin:0;"></span><code style="font-size:11px;">#83827c</code></div></td>
           <td>Hovered solid backgrounds</td>
         </tr>
         <tr>
           <td style="font-weight:600;color:var(--primary-default);">11</td>
-          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-11);margin:0;"></span><code style="font-size:11px;">#197592</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-11);margin:0;"></span><code style="font-size:11px;">#006c78</code></div></td>
           <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-11);margin:0;"></span><code style="font-size:11px;">#64635e</code></div></td>
           <td>Low-contrast text</td>
         </tr>
         <tr>
           <td style="font-weight:600;color:var(--primary-default);">12</td>
-          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-12);margin:0;"></span><code style="font-size:11px;">#1B404E</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-12);margin:0;"></span><code style="font-size:11px;">#1b3c41</code></div></td>
           <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-12);margin:0;"></span><code style="font-size:11px;">#21201c</code></div></td>
           <td>High-contrast text</td>
         </tr>
@@ -2521,7 +2532,7 @@ pre code {
     <div class="cascade-diagram">
       <div class="cascade-row">
         <span class="cascade-layer primitive">Primitive</span>
-        <span class="cascade-value"><code>--color-blue-500: #0B6E8A</code></span>
+        <span class="cascade-value"><code>--color-blue-500: #0c818f</code></span>
       </div>
       <div class="cascade-arrow">↓</div>
       <div class="cascade-row">
@@ -2538,7 +2549,7 @@ pre code {
         <span class="cascade-layer rendered">Rendered</span>
         <span class="cascade-value">
           <button class="btn btn-sm btn-primary">Primary Button</button>
-          <span style="font-size:11px; color:var(--text-subtle); margin-left:8px;">background: #0B6E8A</span>
+          <span style="font-size:11px; color:var(--text-subtle); margin-left:8px;">background: #0c818f</span>
         </span>
       </div>
     </div>
@@ -2752,10 +2763,10 @@ pre code {
   <div class="example-code">&lt;Button variant="primary" size="md"&gt;Create New&lt;/Button&gt;
 
 /* Tokens */
-background: var(--primary-default);           /* #0B6E8A */
+background: var(--primary-default);           /* #0c818f */
 color: #FFFFFF;
 hover:  var(--primary-hover);         /* #095C73 */
-active: var(--color-primary-800);       /* #074B5E */
+active: var(--surface-brand-deep);   /* #1b3c41 */
 focus:  box-shadow 0 0 0 3px var(--primary-subtle);</div>
 </div>
 
@@ -2815,7 +2826,7 @@ focus:  box-shadow 0 0 0 3px var(--primary-subtle);</div>
 
 /* Tokens */
 background: transparent;
-color: var(--primary-default);                /* #0B6E8A */
+color: var(--primary-default);                /* #0c818f */
 border: 1px solid var(--primary-default);
 hover-bg: var(--primary-subtle);          /* #E6F3F7 */
 active-bg: var(--primary-muted);        /* #B8DDE8 */</div>
@@ -2878,7 +2889,7 @@ active-bg: var(--primary-muted);        /* #B8DDE8 */</div>
 
 /* Tokens */
 background: transparent;
-color: var(--primary-default);                /* #0B6E8A */
+color: var(--primary-default);                /* #0c818f */
 border: none;
 hover-bg: var(--color-sand-100);            /* #F3F2F1 */
 active-bg: var(--color-sand-200);           /* #ECEAE9 */</div>
@@ -3055,7 +3066,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
       </button>
       <span class="spacer"></span>
-      <button class="btn btn-md" style="background:#006B5C;color:white;border:none;border-radius:var(--radius-2);height:40px;padding:0 20px;font-family:var(--font-family-text);font-size:var(--font-size-2);font-weight:500;cursor:pointer;">Create New</button>
+      <button class="btn btn-md" style="background:#028854;color:white;border:none;border-radius:var(--radius-2);height:40px;padding:0 20px;font-family:var(--font-family-text);font-size:var(--font-size-2);font-weight:500;cursor:pointer;">Create New</button>
     </div>
   </div>
 </div>
@@ -4244,7 +4255,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
 <div class="example-block">
   <div class="example-label">Hash-deterministic palette — same name always = same colour</div>
   <div class="example-render" style="display:flex;gap:8px;flex-wrap:wrap;">
-    <div class="avatar avatar-md" style="background:#0B6E8A;">JD</div>
+    <div class="avatar avatar-md" style="background:#0c818f;">JD</div>
     <div class="avatar avatar-md" style="background:#e67e22;">SK</div>
     <div class="avatar avatar-md" style="background:#7c3aed;">MC</div>
     <div class="avatar avatar-md" style="background:#28a745;">TL</div>
@@ -4532,7 +4543,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
   <div class="example-label">The three AI signals</div>
   <div class="example-render" style="display:flex;gap:32px;align-items:center;flex-wrap:wrap;">
     <div style="text-align:center;">
-      <div style="width:200px;height:8px;border-radius:4px;background:linear-gradient(90deg,#0B6E8A,#29A383,#00A2C7,#5B5BD6);background-size:300% 100%;animation:aiGradDemo 4s ease infinite;"></div>
+      <div style="width:200px;height:8px;border-radius:4px;background:linear-gradient(90deg,#0c818f,#29A383,#00A2C7,#5B5BD6);background-size:300% 100%;animation:aiGradDemo 4s ease infinite;"></div>
       <div style="font-size:11px;color:var(--text-muted);margin-top:8px;font-weight:500;">1. Gradient border / stripe</div>
     </div>
     <div style="text-align:center;">
@@ -4540,8 +4551,8 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
       <div style="font-size:11px;color:var(--text-muted);margin-top:8px;font-weight:500;">2. Sparkle icon</div>
     </div>
     <div style="text-align:center;">
-      <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;background:linear-gradient(135deg,rgba(11,110,138,0.08),rgba(91,91,214,0.08));border:1px solid rgba(11,110,138,0.15);color:#0B6E8A;">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0B6E8A" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg>
+      <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;background:linear-gradient(135deg,rgba(12,129,143,0.08),rgba(91,91,214,0.08));border:1px solid rgba(12,129,143,0.15);color:#0c818f;">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0c818f" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg>
         AI Insight
       </span>
       <div style="font-size:11px;color:var(--text-muted);margin-top:8px;font-weight:500;">3. AI badge</div>
@@ -4550,7 +4561,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
 </div>
 
 <!-- SVG gradient def for this page -->
-<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="aiGradDoc" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0B6E8A"/><stop offset="50%" stop-color="#29A383"/><stop offset="100%" stop-color="#5B5BD6"/></linearGradient></defs></svg>
+<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="aiGradDoc" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0c818f"/><stop offset="50%" stop-color="#29A383"/><stop offset="100%" stop-color="#5B5BD6"/></linearGradient></defs></svg>
 <style>
 @keyframes aiGradDemo { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
 @keyframes aiShimmerDemo { 0%{left:-60%} 100%{left:160%} }
@@ -4767,7 +4778,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
 <div class="do-dont">
   <div class="do-card">
     <div class="dd-header">✓ Do</div>
-    <div class="dd-body">Use the Scale data palette for all AI chart colours. Primary rotation: accent-9 → jade → cyan → iris.<div style="display:flex;gap:6px;margin-top:12px;"><div style="width:24px;height:24px;border-radius:4px;background:#0B6E8A"></div><div style="width:24px;height:24px;border-radius:4px;background:#29A383"></div><div style="width:24px;height:24px;border-radius:4px;background:#00A2C7"></div><div style="width:24px;height:24px;border-radius:4px;background:#5B5BD6"></div><div style="width:24px;height:24px;border-radius:4px;background:#005F7B"></div><div style="width:24px;height:24px;border-radius:4px;background:#6CB3CE"></div></div></div>
+    <div class="dd-body">Use the Scale data palette for all AI chart colours. Primary rotation: accent-9 → jade → cyan → iris.<div style="display:flex;gap:6px;margin-top:12px;"><div style="width:24px;height:24px;border-radius:4px;background:#0c818f"></div><div style="width:24px;height:24px;border-radius:4px;background:#29A383"></div><div style="width:24px;height:24px;border-radius:4px;background:#00A2C7"></div><div style="width:24px;height:24px;border-radius:4px;background:#5B5BD6"></div><div style="width:24px;height:24px;border-radius:4px;background:#007381"></div><div style="width:24px;height:24px;border-radius:4px;background:#65b5c2"></div></div></div>
   </div>
   <div class="dont-card">
     <div class="dd-header">✗ Don't</div>
@@ -4783,7 +4794,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
 <table class="token-table">
   <thead><tr><th>Token</th><th>Value</th><th>Swatch</th><th>Usage</th></tr></thead>
   <tbody>
-    <tr><td><code>--ai-gradient-1</code></td><td><code>#0B6E8A</code></td><td><div class="swatch" style="background:#0B6E8A"></div></td><td>Primary gradient stop (Cerulean / accent-9)</td></tr>
+    <tr><td><code>--ai-gradient-1</code></td><td><code>#0c818f</code></td><td><div class="swatch" style="background:#0c818f"></div></td><td>Primary gradient stop (Cerulean / accent-9)</td></tr>
     <tr><td><code>--ai-gradient-2</code></td><td><code>#29A383</code></td><td><div class="swatch" style="background:#29A383"></div></td><td>Secondary stop (Jade/9)</td></tr>
     <tr><td><code>--ai-gradient-3</code></td><td><code>#00A2C7</code></td><td><div class="swatch" style="background:#00A2C7"></div></td><td>Tertiary stop (Cyan/9)</td></tr>
     <tr><td><code>--ai-gradient-4</code></td><td><code>#5B5BD6</code></td><td><div class="swatch" style="background:#5B5BD6"></div></td><td>Quaternary stop (Iris/9)</td></tr>
@@ -4794,10 +4805,10 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
 <table class="token-table">
   <thead><tr><th>Token</th><th>Purpose</th><th>Preview</th></tr></thead>
   <tbody>
-    <tr><td><code>--ai-border-gradient</code></td><td>Animated border / stripe on AI containers</td><td><div style="width:160px;height:6px;border-radius:3px;background:linear-gradient(90deg,#0B6E8A,#29A383,#00A2C7,#5B5BD6);background-size:300% 100%;animation:aiGradDemo 4s ease infinite;"></div></td></tr>
-    <tr><td><code>--ai-bg-dark</code></td><td>Morning Briefing dark background</td><td><div style="width:160px;height:32px;border-radius:4px;background:linear-gradient(135deg,#1B404E 0%,#053642 40%,#005F7B 100%);"></div></td></tr>
-    <tr><td><code>--ai-bg-badge</code></td><td>Badge pill background</td><td><div style="width:160px;height:32px;border-radius:4px;background:linear-gradient(135deg,rgba(11,110,138,0.08),rgba(91,91,214,0.08));border:1px solid rgba(11,110,138,0.15);"></div></td></tr>
-    <tr><td><code>--ai-send-bg</code></td><td>Send button gradient</td><td><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0B6E8A,#29A383);"></div></td></tr>
+    <tr><td><code>--ai-border-gradient</code></td><td>Animated border / stripe on AI containers</td><td><div style="width:160px;height:6px;border-radius:3px;background:linear-gradient(90deg,#0c818f,#29A383,#00A2C7,#5B5BD6);background-size:300% 100%;animation:aiGradDemo 4s ease infinite;"></div></td></tr>
+    <tr><td><code>--ai-bg-dark</code></td><td>Morning Briefing dark background</td><td><div style="width:160px;height:32px;border-radius:4px;background:linear-gradient(135deg,#1b3c41 0%,#053642 40%,#007381 100%);"></div></td></tr>
+    <tr><td><code>--ai-bg-badge</code></td><td>Badge pill background</td><td><div style="width:160px;height:32px;border-radius:4px;background:linear-gradient(135deg,rgba(12,129,143,0.08),rgba(91,91,214,0.08));border:1px solid rgba(12,129,143,0.15);"></div></td></tr>
+    <tr><td><code>--ai-send-bg</code></td><td>Send button gradient</td><td><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0c818f,#29A383);"></div></td></tr>
   </tbody>
 </table>
 
@@ -4816,12 +4827,12 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
 <div class="example-block">
   <div class="example-label">AI chart colour rotation — use in this order for data series</div>
   <div class="example-render" style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
-    <div style="text-align:center;"><div style="width:48px;height:48px;border-radius:6px;background:#0B6E8A;"></div><div style="font-size:10px;font-family:var(--font-family-mono);color:var(--text-muted);margin-top:4px;">--ai-chart-1<br>accent-9</div></div>
+    <div style="text-align:center;"><div style="width:48px;height:48px;border-radius:6px;background:#0c818f;"></div><div style="font-size:10px;font-family:var(--font-family-mono);color:var(--text-muted);margin-top:4px;">--ai-chart-1<br>accent-9</div></div>
     <div style="text-align:center;"><div style="width:48px;height:48px;border-radius:6px;background:#29A383;"></div><div style="font-size:10px;font-family:var(--font-family-mono);color:var(--text-muted);margin-top:4px;">--ai-chart-2<br>Jade</div></div>
     <div style="text-align:center;"><div style="width:48px;height:48px;border-radius:6px;background:#00A2C7;"></div><div style="font-size:10px;font-family:var(--font-family-mono);color:var(--text-muted);margin-top:4px;">--ai-chart-3<br>Cyan</div></div>
     <div style="text-align:center;"><div style="width:48px;height:48px;border-radius:6px;background:#5B5BD6;"></div><div style="font-size:10px;font-family:var(--font-family-mono);color:var(--text-muted);margin-top:4px;">--ai-chart-4<br>Iris</div></div>
-    <div style="text-align:center;"><div style="width:48px;height:48px;border-radius:6px;background:#005F7B;"></div><div style="font-size:10px;font-family:var(--font-family-mono);color:var(--text-muted);margin-top:4px;">--ai-chart-5<br>accent-10</div></div>
-    <div style="text-align:center;"><div style="width:48px;height:48px;border-radius:6px;background:#6CB3CE;"></div><div style="font-size:10px;font-family:var(--font-family-mono);color:var(--text-muted);margin-top:4px;">--ai-chart-6<br>accent-8</div></div>
+    <div style="text-align:center;"><div style="width:48px;height:48px;border-radius:6px;background:#007381;"></div><div style="font-size:10px;font-family:var(--font-family-mono);color:var(--text-muted);margin-top:4px;">--ai-chart-5<br>accent-10</div></div>
+    <div style="text-align:center;"><div style="width:48px;height:48px;border-radius:6px;background:#65b5c2;"></div><div style="font-size:10px;font-family:var(--font-family-mono);color:var(--text-muted);margin-top:4px;">--ai-chart-6<br>accent-8</div></div>
     <div style="text-align:center;"><div style="width:48px;height:48px;border-radius:6px;background:#F76B15;"></div><div style="font-size:10px;font-family:var(--font-family-mono);color:var(--text-muted);margin-top:4px;">--ai-chart-7<br>Orange</div></div>
   </div>
 </div>
@@ -4914,7 +4925,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
 <table class="token-table">
   <thead><tr><th>Tier</th><th>#</th><th>Token</th><th>Hex</th><th></th><th>Radix Source</th></tr></thead>
   <tbody>
-    <tr><td rowspan="4" style="font-weight:600;color:var(--primary-default);">1</td><td>1</td><td><code>--data-1</code></td><td>#0B6E8A</td><td><span class="swatch-sm" style="background:#0B6E8A;"></span></td><td>Cerulean/9</td></tr>
+    <tr><td rowspan="4" style="font-weight:600;color:var(--primary-default);">1</td><td>1</td><td><code>--data-1</code></td><td>#0c818f</td><td><span class="swatch-sm" style="background:#0c818f;"></span></td><td>Cerulean/9</td></tr>
     <tr><td>2</td><td><code>--data-2</code></td><td>#29A383</td><td><span class="swatch-sm" style="background:#29A383;"></span></td><td>Jade/9</td></tr>
     <tr><td>3</td><td><code>--data-3</code></td><td>#00A2C7</td><td><span class="swatch-sm" style="background:#00A2C7;"></span></td><td>Cyan/9</td></tr>
     <tr><td>4</td><td><code>--data-4</code></td><td>#5B5BD6</td><td><span class="swatch-sm" style="background:#5B5BD6;"></span></td><td>Iris/9</td></tr>
@@ -4977,8 +4988,8 @@ function getDataColor(index: number): string {
 <div class="example-block">
   <div class="example-label">Full gradient border wrap — hero AI content (Morning Briefing)</div>
   <div class="example-render" style="background:var(--surface-subtle);">
-    <div style="border-radius:10px;padding:2px;background:linear-gradient(135deg,#0B6E8A,#29A383,#00A2C7,#5B5BD6,#0B6E8A);background-size:300% 300%;animation:aiGradDemo 4s ease infinite;display:inline-block;">
-      <div style="background:linear-gradient(135deg,#1B404E 0%,#053642 40%,#005F7B 100%);border-radius:8px;padding:20px 24px;color:white;min-width:400px;">
+    <div style="border-radius:10px;padding:2px;background:linear-gradient(135deg,#0c818f,#29A383,#00A2C7,#5B5BD6,#0c818f);background-size:300% 300%;animation:aiGradDemo 4s ease infinite;display:inline-block;">
+      <div style="background:linear-gradient(135deg,#1b3c41 0%,#053642 40%,#007381 100%);border-radius:8px;padding:20px 24px;color:white;min-width:400px;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg>
           <span style="font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;background:linear-gradient(90deg,#8DD1E3,#29A383,#8DD1E3);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:aiTextGradDemo 3s ease infinite;">Morning Briefing</span>
@@ -4994,11 +5005,11 @@ function getDataColor(index: number): string {
   <div class="example-label">Gradient top-stripe — standard AI insight widgets (3px height)</div>
   <div class="example-render">
     <div style="background:white;border:1px solid var(--border-default);border-radius:8px;overflow:hidden;position:relative;width:360px;">
-      <div style="height:3px;background:linear-gradient(90deg,#0B6E8A,#29A383,#00A2C7,#5B5BD6);background-size:300% 100%;animation:aiGradDemo 4s ease infinite;"></div>
+      <div style="height:3px;background:linear-gradient(90deg,#0c818f,#29A383,#00A2C7,#5B5BD6);background-size:300% 100%;animation:aiGradDemo 4s ease infinite;"></div>
       <div style="display:flex;align-items:center;padding:12px 16px;gap:8px;border-bottom:1px solid var(--border-default);">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="url(#aiGradDoc)" stroke-width="1.5" stroke-linecap="round"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg>
         <span style="font-size:14px;font-weight:600;">Task Data</span>
-        <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;background:linear-gradient(135deg,rgba(11,110,138,0.08),rgba(91,91,214,0.08));border:1px solid rgba(11,110,138,0.15);color:#0B6E8A;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0B6E8A" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg> AI</span>
+        <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;background:linear-gradient(135deg,rgba(12,129,143,0.08),rgba(91,91,214,0.08));border:1px solid rgba(12,129,143,0.15);color:#0c818f;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0c818f" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg> AI</span>
       </div>
       <div style="padding:24px;color:var(--text-muted);text-align:center;font-size:13px;">Chart or content area</div>
     </div>
@@ -5024,7 +5035,7 @@ function getDataColor(index: number): string {
   <div class="example-label">AI badge — both variants</div>
   <div class="example-render" style="display:flex;gap:24px;align-items:center;">
     <div style="text-align:center;">
-      <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;background:linear-gradient(135deg,rgba(11,110,138,0.08),rgba(91,91,214,0.08));border:1px solid rgba(11,110,138,0.15);color:#0B6E8A;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0B6E8A" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg> AI Insight</span>
+      <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;background:linear-gradient(135deg,rgba(12,129,143,0.08),rgba(91,91,214,0.08));border:1px solid rgba(12,129,143,0.15);color:#0c818f;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0c818f" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg> AI Insight</span>
       <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">Light (default) — on white surfaces</div>
     </div>
     <div style="text-align:center;">
@@ -5032,7 +5043,7 @@ function getDataColor(index: number): string {
       <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">On-dark — inside Morning Briefing</div>
     </div>
     <div style="text-align:center;">
-      <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;background:linear-gradient(135deg,rgba(11,110,138,0.08),rgba(91,91,214,0.08));border:1px solid rgba(11,110,138,0.15);color:#0B6E8A;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0B6E8A" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg> AI</span>
+      <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;background:linear-gradient(135deg,rgba(12,129,143,0.08),rgba(91,91,214,0.08));border:1px solid rgba(12,129,143,0.15);color:#0c818f;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0c818f" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg> AI</span>
       <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">Compact — header-only label</div>
     </div>
   </div>
@@ -5082,7 +5093,7 @@ function getDataColor(index: number): string {
 <div class="example-block">
   <div class="example-label">Shimmer — live preview on dark AI surface</div>
   <div class="example-render" style="background:var(--surface-subtle);">
-    <div style="background:linear-gradient(135deg,#1B404E 0%,#053642 40%,#005F7B 100%);border-radius:8px;padding:24px 32px;color:white;position:relative;overflow:hidden;width:100%;max-width:500px;">
+    <div style="background:linear-gradient(135deg,#1b3c41 0%,#053642 40%,#007381 100%);border-radius:8px;padding:24px 32px;color:white;position:relative;overflow:hidden;width:100%;max-width:500px;">
       <div style="position:absolute;top:0;left:-60%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.04),rgba(255,255,255,0.07),transparent);animation:aiShimmerDemo 4s ease-in-out infinite;pointer-events:none;"></div>
       <div style="font-size:14px;color:rgba(255,255,255,0.9);position:relative;z-index:1;">Watch the subtle light sweep across this surface. It signals that the content is AI-generated and dynamic.</div>
     </div>
@@ -5100,12 +5111,12 @@ function getDataColor(index: number): string {
   <div class="example-render" style="background:var(--surface-subtle);">
     <div style="background:white;border:1px solid var(--border-default);border-radius:8px;overflow:hidden;position:relative;max-width:480px;">
       <!-- Gradient stripe -->
-      <div style="height:3px;background:linear-gradient(90deg,#0B6E8A,#29A383,#00A2C7,#5B5BD6);background-size:300% 100%;animation:aiGradDemo 4s ease infinite;"></div>
+      <div style="height:3px;background:linear-gradient(90deg,#0c818f,#29A383,#00A2C7,#5B5BD6);background-size:300% 100%;animation:aiGradDemo 4s ease infinite;"></div>
       <!-- Header -->
       <div style="display:flex;align-items:center;padding:14px 20px 12px;gap:8px;border-bottom:1px solid var(--border-default);">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="url(#aiGradDoc)" stroke-width="1.5" stroke-linecap="round"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg>
         <span style="font-size:14px;font-weight:600;flex:1;">Widget Title</span>
-        <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;text-transform:uppercase;background:linear-gradient(135deg,rgba(11,110,138,0.08),rgba(91,91,214,0.08));border:1px solid rgba(11,110,138,0.15);color:#0B6E8A;letter-spacing:0.04em;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0B6E8A" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg> AI</span>
+        <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;text-transform:uppercase;background:linear-gradient(135deg,rgba(12,129,143,0.08),rgba(91,91,214,0.08));border:1px solid rgba(12,129,143,0.15);color:#0c818f;letter-spacing:0.04em;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0c818f" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg> AI</span>
         <button style="height:28px;padding:0 10px;border-radius:4px;font-size:11px;font-weight:500;color:var(--text-muted);background:var(--surface-muted);border:1px solid var(--border-default);cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Refresh</button>
         <button style="width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);cursor:pointer;border:none;background:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v8m-4-4l4 4 4-4M5 12h14M7 12v8l5-3 5 3v-8"/></svg></button>
       </div>
@@ -5115,7 +5126,7 @@ function getDataColor(index: number): string {
       <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;border-top:1px solid var(--border-default);background:var(--surface-subtle);">
         <input type="text" placeholder="Ask a question or refine these results…" style="flex:1;height:36px;padding:0 12px;border:1px solid var(--border-default);border-radius:9999px;font-size:12px;font-family:var(--font-family-text);color:var(--text-default);background:white;outline:none;">
         <button style="height:36px;padding:0 14px;border-radius:9999px;font-size:12px;font-weight:500;color:var(--text-muted);background:white;border:1px solid var(--border-default);cursor:pointer;font-family:inherit;white-space:nowrap;">History</button>
-        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0B6E8A,#29A383);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0c818f,#29A383);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
       </div>
     </div>
   </div>
@@ -5147,23 +5158,23 @@ function getDataColor(index: number): string {
       <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--surface-subtle);border:1px solid var(--border-default);border-radius:8px;max-width:500px;">
         <input type="text" placeholder="Ask a question or refine these results…" style="flex:1;height:36px;padding:0 12px;border:1px solid var(--border-default);border-radius:9999px;font-size:12px;font-family:var(--font-family-text);background:white;outline:none;color:var(--text-default);">
         <button style="height:36px;padding:0 14px;border-radius:9999px;font-size:12px;font-weight:500;color:var(--text-muted);background:white;border:1px solid var(--border-default);cursor:pointer;font-family:inherit;">History</button>
-        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0B6E8A,#29A383);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0c818f,#29A383);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
       </div>
     </div>
     <!-- Focus with overlay -->
     <div>
       <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">Focus state — with suggestion overlay</div>
       <div style="position:relative;max-width:500px;">
-        <div style="background:white;border:1px solid #0B6E8A;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.12);padding:12px 16px;margin-bottom:8px;">
+        <div style="background:white;border:1px solid #0c818f;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.12);padding:12px 16px;margin-bottom:8px;">
           <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);margin-bottom:8px;">Suggested questions</div>
-          <div style="padding:6px 10px;font-size:12px;border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--text-default);background:rgba(11,110,138,0.04);margin-bottom:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0B6E8A" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Show me overdue tasks by project</div>
-          <div style="padding:6px 10px;font-size:12px;border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--text-default);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0B6E8A" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Which team has the most incomplete tasks?</div>
-          <div style="padding:6px 10px;font-size:12px;border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--text-default);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0B6E8A" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Compare completion rate vs last month</div>
+          <div style="padding:6px 10px;font-size:12px;border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--text-default);background:rgba(12,129,143,0.04);margin-bottom:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0c818f" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Show me overdue tasks by project</div>
+          <div style="padding:6px 10px;font-size:12px;border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--text-default);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0c818f" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Which team has the most incomplete tasks?</div>
+          <div style="padding:6px 10px;font-size:12px;border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--text-default);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0c818f" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Compare completion rate vs last month</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--surface-subtle);border:1px solid var(--border-default);border-radius:8px;">
-          <input type="text" placeholder="Ask a question or refine these results…" style="flex:1;height:36px;padding:0 12px;border:1px solid #0B6E8A;border-radius:9999px;font-size:12px;font-family:var(--font-family-text);background:white;outline:none;color:var(--text-default);box-shadow:0 0 0 3px rgba(11,110,138,0.12);">
+          <input type="text" placeholder="Ask a question or refine these results…" style="flex:1;height:36px;padding:0 12px;border:1px solid #0c818f;border-radius:9999px;font-size:12px;font-family:var(--font-family-text);background:white;outline:none;color:var(--text-default);box-shadow:0 0 0 3px rgba(12,129,143,0.12);">
           <button style="height:36px;padding:0 14px;border-radius:9999px;font-size:12px;font-weight:500;color:var(--text-muted);background:white;border:1px solid var(--border-default);cursor:pointer;font-family:inherit;">History</button>
-          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0B6E8A,#29A383);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0c818f,#29A383);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
         </div>
       </div>
     </div>
@@ -5179,8 +5190,8 @@ function getDataColor(index: number): string {
 <div class="example-block">
   <div class="example-label">Full Morning Briefing — live render</div>
   <div class="example-render" style="background:var(--surface-subtle);">
-    <div style="border-radius:10px;padding:2px;background:linear-gradient(135deg,#0B6E8A,#29A383,#00A2C7,#5B5BD6,#0B6E8A);background-size:300% 300%;animation:aiGradDemo 4s ease infinite;">
-      <div style="background:linear-gradient(135deg,#1B404E 0%,#053642 40%,#005F7B 100%);border-radius:8px;padding:20px 24px;color:white;position:relative;overflow:hidden;">
+    <div style="border-radius:10px;padding:2px;background:linear-gradient(135deg,#0c818f,#29A383,#00A2C7,#5B5BD6,#0c818f);background-size:300% 300%;animation:aiGradDemo 4s ease infinite;">
+      <div style="background:linear-gradient(135deg,#1b3c41 0%,#053642 40%,#007381 100%);border-radius:8px;padding:20px 24px;color:white;position:relative;overflow:hidden;">
         <div style="position:absolute;top:0;left:-60%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.04),rgba(255,255,255,0.07),transparent);animation:aiShimmerDemo 4s ease-in-out infinite;pointer-events:none;"></div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;position:relative;z-index:1;">
           <div style="width:28px;height:28px;background:linear-gradient(135deg,rgba(41,163,131,0.3),rgba(91,91,214,0.3));border-radius:6px;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg></div>
@@ -5206,7 +5217,7 @@ function getDataColor(index: number): string {
 <h3>Bullet icon colour mapping</h3>
 <div class="example-block">
   <div class="example-label">Bullet icons — mapped to RAG/status system (on dark backgrounds)</div>
-  <div class="example-render" style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;background:#1B404E;padding:24px;border-radius:8px;">
+  <div class="example-render" style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;background:#1b3c41;padding:24px;border-radius:8px;">
     <div style="text-align:center;">
       <span style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;background:rgba(245,165,36,0.25);color:#FFEFD5;">!</span>
       <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:6px;">Action<br>amber bg</div>
@@ -5599,7 +5610,7 @@ function getDataColor(index: number): string {
   <div class="example-render" style="display:flex;flex-direction:column;gap:0;font-family:var(--font-family-mono);font-size:13px;">
     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;">
       <span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:var(--radius-2);background:var(--surface-muted);color:var(--color-sand-700);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;min-width:90px;font-weight:600;">Primitive</span>
-      <span style="color:var(--text-subtle);"><code>--color-blue-500: #0B6E8A</code> — locked, never overridden</span>
+      <span style="color:var(--text-subtle);"><code>--color-blue-500: #0c818f</code> — locked, never overridden</span>
     </div>
     <div style="padding:2px 0 2px 45px;color:var(--text-subtle);">↓</div>
     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;">
@@ -5792,7 +5803,7 @@ function getDataColor(index: number): string {
   <thead><tr><th>Behaviour</th><th>Tokens</th><th>Why</th></tr></thead>
   <tbody>
     <tr><td>Inverts by role</td><td>surface 1&rarr;4, text 12/11/10, border 3/6/7, every status bg &amp; fg</td><td>Light step N and dark step N are the same role — surfaces darken, text lightens, automatically</td></tr>
-    <tr><td>Holds constant</td><td><code>--accent-9</code> <code>#0b6e8a</code>; every status solid (step 9)</td><td>Brand and solid signal colours are identity, not tone — identical in both modes</td></tr>
+    <tr><td>Holds constant</td><td><code>--accent-9</code> <code>#0c818f</code>; every status solid (step 9)</td><td>Brand and solid signal colours are identity, not tone — identical in both modes</td></tr>
     <tr><td>Intentionally fixed</td><td>nav bar (dark brand surface), toggle thumb (light), on-colour text (white)</td><td>Deliberate constants, not themeable neutrals</td></tr>
   </tbody>
 </table>
@@ -5844,6 +5855,7 @@ function getDataColor(index: number): string {
 <table class="token-table">
   <thead><tr><th>Version</th><th>Date</th><th>Change</th></tr></thead>
   <tbody>
+    <tr><td><code>1.4.0</code></td><td>2026-08-04</td><td>Accent (Cerulean) re-derived. The prior anchor #0b6e8a had drifted ~15&deg; off its documented green&harr;blue midpoint and the brand green it came from was retired; re-anchored to <code>#0c818f</code> (hue 208&deg;, midpoint of SD Green Deep #028854 and the SaaS blue). Full accent ramp replaced in both modes; light step-11 hand-corrected to #006c78 (generator #007d8b was non-monotonic). Full accent ramp + derivation prose + full 12-step accent-alpha ramp (light + dark); alpha a11 hand-corrected to match the solid. Rationale hue-wheel SVG re-labelled to the re-derived Cerulean (#0c818f, 186° HSL / 208° OKLCH) and SD Green Deep #028854. Swept all remaining displayed Cerulean literals (AI demos, data-1, doc echoes, nav primary-800) to #0c818f. Corrected the full accent ramp shown in the swatch table, a code example, and AI demo literals from the old uppercase ramp values (steps 1–12) to the new ramp; the 32-colour data palette (which shares three hex values) left untouched. Retired the legacy Tailwind --color-primary-* ramp (its references migrated to a new fixed --surface-brand-deep token). Reconciled brand-green references from the retired #006B5C to current SD Green Deep #028854 (contrast figure corrected to 4.51:1). Reconciled the Brand Green swatch to the refreshed two-green system (Vibrant #00D880 + Deep #028854, role-labelled); removed the stale pre-refresh tints #57C1A5 / #6DC067. Neutral (Sand) unchanged.</td></tr>
     <tr><td><code>1.3.0</code></td><td>2026-07-21</td><td>Dark mode. Consolidated the neutral and accent semantic layers onto the Radix <code>--neutral-*</code> / <code>--accent-*</code> scales, role-mapped (surface 1&ndash;4, text 12/11/10, border 3/6/7, primary&rarr;accent 9/10/3/5); retired the parallel Tailwind scales from the semantic layer. Added <code>.dark</code> ramp inversions for neutral, accent (Cerulean), and all five status families (light also regenerated to clean Radix ramps at bg=3/border=9/fg=11). Semantics invert automatically by role; canonical components repointed off hardcoded sand. Light role-corrected (surface-subtle gains elevation; status pills adopt Radix values). Added live light-vs-dark ramp reference strips to the colour-scale sections.</td></tr>
     <tr><td><code>1.2.0</code></td><td>2026-07-21</td><td>Filetype badges demoted to a single neutral treatment (<code>--filetype-badge-bg</code> / <code>--filetype-badge-fg</code>); per-type colour tokens retired. Reconciled onto the Sand base — first build carrying Sand + data palette + neutral filetype together. Regenerated the neutral alpha ramp from sand-12 (<code>#21201c</code>, Radix gray-a) so overlays and borders match Sand rather than the stale red-brown base. Fixed the mis-slotted, non-monotonic <code>--neutral-*</code> ramp to canonical Radix gray for <code>#21201c</code> (checkbox borders repointed to sand-500, appearance preserved). (SCR-125)</td></tr>
     <tr><td><code>1.1.0</code></td><td>2026-05-22</td><td>Neutral scale migrated Stone → Sand (all <code>--color-sand-*</code> tokens); 32-colour AI data palette added (§5.1.1).</td></tr>
@@ -5853,7 +5865,7 @@ function getDataColor(index: number): string {
 <div class="callout"><strong>Version rule:</strong> This file is generated, not hand-versioned. On every edit — (1) bump the header version per the table above, (2) add a changelog row, (3) push to the single canonical home (GitHub Pages <code>prototypes</code> repo). A static version string can't enforce itself; the discipline is the enforcement, and one canonical copy is what makes the version meaningful.</div>
 
 <p style="margin-top: var(--spacing-8); padding-top: var(--spacing-6); border-top: 1px solid var(--border-default); color: var(--text-subtle); font-size: var(--font-size-1);">
-  Scale Design System v1.3.0 · Complete Reference · Screendragon Internal Documentation
+  Scale Design System v1.4.0 · Complete Reference · Screendragon Internal Documentation
 </p>
 
 </main>
