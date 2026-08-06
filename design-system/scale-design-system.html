@@ -11,18 +11,6 @@
    SCALE TOKEN DEFINITIONS
    ============================================================ */
 :root {
-  /* ---- Sand neutral scale ---- */
-  --color-sand-50: #fdfdfc;
-  --color-sand-100: #f9f9f8;
-  --color-sand-200: #e9e8e6;
-  --color-sand-300: #dad9d6;
-  --color-sand-400: #8d8d86;
-  --color-sand-500: #63635e;
-  --color-sand-600: #57574f;
-  --color-sand-700: #44443e;
-  --color-sand-800: #292825;
-  --color-sand-900: #21201c;
-
   /* ---- Cerulean 12-step Radix scale ---- */
   --accent-1: #fafdfd;
   --accent-2: #f4fafb;
@@ -40,15 +28,15 @@
   /* ---- Neutral 12-step Radix scale ---- */
   --neutral-1: #fdfdfc;
   --neutral-2: #f9f9f8;
-  --neutral-3: #f1f0ef;
-  --neutral-4: #e9e8e6;
+  --neutral-3: #f0f0ef;
+  --neutral-4: #e9e9e6;
   --neutral-5: #e2e1de;
   --neutral-6: #dad9d6;
-  --neutral-7: #d0ceca;
-  --neutral-8: #bcbbb6;
+  --neutral-7: #cfcfca;
+  --neutral-8: #bcbbb5;
   --neutral-9: #8e8d86;
   --neutral-10: #83827c;
-  --neutral-11: #64635e;
+  --neutral-11: #63635e;
   --neutral-12: #21201c;
 
   /* ---- Accent Alpha ---- */
@@ -67,11 +55,22 @@
 
   /* ---- Neutral Alpha ---- */
   /* Regenerated from sand-12 #21201c — Radix gray-a. Replaces stale Stone-era red-brown base (~15°). */
-  --neutral-alpha-3: rgba(32, 16, 0, 0.06);
-  --neutral-alpha-5: rgba(31, 24, 0, 0.13);
-  --neutral-alpha-6: rgba(25, 19, 0, 0.16);
-  --neutral-alpha-7: rgba(29, 20, 0, 0.21);
-  --neutral-alpha-11: rgba(10, 8, 0, 0.63);
+  --neutral-alpha-1: #55550003;
+  --neutral-alpha-2: #25250007;
+  --neutral-alpha-3: #10100010;
+  --neutral-alpha-4: #1f1f0019;
+  --neutral-alpha-5: #1f180021;
+  --neutral-alpha-6: #19130029;
+  --neutral-alpha-7: #19190035;
+  --neutral-alpha-8: #1915014a;
+  --neutral-alpha-9: #110f0079;
+  --neutral-alpha-10: #0e0c0083;
+  --neutral-alpha-11: #080800a1;
+  --neutral-alpha-12: #060500e3;
+  --neutral-contrast: #ffffff;
+  --neutral-surface: #ffffffcc;
+  --neutral-indicator: #8e8d86;
+  --neutral-track: #8e8d86;
   --black-alpha-3: rgba(0, 0, 0, 0.15);
 
   /* ---- Feedback colours — Radix ramps (-100=step3 bg, -500=step9 solid, -600=step11 fg, -700=step12 strong) ---- */
@@ -268,23 +267,34 @@
 .dark, .dark-theme {
   /* Neutral ramp — inverts light → dark */
   --neutral-1: #12110e;
-  --neutral-2: #191915;
-  --neutral-3: #23221e;
-  --neutral-4: #2a2924;
-  --neutral-5: #32302b;
-  --neutral-6: #3b3a33;
-  --neutral-7: #494741;
-  --neutral-8: #626059;
-  --neutral-9: #6f6d66;
-  --neutral-10: #7d7b73;
-  --neutral-11: #b5b3ab;
-  --neutral-12: #eeedea;
+  --neutral-2: #191918;
+  --neutral-3: #23231f;
+  --neutral-4: #2b2a21;
+  --neutral-5: #333128;
+  --neutral-6: #3c3b31;
+  --neutral-7: #4a493f;
+  --neutral-8: #626056;
+  --neutral-9: #706e64;
+  --neutral-10: #7d7c75;
+  --neutral-11: #b6b5aa;
+  --neutral-12: #f0efe3;
   /* Neutral alpha — warm-cream, light-on-dark (Radix gray-a dark) */
-  --neutral-alpha-3: rgba(247, 234, 183, 0.08);
-  --neutral-alpha-5: rgba(251, 237, 201, 0.14);
-  --neutral-alpha-6: rgba(255, 250, 210, 0.18);
-  --neutral-alpha-7: rgba(255, 247, 221, 0.24);
-  --neutral-alpha-11: rgba(255, 252, 241, 0.69);
+  --neutral-alpha-1: #91110002;
+  --neutral-alpha-2: #f4f4d809;
+  --neutral-alpha-3: #f7f7c414;
+  --neutral-alpha-4: #fef5a31c;
+  --neutral-alpha-5: #fbedaf25;
+  --neutral-alpha-6: #fbf5bf2f;
+  --neutral-alpha-7: #fcf8cf3e;
+  --neutral-alpha-8: #fff9dc57;
+  --neutral-alpha-9: #fffae166;
+  --neutral-alpha-10: #fffded74;
+  --neutral-alpha-11: #fffeeeb1;
+  --neutral-alpha-12: #fffef1ef;
+  --neutral-contrast: #ffffff;
+  --neutral-surface: rgba(0, 0, 0, 0.05);
+  --neutral-indicator: #706e64;
+  --neutral-track: #706e64;
 
   /* Accent (Cerulean) — step 9 #0c818f constant across modes; 11/12 become on-dark text */
   --accent-1: #091315;
@@ -442,7 +452,7 @@ code {
   padding: 1px 5px;
 }
 pre {
-  background: var(--color-sand-900);
+  background: var(--neutral-12);
   color: #e0e6f0;
   border-radius: var(--radius-3);
   padding: var(--spacing-4);
@@ -502,7 +512,7 @@ pre code {
 }
 .example-code {
   border-top: 1px solid var(--border-default);
-  background: var(--color-sand-900);
+  background: var(--neutral-12);
   color: #e0e6f0;
   padding: var(--spacing-4);
   font-family: var(--font-family-mono);
@@ -826,7 +836,7 @@ pre code {
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
-.cascade-layer.primitive { background: var(--color-sand-100); color: var(--color-sand-700); }
+.cascade-layer.primitive { background: var(--neutral-2); color: var(--neutral-12); }
 .cascade-layer.semantic { background: var(--primary-subtle); color: var(--primary-default); }
 .cascade-layer.component { background: var(--color-purple-100); color: var(--color-purple-700); }
 .cascade-layer.rendered { background: var(--color-green-100); color: var(--color-green-700); }
@@ -859,8 +869,8 @@ pre code {
 
 
 /* === Component styles from scale-docs-section-3.html === */
-.example-render-dark{padding:var(--spacing-6);background:var(--color-sand-800);}
-.example-code{border-top:1px solid var(--border-default);background:var(--color-sand-900);color:#e0e6f0;padding:var(--spacing-4);font-family:var(--font-family-mono);font-size:12.5px;line-height:18px;overflow-x:auto;}
+.example-render-dark{padding:var(--spacing-6);background:var(--neutral-12);}
+.example-code{border-top:1px solid var(--border-default);background:var(--neutral-12);color:#e0e6f0;padding:var(--spacing-4);font-family:var(--font-family-mono);font-size:12.5px;line-height:18px;overflow-x:auto;}
 .anatomy-label{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-family:var(--font-family-mono);color:var(--primary-default);background:var(--primary-subtle);padding:1px 6px;border-radius:var(--radius-1);white-space:nowrap;}
 
 .btn-lg{height:var(--btn-height-4);padding:12px 24px;font-size:var(--font-size-3);}
@@ -910,7 +920,7 @@ pre code {
 .toggle-wrap{display:inline-flex;align-items:center;gap:var(--spacing-2);cursor:pointer;font-size:var(--font-size-2);}
 .toggle-track{width:36px;height:20px;border-radius:var(--radius-full);background:var(--neutral-8);position:relative;transition:background 0.2s;flex-shrink:0;}
 .toggle-track.on{background:var(--primary-default);}
-.toggle-thumb{width:16px;height:16px;border-radius:var(--radius-full);background:var(--color-sand-50);position:absolute;top:2px;left:2px;transition:transform 0.2s;box-shadow:0 1px 2px rgba(0,0,0,0.15);}
+.toggle-thumb{width:16px;height:16px;border-radius:var(--radius-full);background:var(--neutral-1);position:absolute;top:2px;left:2px;transition:transform 0.2s;box-shadow:0 1px 2px rgba(0,0,0,0.15);}
 .toggle-track.on .toggle-thumb{transform:translateX(16px);}
 .toggle-track.disabled{opacity:0.45;cursor:not-allowed;}
 
@@ -965,8 +975,8 @@ pre code {
 @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
 
 /* === Component styles from scale-docs-section-5.html === */
-.example-render-dark{padding:var(--spacing-6);background:var(--color-sand-900);}
-.example-code{border-top:1px solid var(--border-default);background:var(--color-sand-900);color:#e0e6f0;padding:var(--spacing-4);font-family:var(--font-family-mono);font-size:12.5px;line-height:18px;overflow-x:auto;}
+.example-render-dark{padding:var(--spacing-6);background:var(--neutral-12);}
+.example-code{border-top:1px solid var(--border-default);background:var(--neutral-12);color:#e0e6f0;padding:var(--spacing-4);font-family:var(--font-family-mono);font-size:12.5px;line-height:18px;overflow-x:auto;}
 .filetype-badge{background:var(--filetype-badge-bg);color:var(--filetype-badge-fg);display:inline-flex;align-items:center;padding:2px 8px;border-radius:var(--radius-2);font-size:11px;font-weight:var(--font-weight-semibold);text-transform:uppercase;letter-spacing:0.05em;}
 
 .avatar{display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius-full);font-weight:var(--font-weight-semibold);color:var(--text-on-primary);flex-shrink:0;}
@@ -1037,7 +1047,7 @@ pre code {
 .do-block, .dont-block {
   border-radius: var(--radius-3);
   overflow: hidden;
-  border: 1px solid var(--color-sand-300);
+  border: 1px solid var(--neutral-6);
 }
 .do-block .dd-header {
   padding: var(--spacing-2) var(--spacing-3);
@@ -1105,16 +1115,16 @@ pre code {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--text-subtle);
-  background: var(--color-sand-100);
+  background: var(--neutral-2);
   text-align: left;
-  border-bottom: 2px solid var(--color-sand-300);
+  border-bottom: 2px solid var(--neutral-6);
   position: sticky;
   top: 0;
   z-index: 1;
 }
 .matrix td {
   padding: var(--spacing-3) var(--spacing-3);
-  border-bottom: 1px solid var(--color-sand-200);
+  border-bottom: 1px solid var(--neutral-4);
   vertical-align: top;
   line-height: 1.5;
 }
@@ -1139,7 +1149,7 @@ pre code {
 .tier-1 .tier-num { background: var(--primary-default); color: white; }
 .tier-2 .tier-num { background: var(--primary-subtle); color: var(--primary-default); border: 1px solid var(--primary-default); }
 .tier-3 .tier-num { background: transparent; color: var(--primary-default); }
-.tier-4 .tier-num { background: var(--color-sand-100); color: var(--text-subtle); }
+.tier-4 .tier-num { background: var(--neutral-2); color: var(--text-subtle); }
 .tier-5 .tier-num { background: var(--color-red-100); color: var(--error-9); }
 
 .decision-flow {
@@ -1154,7 +1164,7 @@ pre code {
   gap: var(--spacing-4);
   padding: var(--spacing-4) var(--spacing-4);
   background: var(--panel-solid);
-  border: 1px solid var(--color-sand-300);
+  border: 1px solid var(--neutral-6);
   border-radius: var(--radius-3);
   margin-bottom: -1px;
 }
@@ -1193,7 +1203,7 @@ pre code {
   gap: var(--spacing-3);
   padding: var(--spacing-3) var(--spacing-4);
   background: var(--panel-solid);
-  border: 1px solid var(--color-sand-300);
+  border: 1px solid var(--neutral-6);
   border-radius: var(--radius-3);
 }
 .toolbar-demo .spacer { flex: 1; }
@@ -1204,7 +1214,7 @@ pre code {
   gap: var(--spacing-3);
   padding: var(--spacing-2) var(--spacing-4);
   background: var(--panel-solid);
-  border: 1px solid var(--color-sand-200);
+  border: 1px solid var(--neutral-4);
   border-radius: var(--radius-2);
   font-size: var(--font-size-2);
 }
@@ -1239,7 +1249,7 @@ pre code {
   .matrix { font-size: 11px; }
   .matrix td, .matrix th { padding: var(--spacing-2); }
 </style>
-<meta name="scale-version" content="1.4.0">
+<meta name="scale-version" content="1.5.0">
 <meta name="scale-build-date" content="2026-07-21">
 </head>
 <body>
@@ -1343,7 +1353,7 @@ pre code {
 <!-- ======================== SECTION 1: INTRO ======================== -->
 <h1>Scale Design System</h1>
 <p style="font-size: var(--font-size-3); color: var(--text-subtle); margin-bottom: var(--spacing-7);">
-  Version 1.4.0 · Built 2026-08-04 · Screendragon · Internal Documentation
+  Version 1.5.0 · Built 2026-08-04 · Screendragon · Internal Documentation
 </p>
 
 <h2 id="what-is-scale">What Scale Is</h2>
@@ -1707,43 +1717,43 @@ pre code {
   <div class="example-label">Gray scale</div>
   <div class="example-render" style="display:flex; flex-wrap: wrap; gap: 8px;">
     <div style="text-align:center;">
-      <div class="swatch" style="width:56px; height:40px; background:var(--color-sand-50);"></div>
+      <div class="swatch" style="width:56px; height:40px; background:var(--neutral-1);"></div>
       <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">50</div>
     </div>
     <div style="text-align:center;">
-      <div class="swatch" style="width:56px; height:40px; background:var(--color-sand-100);"></div>
+      <div class="swatch" style="width:56px; height:40px; background:var(--neutral-2);"></div>
       <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">100</div>
     </div>
     <div style="text-align:center;">
-      <div class="swatch" style="width:56px; height:40px; background:var(--color-sand-200);"></div>
+      <div class="swatch" style="width:56px; height:40px; background:var(--neutral-4);"></div>
       <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">200</div>
     </div>
     <div style="text-align:center;">
-      <div class="swatch" style="width:56px; height:40px; background:var(--color-sand-300);"></div>
+      <div class="swatch" style="width:56px; height:40px; background:var(--neutral-6);"></div>
       <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">300</div>
     </div>
     <div style="text-align:center;">
-      <div class="swatch" style="width:56px; height:40px; background:var(--color-sand-400);"></div>
+      <div class="swatch" style="width:56px; height:40px; background:var(--neutral-9);"></div>
       <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">400</div>
     </div>
     <div style="text-align:center;">
-      <div class="swatch" style="width:56px; height:40px; background:var(--color-sand-500);"></div>
+      <div class="swatch" style="width:56px; height:40px; background:var(--neutral-11);"></div>
       <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">500</div>
     </div>
     <div style="text-align:center;">
-      <div class="swatch" style="width:56px; height:40px; background:var(--color-sand-600);"></div>
+      <div class="swatch" style="width:56px; height:40px; background:var(--neutral-11);"></div>
       <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">600</div>
     </div>
     <div style="text-align:center;">
-      <div class="swatch" style="width:56px; height:40px; background:var(--color-sand-700);"></div>
+      <div class="swatch" style="width:56px; height:40px; background:var(--neutral-12);"></div>
       <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">700</div>
     </div>
     <div style="text-align:center;">
-      <div class="swatch" style="width:56px; height:40px; background:var(--color-sand-800);"></div>
+      <div class="swatch" style="width:56px; height:40px; background:var(--neutral-12);"></div>
       <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">800</div>
     </div>
     <div style="text-align:center;">
-      <div class="swatch" style="width:56px; height:40px; background:var(--color-sand-900);"></div>
+      <div class="swatch" style="width:56px; height:40px; background:var(--neutral-12);"></div>
       <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">900</div>
     </div>
   </div>
@@ -1846,13 +1856,13 @@ pre code {
         <tr>
           <td style="font-weight:600;color:var(--primary-default);">3</td>
           <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-3);margin:0;"></span><code style="font-size:11px;">#e3f5f8</code></div></td>
-          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-3);margin:0;"></span><code style="font-size:11px;">#f1f0ef</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-3);margin:0;"></span><code style="font-size:11px;">#f0f0ef</code></div></td>
           <td>UI element background</td>
         </tr>
         <tr>
           <td style="font-weight:600;color:var(--primary-default);">4</td>
           <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-4);margin:0;"></span><code style="font-size:11px;">#d3eff3</code></div></td>
-          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-4);margin:0;"></span><code style="font-size:11px;">#e9e8e6</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-4);margin:0;"></span><code style="font-size:11px;">#e9e9e6</code></div></td>
           <td>Hovered UI element background</td>
         </tr>
         <tr>
@@ -1870,13 +1880,13 @@ pre code {
         <tr>
           <td style="font-weight:600;color:var(--primary-default);">7</td>
           <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-7);margin:0;"></span><code style="font-size:11px;">#92cbd4</code></div></td>
-          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-7);margin:0;"></span><code style="font-size:11px;">#d0ceca</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-7);margin:0;"></span><code style="font-size:11px;">#cfcfca</code></div></td>
           <td>UI element border and focus rings</td>
         </tr>
         <tr>
           <td style="font-weight:600;color:var(--primary-default);">8</td>
           <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-8);margin:0;"></span><code style="font-size:11px;">#65b5c2</code></div></td>
-          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-8);margin:0;"></span><code style="font-size:11px;">#bcbbb6</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-8);margin:0;"></span><code style="font-size:11px;">#bcbbb5</code></div></td>
           <td>Hovered UI element border</td>
         </tr>
         <tr>
@@ -1894,7 +1904,7 @@ pre code {
         <tr>
           <td style="font-weight:600;color:var(--primary-default);">11</td>
           <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-11);margin:0;"></span><code style="font-size:11px;">#006c78</code></div></td>
-          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-11);margin:0;"></span><code style="font-size:11px;">#64635e</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-11);margin:0;"></span><code style="font-size:11px;">#63635e</code></div></td>
           <td>Low-contrast text</td>
         </tr>
         <tr>
@@ -2002,7 +2012,7 @@ pre code {
         <div style="width:48px; font-size:9px; font-family:var(--font-family-mono); color:var(--text-subtle); text-align:center;">α11</div>
       </div>
     </div>
-    <div style="background: var(--color-sand-100); padding: 12px; border-radius: var(--radius-3);">
+    <div style="background: var(--neutral-2); padding: 12px; border-radius: var(--radius-3);">
       <div style="font-size:11px; font-weight:500; color:var(--text-subtle); margin-bottom:8px;">On gray</div>
       <div style="display:flex; gap:4px;">
         <div style="width:48px; height:32px; background:var(--neutral-alpha-3); border-radius:var(--radius-1);"></div>
@@ -2065,12 +2075,12 @@ pre code {
   </thead>
   <tbody>
     <tr><td><code>--surface-default</code></td><td><code>--color-white</code></td><td>App-level background (warm off-white)</td></tr>
-    <tr><td><code>--surface-subtle</code></td><td><code>--color-sand-50</code></td><td>Subtle background for cards and panels</td></tr>
-    <tr><td><code>--surface-muted</code></td><td><code>--color-sand-100</code></td><td>UI element background — table headers, toolbars</td></tr>
-    <tr><td><code>--border-default</code></td><td><code>--color-sand-200</code></td><td>Default borders and dividers</td></tr>
-    <tr><td><code>--text-default</code></td><td><code>--color-sand-900</code></td><td>Headings, primary body text</td></tr>
-    <tr><td><code>--text-subtle</code></td><td><code>--color-sand-600</code></td><td>Secondary text — metadata, timestamps</td></tr>
-    <tr><td><code>--text-subtle</code></td><td><code>--color-sand-500</code></td><td>Tertiary text — placeholder, disabled</td></tr>
+    <tr><td><code>--surface-subtle</code></td><td><code>--neutral-1</code></td><td>Subtle background for cards and panels</td></tr>
+    <tr><td><code>--surface-muted</code></td><td><code>--neutral-2</code></td><td>UI element background — table headers, toolbars</td></tr>
+    <tr><td><code>--border-default</code></td><td><code>--neutral-4</code></td><td>Default borders and dividers</td></tr>
+    <tr><td><code>--text-default</code></td><td><code>--neutral-12</code></td><td>Headings, primary body text</td></tr>
+    <tr><td><code>--text-subtle</code></td><td><code>--neutral-11</code></td><td>Secondary text — metadata, timestamps</td></tr>
+    <tr><td><code>--text-subtle</code></td><td><code>--neutral-11</code></td><td>Tertiary text — placeholder, disabled</td></tr>
     <tr><td><code>--primary-default</code></td><td><code>--color-blue-500</code></td><td>Cerulean — links, active indicators, focus rings</td></tr>
     <tr><td><code>--primary-subtle</code></td><td><code>--color-blue-100</code></td><td>Cerulean subtle — active nav highlight, selection background</td></tr>
     <tr><td><code>--surface-default</code></td><td><code>--color-white</code></td><td>Elevated surface — menus, popovers, modals</td></tr>
@@ -2636,7 +2646,7 @@ pre code {
     <div class="decision-q"><strong>Does the action target a specific row, card, or inline item?</strong><br>Row kebab menu (⋯), edit pencil, row delete, drag handle, expand chevron</div>
     <div class="decision-arrow">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <span class="decision-result" style="background:var(--color-sand-100);color:var(--text-subtle);">Tier 4 · Ghost / Icon</span>
+      <span class="decision-result" style="background:var(--neutral-2);color:var(--text-subtle);">Tier 4 · Ghost / Icon</span>
     </div>
   </div>
   <div class="decision-step">
@@ -2891,8 +2901,8 @@ active-bg: var(--primary-muted);        /* #B8DDE8 */</div>
 background: transparent;
 color: var(--primary-default);                /* #0c818f */
 border: none;
-hover-bg: var(--color-sand-100);            /* #F3F2F1 */
-active-bg: var(--color-sand-200);           /* #ECEAE9 */</div>
+hover-bg: var(--neutral-2);            /* #F3F2F1 */
+active-bg: var(--neutral-4);           /* #ECEAE9 */</div>
 </div>
 
 <div class="callout callout-info">
@@ -2944,7 +2954,7 @@ active-bg: var(--color-sand-200);           /* #ECEAE9 */</div>
 /* Tokens */
 background: transparent;
 color: var(--text-subtle);            /* #8A807D */
-hover-bg: var(--color-sand-100);            /* #F3F2F1 */
+hover-bg: var(--neutral-2);            /* #F3F2F1 */
 hover-color: var(--text-default);    /* #21201c */
 /* Always pair icon-only with tooltip or aria-label */</div>
 </div>
@@ -3024,13 +3034,13 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
 <div class="example-block">
   <div class="example-label">Destructive flow — trigger → confirm</div>
   <div class="example-render">
-    <div style="background:var(--color-sand-100);border-radius:var(--radius-4);padding:var(--spacing-6);display:flex;align-items:center;justify-content:center;">
+    <div style="background:var(--neutral-2);border-radius:var(--radius-4);padding:var(--spacing-6);display:flex;align-items:center;justify-content:center;">
       <div style="background:var(--surface-default);border-radius:var(--radius-4);box-shadow:var(--shadow-md);width:420px;overflow:hidden;">
-        <div style="padding:var(--spacing-4) var(--spacing-5);border-bottom:1px solid var(--color-sand-200);font-weight:var(--font-weight-semibold);font-size:var(--font-size-3);">Delete project?</div>
+        <div style="padding:var(--spacing-4) var(--spacing-5);border-bottom:1px solid var(--neutral-4);font-weight:var(--font-weight-semibold);font-size:var(--font-size-3);">Delete project?</div>
         <div style="padding:var(--spacing-4) var(--spacing-5);font-size:var(--font-size-2);color:var(--text-subtle);line-height:1.6;">
           This will permanently delete <strong style="color:var(--text-default);">Q4 Brand Campaign</strong> and all associated tasks, assets, and comments. This action cannot be undone.
         </div>
-        <div style="padding:var(--spacing-3) var(--spacing-5);border-top:1px solid var(--color-sand-200);display:flex;justify-content:flex-end;gap:var(--spacing-2);">
+        <div style="padding:var(--spacing-3) var(--spacing-5);border-top:1px solid var(--neutral-4);display:flex;justify-content:flex-end;gap:var(--spacing-2);">
           <button class="btn btn-md btn-ghost">Cancel</button>
           <button class="btn btn-md btn-destructive">Delete Permanently</button>
         </div>
@@ -3055,13 +3065,13 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
 <div class="example-block">
   <div class="example-label">Current Screendragon toolbar — same visual weight for different tiers</div>
   <div class="example-render">
-    <div class="toolbar-demo" style="background:var(--color-sand-100);">
-      <button class="btn btn-md" style="background:white;color:var(--color-sand-500);border:1px solid var(--color-sand-300);border-radius:var(--radius-2);height:40px;padding:0 16px;font-family:var(--font-family-text);font-size:var(--font-size-2);cursor:pointer;display:inline-flex;align-items:center;gap:8px;">
+    <div class="toolbar-demo" style="background:var(--neutral-2);">
+      <button class="btn btn-md" style="background:white;color:var(--neutral-11);border:1px solid var(--neutral-6);border-radius:var(--radius-2);height:40px;padding:0 16px;font-family:var(--font-family-text);font-size:var(--font-size-2);cursor:pointer;display:inline-flex;align-items:center;gap:8px;">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M1 5h14" stroke="currentColor" stroke-width="1.2"/></svg>
         Excel Export
       </button>
-      <button class="btn btn-md" style="background:white;color:var(--color-sand-500);border:1px solid var(--color-sand-300);border-radius:var(--radius-2);height:40px;padding:0 16px;font-family:var(--font-family-text);font-size:var(--font-size-2);cursor:pointer;">Show Pipeline Project(s)</button>
-      <button class="btn btn-md" style="background:white;color:var(--color-sand-500);border:1px solid var(--color-sand-300);border-radius:var(--radius-2);height:40px;padding:0 16px;font-family:var(--font-family-text);font-size:var(--font-size-2);cursor:pointer;display:inline-flex;align-items:center;gap:8px;">
+      <button class="btn btn-md" style="background:white;color:var(--neutral-11);border:1px solid var(--neutral-6);border-radius:var(--radius-2);height:40px;padding:0 16px;font-family:var(--font-family-text);font-size:var(--font-size-2);cursor:pointer;">Show Pipeline Project(s)</button>
+      <button class="btn btn-md" style="background:white;color:var(--neutral-11);border:1px solid var(--neutral-6);border-radius:var(--radius-2);height:40px;padding:0 16px;font-family:var(--font-family-text);font-size:var(--font-size-2);cursor:pointer;display:inline-flex;align-items:center;gap:8px;">
         Filter
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
       </button>
@@ -3141,7 +3151,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
     <!-- Create modal footer -->
     <div>
       <div style="font-size:var(--font-size-0);font-weight:var(--font-weight-semibold);color:var(--text-subtle);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--spacing-2);">Create modal</div>
-      <div style="padding:var(--spacing-3) var(--spacing-5);border-top:1px solid var(--color-sand-200);display:flex;justify-content:flex-end;gap:var(--spacing-2);background:var(--surface-default);border-radius:var(--radius-3);">
+      <div style="padding:var(--spacing-3) var(--spacing-5);border-top:1px solid var(--neutral-4);display:flex;justify-content:flex-end;gap:var(--spacing-2);background:var(--surface-default);border-radius:var(--radius-3);">
         <button class="btn btn-md btn-ghost">Cancel</button>
         <button class="btn btn-md btn-primary">Create Request</button>
       </div>
@@ -3149,7 +3159,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
     <!-- Edit with save/apply -->
     <div>
       <div style="font-size:var(--font-size-0);font-weight:var(--font-weight-semibold);color:var(--text-subtle);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--spacing-2);">Edit modal with secondary save</div>
-      <div style="padding:var(--spacing-3) var(--spacing-5);border-top:1px solid var(--color-sand-200);display:flex;justify-content:flex-end;gap:var(--spacing-2);background:var(--surface-default);border-radius:var(--radius-3);">
+      <div style="padding:var(--spacing-3) var(--spacing-5);border-top:1px solid var(--neutral-4);display:flex;justify-content:flex-end;gap:var(--spacing-2);background:var(--surface-default);border-radius:var(--radius-3);">
         <button class="btn btn-md btn-ghost">Cancel</button>
         <button class="btn btn-md btn-secondary">Save as Draft</button>
         <button class="btn btn-md btn-primary">Save &amp; Publish</button>
@@ -3158,7 +3168,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
     <!-- Delete confirm -->
     <div>
       <div style="font-size:var(--font-size-0);font-weight:var(--font-weight-semibold);color:var(--text-subtle);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--spacing-2);">Delete confirmation</div>
-      <div style="padding:var(--spacing-3) var(--spacing-5);border-top:1px solid var(--color-sand-200);display:flex;justify-content:flex-end;gap:var(--spacing-2);background:var(--surface-default);border-radius:var(--radius-3);">
+      <div style="padding:var(--spacing-3) var(--spacing-5);border-top:1px solid var(--neutral-4);display:flex;justify-content:flex-end;gap:var(--spacing-2);background:var(--surface-default);border-radius:var(--radius-3);">
         <button class="btn btn-md btn-ghost">Cancel</button>
         <button class="btn btn-md btn-destructive">Delete Permanently</button>
       </div>
@@ -3176,13 +3186,13 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
 <div class="example-block">
   <div class="example-label">Table row with inline actions</div>
   <div class="example-render" style="display:flex;flex-direction:column;gap:0;">
-    <div style="display:flex;align-items:center;padding:var(--spacing-2) var(--spacing-4);background:var(--color-sand-100);font-size:var(--font-size-0);font-weight:var(--font-weight-semibold);color:var(--text-subtle);text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid var(--color-sand-300);border-radius:var(--radius-2) var(--radius-2) 0 0;">
+    <div style="display:flex;align-items:center;padding:var(--spacing-2) var(--spacing-4);background:var(--neutral-2);font-size:var(--font-size-0);font-weight:var(--font-weight-semibold);color:var(--text-subtle);text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid var(--neutral-6);border-radius:var(--radius-2) var(--radius-2) 0 0;">
       <span style="flex:2;">Name</span>
       <span style="flex:1;">Status</span>
       <span style="flex:1;">Owner</span>
       <span style="width:100px;text-align:right;">Actions</span>
     </div>
-    <div style="display:flex;align-items:center;padding:var(--spacing-2) var(--spacing-4);border-bottom:1px solid var(--color-sand-200);background:var(--surface-default);font-size:var(--font-size-2);">
+    <div style="display:flex;align-items:center;padding:var(--spacing-2) var(--spacing-4);border-bottom:1px solid var(--neutral-4);background:var(--surface-default);font-size:var(--font-size-2);">
       <span style="flex:2;font-weight:var(--font-weight-medium);">Brand Toolkit v3</span>
       <span style="flex:1;"><span style="display:inline-flex;align-items:center;gap:6px;font-size:var(--font-size-1);"><span style="width:8px;height:8px;border-radius:50%;background:var(--color-green-500);"></span> Active</span></span>
       <span style="flex:1;font-size:var(--font-size-1);color:var(--text-subtle);">Sarah M.</span>
@@ -3192,7 +3202,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
         <button class="btn-icon btn-sm" title="More options"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="3" r="1.5" fill="currentColor"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="8" cy="13" r="1.5" fill="currentColor"/></svg></button>
       </span>
     </div>
-    <div style="display:flex;align-items:center;padding:var(--spacing-2) var(--spacing-4);border-bottom:1px solid var(--color-sand-200);background:var(--surface-default);font-size:var(--font-size-2);">
+    <div style="display:flex;align-items:center;padding:var(--spacing-2) var(--spacing-4);border-bottom:1px solid var(--neutral-4);background:var(--surface-default);font-size:var(--font-size-2);">
       <span style="flex:2;font-weight:var(--font-weight-medium);">Campaign Brief — EMEA</span>
       <span style="flex:1;"><span style="display:inline-flex;align-items:center;gap:6px;font-size:var(--font-size-1);"><span style="width:8px;height:8px;border-radius:50%;background:var(--color-amber-500);"></span> In Review</span></span>
       <span style="flex:1;font-size:var(--font-size-1);color:var(--text-subtle);">James D.</span>
@@ -3251,16 +3261,16 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
       <td>Hover bg</td>
       <td><code>--primary-hover</code></td>
       <td><code>--primary-subtle</code></td>
-      <td><code>--color-sand-100</code></td>
-      <td><code>--color-sand-100</code></td>
+      <td><code>--neutral-2</code></td>
+      <td><code>--neutral-2</code></td>
       <td><code>--error-10</code></td>
     </tr>
     <tr>
       <td>Active bg</td>
       <td><code>--primary-pressed</code></td>
       <td><code>--primary-muted</code></td>
-      <td><code>--color-sand-200</code></td>
-      <td><code>--color-sand-200</code></td>
+      <td><code>--neutral-4</code></td>
+      <td><code>--neutral-4</code></td>
       <td><code>--error-11</code></td>
     </tr>
     <tr>
@@ -3300,7 +3310,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
   <div class="do-block">
     <div class="dd-header">✓ Do</div>
     <div class="dd-body">
-      <div style="padding:var(--spacing-3) var(--spacing-4);border:1px solid var(--color-sand-200);border-radius:var(--radius-3);display:flex;justify-content:flex-end;gap:var(--spacing-2);">
+      <div style="padding:var(--spacing-3) var(--spacing-4);border:1px solid var(--neutral-4);border-radius:var(--radius-3);display:flex;justify-content:flex-end;gap:var(--spacing-2);">
         <button class="btn btn-md btn-ghost">Cancel</button>
         <button class="btn btn-md btn-secondary">Save as Draft</button>
         <button class="btn btn-md btn-primary">Save &amp; Publish</button>
@@ -3311,7 +3321,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
   <div class="dont-block">
     <div class="dd-header">✗ Don't</div>
     <div class="dd-body">
-      <div style="padding:var(--spacing-3) var(--spacing-4);border:1px solid var(--color-sand-200);border-radius:var(--radius-3);display:flex;justify-content:flex-end;gap:var(--spacing-2);">
+      <div style="padding:var(--spacing-3) var(--spacing-4);border:1px solid var(--neutral-4);border-radius:var(--radius-3);display:flex;justify-content:flex-end;gap:var(--spacing-2);">
         <button class="btn btn-md btn-ghost">Cancel</button>
         <button class="btn btn-md btn-primary">Save as Draft</button>
         <button class="btn btn-md btn-primary">Save &amp; Publish</button>
@@ -3736,7 +3746,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
 <table class="token-table">
   <thead><tr><th>Property</th><th>Off</th><th>On</th></tr></thead>
   <tbody>
-    <tr><td>Track</td><td><code>--color-sand-400</code></td><td><code>--primary-default</code></td></tr>
+    <tr><td>Track</td><td><code>--neutral-9</code></td><td><code>--primary-default</code></td></tr>
     <tr><td>Thumb</td><td colspan="2"><code>--color-white</code> with <code>--shadow-sm</code></td></tr>
     <tr><td>Width × Height</td><td colspan="2">36 × 20px</td></tr>
   </tbody>
@@ -4571,7 +4581,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
 .do-block, .dont-block {
   border-radius: var(--radius-3);
   overflow: hidden;
-  border: 1px solid var(--color-sand-300);
+  border: 1px solid var(--neutral-6);
 }
 .do-block .dd-header {
   padding: var(--spacing-2) var(--spacing-3);
@@ -4639,16 +4649,16 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--text-subtle);
-  background: var(--color-sand-100);
+  background: var(--neutral-2);
   text-align: left;
-  border-bottom: 2px solid var(--color-sand-300);
+  border-bottom: 2px solid var(--neutral-6);
   position: sticky;
   top: 0;
   z-index: 1;
 }
 .matrix td {
   padding: var(--spacing-3) var(--spacing-3);
-  border-bottom: 1px solid var(--color-sand-200);
+  border-bottom: 1px solid var(--neutral-4);
   vertical-align: top;
   line-height: 1.5;
 }
@@ -4673,7 +4683,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
 .tier-1 .tier-num { background: var(--primary-default); color: white; }
 .tier-2 .tier-num { background: var(--primary-subtle); color: var(--primary-default); border: 1px solid var(--primary-default); }
 .tier-3 .tier-num { background: transparent; color: var(--primary-default); }
-.tier-4 .tier-num { background: var(--color-sand-100); color: var(--text-subtle); }
+.tier-4 .tier-num { background: var(--neutral-2); color: var(--text-subtle); }
 .tier-5 .tier-num { background: var(--color-red-100); color: var(--error-9); }
 
 .decision-flow {
@@ -4688,7 +4698,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
   gap: var(--spacing-4);
   padding: var(--spacing-4) var(--spacing-4);
   background: var(--panel-solid);
-  border: 1px solid var(--color-sand-300);
+  border: 1px solid var(--neutral-6);
   border-radius: var(--radius-3);
   margin-bottom: -1px;
 }
@@ -4727,7 +4737,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
   gap: var(--spacing-3);
   padding: var(--spacing-3) var(--spacing-4);
   background: var(--panel-solid);
-  border: 1px solid var(--color-sand-300);
+  border: 1px solid var(--neutral-6);
   border-radius: var(--radius-3);
 }
 .toolbar-demo .spacer { flex: 1; }
@@ -4738,7 +4748,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
   gap: var(--spacing-3);
   padding: var(--spacing-2) var(--spacing-4);
   background: var(--panel-solid);
-  border: 1px solid var(--color-sand-200);
+  border: 1px solid var(--neutral-4);
   border-radius: var(--radius-2);
   font-size: var(--font-size-2);
 }
@@ -5514,11 +5524,11 @@ function getDataColor(index: number): string {
   <div class="example-label">Contrast examples — pass and fail</div>
   <div class="example-render" style="display:flex;gap:16px;flex-wrap:wrap;">
     <div style="text-align:center;">
-      <div class="contrast-sample" style="background:var(--surface-default);color:var(--color-sand-900);border:1px solid var(--border-default);">Gray-900 on white</div>
+      <div class="contrast-sample" style="background:var(--surface-default);color:var(--neutral-12);border:1px solid var(--border-default);">Gray-900 on white</div>
       <div style="font-size:10px;color:var(--color-green-700);margin-top:6px;">15.4:1 — Pass</div>
     </div>
     <div style="text-align:center;">
-      <div class="contrast-sample" style="background:var(--surface-default);color:var(--color-sand-600);border:1px solid var(--border-default);">Gray-600 on white</div>
+      <div class="contrast-sample" style="background:var(--surface-default);color:var(--neutral-11);border:1px solid var(--border-default);">Gray-600 on white</div>
       <div style="font-size:10px;color:var(--color-green-700);margin-top:6px;">5.0:1 — Pass</div>
     </div>
     <div style="text-align:center;">
@@ -5526,14 +5536,14 @@ function getDataColor(index: number): string {
       <div style="font-size:10px;color:var(--color-green-700);margin-top:6px;">5.7:1 — Pass</div>
     </div>
     <div style="text-align:center;">
-      <div class="contrast-sample" style="background:var(--surface-default);color:var(--color-sand-400);border:1px solid var(--border-default);">Gray-400 on white</div>
+      <div class="contrast-sample" style="background:var(--surface-default);color:var(--neutral-9);border:1px solid var(--border-default);">Gray-400 on white</div>
       <div style="font-size:10px;color:var(--color-red-700);margin-top:6px;">2.7:1 — Fail (text)</div>
     </div>
   </div>
 </div>
 <div class="do-dont">
   <div class="do-card"><div class="dd-header">✓ Do</div><div class="dd-body">Use <code>--text-subtle</code> (sand-500, 4.0:1) as the lightest text colour for non-essential metadata. It passes the 3:1 threshold for large text and UI components.</div></div>
-  <div class="dont-card"><div class="dd-header">✗ Don't</div><div class="dd-body">Use <code>--color-sand-400</code> for readable text — it fails the 4.5:1 minimum. Reserve sand-400 for decorative borders and disabled states only.</div></div>
+  <div class="dont-card"><div class="dd-header">✗ Don't</div><div class="dd-body">Use <code>--neutral-9</code> for readable text — it fails the 4.5:1 minimum. Reserve sand-400 for decorative borders and disabled states only.</div></div>
 </div>
 
 <h2 id="keyboard">Keyboard Navigation</h2>
@@ -5597,7 +5607,7 @@ function getDataColor(index: number): string {
     </div>
   </div>
 </div>
-<div class="callout"><strong>Rule:</strong> Unchecked checkboxes and radios on dark surfaces use <code>rgba(255,255,255,0.4)</code> borders — this provides 3.3:1 contrast against a <code>--color-sand-800</code> background, meeting the 3:1 UI component threshold.</div>
+<div class="callout"><strong>Rule:</strong> Unchecked checkboxes and radios on dark surfaces use <code>rgba(255,255,255,0.4)</code> borders — this provides 3.3:1 contrast against a <code>--neutral-12</code> background, meeting the 3:1 UI component threshold.</div>
 
 <!-- ================================================================
      SECTION 8: THEMING
@@ -5609,7 +5619,7 @@ function getDataColor(index: number): string {
   <div class="example-label">Token cascade — how an override flows</div>
   <div class="example-render" style="display:flex;flex-direction:column;gap:0;font-family:var(--font-family-mono);font-size:13px;">
     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;">
-      <span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:var(--radius-2);background:var(--surface-muted);color:var(--color-sand-700);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;min-width:90px;font-weight:600;">Primitive</span>
+      <span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:var(--radius-2);background:var(--surface-muted);color:var(--neutral-12);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;min-width:90px;font-weight:600;">Primitive</span>
       <span style="color:var(--text-subtle);"><code>--color-blue-500: #0c818f</code> — locked, never overridden</span>
     </div>
     <div style="padding:2px 0 2px 45px;color:var(--text-subtle);">↓</div>
@@ -5650,7 +5660,7 @@ function getDataColor(index: number): string {
       <div><code>--nav-bg</code><div style="font-size:12px;color:var(--text-subtle);">Top navigation background</div></div>
     </div>
     <div style="display:flex;align-items:center;gap:12px;">
-      <span class="swatch" style="background:var(--color-sand-50);"></span>
+      <span class="swatch" style="background:var(--neutral-1);"></span>
       <div><code>--nav-fg</code><div style="font-size:12px;color:var(--text-subtle);">Top navigation text and icons</div></div>
     </div>
     <div style="display:flex;align-items:center;gap:12px;">
@@ -5855,6 +5865,7 @@ function getDataColor(index: number): string {
 <table class="token-table">
   <thead><tr><th>Version</th><th>Date</th><th>Change</th></tr></thead>
   <tbody>
+    <tr><td><code>1.5.0</code></td><td>2026-08-04</td><td>Neutral (Sand) re-baselined to a fresh Radix generation. Light solids nudged on 5 steps (3/4/7/8/11); dark ramp updated to the current Radix Sand — converging with the shipped product. Neutral alpha expanded from a 5-step subset to the full 12-step ramp (light + dark). Added four Radix utility tokens (--neutral-contrast / -surface / -indicator / -track). Swatch labels re-stamped. P3 held for a later all-families pass. Retired the legacy Tailwind --color-sand-* neutral scale: migrated all references to --neutral-* (value-preserving for the 7 clean steps; the 3 dark steps mapped by role — sand-600→neutral-11, sand-700/800→neutral-12) and deleted the ramp, completing the Tailwind removal begun with --color-primary-*.</td></tr>
     <tr><td><code>1.4.0</code></td><td>2026-08-04</td><td>Accent (Cerulean) re-derived. The prior anchor #0b6e8a had drifted ~15&deg; off its documented green&harr;blue midpoint and the brand green it came from was retired; re-anchored to <code>#0c818f</code> (hue 208&deg;, midpoint of SD Green Deep #028854 and the SaaS blue). Full accent ramp replaced in both modes; light step-11 hand-corrected to #006c78 (generator #007d8b was non-monotonic). Full accent ramp + derivation prose + full 12-step accent-alpha ramp (light + dark); alpha a11 hand-corrected to match the solid. Rationale hue-wheel SVG re-labelled to the re-derived Cerulean (#0c818f, 186° HSL / 208° OKLCH) and SD Green Deep #028854. Swept all remaining displayed Cerulean literals (AI demos, data-1, doc echoes, nav primary-800) to #0c818f. Corrected the full accent ramp shown in the swatch table, a code example, and AI demo literals from the old uppercase ramp values (steps 1–12) to the new ramp; the 32-colour data palette (which shares three hex values) left untouched. Retired the legacy Tailwind --color-primary-* ramp (its references migrated to a new fixed --surface-brand-deep token). Reconciled brand-green references from the retired #006B5C to current SD Green Deep #028854 (contrast figure corrected to 4.51:1). Reconciled the Brand Green swatch to the refreshed two-green system (Vibrant #00D880 + Deep #028854, role-labelled); removed the stale pre-refresh tints #57C1A5 / #6DC067. Neutral (Sand) unchanged.</td></tr>
     <tr><td><code>1.3.0</code></td><td>2026-07-21</td><td>Dark mode. Consolidated the neutral and accent semantic layers onto the Radix <code>--neutral-*</code> / <code>--accent-*</code> scales, role-mapped (surface 1&ndash;4, text 12/11/10, border 3/6/7, primary&rarr;accent 9/10/3/5); retired the parallel Tailwind scales from the semantic layer. Added <code>.dark</code> ramp inversions for neutral, accent (Cerulean), and all five status families (light also regenerated to clean Radix ramps at bg=3/border=9/fg=11). Semantics invert automatically by role; canonical components repointed off hardcoded sand. Light role-corrected (surface-subtle gains elevation; status pills adopt Radix values). Added live light-vs-dark ramp reference strips to the colour-scale sections.</td></tr>
     <tr><td><code>1.2.0</code></td><td>2026-07-21</td><td>Filetype badges demoted to a single neutral treatment (<code>--filetype-badge-bg</code> / <code>--filetype-badge-fg</code>); per-type colour tokens retired. Reconciled onto the Sand base — first build carrying Sand + data palette + neutral filetype together. Regenerated the neutral alpha ramp from sand-12 (<code>#21201c</code>, Radix gray-a) so overlays and borders match Sand rather than the stale red-brown base. Fixed the mis-slotted, non-monotonic <code>--neutral-*</code> ramp to canonical Radix gray for <code>#21201c</code> (checkbox borders repointed to sand-500, appearance preserved). (SCR-125)</td></tr>
@@ -5865,7 +5876,7 @@ function getDataColor(index: number): string {
 <div class="callout"><strong>Version rule:</strong> This file is generated, not hand-versioned. On every edit — (1) bump the header version per the table above, (2) add a changelog row, (3) push to the single canonical home (GitHub Pages <code>prototypes</code> repo). A static version string can't enforce itself; the discipline is the enforcement, and one canonical copy is what makes the version meaningful.</div>
 
 <p style="margin-top: var(--spacing-8); padding-top: var(--spacing-6); border-top: 1px solid var(--border-default); color: var(--text-subtle); font-size: var(--font-size-1);">
-  Scale Design System v1.4.0 · Complete Reference · Screendragon Internal Documentation
+  Scale Design System v1.5.0 · Complete Reference · Screendragon Internal Documentation
 </p>
 
 </main>
