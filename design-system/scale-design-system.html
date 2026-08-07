@@ -71,6 +71,91 @@
   --neutral-surface: #ffffffcc;
   --neutral-indicator: #8e8d86;
   --neutral-track: #8e8d86;
+  /* ---- Status solids (12-step Radix; success/warning/error/info/orange/purple) ---- */
+  --green-1: #fbfefd;
+  --green-2: #f3fbf8;
+  --green-3: #e4f7f0;
+  --green-4: #d4f1e6;
+  --green-5: #c1e9da;
+  --green-6: #aadecb;
+  --green-7: #8aceb7;
+  --green-8: #59ba9c;
+  --green-9: #29a383;
+  --green-10: #209677;
+  --green-11: #008062;
+  --green-12: #1d3b31;
+  --amber-1: #fefdfb;
+  --amber-2: #fff8e7;
+  --amber-3: #fff0cb;
+  --amber-4: #ffe6b6;
+  --amber-5: #ffda9b;
+  --amber-6: #ffca73;
+  --amber-7: #fdb757;
+  --amber-8: #ed9d14;
+  --amber-9: #f5a524;
+  --amber-10: #e99a08;
+  --amber-11: #a96600;
+  --amber-12: #4d3618;
+  --red-1: #fffcfc;
+  --red-2: #fff8f7;
+  --red-3: #feebe7;
+  --red-4: #ffdcd3;
+  --red-5: #ffcdc1;
+  --red-6: #fdbdae;
+  --red-7: #f5a997;
+  --red-8: #ec8f7a;
+  --red-9: #e54d2e;
+  --red-10: #d73d1d;
+  --red-11: #cf3716;
+  --red-12: #5c281c;
+  --blue-1: #fbfdff;
+  --blue-2: #f4faff;
+  --blue-3: #e9f3ff;
+  --blue-4: #d9edff;
+  --blue-5: #c7e3ff;
+  --blue-6: #b2d6ff;
+  --blue-7: #97c5f9;
+  --blue-8: #6eadf3;
+  --blue-9: #0090ff;
+  --blue-10: #0084ec;
+  --blue-11: #0073dd;
+  --blue-12: #003463;
+  --orange-1: #fefcfb;
+  --orange-2: #fff5f0;
+  --orange-3: #ffeadd;
+  --orange-4: #ffd7c0;
+  --orange-5: #ffc9ac;
+  --orange-6: #ffba96;
+  --orange-7: #fda781;
+  --orange-8: #f28f62;
+  --orange-9: #f76707;
+  --orange-10: #eb5900;
+  --orange-11: #d44a00;
+  --orange-12: #582d19;
+  --purple-1: #fcfcff;
+  --purple-2: #f9f8ff;
+  --purple-3: #f3f0ff;
+  --purple-4: #eae3ff;
+  --purple-5: #e0d7ff;
+  --purple-6: #d4c6ff;
+  --purple-7: #c3b0ff;
+  --purple-8: #ad91ff;
+  --purple-9: #7c3aed;
+  --purple-10: #6d34d1;
+  --purple-11: #7139d6;
+  --purple-12: #37196e;
+  --discovery-1: #fdfcff;
+  --discovery-2: #fbf8fe;
+  --discovery-3: #f5eeff;
+  --discovery-4: #efe3fe;
+  --discovery-5: #e7d6fb;
+  --discovery-6: #dcc6f6;
+  --discovery-7: #ceb0ef;
+  --discovery-8: #bc94e6;
+  --discovery-9: #8e4ec6;
+  --discovery-10: #7f43b3;
+  --discovery-11: #8145b5;
+  --discovery-12: #411f5f;
   /* ---- Status alpha ramps (Radix-generated; tints/overlays on status surfaces) ---- */
   --green-alpha-1: #00c08004;
   --green-alpha-2: #00aa6b0c;
@@ -144,37 +229,26 @@
   --purple-alpha-10: #4800c5cb;
   --purple-alpha-11: #4800cac6;
   --purple-alpha-12: #21005ee6;
+  --discovery-alpha-1: #5500ff03;
+  --discovery-alpha-2: #6e00db07;
+  --discovery-alpha-3: #6900ff11;
+  --discovery-alpha-4: #6e00f61c;
+  --discovery-alpha-5: #6a00e729;
+  --discovery-alpha-6: #6300d739;
+  --discovery-alpha-7: #6100cc4f;
+  --discovery-alpha-8: #6001c46b;
+  --discovery-alpha-9: #5c00adb1;
+  --discovery-alpha-10: #520098bc;
+  --discovery-alpha-11: #52009aba;
+  --discovery-alpha-12: #270049e0;
   --black-alpha-3: rgba(0, 0, 0, 0.15);
 
   /* ---- Feedback colours — Radix ramps (-100=step3 bg, -500=step9 solid, -600=step11 fg, -700=step12 strong) ---- */
-  --color-red-100: #feebe7;    /* tomato-3  */
-  --color-red-500: #e54d2e;    /* tomato-9  */
-  --color-red-600: #cf3716;    /* tomato-11 */
-  --color-red-700: #5c281c;    /* tomato-12 */
-  --color-amber-100: #fff0cb;  /* amber-3  */
-  --color-amber-500: #f5a524;  /* amber-9  */
-  --color-amber-600: #a96600;  /* amber-11 */
-  --color-amber-700: #4d3618;  /* amber-12 */
-  --color-green-100: #e4f7f0;  /* jade-3  */
-  --color-green-500: #29a383;  /* jade-9  */
-  --color-green-600: #008062;  /* jade-11 */
-  --color-green-700: #1d3b31;  /* jade-12 */
-  --color-orange-100: #ffeadd; /* orange-3  */
-  --color-orange-500: #f76707; /* orange-9  */
-  --color-orange-600: #d44a00; /* orange-11 */
-  --color-orange-700: #582d19; /* orange-12 */
-  --color-purple-100: #f3f0ff; /* violet-3  */
-  --color-purple-500: #7c3aed; /* violet-9  */
-  --color-purple-600: #7139d6; /* violet-11 */
-  --color-purple-700: #37196e; /* violet-12 */
 
   /* ---- Data palette ---- */
   --color-iris-100: #f0f1fe;
   --color-iris-500: #5b5bd6;
   --color-iris-600: #5753c6;
-  --color-blue-100: #e6f4fe;
-  --color-blue-500: #0090ff;
-  --color-blue-600: #0d74ce;
   --color-cyan-100: #def7f9;
   --color-cyan-500: #00a2c7;
   --color-cyan-600: #107d98;
@@ -210,30 +284,30 @@
   --nav-bg: var(--surface-brand-deep); /* fixed dark brand bar */
 
   /* ---- Semantic: Status ---- */
-  --status-active-bg: var(--color-green-100);
-  --status-active-border: var(--color-green-500);
-  --status-active-fg: var(--color-green-600);
-  --status-progress-bg: var(--color-orange-100);
-  --status-progress-border: var(--color-orange-500);
-  --status-progress-fg: var(--color-orange-600);
-  --status-complete-bg: var(--color-green-100);
-  --status-complete-border: var(--color-green-500);
-  --status-complete-fg: var(--color-green-600);
-  --status-cancelled-bg: var(--color-red-100);
-  --status-cancelled-border: var(--color-red-500);
-  --status-cancelled-fg: var(--color-red-600);
-  --status-pending-bg: var(--color-amber-100);
-  --status-pending-border: var(--color-amber-500);
-  --status-pending-fg: var(--color-amber-600);
+  --status-active-bg: var(--green-3);
+  --status-active-border: var(--green-9);
+  --status-active-fg: var(--green-11);
+  --status-progress-bg: var(--orange-3);
+  --status-progress-border: var(--orange-9);
+  --status-progress-fg: var(--orange-11);
+  --status-complete-bg: var(--green-3);
+  --status-complete-border: var(--green-9);
+  --status-complete-fg: var(--green-11);
+  --status-cancelled-bg: var(--red-3);
+  --status-cancelled-border: var(--red-9);
+  --status-cancelled-fg: var(--red-11);
+  --status-pending-bg: var(--amber-3);
+  --status-pending-border: var(--amber-9);
+  --status-pending-fg: var(--amber-11);
   --status-onhold-bg: var(--neutral-2);
   --status-onhold-border: var(--neutral-6);
   --status-onhold-fg: var(--neutral-11);
   --status-draft-bg: var(--neutral-2);
   --status-draft-border: var(--neutral-4);
   --status-draft-fg: var(--neutral-9);
-  --status-review-bg: var(--color-purple-100);
-  --status-review-border: var(--color-purple-500);
-  --status-review-fg: var(--color-purple-600);
+  --status-review-bg: var(--purple-3);
+  --status-review-border: var(--purple-9);
+  --status-review-fg: var(--purple-11);
 
   /* ---- Filetype ---- */
   --filetype-badge-bg: rgba(28,28,25,0.62); /* sand-900 @ 62% scrim — legible on any thumbnail */
@@ -368,6 +442,91 @@
   --neutral-surface: rgba(0, 0, 0, 0.05);
   --neutral-indicator: #706e64;
   --neutral-track: #706e64;
+  /* ---- Status solids (12-step Radix; success/warning/error/info/orange/purple) ---- */
+  --green-1: #0b1310;
+  --green-2: #111c18;
+  --green-3: #0d2d24;
+  --green-4: #073b2e;
+  --green-5: #0e4839;
+  --green-6: #1a5645;
+  --green-7: #246854;
+  --green-8: #2b7e67;
+  --green-9: #29a383;
+  --green-10: #119677;
+  --green-11: #60d1af;
+  --green-12: #aaf0d8;
+  --amber-1: #14100c;
+  --amber-2: #1d1710;
+  --amber-3: #2f200d;
+  --amber-4: #402600;
+  --amber-5: #4d2f00;
+  --amber-6: #5b3d11;
+  --amber-7: #704f20;
+  --amber-8: #8f652a;
+  --amber-9: #f5a524;
+  --amber-10: #e99a08;
+  --amber-11: #fbb554;
+  --amber-12: #fce3c4;
+  --red-1: #160f0e;
+  --red-2: #1e1512;
+  --red-3: #381710;
+  --red-4: #4e160b;
+  --red-5: #5e1d10;
+  --red-6: #6d2a1c;
+  --red-7: #853b2b;
+  --red-8: #ac4d39;
+  --red-9: #e54d2e;
+  --red-10: #d63e1f;
+  --red-11: #ff9277;
+  --red-12: #fbd3ca;
+  --blue-1: #08121c;
+  --blue-2: #0e1926;
+  --blue-3: #0a2847;
+  --blue-4: #003262;
+  --blue-5: #003f75;
+  --blue-6: #104d86;
+  --blue-7: #1d5e9d;
+  --blue-8: #2371bd;
+  --blue-9: #0090ff;
+  --blue-10: #0083f1;
+  --blue-11: #70b8ff;
+  --blue-12: #c8e3ff;
+  --orange-1: #160f0d;
+  --orange-2: #1f1510;
+  --orange-3: #351b10;
+  --orange-4: #4b1b02;
+  --orange-5: #5a2407;
+  --orange-6: #6a3217;
+  --orange-7: #814224;
+  --orange-8: #a6552e;
+  --orange-9: #f76707;
+  --orange-10: #e95a00;
+  --orange-11: #ff9c69;
+  --orange-12: #ffdcc9;
+  --purple-1: #120e1f;
+  --purple-2: #19142a;
+  --purple-3: #291a4d;
+  --purple-4: #361c68;
+  --purple-5: #3f2477;
+  --purple-6: #4a2f87;
+  --purple-7: #5a3d9e;
+  --purple-8: #704cc5;
+  --purple-9: #7c3aed;
+  --purple-10: #6f26dd;
+  --purple-11: #bba4ff;
+  --purple-12: #e3dbff;
+  --discovery-1: #130f19;
+  --discovery-2: #1c1524;
+  --discovery-3: #2d1c3d;
+  --discovery-4: #3a2350;
+  --discovery-5: #452a5e;
+  --discovery-6: #51356d;
+  --discovery-7: #644384;
+  --discovery-8: #8258ab;
+  --discovery-9: #8e4ec6;
+  --discovery-10: #8040b7;
+  --discovery-11: #d29dff;
+  --discovery-12: #e9dafc;
   /* ---- Status alpha ramps (Radix-generated; tints/overlays on status surfaces) ---- */
   --green-alpha-1: #00bb0003;
   --green-alpha-2: #12fba60c;
@@ -441,6 +600,18 @@
   --purple-alpha-10: #7f2affdb;
   --purple-alpha-11: #bba4ff;
   --purple-alpha-12: #e3dbff;
+  --discovery-alpha-1: #4a00f409;
+  --discovery-alpha-2: #9742f815;
+  --discovery-alpha-3: #a64cfb30;
+  --discovery-alpha-4: #ab55fe44;
+  --discovery-alpha-5: #b15efe53;
+  --discovery-alpha-6: #b66efe63;
+  --discovery-alpha-7: #bc78fd7c;
+  --discovery-alpha-8: #c07fffa5;
+  --discovery-alpha-9: #b661ffc2;
+  --discovery-alpha-10: #b055ffb2;
+  --discovery-alpha-11: #d29dff;
+  --discovery-alpha-12: #ecddfffc;
 
   /* Accent (Cerulean) — step 9 #0c818f constant across modes; 11/12 become on-dark text */
   --accent-1: #091315;
@@ -470,11 +641,6 @@
   --accent-alpha-12: #b9f4fef6;
 
   /* Feedback colours — dark (Radix dark ramps; step-9 solids hold constant across modes) */
-  --color-red-100: #381710;    --color-red-500: #e54d2e;    --color-red-600: #ff9277;    --color-red-700: #fbd3ca;
-  --color-amber-100: #2f200d;  --color-amber-500: #f5a524;  --color-amber-600: #fbb554;  --color-amber-700: #fce3c4;
-  --color-green-100: #0d2d24;  --color-green-500: #29a383;  --color-green-600: #60d1af;  --color-green-700: #aaf0d8;
-  --color-orange-100: #351b10; --color-orange-500: #f76707; --color-orange-600: #ff9c69; --color-orange-700: #ffdcc9;
-  --color-purple-100: #291a4d; --color-purple-500: #7c3aed; --color-purple-600: #bba4ff; --color-purple-700: #e3dbff;
 }
 
 /* ============================================================
@@ -627,8 +793,8 @@ pre code {
 }
 .callout strong { font-weight: var(--font-weight-semibold); }
 .callout-warn {
-  border-left-color: var(--color-amber-500);
-  background: var(--color-amber-100);
+  border-left-color: var(--amber-9);
+  background: var(--amber-3);
 }
 
 /* ---- Example Block ---- */
@@ -680,15 +846,15 @@ pre code {
   border: 1px solid var(--border-default);
 }
 .do-card .dd-header {
-  background: var(--color-green-100);
-  color: var(--color-green-700);
+  background: var(--green-3);
+  color: var(--green-12);
   padding: var(--spacing-2) var(--spacing-3);
   font-size: var(--font-size-1);
   font-weight: var(--font-weight-semibold);
 }
 .dont-card .dd-header {
-  background: var(--color-red-100);
-  color: var(--color-red-700);
+  background: var(--red-3);
+  color: var(--red-12);
   padding: var(--spacing-2) var(--spacing-3);
   font-size: var(--font-size-1);
   font-weight: var(--font-weight-semibold);
@@ -984,8 +1150,8 @@ pre code {
 }
 .cascade-layer.primitive { background: var(--neutral-2); color: var(--neutral-12); }
 .cascade-layer.semantic { background: var(--primary-subtle); color: var(--primary-default); }
-.cascade-layer.component { background: var(--color-purple-100); color: var(--color-purple-700); }
-.cascade-layer.rendered { background: var(--color-green-100); color: var(--color-green-700); }
+.cascade-layer.component { background: var(--purple-3); color: var(--purple-12); }
+.cascade-layer.rendered { background: var(--green-3); color: var(--green-12); }
 .cascade-value {
   color: var(--text-subtle);
   flex: 1;
@@ -1034,7 +1200,7 @@ pre code {
 .input-field{font-family:var(--font-family-text);font-size:var(--font-size-2);padding:var(--input-padding);border:1px solid var(--border-emphasis);border-radius:var(--radius-2);outline:none;transition:border-color 0.15s,box-shadow 0.15s;background:var(--surface-default);color:var(--text-default);width:260px;height:var(--btn-height-3);}
 .input-field:focus{border-color:var(--primary-default);box-shadow:0 0 0 3px var(--primary-subtle);}
 .input-field.error{border-color:var(--error-9);}
-.input-field.error:focus{box-shadow:0 0 0 3px var(--color-red-100);}
+.input-field.error:focus{box-shadow:0 0 0 3px var(--red-3);}
 .input-field:disabled{background:var(--surface-subtle);color:var(--text-subtle);cursor:not-allowed;}
 .input-field::placeholder{color:var(--text-subtle);}
 .input-field.read-only{background:var(--surface-subtle);border-style:dashed;}
@@ -1197,8 +1363,8 @@ pre code {
 }
 .do-block .dd-header {
   padding: var(--spacing-2) var(--spacing-3);
-  background: var(--color-green-100);
-  color: var(--color-green-500);
+  background: var(--green-3);
+  color: var(--green-9);
   font-size: var(--font-size-0);
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
@@ -1206,7 +1372,7 @@ pre code {
 }
 .dont-block .dd-header {
   padding: var(--spacing-2) var(--spacing-3);
-  background: var(--color-red-100);
+  background: var(--red-3);
   color: var(--error-9);
   font-size: var(--font-size-0);
   font-weight: var(--font-weight-semibold);
@@ -1231,7 +1397,7 @@ pre code {
   color: var(--error-9);
   border: 1px solid var(--error-9);
 }
-.btn-destructive-secondary:hover { background: var(--color-red-100); }
+.btn-destructive-secondary:hover { background: var(--red-3); }
 
 .btn-icon {
   background: transparent;
@@ -1296,7 +1462,7 @@ pre code {
 .tier-2 .tier-num { background: var(--primary-subtle); color: var(--primary-default); border: 1px solid var(--primary-default); }
 .tier-3 .tier-num { background: transparent; color: var(--primary-default); }
 .tier-4 .tier-num { background: var(--neutral-2); color: var(--text-subtle); }
-.tier-5 .tier-num { background: var(--color-red-100); color: var(--error-9); }
+.tier-5 .tier-num { background: var(--red-3); color: var(--error-9); }
 
 .decision-flow {
   display: flex;
@@ -1373,8 +1539,8 @@ pre code {
   border-color: var(--primary-default);
 }
 .callout-warning {
-  background: var(--color-amber-100);
-  border-color: var(--color-amber-500);
+  background: var(--amber-3);
+  border-color: var(--amber-9);
 }
 .callout-label {
   font-weight: var(--font-weight-semibold);
@@ -1395,8 +1561,8 @@ pre code {
   .matrix { font-size: 11px; }
   .matrix td, .matrix th { padding: var(--spacing-2); }
 </style>
-<meta name="scale-version" content="1.5.0">
-<meta name="scale-build-date" content="2026-08-06">
+<meta name="scale-version" content="1.6.0">
+<meta name="scale-build-date" content="2026-08-07">
 </head>
 <body>
 
@@ -1499,7 +1665,7 @@ pre code {
 <!-- ======================== SECTION 1: INTRO ======================== -->
 <h1>Scale Design System</h1>
 <p style="font-size: var(--font-size-3); color: var(--text-subtle); margin-bottom: var(--spacing-7);">
-  Version 1.5.0 · Built 2026-08-06 · Screendragon · Internal Documentation
+  Version 1.6.0 · Built 2026-08-07 · Screendragon · Internal Documentation
 </p>
 
 <h2 id="what-is-scale">What Scale Is</h2>
@@ -1572,7 +1738,7 @@ pre code {
   <div class="example-code">--surface-default: var(--neutral-1);
 --accent: var(--accent-9);
 --text-default: var(--neutral-12);
---status-active-bg: var(--color-green-100);</div>
+--status-active-bg: var(--green-3);</div>
 </div>
 
 <h3>Layer 3: Component Tokens</h3>
@@ -1858,72 +2024,112 @@ pre code {
 
 <p>The full colour palette. These values are never used directly in component code — they exist to be aliased by semantic tokens.</p>
 
-<h4>Grays</h4>
+<h4>Neutral (Sand)</h4>
 <div class="example-block">
-  <div class="example-label">Gray scale</div>
+  <div class="example-label">Neutral scale — Sand (Radix 12-step)</div>
   <div class="example-render" style="display:flex; flex-wrap: wrap; gap: 8px;">
     <div style="text-align:center;">
       <div class="swatch" style="width:56px; height:40px; background:var(--neutral-1);"></div>
-      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">50</div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">1</div>
     </div>
     <div style="text-align:center;">
       <div class="swatch" style="width:56px; height:40px; background:var(--neutral-2);"></div>
-      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">100</div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">2</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="swatch" style="width:56px; height:40px; background:var(--neutral-3);"></div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">3</div>
     </div>
     <div style="text-align:center;">
       <div class="swatch" style="width:56px; height:40px; background:var(--neutral-4);"></div>
-      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">200</div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">4</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="swatch" style="width:56px; height:40px; background:var(--neutral-5);"></div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">5</div>
     </div>
     <div style="text-align:center;">
       <div class="swatch" style="width:56px; height:40px; background:var(--neutral-6);"></div>
-      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">300</div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">6</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="swatch" style="width:56px; height:40px; background:var(--neutral-7);"></div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">7</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="swatch" style="width:56px; height:40px; background:var(--neutral-8);"></div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">8</div>
     </div>
     <div style="text-align:center;">
       <div class="swatch" style="width:56px; height:40px; background:var(--neutral-9);"></div>
-      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">400</div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">9</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="swatch" style="width:56px; height:40px; background:var(--neutral-10);"></div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">10</div>
     </div>
     <div style="text-align:center;">
       <div class="swatch" style="width:56px; height:40px; background:var(--neutral-11);"></div>
-      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">500</div>
-    </div>
-    <div style="text-align:center;">
-      <div class="swatch" style="width:56px; height:40px; background:var(--neutral-11);"></div>
-      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">600</div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">11</div>
     </div>
     <div style="text-align:center;">
       <div class="swatch" style="width:56px; height:40px; background:var(--neutral-12);"></div>
-      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">700</div>
-    </div>
-    <div style="text-align:center;">
-      <div class="swatch" style="width:56px; height:40px; background:var(--neutral-12);"></div>
-      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">800</div>
-    </div>
-    <div style="text-align:center;">
-      <div class="swatch" style="width:56px; height:40px; background:var(--neutral-12);"></div>
-      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">900</div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">12</div>
     </div>
   </div>
 </div>
 
 <h4>Brand &amp; Accent</h4>
 <div class="example-block">
-  <div class="example-label">Blue scale (accent)</div>
-  <div class="example-render" style="display:flex; gap: 8px; align-items: flex-end;">
+  <div class="example-label">Accent scale — Cerulean (Radix 12-step)</div>
+  <div class="example-render" style="display:flex; flex-wrap: wrap; gap: 8px;">
     <div style="text-align:center;">
-      <div class="swatch" style="width:56px; height:40px; background:var(--color-blue-100);"></div>
-      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">100</div>
+      <div class="swatch" style="width:56px; height:40px; background:var(--accent-1);"></div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">1</div>
     </div>
     <div style="text-align:center;">
-      <div class="swatch" style="width:56px; height:40px; background:var(--color-blue-500);"></div>
-      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">500</div>
+      <div class="swatch" style="width:56px; height:40px; background:var(--accent-2);"></div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">2</div>
     </div>
     <div style="text-align:center;">
-      <div class="swatch" style="width:56px; height:40px; background:var(--color-blue-600);"></div>
-      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">600</div>
+      <div class="swatch" style="width:56px; height:40px; background:var(--accent-3);"></div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">3</div>
     </div>
     <div style="text-align:center;">
-      <div class="swatch" style="width:56px; height:40px; background:var(--color-blue-700);"></div>
-      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">700</div>
+      <div class="swatch" style="width:56px; height:40px; background:var(--accent-4);"></div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">4</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="swatch" style="width:56px; height:40px; background:var(--accent-5);"></div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">5</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="swatch" style="width:56px; height:40px; background:var(--accent-6);"></div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">6</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="swatch" style="width:56px; height:40px; background:var(--accent-7);"></div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">7</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="swatch" style="width:56px; height:40px; background:var(--accent-8);"></div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">8</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="swatch" style="width:56px; height:40px; background:var(--accent-9);"></div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">9</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="swatch" style="width:56px; height:40px; background:var(--accent-10);"></div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">10</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="swatch" style="width:56px; height:40px; background:var(--accent-11);"></div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">11</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="swatch" style="width:56px; height:40px; background:var(--accent-12);"></div>
+      <div style="font-size:10px; font-family:var(--font-family-mono); color:var(--text-subtle); margin-top:4px;">12</div>
     </div>
   </div>
 </div>
@@ -1934,41 +2140,41 @@ pre code {
   <div class="example-render" style="display:flex; flex-wrap:wrap; gap:16px;">
     <div style="text-align:center;">
       <div style="display:flex; gap:2px;">
-        <div class="swatch" style="width:32px; height:24px; background:var(--color-green-100); border-radius:2px 0 0 2px;"></div>
-        <div class="swatch" style="width:32px; height:24px; background:var(--color-green-500); border-radius:0;"></div>
-        <div class="swatch" style="width:32px; height:24px; background:var(--color-green-700); border-radius:0 2px 2px 0;"></div>
+        <div class="swatch" style="width:32px; height:24px; background:var(--green-3); border-radius:2px 0 0 2px;"></div>
+        <div class="swatch" style="width:32px; height:24px; background:var(--green-9); border-radius:0;"></div>
+        <div class="swatch" style="width:32px; height:24px; background:var(--green-12); border-radius:0 2px 2px 0;"></div>
       </div>
       <div style="font-size:10px; color:var(--text-subtle); margin-top:4px;">green (active)</div>
     </div>
     <div style="text-align:center;">
       <div style="display:flex; gap:2px;">
-        <div class="swatch" style="width:32px; height:24px; background:var(--color-orange-100); border-radius:2px 0 0 2px;"></div>
-        <div class="swatch" style="width:32px; height:24px; background:var(--color-orange-500); border-radius:0;"></div>
-        <div class="swatch" style="width:32px; height:24px; background:var(--color-orange-700); border-radius:0 2px 2px 0;"></div>
+        <div class="swatch" style="width:32px; height:24px; background:var(--orange-3); border-radius:2px 0 0 2px;"></div>
+        <div class="swatch" style="width:32px; height:24px; background:var(--orange-9); border-radius:0;"></div>
+        <div class="swatch" style="width:32px; height:24px; background:var(--orange-12); border-radius:0 2px 2px 0;"></div>
       </div>
       <div style="font-size:10px; color:var(--text-subtle); margin-top:4px;">orange (progress)</div>
     </div>
     <div style="text-align:center;">
       <div style="display:flex; gap:2px;">
-        <div class="swatch" style="width:32px; height:24px; background:var(--color-amber-100); border-radius:2px 0 0 2px;"></div>
-        <div class="swatch" style="width:32px; height:24px; background:var(--color-amber-500); border-radius:0;"></div>
-        <div class="swatch" style="width:32px; height:24px; background:var(--color-amber-700); border-radius:0 2px 2px 0;"></div>
+        <div class="swatch" style="width:32px; height:24px; background:var(--amber-3); border-radius:2px 0 0 2px;"></div>
+        <div class="swatch" style="width:32px; height:24px; background:var(--amber-9); border-radius:0;"></div>
+        <div class="swatch" style="width:32px; height:24px; background:var(--amber-12); border-radius:0 2px 2px 0;"></div>
       </div>
       <div style="font-size:10px; color:var(--text-subtle); margin-top:4px;">amber (pending)</div>
     </div>
     <div style="text-align:center;">
       <div style="display:flex; gap:2px;">
-        <div class="swatch" style="width:32px; height:24px; background:var(--color-red-100); border-radius:2px 0 0 2px;"></div>
-        <div class="swatch" style="width:32px; height:24px; background:var(--color-red-500); border-radius:0;"></div>
-        <div class="swatch" style="width:32px; height:24px; background:var(--color-red-700); border-radius:0 2px 2px 0;"></div>
+        <div class="swatch" style="width:32px; height:24px; background:var(--red-3); border-radius:2px 0 0 2px;"></div>
+        <div class="swatch" style="width:32px; height:24px; background:var(--red-9); border-radius:0;"></div>
+        <div class="swatch" style="width:32px; height:24px; background:var(--red-12); border-radius:0 2px 2px 0;"></div>
       </div>
       <div style="font-size:10px; color:var(--text-subtle); margin-top:4px;">red (cancelled)</div>
     </div>
     <div style="text-align:center;">
       <div style="display:flex; gap:2px;">
-        <div class="swatch" style="width:32px; height:24px; background:var(--color-purple-100); border-radius:2px 0 0 2px;"></div>
-        <div class="swatch" style="width:32px; height:24px; background:var(--color-purple-500); border-radius:0;"></div>
-        <div class="swatch" style="width:32px; height:24px; background:var(--color-purple-700); border-radius:0 2px 2px 0;"></div>
+        <div class="swatch" style="width:32px; height:24px; background:var(--purple-3); border-radius:2px 0 0 2px;"></div>
+        <div class="swatch" style="width:32px; height:24px; background:var(--purple-9); border-radius:0;"></div>
+        <div class="swatch" style="width:32px; height:24px; background:var(--purple-12); border-radius:0 2px 2px 0;"></div>
       </div>
       <div style="font-size:10px; color:var(--text-subtle); margin-top:4px;">purple (review)</div>
     </div>
@@ -2061,6 +2267,94 @@ pre code {
         </tr>
       </tbody>
     </table>
+  </div>
+</div>
+
+<p>The same 12 steps in dark mode. Each ramp inverts by role — a step keeps its use case across modes, so a component built on step tokens themes correctly without remapping.</p>
+<div class="example-block">
+  <div class="example-label">12-step scale — dark mode</div>
+  <div class="example-render" style="padding:0;">
+    <div class="dark" style="background:var(--neutral-1);padding:20px;border-radius:var(--radius-3);">
+      <table class="token-table" style="margin:0;">
+        <thead>
+          <tr><th style="width:50px;">Step</th><th>Cerulean</th><th>Neutral</th><th>Use Case</th></tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td style="font-weight:600;color:var(--primary-default);">1</td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-1);margin:0;"></span><code style="font-size:11px;">#091315</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-1);margin:0;"></span><code style="font-size:11px;">#12110e</code></div></td>
+          <td>App background</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--primary-default);">2</td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-2);margin:0;"></span><code style="font-size:11px;">#0f1b1d</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-2);margin:0;"></span><code style="font-size:11px;">#191918</code></div></td>
+          <td>Subtle background</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--primary-default);">3</td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-3);margin:0;"></span><code style="font-size:11px;">#072c31</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-3);margin:0;"></span><code style="font-size:11px;">#23231f</code></div></td>
+          <td>UI element background</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--primary-default);">4</td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-4);margin:0;"></span><code style="font-size:11px;">#003941</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-4);margin:0;"></span><code style="font-size:11px;">#2b2a21</code></div></td>
+          <td>Hovered UI element background</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--primary-default);">5</td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-5);margin:0;"></span><code style="font-size:11px;">#004750</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-5);margin:0;"></span><code style="font-size:11px;">#333128</code></div></td>
+          <td>Active / Selected UI element background</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--primary-default);">6</td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-6);margin:0;"></span><code style="font-size:11px;">#02565f</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-6);margin:0;"></span><code style="font-size:11px;">#3c3b31</code></div></td>
+          <td>Subtle borders and separators</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--primary-default);">7</td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-7);margin:0;"></span><code style="font-size:11px;">#0e6874</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-7);margin:0;"></span><code style="font-size:11px;">#4a493f</code></div></td>
+          <td>UI element border and focus rings</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--primary-default);">8</td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-8);margin:0;"></span><code style="font-size:11px;">#0c818f</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-8);margin:0;"></span><code style="font-size:11px;">#626056</code></div></td>
+          <td>Hovered UI element border</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--primary-default);">9</td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-9);margin:0;"></span><code style="font-size:11px;">#0c818f</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-9);margin:0;"></span><code style="font-size:11px;">#706e64</code></div></td>
+          <td>Solid backgrounds</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--primary-default);">10</td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-10);margin:0;"></span><code style="font-size:11px;">#1d717d</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-10);margin:0;"></span><code style="font-size:11px;">#7d7c75</code></div></td>
+          <td>Hovered solid backgrounds</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--primary-default);">11</td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-11);margin:0;"></span><code style="font-size:11px;">#6acad9</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-11);margin:0;"></span><code style="font-size:11px;">#b6b5aa</code></div></td>
+          <td>Low-contrast text</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--primary-default);">12</td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--accent-12);margin:0;"></span><code style="font-size:11px;">#b3ecf6</code></div></td>
+          <td><div style="display:flex;align-items:center;gap:8px;"><span class="swatch" style="width:32px;height:24px;background:var(--neutral-12);margin:0;"></span><code style="font-size:11px;">#f0efe3</code></div></td>
+          <td>High-contrast text</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -2739,14 +3033,14 @@ pre code {
     <tr><th>Status</th><th><code>-bg</code></th><th><code>-border</code></th><th><code>-fg</code></th></tr>
   </thead>
   <tbody>
-    <tr><td>active</td><td style="color:var(--color-green-700);">green-100</td><td style="color:var(--color-green-700);">green-500</td><td style="color:var(--color-green-700);">green-700</td></tr>
-    <tr><td>progress</td><td style="color:var(--color-orange-700);">orange-100</td><td style="color:var(--color-orange-700);">orange-500</td><td style="color:var(--color-orange-700);">orange-700</td></tr>
-    <tr><td>complete</td><td style="color:var(--color-green-700);">green-100</td><td style="color:var(--color-green-700);">green-500</td><td style="color:var(--color-green-700);">green-700</td></tr>
-    <tr><td>cancelled</td><td style="color:var(--color-red-700);">red-100</td><td style="color:var(--color-red-700);">red-500</td><td style="color:var(--color-red-700);">red-700</td></tr>
-    <tr><td>pending</td><td style="color:var(--color-amber-700);">amber-100</td><td style="color:var(--color-amber-700);">amber-500</td><td style="color:var(--color-amber-700);">amber-700</td></tr>
+    <tr><td>active</td><td style="color:var(--green-12);">green-100</td><td style="color:var(--green-12);">green-500</td><td style="color:var(--green-12);">green-700</td></tr>
+    <tr><td>progress</td><td style="color:var(--orange-12);">orange-100</td><td style="color:var(--orange-12);">orange-500</td><td style="color:var(--orange-12);">orange-700</td></tr>
+    <tr><td>complete</td><td style="color:var(--green-12);">green-100</td><td style="color:var(--green-12);">green-500</td><td style="color:var(--green-12);">green-700</td></tr>
+    <tr><td>cancelled</td><td style="color:var(--red-12);">red-100</td><td style="color:var(--red-12);">red-500</td><td style="color:var(--red-12);">red-700</td></tr>
+    <tr><td>pending</td><td style="color:var(--amber-12);">amber-100</td><td style="color:var(--amber-12);">amber-500</td><td style="color:var(--amber-12);">amber-700</td></tr>
     <tr><td>onhold</td><td>sand-100</td><td>sand-400</td><td>sand-700</td></tr>
     <tr><td>draft</td><td>sand-100</td><td>sand-300</td><td>sand-600</td></tr>
-    <tr><td>review</td><td style="color:var(--color-purple-700);">purple-100</td><td style="color:var(--color-purple-700);">purple-500</td><td style="color:var(--color-purple-700);">purple-700</td></tr>
+    <tr><td>review</td><td style="color:var(--purple-12);">purple-100</td><td style="color:var(--purple-12);">purple-500</td><td style="color:var(--purple-12);">purple-700</td></tr>
   </tbody>
 </table>
 
@@ -3162,12 +3456,12 @@ pre code {
     <div class="cascade-diagram">
       <div class="cascade-row">
         <span class="cascade-layer primitive">Primitive</span>
-        <span class="cascade-value"><code>--color-blue-500: #0c818f</code></span>
+        <span class="cascade-value"><code>--accent-9: #0c818f</code></span>
       </div>
       <div class="cascade-arrow">↓</div>
       <div class="cascade-row">
         <span class="cascade-layer semantic">Semantic</span>
-        <span class="cascade-value"><code>--accent: var(--color-blue-500)</code></span>
+        <span class="cascade-value"><code>--accent: var(--blue-9)</code></span>
       </div>
       <div class="cascade-arrow">↓</div>
       <div class="cascade-row">
@@ -3273,7 +3567,7 @@ pre code {
     <div class="decision-q"><strong>Would a mistaken click cause irreversible data loss?</strong><br>Delete permanently, Remove user, Revoke access</div>
     <div class="decision-arrow">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <span class="decision-result" style="background:var(--color-red-100);color:var(--error-9);">Tier 5 · Destructive</span>
+      <span class="decision-result" style="background:var(--red-3);color:var(--error-9);">Tier 5 · Destructive</span>
     </div>
   </div>
 </div>
@@ -3647,7 +3941,7 @@ color: #FFFFFF;
 background: transparent;
 border: 1px solid var(--error-9);
 color: var(--error-9);
-hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
+hover-bg: var(--red-3);            /* #FDE8EA */</div>
 </div>
 
 <h4>Confirmation Dialog Pattern</h4>
@@ -3814,7 +4108,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
     </div>
     <div style="display:flex;align-items:center;padding:var(--spacing-2) var(--spacing-4);border-bottom:1px solid var(--neutral-4);background:var(--surface-default);font-size:var(--font-size-2);">
       <span style="flex:2;font-weight:var(--font-weight-medium);">Brand Toolkit v3</span>
-      <span style="flex:1;"><span style="display:inline-flex;align-items:center;gap:6px;font-size:var(--font-size-1);"><span style="width:8px;height:8px;border-radius:50%;background:var(--color-green-500);"></span> Active</span></span>
+      <span style="flex:1;"><span style="display:inline-flex;align-items:center;gap:6px;font-size:var(--font-size-1);"><span style="width:8px;height:8px;border-radius:50%;background:var(--green-9);"></span> Active</span></span>
       <span style="flex:1;font-size:var(--font-size-1);color:var(--text-subtle);">Sarah M.</span>
       <span style="width:100px;display:flex;justify-content:flex-end;gap:2px;">
         <button class="btn-icon btn-sm" title="Edit"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12.5V14h1.5L12 5.5 10.5 4 2 12.5z" fill="currentColor"/><path d="M14.4 2.1a.5.5 0 00-.7 0l-1.2 1.2 1.5 1.5 1.2-1.2a.5.5 0 000-.7l-.8-.8z" fill="currentColor"/></svg></button>
@@ -3824,7 +4118,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
     </div>
     <div style="display:flex;align-items:center;padding:var(--spacing-2) var(--spacing-4);border-bottom:1px solid var(--neutral-4);background:var(--surface-default);font-size:var(--font-size-2);">
       <span style="flex:2;font-weight:var(--font-weight-medium);">Campaign Brief — EMEA</span>
-      <span style="flex:1;"><span style="display:inline-flex;align-items:center;gap:6px;font-size:var(--font-size-1);"><span style="width:8px;height:8px;border-radius:50%;background:var(--color-amber-500);"></span> In Review</span></span>
+      <span style="flex:1;"><span style="display:inline-flex;align-items:center;gap:6px;font-size:var(--font-size-1);"><span style="width:8px;height:8px;border-radius:50%;background:var(--amber-9);"></span> In Review</span></span>
       <span style="flex:1;font-size:var(--font-size-1);color:var(--text-subtle);">James D.</span>
       <span style="width:100px;display:flex;justify-content:flex-end;gap:2px;">
         <button class="btn-icon btn-sm" title="Edit"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12.5V14h1.5L12 5.5 10.5 4 2 12.5z" fill="currentColor"/><path d="M14.4 2.1a.5.5 0 00-.7 0l-1.2 1.2 1.5 1.5 1.2-1.2a.5.5 0 000-.7l-.8-.8z" fill="currentColor"/></svg></button>
@@ -5205,8 +5499,8 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
 }
 .do-block .dd-header {
   padding: var(--spacing-2) var(--spacing-3);
-  background: var(--color-green-100);
-  color: var(--color-green-500);
+  background: var(--green-3);
+  color: var(--green-9);
   font-size: var(--font-size-0);
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
@@ -5214,7 +5508,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
 }
 .dont-block .dd-header {
   padding: var(--spacing-2) var(--spacing-3);
-  background: var(--color-red-100);
+  background: var(--red-3);
   color: var(--error-9);
   font-size: var(--font-size-0);
   font-weight: var(--font-weight-semibold);
@@ -5239,7 +5533,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
   color: var(--error-9);
   border: 1px solid var(--error-9);
 }
-.btn-destructive-secondary:hover { background: var(--color-red-100); }
+.btn-destructive-secondary:hover { background: var(--red-3); }
 
 .btn-icon {
   background: transparent;
@@ -5304,7 +5598,7 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
 .tier-2 .tier-num { background: var(--primary-subtle); color: var(--primary-default); border: 1px solid var(--primary-default); }
 .tier-3 .tier-num { background: transparent; color: var(--primary-default); }
 .tier-4 .tier-num { background: var(--neutral-2); color: var(--text-subtle); }
-.tier-5 .tier-num { background: var(--color-red-100); color: var(--error-9); }
+.tier-5 .tier-num { background: var(--red-3); color: var(--error-9); }
 
 .decision-flow {
   display: flex;
@@ -5381,8 +5675,8 @@ hover-bg: var(--color-red-100);            /* #FDE8EA */</div>
   border-color: var(--primary-default);
 }
 .callout-warning {
-  background: var(--color-amber-100);
-  border-color: var(--color-amber-500);
+  background: var(--amber-3);
+  border-color: var(--amber-9);
 }
 .callout-label {
   font-weight: var(--font-weight-semibold);
@@ -5898,7 +6192,7 @@ function getDataColor(index: number): string {
         <div style="font-size:11px;font-family:var(--font-family-mono);color:var(--primary-default);background:var(--primary-subtle);padding:2px 6px;border-radius:var(--radius-1);display:inline-block;margin-bottom:12px;">panel — 35%</div>
         <div style="font-weight:var(--font-weight-medium);font-size:13px;margin-bottom:8px;">Details</div>
         <div style="font-size:12px;color:var(--text-subtle);display:flex;flex-direction:column;gap:8px;">
-          <div style="display:flex;justify-content:space-between;"><span>Status</span><span style="color:var(--color-green-700);font-weight:500;">Active</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>Status</span><span style="color:var(--green-12);font-weight:500;">Active</span></div>
           <div style="display:flex;justify-content:space-between;"><span>Owner</span><span>James D'Arcy</span></div>
           <div style="display:flex;justify-content:space-between;"><span>Due</span><span>18 Mar 2026</span></div>
         </div>
@@ -5999,15 +6293,15 @@ function getDataColor(index: number): string {
 <div class="example-block">
   <div class="example-label">Toast variants</div>
   <div class="example-render" style="display:flex;flex-direction:column;gap:12px;">
-    <div class="toast" style="background:var(--color-green-100);color:var(--color-green-700);border:1px solid var(--color-green-500);">
+    <div class="toast" style="background:var(--green-3);color:var(--green-12);border:1px solid var(--green-9);">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
       Request created successfully
     </div>
-    <div class="toast" style="background:var(--color-red-100);color:var(--color-red-700);border:1px solid var(--color-red-500);">
+    <div class="toast" style="background:var(--red-3);color:var(--red-12);border:1px solid var(--red-9);">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
       Failed to save changes. Please try again.
     </div>
-    <div class="toast" style="background:var(--color-amber-100);color:var(--color-amber-700);border:1px solid var(--color-amber-500);">
+    <div class="toast" style="background:var(--amber-3);color:var(--amber-12);border:1px solid var(--amber-9);">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
       You have unsaved changes
     </div>
@@ -6041,15 +6335,15 @@ function getDataColor(index: number): string {
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
       <span>This request requires Finance approval before it can proceed.</span>
     </div>
-    <div class="banner" style="background:var(--color-amber-100);border-color:var(--color-amber-500);color:var(--color-amber-700);">
+    <div class="banner" style="background:var(--amber-3);border-color:var(--amber-9);color:var(--amber-12);">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
       <span>2 assets in this collection have expired usage rights.</span>
     </div>
-    <div class="banner" style="background:var(--color-red-100);border-color:var(--color-red-500);color:var(--color-red-700);">
+    <div class="banner" style="background:var(--red-3);border-color:var(--red-9);color:var(--red-12);">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
       <span>Unable to sync with the external DAM. Check your connection settings.</span>
     </div>
-    <div class="banner" style="background:var(--color-green-100);border-color:var(--color-green-500);color:var(--color-green-700);">
+    <div class="banner" style="background:var(--green-3);border-color:var(--green-9);color:var(--green-12);">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
       <span>All assets have been approved and are ready to publish.</span>
     </div>
@@ -6073,7 +6367,7 @@ function getDataColor(index: number): string {
         </tr>
       </thead>
       <tbody>
-        <tr><td style="padding:8px 12px;border-bottom:1px solid var(--border-default);">Q4 Campaign</td><td style="padding:8px 12px;border-bottom:1px solid var(--border-default);"><span style="background:var(--color-green-100);color:var(--color-green-700);border:1px solid var(--color-green-500);padding:1px 8px;border-radius:var(--radius-2);font-size:12px;font-weight:500;">Active</span></td><td style="padding:8px 12px;border-bottom:1px solid var(--border-default);">James D'Arcy</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid var(--border-default);">Q4 Campaign</td><td style="padding:8px 12px;border-bottom:1px solid var(--border-default);"><span style="background:var(--green-3);color:var(--green-12);border:1px solid var(--green-9);padding:1px 8px;border-radius:var(--radius-2);font-size:12px;font-weight:500;">Active</span></td><td style="padding:8px 12px;border-bottom:1px solid var(--border-default);">James D'Arcy</td></tr>
       </tbody>
     </table>
   </div>
@@ -6145,19 +6439,19 @@ function getDataColor(index: number): string {
   <div class="example-render" style="display:flex;gap:16px;flex-wrap:wrap;">
     <div style="text-align:center;">
       <div class="contrast-sample" style="background:var(--surface-default);color:var(--neutral-12);border:1px solid var(--border-default);">Gray-900 on white</div>
-      <div style="font-size:10px;color:var(--color-green-700);margin-top:6px;">15.4:1 — Pass</div>
+      <div style="font-size:10px;color:var(--green-12);margin-top:6px;">15.4:1 — Pass</div>
     </div>
     <div style="text-align:center;">
       <div class="contrast-sample" style="background:var(--surface-default);color:var(--neutral-11);border:1px solid var(--border-default);">Gray-600 on white</div>
-      <div style="font-size:10px;color:var(--color-green-700);margin-top:6px;">5.0:1 — Pass</div>
+      <div style="font-size:10px;color:var(--green-12);margin-top:6px;">5.0:1 — Pass</div>
     </div>
     <div style="text-align:center;">
       <div class="contrast-sample" style="background:var(--primary-default);color:white;">White on accent</div>
-      <div style="font-size:10px;color:var(--color-green-700);margin-top:6px;">5.7:1 — Pass</div>
+      <div style="font-size:10px;color:var(--green-12);margin-top:6px;">5.7:1 — Pass</div>
     </div>
     <div style="text-align:center;">
       <div class="contrast-sample" style="background:var(--surface-default);color:var(--neutral-9);border:1px solid var(--border-default);">Gray-400 on white</div>
-      <div style="font-size:10px;color:var(--color-red-700);margin-top:6px;">2.7:1 — Fail (text)</div>
+      <div style="font-size:10px;color:var(--red-12);margin-top:6px;">2.7:1 — Fail (text)</div>
     </div>
   </div>
 </div>
@@ -6240,21 +6534,21 @@ function getDataColor(index: number): string {
   <div class="example-render" style="display:flex;flex-direction:column;gap:0;font-family:var(--font-family-mono);font-size:13px;">
     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;">
       <span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:var(--radius-2);background:var(--surface-muted);color:var(--neutral-12);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;min-width:90px;font-weight:600;">Primitive</span>
-      <span style="color:var(--text-subtle);"><code>--color-blue-500: #0c818f</code> — locked, never overridden</span>
+      <span style="color:var(--text-subtle);"><code>--accent-9: #0c818f</code> — locked, never overridden</span>
     </div>
     <div style="padding:2px 0 2px 45px;color:var(--text-subtle);">↓</div>
     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;">
       <span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:var(--radius-2);background:var(--primary-subtle);color:var(--primary-default);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;min-width:90px;font-weight:600;">Semantic</span>
-      <span style="color:var(--text-subtle);"><code>--accent: var(--color-blue-500)</code> — overridable per client</span>
+      <span style="color:var(--text-subtle);"><code>--accent: var(--blue-9)</code> — overridable per client</span>
     </div>
     <div style="padding:2px 0 2px 45px;color:var(--text-subtle);">↓</div>
     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;">
-      <span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:var(--radius-2);background:var(--color-purple-100);color:var(--color-purple-700);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;min-width:90px;font-weight:600;">Component</span>
+      <span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:var(--radius-2);background:var(--purple-3);color:var(--purple-12);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;min-width:90px;font-weight:600;">Component</span>
       <span style="color:var(--text-subtle);"><code>--btn-primary-bg: var(--primary-default)</code> — resolves automatically</span>
     </div>
     <div style="padding:2px 0 2px 45px;color:var(--text-subtle);">↓</div>
     <div style="display:flex;align-items:center;gap:12px;padding:8px 0;">
-      <span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:var(--radius-2);background:var(--color-green-100);color:var(--color-green-700);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;min-width:90px;font-weight:600;">Rendered</span>
+      <span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:var(--radius-2);background:var(--green-3);color:var(--green-12);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;min-width:90px;font-weight:600;">Rendered</span>
       <button class="btn btn-sm btn-primary">Primary Button</button>
       <span style="font-size:11px;color:var(--text-subtle);">background resolves to the client's accent</span>
     </div>
@@ -6324,9 +6618,9 @@ function getDataColor(index: number): string {
 <table class="token-table">
   <thead><tr><th>Layer</th><th>Overridable?</th><th>Examples</th></tr></thead>
   <tbody>
-    <tr><td>Primitive</td><td style="color:var(--color-red-700);font-weight:500;">No</td><td>--color-green-100, --spacing-4, --radius-2, --font-size-2</td></tr>
-    <tr><td>Semantic</td><td style="color:var(--color-green-700);font-weight:500;">Only the 5 theming tokens</td><td>--accent, --nav-bg, --nav-fg, --logo-src</td></tr>
-    <tr><td>Component</td><td style="color:var(--color-green-700);font-weight:500;">Only --btn-primary-bg</td><td>All other component tokens resolve through the cascade</td></tr>
+    <tr><td>Primitive</td><td style="color:var(--red-12);font-weight:500;">No</td><td>--color-green-100, --spacing-4, --radius-2, --font-size-2</td></tr>
+    <tr><td>Semantic</td><td style="color:var(--green-12);font-weight:500;">Only the 5 theming tokens</td><td>--accent, --nav-bg, --nav-fg, --logo-src</td></tr>
+    <tr><td>Component</td><td style="color:var(--green-12);font-weight:500;">Only --btn-primary-bg</td><td>All other component tokens resolve through the cascade</td></tr>
   </tbody>
 </table>
 
@@ -6377,19 +6671,19 @@ function getDataColor(index: number): string {
   <div class="example-label">Decision examples</div>
   <div class="example-render" style="display:flex;flex-direction:column;gap:12px;font-size:13px;">
     <div style="display:flex;gap:12px;align-items:flex-start;">
-      <span style="color:var(--color-green-700);font-weight:600;min-width:80px;">Compose</span>
+      <span style="color:var(--green-12);font-weight:600;min-width:80px;">Compose</span>
       <span>A confirmation dialog → Modal + Button + Text. The composition works — no UX compromise.</span>
     </div>
     <div style="display:flex;gap:12px;align-items:flex-start;">
-      <span style="color:var(--color-green-700);font-weight:600;min-width:80px;">Compose</span>
+      <span style="color:var(--green-12);font-weight:600;min-width:80px;">Compose</span>
       <span>A filter toolbar → Search Input + Select + Button. Standard components, standard layout.</span>
     </div>
     <div style="display:flex;gap:12px;align-items:flex-start;">
-      <span style="color:var(--color-red-700);font-weight:600;min-width:80px;">Net-new</span>
+      <span style="color:var(--red-12);font-weight:600;min-width:80px;">Net-new</span>
       <span>An asset upload wizard with drag-drop zones, progress tracking, and metadata entry. Forcing this into a Modal composition would compromise the UX.</span>
     </div>
     <div style="display:flex;gap:12px;align-items:flex-start;">
-      <span style="color:var(--color-red-700);font-weight:600;min-width:80px;">Net-new</span>
+      <span style="color:var(--red-12);font-weight:600;min-width:80px;">Net-new</span>
       <span>A rights management panel with tree-structured permissions. No existing component handles nested hierarchical selection.</span>
     </div>
   </div>
@@ -6485,7 +6779,8 @@ function getDataColor(index: number): string {
 <table class="token-table">
   <thead><tr><th>Version</th><th>Date</th><th>Change</th></tr></thead>
   <tbody>
-    <tr><td><code>1.5.0</code></td><td>2026-08-06</td><td>Neutral (Sand) re-baselined to a fresh Radix generation. Light solids nudged on 5 steps (3/4/7/8/11); dark ramp updated to the current Radix Sand — converging with the shipped product. Neutral alpha expanded from a 5-step subset to the full 12-step ramp (light + dark). Added four Radix utility tokens (--neutral-contrast / -surface / -indicator / -track). Swatch labels re-stamped. Alpha display strips expanded to all 12 steps, plus a self-truthing value table (light + dark 8-digit hex, stamped from live tokens). Added status alpha ramps — full 12-step, light + dark, for all six families (green/amber/red/blue/orange/purple), named --{family}-alpha-* to match the neutral/accent convention; sRGB-only (P3 held). Success/warning/error get a tint + text overview and collapsible self-truthing value tables in the doc. Status solids remain 4-step Tailwind (--color-*), flagged for a later Radix reconciliation. P3 held for a later all-families pass. Retired the legacy Tailwind --color-sand-* neutral scale: migrated all references to --neutral-* (value-preserving for the 7 clean steps; the 3 dark steps mapped by role — sand-600→neutral-11, sand-700/800→neutral-12) and deleted the ramp, completing the Tailwind removal begun with --color-primary-*.</td></tr>
+    <tr><td><code>1.6.0</code></td><td>2026-08-07</td><td>Added the Discovery semantic family (Purple, anchor #8e4ec6): full 12-step solids + alphas, light + dark. Reconciles the doc with the product's semantic model (error / success / warning / info / discovery). Info confirmed on Blue #0090ff (the info solid was always correct — Sky was a Figma-only alias, now repointed). Corrected two stale prose references that labelled the accent #0c818f as --color-blue-500. Note: legacy --purple-* (#7c3aed) retained but maps to no current product colour — flagged for review.</td></tr>
+    <tr><td><code>1.5.0</code></td><td>2026-08-06</td><td>Neutral (Sand) re-baselined to a fresh Radix generation. Light solids nudged on 5 steps (3/4/7/8/11); dark ramp updated to the current Radix Sand — converging with the shipped product. Neutral alpha expanded from a 5-step subset to the full 12-step ramp (light + dark). Added four Radix utility tokens (--neutral-contrast / -surface / -indicator / -track). Swatch labels re-stamped. Alpha display strips expanded to all 12 steps, plus a self-truthing value table (light + dark 8-digit hex, stamped from live tokens). Added status alpha ramps — full 12-step, light + dark, for all six families (green/amber/red/blue/orange/purple), named --{family}-alpha-* to match the neutral/accent convention; sRGB-only (P3 held). Success/warning/error get a tint + text overview and collapsible self-truthing value tables in the doc. Status solids remain 4-step Tailwind (--color-*), flagged for a later Radix reconciliation. Rebuilt the Primitive Palette overview to Radix — 12-step neutral + Cerulean accent — correcting stale Tailwind gray labels (with duplicate swatches from the 10→12 collapse) and a display that mislabelled the info blue as the accent. Added a dark-mode twin of the 12-step use-case table (self-truthing dark hex). Retired the last Tailwind holdout: status solids regenerated as full 12-step Radix ramps (--{family}-1..12, six families, light + dark); migrated all references from the 4-step --color-* set (100->3, 500->9, 600->11, 700->12, value-preserving) and deleted it. Status now matches neutral/accent — 12-step solids + 12-step alphas. P3 held for a later all-families pass. Retired the legacy Tailwind --color-sand-* neutral scale: migrated all references to --neutral-* (value-preserving for the 7 clean steps; the 3 dark steps mapped by role — sand-600→neutral-11, sand-700/800→neutral-12) and deleted the ramp, completing the Tailwind removal begun with --color-primary-*.</td></tr>
     <tr><td><code>1.4.0</code></td><td>2026-08-04</td><td>Accent (Cerulean) re-derived. The prior anchor #0b6e8a had drifted ~15&deg; off its documented green&harr;blue midpoint and the brand green it came from was retired; re-anchored to <code>#0c818f</code> (hue 208&deg;, midpoint of SD Green Deep #028854 and the SaaS blue). Full accent ramp replaced in both modes; light step-11 hand-corrected to #006c78 (generator #007d8b was non-monotonic). Full accent ramp + derivation prose + full 12-step accent-alpha ramp (light + dark); alpha a11 hand-corrected to match the solid. Rationale hue-wheel SVG re-labelled to the re-derived Cerulean (#0c818f, 186° HSL / 208° OKLCH) and SD Green Deep #028854. Swept all remaining displayed Cerulean literals (AI demos, data-1, doc echoes, nav primary-800) to #0c818f. Corrected the full accent ramp shown in the swatch table, a code example, and AI demo literals from the old uppercase ramp values (steps 1–12) to the new ramp; the 32-colour data palette (which shares three hex values) left untouched. Retired the legacy Tailwind --color-primary-* ramp (its references migrated to a new fixed --surface-brand-deep token). Reconciled brand-green references from the retired #006B5C to current SD Green Deep #028854 (contrast figure corrected to 4.51:1). Reconciled the Brand Green swatch to the refreshed two-green system (Vibrant #00D880 + Deep #028854, role-labelled); removed the stale pre-refresh tints #57C1A5 / #6DC067. Neutral (Sand) unchanged.</td></tr>
     <tr><td><code>1.3.0</code></td><td>2026-07-21</td><td>Dark mode. Consolidated the neutral and accent semantic layers onto the Radix <code>--neutral-*</code> / <code>--accent-*</code> scales, role-mapped (surface 1&ndash;4, text 12/11/10, border 3/6/7, primary&rarr;accent 9/10/3/5); retired the parallel Tailwind scales from the semantic layer. Added <code>.dark</code> ramp inversions for neutral, accent (Cerulean), and all five status families (light also regenerated to clean Radix ramps at bg=3/border=9/fg=11). Semantics invert automatically by role; canonical components repointed off hardcoded sand. Light role-corrected (surface-subtle gains elevation; status pills adopt Radix values). Added live light-vs-dark ramp reference strips to the colour-scale sections.</td></tr>
     <tr><td><code>1.2.0</code></td><td>2026-07-21</td><td>Filetype badges demoted to a single neutral treatment (<code>--filetype-badge-bg</code> / <code>--filetype-badge-fg</code>); per-type colour tokens retired. Reconciled onto the Sand base — first build carrying Sand + data palette + neutral filetype together. Regenerated the neutral alpha ramp from sand-12 (<code>#21201c</code>, Radix gray-a) so overlays and borders match Sand rather than the stale red-brown base. Fixed the mis-slotted, non-monotonic <code>--neutral-*</code> ramp to canonical Radix gray for <code>#21201c</code> (checkbox borders repointed to sand-500, appearance preserved). (SCR-125)</td></tr>
@@ -6496,7 +6791,7 @@ function getDataColor(index: number): string {
 <div class="callout"><strong>Version rule:</strong> This file is generated, not hand-versioned. On every edit — (1) bump the header version per the table above, (2) add a changelog row, (3) push to the single canonical home (GitHub Pages <code>prototypes</code> repo). A static version string can't enforce itself; the discipline is the enforcement, and one canonical copy is what makes the version meaningful.</div>
 
 <p style="margin-top: var(--spacing-8); padding-top: var(--spacing-6); border-top: 1px solid var(--border-default); color: var(--text-subtle); font-size: var(--font-size-1);">
-  Scale Design System v1.5.0 · Complete Reference · Screendragon Internal Documentation
+  Scale Design System v1.6.0 · Complete Reference · Screendragon Internal Documentation
 </p>
 
 </main>
