@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scale in Unity — Screendragon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+/* ============================================================
+   LAYER 1 — PRIMITIVES (mirrored from Scale, do not author here)
+   ============================================================ */
+:root {
+  --neutral-1: #fdfdfc;
+  --neutral-2: #f9f9f8;
+  --neutral-3: #f0f0ef;
+  --neutral-4: #e9e9e6;
+  --neutral-5: #e2e1de;
+  --neutral-6: #dad9d6;
+  --neutral-7: #cfcfca;
+  --neutral-8: #bcbbb5;
+  --neutral-9: #8e8d86;
+  --neutral-10: #83827c;
+  --neutral-11: #63635e;
+  --neutral-12: #21201c;
+
+  --neutral-alpha-3: rgba(16, 16, 0, 0.063);
+  --neutral-alpha-5: rgba(31, 24, 0, 0.129);
+  --neutral-alpha-7: rgba(25, 25, 0, 0.208);
+
+  /* Cerulean — accent. Step 11 is HAND-CORRECTED. See Law 1. */
+  --accent-1:  #fafdfd;
+  --accent-2:  #f4fafb;
+  --accent-3:  #e3f5f8;
+  --accent-4:  #d3eff3;
+  --accent-5:  #c1e6ec;
+  --accent-6:  #addae2;
+  --accent-7:  #92cbd4;
+  --accent-8:  #65b5c2;
+  --accent-9:  #0c818f;
+  --accent-10: #007381;
+  --accent-11: #006c78;   /* hand-corrected from generator #007d8b — non-monotonic. See Law 1. */
+  --accent-12: #1b3c41;
+
+  /* State hues — tomato / amber / jade. Steps 3, 7, 11, 12.
+     Step 7 is NEW (border role). Warning step 7 is hand-tuned. */
+  --tomato-3:  #feebe7;
+  --tomato-7:  #ffac94;   /* new */
+  --tomato-11: #cf3716;
+  --tomato-12: #5c281c;
+
+  --amber-3:  #fff0cb;
+  --amber-7:  #eeb95f;    /* new, hand-tuned — see Law 1 note */
+  --amber-11: #a96600;
+  --amber-12: #4d3618;
+
+  --jade-3:  #e4f7f0;
+  --jade-7:  #8bceb6;     /* new */
+  --jade-11: #008062;
+  --jade-12: #1d3b31;
+
+  /* Blue — info. Distinct from the teal accent (info is not the brand colour). Role steps. */
+  --blue-3:  #e9f3ff;
+  --blue-7:  #97c5f9;
+  --blue-11: #0073dd;
+  --blue-12: #003463;
+}
+
+/* ============================================================
+   LAYER 2 — SEMANTIC
+   ============================================================ */
+:root {
+  --surface-default: var(--neutral-1);
+  --surface-subtle:  var(--neutral-2);
+  --surface-muted:   var(--neutral-3);
+
+  --text-default: var(--neutral-12);
+  --text-muted:   var(--neutral-11);
+  --text-subtle:  var(--neutral-10);
+
+  --border-default:  var(--neutral-6);
+  --border-subtle:   var(--neutral-3);
+  --border-emphasis: var(--neutral-7);
+
+  --primary-default: var(--accent-9);
+  --primary-hover:   var(--accent-10);
+  --primary-text:    var(--accent-11);
+  --primary-border:  var(--accent-7);
+
+  /* Solid action fills — the modal primary (the one filled button in the book). */
+  --action-primary:       var(--primary-default);   /* accent-9 · white 4.61:1 */
+  --action-primary-hover: var(--primary-hover);      /* accent-10 · white 5.57:1 */
+  --action-danger:        var(--tomato-11);          /* white 4.99:1 — NOT tomato-9 (3.87, fails). Law 3. */
+  --action-danger-hover:  var(--tomato-12);
+  --action-on-solid:      #ffffff;
+
+  /* Overlay chrome — scrim + elevation, for modal and drawer. */
+  --scrim: rgba(20, 20, 17, 0.58);
+  --shadow-overlay: 0 16px 48px rgba(20,20,17,0.24), 0 4px 12px rgba(20,20,17,0.14);
+
+  /* Inverted surface — the tooltip chip. Dark on purpose; distinct from the light popover. */
+  --surface-inverse: var(--neutral-12);
+  --text-inverse:    var(--neutral-1);
+  --shadow-popover:  0 4px 12px rgba(20,20,17,0.16), 0 1px 3px rgba(20,20,17,0.10);
+
+  /* --- STATE ROLE TOKENS — the four-role model. Law 2. ---
+     Note the role names. There is no -bg and no -fg, because those
+     names are what let one value do three jobs. */
+  --state-error-surface: var(--tomato-3);
+  --state-error-border:  var(--tomato-7);
+  --state-error-icon:    var(--tomato-11);
+  --state-error-text:    var(--tomato-12);
+
+  --state-warning-surface: var(--amber-3);
+  --state-warning-border:  var(--amber-7);
+  --state-warning-icon:    var(--amber-11);
+  --state-warning-text:    var(--amber-12);
+
+  --state-success-surface: var(--jade-3);
+  --state-success-border:  var(--jade-7);
+  --state-success-icon:    var(--jade-11);
+  --state-success-text:    var(--jade-12);
+
+  --state-info-surface: var(--blue-3);
+  --state-info-border:  var(--blue-7);
+  --state-info-icon:    var(--blue-11);
+  --state-info-text:    var(--blue-12);
+
+  --focus-ring-color: var(--accent-9);
+
+  /* Hue-neutral interaction overlays — legal on any surface, tinted or not */
+  --overlay-hover:  var(--neutral-alpha-3);
+  --overlay-active: var(--neutral-alpha-5);
+
+  --radius-1: 3px; --radius-2: 5px; --radius-3: 8px; --radius-4: 12px; --radius-full: 9999px;
+  --spacing-1: 4px; --spacing-2: 8px; --spacing-3: 12px; --spacing-4: 16px;
+  --spacing-5: 20px; --spacing-6: 24px; --spacing-7: 32px; --spacing-8: 40px; --spacing-9: 48px;
+  --font-family-text: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-family-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-size-0: 12px; --font-size-1: 13px; --font-size-2: 14px; --font-size-3: 16px;
+  --font-size-4: 20px; --font-size-5: 26px; --font-size-6: 34px;
+  --font-weight-medium: 500; --font-weight-semibold: 600; --font-weight-bold: 700;
+  --shadow-sm: 0 1px 2px rgba(33,32,28,.06), 0 1px 3px rgba(33,32,28,.05);
+  --shadow-md: 0 2px 4px rgba(33,32,28,.06), 0 4px 12px rgba(33,32,28,.07);
+}
+
+/* ============================================================
+   DOCUMENT CHROME (not part of the spec)
+   ============================================================ */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--surface-default); color: var(--text-default);
+  font-family: var(--font-family-text); font-size: var(--font-size-2); line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.doc-wrapper { display: flex; min-height: 100vh; }
+
+.doc-nav {
+  width: 268px; flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  background: var(--surface-subtle); border-right: 1px solid var(--border-subtle);
+  padding: var(--spacing-6) 0 var(--spacing-9);
+}
+.doc-nav-title {
+  font-size: var(--font-size-2); font-weight: var(--font-weight-bold);
+  padding: 0 var(--spacing-6) var(--spacing-1); letter-spacing: -0.01em;
+}
+.doc-nav-version {
+  font-family: var(--font-family-mono); font-size: 11px; color: var(--text-subtle);
+  padding: 0 var(--spacing-6) var(--spacing-5);
+}
+.doc-nav-section {
+  font-size: 11px; font-weight: var(--font-weight-semibold); text-transform: uppercase;
+  letter-spacing: .07em; color: var(--text-subtle);
+  padding: var(--spacing-5) var(--spacing-6) var(--spacing-2);
+}
+.doc-nav a {
+  display: block; padding: 5px var(--spacing-6); color: var(--text-muted);
+  text-decoration: none; font-size: var(--font-size-1); border-left: 2px solid transparent;
+}
+.doc-nav a:hover { color: var(--text-default); background: var(--neutral-alpha-3); }
+.doc-nav a.pending { color: var(--text-subtle); }
+.doc-nav a.pending::after {
+  content: 'stub'; float: right; font-family: var(--font-family-mono);
+  font-size: 10px; color: var(--text-subtle); opacity: .7;
+}
+
+.doc-main { flex: 1; min-width: 0; padding: var(--spacing-9) var(--spacing-9) 120px; max-width: 1020px; }
+
+h1 { font-size: var(--font-size-6); font-weight: var(--font-weight-bold); letter-spacing: -.025em; margin: 0 0 var(--spacing-3); }
+h2 {
+  font-size: var(--font-size-5); font-weight: var(--font-weight-bold); letter-spacing: -.02em;
+  margin: var(--spacing-9) 0 var(--spacing-4); padding-top: var(--spacing-5);
+  border-top: 1px solid var(--border-subtle);
+}
+h3 { font-size: var(--font-size-4); font-weight: var(--font-weight-semibold); letter-spacing: -.012em; margin: var(--spacing-7) 0 var(--spacing-3); }
+h4 { font-size: var(--font-size-3); font-weight: var(--font-weight-semibold); margin: var(--spacing-6) 0 var(--spacing-2); }
+p { margin: 0 0 var(--spacing-4); max-width: 74ch; }
+ul, ol { max-width: 74ch; padding-left: var(--spacing-5); }
+li { margin-bottom: var(--spacing-2); }
+code {
+  font-family: var(--font-family-mono); font-size: .88em;
+  background: var(--surface-muted); padding: 1px 5px; border-radius: var(--radius-1);
+}
+.lede { font-size: var(--font-size-3); color: var(--text-muted); max-width: 70ch; }
+
+table { border-collapse: collapse; width: 100%; margin: var(--spacing-4) 0 var(--spacing-6); font-size: var(--font-size-1); }
+th, td { text-align: left; padding: var(--spacing-2) var(--spacing-3); border-bottom: 1px solid var(--border-subtle); vertical-align: top; }
+th { font-weight: var(--font-weight-semibold); color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; border-bottom-color: var(--border-default); }
+td.mono, th.mono { font-family: var(--font-family-mono); font-size: 12px; }
+.chip { display: inline-block; width: 13px; height: 13px; border-radius: 3px; border: 1px solid var(--neutral-alpha-7); vertical-align: -2px; margin-right: 6px; }
+.pass { color: #008062; font-weight: var(--font-weight-semibold); }
+.fail { color: #cf3716; font-weight: var(--font-weight-semibold); }
+
+.example-block { border: 1px solid var(--border-default); border-radius: var(--radius-3); overflow: hidden; margin: var(--spacing-5) 0 var(--spacing-6); }
+.example-label {
+  font-size: 11px; font-weight: var(--font-weight-semibold); text-transform: uppercase;
+  letter-spacing: .06em; color: var(--text-muted); padding: var(--spacing-3) var(--spacing-4);
+  background: var(--surface-subtle); border-bottom: 1px solid var(--border-subtle);
+}
+.example-render { padding: var(--spacing-6); background: var(--surface-default); display: flex; flex-direction: column; gap: var(--spacing-4); }
+.example-code {
+  font-family: var(--font-family-mono); font-size: 12px; line-height: 1.65; white-space: pre;
+  overflow-x: auto; padding: var(--spacing-4); background: var(--neutral-12); color: #eeedea;
+  border-top: 1px solid var(--border-subtle);
+}
+.example-code .c { color: #8e8d86; }
+.example-code .k { color: #65b5c2; }
+
+.callout { border: 1px solid var(--border-default); border-left: 3px solid var(--primary-default); border-radius: var(--radius-2); padding: var(--spacing-4) var(--spacing-5); margin: var(--spacing-5) 0; background: var(--surface-subtle); }
+.callout-title { font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-1); font-size: var(--font-size-2); }
+.callout p:last-child { margin-bottom: 0; }
+.callout.warn { border-left-color: var(--amber-11); }
+.callout.stop { border-left-color: var(--tomato-11); }
+
+.law { border: 1px solid var(--border-default); border-radius: var(--radius-3); padding: var(--spacing-5); margin: var(--spacing-4) 0; background: var(--surface-default); }
+.law-no { font-family: var(--font-family-mono); font-size: 11px; color: var(--text-subtle); letter-spacing: .08em; text-transform: uppercase; }
+.law-statement { font-size: var(--font-size-3); font-weight: var(--font-weight-semibold); letter-spacing: -.01em; margin: 4px 0 var(--spacing-3); max-width: 62ch; }
+
+.rules { counter-reset: rule; list-style: none; padding: 0; max-width: 78ch; }
+.rules li { counter-increment: rule; position: relative; padding-left: 46px; margin-bottom: var(--spacing-4); }
+.rules li::before {
+  content: counter(rule, decimal-leading-zero); position: absolute; left: 0; top: 1px;
+  font-family: var(--font-family-mono); font-size: 11px; font-weight: var(--font-weight-medium);
+  color: var(--text-subtle); border: 1px solid var(--border-default); border-radius: var(--radius-1);
+  padding: 2px 6px; background: var(--surface-subtle);
+}
+.must { font-weight: var(--font-weight-semibold); }
+.mustnot { font-weight: var(--font-weight-semibold); color: var(--tomato-11); }
+
+.stub { border: 1px dashed var(--border-emphasis); border-radius: var(--radius-3); padding: var(--spacing-5); color: var(--text-muted); background: var(--surface-subtle); margin: var(--spacing-4) 0; }
+.stub-h { font-weight: var(--font-weight-semibold); color: var(--text-default); margin-bottom: var(--spacing-1); }
+
+.status-bar { display: flex; gap: var(--spacing-6); flex-wrap: wrap; padding: var(--spacing-4) var(--spacing-5); border: 1px solid var(--border-default); border-radius: var(--radius-3); background: var(--surface-subtle); margin-bottom: var(--spacing-7); font-size: var(--font-size-1); }
+.status-bar dt { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-subtle); }
+.status-bar dd { margin: 2px 0 0; font-weight: var(--font-weight-medium); }
+
+.ramp { display: flex; border-radius: var(--radius-2); overflow: hidden; border: 1px solid var(--border-default); }
+.ramp div { flex: 1; height: 52px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; font-family: var(--font-family-mono); font-size: 10px; }
+
+/* ============================================================
+   LAYER 3 — COMPONENT TOKENS + COMPONENT CSS
+   This block is the reference implementation. It is the spec.
+   ============================================================ */
+
+/* ---------- INLINE ALERT ---------- */
+.sd-alert {
+  /* Component tokens. A variant sets these four and nothing else. */
+  --alert-surface: var(--state-info-surface);
+  --alert-border:  var(--state-info-border);
+  --alert-icon:    var(--state-info-icon);
+  --alert-text:    var(--state-info-text);
+
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--spacing-3);
+  align-items: start;
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--alert-surface);
+  border: 1px solid var(--alert-border);
+  border-radius: var(--radius-2);
+  color: var(--alert-text);
+  font-size: var(--font-size-2);
+  line-height: 1.5;
+}
+.sd-alert[data-state="error"]   { --alert-surface: var(--state-error-surface);   --alert-border: var(--state-error-border);   --alert-icon: var(--state-error-icon);   --alert-text: var(--state-error-text); }
+.sd-alert[data-state="warning"] { --alert-surface: var(--state-warning-surface); --alert-border: var(--state-warning-border); --alert-icon: var(--state-warning-icon); --alert-text: var(--state-warning-text); }
+.sd-alert[data-state="success"] { --alert-surface: var(--state-success-surface); --alert-border: var(--state-success-border); --alert-icon: var(--state-success-icon); --alert-text: var(--state-success-text); }
+.sd-alert[data-state="info"]    { --alert-surface: var(--state-info-surface);    --alert-border: var(--state-info-border);    --alert-icon: var(--state-info-icon);    --alert-text: var(--state-info-text); }
+
+.sd-alert__icon { width: 18px; height: 18px; flex-shrink: 0; color: var(--alert-icon); margin-top: 1px; }
+.sd-alert__body { min-width: 0; }
+.sd-alert__title { font-weight: var(--font-weight-semibold); margin: 0 0 2px; }
+.sd-alert__message { margin: 0; max-width: 68ch; }
+.sd-alert__message a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.sd-alert__actions { display: flex; gap: var(--spacing-4); margin-top: var(--spacing-3); }
+.sd-alert__action {
+  background: none; border: 0; padding: 0; font: inherit; color: inherit;
+  font-weight: var(--font-weight-semibold); text-decoration: underline;
+  text-underline-offset: 3px; cursor: pointer; border-radius: var(--radius-1);
+}
+.sd-alert__dismiss {
+  width: 24px; height: 24px; display: grid; place-items: center; flex-shrink: 0;
+  background: none; border: 0; padding: 0; cursor: pointer;
+  color: var(--alert-icon); border-radius: var(--radius-1); position: relative;
+}
+/* 44px hit target without a 44px box */
+.sd-alert__dismiss::after { content: ''; position: absolute; inset: -10px; }
+.sd-alert__dismiss:hover { background: var(--overlay-hover); }
+.sd-alert__dismiss:active { background: var(--overlay-active); }
+.sd-alert :is(.sd-alert__dismiss, .sd-alert__action):focus-visible {
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 2px;
+}
+.sd-alert--quiet { border-color: transparent; }
+/* ---- 1.2 Toast — inline alert + ephemerality + elevation, portalled out of flow. Same four tokens. ---- */
+.sd-toast-region {
+  position: fixed; z-index: 900; bottom: var(--spacing-5); right: var(--spacing-5);
+  display: flex; flex-direction: column; gap: var(--spacing-3);
+  width: min(400px, calc(100vw - var(--spacing-6))); pointer-events: none;
+}
+.sd-toast {
+  --toast-surface: var(--state-info-surface);
+  --toast-border:  var(--state-info-border);
+  --toast-icon:    var(--state-info-icon);
+  --toast-text:    var(--state-info-text);
+  pointer-events: auto;
+  display: grid; grid-template-columns: auto 1fr auto; gap: var(--spacing-3);
+  align-items: start; padding: var(--spacing-3) var(--spacing-4);
+  background: var(--toast-surface); border: 1px solid var(--toast-border);
+  border-radius: var(--radius-2); color: var(--toast-text);
+  font-size: var(--font-size-2); line-height: 1.5;
+  box-shadow: var(--shadow-3, 0 8px 24px rgba(20,20,20,.14), 0 2px 6px rgba(20,20,20,.10));
+}
+.sd-toast[data-state="error"]   { --toast-surface: var(--state-error-surface);   --toast-border: var(--state-error-border);   --toast-icon: var(--state-error-icon);   --toast-text: var(--state-error-text); }
+.sd-toast[data-state="warning"] { --toast-surface: var(--state-warning-surface); --toast-border: var(--state-warning-border); --toast-icon: var(--state-warning-icon); --toast-text: var(--state-warning-text); }
+.sd-toast[data-state="success"] { --toast-surface: var(--state-success-surface); --toast-border: var(--state-success-border); --toast-icon: var(--state-success-icon); --toast-text: var(--state-success-text); }
+.sd-toast[data-state="info"]    { --toast-surface: var(--state-info-surface);    --toast-border: var(--state-info-border);    --toast-icon: var(--state-info-icon);    --toast-text: var(--state-info-text); }
+.sd-toast__icon { width: 18px; height: 18px; flex-shrink: 0; color: var(--toast-icon); margin-top: 1px; }
+.sd-toast__body { min-width: 0; display: flex; align-items: baseline; flex-wrap: wrap; }
+.sd-toast__message { margin: 0; }
+.sd-toast__message a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.sd-toast__action {
+  background: none; border: 0; padding: 0; margin-left: var(--spacing-3); font: inherit; color: inherit;
+  font-weight: var(--font-weight-semibold); text-decoration: underline; text-underline-offset: 3px;
+  cursor: pointer; border-radius: var(--radius-1); white-space: nowrap;
+}
+.sd-toast__dismiss {
+  width: 24px; height: 24px; display: grid; place-items: center; flex-shrink: 0;
+  background: none; border: 0; padding: 0; cursor: pointer; color: var(--toast-icon);
+  border-radius: var(--radius-1); position: relative;
+}
+.sd-toast__dismiss::after { content: ''; position: absolute; inset: -10px; }
+.sd-toast__dismiss:hover { background: var(--overlay-hover); }
+.sd-toast__dismiss:active { background: var(--overlay-active); }
+.sd-toast :is(.sd-toast__dismiss, .sd-toast__action):focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; }
+/* ---- 1.3 Banner — state model + persistence + full-bleed. Tinted, never solid (Law 4). ---- */
+.sd-banner {
+  --banner-surface: var(--state-info-surface);
+  --banner-border:  var(--state-info-border);
+  --banner-icon:    var(--state-info-icon);
+  --banner-text:    var(--state-info-text);
+  display: grid; grid-template-columns: auto 1fr auto; gap: var(--spacing-3);
+  align-items: center; padding: var(--spacing-3) var(--spacing-5);
+  background: var(--banner-surface); color: var(--banner-text);
+  border: 0; border-bottom: 1px solid var(--banner-border); border-radius: 0;
+  font-size: var(--font-size-2); line-height: 1.5;
+}
+.sd-banner[data-state="error"]   { --banner-surface: var(--state-error-surface);   --banner-border: var(--state-error-border);   --banner-icon: var(--state-error-icon);   --banner-text: var(--state-error-text); }
+.sd-banner[data-state="warning"] { --banner-surface: var(--state-warning-surface); --banner-border: var(--state-warning-border); --banner-icon: var(--state-warning-icon); --banner-text: var(--state-warning-text); }
+.sd-banner[data-state="success"] { --banner-surface: var(--state-success-surface); --banner-border: var(--state-success-border); --banner-icon: var(--state-success-icon); --banner-text: var(--state-success-text); }
+.sd-banner[data-state="info"]    { --banner-surface: var(--state-info-surface);    --banner-border: var(--state-info-border);    --banner-icon: var(--state-info-icon);    --banner-text: var(--state-info-text); }
+.sd-banner__icon { width: 18px; height: 18px; flex-shrink: 0; color: var(--banner-icon); }
+.sd-banner__body { min-width: 0; }
+.sd-banner__message { margin: 0; }
+.sd-banner__message a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.sd-banner__action {
+  background: none; border: 0; padding: 0; margin-left: var(--spacing-3); font: inherit; color: inherit;
+  font-weight: var(--font-weight-semibold); text-decoration: underline; text-underline-offset: 3px;
+  cursor: pointer; border-radius: var(--radius-1); white-space: nowrap;
+}
+.sd-banner__dismiss {
+  width: 24px; height: 24px; display: grid; place-items: center; flex-shrink: 0;
+  background: none; border: 0; padding: 0; cursor: pointer; color: var(--banner-icon);
+  border-radius: var(--radius-1); position: relative;
+}
+.sd-banner__dismiss::after { content: ''; position: absolute; inset: -10px; }
+.sd-banner__dismiss:hover { background: var(--overlay-hover); }
+.sd-banner__dismiss:active { background: var(--overlay-active); }
+.sd-banner :is(.sd-banner__dismiss, .sd-banner__action):focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; }
+/* ---- 2.1 Modal — the one place a filled primary lives. Neutral chrome; state goes inside, never on the frame. ---- */
+.sd-modal-scrim {
+  position: fixed; inset: 0; z-index: 1000; background: var(--scrim);
+  display: grid; place-items: center; padding: var(--spacing-6);
+}
+.sd-modal {
+  --overlay-primary:       var(--action-primary);
+  --overlay-primary-hover: var(--action-primary-hover);
+  width: min(520px, 100%); max-height: min(80vh, 720px);
+  display: flex; flex-direction: column; overflow: hidden;
+  background: var(--surface-default); color: var(--text-default);
+  border-radius: var(--radius-4); box-shadow: var(--shadow-overlay);
+}
+.sd-modal[data-intent="destructive"] {
+  --overlay-primary:       var(--action-danger);
+  --overlay-primary-hover: var(--action-danger-hover);
+}
+.sd-modal__header {
+  display: grid; grid-template-columns: 1fr auto; align-items: start; gap: var(--spacing-4);
+  padding: var(--spacing-5) var(--spacing-5) var(--spacing-3);
+}
+.sd-modal__title { margin: 0; font-size: var(--font-size-4); font-weight: var(--font-weight-semibold); color: var(--text-default); line-height: 1.3; }
+.sd-modal__close {
+  width: 32px; height: 32px; display: grid; place-items: center; flex-shrink: 0;
+  background: none; border: 0; padding: 0; cursor: pointer; color: var(--text-muted);
+  border-radius: var(--radius-1); margin: -6px -6px 0 0;
+}
+.sd-modal__close:hover { background: var(--overlay-hover); color: var(--text-default); }
+.sd-modal__body { padding: 0 var(--spacing-5) var(--spacing-4); overflow-y: auto; color: var(--text-muted); font-size: var(--font-size-2); line-height: 1.55; }
+.sd-modal__footer {
+  display: flex; justify-content: flex-end; align-items: center; gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-5); border-top: 1px solid var(--border-subtle); margin-top: auto;
+}
+.sd-btn {
+  font: inherit; font-size: var(--font-size-2); font-weight: var(--font-weight-semibold); line-height: 1;
+  padding: 9px 15px; border-radius: var(--radius-2); border: 1px solid transparent; cursor: pointer; white-space: nowrap;
+}
+.sd-btn--primary   { background: var(--overlay-primary); color: var(--action-on-solid); }
+.sd-btn--primary:hover   { background: var(--overlay-primary-hover); }
+.sd-btn--secondary { background: transparent; color: var(--text-default); border-color: var(--border-default); }
+.sd-btn--secondary:hover { background: var(--overlay-hover); }
+.sd-modal :is(.sd-btn, .sd-modal__close):focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; }
+/* ---- 2.2 Drawer — the modal, re-anchored to an edge at full height. Same contract, same tokens. ---- */
+.sd-drawer-scrim { position: fixed; inset: 0; z-index: 1000; background: var(--scrim); display: flex; }
+.sd-drawer {
+  --overlay-primary:       var(--action-primary);
+  --overlay-primary-hover: var(--action-primary-hover);
+  display: flex; flex-direction: column; overflow: hidden;
+  background: var(--surface-default); color: var(--text-default);
+  box-shadow: var(--shadow-overlay);
+  width: min(480px, 100%); height: 100%; margin-left: auto;   /* default anchor: right edge */
+}
+.sd-drawer[data-intent="destructive"] { --overlay-primary: var(--action-danger); --overlay-primary-hover: var(--action-danger-hover); }
+.sd-drawer[data-side="left"]   { margin-left: 0; margin-right: auto; }
+.sd-drawer[data-side="bottom"] { width: 100%; height: auto; max-height: 80vh; margin: auto 0 0 0; }
+.sd-drawer[data-size="sm"] { width: min(360px, 100%); }
+.sd-drawer[data-size="lg"] { width: min(640px, 100%); }
+.sd-drawer__header { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: var(--spacing-4); padding: var(--spacing-5) var(--spacing-5) var(--spacing-3); }
+.sd-drawer__title { margin: 0; font-size: var(--font-size-4); font-weight: var(--font-weight-semibold); color: var(--text-default); line-height: 1.3; }
+.sd-drawer__close { width: 32px; height: 32px; display: grid; place-items: center; flex-shrink: 0; background: none; border: 0; padding: 0; cursor: pointer; color: var(--text-muted); border-radius: var(--radius-1); margin: -6px -6px 0 0; }
+.sd-drawer__close:hover { background: var(--overlay-hover); color: var(--text-default); }
+.sd-drawer__body { padding: 0 var(--spacing-5) var(--spacing-4); overflow-y: auto; color: var(--text-muted); font-size: var(--font-size-2); line-height: 1.55; flex: 1; }
+.sd-drawer__footer { display: flex; justify-content: flex-end; align-items: center; gap: var(--spacing-3); padding: var(--spacing-4) var(--spacing-5); border-top: 1px solid var(--border-subtle); }
+.sd-drawer :is(.sd-btn, .sd-drawer__close):focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; }
+/* ---- 3.1 Tooltip — a supplementary label, anchored and inverted. Never load-bearing. ---- */
+.sd-tooltip {
+  position: absolute; z-index: 1100; max-width: 240px;
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--surface-inverse); color: var(--text-inverse);
+  border-radius: var(--radius-2); font-size: var(--font-size-1); line-height: 1.4;
+  font-weight: var(--font-weight-medium); box-shadow: var(--shadow-popover);
+}
+.sd-tooltip__arrow { position: absolute; width: 8px; height: 8px; background: var(--surface-inverse); transform: rotate(45deg); }
+/* ---- 3.2 Popover — the tooltip's interactive inverse: a light, anchored, non-blocking surface. ---- */
+.sd-popover {
+  position: absolute; z-index: 1050; min-width: 200px; max-width: 320px;
+  background: var(--surface-default); color: var(--text-default);
+  border: 1px solid var(--border-default); border-radius: var(--radius-3);
+  box-shadow: var(--shadow-popover);
+}
+.sd-popover__arrow { position: absolute; width: 10px; height: 10px; background: var(--surface-default); border-left: 1px solid var(--border-default); border-top: 1px solid var(--border-default); transform: rotate(45deg); }
+.sd-popover__body { padding: var(--spacing-4); font-size: var(--font-size-2); color: var(--text-muted); line-height: 1.55; }
+.sd-popover__menu { padding: var(--spacing-2); display: flex; flex-direction: column; }
+.sd-popover__item {
+  display: flex; align-items: center; gap: var(--spacing-3); width: 100%;
+  padding: 7px 10px; border: 0; background: none; border-radius: var(--radius-2);
+  font: inherit; font-size: var(--font-size-2); color: var(--text-default); text-align: left; cursor: pointer;
+}
+.sd-popover__item:hover { background: var(--overlay-hover); }
+.sd-popover__item[data-intent="destructive"] { color: var(--action-danger); }
+.sd-popover :is(.sd-popover__item, button, a):focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; }
+
+
+
+
+
+
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.ph { display:inline-block; font-size:11px; font-weight:var(--font-weight-semibold); line-height:1.5; padding:0 7px; border-radius:999px; letter-spacing:.02em; white-space:nowrap; }
+.ph-ui    { background:var(--accent-3);  color:var(--accent-11);  border:1px solid var(--accent-7); }
+.ph-react { background:var(--neutral-3); color:var(--neutral-11); border:1px solid var(--neutral-7); }
+
+@media (prefers-reduced-motion: reduce) { * { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+@media (max-width: 900px) { .doc-nav { display: none; } .doc-main { padding: var(--spacing-6) var(--spacing-5) 80px; } }
+
+
+/* ===== UI Correction Guide — additions on top of the shared rulebook system ===== */
+.scope-box { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); margin: var(--spacing-6) 0; }
+.scope-box > div { border: 1px solid var(--border-default); border-radius: var(--radius-3); padding: var(--spacing-4) var(--spacing-5); }
+.scope-in  { background: var(--jade-3); border-color: #cdeee0 !important; }
+.scope-out { background: var(--neutral-2); }
+.scope-box h4 { margin: 0 0 var(--spacing-2); font-size: var(--font-size-1); text-transform: uppercase; letter-spacing: .06em; }
+.scope-in h4  { color: var(--jade-11); }
+.scope-out h4 { color: var(--text-muted); }
+.scope-box p { margin: 0; font-size: var(--font-size-2); color: var(--text-default); }
+
+.part-head { margin: var(--spacing-9) 0 var(--spacing-2); padding-top: var(--spacing-6); border-top: 2px solid var(--neutral-12); }
+.part-head .k { font-family: var(--font-family-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-subtle); }
+.part-head h2 { margin: 4px 0 0; border: 0; padding: 0; }
+.part-head + p.lede { margin-top: var(--spacing-2); }
+
+.fix { border: 1px solid var(--border-default); border-radius: var(--radius-4); padding: var(--spacing-6); margin: var(--spacing-5) 0; background: var(--surface-default); }
+.fix-head { display: flex; align-items: center; gap: var(--spacing-3); margin-bottom: var(--spacing-3); flex-wrap: wrap; }
+.fix-id { font-family: var(--font-family-mono); font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; background: var(--neutral-3); color: var(--neutral-11); border: 1px solid var(--neutral-6); }
+.fix-head h3 { margin: 0; font-size: var(--font-size-4); flex: 1; min-width: 200px; }
+.fix-what { margin: 0 0 var(--spacing-3); font-size: var(--font-size-2); color: var(--text-default); }
+.fix-where { margin: 0 0 var(--spacing-4); font-size: var(--font-size-1); color: var(--text-muted); }
+.fix-where code { font-family: var(--font-family-mono); font-size: .9em; background: var(--neutral-2); padding: 1px 5px; border-radius: 4px; }
+
+.ba { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); margin: var(--spacing-4) 0; }
+.ba-col { border: 1px solid var(--border-default); border-radius: var(--radius-3); overflow: hidden; display: flex; flex-direction: column; }
+.ba-label { padding: 7px var(--spacing-4); font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; gap: var(--spacing-3); }
+.ba-before .ba-label { background: var(--tomato-3); color: var(--tomato-11); border-bottom: 1px solid #f6cabd; }
+.ba-after  .ba-label { background: var(--jade-3);   color: var(--jade-11);   border-bottom: 1px solid #cdeee0; }
+.ba-visual { padding: var(--spacing-5); display: flex; align-items: center; justify-content: center; min-height: 96px; background: var(--surface-default); flex: 1; }
+.ba-code { margin: 0; font-family: var(--font-family-mono); font-size: 11.5px; line-height: 1.6; white-space: pre; overflow-x: auto; padding: var(--spacing-4); background: var(--neutral-12); color: #eeedea; border-top: 1px solid var(--border-subtle); }
+.ba-code .c { color: #8e8d86; }
+.ba-code .k { color: #65b5c2; }
+.ba-code .r { color: #f19a8a; }
+
+.cpill { font-family: var(--font-family-mono); font-size: 11px; font-weight: 600; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+.cpill-fail { background: #fff; color: var(--tomato-11); border: 1px solid currentColor; }
+.cpill-pass { background: #fff; color: var(--jade-11); border: 1px solid currentColor; }
+.fail { color: var(--tomato-11); font-weight: 600; }
+
+.fix-check { margin-top: var(--spacing-4); padding: var(--spacing-3) var(--spacing-4); background: var(--neutral-2); border-radius: var(--radius-2); font-size: var(--font-size-1); color: var(--text-default); }
+.fix-check code { font-family: var(--font-family-mono); font-size: .92em; color: var(--accent-11); }
+.fix-note { margin-top: var(--spacing-3); font-size: var(--font-size-1); color: var(--text-muted); }
+.fix-note strong { color: var(--text-default); }
+
+.swrow { display: flex; gap: 3px; align-items: flex-end; }
+.swrow div { flex: 1; height: 40px; border-radius: 3px; }
+.rampx { display: flex; gap: 2px; width: 100%; }
+.rampx div { flex: 1; height: 40px; }
+.rampx div:first-child { border-radius: 4px 0 0 4px; }
+.rampx div:last-child  { border-radius: 0 4px 4px 0; }
+.seed { width: 44px; height: 44px; border-radius: var(--radius-2); border: 1px solid rgba(0,0,0,.1); flex-shrink: 0; }
+
+@media (max-width: 760px) { .ba, .scope-box { grid-template-columns: 1fr; } }
+
+
+/* ===== Token Contrast Matrix — additions ===== */
+.mx-wrap { overflow-x: auto; margin: var(--spacing-4) 0 var(--spacing-2); }
+.mx { border-collapse: separate; border-spacing: 3px; min-width: 640px; }
+.mx th { font-family: var(--font-family-mono); font-weight: 500; font-size: 10px; padding: 4px 3px; text-align: center; color: var(--text-muted); vertical-align: bottom; line-height: 1.2; }
+.mx th.rowh { text-align: left; padding: 5px 12px 5px 0; white-space: nowrap; color: var(--text-default); font-size: 11.5px; font-weight: 600; }
+.mx td { text-align: center; padding: 6px 6px; border-radius: 4px; font-family: var(--font-family-mono); font-weight: 700; font-size: 11.5px; min-width: 34px; }
+.mx-pass  { background: var(--jade-3);   color: var(--jade-11); }
+.mx-tight { background: var(--amber-3);  color: #8a5a00; }
+.mx-fail  { background: var(--tomato-3); color: var(--tomato-11); }
+.mx-na    { background: var(--neutral-2); color: var(--neutral-10); font-weight: 500; font-size: 10px; }
+.mx-caption { font-family: var(--font-family-mono); font-size: 11px; color: var(--text-subtle); margin: var(--spacing-6) 0 4px; }
+.mx-legend { display: flex; gap: var(--spacing-5); flex-wrap: wrap; font-size: 11.5px; color: var(--text-muted); margin: var(--spacing-3) 0 var(--spacing-6); align-items: center; }
+.mx-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.mx-legend i { width: 15px; height: 15px; border-radius: 4px; display: inline-block; }
+
+.finding { border: 1px solid var(--border-default); border-left: 4px solid var(--tomato-9); background: var(--surface-subtle); padding: var(--spacing-4) var(--spacing-5); border-radius: 0 var(--radius-3) var(--radius-3) 0; margin: var(--spacing-4) 0; }
+.finding.rule { border-left-color: var(--accent-9); }
+.finding .fn { font-family: var(--font-family-mono); font-size: 11px; color: var(--text-subtle); letter-spacing: .06em; }
+.finding h4 { margin: 2px 0 6px; font-size: var(--font-size-3); }
+.finding p { margin: 0; font-size: var(--font-size-2); color: var(--text-default); }
+.finding p + p { margin-top: 6px; color: var(--text-muted); }
+.finding .verdict { color: var(--tomato-11); font-weight: 700; }
+.finding.rule .verdict { color: var(--accent-11); }
+
+
+/* ===== Contrast Register — additions ===== */
+.reg { width:100%; border-collapse:collapse; font-size:12.5px; margin:var(--spacing-4) 0 var(--spacing-2); }
+.reg th { text-align:left; font-family:var(--font-family-mono); font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-subtle); font-weight:500; padding:6px 10px; border-bottom:1px solid var(--border-default); }
+.reg th:nth-child(2),.reg th:nth-child(3),.reg th:last-child { width:1%; white-space:nowrap; }
+.reg td { padding:8px 10px; border-bottom:1px solid var(--surface-muted); color:var(--text-default); vertical-align:middle; }
+.reg td code { font-family:var(--font-family-mono); font-size:.88em; background:var(--neutral-2); padding:1px 5px; border-radius:4px; }
+.reg .reg-g { font-family:var(--font-family-mono); font-size:10.5px; color:var(--text-muted); white-space:nowrap; }
+.reg .reg-r { font-family:var(--font-family-mono); font-weight:700; text-align:right; }
+.reg tr:last-child td { border-bottom:0; }
+.needlive { display:inline-block; font-family:var(--font-family-mono); font-size:10px; font-weight:600; letter-spacing:.04em; padding:1px 7px; border-radius:999px; background:var(--amber-3); color:#8a5a00; border:1px solid #e9c877; vertical-align:middle; }
+
+/* ===== Worked Examples — additions ===== */
+.exg { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.pill { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; padding:3px 11px; border-radius:999px; white-space:nowrap; }
+.pill small { font-family:var(--font-family-mono); font-size:9px; font-weight:700; opacity:.9; }
+.field { width:100%; max-width:280px; text-align:left; }
+.field .lab { font-size:12px; font-weight:600; color:var(--text-default); margin-bottom:5px; display:flex; gap:6px; align-items:center; }
+.field .inp { display:flex; align-items:center; padding:9px 12px; border-radius:7px; font-size:13px; background:#fff; }
+.chk { display:flex; align-items:center; gap:9px; font-size:13px; color:var(--text-default); }
+.chk .box { width:18px; height:18px; border-radius:5px; background:#fff; flex-shrink:0; }
+.bar-wrap { width:100%; display:flex; flex-direction:column; gap:7px; }
+.bar { height:30px; border-radius:5px; display:flex; align-items:center; padding:0 12px; font-size:12px; font-weight:600; }
+.exnote { font-family:var(--font-family-mono); font-size:10.5px; color:var(--text-subtle); }
+
+
+
+/* ===== core artefact — chapter dividers ===== */
+.chapter { margin: calc(var(--spacing-9) * 1.4) 0 var(--spacing-6); padding: var(--spacing-6) 0 0; border-top: 3px solid var(--neutral-12); }
+.chapter .cn { font-family: var(--font-family-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-11); font-weight: 700; }
+.chapter .ct { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; margin: 8px 0 10px; line-height: 1.1; }
+.chapter p { margin: 0; font-size: var(--font-size-3); color: var(--text-muted); max-width: 72ch; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="doc-wrapper">
+<nav class="doc-nav">
+  <div class="doc-nav-title">Scale in Unity</div>
+  <div class="doc-nav-version">v1.0 · corrections + contrast · 2026-08-07</div>
+  <div class="doc-nav-section">Overview</div>
+  <a href="#overview">What this is</a>
+  <div class="doc-nav-section">Part 1 · Corrections</div>
+  <a href="#fixnow">Fix-now · §0</a>
+  <a href="#skins">Tenant skins · §1</a>
+  <a href="#dictionaries">Dictionaries · §2</a>
+  <a href="#admin">Admin · §3</a>
+  <div class="doc-nav-section">Part 2 · Contrast oracle</div>
+  <a href="#text">Text on surfaces</a>
+  <a href="#state">State text &amp; icon</a>
+  <a href="#nontext">Borders &amp; focus</a>
+  <a href="#verdict">Verdict — bans &amp; rules</a>
+  <div class="doc-nav-section">Part 3 · Contrast recipes</div>
+  <a href="#tables">Data tables</a>
+  <a href="#badges">Badges &amp; pills</a>
+  <a href="#forms">Form controls</a>
+  <a href="#nav">Navigation</a>
+  <a href="#charts">Charts</a>
+  <a href="#harness">Tenant colours</a>
+  <a href="#summary">Contrast summary</a>
+</nav>
+<main class="doc-main">
+
+<h1>Scale in Unity</h1>
+<p class="lede" id="overview">How the existing product uses Scale — and how to get the parts that don't onto it. One reference in three parts: the corrections the audit found, the contrast oracle that says which token pairs are safe, and the in-situ recipes that show which component patterns hold. Everything here is colour and tokens in the Unity codebase as it ships today.</p>
+<p>This is one of two artefacts. This one is <strong>Unity</strong> — applying Scale to the product that exists. Its companion, the <strong>Component Rulebook</strong>, is the <strong>React transition</strong>: the normative standard the rebuilt components target. Where a correction or recipe here needs a component rule, it points into the rulebook; it doesn't restate it.</p>
+<p>Two threads run throughout. The <strong>tenant colours</strong> are being stripped back out of the product — clients no longer set the button or accent — so the contrast failures that surface could produce are designed out, not gated (Part 3). And the one input still open is the <strong>compiled Unity CSS</strong>, needed to confirm off-spec deviations; it's flagged where it matters.</p>
+
+<div class="chapter" id="corrections"><div class="cn">Part 1</div><div class="ct">Corrections</div><p>The conformance audit's UI-only findings, as fixes to the code that ships today — chart theme, chatbot slot, admin ramp, skin hex, colour dictionaries. Each is the same shape: what's wrong, where, the before, the after with the exact token, and a grep that confirms it landed. No behaviour, no React.</p></div>
+<div class="scope-box" id="scope">
+  <div class="scope-in">
+    <h4>In scope — the UI-only pass</h4>
+    <p>Colour and tokens in the code that ships today: chart themes, skin hex, colour dictionaries, the admin ramp. Every fix below changes how the product <strong>looks</strong>, never what it does or how a user moves through it. Ships independently of the React migration.</p>
+  </div>
+  <div class="scope-out">
+    <h4>Out of scope — lives elsewhere</h4>
+    <p>Net-new components (alert, banner, tooltip, popover, drawer), the modal replacement, toast <em>behaviour</em>, overlay state variants. Those are builds and replacements — the rulebook's component chapters and the React migration, not a correction to existing code.</p>
+  </div>
+</div>
+
+<p><strong>How to read a correction.</strong> The <span class="cpill cpill-fail">before</span> is what's in the code now; the <span class="cpill cpill-pass">after</span> is the token-correct version, with the value or variable to swap to. Contrast numbers are white-or-text against the fill shown. The grep at the foot is the done-check — it should return zero, or the expected count, when the correction has landed. Everything here is <span class="ph ph-ui">UI</span>; where a finding has a behavioural tail, it's called out and sent to the rulebook.</p>
+
+<div class="callout">
+  <div class="callout-title">One dependency to respect before you start</div>
+  <p><strong>§2 before §1.</strong> Collapse the three colour dictionaries (B4) before migrating the tenant skins (B5), or the palette gets migrated three times — once in the skins, once in each dictionary that still hardcodes it. The order in the nav is the order to work.</p>
+</div>
+
+<!-- ============ PART 1 ============ -->
+<div class="part-head" id="fixnow"><div class="k">Fix-now · §0</div><h2>Small, high value, no dependencies</h2></div>
+<p class="lede">Four corrections a single dev can clear in about a day. None depends on the skin or dictionary work, so they can ship first.</p>
+
+<article class="fix" id="b7">
+  <div class="fix-head"><span class="fix-id">B7</span><h3>Charts render on ECharts' default palette</h3><span class="ph ph-ui">UI</span></div>
+  <p class="fix-what">No <code>echarts.registerTheme</code> exists. Series colours come from a raw eight-colour array, duplicated across two config files, so every chart in the product is wearing ECharts' out-of-the-box palette. The Scale AI Data Palette — 32 colours across five tiers — already exists and nothing consumes it.</p>
+  <p class="fix-where"><strong>Where:</strong> the two chart-config files (the duplicated arrays) · the palette lives in the Scale AI Data Palette</p>
+  <div class="ba">
+    <div class="ba-col ba-before">
+      <div class="ba-label"><span>Before</span><span class="cpill cpill-fail">generic defaults</span></div>
+      <div class="ba-visual"><div class="swrow" style="width:100%;"><div style="background:#5470c6"></div><div style="background:#91cc75"></div><div style="background:#fac858"></div><div style="background:#ee6666"></div><div style="background:#73c0de"></div><div style="background:#3ba272"></div><div style="background:#fc8452"></div><div style="background:#9a60b4"></div></div></div>
+      <pre class="ba-code"><span class="c">// duplicated in two files</span>
+color: [<span class="r">'#5470c6'</span>, <span class="r">'#91cc75'</span>,
+        <span class="r">'#fac858'</span>, <span class="r">'#ee6666'</span>, …]</pre>
+    </div>
+    <div class="ba-col ba-after">
+      <div class="ba-label"><span>After</span><span class="cpill cpill-pass">Scale AI Data Palette</span></div>
+      <div class="ba-visual"><div class="swrow" style="width:100%;"><div style="background:#0c818f"></div><div style="background:#29a383"></div><div style="background:#0090ff"></div><div style="background:#5b5bd6"></div><div style="background:#f76b15"></div><div style="background:#e54d2e"></div><div style="background:#8e4ec6"></div><div style="background:#d6409f"></div></div></div>
+      <pre class="ba-code"><span class="c">// once, at startup</span>
+echarts.<span class="k">registerTheme</span>(<span class="r">'scale'</span>, scaleData);
+<span class="c">// then</span>
+echarts.<span class="k">init</span>(el, <span class="r">'scale'</span>);</pre>
+    </div>
+  </div>
+  <p class="fix-note"><strong>Highest visible-improvement-to-effort ratio in the audit</strong> — one theme registration re-skins every chart at once, and the palette is already built.</p>
+  <div class="fix-check"><strong>Check:</strong> <code>grep -rn "registerTheme" src</code> → present · <code>grep -rn "'#5470c6'" src</code> → 0 (the default array is gone)</div>
+</article>
+
+<article class="fix" id="c3">
+  <div class="fix-head"><span class="fix-id">C3</span><h3>Chatbot pins the wrong step into the accent slot</h3><span class="ph ph-ui">UI</span></div>
+  <p class="fix-what">Inside a <code>@scope</code> block, the chatbot overrides <code>--accent-9</code> with the accent <em>dark ramp's step 11</em>. The primary-action slot is filled with a step that was never meant to be a solid fill, so the chatbot's accent is off the ramp — the exact instinct behind the A3 monotonicity fix, in a different place.</p>
+  <p class="fix-where"><strong>Where:</strong> <code>sdComponents/sdChatBot/main.css</code></p>
+  <div class="ba">
+    <div class="ba-col ba-before">
+      <div class="ba-label"><span>Before</span><span class="cpill cpill-fail">wrong step</span></div>
+      <div class="ba-visual"><button style="background:#65b5c2; color:#fff; border:0; border-radius:8px; padding:9px 18px; font:inherit; font-weight:600; font-size:13px;">Ask Scale</button></div>
+      <pre class="ba-code">--accent-9: <span class="r">var(--colors-accent-accent-dark-11)</span>;</pre>
+    </div>
+    <div class="ba-col ba-after">
+      <div class="ba-label"><span>After</span><span class="cpill cpill-pass">step 9</span></div>
+      <div class="ba-visual"><button style="background:#0c818f; color:#fff; border:0; border-radius:8px; padding:9px 18px; font:inherit; font-weight:600; font-size:13px;">Ask Scale</button></div>
+      <pre class="ba-code">--accent-9: <span class="k">var(--colors-accent-accent-9)</span>;
+<span class="c">/* or delete the override entirely */</span></pre>
+    </div>
+  </div>
+  <p class="fix-note"><strong>While you're in there:</strong> grep for other <code>-dark-11</code> or cross-step overrides — this pattern tends to repeat.</p>
+  <div class="fix-check"><strong>Check:</strong> <code>grep "accent-dark-11" sdChatBot/main.css</code> → 0</div>
+</article>
+
+<article class="fix" id="c1">
+  <div class="fix-head"><span class="fix-id">C1</span><h3>Admin runs an unmigrated Stone ramp</h3><span class="ph ph-ui">UI</span></div>
+  <p class="fix-what">The admin zone declares <code>--neutral-1…12</code> as raw Tailwind <strong>Stone</strong> — a cool grey — on <code>:is(html, body)</code>, and the ramp is scrambled: step 7 is lighter than step 6, so borders and dividers built on those steps invert. Scale's neutral is warm <strong>Sand</strong>. The whole admin surface is running the wrong temperature.</p>
+  <p class="fix-where"><strong>Where:</strong> <code>_cv-admin.scss</code></p>
+  <div class="ba">
+    <div class="ba-col ba-before">
+      <div class="ba-label"><span>Before · Stone</span><span class="cpill cpill-fail">cool · scrambled</span></div>
+      <div class="ba-visual"><div class="rampx"><div style="background:#fafaf9"></div><div style="background:#f5f5f4"></div><div style="background:#e7e5e4"></div><div style="background:#d6d3d1"></div><div style="background:#c3bfbd"></div><div style="background:#a8a29e"></div><div style="background:#b0aaa6"></div><div style="background:#78716c"></div><div style="background:#978985"></div><div style="background:#57534e"></div><div style="background:#44403c"></div><div style="background:#1c1917"></div></div></div>
+      <pre class="ba-code">--neutral-9: <span class="r">#978985</span>; <span class="c">/* Stone */</span></pre>
+    </div>
+    <div class="ba-col ba-after">
+      <div class="ba-label"><span>After · Sand</span><span class="cpill cpill-pass">warm · monotonic</span></div>
+      <div class="ba-visual"><div class="rampx"><div style="background:var(--neutral-1)"></div><div style="background:var(--neutral-2)"></div><div style="background:var(--neutral-3)"></div><div style="background:var(--neutral-4)"></div><div style="background:var(--neutral-5)"></div><div style="background:var(--neutral-6)"></div><div style="background:var(--neutral-7)"></div><div style="background:var(--neutral-8)"></div><div style="background:var(--neutral-9)"></div><div style="background:var(--neutral-10)"></div><div style="background:var(--neutral-11)"></div><div style="background:var(--neutral-12)"></div></div></div>
+      <pre class="ba-code">--neutral-9: <span class="k">#8d8d86</span>; <span class="c">/* Sand — or drop
+the block and inherit the tokens */</span></pre>
+    </div>
+  </div>
+  <p class="fix-note"><strong>Verify first, and it may be S1.</strong> Run <code>getComputedStyle(document.body).getPropertyValue('--neutral-9')</code> — Sand <code>#8d8d86</code> vs Stone <code>#978985</code>. If admin is live on Stone, promote this out of fix-now and pull it forward.</p>
+  <div class="fix-check"><strong>Check:</strong> <code>grep -E "neutral-[0-9]+:\s*#" _cv-admin.scss</code> → 0 (admin inherits the token ramp)</div>
+</article>
+
+<article class="fix" id="a4">
+  <div class="fix-head"><span class="fix-id">A4</span><h3>Login may resolve its surface to nothing</h3><span class="ph ph-ui">UI</span></div>
+  <p class="fix-what"><code>--login-form-bg</code> has 30 references. If the login page renders <em>without</em> a skin — which is the likely case — those references resolve to nothing: a transparent form background and borders that vanish. This is a verify-then-fix: the answer decides whether A4 is 573 findings or roughly 514.</p>
+  <p class="fix-where"><strong>Where:</strong> login templates · the skin variable definitions</p>
+  <div class="ba">
+    <div class="ba-col ba-before">
+      <div class="ba-label"><span>Before · skinless</span><span class="cpill cpill-fail">unresolved</span></div>
+      <div class="ba-visual"><div style="width:150px; padding:16px; border-radius:8px; background:transparent; border:1px solid transparent;"><div style="height:9px; width:60%; background:var(--neutral-4); border-radius:3px; margin-bottom:9px;"></div><div style="height:26px; background:var(--neutral-2); border:1px dashed var(--neutral-6); border-radius:5px;"></div></div></div>
+      <pre class="ba-code">background: <span class="r">var(--login-form-bg)</span>;
+<span class="c">/* undefined with no skin → transparent */</span></pre>
+    </div>
+    <div class="ba-col ba-after">
+      <div class="ba-label"><span>After · fallback</span><span class="cpill cpill-pass">resolves</span></div>
+      <div class="ba-visual"><div style="width:150px; padding:16px; border-radius:8px; background:var(--surface-default); border:1px solid var(--border-default); box-shadow:0 2px 8px rgba(20,20,17,.08);"><div style="height:9px; width:60%; background:var(--neutral-4); border-radius:3px; margin-bottom:9px;"></div><div style="height:26px; background:var(--surface-default); border:1px solid var(--border-default); border-radius:5px;"></div></div></div>
+      <pre class="ba-code">background: var(--login-form-bg,
+                   <span class="k">var(--surface-default)</span>);</pre>
+    </div>
+  </div>
+  <p class="fix-note"><strong>Verify:</strong> load login with no tenant skin. If the form is transparent, add the base-surface fallback to every skin-scoped login variable so login is correct with or without a skin.</p>
+  <div class="fix-check"><strong>Check:</strong> login renders on a defined surface with skins disabled</div>
+</article>
+
+<!-- ============ PART 2 ============ -->
+<div class="part-head" id="skins"><div class="k">Tenant skins · §1</div><h2>The long pole</h2></div>
+<p class="lede">The largest body of work and the one that gates client delivery — nothing reaches a tenant until it lands. One owner, sustained. The two contrast defects (A1, A2) close as part of this, not separately.</p>
+
+<article class="fix" id="b5">
+  <div class="fix-head"><span class="fix-id">B5</span><h3>Skins hardcode colour instead of seeding tokens</h3><span class="ph ph-ui">UI</span></div>
+  <p class="fix-what">Across 19 skins there are <strong>62,235 raw hex literals</strong> against 67 token references. Each skin restates the entire palette in hex rather than seeding the token layer, so a change to the system has to be made 19 times. The fix inverts it: a skin sets the handful of client-overridable tokens, and everything else derives.</p>
+  <p class="fix-where"><strong>Where:</strong> the 19 skin files — 13 byte-identical (3,454 literals each) · 6 forks (2,700–3,000)</p>
+  <div class="ba">
+    <div class="ba-col ba-before">
+      <div class="ba-label"><span>Before</span><span class="cpill cpill-fail">3,454 literals</span></div>
+      <pre class="ba-code" style="border-top:0;">--primary:       <span class="r">#0b6e8a</span>;
+--primary-hover: <span class="r">#095c73</span>;
+--nav-bg:        <span class="r">#1a1a1a</span>;
+--btn-bg:        <span class="r">#0b6e8a</span>;
+--link:          <span class="r">#0b6e8a</span>;
+<span class="c">/* …3,449 more lines of hex… */</span></pre>
+    </div>
+    <div class="ba-col ba-after">
+      <div class="ba-label"><span>After</span><span class="cpill cpill-pass">5 seeds</span></div>
+      <div class="ba-visual" style="min-height:0; padding-top:var(--spacing-4); padding-bottom:0;"><div style="display:flex; align-items:center; gap:12px;"><div class="seed" style="background:#0c818f;"></div><span style="font-size:11px; color:var(--text-muted);">seed → derives the 12-step ramp</span></div></div>
+      <pre class="ba-code">--accent:        <span class="k">#0c818f</span>;
+--nav-bg:        <span class="k">#1a1a1a</span>;
+--nav-fg:        <span class="k">#ffffff</span>;
+--logo:          url(…);
+--primary-button:<span class="k">var(--accent-9)</span>;
+<span class="c">/* the ramp, states, surfaces derive */</span></pre>
+    </div>
+  </div>
+  <p class="fix-note"><strong>Order of work:</strong> migrate one base skin → re-derive across the 13 identical → reconcile the 6 forks by diff. The five seeds are the client-overridable tokens from the rollout — accent, nav-bg, nav-fg, logo, primary button.</p>
+  <div class="fix-check"><strong>Check:</strong> <code>grep -c "#[0-9a-fA-F]\{6\}" skin.css</code> → drops from thousands to ~5</div>
+</article>
+
+<article class="fix" id="a1">
+  <div class="fix-head"><span class="fix-id">A1</span><h3>Warning amber fails AA by a wide margin</h3><span class="ph ph-ui">UI</span></div>
+  <p class="fix-what">17 skins render warnings as white text on a solid amber <code>#fdb302</code>. That pair is <strong>1.81:1</strong> — amber is a light hue, so white on it is close to invisible. The correction is the rulebook's warning treatment: a tinted surface with step-12 text, which clears AA with room to spare.</p>
+  <p class="fix-where"><strong>Where:</strong> 17 tenant skins → <strong>Rulebook §1.1</strong> for the warning role steps</p>
+  <div class="ba">
+    <div class="ba-col ba-before">
+      <div class="ba-label"><span>Before</span><span class="cpill cpill-fail">1.81:1 ✗</span></div>
+      <div class="ba-visual"><div style="display:inline-flex; align-items:center; gap:8px; background:#fdb302; color:#fff; padding:10px 14px; border-radius:8px; font-weight:600; font-size:13px;">⚠ Export is nearing the 2&nbsp;GB limit</div></div>
+      <pre class="ba-code">background: <span class="r">#fdb302</span>; color: <span class="r">#fff</span>;</pre>
+    </div>
+    <div class="ba-col ba-after">
+      <div class="ba-label"><span>After</span><span class="cpill cpill-pass">9.9:1 ✓</span></div>
+      <div class="ba-visual"><div style="display:inline-flex; align-items:center; gap:8px; background:var(--state-warning-surface); border:1px solid var(--state-warning-border); color:var(--state-warning-text); padding:10px 14px; border-radius:8px; font-weight:500; font-size:13px;"><span style="color:var(--state-warning-icon);">⚠</span>Export is nearing the 2&nbsp;GB limit</div></div>
+      <pre class="ba-code">background: <span class="k">var(--state-warning-surface)</span>;
+color:      <span class="k">var(--state-warning-text)</span>;
+border:1px solid <span class="k">var(--state-warning-border)</span>;</pre>
+    </div>
+  </div>
+  <p class="fix-note"><strong>Resolve first:</strong> are the skins' state colours fills or text? If a solid warning fill must stay, the minimal fix is dark text — <code>#21201c</code> on the amber is 9.0:1 — but the tinted treatment above is the system answer.</p>
+  <div class="fix-check"><strong>Check:</strong> <code>grep -i "fdb302" skins/</code> → 0 · no white text on a warning fill</div>
+</article>
+
+<article class="fix" id="a2">
+  <div class="fix-head"><span class="fix-id">A2</span><h3>Success green fails AA</h3><span class="ph ph-ui">UI</span></div>
+  <p class="fix-what">16 skins render success as white text on a solid green <code>#0da141</code> — <strong>3.39:1</strong>, under the 4.5:1 floor. Same shape as A1, same fix: the tinted success treatment with step-12 text.</p>
+  <p class="fix-where"><strong>Where:</strong> 16 tenant skins → <strong>Rulebook §1.1</strong> for the success role steps</p>
+  <div class="ba">
+    <div class="ba-col ba-before">
+      <div class="ba-label"><span>Before</span><span class="cpill cpill-fail">3.39:1 ✗</span></div>
+      <div class="ba-visual"><div style="display:inline-flex; align-items:center; gap:8px; background:#0da141; color:#fff; padding:10px 14px; border-radius:8px; font-weight:600; font-size:13px;">✓ Brand kit published</div></div>
+      <pre class="ba-code">background: <span class="r">#0da141</span>; color: <span class="r">#fff</span>;</pre>
+    </div>
+    <div class="ba-col ba-after">
+      <div class="ba-label"><span>After</span><span class="cpill cpill-pass">10.9:1 ✓</span></div>
+      <div class="ba-visual"><div style="display:inline-flex; align-items:center; gap:8px; background:var(--state-success-surface); border:1px solid var(--state-success-border); color:var(--state-success-text); padding:10px 14px; border-radius:8px; font-weight:500; font-size:13px;"><span style="color:var(--state-success-icon);">✓</span>Brand kit published</div></div>
+      <pre class="ba-code">background: <span class="k">var(--state-success-surface)</span>;
+color:      <span class="k">var(--state-success-text)</span>;
+border:1px solid <span class="k">var(--state-success-border)</span>;</pre>
+    </div>
+  </div>
+  <div class="fix-check"><strong>Check:</strong> <code>grep -i "0da141" skins/</code> → 0 · no white text on a success fill</div>
+</article>
+
+<!-- ============ PART 3 ============ -->
+<div class="part-head" id="dictionaries"><div class="k">Colour dictionaries · §2</div><h2>Do this before the skins</h2></div>
+<p class="lede">Three JavaScript colour maps run parallel to the token layer and fight it. Collapse them first — migrating skins while the dictionaries still hardcode the palette means doing the work more than once.</p>
+
+<article class="fix" id="b4">
+  <div class="fix-head"><span class="fix-id">B4</span><h3>Three parallel colour dictionaries</h3><span class="ph ph-ui">UI</span></div>
+  <p class="fix-what">Three JS files map colour names to values independently of the tokens: <code>colorable.js</code> (57 entries, maps into the <code>--cv-*</code> namespace, and lives in <code>sdcore</code> so every product inherits it — the worst offender), <code>previewer.ts</code> (~183 colour→rgb conversions), and <code>Configuration.ts</code> (70 chart-array and inline-style hits). Three sources of truth for one palette.</p>
+  <p class="fix-where"><strong>Where:</strong> <code>colorable.js</code> · <code>previewer.ts:5090+</code> · <code>Configuration.ts</code></p>
+  <div class="ba">
+    <div class="ba-col ba-before">
+      <div class="ba-label"><span>Before</span><span class="cpill cpill-fail">3 sources</span></div>
+      <pre class="ba-code" style="border-top:0;"><span class="c">// colorable.js — in sdcore</span>
+const colorable = {
+  teal:  <span class="r">'#0d9488'</span>,
+  amber: <span class="r">'#f59e0b'</span>,
+  … <span class="c">// 57 entries → --cv-*</span>
+};</pre>
+    </div>
+    <div class="ba-col ba-after">
+      <div class="ba-label"><span>After</span><span class="cpill cpill-pass">1 token layer</span></div>
+      <pre class="ba-code" style="border-top:0;"><span class="c">// read the tokens; delete the map</span>
+const v = getComputedStyle(el)
+  .<span class="k">getPropertyValue</span>(<span class="r">'--accent-9'</span>);
+<span class="c">// or import the exported token JSON</span></pre>
+    </div>
+  </div>
+  <p class="fix-note"><strong>Start with <code>colorable.js</code></strong> — it's in <code>sdcore</code>, so collapsing it corrects every product downstream at once.</p>
+  <div class="fix-check"><strong>Check:</strong> <code>grep -rn "colorable" src</code> → 0 · the three maps deleted, consumers read tokens</div>
+</article>
+
+<article class="fix" id="b8">
+  <div class="fix-head"><span class="fix-id">B8</span><h3>Two sites bypass the toast wrapper</h3><span class="ph ph-ui">UI</span></div>
+  <p class="fix-what">Two calls hit <code>Vue.toasted.show</code> directly instead of going through <code>Utils.successToast</code> / <code>errorToast</code>. Small in itself, but it means the wrapper isn't a real chokepoint — which the toast rebuild depends on.</p>
+  <p class="fix-where"><strong>Where:</strong> two call sites → <strong>Rulebook §1.2</strong> for why the wrapper must be the single entry point</p>
+  <div class="ba">
+    <div class="ba-col ba-before">
+      <div class="ba-label"><span>Before</span><span class="cpill cpill-fail">bypass</span></div>
+      <pre class="ba-code" style="border-top:0;"><span class="r">Vue.toasted.show</span>(<span class="r">'Saved'</span>, {
+  type: <span class="r">'success'</span>, …
+});</pre>
+    </div>
+    <div class="ba-col ba-after">
+      <div class="ba-label"><span>After</span><span class="cpill cpill-pass">through wrapper</span></div>
+      <pre class="ba-code" style="border-top:0;">Utils.<span class="k">successToast</span>(<span class="r">'Saved'</span>);</pre>
+    </div>
+  </div>
+  <p class="fix-note"><strong>Note:</strong> the colour fix (styling the three toast classes) is <span class="ph ph-ui">UI</span> and lands here; the toast's <em>behaviour</em> — regions, timing — is <span class="ph ph-react">React</span> and rides the rebuild. This correction just closes the bypass.</p>
+  <div class="fix-check"><strong>Check:</strong> <code>grep -rn "Vue.toasted.show" src</code> → 0</div>
+</article>
+
+<!-- ============ PART 4 ============ -->
+<div class="part-head" id="admin"><div class="k">Admin · §3</div><h2>Its own zone</h2></div>
+<p class="lede">Admin has a distinct lineage — the Stone ramp (C1, in fix-now) and a palette the export doesn't ship. Track it separately from the tenant work.</p>
+
+<article class="fix" id="c2">
+  <div class="fix-head"><span class="fix-id">C2</span><h3>Admin is coded against a palette the export doesn't ship</h3><span class="ph ph-ui">UI</span></div>
+  <p class="fix-what"><code>admin-core.css</code> references <strong>336 unresolved</strong> <code>--colors-*</code> variables — ruby, teal, orange, pink, lime, plum, in light, dark and <code>-contrast</code>. The token export ships accent and sand only, so all 336 resolve to nothing. Admin was built against a fuller palette than exists.</p>
+  <p class="fix-where"><strong>Where:</strong> <code>admin-core.css</code></p>
+  <div class="ba">
+    <div class="ba-col ba-before">
+      <div class="ba-label"><span>Before</span><span class="cpill cpill-fail">336 unresolved</span></div>
+      <pre class="ba-code" style="border-top:0;">color:      <span class="r">var(--colors-ruby-9)</span>;
+background:  <span class="r">var(--colors-lime-3)</span>;
+border:1px solid <span class="r">var(--colors-plum-7)</span>;
+<span class="c">/* none of these ship */</span></pre>
+    </div>
+    <div class="ba-col ba-after">
+      <div class="ba-label"><span>After</span><span class="cpill cpill-pass">shipped tokens</span></div>
+      <pre class="ba-code" style="border-top:0;">color:      <span class="k">var(--state-error-text)</span>;
+background:  <span class="k">var(--state-success-surface)</span>;
+border:1px solid <span class="k">var(--border-default)</span>;
+<span class="c">/* accent · sand · status */</span></pre>
+    </div>
+  </div>
+  <p class="fix-note"><strong>Decision, not a mechanical swap.</strong> Rewrite admin against accent / neutral / status (correct, more work) or widen the export to ship the extra families (faster, more surface to maintain). Which one depends on whether admin is in the React migration's first wave — if it is, rewrite; if not, widen to unblock now.</p>
+  <div class="fix-check"><strong>Check:</strong> <code>grep -oE "var\(--colors-[a-z]+-" admin-core.css | sort -u</code> → only accent, sand, status families</div>
+</article>
+
+<div class="chapter" id="oracle"><div class="cn">Part 2</div><div class="ct">Contrast — the token oracle</div><p>Every text and border token computed against every surface: the WCAG ratio and pass/fail for each pair. This proves which token pairings are safe in isolation, which to ban, and where the system has no compliant token at all.</p></div>
+<h3 id="read">How to read</h3>
+<p>Cells are the computed contrast ratio of that row's colour against that column's surface. Text is judged at <strong>4.5:1</strong> (WCAG AA, normal text); borders, icons, and focus rings at <strong>3.0:1</strong> (AA non-text, 1.4.11).</p>
+<div class="mx-legend">
+  <span><i style="background:var(--jade-3);"></i> passes with margin</span>
+  <span><i style="background:var(--amber-3);"></i> passes, thin margin</span>
+  <span><i style="background:var(--tomato-3);"></i> fails the threshold</span>
+</div>
+
+<div class="part-head"><div class="k">Matrix 1 · threshold 4.5</div><h2 id="text">Text on surfaces</h2></div>
+<p class="lede">The muted-text question, answered. This is where low contrast quietly accumulates — secondary text, helper text, placeholders — against the surface hierarchy and the tinted state surfaces.</p>
+<div class="mx-caption">// foreground text × surface — ratio, AA text 4.5:1</div>
+<div class="mx-wrap"><table class="mx"><thead><tr><th class="rowh"></th><th>white</th><th>surface-default</th><th>surface-subtle</th><th>surface-muted</th><th>neutral-4</th><th>neutral-5</th><th>error-3</th><th>warning-3</th><th>success-3</th><th>info-3</th><th>inverse</th></tr></thead><tbody><tr><th class="rowh">text-default</th><td class="mx-pass">16.3</td><td class="mx-pass">16.0</td><td class="mx-pass">15.5</td><td class="mx-pass">14.3</td><td class="mx-pass">13.4</td><td class="mx-pass">12.5</td><td class="mx-pass">14.2</td><td class="mx-pass">14.4</td><td class="mx-pass">14.6</td><td class="mx-pass">14.5</td><td class="mx-fail">1.0</td></tr><tr><th class="rowh">text-muted</th><td class="mx-pass">6.0</td><td class="mx-pass">5.9</td><td class="mx-pass">5.7</td><td class="mx-tight">5.3</td><td class="mx-tight">5.0</td><td class="mx-tight">4.6</td><td class="mx-tight">5.2</td><td class="mx-tight">5.3</td><td class="mx-tight">5.4</td><td class="mx-tight">5.4</td><td class="mx-fail">2.7</td></tr><tr><th class="rowh">primary-text</th><td class="mx-pass">6.1</td><td class="mx-pass">6.0</td><td class="mx-pass">5.8</td><td class="mx-tight">5.4</td><td class="mx-tight">5.1</td><td class="mx-tight">4.7</td><td class="mx-tight">5.3</td><td class="mx-tight">5.4</td><td class="mx-pass">5.5</td><td class="mx-tight">5.5</td><td class="mx-fail">2.7</td></tr><tr><th class="rowh">text-subtle</th><td class="mx-fail">3.9</td><td class="mx-fail">3.8</td><td class="mx-fail">3.7</td><td class="mx-fail">3.4</td><td class="mx-fail">3.2</td><td class="mx-fail">2.9</td><td class="mx-fail">3.3</td><td class="mx-fail">3.4</td><td class="mx-fail">3.5</td><td class="mx-fail">3.4</td><td class="mx-fail">4.2</td></tr><tr><th class="rowh">neutral-9</th><td class="mx-fail">3.3</td><td class="mx-fail">3.3</td><td class="mx-fail">3.2</td><td class="mx-fail">2.9</td><td class="mx-fail">2.7</td><td class="mx-fail">2.5</td><td class="mx-fail">2.9</td><td class="mx-fail">2.9</td><td class="mx-fail">3.0</td><td class="mx-fail">3.0</td><td class="mx-tight">4.9</td></tr><tr><th class="rowh">text-inverse</th><td class="mx-fail">1.0</td><td class="mx-fail">1.0</td><td class="mx-fail">1.0</td><td class="mx-fail">1.1</td><td class="mx-fail">1.2</td><td class="mx-fail">1.3</td><td class="mx-fail">1.1</td><td class="mx-fail">1.1</td><td class="mx-fail">1.1</td><td class="mx-fail">1.1</td><td class="mx-pass">16.0</td></tr></tbody></table>
+</div>
+
+<div class="finding">
+  <div class="fn">READS FROM MATRIX 1</div>
+  <h4>Two neutral text steps fail everywhere</h4>
+  <p><code>text-subtle</code> (neutral-10) never reaches 4.5 — 3.85 on white, 2.95 on a row fill. <code>neutral-9</code> is worse. And <code>text-muted</code> (neutral-11), which does pass, is down to <strong>4.62</strong> on neutral-5 — it has almost nothing left on a selected or hover row.</p>
+</div>
+
+<div class="part-head"><div class="k">Matrix 2 · text 4.5 / icon 3.0</div><h2 id="state">State text &amp; icon</h2></div>
+<p class="lede">The prescribed state pairs. Text is step 12, icon is step 11 — checked against white, the base surface, and the state's own tinted surface.</p>
+<div class="mx-caption">// state colour × surface — text at 4.5, icon at 3.0</div>
+<div class="mx-wrap"><table class="mx"><thead><tr><th class="rowh"></th><th>white</th><th>surface-default</th><th>own surface (step 3)</th><th>threshold</th></tr></thead><tbody><tr><th class="rowh">error-text (12)</th><td class="mx-pass">11.8</td><td class="mx-pass">11.6</td><td class="mx-pass">10.3</td><td class="mx-na">4.5 text</td></tr><tr><th class="rowh">error-icon (11)</th><td class="mx-pass">5.0</td><td class="mx-pass">4.9</td><td class="mx-pass">4.3</td><td class="mx-na">3.0 non-text</td></tr><tr><th class="rowh">warning-text (12)</th><td class="mx-pass">11.3</td><td class="mx-pass">11.1</td><td class="mx-pass">10.0</td><td class="mx-na">4.5 text</td></tr><tr><th class="rowh">warning-icon (11)</th><td class="mx-pass">4.6</td><td class="mx-pass">4.5</td><td class="mx-pass">4.0</td><td class="mx-na">3.0 non-text</td></tr><tr><th class="rowh">success-text (12)</th><td class="mx-pass">12.2</td><td class="mx-pass">12.0</td><td class="mx-pass">11.0</td><td class="mx-na">4.5 text</td></tr><tr><th class="rowh">success-icon (11)</th><td class="mx-pass">4.9</td><td class="mx-pass">4.8</td><td class="mx-pass">4.4</td><td class="mx-na">3.0 non-text</td></tr><tr><th class="rowh">info-text (12)</th><td class="mx-pass">12.6</td><td class="mx-pass">12.3</td><td class="mx-pass">11.2</td><td class="mx-na">4.5 text</td></tr><tr><th class="rowh">info-icon (11)</th><td class="mx-pass">4.7</td><td class="mx-pass">4.6</td><td class="mx-pass">4.2</td><td class="mx-na">3.0 non-text</td></tr></tbody></table>
+</div>
+
+<div class="finding">
+  <div class="fn">READS FROM MATRIX 2</div>
+  <h4>Step 11 is a non-text colour, even on white</h4>
+  <p>State step-12 text is 10–12:1 everywhere — solid. But step-11 (the icon colour) is 4.05–4.42 on its own surface and 4.58–4.99 on white: it clears the 3:1 icon threshold and <strong>fails, or barely scrapes, the 4.5 text threshold</strong>. It is an icon and border colour, not a text colour.</p>
+</div>
+
+<div class="part-head"><div class="k">Matrix 3 · threshold 3.0</div><h2 id="nontext">Borders &amp; focus</h2></div>
+<p class="lede">Non-text contrast — the 1.4.11 check nothing in the product currently gates. Neutral borders and the focus ring against the surface hierarchy.</p>
+<div class="mx-caption">// border / focus × surface — AA non-text 3.0:1</div>
+<div class="mx-wrap"><table class="mx"><thead><tr><th class="rowh"></th><th>white</th><th>surface-default</th><th>surface-subtle</th><th>surface-muted</th><th>neutral-4</th><th>neutral-5</th></tr></thead><tbody><tr><th class="rowh">border-subtle (n-3)</th><td class="mx-fail">1.1</td><td class="mx-fail">1.1</td><td class="mx-fail">1.1</td><td class="mx-fail">1.0</td><td class="mx-fail">1.1</td><td class="mx-fail">1.1</td></tr><tr><th class="rowh">border-default (n-6)</th><td class="mx-fail">1.4</td><td class="mx-fail">1.4</td><td class="mx-fail">1.3</td><td class="mx-fail">1.2</td><td class="mx-fail">1.2</td><td class="mx-fail">1.1</td></tr><tr><th class="rowh">neutral-7</th><td class="mx-fail">1.6</td><td class="mx-fail">1.5</td><td class="mx-fail">1.5</td><td class="mx-fail">1.4</td><td class="mx-fail">1.3</td><td class="mx-fail">1.2</td></tr><tr><th class="rowh">neutral-8</th><td class="mx-fail">1.9</td><td class="mx-fail">1.9</td><td class="mx-fail">1.8</td><td class="mx-fail">1.7</td><td class="mx-fail">1.6</td><td class="mx-fail">1.5</td></tr><tr><th class="rowh">neutral-9</th><td class="mx-tight">3.3</td><td class="mx-tight">3.3</td><td class="mx-tight">3.2</td><td class="mx-fail">2.9</td><td class="mx-fail">2.7</td><td class="mx-fail">2.5</td></tr><tr><th class="rowh">primary-border (a-7)</th><td class="mx-fail">1.8</td><td class="mx-fail">1.8</td><td class="mx-fail">1.7</td><td class="mx-fail">1.6</td><td class="mx-fail">1.5</td><td class="mx-fail">1.4</td></tr><tr><th class="rowh">focus ring (a-9)</th><td class="mx-pass">4.6</td><td class="mx-pass">4.5</td><td class="mx-pass">4.4</td><td class="mx-pass">4.0</td><td class="mx-pass">3.8</td><td class="mx-pass">3.5</td></tr></tbody></table></div>
+
+<div class="finding">
+  <div class="fn">READS FROM MATRIX 3</div>
+  <h4>No neutral border below neutral-9 meets 1.4.11</h4>
+  <p><code>border-default</code> (neutral-6) is <strong>1.41</strong> on white. border-subtle, neutral-7, neutral-8 all fail too. The first neutral that reaches 3:1 is neutral-9 (3.33). The border tokens are decorative-grade — fine for dividers, not for a control whose border is its affordance. The focus ring holds (4.61 on white) but thins to <strong>3.53</strong> on neutral-5.</p>
+</div>
+
+<!-- ===== VERDICT ===== -->
+<div class="part-head"><div class="k">Result</div><h2 id="verdict">Verdict — what the matrix bans and requires</h2></div>
+<p class="lede">Six rules fall straight out of the numbers. Three are bans on pairings that fail; three are gaps the token system has to fill.</p>
+
+<div class="finding">
+  <div class="fn">FINDING 01 · BAN</div>
+  <h4>Secondary text has a hard floor: neutral-11</h4>
+  <p><span class="verdict">Ban neutral-9 and neutral-10 as text of any size.</span> They fail AA on every surface (3.85 → 2.55). Captions, helper text, secondary labels, and <strong>placeholders</strong> — placeholder is text — must be <code>text-muted</code> (neutral-11) or darker.</p>
+</div>
+<div class="finding rule">
+  <div class="fn">FINDING 02 · RULE</div>
+  <h4>text-muted's margin runs out on row fills</h4>
+  <p><span class="verdict">Cap zebra, hover, and selected row fills at neutral-5.</span> Muted text is 6.04 on white but 4.62 on neutral-5. On any interactive fill darker than that, step the text up to <code>text-default</code>.</p>
+</div>
+<div class="finding">
+  <div class="fn">FINDING 03 · BAN</div>
+  <h4>State step-11 is a non-text colour</h4>
+  <p><span class="verdict">Never use a state step-11 for text.</span> On its own surface it is 4.05–4.42 — below 4.5. State emphasis text is step-12; step-11 is icons and borders only.</p>
+</div>
+<div class="finding rule">
+  <div class="fn">FINDING 04 · GAP</div>
+  <h4>There is no border token that meets 1.4.11</h4>
+  <p><span class="verdict">Add a <code>--border-strong</code> at neutral-9 or darker for perceivable control boundaries.</span> Every current border token is under 3:1 on white — decorative only. Inputs, checkboxes, radios, toggles, and segmented controls, whose border <em>is</em> the affordance, have no compliant token to use. This is a hole in the system, not a misuse of it.</p>
+</div>
+<div class="finding rule">
+  <div class="fn">FINDING 05 · RULE</div>
+  <h4>A state surface never carries state on its border alone</h4>
+  <p><span class="verdict">The border always pairs with the step-11 icon and step-12 text.</span> step-7 on step-3 is 1.58–1.63 — below 3:1 by design. Consistent with the rulebook; here it is a measured fact, not a preference.</p>
+</div>
+<div class="finding rule">
+  <div class="fn">FINDING 06 · VERIFY</div>
+  <h4>The focus ring thins on dark rows</h4>
+  <p><span class="verdict">Verify accent-9 against the darkest interactive fill in the product.</span> It is 4.61 on white but 3.53 on neutral-5. If any selected or active surface is darker than neutral-5, the ring needs a darker or doubled treatment there.</p>
+</div>
+
+<div class="callout">
+  <div class="callout-title">Discovery (Purple) follows the identical pattern</div>
+  <p>Discovery isn't in the rulebook's embedded token layer, so it's not plotted above — but it is a step-3/7/11/12 state family like the others, so its ratios mirror info and success: step-12 text ~10:1 (pass), step-11 icon ~4:1 (non-text only), step-7 border ~1.6 (fails 3:1, decorative). Findings 03 and 05 apply to it unchanged.</p>
+</div>
+
+<!-- ===== NEXT ===== -->
+
+
+<div class="chapter" id="recipes"><div class="cn">Part 3</div><div class="ct">Contrast — recipes in situ</div><p>The oracle taken out of the abstract: the recipes each surface prescribes, swept and rendered. Tables, badges, forms, navigation, charts, and the tenant colours — every finding shown as the actual element, with the fix beside each failure.</p></div>
+<div class="part-head"><div class="k">Surface 1</div><h2 id="tables">Data tables</h2></div>
+<p class="lede">The prescribed table recipe, swept across its row states. This is the most composed surface in the product — header, primary, secondary, zebra, selected, links, dividers — and the densest place for contrast to slip.</p>
+<table class="reg"><thead><tr><th>Pairing</th><th>Gate</th><th>Ratio</th><th></th></tr></thead><tbody><tr><td>Header text — <code>text-muted</code> on surface</td><td class="reg-g">4.5 text</td><td class="reg-r">5.93</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td>Primary cell — <code>text-default</code> on surface</td><td class="reg-g">4.5 text</td><td class="reg-r">16.02</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td>Secondary/meta — <code>text-muted</code> on surface</td><td class="reg-g">4.5 text</td><td class="reg-r">5.93</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td>Secondary/meta — <code>text-muted</code> on zebra (n-2)</td><td class="reg-g">4.5 text</td><td class="reg-r">5.73</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td>Secondary/meta — <code>text-muted</code> on selected (accent-3)</td><td class="reg-g">4.5 text</td><td class="reg-r">5.37</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td>Cell link — <code>primary-text</code> on surface</td><td class="reg-g">4.5 text</td><td class="reg-r">6.04</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td>Sort icon — <code>text-muted</code> on surface</td><td class="reg-g">3.0 non-text</td><td class="reg-r">5.93</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td>Row divider — <code>border-default</code> on surface</td><td class="reg-g">3.0 non-text</td><td class="reg-r">1.39</td><td><span class="cpill cpill-fail">FAIL</span></td></tr></tbody></table>
+<div class="mx-caption">// rendered — existing vs the fix</div>
+<div class="ba">
+  <div class="ba-col ba-before">
+    <div class="ba-label"><span>Existing — metadata in neutral-9/10</span><span class="cpill cpill-fail">3.3–3.9:1</span></div>
+    <div class="ba-visual" style="padding:0; display:block;">
+      <div style="background:#fff; font-size:12.5px;">
+        <div style="display:grid; grid-template-columns:1fr auto; padding:8px 14px; border-bottom:1px solid #dad9d6; font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:#83827c;"><span>Asset</span><span>Status</span></div>
+        <div style="display:grid; grid-template-columns:1fr auto; align-items:center; padding:9px 14px; border-bottom:1px solid #dad9d6;"><div><div style="color:#21201c; font-weight:600;">Nike_AW26_hero.psd</div><div style="color:#8e8d86; font-size:11px;">PSD · 4.2 MB · 2 days ago</div></div><span class="pill" style="background:#e4f7f0; color:#29a383; font-size:10px;">Approved</span></div>
+        <div style="display:grid; grid-template-columns:1fr auto; align-items:center; padding:9px 14px; background:#dad9d6;"><div><div style="color:#21201c; font-weight:600;">Puma_launch.ai</div><div style="color:#63635e; font-size:11px;">AI · 8.9 MB · selected</div></div><span class="pill" style="background:#fff0cb; color:#c9973a; font-size:10px;">In review</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="ba-col ba-after">
+    <div class="ba-label"><span>Fix — floor at neutral-11, capped fill</span><span class="cpill cpill-pass">6.0:1</span></div>
+    <div class="ba-visual" style="padding:0; display:block;">
+      <div style="background:#fff; font-size:12.5px;">
+        <div style="display:grid; grid-template-columns:1fr auto; padding:8px 14px; border-bottom:1px solid #dad9d6; font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:#63635e;"><span>Asset</span><span>Status</span></div>
+        <div style="display:grid; grid-template-columns:1fr auto; align-items:center; padding:9px 14px; border-bottom:1px solid #dad9d6;"><div><div style="color:#21201c; font-weight:600;">Nike_AW26_hero.psd</div><div style="color:#63635e; font-size:11px;">PSD · 4.2 MB · 2 days ago</div></div><span class="pill" style="background:#e4f7f0; color:#1d3b31; font-size:10px;">Approved</span></div>
+        <div style="display:grid; grid-template-columns:1fr auto; align-items:center; padding:9px 14px; background:var(--accent-3);"><div><div style="color:#21201c; font-weight:600;">Puma_launch.ai</div><div style="color:#63635e; font-size:11px;">AI · 8.9 MB · selected</div></div><span class="pill" style="background:#fff0cb; color:#4d3618; font-size:10px;">In review</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="finding rule">
+  <div class="fn">SURFACE 1</div>
+  <h4>The recipe passes; the failures are deviations from it</h4>
+  <p><span class="verdict">Every text role clears 4.5 when the prescribed token is used</span> — secondary text at <code>text-muted</code> holds 5.4–5.9 even on the selected row. The one weak spot is the row divider (<code>border-default</code>, 1.41) — decorative-grade, fine unless a divider is the only thing separating rows.</p>
+  <p>So a correctly-built table is compliant. The failures — metadata dropped to neutral-9/10, a selected fill past the neutral-5 cap — are <em>off-spec</em>, exactly the failing list rendered just above. Catching them in the product is a <span class="needlive">needs live input</span>: grep the compiled CSS for secondary text bound to neutral-9/10 and row fills darker than neutral-5.</p>
+</div>
+
+<!-- 2 -->
+<div class="part-head"><div class="k">Surface 2</div><h2 id="badges">Badges, pills &amp; tags</h2></div>
+<p class="lede">Status pills, count pills, filetype and category badges — small text on a tinted or solid fill, which is exactly where contrast is easiest to lose.</p>
+<table class="reg"><thead><tr><th>Pairing</th><th>Gate</th><th>Ratio</th><th></th></tr></thead><tbody><tr><td>Solid count pill — white on <code>accent-9</code></td><td class="reg-g">4.5 text</td><td class="reg-r">4.61</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td>Solid error pill — white on <code>error-9</code></td><td class="reg-g">4.5 text</td><td class="reg-r">3.87</td><td><span class="cpill cpill-fail">FAIL</span></td></tr><tr><td>Solid warning pill — white on <code>warning-9</code></td><td class="reg-g">4.5 text</td><td class="reg-r">2.04</td><td><span class="cpill cpill-fail">FAIL</span></td></tr><tr><td>Solid success pill — white on <code>success-9</code></td><td class="reg-g">4.5 text</td><td class="reg-r">3.15</td><td><span class="cpill cpill-fail">FAIL</span></td></tr><tr><td>Solid info pill — white on <code>info-9</code></td><td class="reg-g">4.5 text</td><td class="reg-r">3.26</td><td><span class="cpill cpill-fail">FAIL</span></td></tr><tr><td>Subtle count pill — <code>accent-11</code> on <code>accent-3</code></td><td class="reg-g">4.5 text</td><td class="reg-r">5.47</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td>Subtle status — <code>step-12</code> on <code>step-3</code></td><td class="reg-g">4.5 text</td><td class="reg-r">10.95</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td>Subtle status — <code>step-11</code> on <code>step-3</code> (as text)</td><td class="reg-g">4.5 text</td><td class="reg-r">4.42</td><td><span class="cpill cpill-fail">FAIL</span></td></tr></tbody></table>
+<div class="mx-caption">// rendered — existing vs the fix</div>
+<div class="ba">
+  <div class="ba-col ba-before">
+    <div class="ba-label"><span>Existing — solid, white text</span><span class="cpill cpill-fail">2.0–3.9:1</span></div>
+    <div class="ba-visual" style="flex-direction:column; gap:12px;">
+      <div class="exg">
+        <span class="pill" style="background:#0c818f; color:#fff;">12 open <small>4.6 ✓</small></span>
+        <span class="pill" style="background:#e54d2e; color:#fff;">3 failed <small>3.9 ✗</small></span>
+      </div>
+      <div class="exg">
+        <span class="pill" style="background:#f5a524; color:#fff;">In review <small>2.0 ✗</small></span>
+        <span class="pill" style="background:#29a383; color:#fff;">Approved <small>3.2 ✗</small></span>
+      </div>
+      <div class="exnote">Only the accent count pill clears white. Warning is near-invisible.</div>
+    </div>
+  </div>
+  <div class="ba-col ba-after">
+    <div class="ba-label"><span>Fix — subtle, step-12 text</span><span class="cpill cpill-pass">10:1</span></div>
+    <div class="ba-visual" style="flex-direction:column; gap:12px;">
+      <div class="exg">
+        <span class="pill" style="background:var(--accent-3); color:var(--primary-text);">12 open <small>5.5 ✓</small></span>
+        <span class="pill" style="background:#feebe7; color:#5c281c;">3 failed <small>10.3 ✓</small></span>
+      </div>
+      <div class="exg">
+        <span class="pill" style="background:#fff0cb; color:#4d3618;">In review <small>10.0 ✓</small></span>
+        <span class="pill" style="background:#e4f7f0; color:#1d3b31;">Approved <small>10.9 ✓</small></span>
+      </div>
+      <div class="exnote">Step-3 fill, step-12 text. Same hue, legible. This is the status pill.</div>
+    </div>
+  </div>
+</div>
+<div class="finding">
+  <div class="fn">SURFACE 2 · SPEC FAILURE</div>
+  <h4>Solid status pills fail — only the accent clears white</h4>
+  <p><span class="verdict">A solid status badge with white text fails AA on every state.</span> White on error-9 is 3.87, warning-9 <strong>2.04</strong>, success-9 3.15, info-9 3.26 — the same on-fill failure as the tenant skins' warning and success. Only <code>accent-9</code> carries white (4.61), because accent isn't a state colour.</p>
+  <p>The compliant status pill is the <strong>subtle</strong> one — step-3 fill, <strong>step-12</strong> text (10:1). Note step-11 as pill text fails (4.42), so the subtle pill's text is step-12, not the icon step. Count pills are fine both ways.</p>
+</div>
+
+<!-- 3 -->
+<div class="part-head"><div class="k">Surface 3</div><h2 id="forms">Form controls</h2></div>
+<p class="lede">Inputs, checkboxes, toggles, placeholders, helper and focus — where the 1.4.11 non-text rule bites hardest, because a control's border <em>is</em> its affordance.</p>
+<table class="reg"><thead><tr><th>Pairing</th><th>Gate</th><th>Ratio</th><th></th></tr></thead><tbody><tr><td>Input border — <code>border-default</code> on white</td><td class="reg-g">3.0 non-text</td><td class="reg-r">1.41</td><td><span class="cpill cpill-fail">FAIL</span></td></tr><tr><td>Input border — <code>neutral-8</code> on white</td><td class="reg-g">3.0 non-text</td><td class="reg-r">1.92</td><td><span class="cpill cpill-fail">FAIL</span></td></tr><tr><td>Checkbox border — <code>neutral-9</code> on white</td><td class="reg-g">3.0 non-text</td><td class="reg-r">3.33</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td>Placeholder — <code>neutral-9</code> on white</td><td class="reg-g">4.5 text</td><td class="reg-r">3.33</td><td><span class="cpill cpill-fail">FAIL</span></td></tr><tr><td>Helper text — <code>text-muted</code> on white</td><td class="reg-g">4.5 text</td><td class="reg-r">6.04</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td>Checked box — white on <code>accent-9</code></td><td class="reg-g">4.5 text</td><td class="reg-r">4.61</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td>Focus ring — <code>accent-9</code> on white</td><td class="reg-g">3.0 non-text</td><td class="reg-r">4.61</td><td><span class="cpill cpill-pass">pass</span></td></tr></tbody></table>
+<div class="mx-caption">// rendered — existing vs the fix</div>
+<div class="ba">
+  <div class="ba-col ba-before">
+    <div class="ba-label"><span>Existing</span><span class="cpill cpill-fail">border 1.4:1 · text 3.3:1</span></div>
+    <div class="ba-visual" style="flex-direction:column; gap:16px;">
+      <div class="field">
+        <div class="lab">Workspace name</div>
+        <div class="inp" style="border:1px solid #dad9d6;"><span style="color:#8e8d86;">e.g. Nike Global</span></div>
+      </div>
+      <div class="chk"><span class="box" style="border:1px solid #dad9d6;"></span> Notify collaborators</div>
+      <div class="exnote">The border is 1.41:1 — the field edge barely reads. Placeholder is 3.33:1.</div>
+    </div>
+  </div>
+  <div class="ba-col ba-after">
+    <div class="ba-label"><span>Fix — border-strong + muted text</span><span class="cpill cpill-pass">border 3.3:1 · text 6.0:1</span></div>
+    <div class="ba-visual" style="flex-direction:column; gap:16px;">
+      <div class="field">
+        <div class="lab">Workspace name</div>
+        <div class="inp" style="border:1px solid #8e8d86;"><span style="color:#63635e;">e.g. Nike Global</span></div>
+      </div>
+      <div class="chk"><span class="box" style="border:1.5px solid #8e8d86;"></span> Notify collaborators</div>
+      <div class="exnote">Border at neutral-9 (3.33:1) — the field is a field. Placeholder at text-muted (6.04:1).</div>
+    </div>
+  </div>
+</div>
+<div class="finding">
+  <div class="fn">SURFACE 3 · SPEC GAP</div>
+  <h4>No control border meets 1.4.11, and placeholders fail as text</h4>
+  <p><span class="verdict">An input or checkbox whose boundary relies on <code>border-default</code> is non-compliant.</span> border-default is 1.41 on white, neutral-8 is 1.92 — both under the 3:1 non-text floor. neutral-9 (3.33) is the first step that passes. Placeholder at neutral-9 fails as text (3.33).</p>
+  <p>Helper text, the checked box, and the focus ring all pass. The fix is the same <code>--border-strong</code> (neutral-9+) flagged in Part 2, applied to control boundaries, and placeholders moved to <code>text-muted</code>.</p>
+</div>
+
+<!-- 4 -->
+<div class="part-head"><div class="k">Surface 4</div><h2 id="nav">Navigation</h2></div>
+<p class="lede">The one real nav treatment in the design-system doc — a dark rail with white text.</p>
+<table class="reg"><thead><tr><th>Pairing</th><th>Gate</th><th>Ratio</th><th></th></tr></thead><tbody><tr><td>nav-fg white on nav-bg <code>#1a1a2e</code></td><td class="reg-g">4.5 text</td><td class="reg-r">17.06</td><td><span class="cpill cpill-pass">pass</span></td></tr></tbody></table>
+<div class="finding rule">
+  <div class="fn">SURFACE 4</div>
+  <h4>The default nav is safe; the risk is entirely the tenant override</h4>
+  <p><span class="verdict">White on the dark nav-bg is 17:1</span> — no concern in the default. But nav-bg and nav-fg are two of the four colours a client sets, so the nav's contrast is only as safe as the pair a tenant chooses. That's the harness, below.</p>
+</div>
+
+<!-- 5 -->
+<div class="part-head"><div class="k">Surface 5</div><h2 id="charts">Charts &amp; data-viz</h2></div>
+<p class="lede">On-fill data labels against the 34-colour series palette, and the neutral axis/legend text.</p>
+<table class="reg"><thead><tr><th>Pairing</th><th>Gate</th><th>Ratio</th><th></th></tr></thead><tbody><tr><td>Data label on series <code>#0c818f</code> — best is <b>white</b></td><td class="reg-g">4.5 text</td><td class="reg-r">4.61</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td>Data label on series <code>#0090ff</code> — best is <b>dark</b></td><td class="reg-g">4.5 text</td><td class="reg-r">4.99</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td>Data label on series <code>#29a383</code> — best is <b>dark</b></td><td class="reg-g">4.5 text</td><td class="reg-r">5.17</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td>Data label on series <code>#f5a524</code> — best is <b>dark</b></td><td class="reg-g">4.5 text</td><td class="reg-r">7.99</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td>Data label on series <code>#e54d2e</code> — best is <b>dark</b></td><td class="reg-g">4.5 text</td><td class="reg-r">4.22</td><td><span class="cpill cpill-fail">FAIL</span></td></tr></tbody></table>
+<div class="mx-caption">// rendered — existing vs the fix</div>
+<div class="ba">
+  <div class="ba-col ba-before">
+    <div class="ba-label"><span>Existing — white label on every bar</span><span class="cpill cpill-fail">fails on light series</span></div>
+    <div class="ba-visual" style="padding:16px;">
+      <div class="bar-wrap">
+        <div class="bar" style="background:#0c818f; color:#fff; width:88%; justify-content:flex-end;">1,240</div>
+        <div class="bar" style="background:#f5a524; color:#fff; width:64%; justify-content:flex-end;">820</div>
+        <div class="bar" style="background:#29a383; color:#fff; width:52%; justify-content:flex-end;">640</div>
+        <div class="bar" style="background:#e54d2e; color:#fff; width:40%; justify-content:flex-end;">410</div>
+      </div>
+      <div class="exnote" style="margin-top:8px;">White holds on teal; it fails on amber (2.0), green (3.2), and red (3.9).</div>
+    </div>
+  </div>
+  <div class="ba-col ba-after">
+    <div class="ba-label"><span>Fix — label colour per series</span><span class="cpill cpill-pass">per-series</span></div>
+    <div class="ba-visual" style="padding:16px;">
+      <div class="bar-wrap">
+        <div class="bar" style="background:#0c818f; color:#fff; width:88%; justify-content:flex-end;">1,240</div>
+        <div class="bar" style="background:#f5a524; color:#21201c; width:64%; justify-content:flex-end;">820</div>
+        <div class="bar" style="background:#29a383; color:#21201c; width:52%; justify-content:flex-end;">640</div>
+        <div class="bar" style="background:#e54d2e; color:#21201c; width:40%; justify-content:flex-start; position:relative;"><span style="position:absolute; left:calc(40% + 8px); color:#21201c;">410</span></div>
+      </div>
+      <div class="exnote" style="margin-top:8px;">Dark on light series. <code>#e54d2e</code> clears neither on-bar — its label moves outside.</div>
+    </div>
+  </div>
+</div>
+<div class="finding">
+  <div class="fn">SURFACE 5</div>
+  <h4>A data label cannot be one colour, and one series takes no label at all</h4>
+  <p><span class="verdict">Of 34 series colours, 23 need a dark label and 11 need white</span> — a fixed on-fill label colour fails on roughly half the palette, so the label colour must be chosen per series from its own contrast. One colour, <code>#e54d2e</code>, clears neither white (3.9) nor dark (4.2) at 4.5 — there is <strong>no compliant on-fill label</strong> for it; move the value off the bar or give the label its own background.</p>
+  <p>Axis, legend, and gridline text is neutral-on-white, so the neutral text floors from the matrix apply directly — <code>text-muted</code> minimum, never <code>text-subtle</code>.</p>
+</div>
+
+<!-- 6 -->
+<div class="part-head"><div class="k">Surface 6 · resolved by design</div><h2 id="harness">Tenant pair harness</h2></div>
+<p class="lede">Under the old model a client set four colours — accent, nav-bg, nav-fg, primary button — with nothing gating them for contrast except the login form. That model is being withdrawn: client branding is being stripped back out of the product, so clients no longer set the button or accent. The harness below is kept as the <strong>record of what that model could break</strong> — the nav pair, the button's on-fill text, the accent as a link and as a focus ring — computed on the default and three representative clients. It is the evidence for removing the surface, not a sweep to run: with the client colours gone, there is nothing left to export.</p>
+<table class="reg"><thead><tr><th>Pairing</th><th>Gate</th><th>Ratio</th><th></th></tr></thead><tbody><tr><td><b>Default</b> · nav-fg / nav-bg</td><td class="reg-g">4.5 text</td><td class="reg-r">17.06</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td><b>Default</b> · button text / fill</td><td class="reg-g">4.5 text</td><td class="reg-r">4.61</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td><b>Default</b> · accent as link</td><td class="reg-g">4.5 text</td><td class="reg-r">4.61</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td><b>Default</b> · accent as focus ring</td><td class="reg-g">3.0 non-text</td><td class="reg-r">4.61</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td><b>Rep A · light nav</b> · nav-fg / nav-bg</td><td class="reg-g">4.5 text</td><td class="reg-r">3.03</td><td><span class="cpill cpill-fail">FAIL</span></td></tr><tr><td><b>Rep A · light nav</b> · button text / fill</td><td class="reg-g">4.5 text</td><td class="reg-r">4.61</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td><b>Rep A · light nav</b> · accent as link</td><td class="reg-g">4.5 text</td><td class="reg-r">4.61</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td><b>Rep A · light nav</b> · accent as focus ring</td><td class="reg-g">3.0 non-text</td><td class="reg-r">4.61</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td><b>Rep B · bright brand</b> · nav-fg / nav-bg</td><td class="reg-g">4.5 text</td><td class="reg-r">17.06</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td><b>Rep B · bright brand</b> · button text / fill</td><td class="reg-g">4.5 text</td><td class="reg-r">2.04</td><td><span class="cpill cpill-fail">FAIL</span></td></tr><tr><td><b>Rep B · bright brand</b> · accent as link</td><td class="reg-g">4.5 text</td><td class="reg-r">2.04</td><td><span class="cpill cpill-fail">FAIL</span></td></tr><tr><td><b>Rep B · bright brand</b> · accent as focus ring</td><td class="reg-g">3.0 non-text</td><td class="reg-r">2.04</td><td><span class="cpill cpill-fail">FAIL</span></td></tr><tr><td><b>Rep C · mid brand</b> · nav-fg / nav-bg</td><td class="reg-g">4.5 text</td><td class="reg-r">16.35</td><td><span class="cpill cpill-pass">pass</span></td></tr><tr><td><b>Rep C · mid brand</b> · button text / fill</td><td class="reg-g">4.5 text</td><td class="reg-r">4.22</td><td><span class="cpill cpill-fail">FAIL</span></td></tr><tr><td><b>Rep C · mid brand</b> · accent as link</td><td class="reg-g">4.5 text</td><td class="reg-r">4.22</td><td><span class="cpill cpill-fail">FAIL</span></td></tr><tr><td><b>Rep C · mid brand</b> · accent as focus ring</td><td class="reg-g">3.0 non-text</td><td class="reg-r">4.22</td><td><span class="cpill cpill-pass">pass</span></td></tr></tbody></table>
+<div class="mx-caption">// rendered — existing vs the fix</div>
+<div class="ba">
+  <div class="ba-col ba-before">
+    <div class="ba-label"><span>Old model — client sets the button</span><span class="cpill cpill-fail">2.0:1</span></div>
+    <div class="ba-visual" style="flex-direction:column; gap:10px;">
+      <button style="background:#f5a524; color:#fff; border:0; border-radius:8px; padding:10px 22px; font:inherit; font-weight:600; font-size:14px;">Save changes</button>
+      <div class="exnote">A client's bright brand as the primary — white text at 2.04:1. This shipped (HH Global).</div>
+    </div>
+  </div>
+  <div class="ba-col ba-after">
+    <div class="ba-label"><span>New model — system accent, always</span><span class="cpill cpill-pass">4.6:1</span></div>
+    <div class="ba-visual" style="flex-direction:column; gap:10px;">
+      <button style="background:#0c818f; color:#fff; border:0; border-radius:8px; padding:10px 22px; font:inherit; font-weight:600; font-size:14px;">Save changes</button>
+      <div class="exnote">The primary is the system accent, verified once. The client can't break it because they don't set it.</div>
+    </div>
+  </div>
+</div>
+<div class="finding">
+  <div class="fn">SURFACE 6 · SYSTEMIC</div>
+  <h4>The client colours broke in every realistic case — so they're being removed, not gated</h4>
+  <p><span class="verdict">Three of four scenarios failed, each differently — and HH Global's live CTA failure is this, already shipped.</span> A grey-on-grey nav failed the nav pair at 3.03. A bright brand accent broke the button, links, and focus ring at once (2.04) — the warning-amber pattern, client-chosen. A mid-tone accent failed white-text and links (4.22) while passing as a ring, so a colour a client thought was fine because the focus state worked still failed its button. The table above is that record.</p>
+  <p>The fix chosen is <strong>removal, not a gate</strong>. Client branding is being stripped back out of the product, so the primary button and accent are always the system's — which pass — and a client colour can no longer land on a control. That deletes the failure mode instead of catching it on every entry, and needs no skin export. Brand expression moves to the logo, the login moment, and generated output, where a client colour can't take a control below AA. The one residual: if <strong>nav-fg / nav-bg</strong> stay client-set, the nav pair is the last place a client colour can still drop below AA — the one pair worth keeping a check on.</p>
+</div>
+
+<!-- summary -->
+<div class="part-head"><div class="k">Result</div><h2 id="summary">Register summary</h2></div>
+<p class="lede">What the sweep found, sorted by whether it's a failure in the system itself or a deviation only the live product can confirm.</p>
+
+<div class="finding">
+  <div class="fn">SPEC-LEVEL FAILURES · fix in the system</div>
+  <h4>Three recipes fail as specified</h4>
+  <p><strong>Solid status pills</strong> (white on state-9, 2.04–3.87) · <strong>control borders</strong> (no token meets 1.4.11) · <strong>chart labels</strong> (need per-series colour; one impossible). These are wrong wherever they appear — fixing them is a token and rule change, not a hunt through code. The fourth systemic risk the sweep found — the client-set tenant colours — is resolved not by a token change but by the branding strip-back in §6: removing the client's control of the button and accent deletes the failure mode.</p>
+</div>
+<div class="finding rule">
+  <div class="fn">SAFE WHEN FOLLOWED · confirm off-spec use live</div>
+  <h4>Tables, nav, count pills, helper &amp; focus pass the recipe</h4>
+  <p>These are compliant when built to spec. Their risk is <em>deviation</em> — secondary text in the wrong grey, a fill past the cap, a placeholder at neutral-9. That's the <span class="needlive">needs live input</span> half: grep the compiled Unity CSS for the off-spec pairs. The tenant half that once needed skin exports is gone — the client colour surface is being removed, not swept (§6).</p>
+</div>
+
+
+
+<p style="margin-top:var(--spacing-9); padding-top:var(--spacing-5); border-top:1px solid var(--border-default); font-size:var(--font-size-1); color:var(--text-muted);">The two artefacts: <strong>Scale in Unity</strong> (this) applies Scale to the product that exists; the <strong>Component Rulebook</strong> is the normative standard for the React rebuild. Findings and counts trace to the Unity conformance audit; ratios are computed per WCAG 2.1 from the live token values and the AI Data Palette. The one input still open is the compiled Unity CSS, for confirming off-spec deviations. Re-grep current <code>main</code> for the ⚠ verify items before committing effort.</p>
+
+</main>
+</div>
+</body>
+</html>

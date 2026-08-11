@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scale Component Rulebook v0.1 — Screendragon</title>
+<title>Scale Component Rulebook v0.3 — Screendragon</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -13,34 +13,34 @@
 :root {
   --neutral-1: #fdfdfc;
   --neutral-2: #f9f9f8;
-  --neutral-3: #f1f0ef;
-  --neutral-4: #e9e8e6;
+  --neutral-3: #f0f0ef;
+  --neutral-4: #e9e9e6;
   --neutral-5: #e2e1de;
   --neutral-6: #dad9d6;
-  --neutral-7: #d0ceca;
-  --neutral-8: #bcbbb6;
+  --neutral-7: #cfcfca;
+  --neutral-8: #bcbbb5;
   --neutral-9: #8e8d86;
   --neutral-10: #83827c;
-  --neutral-11: #64635e;
+  --neutral-11: #63635e;
   --neutral-12: #21201c;
 
-  --neutral-alpha-3: rgba(32, 16, 0, 0.06);
-  --neutral-alpha-5: rgba(31, 24, 0, 0.13);
-  --neutral-alpha-7: rgba(29, 20, 0, 0.21);
+  --neutral-alpha-3: rgba(16, 16, 0, 0.063);
+  --neutral-alpha-5: rgba(31, 24, 0, 0.129);
+  --neutral-alpha-7: rgba(25, 25, 0, 0.208);
 
   /* Cerulean — accent. Step 11 is HAND-CORRECTED. See Law 1. */
-  --accent-1:  #FAFEFF;
-  --accent-2:  #F3FAFD;
-  --accent-3:  #E4F5FC;
-  --accent-4:  #D5EFF9;
-  --accent-5:  #C4E5F3;
-  --accent-6:  #B0D9E9;
-  --accent-7:  #95C9DD;
-  --accent-8:  #6CB3CE;
-  --accent-9:  #0B6E8A;
-  --accent-10: #005F7B;
-  --accent-11: #0d5266;   /* was #197592 — corrected, non-monotonic */
-  --accent-12: #1B404E;
+  --accent-1:  #fafdfd;
+  --accent-2:  #f4fafb;
+  --accent-3:  #e3f5f8;
+  --accent-4:  #d3eff3;
+  --accent-5:  #c1e6ec;
+  --accent-6:  #addae2;
+  --accent-7:  #92cbd4;
+  --accent-8:  #65b5c2;
+  --accent-9:  #0c818f;
+  --accent-10: #007381;
+  --accent-11: #006c78;   /* hand-corrected from generator #007d8b — non-monotonic. See Law 1. */
+  --accent-12: #1b3c41;
 
   /* State hues — tomato / amber / jade. Steps 3, 7, 11, 12.
      Step 7 is NEW (border role). Warning step 7 is hand-tuned. */
@@ -58,6 +58,12 @@
   --jade-7:  #8bceb6;     /* new */
   --jade-11: #008062;
   --jade-12: #1d3b31;
+
+  /* Blue — info. Distinct from the teal accent (info is not the brand colour). Role steps. */
+  --blue-3:  #e9f3ff;
+  --blue-7:  #97c5f9;
+  --blue-11: #0073dd;
+  --blue-12: #003463;
 }
 
 /* ============================================================
@@ -81,6 +87,22 @@
   --primary-text:    var(--accent-11);
   --primary-border:  var(--accent-7);
 
+  /* Solid action fills — the modal primary (the one filled button in the book). */
+  --action-primary:       var(--primary-default);   /* accent-9 · white 4.61:1 */
+  --action-primary-hover: var(--primary-hover);      /* accent-10 · white 5.57:1 */
+  --action-danger:        var(--tomato-11);          /* white 4.99:1 — NOT tomato-9 (3.87, fails). Law 3. */
+  --action-danger-hover:  var(--tomato-12);
+  --action-on-solid:      #ffffff;
+
+  /* Overlay chrome — scrim + elevation, for modal and drawer. */
+  --scrim: rgba(20, 20, 17, 0.58);
+  --shadow-overlay: 0 16px 48px rgba(20,20,17,0.24), 0 4px 12px rgba(20,20,17,0.14);
+
+  /* Inverted surface — the tooltip chip. Dark on purpose; distinct from the light popover. */
+  --surface-inverse: var(--neutral-12);
+  --text-inverse:    var(--neutral-1);
+  --shadow-popover:  0 4px 12px rgba(20,20,17,0.16), 0 1px 3px rgba(20,20,17,0.10);
+
   /* --- STATE ROLE TOKENS — the four-role model. Law 2. ---
      Note the role names. There is no -bg and no -fg, because those
      names are what let one value do three jobs. */
@@ -99,10 +121,10 @@
   --state-success-icon:    var(--jade-11);
   --state-success-text:    var(--jade-12);
 
-  --state-info-surface: var(--accent-3);
-  --state-info-border:  var(--accent-7);
-  --state-info-icon:    var(--accent-11);
-  --state-info-text:    var(--accent-12);
+  --state-info-surface: var(--blue-3);
+  --state-info-border:  var(--blue-7);
+  --state-info-icon:    var(--blue-11);
+  --state-info-text:    var(--blue-12);
 
   --focus-ring-color: var(--accent-9);
 
@@ -203,7 +225,7 @@ td.mono, th.mono { font-family: var(--font-family-mono); font-size: 12px; }
   border-top: 1px solid var(--border-subtle);
 }
 .example-code .c { color: #8e8d86; }
-.example-code .k { color: #6CB3CE; }
+.example-code .k { color: #65b5c2; }
 
 .callout { border: 1px solid var(--border-default); border-left: 3px solid var(--primary-default); border-radius: var(--radius-2); padding: var(--spacing-4) var(--spacing-5); margin: var(--spacing-5) 0; background: var(--surface-subtle); }
 .callout-title { font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-1); font-size: var(--font-size-2); }
@@ -291,8 +313,183 @@ td.mono, th.mono { font-family: var(--font-family-mono); font-size: 12px; }
   outline-offset: 2px;
 }
 .sd-alert--quiet { border-color: transparent; }
+/* ---- 1.2 Toast — inline alert + ephemerality + elevation, portalled out of flow. Same four tokens. ---- */
+.sd-toast-region {
+  position: fixed; z-index: 900; bottom: var(--spacing-5); right: var(--spacing-5);
+  display: flex; flex-direction: column; gap: var(--spacing-3);
+  width: min(400px, calc(100vw - var(--spacing-6))); pointer-events: none;
+}
+.sd-toast {
+  --toast-surface: var(--state-info-surface);
+  --toast-border:  var(--state-info-border);
+  --toast-icon:    var(--state-info-icon);
+  --toast-text:    var(--state-info-text);
+  pointer-events: auto;
+  display: grid; grid-template-columns: auto 1fr auto; gap: var(--spacing-3);
+  align-items: start; padding: var(--spacing-3) var(--spacing-4);
+  background: var(--toast-surface); border: 1px solid var(--toast-border);
+  border-radius: var(--radius-2); color: var(--toast-text);
+  font-size: var(--font-size-2); line-height: 1.5;
+  box-shadow: var(--shadow-3, 0 8px 24px rgba(20,20,20,.14), 0 2px 6px rgba(20,20,20,.10));
+}
+.sd-toast[data-state="error"]   { --toast-surface: var(--state-error-surface);   --toast-border: var(--state-error-border);   --toast-icon: var(--state-error-icon);   --toast-text: var(--state-error-text); }
+.sd-toast[data-state="warning"] { --toast-surface: var(--state-warning-surface); --toast-border: var(--state-warning-border); --toast-icon: var(--state-warning-icon); --toast-text: var(--state-warning-text); }
+.sd-toast[data-state="success"] { --toast-surface: var(--state-success-surface); --toast-border: var(--state-success-border); --toast-icon: var(--state-success-icon); --toast-text: var(--state-success-text); }
+.sd-toast[data-state="info"]    { --toast-surface: var(--state-info-surface);    --toast-border: var(--state-info-border);    --toast-icon: var(--state-info-icon);    --toast-text: var(--state-info-text); }
+.sd-toast__icon { width: 18px; height: 18px; flex-shrink: 0; color: var(--toast-icon); margin-top: 1px; }
+.sd-toast__body { min-width: 0; display: flex; align-items: baseline; flex-wrap: wrap; }
+.sd-toast__message { margin: 0; }
+.sd-toast__message a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.sd-toast__action {
+  background: none; border: 0; padding: 0; margin-left: var(--spacing-3); font: inherit; color: inherit;
+  font-weight: var(--font-weight-semibold); text-decoration: underline; text-underline-offset: 3px;
+  cursor: pointer; border-radius: var(--radius-1); white-space: nowrap;
+}
+.sd-toast__dismiss {
+  width: 24px; height: 24px; display: grid; place-items: center; flex-shrink: 0;
+  background: none; border: 0; padding: 0; cursor: pointer; color: var(--toast-icon);
+  border-radius: var(--radius-1); position: relative;
+}
+.sd-toast__dismiss::after { content: ''; position: absolute; inset: -10px; }
+.sd-toast__dismiss:hover { background: var(--overlay-hover); }
+.sd-toast__dismiss:active { background: var(--overlay-active); }
+.sd-toast :is(.sd-toast__dismiss, .sd-toast__action):focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; }
+/* ---- 1.3 Banner — state model + persistence + full-bleed. Tinted, never solid (Law 4). ---- */
+.sd-banner {
+  --banner-surface: var(--state-info-surface);
+  --banner-border:  var(--state-info-border);
+  --banner-icon:    var(--state-info-icon);
+  --banner-text:    var(--state-info-text);
+  display: grid; grid-template-columns: auto 1fr auto; gap: var(--spacing-3);
+  align-items: center; padding: var(--spacing-3) var(--spacing-5);
+  background: var(--banner-surface); color: var(--banner-text);
+  border: 0; border-bottom: 1px solid var(--banner-border); border-radius: 0;
+  font-size: var(--font-size-2); line-height: 1.5;
+}
+.sd-banner[data-state="error"]   { --banner-surface: var(--state-error-surface);   --banner-border: var(--state-error-border);   --banner-icon: var(--state-error-icon);   --banner-text: var(--state-error-text); }
+.sd-banner[data-state="warning"] { --banner-surface: var(--state-warning-surface); --banner-border: var(--state-warning-border); --banner-icon: var(--state-warning-icon); --banner-text: var(--state-warning-text); }
+.sd-banner[data-state="success"] { --banner-surface: var(--state-success-surface); --banner-border: var(--state-success-border); --banner-icon: var(--state-success-icon); --banner-text: var(--state-success-text); }
+.sd-banner[data-state="info"]    { --banner-surface: var(--state-info-surface);    --banner-border: var(--state-info-border);    --banner-icon: var(--state-info-icon);    --banner-text: var(--state-info-text); }
+.sd-banner__icon { width: 18px; height: 18px; flex-shrink: 0; color: var(--banner-icon); }
+.sd-banner__body { min-width: 0; }
+.sd-banner__message { margin: 0; }
+.sd-banner__message a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.sd-banner__action {
+  background: none; border: 0; padding: 0; margin-left: var(--spacing-3); font: inherit; color: inherit;
+  font-weight: var(--font-weight-semibold); text-decoration: underline; text-underline-offset: 3px;
+  cursor: pointer; border-radius: var(--radius-1); white-space: nowrap;
+}
+.sd-banner__dismiss {
+  width: 24px; height: 24px; display: grid; place-items: center; flex-shrink: 0;
+  background: none; border: 0; padding: 0; cursor: pointer; color: var(--banner-icon);
+  border-radius: var(--radius-1); position: relative;
+}
+.sd-banner__dismiss::after { content: ''; position: absolute; inset: -10px; }
+.sd-banner__dismiss:hover { background: var(--overlay-hover); }
+.sd-banner__dismiss:active { background: var(--overlay-active); }
+.sd-banner :is(.sd-banner__dismiss, .sd-banner__action):focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; }
+/* ---- 2.1 Modal — the one place a filled primary lives. Neutral chrome; state goes inside, never on the frame. ---- */
+.sd-modal-scrim {
+  position: fixed; inset: 0; z-index: 1000; background: var(--scrim);
+  display: grid; place-items: center; padding: var(--spacing-6);
+}
+.sd-modal {
+  --overlay-primary:       var(--action-primary);
+  --overlay-primary-hover: var(--action-primary-hover);
+  width: min(520px, 100%); max-height: min(80vh, 720px);
+  display: flex; flex-direction: column; overflow: hidden;
+  background: var(--surface-default); color: var(--text-default);
+  border-radius: var(--radius-4); box-shadow: var(--shadow-overlay);
+}
+.sd-modal[data-intent="destructive"] {
+  --overlay-primary:       var(--action-danger);
+  --overlay-primary-hover: var(--action-danger-hover);
+}
+.sd-modal__header {
+  display: grid; grid-template-columns: 1fr auto; align-items: start; gap: var(--spacing-4);
+  padding: var(--spacing-5) var(--spacing-5) var(--spacing-3);
+}
+.sd-modal__title { margin: 0; font-size: var(--font-size-4); font-weight: var(--font-weight-semibold); color: var(--text-default); line-height: 1.3; }
+.sd-modal__close {
+  width: 32px; height: 32px; display: grid; place-items: center; flex-shrink: 0;
+  background: none; border: 0; padding: 0; cursor: pointer; color: var(--text-muted);
+  border-radius: var(--radius-1); margin: -6px -6px 0 0;
+}
+.sd-modal__close:hover { background: var(--overlay-hover); color: var(--text-default); }
+.sd-modal__body { padding: 0 var(--spacing-5) var(--spacing-4); overflow-y: auto; color: var(--text-muted); font-size: var(--font-size-2); line-height: 1.55; }
+.sd-modal__footer {
+  display: flex; justify-content: flex-end; align-items: center; gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-5); border-top: 1px solid var(--border-subtle); margin-top: auto;
+}
+.sd-btn {
+  font: inherit; font-size: var(--font-size-2); font-weight: var(--font-weight-semibold); line-height: 1;
+  padding: 9px 15px; border-radius: var(--radius-2); border: 1px solid transparent; cursor: pointer; white-space: nowrap;
+}
+.sd-btn--primary   { background: var(--overlay-primary); color: var(--action-on-solid); }
+.sd-btn--primary:hover   { background: var(--overlay-primary-hover); }
+.sd-btn--secondary { background: transparent; color: var(--text-default); border-color: var(--border-default); }
+.sd-btn--secondary:hover { background: var(--overlay-hover); }
+.sd-modal :is(.sd-btn, .sd-modal__close):focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; }
+/* ---- 2.2 Drawer — the modal, re-anchored to an edge at full height. Same contract, same tokens. ---- */
+.sd-drawer-scrim { position: fixed; inset: 0; z-index: 1000; background: var(--scrim); display: flex; }
+.sd-drawer {
+  --overlay-primary:       var(--action-primary);
+  --overlay-primary-hover: var(--action-primary-hover);
+  display: flex; flex-direction: column; overflow: hidden;
+  background: var(--surface-default); color: var(--text-default);
+  box-shadow: var(--shadow-overlay);
+  width: min(480px, 100%); height: 100%; margin-left: auto;   /* default anchor: right edge */
+}
+.sd-drawer[data-intent="destructive"] { --overlay-primary: var(--action-danger); --overlay-primary-hover: var(--action-danger-hover); }
+.sd-drawer[data-side="left"]   { margin-left: 0; margin-right: auto; }
+.sd-drawer[data-side="bottom"] { width: 100%; height: auto; max-height: 80vh; margin: auto 0 0 0; }
+.sd-drawer[data-size="sm"] { width: min(360px, 100%); }
+.sd-drawer[data-size="lg"] { width: min(640px, 100%); }
+.sd-drawer__header { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: var(--spacing-4); padding: var(--spacing-5) var(--spacing-5) var(--spacing-3); }
+.sd-drawer__title { margin: 0; font-size: var(--font-size-4); font-weight: var(--font-weight-semibold); color: var(--text-default); line-height: 1.3; }
+.sd-drawer__close { width: 32px; height: 32px; display: grid; place-items: center; flex-shrink: 0; background: none; border: 0; padding: 0; cursor: pointer; color: var(--text-muted); border-radius: var(--radius-1); margin: -6px -6px 0 0; }
+.sd-drawer__close:hover { background: var(--overlay-hover); color: var(--text-default); }
+.sd-drawer__body { padding: 0 var(--spacing-5) var(--spacing-4); overflow-y: auto; color: var(--text-muted); font-size: var(--font-size-2); line-height: 1.55; flex: 1; }
+.sd-drawer__footer { display: flex; justify-content: flex-end; align-items: center; gap: var(--spacing-3); padding: var(--spacing-4) var(--spacing-5); border-top: 1px solid var(--border-subtle); }
+.sd-drawer :is(.sd-btn, .sd-drawer__close):focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; }
+/* ---- 3.1 Tooltip — a supplementary label, anchored and inverted. Never load-bearing. ---- */
+.sd-tooltip {
+  position: absolute; z-index: 1100; max-width: 240px;
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--surface-inverse); color: var(--text-inverse);
+  border-radius: var(--radius-2); font-size: var(--font-size-1); line-height: 1.4;
+  font-weight: var(--font-weight-medium); box-shadow: var(--shadow-popover);
+}
+.sd-tooltip__arrow { position: absolute; width: 8px; height: 8px; background: var(--surface-inverse); transform: rotate(45deg); }
+/* ---- 3.2 Popover — the tooltip's interactive inverse: a light, anchored, non-blocking surface. ---- */
+.sd-popover {
+  position: absolute; z-index: 1050; min-width: 200px; max-width: 320px;
+  background: var(--surface-default); color: var(--text-default);
+  border: 1px solid var(--border-default); border-radius: var(--radius-3);
+  box-shadow: var(--shadow-popover);
+}
+.sd-popover__arrow { position: absolute; width: 10px; height: 10px; background: var(--surface-default); border-left: 1px solid var(--border-default); border-top: 1px solid var(--border-default); transform: rotate(45deg); }
+.sd-popover__body { padding: var(--spacing-4); font-size: var(--font-size-2); color: var(--text-muted); line-height: 1.55; }
+.sd-popover__menu { padding: var(--spacing-2); display: flex; flex-direction: column; }
+.sd-popover__item {
+  display: flex; align-items: center; gap: var(--spacing-3); width: 100%;
+  padding: 7px 10px; border: 0; background: none; border-radius: var(--radius-2);
+  font: inherit; font-size: var(--font-size-2); color: var(--text-default); text-align: left; cursor: pointer;
+}
+.sd-popover__item:hover { background: var(--overlay-hover); }
+.sd-popover__item[data-intent="destructive"] { color: var(--action-danger); }
+.sd-popover :is(.sd-popover__item, button, a):focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; }
+
+
+
+
+
+
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.ph { display:inline-block; font-size:11px; font-weight:var(--font-weight-semibold); line-height:1.5; padding:0 7px; border-radius:999px; letter-spacing:.02em; white-space:nowrap; }
+.ph-ui    { background:var(--accent-3);  color:var(--accent-11);  border:1px solid var(--accent-7); }
+.ph-react { background:var(--neutral-3); color:var(--neutral-11); border:1px solid var(--neutral-7); }
 
 @media (prefers-reduced-motion: reduce) { * { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 @media (max-width: 900px) { .doc-nav { display: none; } .doc-main { padding: var(--spacing-6) var(--spacing-5) 80px; } }
@@ -303,7 +500,7 @@ td.mono, th.mono { font-family: var(--font-family-mono); font-size: 12px; }
 
 <nav class="doc-nav">
   <div class="doc-nav-title">Scale Component Rulebook</div>
-  <div class="doc-nav-version">v0.1 · draft · unreleased</div>
+  <div class="doc-nav-version">v0.3 · Parts 1–3 complete · 2026-08-07</div>
 
   <div class="doc-nav-section">Part 0 — Front matter</div>
   <a href="#how-to-read">0.1 How to read this book</a>
@@ -380,7 +577,7 @@ td.mono, th.mono { font-family: var(--font-family-mono); font-size: 12px; }
   <div class="law-no">Law 1</div>
   <div class="law-statement">Fill, text and border are different steps of one colour. A hex is never reused across roles.</div>
   <p>One value cannot satisfy three contrast obligations at once. The audit found the current skins using the same state hex as background 1,289 times, as text 1,193 times and as border 593 times — which is why warning sits at 1.81:1 and success at 3.39:1.</p>
-  <p><strong>Accent step 11 is hand-corrected to <code>#0d5266</code>.</strong> Verified in OKLCH: L 0.409, C 0.071, H 223.1° — between step 10 (L 0.453) and step 12 (L 0.351), hue drift under 1°, chroma tapering correctly toward 12. Monotonic. 8.69:1 on white, up from 5.25:1. The generator produced a lighter step 11 than step 9 because <code>#0B6E8A</code> is an unusually dark step 9 anchor; the ramp is now documented as hand-tuned, not generator output.</p>
+  <p><strong>Accent step 11 is hand-corrected to <code>#006c78</code>.</strong> The generator produced <code>#007d8b</code>, which broke monotonicity — lighter than step 10, so the ramp reversed. The corrected value is OKLCH L 0.486 (C 0.084, H 208.2°), sitting between step 10 (L 0.509) and step 12 (L 0.334): lightness now descends monotonically, hue holds within ~1°, chroma tapers toward 12. 6.15:1 on white. Documented as hand-tuned at step 11, not generator output — re-apply on any regenerate.</p>
   <div class="ramp" style="margin-top:var(--spacing-4)">
     <div style="background:var(--accent-7);color:var(--accent-12)">7</div>
     <div style="background:var(--accent-8);color:var(--accent-12)">8</div>
@@ -487,10 +684,10 @@ td.mono, th.mono { font-family: var(--font-family-mono); font-size: 12px; }
     </tr>
     <tr>
       <td><strong>Info</strong></td>
-      <td class="mono"><span class="chip" style="background:#E4F5FC"></span>#E4F5FC</td>
-      <td class="mono"><span class="chip" style="background:#95C9DD"></span>#95C9DD</td><td>1.61 <span class="pass">✓</span></td>
-      <td class="mono"><span class="chip" style="background:#0d5266"></span>#0d5266</td><td>7.77 <span class="pass">✓</span></td>
-      <td class="mono"><span class="chip" style="background:#1B404E"></span>#1B404E</td><td>9.93 <span class="pass">✓</span></td>
+      <td class="mono"><span class="chip" style="background:#e9f3ff"></span>#e9f3ff</td>
+      <td class="mono"><span class="chip" style="background:#97c5f9"></span>#97c5f9</td><td>1.60 <span class="pass">✓</span></td>
+      <td class="mono"><span class="chip" style="background:#0073dd"></span>#0073dd</td><td>4.17 <span class="pass">✓</span></td>
+      <td class="mono"><span class="chip" style="background:#003463"></span>#003463</td><td>11.21 <span class="pass">✓</span></td>
     </tr>
   </tbody>
 </table>
@@ -548,6 +745,8 @@ td.mono, th.mono { font-family: var(--font-family-mono); font-size: 12px; }
     <tr><td>Adoption</td><td>Count of legacy calls remaining. Conformance and adoption are different numbers and are reported separately.</td></tr>
   </tbody>
 </table>
+
+<p><strong>Two phases, tagged per check.</strong> This book specs the finished component — colour, behaviour and accessibility as one thing — because it describes the destination a React build aims at. The near-term pass is UI-only: colour and tokens in the existing codebase, no behaviour change. So every conformance check below carries a phase tag. <span class="ph ph-ui">UI</span> is satisfiable now, as colour/token conformance, without touching behaviour or flow. <span class="ph ph-react">React</span> requires the component to be built or replaced and rides the module's React migration. A surface that passes its <span class="ph ph-ui">UI</span> checks and fails its <span class="ph ph-react">React</span> checks is visually conformant with its behaviour still pending — the expected interim state, not a defect. <strong>Colour-conformant is not component-conformant.</strong></p>
 
 <div class="callout">
   <div class="callout-title">Conformance is not adoption</div>
@@ -791,15 +990,16 @@ td.mono, th.mono { font-family: var(--font-family-mono); font-size: 12px; }
 <p>A class is additive: <code>sd-alert-error sd-alert-warning</code> is valid HTML and renders whichever rule wins the cascade. An attribute holds one value. The state becomes an enumerable, greppable, mutually exclusive property that a linter can validate against a list of four — and it prevents the specific defect the audit found, where the overlay system has no state layer and the toast classes that do exist are applied without ever being styled.</p>
 
 <h4>Conformance checks</h4>
+<p>The inline alert is a net-new build — there is no legacy alert to colour-conform, so every check is <span class="ph ph-react">React</span>. The current hand-rolled messages are fixed by the tenant-skin migration, not here.</p>
 <table>
-  <thead><tr><th style="width:210px">Check</th><th>Pass</th></tr></thead>
+  <thead><tr><th style="width:210px">Check</th><th style="width:74px">Phase</th><th>Pass</th></tr></thead>
   <tbody>
-    <tr><td>No primitive in component CSS</td><td><code>grep -E "\-\-(accent|neutral|amber|jade|tomato)-[0-9]" alert.css</code> → 0</td></tr>
-    <tr><td>No state literal outside tokens</td><td><code>grep -E "#(feebe7|ffac94|cf3716|5c281c|fff0cb|eeb95f|a96600|4d3618|e4f7f0|8bceb6|008062|1d3b31)"</code> outside the token block → 0</td></tr>
-    <tr><td>Every alert declares state</td><td><code>grep "sd-alert\"" src | grep -v "data-state"</code> → 0</td></tr>
-    <tr><td>Every dismiss is named</td><td><code>grep "sd-alert__dismiss" src | grep -v "aria-label"</code> → 0</td></tr>
-    <tr><td>No filled button inside</td><td><code>grep -A6 "sd-alert__actions" src | grep "btn-primary"</code> → 0</td></tr>
-    <tr><td>Adoption</td><td>Count of hand-rolled inline messages remaining. Reported, not gated.</td></tr>
+    <tr><td>No primitive in component CSS</td><td><span class="ph ph-react">React</span></td><td><code>grep -E "\-\-(accent|neutral|amber|jade|tomato)-[0-9]" alert.css</code> → 0</td></tr>
+    <tr><td>No state literal outside tokens</td><td><span class="ph ph-react">React</span></td><td><code>grep -E "#(feebe7|ffac94|cf3716|5c281c|fff0cb|eeb95f|a96600|4d3618|e4f7f0|8bceb6|008062|1d3b31)"</code> outside the token block → 0</td></tr>
+    <tr><td>Every alert declares state</td><td><span class="ph ph-react">React</span></td><td><code>grep "sd-alert\"" src | grep -v "data-state"</code> → 0</td></tr>
+    <tr><td>Every dismiss is named</td><td><span class="ph ph-react">React</span></td><td><code>grep "sd-alert__dismiss" src | grep -v "aria-label"</code> → 0</td></tr>
+    <tr><td>No filled button inside</td><td><span class="ph ph-react">React</span></td><td><code>grep -A6 "sd-alert__actions" src | grep "btn-primary"</code> → 0</td></tr>
+    <tr><td>Adoption</td><td><span class="ph ph-react">React</span></td><td>Count of hand-rolled inline messages remaining. Reported, not gated.</td></tr>
   </tbody>
 </table>
 
@@ -810,31 +1010,1064 @@ td.mono, th.mono { font-family: var(--font-family-mono); font-size: 12px; }
 </div>
 
 <h2 id="toast">1.2 Toast</h2>
-<div class="stub">
-  <div class="stub-h">Not yet written — awaiting approval of 0.x and 1.1</div>
-  <p>Inherits the entire state model from 1.1 and adds: ephemerality and timing, portal and stacking order, live-region politeness under rapid succession, pause-on-hover and pause-on-focus, and the interaction with <code>prefers-reduced-motion</code>. Audit dependencies: three toast classes are applied and never styled, so the current state colour is <code>vue-toasted</code>'s vendor default; and two sites call <code>Vue.toasted.show</code> directly, bypassing the wrapper — so the wrapper is not a chokepoint and the contract cannot assume it is.</p>
+
+<p class="lede">The inline alert plus ephemerality. Same state model, same four tokens, same contrast — lifted out of the document flow, elevated over content, announcing a background operation the user has already moved on from, then leaving on its own.</p>
+
+<h3>1 · Purpose and boundary</h3>
+
+<p>A transient message about an operation that completed or failed away from the user's current focus. It floats above content, times out, and never blocks progress. The test is single: if dismissing it loses something the user still needs, it should not have been a toast.</p>
+
+<table>
+  <thead><tr><th style="width:220px">Use a toast when</th><th>Use something else when</th></tr></thead>
+  <tbody>
+    <tr><td>A background operation finished and the user has moved on from where it started</td><td>The message is about a region still on screen and belongs beside it → <strong>Inline alert</strong></td></tr>
+    <tr><td>The confirmation would otherwise be invisible — a save, a queued export, a copied link</td><td>Losing the message strands the user — they must act on it in place → <strong>Inline alert or Modal</strong></td></tr>
+    <tr><td>The message is one line, at most with a single recoverable action</td><td>The message needs a title, body, and two actions → <strong>Inline alert</strong></td></tr>
+    <tr><td>The condition is a moment, not a state</td><td>The condition persists and must stay visible until resolved → <strong>Banner</strong></td></tr>
+  </tbody>
+</table>
+
+<p>The boundary most often crossed is the error toast. An error the user must fix is not a background event: putting it in a surface that times out means the one message they needed vanishes in five seconds. A toast may <em>report</em> a background failure — "Export failed" with a retry — but the instant recovery has to happen in place, it is an alert or a modal. This is why the timing table below never auto-dismisses error or warning.</p>
+
+<h3>2 · Anatomy</h3>
+<table>
+  <thead><tr><th style="width:200px">Part</th><th style="width:90px">Required</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">.sd-toast-region</td><td>yes</td><td>The portal container. One per document, present at load, holds the two live regions. Part of the component, because the announcement behaviour is a property of the region, not the toast.</td></tr>
+    <tr><td class="mono">.sd-toast</td><td>yes</td><td>Container. Carries <code>data-state</code>, the four component tokens, and the elevation shadow.</td></tr>
+    <tr><td class="mono">.sd-toast__icon</td><td>yes</td><td>18px. One glyph per state, fixed. <code>aria-hidden</code>.</td></tr>
+    <tr><td class="mono">.sd-toast__message</td><td>yes</td><td>One line. No title — a title on one line is the alert you should have used.</td></tr>
+    <tr><td class="mono">.sd-toast__action</td><td>no</td><td>At most one. Text button, non-destructive, recoverable — undo, retry, view.</td></tr>
+    <tr><td class="mono">.sd-toast__dismiss</td><td>yes</td><td>Always present. A toast must be closable before its timer ends.</td></tr>
+  </tbody>
+</table>
+
+<p>Two differences from the alert. There is <strong>no title</strong> — a toast is one line. And the <strong>region is part of the component</strong>: the live-region behaviour that makes a toast accessible lives on the container, so shipping the toast without shipping the region ships a toast that never announces. That is exactly the failure the audit found.</p>
+
+<h3>3 · Token map by role</h3>
+
+<p>Identical to the inline alert. A toast resolves the same four <code>--state-{s}-*</code> roles to the same steps, so every contrast measurement in <a href="#alert">1.1 §3</a> carries over unchanged — surface at step 3, border at step 7, icon at step 11, text at step 12. The toast adds exactly one property the alert does not have.</p>
+
+<table>
+  <thead><tr><th style="width:180px">Part</th><th style="width:210px">Component token</th><th>Resolves to</th><th>Contrast vs toast surface</th></tr></thead>
+  <tbody>
+    <tr><td>Container background</td><td class="mono">--toast-surface</td><td class="mono">--state-{s}-surface → step 3</td><td>reference surface</td></tr>
+    <tr><td>Container border</td><td class="mono">--toast-border</td><td class="mono">--state-{s}-border → step 7</td><td>1.58–1.63 <span class="pass">✓</span></td></tr>
+    <tr><td>Icon</td><td class="mono">--toast-icon</td><td class="mono">--state-{s}-icon → step 11</td><td>4.05–7.77 <span class="pass">✓</span> ≥3:1</td></tr>
+    <tr><td>Message and action</td><td class="mono">--toast-text</td><td class="mono">--state-{s}-text → step 12</td><td>9.93–10.95 <span class="pass">✓</span> ≥4.5:1</td></tr>
+    <tr><td>Elevation</td><td class="mono">--toast-shadow</td><td class="mono">--shadow-3</td><td>n/a — shadow, not a pair</td></tr>
+    <tr><td>Focus ring</td><td class="mono">--focus-ring-color</td><td class="mono">--accent-9</td><td>≥3:1 on all four surfaces</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Elevation is the only thing a toast adds to the alert's surface, and it is deliberately the only thing.</strong> A surface floating over content has to separate from what is behind it. The shadow does that. Reaching instead for a heavier border or a solid fill to say "this is on top" would spend hue on depth and reopen Law 4 — so the fill stays at step 3, the border stays at step 7, and the shadow carries the elevation. Depth is not a colour problem.</p>
+
+<h3>4 · Required states</h3>
+
+<table>
+  <thead><tr><th style="width:150px">Variant</th><th style="width:120px">Attribute</th><th>Meaning</th><th>Region · timing</th></tr></thead>
+  <tbody>
+    <tr><td>Error</td><td class="mono">data-state="error"</td><td>A background operation failed.</td><td>assertive · no auto-dismiss</td></tr>
+    <tr><td>Warning</td><td class="mono">data-state="warning"</td><td>It completed with a consequence worth surfacing.</td><td>assertive · no auto-dismiss</td></tr>
+    <tr><td>Success</td><td class="mono">data-state="success"</td><td>It completed, and completion is not otherwise visible.</td><td>polite · 5s</td></tr>
+    <tr><td>Info</td><td class="mono">data-state="info"</td><td>Background context worth one line.</td><td>polite · 5s</td></tr>
+  </tbody>
+</table>
+
+<p>A toast is always inserted dynamically, so — unlike the alert — there is no page-load case to suppress: a toast always announces. The severity split drives two things at once: which live region it enters, and whether it is allowed to time out. Both are covered in Behaviour.</p>
+
+<p><em>Interaction states:</em> default; hover and <code>:focus-within</code>, which both pause the timer; dismiss hover and active; <code>:focus-visible</code> on the dismiss and on the single action. There is no quiet toast — a toast is never nested inside a bordered container — and no disabled toast.</p>
+
+<h3>5 · Accessibility — hard rules</h3>
+
+<ol class="rules">
+  <li><span class="must">MUST</span> resolve every colour through <code>--toast-*</code>. A variant sets four custom properties and nothing else. <span class="mustnot">MUST NOT</span> reference a layer 1 primitive in component CSS.</li>
+  <li><span class="must">MUST</span> carry an icon and a text message. Hue is never the sole carrier of state (WCAG 1.4.1). The toast survives a greyscale screenshot.</li>
+  <li><span class="must">MUST</span> render the region container in the DOM at page load, empty, before any toast is inserted. A live region created and populated in the same tick is not announced in most screen readers. <strong>This is the most common toast failure and the audit's B3 is its symptom</strong> — three toast classes are set as class names with no region and no styling behind them.</li>
+  <li><span class="must">MUST</span> split politeness by severity across <strong>two</strong> regions: error and warning into an assertive region (<code>aria-live="assertive"</code>), success and info into a polite one (<code>aria-live="polite"</code>). One shared region forces a choice between interrupting the user for a success or under-announcing an error. Two regions cost nothing and remove the compromise.</li>
+  <li><span class="mustnot">MUST NOT</span> auto-dismiss error or warning. A message that announces assertively and then removes itself before it can be read or acted on is worse than silence. Error and warning persist until dismissed.</li>
+  <li><span class="must">MUST</span> pause every timer on hover and on <code>:focus-within</code>, and resume on leave (WCAG 2.2.1). A user reading the line or reaching for undo must not have it disappear under the pointer. A toast carrying an action holds a minimum of 8s regardless, so the action is reachable.</li>
+  <li><span class="must">MUST</span> keep the toast keyboard-reachable for as long as it is visible: the dismiss and the single action are in the tab order, and dismissing returns focus to where it was. <span class="mustnot">MUST NOT</span> let focus fall to <code>&lt;body&gt;</code>.</li>
+  <li><span class="must">MUST</span> use step 12 for text and the 2px accent-9 offset focus ring — identical to the alert, for the identical reason: the ring is the only indicator that clears 3:1 on all four tinted surfaces.</li>
+  <li><span class="mustnot">MUST NOT</span> carry more than one action, and that action is non-destructive and recoverable. A toast is the wrong surface for a decision — it times out, and a decision that expires is a trap.</li>
+  <li><span class="mustnot">MUST NOT</span> render a solid state fill or place white text on any state step 9. Law 4. The vendor default the audit leaves in place does exactly this — see the rejected example.</li>
+</ol>
+
+<h3>6 · Behaviour</h3>
+
+<p>The alert's behaviour is one line: stay until the condition changes. The toast's behaviour is the set of rules for <em>leaving</em>, and that is what earns it a section.</p>
+
+<table>
+  <thead><tr><th style="width:170px">State</th><th style="width:150px">Default lifetime</th><th>Rationale</th></tr></thead>
+  <tbody>
+    <tr><td>Success · Info</td><td>5s, timer paused on hover / focus</td><td>Long enough to read one line, short enough to not accumulate.</td></tr>
+    <tr><td>Error · Warning</td><td>Until dismissed</td><td>Assertive announcement plus a self-erasing message is a contradiction. It waits for the user.</td></tr>
+    <tr><td>Any, carrying an action</td><td>Minimum 8s, paused on interaction</td><td>The undo must outlive the reach for it.</td></tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><strong>Stacking.</strong> Newest at the anchored edge; maximum three visible; a fourth queues and enters as one leaves. More than three at once is a symptom — batch them, or the operation should have reported inline.</li>
+  <li><strong>Order carries no priority.</strong> Toasts enter at the region's edge and push the stack. Severity is carried by state and announcement, never by position — a user must never have to infer importance from where a toast sits.</li>
+  <li><strong>Portal and layering.</strong> Every toast renders into the single region, above app chrome but <em>below</em> modals. A modal owns the screen while it blocks on a decision; a toast floating over it competes for attention it should not have.</li>
+  <li><strong>Motion.</strong> Enter is a 150ms fade with a short translate along the anchored axis; exit is a 150ms fade. Under <code>prefers-reduced-motion</code>, opacity only — no translate. Never animate height: toasts are portalled, so there is no reflow to justify it, and a height transition makes the rest of the stack jump.</li>
+  <li><strong>Rapid succession.</strong> Identical consecutive toasts collapse into one with a count rather than announcing the same string five times into a live region. The wrapper owns this — which is the argument for the wrapper being a real chokepoint, below.</li>
+</ul>
+
+<h3>7 · Rendered example</h3>
+
+<div class="example-block">
+  <div class="example-label">Three states · one line each · success carries a single undo · error persists</div>
+  <div class="example-render" style="gap:var(--spacing-3); display:flex; flex-direction:column; align-items:stretch;">
+
+    <div class="sd-toast" data-state="success">
+      <svg class="sd-toast__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M6.6 10.3l2.3 2.3 4.5-4.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="sd-toast__body">
+        <p class="sd-toast__message"><span class="sr-only">Success: </span>Brand kit published.</p>
+        <button type="button" class="sd-toast__action">Undo</button>
+      </div>
+      <button type="button" class="sd-toast__dismiss" aria-label="Dismiss success message"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg></button>
+    </div>
+
+    <div class="sd-toast" data-state="error">
+      <svg class="sd-toast__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 6.2v4.6" stroke-linecap="round"/><circle cx="10" cy="13.7" r=".9" fill="currentColor" stroke="none"/></svg>
+      <div class="sd-toast__body">
+        <p class="sd-toast__message"><span class="sr-only">Error: </span>Export failed — 2&nbsp;GB limit exceeded.</p>
+        <button type="button" class="sd-toast__action">Retry</button>
+      </div>
+      <button type="button" class="sd-toast__dismiss" aria-label="Dismiss error message"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg></button>
+    </div>
+
+    <div class="sd-toast" data-state="info">
+      <svg class="sd-toast__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9.4v4.4" stroke-linecap="round"/><circle cx="10" cy="6.4" r=".9" fill="currentColor" stroke="none"/></svg>
+      <div class="sd-toast__body">
+        <p class="sd-toast__message"><span class="sr-only">Information: </span>Ingest completes in about 4 minutes.</p>
+      </div>
+      <button type="button" class="sd-toast__dismiss" aria-label="Dismiss information message"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg></button>
+    </div>
+
+  </div>
+</div>
+
+<div class="example-block">
+  <div class="example-label">Rejected — the vendor default the audit leaves in place (B3), shown so it is recognisable in review</div>
+  <div class="example-render">
+    <div style="display:inline-grid; grid-template-columns:auto 1fr; gap:var(--spacing-3); align-items:center; padding:var(--spacing-3) var(--spacing-4); background:#323232; border-radius:var(--radius-5); color:#fff; font-size:var(--font-size-2); box-shadow:0 8px 24px rgba(0,0,0,.2);">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M6.6 10.3l2.3 2.3 4.5-4.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div>Brand kit published — <code style="background:rgba(255,255,255,.2);color:#fff">sd-success-toast</code> is set as a class name, no selector styles it, so this is <code style="background:rgba(255,255,255,.2);color:#fff">vue-toasted</code>'s dark pill. State is not expressed at all — the one place hue is deliberately spent is the vendor's, not ours, and it is the same dark surface whether the operation succeeded or failed.</div>
+    </div>
+  </div>
+</div>
+
+<h3>8 · Markup contract</h3>
+
+<p>Both implementations produce this DOM. The region ships once, at load; each toast is inserted into the region that matches its severity.</p>
+
+<div class="example-block">
+  <div class="example-label">Canonical DOM</div>
+  <div class="example-code"><span class="c">/* Rendered once, at page load. Empty. Two regions, not one. */</span>
+&lt;div class=<span class="k">"sd-toast-region"</span>&gt;
+  &lt;div aria-live=<span class="k">"assertive"</span> aria-atomic=<span class="k">"true"</span> data-severity=<span class="k">"error warning"</span>&gt;&lt;/div&gt;
+  &lt;div aria-live=<span class="k">"polite"</span>    aria-atomic=<span class="k">"true"</span> data-severity=<span class="k">"success info"</span>&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+<span class="c">/* One toast, inserted into the region its state maps to. */</span>
+&lt;div class=<span class="k">"sd-toast"</span> data-state=<span class="k">"success"</span>&gt;
+  &lt;svg class=<span class="k">"sd-toast__icon"</span> aria-hidden=<span class="k">"true"</span>&gt;…&lt;/svg&gt;
+  &lt;div class=<span class="k">"sd-toast__body"</span>&gt;
+    &lt;p class=<span class="k">"sd-toast__message"</span>&gt;&lt;span class=<span class="k">"sr-only"</span>&gt;Success: &lt;/span&gt;Message&lt;/p&gt;
+    &lt;button type=<span class="k">"button"</span> class=<span class="k">"sd-toast__action"</span>&gt;Undo&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;button type=<span class="k">"button"</span> class=<span class="k">"sd-toast__dismiss"</span> aria-label=<span class="k">"Dismiss success message"</span>&gt;…&lt;/button&gt;
+&lt;/div&gt;</div>
+</div>
+
+<h4>Why the region is part of the component</h4>
+<p>Ship the toast without the region and you ship a surface that renders correctly and announces nothing — which is the current state: three toast class names applied, no region behind them, no styling on them. The region is not chrome the host provides. It is the component's accessibility contract, and it is why <code>Utils.successToast</code> has to be the single entry point.</p>
+
+<h4>The wrapper is a chokepoint — make it one</h4>
+<p>Duplicate-collapse, region routing by severity, timer management and the maximum-three queue all live in one place or they live nowhere. The audit found two sites calling <code>Vue.toasted.show</code> directly (B8), which means the wrapper is not currently a chokepoint and none of the above can be relied on. <strong>The contract requires it to be one:</strong> every toast goes through <code>Utils.successToast</code> / <code>errorToast</code>; the two direct calls are conformance failures, not style nits.</p>
+
+<h4>Conformance checks</h4>
+<p>Toast is the one Part 1 component that splits. Colour the three existing classes against <code>--state-*</code> now (<span class="ph ph-ui">UI</span>); the two live regions, the timing and the wrapper chokepoint ride the React rebuild (<span class="ph ph-react">React</span>).</p>
+<table>
+  <thead><tr><th style="width:230px">Check</th><th style="width:74px">Phase</th><th>Pass</th></tr></thead>
+  <tbody>
+    <tr><td>No primitive in component CSS</td><td><span class="ph ph-ui">UI</span></td><td><code>grep -E "\-\-(accent|neutral|amber|jade|tomato|blue)-[0-9]" toast.css</code> → 0</td></tr>
+    <tr><td>The three classes are styled</td><td><span class="ph ph-ui">UI</span></td><td><code>grep -E "sd-(success|error|info)-toast" src</code> → each has a matching selector, or is removed in favour of <code>data-state</code></td></tr>
+    <tr><td>Region present at load</td><td><span class="ph ph-react">React</span></td><td><code>grep "sd-toast-region" src</code> → rendered once, not per-toast</td></tr>
+    <tr><td>No direct vendor call</td><td><span class="ph ph-react">React</span></td><td><code>grep -rn "Vue.toasted.show" src</code> → 0 (B8)</td></tr>
+    <tr><td>Every toast declares state</td><td><span class="ph ph-react">React</span></td><td><code>grep "sd-toast\"" src | grep -v "data-state"</code> → 0</td></tr>
+    <tr><td>No auto-dismiss on error/warning</td><td><span class="ph ph-react">React</span></td><td>timer config for error/warning → 0 / persistent</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-title">Conformance and adoption for this component</div>
+  <p><strong>Conformance:</strong> the classes exist and are unstyled (B3); the wrapper is bypassed twice (B8). Conformance here is: style the three states against <code>--state-*</code> — or replace the classes with <code>data-state</code> — stand up the two regions, and close the two direct calls. Small, bounded, and it is the one component in Part 1 that already has live call sites.</p>
+  <p><strong>Adoption:</strong> because the wrapper already exists and is used almost everywhere, adoption is near-complete the moment conformance lands — routing the two bypasses through it flips the whole product at once. Highest adoption-per-unit-effort in the book.</p>
 </div>
 
 <h2 id="banner">1.3 Banner</h2>
-<div class="stub">
-  <div class="stub-h">Not yet written — awaiting approval of 0.x and 1.1</div>
-  <p>Inherits the state model and adds: full-bleed layout at zero radius, persistence across navigation, precedence when more than one qualifies, and the relationship to the left nav rail and page chrome. No banner component exists in <code>sdcore/src/pattern/</code> — this is a build. Open question this section must answer: whether a banner may ever be solid, given Law 4. Current position is no.</p>
+
+<p class="lede">The inline alert plus persistence. Same state model, same four tokens, same contrast — full-bleed across the top of the application, outliving the page that raised it, speaking for the whole product or account rather than one region. It is the last of the state-bearing group, and it is the one under the most pressure to break Law 4.</p>
+
+<h3>1 · Purpose and boundary</h3>
+
+<p>A message about the application or the account that persists across navigation until the condition it reports is resolved. It is anchored to the top of the app frame, spans the full width, and is the most prominent surface a non-blocking message can occupy. That prominence is the whole reason it exists — and the whole reason it is the easiest component to misuse.</p>
+
+<table>
+  <thead><tr><th style="width:220px">Use a banner when</th><th>Use something else when</th></tr></thead>
+  <tbody>
+    <tr><td>The message is about the whole application or account — billing, an outage, a maintenance window, a plan limit</td><td>The message is about a region on the current page → <strong>Inline alert</strong></td></tr>
+    <tr><td>It must survive navigation between pages, not just re-render on one</td><td>It is a moment, not a state — a save, a completed export → <strong>Toast</strong></td></tr>
+    <tr><td>The user should see it but is not blocked from working</td><td>The user cannot safely proceed until they act → <strong>Modal</strong></td></tr>
+    <tr><td>Exactly one condition qualifies at app level</td><td>Several page regions each have something to say → <strong>Inline alerts</strong>, in place</td></tr>
+  </tbody>
+</table>
+
+<p>The boundary most often crossed is prominence-seeking: a page-level message promoted to a banner because it feels important. Importance is not the test — <em>scope</em> is. A banner is for what is true everywhere in the app. If navigating away should make the message go, it was never a banner.</p>
+
+<h3>2 · Anatomy</h3>
+<table>
+  <thead><tr><th style="width:200px">Part</th><th style="width:90px">Required</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">.sd-banner</td><td>yes</td><td>Full-bleed container. Zero radius, no side borders, a single rule along the bottom edge. Carries <code>data-state</code> and the four tokens.</td></tr>
+    <tr><td class="mono">.sd-banner__icon</td><td>yes</td><td>18px. One glyph per state, fixed. <code>aria-hidden</code>.</td></tr>
+    <tr><td class="mono">.sd-banner__message</td><td>yes</td><td>One line, centred vertically. May carry a link.</td></tr>
+    <tr><td class="mono">.sd-banner__action</td><td>no</td><td>At most one. Text button — "Manage billing", "View status". Never a filled button (rule 08).</td></tr>
+    <tr><td class="mono">.sd-banner__dismiss</td><td>no</td><td>Only when the message is advisory and dismissal is remembered. An error bound to an unresolved account condition is not dismissible.</td></tr>
+  </tbody>
+</table>
+
+<p>No title. A banner is one line — if it needs a title and body, it is an inline alert that has been promoted past its scope. The container is <strong>full-bleed</strong>: zero radius, no side borders, a bottom rule only. That shape is what reads as "app frame, not page content", and it is the only structural difference from the alert.</p>
+
+<h3>3 · Token map by role</h3>
+
+<p>Identical to the inline alert. The banner resolves the same four <code>--state-{s}-*</code> roles to the same steps — surface 3, border 7, icon 11, text 12 — so every contrast measurement in <a href="#alert">1.1 §3</a> carries over. The full-bleed shape moves the border from four sides to one; it does not change which step the border is.</p>
+
+<table>
+  <thead><tr><th style="width:180px">Part</th><th style="width:210px">Component token</th><th>Resolves to</th><th>Contrast vs banner surface</th></tr></thead>
+  <tbody>
+    <tr><td>Container background</td><td class="mono">--banner-surface</td><td class="mono">--state-{s}-surface → step 3</td><td>reference surface</td></tr>
+    <tr><td>Bottom rule</td><td class="mono">--banner-border</td><td class="mono">--state-{s}-border → step 7</td><td>1.58–1.63 <span class="pass">✓</span></td></tr>
+    <tr><td>Icon</td><td class="mono">--banner-icon</td><td class="mono">--state-{s}-icon → step 11</td><td>4.05–7.77 <span class="pass">✓</span> ≥3:1</td></tr>
+    <tr><td>Message and action</td><td class="mono">--banner-text</td><td class="mono">--state-{s}-text → step 12</td><td>9.93–10.95 <span class="pass">✓</span> ≥4.5:1</td></tr>
+    <tr><td>Focus ring</td><td class="mono">--focus-ring-color</td><td class="mono">--accent-9</td><td>≥3:1 on all four surfaces</td></tr>
+  </tbody>
+</table>
+
+<div class="callout warn">
+  <div class="callout-title">The decision this section exists to make — a banner is never solid</div>
+  <p>A banner is the largest single surface in the product, and full-bleed at the top is the most prominent place a message can sit. The pull to make it a <em>solid</em> state fill — white text on <code>--state-{s}-9</code> — is strongest here, because prominence feels like it should come from a loud fill. <strong>It does not, and it may not.</strong></p>
+  <p>A solid banner puts white text on step 9. Error 9 clears 4.5:1; warning and success step 9 do not — the same 1.81:1 and 3.39:1 failures the audit found, now stretched across the widest surface in the app. That is Law 4, and Law 4 does not have an exception for "important". The banner earns its prominence from <strong>position and persistence</strong> — full-bleed, top of frame, present on every page — not from hue. Surface stays at step 3, text at step 12, border at step 7, exactly as the alert. <strong>Position: no banner is ever solid. There is no brand-banner exception, no marketing exception, no severity exception.</strong></p>
+</div>
+
+<h3>4 · Required states</h3>
+
+<table>
+  <thead><tr><th style="width:150px">Variant</th><th style="width:120px">Attribute</th><th>Meaning at app scope</th><th>Dismissible</th></tr></thead>
+  <tbody>
+    <tr><td>Error</td><td class="mono">data-state="error"</td><td>The account is in a broken state — suspended, payment failed, over a hard limit.</td><td>No — bound to the condition</td></tr>
+    <tr><td>Warning</td><td class="mono">data-state="warning"</td><td>A consequence is approaching — trial ending, limit near, maintenance window.</td><td>Remembered, if advisory</td></tr>
+    <tr><td>Info</td><td class="mono">data-state="info"</td><td>Application-wide context — a new region, a scheduled change. The common case.</td><td>Yes, remembered</td></tr>
+    <tr><td>Success</td><td class="mono">data-state="success"</td><td>Rare at banner scope. Only a lasting account-wide state worth persisting.</td><td>Yes, remembered</td></tr>
+  </tbody>
+</table>
+
+<p>Success is the odd one at this scope: almost nothing that succeeds is true <em>everywhere, persistently</em> — most successes are moments and belong in a toast. It stays in the enum for symmetry and for the rare durable case, but a success banner should make you check whether it wanted to be a toast.</p>
+
+<p><em>Interaction states:</em> default; dismiss hover / active; <code>:focus-visible</code> on the dismiss and the single action. No quiet variant — a banner is full-bleed chrome, never nested — and no disabled state.</p>
+
+<h3>5 · Accessibility — hard rules</h3>
+
+<ol class="rules">
+  <li><span class="must">MUST</span> resolve every colour through <code>--banner-*</code>. A variant sets four custom properties and nothing else. <span class="mustnot">MUST NOT</span> reference a layer 1 primitive in component CSS.</li>
+  <li><span class="must">MUST</span> carry an icon and a text message. Hue is never the sole carrier of state (WCAG 1.4.1). Survives greyscale.</li>
+  <li><span class="mustnot">MUST NOT</span> render a solid state fill or white text on any state step 9 — the decision above, as a greppable rule. The banner surface is step 3; if a background resolves to step 9, it fails.</li>
+  <li><span class="mustnot">MUST NOT</span> use <code>role="banner"</code>. That ARIA landmark is the page masthead; putting it on a state banner creates a second banner landmark and breaks landmark navigation. Use a labelled region — <code>role="region"</code> with an <code>aria-label</code> — or a plain element in document order.</li>
+  <li><span class="must">MUST</span> use step 12 for text, links and the action label. <span class="mustnot">MUST NOT</span> use step 11 for body copy — 4.05:1 fails AA on the tinted surface.</li>
+  <li><span class="must">MUST</span> announce a banner inserted after load through a live region — <code>aria-live="assertive"</code> for error/warning, <code>polite</code> for info/success. <span class="mustnot">MUST NOT</span> put a live region on a banner present at page load; it is read in document order.</li>
+  <li><span class="must">MUST</span> place the banner first in the document, before the nav rail and main, so it is encountered before the content it qualifies — and keep it in the tab order ahead of the rail.</li>
+  <li><span class="must">MUST</span> keep the focus ring at 2px accent-9, 2px offset, on <code>:focus-visible</code> — the one indicator that clears 3:1 on all four surfaces.</li>
+  <li><span class="mustnot">MUST NOT</span> place a filled button in a banner. One underlined text action. A filled button needs an on-fill colour, which reopens Law 4, and competes with the page's single primary action.</li>
+  <li><span class="mustnot">MUST NOT</span> offer dismissal on an error bound to an unresolved account condition, and <span class="must">MUST</span> remember every dismissal it does offer, per user, so a dismissed banner does not return on the next navigation — the behaviour that makes users install banner-blockers.</li>
+</ol>
+
+<h3>6 · Behaviour</h3>
+
+<p>The alert stays until its condition changes on one page. The banner does the same thing <em>across</em> pages — which turns persistence, precedence and placement into real rules.</p>
+
+<ul>
+  <li><strong>Persistence.</strong> The banner's state lives above the router, not in a page. It renders identically on every route until the condition clears, and a client-side navigation never re-animates or re-announces it.</li>
+  <li><strong>Precedence — one at a time.</strong> At most one banner is visible. If more than one condition qualifies, the highest severity wins: error &gt; warning &gt; info &gt; success. Two genuinely co-equal app-level conditions is the signal that one of them is not actually app-scoped and belongs in an alert.</li>
+  <li><strong>Placement.</strong> Full-bleed across the very top of the app frame, above both the nav rail and the page content — it speaks for the whole product, so it sits above the whole product. It pushes content down; it never overlays, because a banner does not block and must not cover.</li>
+  <li><strong>Dismissal memory.</strong> A dismissed advisory banner stays dismissed for that user until the condition changes state — stored by a stable id for the condition, not re-shown on reload or navigation.</li>
+  <li><strong>Motion.</strong> On first appearance, a 150ms height-and-fade in. On dismissal, a 150ms collapse. Under <code>prefers-reduced-motion</code>, opacity only. Never re-animate on navigation — the banner was already there.</li>
+</ul>
+
+<h3>7 · Rendered example</h3>
+
+<div class="example-block">
+  <div class="example-label">Full-bleed · one line · warning carries a single action · info is dismissible</div>
+  <div class="example-render" style="padding:0; display:flex; flex-direction:column; gap:0; overflow:hidden; border-radius:var(--radius-3);">
+
+    <div class="sd-banner" data-state="warning">
+      <svg class="sd-banner__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10 2.8 18 16.4H2z" stroke-linejoin="round"/><path d="M10 8v3.4" stroke-linecap="round"/><circle cx="10" cy="13.9" r=".9" fill="currentColor" stroke="none"/></svg>
+      <div class="sd-banner__body"><p class="sd-banner__message"><span class="sr-only">Warning: </span>Your trial ends in 3 days. <button type="button" class="sd-banner__action">Manage billing</button></p></div>
+    </div>
+
+    <div class="sd-banner" data-state="error">
+      <svg class="sd-banner__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 6.2v4.6" stroke-linecap="round"/><circle cx="10" cy="13.7" r=".9" fill="currentColor" stroke="none"/></svg>
+      <div class="sd-banner__body"><p class="sd-banner__message"><span class="sr-only">Error: </span>Payment failed — asset delivery is paused for this workspace. <a href="#banner">Update payment method</a></p></div>
+    </div>
+
+    <div class="sd-banner" data-state="info">
+      <svg class="sd-banner__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9.4v4.4" stroke-linecap="round"/><circle cx="10" cy="6.4" r=".9" fill="currentColor" stroke="none"/></svg>
+      <div class="sd-banner__body"><p class="sd-banner__message"><span class="sr-only">Information: </span>Scheduled maintenance on Sunday 02:00–04:00 UTC.</p></div>
+      <button type="button" class="sd-banner__dismiss" aria-label="Dismiss maintenance notice"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg></button>
+    </div>
+
+  </div>
+</div>
+
+<div class="example-block">
+  <div class="example-label">Rejected — the solid banner, shown so the pull to build it is recognisable</div>
+  <div class="example-render" style="padding:0; overflow:hidden; border-radius:var(--radius-3);">
+    <div style="display:grid; grid-template-columns:auto 1fr; gap:var(--spacing-3); align-items:center; padding:var(--spacing-3) var(--spacing-5); background:#f5a524; color:#fff; font-size:var(--font-size-2);">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10 2.8 18 16.4H2z" stroke-linejoin="round"/><path d="M10 8v3.4" stroke-linecap="round"/></svg>
+      <div>Your trial ends in 3 days — white on <code style="background:rgba(255,255,255,.2);color:#fff">--warning-9</code> at <strong>2.04:1</strong>, across the widest surface in the app. It looks decisive and it is unreadable. This is the exact instinct the decision above exists to stop.</div>
+    </div>
+  </div>
+</div>
+
+<h3>8 · Markup contract</h3>
+
+<p>Both implementations produce this DOM. The banner is first in the document, above the nav rail and main.</p>
+
+<div class="example-block">
+  <div class="example-label">Canonical DOM</div>
+  <div class="example-code">&lt;body&gt;
+  <span class="c">&lt;!-- first in document, above rail and main --&gt;</span>
+  &lt;div class=<span class="k">"sd-banner"</span> data-state=<span class="k">"warning"</span> role=<span class="k">"region"</span> aria-label=<span class="k">"Account notice"</span>&gt;
+    &lt;svg class=<span class="k">"sd-banner__icon"</span> aria-hidden=<span class="k">"true"</span>&gt;…&lt;/svg&gt;
+    &lt;div class=<span class="k">"sd-banner__body"</span>&gt;
+      &lt;p class=<span class="k">"sd-banner__message"</span>&gt;&lt;span class=<span class="k">"sr-only"</span>&gt;Warning: &lt;/span&gt;Message
+        &lt;button type=<span class="k">"button"</span> class=<span class="k">"sd-banner__action"</span>&gt;Action&lt;/button&gt;&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;button type=<span class="k">"button"</span> class=<span class="k">"sd-banner__dismiss"</span> aria-label=<span class="k">"Dismiss notice"</span>&gt;…&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;nav&gt;…&lt;/nav&gt; &lt;main&gt;…&lt;/main&gt;
+&lt;/body&gt;
+
+<span class="c">role="region" + aria-label — never role="banner" (that landmark is the masthead).
+Live region only when inserted after load; omitted when present at load.</span></div>
+</div>
+
+<h4>Conformance checks</h4>
+<p>The banner is a net-new build — no banner exists in <code>sdcore/src/pattern/</code>, so there is no legacy form to colour-conform. Every check is <span class="ph ph-react">React</span>; it lands with the module that first needs an app-level message.</p>
+<table>
+  <thead><tr><th style="width:210px">Check</th><th style="width:74px">Phase</th><th>Pass</th></tr></thead>
+  <tbody>
+    <tr><td>No primitive in component CSS</td><td><span class="ph ph-react">React</span></td><td><code>grep -E "\-\-(accent|neutral|amber|jade|tomato|blue)-[0-9]" banner.css</code> → 0</td></tr>
+    <tr><td>Never solid</td><td><span class="ph ph-react">React</span></td><td><code>grep -E "state-[a-z]+-9|#(f5a524|29a383|e54d2e)" banner.css</code> → 0. Surface resolves to step 3, never 9.</td></tr>
+    <tr><td>Not the masthead landmark</td><td><span class="ph ph-react">React</span></td><td><code>grep "sd-banner" src | grep 'role="banner"'</code> → 0</td></tr>
+    <tr><td>Every banner declares state</td><td><span class="ph ph-react">React</span></td><td><code>grep "sd-banner\"" src | grep -v "data-state"</code> → 0</td></tr>
+    <tr><td>One banner at a time</td><td><span class="ph ph-react">React</span></td><td>Render logic selects a single condition by severity → verified in the banner controller, not CSS.</td></tr>
+    <tr><td>Dismissal is remembered</td><td><span class="ph ph-react">React</span></td><td>Dismiss writes a stable condition id to per-user storage; reload/navigation re-reads it → 0 re-shows.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-title">Conformance and adoption for this component</div>
+  <p><strong>Conformance:</strong> nothing to bring into conformance — this is a build. The whole component is <span class="ph ph-react">React</span>, and the one rule to hold under review pressure is the solidity ban: it will be argued with, because a solid banner looks more decisive, and it is wrong every time.</p>
+  <p><strong>Adoption:</strong> app-level messages are currently hand-rolled where they exist at all. Adoption is the count of those, replaced. Because a banner is singular and global, adoption is nearly binary — the app has the component wired at the frame, or it does not.</p>
 </div>
 
 <h2 id="modal">2.1 Modal</h2>
-<div class="stub">
-  <div class="stub-h">Not yet written — Part 2</div>
-  <p>The highest-stakes component in the book: it has to justify replacing 1,484 legacy calls across two systems. Covers backdrop, elevation, header, dismissal, focus trap, scroll containment, and the one-filled-primary rule. Deliberately sequenced after the state-bearing group, so the state layer it needs already exists rather than being invented under pressure.</p>
+
+<p class="lede">The first overlay and the highest-stakes section in the book. It has to be good enough to justify replacing 1,484 legacy calls across two systems — and it is the one component where a filled primary button is allowed, which makes it the one place the book has to define an on-fill colour without reopening Law 4. It is sequenced here, after the state-bearing group, so the state layer it borrows already exists.</p>
+
+<h3>1 · Purpose and boundary</h3>
+
+<p>A surface that takes over the screen to get a decision or complete a focused task that must finish or be abandoned before the user does anything else. It blocks. That is its whole reason to exist and the whole reason it is overused: blocking is powerful, and power invites reaching for it when a quieter surface would do.</p>
+
+<table>
+  <thead><tr><th style="width:220px">Use a modal when</th><th>Use something else when</th></tr></thead>
+  <tbody>
+    <tr><td>The user must decide or finish before continuing, and proceeding without deciding would be wrong</td><td>The message is information the user can read and move past → <strong>Inline alert</strong> or <strong>Toast</strong></td></tr>
+    <tr><td>The task is short and self-contained — a confirm, a small form, a focused choice</td><td>The task is long, multi-step, or benefits from page context beside it → <strong>a page or a drawer</strong></td></tr>
+    <tr><td>Interrupting is justified by the cost of getting it wrong</td><td>It is app- or account-level and should persist, not block → <strong>Banner</strong></td></tr>
+    <tr><td>Exactly one decision is in front of the user</td><td>You are about to open a modal from a modal → stop; that is a flow that wants a page</td></tr>
+  </tbody>
+</table>
+
+<p><strong>This component is a replacement, not a conformance target.</strong> Unity runs three modal systems: <code>sd.component.messageBox.action</code> (940 calls), <code>Utils.openDialog</code> (544), and the design system's own <code>&lt;sd-modal&gt;</code> — used 5 times. The modern component is 0.3% of modal usage. Bringing those 5 into conformance changes nothing anyone sees. The work is replacing the 1,484, and this spec is the thing that has to justify it: it has to do everything the two legacy systems do — confirms, prompts, small forms — and fix what they don't: no focus trap, no scroll lock, no consistent button hierarchy, no state discipline.</p>
+
+<h3>2 · Anatomy</h3>
+<table>
+  <thead><tr><th style="width:200px">Part</th><th style="width:90px">Required</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">.sd-modal-scrim</td><td>yes</td><td>Fixed backdrop. Dims and captures the page behind, centres the surface, and is the click target for dismissal where dismissal is allowed.</td></tr>
+    <tr><td class="mono">.sd-modal</td><td>yes</td><td>The elevated surface. Neutral — <code>--surface-default</code>, not a state colour. Carries <code>data-intent</code> for the destructive variant.</td></tr>
+    <tr><td class="mono">.sd-modal__header</td><td>yes</td><td>Title plus close. The title is the accessible name of the dialog.</td></tr>
+    <tr><td class="mono">.sd-modal__close</td><td>no</td><td>Top-right. Omit only on a modal that must be resolved by choosing an action — and then Escape and backdrop are off too.</td></tr>
+    <tr><td class="mono">.sd-modal__body</td><td>yes</td><td>Scrolls internally when tall. State that belongs to the task lives here as an inline alert — never on the frame.</td></tr>
+    <tr><td class="mono">.sd-modal__footer</td><td>yes</td><td>Actions, right-aligned. <strong>Exactly one</strong> filled primary; the rest are secondary. Destructive replaces the primary, it does not add a second filled button.</td></tr>
+  </tbody>
+</table>
+
+<h3>3 · Token map by role</h3>
+
+<p>The modal is neutral chrome, so most of it resolves to the neutral and surface tokens, not to a state family. The only coloured element is the single primary button.</p>
+
+<table>
+  <thead><tr><th style="width:180px">Part</th><th style="width:230px">Component token</th><th>Resolves to</th><th>Contrast</th></tr></thead>
+  <tbody>
+    <tr><td>Backdrop</td><td class="mono">--scrim</td><td>neutral-12 @ 58%</td><td>dims page ≥ enough to separate</td></tr>
+    <tr><td>Surface</td><td class="mono">--surface-default + --shadow-overlay</td><td class="mono">--neutral-1</td><td>reference surface</td></tr>
+    <tr><td>Title</td><td class="mono">--text-default</td><td class="mono">--neutral-12</td><td>15.8:1 <span class="pass">✓</span></td></tr>
+    <tr><td>Body</td><td class="mono">--text-muted</td><td class="mono">--neutral-11</td><td>6.4:1 <span class="pass">✓</span></td></tr>
+    <tr><td>Divider / close</td><td class="mono">--border-subtle / --text-muted</td><td class="mono">--neutral-6 / --neutral-11</td><td>chrome</td></tr>
+    <tr><td>Primary fill</td><td class="mono">--action-primary</td><td class="mono">--accent-9</td><td>white 4.61:1 <span class="pass">✓</span></td></tr>
+    <tr><td>Primary hover</td><td class="mono">--action-primary-hover</td><td class="mono">--accent-10</td><td>white 5.57:1 <span class="pass">✓</span></td></tr>
+    <tr><td>Destructive fill</td><td class="mono">--action-danger</td><td class="mono">--tomato-11</td><td>white 4.99:1 <span class="pass">✓</span></td></tr>
+    <tr><td>Focus ring</td><td class="mono">--focus-ring-color</td><td class="mono">--accent-9</td><td>≥3:1 on surface</td></tr>
+  </tbody>
+</table>
+
+<div class="callout warn">
+  <div class="callout-title">Decision 1 — a modal is neutral. State goes inside it, never on the frame.</div>
+  <p>There is no error modal, no success modal, no red or green dialog. A modal is <code>--surface-default</code>, always. When the task carries state — a destructive warning, a validation summary — that state is an <strong>inline alert inside the body</strong>, which is exactly what 1.1 is for. Tinting the whole dialog spends the largest state surface in the app to say what one alert says better, and it forces an on-fill contrast problem on every word of chrome. The frame is neutral; the state lives in the content.</p>
+</div>
+
+<div class="callout warn">
+  <div class="callout-title">Decision 2 — the one filled primary, and why it is allowed here when it is banned everywhere else</div>
+  <p>The state-bearing group forbids filled buttons because a filled button needs an on-fill colour, and on a state surface that means white on step 9 — Law 4. The modal is the exception, and it is a principled one: its primary is the <strong>accent</strong>, not a state, and <code>--accent-9</code> carries white at <strong>4.61:1</strong>, clearing AA. Law 4 governs the state families; the action colour is not one of them. So the modal gets exactly one filled button — the accent primary — and every other action in the footer is secondary. One filled button per modal, no exceptions: a second filled button is two primaries, which is no primary.</p>
+</div>
+
+<div class="callout warn">
+  <div class="callout-title">Decision 3 — the destructive primary, reconciling the flagged button</div>
+  <p>The obvious destructive button — white on <code>--error-9</code> — is <strong>3.87:1</strong>. It fails AA, and it is the exact defect the audit flagged against the current destructive button. The instinct is to reach for the vivid step-9 red because that is where the accent primary sits. But the step is not the rule; the <em>pair</em> is (Law 3). White on error-9 fails, error-10 lands at 4.48 — a technical fail — and <strong>white on error-11 (<code>#cf3716</code>) is 4.99:1</strong>. So the destructive fill darkens to step 11. It is implemented the way every variant in this book is: <code>data-intent="destructive"</code> re-points one token (<code>--overlay-primary → --action-danger</code>) and nothing else. Same single filled button, different fill. <strong>This is the reconciliation of the flagged destructive-button defect: destructive is error-11, not error-9.</strong></p>
+</div>
+
+<h3>4 · Required states</h3>
+
+<p>A modal does not have the four state variants. It has intents and interaction states.</p>
+
+<table>
+  <thead><tr><th style="width:170px">State</th><th style="width:160px">Attribute</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td>Default</td><td class="mono">(none)</td><td>Accent primary. The common case — a confirm or a small form.</td></tr>
+    <tr><td>Destructive</td><td class="mono">data-intent="destructive"</td><td>Primary becomes error-11. The action is irreversible or lossy; the safe action (Cancel) is the secondary and is where focus lands.</td></tr>
+    <tr><td>Pending</td><td class="mono">data-pending="true"</td><td>Submission in flight: primary shows a spinner and is disabled, secondaries disabled, the surface does not close and cannot be dismissed until it resolves.</td></tr>
+  </tbody>
+</table>
+
+<p><em>Interaction states:</em> opening and closing (scrim fade, surface motion); <code>:focus-visible</code> on every control; button hover / active. There is no disabled <em>modal</em> — a modal that should not be acted on should not be open.</p>
+
+<h3>5 · Accessibility — hard rules</h3>
+
+<ol class="rules">
+  <li><span class="must">MUST</span> use <code>role="dialog"</code> with <code>aria-modal="true"</code>, <code>aria-labelledby</code> pointing at the title and <code>aria-describedby</code> at the body. A modal with no accessible name is an unlabelled trap.</li>
+  <li><span class="must">MUST</span> move focus into the dialog on open — to the first input, or to the safe action on a destructive modal — and <span class="must">MUST</span> return focus to the triggering control on close. <span class="mustnot">MUST NOT</span> let focus land on <code>&lt;body&gt;</code>.</li>
+  <li><span class="must">MUST</span> trap focus within the dialog while open: Tab and Shift+Tab cycle inside it and never reach the page behind the scrim.</li>
+  <li><span class="must">MUST</span> lock background scroll while open and restore the exact scroll position on close, without the layout shift a naive <code>overflow:hidden</code> causes.</li>
+  <li><span class="must">MUST</span> close on <kbd>Escape</kbd> for any dismissible modal. <span class="mustnot">MUST NOT</span> close on Escape when the modal is pending, or guards unsaved work — in which case Escape routes to the same confirm path as the close button.</li>
+  <li><span class="must">MUST</span> carry exactly one filled primary in the footer. <span class="mustnot">MUST NOT</span> render two filled buttons. Secondary actions are outlined or text.</li>
+  <li><span class="must">MUST</span> resolve the primary fill through <code>--action-primary</code> / <code>--action-danger</code>. <span class="mustnot">MUST NOT</span> place white on <code>--error-9</code>, or tint the surface with any state colour. Decisions 1 and 3.</li>
+  <li><span class="mustnot">MUST NOT</span> dismiss a decision-required modal by backdrop click. Backdrop click closes an advisory modal; a modal that demands a choice, is destructive, or holds unsaved input ignores it — an accidental click outside must not discard the decision.</li>
+  <li><span class="mustnot">MUST NOT</span> open a modal from a modal. Stacked dialogs bury focus, multiply the escape paths, and are the signal that the flow wanted a page. Replace the current modal's contents instead of stacking.</li>
+  <li><span class="must">MUST</span> give the close control an accessible name — "Close dialog", not "Close" alone where ambiguous — and a 44×44 target via pseudo-element.</li>
+</ol>
+
+<h3>6 · Behaviour</h3>
+
+<ul>
+  <li><strong>Open.</strong> Scrim fades in over 150ms; the surface fades and scales from 98% to 100% over the same window. Focus moves in as rule 02 requires.</li>
+  <li><strong>Dismissal.</strong> Three paths, and they are not equal: the close button and Escape always work on a dismissible modal; the backdrop works only on advisory ones (rule 08). A destructive or dirty modal has exactly one way out that isn't the action — Cancel — and it is the focused control.</li>
+  <li><strong>Pending.</strong> On submit, the modal enters <code>data-pending</code>: the primary shows a spinner and locks, dismissal is suspended, and the result either closes the modal (success) or surfaces as an inline alert in the body (failure) — state inside the frame, per Decision 1.</li>
+  <li><strong>Stacking.</strong> One modal at a time. A flow that seems to need a second modal replaces the first modal's content or becomes a page.</li>
+  <li><strong>Motion.</strong> Under <code>prefers-reduced-motion</code>, scrim and surface fade only — no scale. Closing reverses the open in 120ms.</li>
+</ul>
+
+<h3>7 · Rendered example</h3>
+
+<div class="example-block">
+  <div class="example-label">Default · one filled accent primary · secondary is the way out</div>
+  <div class="example-render" style="background:var(--scrim); padding:var(--spacing-6); display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <div class="sd-modal" style="width:min(460px,100%); max-height:none;" role="dialog" aria-modal="true" aria-labelledby="m1t">
+      <div class="sd-modal__header">
+        <h3 class="sd-modal__title" id="m1t">Publish brand kit to 4 workspaces?</h3>
+        <button type="button" class="sd-modal__close" aria-label="Close dialog"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="sd-modal__body">Everyone in Nike, Adidas, Puma and Reebok will see the updated logo, palette and type tokens the next time they open Unity.</div>
+      <div class="sd-modal__footer">
+        <button type="button" class="sd-btn sd-btn--secondary">Cancel</button>
+        <button type="button" class="sd-btn sd-btn--primary">Publish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="example-block">
+  <div class="example-label">Destructive · <code>data-intent="destructive"</code> re-points one token · Cancel is focused</div>
+  <div class="example-render" style="background:var(--scrim); padding:var(--spacing-6); display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <div class="sd-modal" data-intent="destructive" style="width:min(460px,100%); max-height:none;" role="dialog" aria-modal="true" aria-labelledby="m2t">
+      <div class="sd-modal__header">
+        <h3 class="sd-modal__title" id="m2t">Delete 118 assets permanently?</h3>
+        <button type="button" class="sd-modal__close" aria-label="Close dialog"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="sd-modal__body">This removes the assets and every derivative from all collections. It cannot be undone.</div>
+      <div class="sd-modal__footer">
+        <button type="button" class="sd-btn sd-btn--secondary">Cancel</button>
+        <button type="button" class="sd-btn sd-btn--primary">Delete assets</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="example-block">
+  <div class="example-label">Rejected — destructive fill hardcoded to error-9, bypassing the token</div>
+  <div class="example-render" style="background:var(--scrim); padding:var(--spacing-6); display:flex; flex-direction:column; align-items:center; gap:var(--spacing-4);">
+    <div class="sd-modal" data-intent="destructive" style="width:min(460px,100%); max-height:none;" role="dialog" aria-modal="true" aria-label="Delete 118 assets permanently?">
+      <div class="sd-modal__header">
+        <h3 class="sd-modal__title">Delete 118 assets permanently?</h3>
+        <button type="button" class="sd-modal__close" aria-label="Close dialog"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="sd-modal__body">This removes the assets and every derivative from all collections. It cannot be undone.</div>
+      <div class="sd-modal__footer">
+        <button type="button" class="sd-btn sd-btn--secondary">Cancel</button>
+        <button type="button" class="sd-btn sd-btn--primary" style="background:#e54d2e;">Delete assets</button>
+      </div>
+    </div>
+    <div style="font-size:var(--font-size-2); color:var(--text-muted); max-width:400px; text-align:center;">Structurally the correct destructive modal — neutral Cancel, one filled primary in the trailing slot. The single defect: the Delete fill is hardcoded to error-9 (<code>#e54d2e</code>) instead of resolving <code>--action-danger</code> (error-11, <code>#cf3716</code>). White on it is <strong>3.87:1</strong> against 4.99:1 — a hair darker to the eye, and the line between fail and pass. Which is why it is a grep, not a judgement call.</div>
+  </div>
+</div>
+
+<h3>8 · Markup contract</h3>
+
+<div class="example-block">
+  <div class="example-label">Canonical DOM</div>
+  <div class="example-code">&lt;div class=<span class="k">"sd-modal-scrim"</span>&gt;
+  &lt;div class=<span class="k">"sd-modal"</span> role=<span class="k">"dialog"</span> aria-modal=<span class="k">"true"</span>
+       aria-labelledby=<span class="k">"title"</span> aria-describedby=<span class="k">"body"</span>&gt;
+    &lt;div class=<span class="k">"sd-modal__header"</span>&gt;
+      &lt;h2 class=<span class="k">"sd-modal__title"</span> id=<span class="k">"title"</span>&gt;Title&lt;/h2&gt;
+      &lt;button class=<span class="k">"sd-modal__close"</span> aria-label=<span class="k">"Close dialog"</span>&gt;…&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=<span class="k">"sd-modal__body"</span> id=<span class="k">"body"</span>&gt;…&lt;/div&gt;
+    &lt;div class=<span class="k">"sd-modal__footer"</span>&gt;
+      &lt;button class=<span class="k">"sd-btn sd-btn--secondary"</span>&gt;Cancel&lt;/button&gt;
+      &lt;button class=<span class="k">"sd-btn sd-btn--primary"</span>&gt;Confirm&lt;/button&gt;   <span class="c">&lt;!-- the one filled button --&gt;</span>
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+<span class="c">data-intent="destructive" on .sd-modal re-points --overlay-primary to --action-danger.
+State inside the task is an .sd-alert in the body — never a tint on .sd-modal.</span></div>
+</div>
+
+<h4>Conformance checks</h4>
+<p>The modal is a replacement, not a fix — the 5 conformant uses are irrelevant beside the 1,484 to replace. Every check is <span class="ph ph-react">React</span>, and lands per module as its dialogs are migrated off <code>messageBox</code> and <code>openDialog</code>.</p>
+<table>
+  <thead><tr><th style="width:210px">Check</th><th style="width:74px">Phase</th><th>Pass</th></tr></thead>
+  <tbody>
+    <tr><td>No primitive in component CSS</td><td><span class="ph ph-react">React</span></td><td><code>grep -E "\-\-(accent|neutral|amber|jade|tomato|blue)-[0-9]" modal.css</code> → 0</td></tr>
+    <tr><td>Surface is never a state colour</td><td><span class="ph ph-react">React</span></td><td><code>grep -E "state-.*(surface|-9)|#(e54d2e|f5a524|29a383)" </code> on <code>.sd-modal {</code> → 0. Decision 1.</td></tr>
+    <tr><td>Destructive is error-11, not error-9</td><td><span class="ph ph-react">React</span></td><td><code>grep -A2 'data-intent="destructive"' modal.css | grep 'action-danger'</code> → present; no white on <code>--error-9</code>. Decision 3.</td></tr>
+    <tr><td>Exactly one filled primary</td><td><span class="ph ph-react">React</span></td><td><code>grep -c "sd-btn--primary"</code> per modal → 1</td></tr>
+    <tr><td>Dialog is labelled and modal</td><td><span class="ph ph-react">React</span></td><td><code>grep "sd-modal\"" src | grep -v "aria-modal"</code> → 0; every title has a matching <code>aria-labelledby</code></td></tr>
+    <tr><td>Focus trap and return</td><td><span class="ph ph-react">React</span></td><td>Verified in the dialog controller: focus enters on open, cycles, returns to trigger on close.</td></tr>
+    <tr><td>Adoption</td><td><span class="ph ph-react">React</span></td><td>Count of remaining <code>messageBox.action</code> + <code>openDialog</code> calls. Starts at 1,484. This is the number that moves.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-title">Conformance and adoption for this component</div>
+  <p><strong>Conformance:</strong> the component is a build, entirely <span class="ph ph-react">React</span>. The three decisions above are the whole of it — neutral frame, one accent primary, destructive at error-11 — and each is a one-line grep.</p>
+  <p><strong>Adoption:</strong> this is the largest adoption number in the register and the one that measures the migration. 1,484 legacy calls across two systems, replaced module by module. Conformance of the component is a day; adoption is the programme. They are different numbers and the second is the real one.</p>
 </div>
 
 <h2 id="drawer">2.2 Drawer</h2>
-<div class="stub"><div class="stub-h">Not yet written — Part 2</div><p>Shares backdrop, elevation, header and dismiss with 2.1. Adds edge anchoring, size steps and the rules for when a drawer beats a modal.</p></div>
+
+<p class="lede">The modal, re-anchored to an edge at full height. It inherits the entire 2.1 contract — scrim, focus trap, scroll lock, the three decisions, the one filled primary — unchanged. Almost nothing here is new colour or new rule. The section exists to make one call: when a drawer beats a modal, and when it is a modal wearing the wrong shape.</p>
+
+<h3>1 · Purpose and boundary</h3>
+
+<p>A full-height panel anchored to a viewport edge, for a focused task that needs more room than a centred dialog, or that benefits from staying spatially attached to the list it came from. It blocks, exactly as a modal does — the edge and the height are the only differences.</p>
+
+<table>
+  <thead><tr><th style="width:220px">Use a drawer when</th><th>Use something else when</th></tr></thead>
+  <tbody>
+    <tr><td>The task is a form or detail view too tall or too wide for a centred dialog to hold comfortably</td><td>The task is a single decision — confirm, choose, acknowledge → <strong>Modal</strong></td></tr>
+    <tr><td>Staying anchored to the list you opened it from matters — editing this row, inspecting this asset</td><td>The context behind is irrelevant to the task → <strong>Modal</strong>, centred</td></tr>
+    <tr><td>It is a side task you return from to the same place</td><td>It is a primary destination the user navigates to → <strong>a page</strong></td></tr>
+    <tr><td>Focus should be held while the task is open</td><td>The page must stay fully interactive alongside the panel → <strong>not this component</strong> (see below)</td></tr>
+  </tbody>
+</table>
+
+<p><strong>The boundary that matters most: a drawer blocks.</strong> The persistent side panel that leaves the page live underneath — a filter rail, an inspector you tab in and out of while working — is <em>not</em> a drawer. It has no scrim, no focus trap, no blocking, and it is a layout element, not an overlay. This section is Part 2, overlays; that panel belongs to layout. Calling it a drawer imports a blocking contract it must not have. If the page stays interactive, it is not this.</p>
+
+<h3>2 · Anatomy</h3>
+
+<p>Identical to the modal — scrim, elevated surface, header with title and close, scrollable body, footer with the actions — re-anchored. The surface meets the anchored edge with no radius on that side, runs the full height (or width, for a bottom drawer), and the footer is pinned to the bottom so the primary action is reachable without scrolling to it.</p>
+
+<table>
+  <thead><tr><th style="width:200px">Part</th><th style="width:90px">Required</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">.sd-drawer-scrim</td><td>yes</td><td>Same backdrop as the modal. A drawer without a scrim is the layout panel above, not this.</td></tr>
+    <tr><td class="mono">.sd-drawer</td><td>yes</td><td>Edge-anchored surface. <code>data-side</code> sets the edge, <code>data-size</code> the width. Neutral — <code>--surface-default</code>. Carries <code>data-intent</code> for destructive, same as the modal.</td></tr>
+    <tr><td class="mono">.sd-drawer__header / __body / __footer</td><td>yes</td><td>The modal's three regions, unchanged. Body flexes and scrolls; footer pins to the bottom edge.</td></tr>
+  </tbody>
+</table>
+
+<h3>3 · Token map by role</h3>
+
+<p><strong>There is no token map, because there is no new colour.</strong> The drawer resolves exactly what the modal resolves — <code>--scrim</code>, <code>--surface-default</code> plus <code>--shadow-overlay</code>, <code>--text-default</code> / <code>--text-muted</code>, <code>--border-subtle</code>, and the one filled primary through <code>--action-primary</code> (destructive re-points to <code>--action-danger</code>, error-11, exactly as <a href="#modal">2.1 §3</a>). Re-anchoring is a layout change. It touches no token, opens no law, and inherits every contrast measurement from the modal. If a drawer introduces a colour the modal does not have, that colour is wrong.</p>
+
+<h3>4 · Required states</h3>
+
+<p>The modal's states — default, destructive, pending — apply unchanged. The drawer adds two presentational axes that carry no colour.</p>
+
+<table>
+  <thead><tr><th style="width:150px">Axis</th><th style="width:200px">Attribute</th><th>Values</th></tr></thead>
+  <tbody>
+    <tr><td>Anchor</td><td class="mono">data-side</td><td><strong>right</strong> (default) · bottom · <em>left (avoid — see rule 04)</em></td></tr>
+    <tr><td>Size</td><td class="mono">data-size</td><td>sm 360 · <strong>md 480</strong> (default) · lg 640 — width, for side drawers; a bottom drawer is content-height to 80vh</td></tr>
+    <tr><td>Intent</td><td class="mono">data-intent</td><td>default · destructive — inherited from 2.1</td></tr>
+    <tr><td>Progress</td><td class="mono">data-pending</td><td>submit in flight — inherited from 2.1</td></tr>
+  </tbody>
+</table>
+
+<h3>5 · Accessibility — hard rules</h3>
+
+<p>Every rule in <a href="#modal">2.1 §5</a> applies to the drawer unchanged: <code>role="dialog"</code> with <code>aria-modal="true"</code>, labelled by its title; focus moves in on open, is trapped, returns to the trigger on close; background scroll locked; Escape closes a dismissible drawer; exactly one filled primary; neutral surface, never a state tint; no white on <code>--error-9</code>; backdrop dismiss only for advisory drawers; no stacking; named close. The drawer adds four.</p>
+
+<ol class="rules" start="1">
+  <li><span class="must">MUST</span> keep dialog semantics regardless of edge. The anchor is presentation; a drawer is a <code>role="dialog"</code>, never a <code>region</code>, <code>complementary</code> or <code>navigation</code> landmark. Sliding from the side does not make it a sidebar.</li>
+  <li><span class="mustnot">MUST NOT</span> be used as a non-modal panel. A drawer has a scrim and a focus trap. If the design needs the page live underneath, that is the layout panel, not this component — do not strip the scrim off a drawer to fake it.</li>
+  <li><span class="must">MUST</span> default to the right edge. Right matches reading order for a detail or edit task and is where users expect a panel opened from a row or item.</li>
+  <li><span class="mustnot">MUST NOT</span> anchor left where the left nav rail lives — a left drawer slides over the primary navigation, buries the user's orientation, and fights the one piece of chrome that should never move. Bottom is the mobile and compact-picker anchor; left is effectively unused.</li>
+</ol>
+
+<h3>6 · Behaviour</h3>
+
+<div class="callout warn">
+  <div class="callout-title">The decision this section exists to make — when a drawer beats a modal</div>
+  <p>Scope of task, not size of content. A <strong>modal</strong> is for a decision that should black out everything else: the answer is confirm or cancel, and what is behind is irrelevant to it, so centring it and dimming the rest is correct. A <strong>drawer</strong> is for a <em>task</em> — a form, an edit, a detail view — that needs room and benefits from staying attached to where it opened: you are editing <em>this</em> row, and the row's list is still there behind you, dimmed but oriented. A <strong>page</strong> is for a primary destination you navigate to. And the <strong>non-modal panel</strong> — the one this component is not — is for work you do <em>alongside</em> a live page. The failure mode in both directions: a one-line confirm stuffed into a full-height drawer (a modal wearing the wrong shape, displacing the whole edge for a yes/no), and a multi-field editor jammed into a centred modal that cannot hold it. Match the shape to the scope.</p>
+</div>
+
+<ul>
+  <li><strong>Anchoring.</strong> Right by default; bottom for mobile and compact contextual pickers; left avoided (rule 04). One drawer chooses one edge; a drawer does not move edges between opens.</li>
+  <li><strong>Size.</strong> Side drawers step sm / md / lg by width and always run full height. A bottom drawer is content height, capped at 80vh, and scrolls its body past that.</li>
+  <li><strong>Motion.</strong> Slides in from its anchored edge — <code>translateX</code> for side, <code>translateY</code> for bottom — over 200ms, while the scrim fades. Under <code>prefers-reduced-motion</code>, the scrim fades and the panel appears without translation. Closing reverses it.</li>
+  <li><strong>Everything else is the modal's.</strong> Dismissal paths, focus management, scroll lock, the pending state and one-at-a-time stacking are inherited from 2.1 without change. A drawer does not open a drawer, and a drawer does not open a modal — that is a flow that wanted a page.</li>
+</ul>
+
+<h3>7 · Rendered example</h3>
+
+<div class="example-block">
+  <div class="example-label">Right-anchored edit drawer · a task with room · one filled primary, neutral secondary</div>
+  <div class="example-render" style="background:var(--scrim); padding:0; height:360px; display:flex; overflow:hidden; border-radius:var(--radius-3);">
+    <div class="sd-drawer" data-side="right" style="width:min(380px,100%);" role="dialog" aria-modal="true" aria-labelledby="dr1t">
+      <div class="sd-drawer__header">
+        <h3 class="sd-drawer__title" id="dr1t">Edit asset details</h3>
+        <button type="button" class="sd-drawer__close" aria-label="Close drawer"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="sd-drawer__body">
+        <p style="margin:0 0 12px; color:var(--text-default); font-weight:var(--font-weight-semibold);">Nike_AW26_keyvisual_v4.psd</p>
+        <p style="margin:0 0 4px;">Tags, rights window, usage territory and linked collections — the kind of detail that never fits a centred dialog, kept attached to the list you opened it from.</p>
+        <p style="margin:12px 0 0;">The list is still there, dimmed, behind the scrim: you have not left it.</p>
+      </div>
+      <div class="sd-drawer__footer">
+        <button type="button" class="sd-btn sd-btn--secondary">Cancel</button>
+        <button type="button" class="sd-btn sd-btn--primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="example-block">
+  <div class="example-label">Rejected — a decision in a drawer, the modal wearing the wrong shape</div>
+  <div class="example-render" style="background:var(--scrim); padding:0; height:360px; display:flex; overflow:hidden; border-radius:var(--radius-3);">
+    <div class="sd-drawer" data-side="right" style="width:min(380px,100%);">
+      <div class="sd-drawer__header">
+        <h3 class="sd-drawer__title">Delete this asset?</h3>
+        <button type="button" class="sd-drawer__close" aria-label="Close drawer"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="sd-drawer__body">This cannot be undone.</div>
+      <div class="sd-drawer__footer">
+        <button type="button" class="sd-btn sd-btn--secondary">Cancel</button>
+        <button type="button" class="sd-btn sd-btn--primary" style="background:var(--action-danger);">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+<p style="font-size:var(--font-size-2); color:var(--text-muted); max-width:520px; margin-top:var(--spacing-2);">A yes/no decision does not need a full-height edge panel — most of the drawer is empty, and the whole right edge is displaced for one line. This is a modal. Scope, not habit, picks the shape.</p>
+
+<h3>8 · Markup contract</h3>
+
+<div class="example-block">
+  <div class="example-label">Canonical DOM</div>
+  <div class="example-code">&lt;div class=<span class="k">"sd-drawer-scrim"</span>&gt;
+  &lt;div class=<span class="k">"sd-drawer"</span> data-side=<span class="k">"right"</span> data-size=<span class="k">"md"</span>
+       role=<span class="k">"dialog"</span> aria-modal=<span class="k">"true"</span> aria-labelledby=<span class="k">"title"</span>&gt;
+    &lt;div class=<span class="k">"sd-drawer__header"</span>&gt;
+      &lt;h2 class=<span class="k">"sd-drawer__title"</span> id=<span class="k">"title"</span>&gt;Title&lt;/h2&gt;
+      &lt;button class=<span class="k">"sd-drawer__close"</span> aria-label=<span class="k">"Close drawer"</span>&gt;…&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=<span class="k">"sd-drawer__body"</span>&gt;…&lt;/div&gt;
+    &lt;div class=<span class="k">"sd-drawer__footer"</span>&gt;
+      &lt;button class=<span class="k">"sd-btn sd-btn--secondary"</span>&gt;Cancel&lt;/button&gt;
+      &lt;button class=<span class="k">"sd-btn sd-btn--primary"</span>&gt;Save&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+<span class="c">Same contract as .sd-modal: role="dialog", aria-modal, one filled primary,
+data-intent="destructive" re-points --overlay-primary. Only data-side / data-size are new.</span></div>
+</div>
+
+<h4>Conformance checks</h4>
+<p>Like the modal, the drawer is a net-new build (B6) — no drawer exists; edge panels are hand-rolled per site. Every check is <span class="ph ph-react">React</span>, and each inherits directly from 2.1.</p>
+<table>
+  <thead><tr><th style="width:210px">Check</th><th style="width:74px">Phase</th><th>Pass</th></tr></thead>
+  <tbody>
+    <tr><td>No primitive in component CSS</td><td><span class="ph ph-react">React</span></td><td><code>grep -E "\-\-(accent|neutral|amber|jade|tomato|blue)-[0-9]" drawer.css</code> → 0</td></tr>
+    <tr><td>No new colour vs the modal</td><td><span class="ph ph-react">React</span></td><td><code>grep -E "#|state-|action-danger" drawer.css</code> → resolves only to shared overlay tokens</td></tr>
+    <tr><td>Has a scrim and a focus trap</td><td><span class="ph ph-react">React</span></td><td><code>grep "sd-drawer-scrim" src</code> present; focus trap verified in the controller. No scrim = it's the layout panel, not this.</td></tr>
+    <tr><td>Dialog semantics, not a landmark</td><td><span class="ph ph-react">React</span></td><td><code>grep "sd-drawer\"" src | grep -vE 'role="dialog"'</code> → 0; no <code>role="navigation|complementary"</code></td></tr>
+    <tr><td>Not anchored left into the rail</td><td><span class="ph ph-react">React</span></td><td><code>grep 'data-side="left"' src</code> → 0 in the app shell</td></tr>
+    <tr><td>Adoption</td><td><span class="ph ph-react">React</span></td><td>Count of hand-rolled edge panels replaced.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-title">Conformance and adoption for this component</div>
+  <p><strong>Conformance:</strong> a build, entirely <span class="ph ph-react">React</span>, and the cheapest in Part 2 — it is the modal with a different anchor, so most of it is already specified in 2.1. The only genuinely new judgement is the one in Behaviour: reach for it by scope of task, not by habit.</p>
+  <p><strong>Adoption:</strong> edge panels are hand-rolled where they exist. Because the drawer shares the modal's shell, the two adopt together — the module that gets a real modal gets a real drawer for free.</p>
+</div>
 
 <h2 id="tooltip">3.1 Tooltip</h2>
-<div class="stub"><div class="stub-h">Not yet written — Part 3</div><p>Positioning, arrow, collision handling, trigger contract, delay in and out, touch behaviour, and the hard rule that a tooltip never carries information required to complete a task.</p></div>
+
+<p class="lede">The smallest surface in the book and the one with the strictest rule. A short, non-interactive label anchored to a trigger — a name for an icon button, a hint, a fuller version of a truncated label. It is supplementary by definition: the moment a tooltip carries something the user needs to finish a task, it is the wrong component, and the whole section is built to hold that line.</p>
+
+<h3>1 · Purpose and boundary</h3>
+
+<p>A label that appears on hover and focus to add a word or a short phrase to a control that already works without it. It is text, it is brief, and it does nothing.</p>
+
+<table>
+  <thead><tr><th style="width:220px">Use a tooltip when</th><th>Use something else when</th></tr></thead>
+  <tbody>
+    <tr><td>An icon button needs a visible name, or a control needs a short hint</td><td>The content is required to use the control — a format rule, a validation constraint → <strong>inline text or a Popover</strong></td></tr>
+    <tr><td>The information is genuinely optional — nice to have, not needed to proceed</td><td>The content is interactive — a link, a button, a field → <strong>Popover</strong></td></tr>
+    <tr><td>A truncated label needs its full text on demand</td><td>The content is more than a phrase → <strong>Popover</strong> or a detail surface</td></tr>
+    <tr><td>The trigger's accessible name is already set elsewhere</td><td>The tooltip would be the control's <em>only</em> name → put the name in <code>aria-label</code>; the tooltip only echoes it</td></tr>
+  </tbody>
+</table>
+
+<p><strong>The one rule everything else hangs off: a tooltip is never load-bearing.</strong> Its content lives behind hover and focus, which means on touch it may never appear, and for a real share of keyboard and assistive-technology users it is missed. So anything a tooltip says must be true and available <em>without</em> it. If removing every tooltip would break a task, the tooltips were doing work they are not allowed to do — that work is inline text or a popover.</p>
+
+<h3>2 · Anatomy</h3>
+<table>
+  <thead><tr><th style="width:200px">Part</th><th style="width:90px">Required</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">trigger</td><td>yes</td><td>The control the tooltip describes. Owns the accessible name (<code>aria-label</code>) and points at the tooltip with <code>aria-describedby</code>.</td></tr>
+    <tr><td class="mono">.sd-tooltip</td><td>yes</td><td>The inverted chip. <code>role="tooltip"</code>. Text only — no interactive content, ever.</td></tr>
+    <tr><td class="mono">.sd-tooltip__arrow</td><td>no</td><td>Points at the trigger and follows it on a collision flip. Cosmetic; omit freely.</td></tr>
+  </tbody>
+</table>
+
+<h3>3 · Token map by role</h3>
+
+<table>
+  <thead><tr><th style="width:180px">Part</th><th style="width:230px">Component token</th><th>Resolves to</th><th>Contrast</th></tr></thead>
+  <tbody>
+    <tr><td>Chip surface</td><td class="mono">--surface-inverse</td><td class="mono">--neutral-12</td><td>reference surface</td></tr>
+    <tr><td>Text</td><td class="mono">--text-inverse</td><td class="mono">--neutral-1</td><td>15.8:1 <span class="pass">✓</span></td></tr>
+    <tr><td>Arrow</td><td class="mono">--surface-inverse</td><td class="mono">--neutral-12</td><td>matches surface</td></tr>
+    <tr><td>Elevation</td><td class="mono">--shadow-popover</td><td>—</td><td>shadow, not a pair</td></tr>
+  </tbody>
+</table>
+
+<div class="callout warn">
+  <div class="callout-title">The two decisions in this map — inverted, and never coloured</div>
+  <p><strong>Inverted on purpose.</strong> The tooltip is the one anchored surface that is dark — <code>--neutral-12</code>, not the app's light surface. That is deliberate: it reads instantly as transient system chrome, and it separates the passive tooltip from the interactive popover in 3.2, which is light because it is part of the app. Dark chip = look, don't touch.</p>
+  <p><strong>Never a state colour.</strong> There is no error tooltip, no warning tooltip. A coloured tooltip implies a state the user is meant to act on — which is exactly the load-bearing content this component forbids. State that matters goes in an inline alert or a popover, where it can persist and be acted on. The tooltip stays neutral because its content, by rule, never demands action.</p>
+</div>
+
+<h3>4 · Required states</h3>
+
+<p>A tooltip has one meaningful state — shown or not — and no variants. It is never error, success, disabled, or quiet; those are all things a passive label cannot be. The only presentational axis is placement.</p>
+
+<table>
+  <thead><tr><th style="width:150px">Axis</th><th style="width:200px">Attribute</th><th>Values</th></tr></thead>
+  <tbody>
+    <tr><td>Placement</td><td class="mono">data-side</td><td><strong>top</strong> (default) · bottom · left · right — a preference, overridden by collision</td></tr>
+    <tr><td>Visibility</td><td class="mono">(controlled)</td><td>shown on hover + focus, hidden on leave + blur + Escape</td></tr>
+  </tbody>
+</table>
+
+<h3>5 · Accessibility — hard rules</h3>
+
+<ol class="rules">
+  <li><span class="mustnot">MUST NOT</span> carry information required to complete a task. Everything a tooltip says is available without it. This is the rule the component exists to enforce; every rule below serves it.</li>
+  <li><span class="must">MUST</span> appear on <strong>both</strong> hover and keyboard focus, and <span class="mustnot">MUST NOT</span> require a click or appear on hover alone. A tooltip that only shows on mouse hover is invisible to keyboard users.</li>
+  <li><span class="must">MUST</span> satisfy WCAG 1.4.13 in full: <strong>dismissible</strong> — <kbd>Escape</kbd> hides it without moving the pointer; <strong>hoverable</strong> — the pointer can move onto the tooltip without it vanishing; <strong>persistent</strong> — it stays until dismissed or the trigger is left, never on a timeout.</li>
+  <li><span class="must">MUST</span> keep the control's accessible name on the trigger, in <code>aria-label</code>, and reference the tooltip with <code>aria-describedby</code>. The tooltip is a visual echo of the name, not its only source. An icon button named only by its tooltip is nameless to touch, to screen readers that don't surface described-by on the way in, and to anyone whose pointer never rests.</li>
+  <li><span class="mustnot">MUST NOT</span> contain interactive content — no link, button, or field. Interactive content inside a surface that vanishes on pointer-leave is unusable. That is a popover.</li>
+  <li><span class="must">MUST</span> treat touch as a case with no hover: assume the tooltip will not appear, and rely on <code>aria-label</code> and inline text to carry the meaning. A long-press reveal is a bonus, never the plan.</li>
+  <li><span class="must">MUST</span> show one tooltip at a time, and hide on trigger activation — once the button is pressed, the action has happened and the label is moot.</li>
+  <li><span class="must">MUST</span> stay within the viewport by flipping and shifting (Behaviour), never clipped at an edge or spilling off-screen.</li>
+</ol>
+
+<h3>6 · Behaviour</h3>
+
+<ul>
+  <li><strong>Positioning.</strong> Anchored to the trigger on the preferred side with a small offset; the arrow points at the trigger's centre.</li>
+  <li><strong>Collision.</strong> If the preferred side would overflow the viewport, flip to the opposite side; if it would still overflow along the cross-axis, shift to stay in view. The arrow tracks the trigger through both.</li>
+  <li><strong>Delay.</strong> Open after roughly 400ms so a pointer passing over a toolbar does not strobe tooltips; close almost immediately on leave, with a short grace period so the pointer can travel to a hoverable tooltip (rule 03). Once one tooltip has opened, a shared skip-delay window lets adjacent triggers open instantly while the user is scanning.</li>
+  <li><strong>Trigger.</strong> Hover and focus open; leave, blur, Escape and activation close. Focus is a first-class trigger, not an afterthought.</li>
+  <li><strong>Touch.</strong> No hover state, so in practice the tooltip does not fire; the meaning is already carried by the name and any inline text. The component degrades to nothing, which is safe precisely because it was never load-bearing.</li>
+</ul>
+
+<h3>7 · Rendered example</h3>
+
+<div class="example-block">
+  <div class="example-label">Icon buttons with their name in a tooltip · shown state · top placement</div>
+  <div class="example-render" style="min-height:150px; display:flex; flex-direction:row; gap:72px; justify-content:center; align-items:center;">
+
+    <div style="position:relative; display:inline-block;">
+      <button type="button" aria-label="Delete asset" aria-describedby="tt-del" style="width:36px; height:36px; display:grid; place-items:center; background:transparent; border:1px solid var(--border-default); border-radius:var(--radius-2); color:var(--text-muted); cursor:pointer;"><svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 6h12M8 6V4.5h4V6M6.5 6l.7 9.5h5.6l.7-9.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="sd-tooltip" id="tt-del" role="tooltip" style="left:50%; bottom:calc(100% + 10px); transform:translateX(-50%); white-space:nowrap;">Delete asset<span class="sd-tooltip__arrow" style="left:50%; bottom:-4px; margin-left:-4px;"></span></div>
+    </div>
+
+    <div style="position:relative; display:inline-block;">
+      <button type="button" aria-label="Sync status" aria-describedby="tt-sync" style="width:36px; height:36px; display:grid; place-items:center; background:transparent; border:1px solid var(--border-default); border-radius:var(--radius-2); color:var(--text-muted); cursor:pointer;"><svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M15.5 6.5A6 6 0 0 0 5 7M4.5 13.5A6 6 0 0 0 15 13M15.5 4v2.5H13M4.5 16v-2.5H7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="sd-tooltip" id="tt-sync" role="tooltip" style="left:50%; bottom:calc(100% + 10px); transform:translateX(-50%); white-space:nowrap;">Last synced 2 min ago<span class="sd-tooltip__arrow" style="left:50%; bottom:-4px; margin-left:-4px;"></span></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="example-block">
+  <div class="example-label">Rejected — a requirement hidden in a tooltip, load-bearing content behind hover</div>
+  <div class="example-render" style="min-height:150px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+    <div style="display:flex; flex-direction:column; gap:6px; width:280px;">
+      <label style="display:flex; align-items:center; gap:6px; font-size:var(--font-size-2); color:var(--text-default); font-weight:var(--font-weight-semibold);">Password
+        <span style="position:relative; display:inline-block;">
+          <span style="display:grid; place-items:center; width:18px; height:18px; border-radius:999px; border:1px solid var(--border-default); color:var(--text-muted); font-size:11px; cursor:help;">?</span>
+          <span class="sd-tooltip" role="tooltip" style="left:50%; bottom:calc(100% + 8px); transform:translateX(-50%); width:210px; white-space:normal;">Must be 12+ characters and include a symbol<span class="sd-tooltip__arrow" style="left:50%; bottom:-4px; margin-left:-4px;"></span></span>
+        </span>
+      </label>
+      <input type="password" style="padding:8px 10px; border:1px solid var(--border-default); border-radius:var(--radius-2); font:inherit; background:var(--surface-default);" />
+    </div>
+  </div>
+</div>
+<p style="font-size:var(--font-size-2); color:var(--text-muted); max-width:520px; margin-top:var(--spacing-2);">The rule is required to complete the field, so it cannot live behind a hover icon — on touch it never shows, and it is easy to miss by keyboard. A constraint is inline helper text under the field, or a popover the user can open and keep open. The tooltip is for the optional hint, never the requirement.</p>
+
+<h3>8 · Markup contract</h3>
+
+<div class="example-block">
+  <div class="example-label">Canonical DOM</div>
+  <div class="example-code"><span class="c">&lt;!-- name on the trigger; tooltip is the described-by echo --&gt;</span>
+&lt;button type=<span class="k">"button"</span> aria-label=<span class="k">"Delete asset"</span> aria-describedby=<span class="k">"tt-del"</span>&gt;
+  &lt;svg aria-hidden=<span class="k">"true"</span>&gt;…&lt;/svg&gt;
+&lt;/button&gt;
+
+&lt;div class=<span class="k">"sd-tooltip"</span> id=<span class="k">"tt-del"</span> role=<span class="k">"tooltip"</span> data-side=<span class="k">"top"</span>&gt;
+  Delete asset
+  &lt;span class=<span class="k">"sd-tooltip__arrow"</span>&gt;&lt;/span&gt;
+&lt;/div&gt;
+
+<span class="c">No interactive elements inside the tooltip. Shown on hover AND focus.
+Escape dismisses. Content also true without the tooltip (rule 01).</span></div>
+</div>
+
+<h4>Conformance checks</h4>
+<p>A net-new build (B6) — tooltips are hand-rolled or absent. Every check is <span class="ph ph-react">React</span>. Two of them are greppable guards on the one rule that matters.</p>
+<table>
+  <thead><tr><th style="width:210px">Check</th><th style="width:74px">Phase</th><th>Pass</th></tr></thead>
+  <tbody>
+    <tr><td>No primitive in component CSS</td><td><span class="ph ph-react">React</span></td><td><code>grep -E "\-\-(accent|neutral|amber|jade|tomato|blue)-[0-9]" tooltip.css</code> → 0</td></tr>
+    <tr><td>Nothing interactive inside</td><td><span class="ph ph-react">React</span></td><td><code>grep -A2 'role="tooltip"' src | grep -E "&lt;a |&lt;button|&lt;input"</code> → 0 (rule 05)</td></tr>
+    <tr><td>Trigger carries its own name</td><td><span class="ph ph-react">React</span></td><td>Every tooltip trigger has an <code>aria-label</code> or visible text — not named by the tooltip alone (rule 04)</td></tr>
+    <tr><td>Focus opens it, not just hover</td><td><span class="ph ph-react">React</span></td><td>Open handler bound to focus as well as pointer-enter (rule 02); verified in the controller</td></tr>
+    <tr><td>Never coloured by state</td><td><span class="ph ph-react">React</span></td><td><code>grep -E "state-|data-state" tooltip</code> → 0</td></tr>
+    <tr><td>Adoption</td><td><span class="ph ph-react">React</span></td><td>Count of hand-rolled title-attribute and ad-hoc tooltips replaced.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-title">Conformance and adoption for this component</div>
+  <p><strong>Conformance:</strong> a build, entirely <span class="ph ph-react">React</span>. The component is small; the discipline is not. The value is almost all in rule 01 — enforcing it means auditing where content currently hides behind hover, which is a content problem as much as a code one.</p>
+  <p><strong>Adoption:</strong> the common legacy form is the native <code>title</code> attribute — no focus support, no dismiss, no styling, inconsistent timing. Adoption is the count of those replaced, and every one replaced is a keyboard and touch improvement, not just a visual one.</p>
+</div>
 
 <h2 id="popover">3.2 Popover</h2>
-<div class="stub"><div class="stub-h">Not yet written — Part 3</div><p>Shares positioning, arrow and trigger with 3.1. Adds focus management, interactive content and dismissal.</p></div>
+
+<p class="lede">The tooltip's interactive inverse, and the last surface in the book. A light, anchored, non-blocking panel that holds what the tooltip refuses — links, buttons, a small form, a menu. It sits between the two extremes it borrows from: it carries interactive content like a modal, but it does not block like one; it anchors to a trigger like a tooltip, but it does not hide on the way to it. Getting a component this in-between right is a matter of holding two boundaries at once, and that is the whole of this section.</p>
+
+<h3>1 · Purpose and boundary</h3>
+
+<p>A small surface, opened on purpose, holding content the user interacts with while the page stays live behind it. It is deliberate where the tooltip is passive, and it is dismissable where the modal is blocking.</p>
+
+<table>
+  <thead><tr><th style="width:220px">Use a popover when</th><th>Use something else when</th></tr></thead>
+  <tbody>
+    <tr><td>The anchored content is interactive — a menu of actions, a filter, a small form, a link</td><td>The content is a passive label or hint → <strong>Tooltip</strong></td></tr>
+    <tr><td>The user opens it deliberately and the page can stay usable underneath</td><td>The decision must be made before anything else and must not be lost → <strong>Modal</strong></td></tr>
+    <tr><td>Losing it to a click outside is harmless — they can reopen it</td><td>A stray click outside would discard work or a choice that matters → <strong>Modal</strong></td></tr>
+    <tr><td>The content is small and self-contained</td><td>It grows into a full form or a multi-step flow → <strong>a page or a Drawer</strong></td></tr>
+  </tbody>
+</table>
+
+<p><strong>Both boundaries are about dismissal.</strong> Downward: a popover is <em>interactive</em>, so it is click-triggered — you cannot ask a user to travel a mouse across a gap to reach content that a tooltip's hover would close. Upward: a popover is <em>light-dismissed</em> — Escape or a click anywhere outside closes it — so it must never hold a decision the user would be hurt to lose to a stray click. Content the user opens and uses: popover. A choice they must deliberately make: modal. The click-to-open keeps it clear of the tooltip; the light-dismiss keeps it clear of the modal.</p>
+
+<h3>2 · Anatomy</h3>
+<table>
+  <thead><tr><th style="width:200px">Part</th><th style="width:90px">Required</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">trigger</td><td>yes</td><td>Toggles the popover. Carries <code>aria-expanded</code>, <code>aria-haspopup</code> and <code>aria-controls</code>.</td></tr>
+    <tr><td class="mono">.sd-popover</td><td>yes</td><td>The light surface — <code>--surface-default</code>, bordered, elevated. Its role depends on its content (dialog or menu). No scrim; the page stays live.</td></tr>
+    <tr><td class="mono">.sd-popover__body / __menu</td><td>yes</td><td>The content. <code>__menu</code> for an actions list, <code>__body</code> for a form or free content. This is where interactivity is allowed.</td></tr>
+    <tr><td class="mono">.sd-popover__arrow</td><td>no</td><td>Points at the trigger; follows on a collision flip. Bordered to match the light surface.</td></tr>
+  </tbody>
+</table>
+
+<h3>3 · Token map by role</h3>
+
+<table>
+  <thead><tr><th style="width:180px">Part</th><th style="width:230px">Component token</th><th>Resolves to</th><th>Contrast</th></tr></thead>
+  <tbody>
+    <tr><td>Surface</td><td class="mono">--surface-default</td><td class="mono">--neutral-1</td><td>reference surface</td></tr>
+    <tr><td>Border + arrow</td><td class="mono">--border-default</td><td class="mono">--neutral-6</td><td>chrome</td></tr>
+    <tr><td>Content text</td><td class="mono">--text-default / --text-muted</td><td class="mono">--neutral-12 / --neutral-11</td><td>15.8:1 / 6.4:1 <span class="pass">✓</span></td></tr>
+    <tr><td>Item hover</td><td class="mono">--overlay-hover</td><td class="mono">--neutral-alpha</td><td>chrome</td></tr>
+    <tr><td>Destructive item text</td><td class="mono">--action-danger</td><td class="mono">--tomato-11</td><td>4.99:1 on surface <span class="pass">✓</span></td></tr>
+    <tr><td>Elevation</td><td class="mono">--shadow-popover</td><td>—</td><td>shadow, not a pair</td></tr>
+  </tbody>
+</table>
+
+<div class="callout warn">
+  <div class="callout-title">Light on purpose — the visible half of the tooltip decision</div>
+  <p>The popover is the app's own surface: <code>--surface-default</code>, bordered, the same light card the rest of the product is built from. That is the deliberate counterpart to the tooltip's dark chip. Dark said <em>transient chrome, look don't touch</em>; light says <em>this is part of the app, you can act here</em>. A user should be able to tell at a glance whether an anchored surface will accept a click, and the surface colour is that tell before they read a word. And like the modal, the popover frame is neutral — a state that matters inside it is an inline alert in the body, never a tint on the panel. <code>--action-danger</code> on a destructive menu item is the one coloured element, and it is text, not a fill: tomato-11 clears 4.99:1 on the light surface, the same pair that carries white as the destructive fill.</p>
+</div>
+
+<h3>4 · Required states</h3>
+
+<p>Open or closed, and a placement. No state variants — the popover is neutral chrome, and its content carries its own states.</p>
+
+<table>
+  <thead><tr><th style="width:150px">Axis</th><th style="width:200px">Attribute</th><th>Values</th></tr></thead>
+  <tbody>
+    <tr><td>Visibility</td><td class="mono">trigger aria-expanded</td><td>open on press, closed on Escape / outside click / action</td></tr>
+    <tr><td>Placement</td><td class="mono">data-side</td><td><strong>bottom</strong> (default) · top · left · right — a preference, overridden by collision</td></tr>
+    <tr><td>Role</td><td class="mono">role</td><td><code>dialog</code> for a form or free content · <code>menu</code> for an actions list</td></tr>
+  </tbody>
+</table>
+
+<h3>5 · Accessibility — hard rules</h3>
+
+<ol class="rules">
+  <li><span class="must">MUST</span> open on click or key press, never on hover. Interactive content cannot sit behind a hover state — the pointer cannot reach it without crossing a gap that closes it. Hover belongs to the tooltip.</li>
+  <li><span class="must">MUST</span> wire the trigger: <code>aria-expanded</code> tracks open state, <code>aria-haspopup</code> names the type (<code>dialog</code> or <code>menu</code>), <code>aria-controls</code> points at the popover.</li>
+  <li><span class="must">MUST</span> move focus into the popover on open — to the first focusable element — and return it to the trigger on close. <span class="mustnot">MUST NOT</span> trap focus: a popover is not a modal. Tabbing past the last element moves focus onward and closes the popover; the page behind is never sealed off.</li>
+  <li><span class="must">MUST</span> light-dismiss: <kbd>Escape</kbd> closes and returns focus; a click or tap outside closes. Because of this, <span class="mustnot">MUST NOT</span> hold a decision that must not be lost — a destructive confirm, unsaved input the user cannot recover. That is a modal.</li>
+  <li><span class="mustnot">MUST NOT</span> render a scrim or block the page. The page stays interactive underneath; the popover is a surface on top, not a gate in front.</li>
+  <li><span class="must">MUST</span> carry the role its content implies — <code>role="dialog"</code> (non-modal, no <code>aria-modal="true"</code>) for a form or free content, <code>role="menu"</code> with <code>menuitem</code>s for an actions list — and a label. A generic <code>div</code> of buttons is not a menu.</li>
+  <li><span class="must">MUST</span> keep the surface neutral and the frame free of state tint; a state that matters inside is an inline alert. The only coloured element is a destructive item's text, via <code>--action-danger</code>.</li>
+  <li><span class="must">MUST</span> stay in the viewport by flipping and shifting — the same collision behaviour as the tooltip — and keep interactive content fully on-screen and reachable.</li>
+</ol>
+
+<h3>6 · Behaviour</h3>
+
+<ul>
+  <li><strong>Open.</strong> The trigger is pressed; the popover opens on the preferred side and focus moves to its first control. A second press, or pressing a different trigger, closes it.</li>
+  <li><strong>Positioning and collision.</strong> The same engine as the tooltip: preferred side, flip when it would overflow, shift along the cross-axis, arrow tracking the trigger. Anchored surfaces share this so their behaviour is identical whichever one is open.</li>
+  <li><strong>Dismissal.</strong> Escape, an outside click or tap, choosing a menu item, or completing the form's action — all close it and return focus to the trigger. There is no modal-style close button unless the content is large enough to warrant one.</li>
+  <li><strong>Focus.</strong> In on open, onward-not-trapped while open, back to the trigger on close. This is the single behavioural line between a popover and a modal, and it is the one most often got wrong by building a popover on a modal's focus trap.</li>
+  <li><strong>Nesting.</strong> One popover per trigger; a popover does not spawn another except as a true menu submenu, handled by the menu pattern. A popover that opens a popover that opens a popover is a flow that wanted a page.</li>
+  <li><strong>Motion.</strong> A quick fade with a small scale or translate from the anchor; under <code>prefers-reduced-motion</code>, fade only.</li>
+</ul>
+
+<h3>7 · Rendered example</h3>
+
+<div class="example-block">
+  <div class="example-label">Action menu · interactive content the tooltip could never hold · open, below the trigger</div>
+  <div class="example-render" style="min-height:270px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding-top:var(--spacing-5);">
+    <div style="position:relative; display:inline-block;">
+      <button type="button" aria-haspopup="menu" aria-expanded="true" aria-controls="pop-menu" style="width:36px; height:36px; display:grid; place-items:center; background:var(--surface-default); border:1px solid var(--border-default); border-radius:var(--radius-2); color:var(--text-muted); cursor:pointer;"><svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="10" cy="4.5" r="1.6"/><circle cx="10" cy="10" r="1.6"/><circle cx="10" cy="15.5" r="1.6"/></svg></button>
+      <div class="sd-popover" id="pop-menu" role="menu" aria-label="Asset actions" style="top:calc(100% + 10px); left:50%; transform:translateX(-50%); min-width:180px;">
+        <span class="sd-popover__arrow" style="top:-6px; left:50%; margin-left:-5px;"></span>
+        <div class="sd-popover__menu">
+          <button type="button" class="sd-popover__item" role="menuitem"><svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 13.5V16h2.5l8-8L12 5.5z" stroke-linejoin="round"/></svg>Rename</button>
+          <button type="button" class="sd-popover__item" role="menuitem"><svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="7" y="7" width="9" height="9" rx="1.5"/><path d="M4 13V5a1 1 0 0 1 1-1h8" stroke-linecap="round"/></svg>Duplicate</button>
+          <button type="button" class="sd-popover__item" role="menuitem"><svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10 3.5v9M6.5 9l3.5 3.5L13.5 9M4 15.5h12" stroke-linecap="round" stroke-linejoin="round"/></svg>Download</button>
+          <button type="button" class="sd-popover__item" role="menuitem" data-intent="destructive"><svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 6h12M8 6V4.5h4V6M6.5 6l.7 9.5h5.6l.7-9.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Delete…</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="example-block">
+  <div class="example-label">Rejected — a decision in a popover, one stray click from lost</div>
+  <div class="example-render" style="min-height:230px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding-top:var(--spacing-5);">
+    <div style="position:relative; display:inline-block;">
+      <button type="button" style="font:inherit; font-size:var(--font-size-2); font-weight:var(--font-weight-semibold); padding:9px 15px; border-radius:var(--radius-2); border:1px solid var(--border-default); background:var(--surface-default); color:var(--text-default); cursor:pointer;">Delete workspace</button>
+      <div class="sd-popover" role="dialog" aria-label="Confirm delete" style="top:calc(100% + 10px); left:50%; transform:translateX(-50%); width:260px;">
+        <span class="sd-popover__arrow" style="top:-6px; left:50%; margin-left:-5px;"></span>
+        <div class="sd-popover__body" style="color:var(--text-default);">Permanently delete this workspace and everything in it?
+          <div style="display:flex; justify-content:flex-end; gap:var(--spacing-3); margin-top:var(--spacing-4);">
+            <button type="button" class="sd-btn sd-btn--secondary">Cancel</button>
+            <button type="button" class="sd-btn sd-btn--primary" style="background:var(--action-danger);">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p style="font-size:var(--font-size-2); color:var(--text-muted); max-width:520px; margin-top:var(--spacing-2);">A popover light-dismisses — a click anywhere outside closes it and the confirmation is silently abandoned. A destructive, irreversible decision must be deliberate, so it blocks: this is a modal. The popover is for content the user opens and works in, never for a choice they must not lose by missing.</p>
+
+<h3>8 · Markup contract</h3>
+
+<div class="example-block">
+  <div class="example-label">Canonical DOM</div>
+  <div class="example-code">&lt;button aria-haspopup=<span class="k">"menu"</span> aria-expanded=<span class="k">"true"</span> aria-controls=<span class="k">"pop"</span>&gt;⋯&lt;/button&gt;
+
+&lt;div class=<span class="k">"sd-popover"</span> id=<span class="k">"pop"</span> role=<span class="k">"menu"</span> aria-label=<span class="k">"Asset actions"</span> data-side=<span class="k">"bottom"</span>&gt;
+  &lt;span class=<span class="k">"sd-popover__arrow"</span>&gt;&lt;/span&gt;
+  &lt;div class=<span class="k">"sd-popover__menu"</span>&gt;
+    &lt;button class=<span class="k">"sd-popover__item"</span> role=<span class="k">"menuitem"</span>&gt;Rename&lt;/button&gt;
+    &lt;button class=<span class="k">"sd-popover__item"</span> role=<span class="k">"menuitem"</span> data-intent=<span class="k">"destructive"</span>&gt;Delete…&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+<span class="c">Non-modal: no scrim, no aria-modal="true". Opens on press, not hover.
+Focus enters, is NOT trapped, returns to the trigger. Escape and outside-click close.</span></div>
+</div>
+
+<h4>Conformance checks</h4>
+<p>A net-new build (B6). Every check is <span class="ph ph-react">React</span>, and the two that matter guard the boundaries either side of it.</p>
+<table>
+  <thead><tr><th style="width:210px">Check</th><th style="width:74px">Phase</th><th>Pass</th></tr></thead>
+  <tbody>
+    <tr><td>No primitive in component CSS</td><td><span class="ph ph-react">React</span></td><td><code>grep -E "\-\-(accent|neutral|amber|jade|tomato|blue)-[0-9]" popover.css</code> → 0</td></tr>
+    <tr><td>Opens on press, not hover</td><td><span class="ph ph-react">React</span></td><td>Open handler bound to click / key, never to pointer-enter (rule 01)</td></tr>
+    <tr><td>Non-modal, no scrim</td><td><span class="ph ph-react">React</span></td><td><code>grep -E "scrim|aria-modal=.true" popover</code> → 0 (rule 05)</td></tr>
+    <tr><td>Focus enters, not trapped</td><td><span class="ph ph-react">React</span></td><td>Controller moves focus in on open and does not install a trap; Tab exits and closes (rule 03)</td></tr>
+    <tr><td>Trigger is wired</td><td><span class="ph ph-react">React</span></td><td>Every trigger has <code>aria-expanded</code> + <code>aria-controls</code>; the popover has a content-appropriate role</td></tr>
+    <tr><td>Adoption</td><td><span class="ph ph-react">React</span></td><td>Count of hand-rolled dropdowns, action menus and inline flyouts replaced.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <div class="callout-title">Conformance and adoption for this component</div>
+  <p><strong>Conformance:</strong> a build, entirely <span class="ph ph-react">React</span>. It shares the anchoring engine with the tooltip and the light surface with the modal's body, so most of it is assembled from parts the book already specifies. The one thing to get right is the focus behaviour in rule 03 — in, not trapped, back — because it is the single line that separates a popover from a modal, and it is the line most often crossed by starting from a modal.</p>
+  <p><strong>Adoption:</strong> the legacy forms are many — bespoke dropdowns, absolutely-positioned action menus, jQuery flyouts — and inconsistent. Adoption is the count of those consolidated onto one anchored surface with one positioning engine and one focus contract.</p>
+</div>
 
 </main>
 </div>
