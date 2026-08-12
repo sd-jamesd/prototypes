@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DAM AI Features: Cost and Pricing Matrix</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent-1:#FAFEFF; --accent-2:#F3FAFD; --accent-3:#E4F5FC; --accent-4:#D5EFF9;
+  --accent-5:#C4E5F3; --accent-6:#B0D9E9; --accent-7:#95C9DD; --accent-8:#6CB3CE;
+  --accent-9:#0B6E8A; --accent-10:#005F7B; --accent-11:#197592; --accent-12:#1B404E;
+  --neutral-1:#fdfdfc; --neutral-2:#f9f9f8; --neutral-3:#f1f0ef; --neutral-4:#e9e8e6;
+  --neutral-5:#e2e1de; --neutral-6:#dad9d6; --neutral-7:#d0ceca; --neutral-8:#bcbbb6;
+  --neutral-9:#8e8d86; --neutral-10:#83827c; --neutral-11:#64635e; --neutral-12:#21201c;
+  --accent-alpha-3:rgba(0,145,171,0.08); --accent-alpha-6:rgba(0,145,171,0.2);
+  --neutral-alpha-3:rgba(32,16,0,0.06);
+  --surface-default:var(--neutral-1); --surface-subtle:var(--neutral-2);
+  --surface-muted:var(--neutral-3); --surface-emphasis:var(--neutral-4);
+  --text-default:var(--neutral-12); --text-muted:var(--neutral-11); --text-subtle:var(--neutral-10);
+  --text-on-primary:#ffffff;
+  --border-default:var(--neutral-6); --border-subtle:var(--neutral-3); --border-emphasis:var(--neutral-7);
+  --primary-default:var(--accent-9); --primary-hover:var(--accent-10);
+  --primary-subtle:var(--accent-3); --primary-muted:var(--accent-5);
+  --error-9:#e54d2e; --error-11:#582C29;
+  --spacing-1:4px; --spacing-2:8px; --spacing-3:12px; --spacing-4:16px; --spacing-5:20px;
+  --spacing-6:24px; --spacing-7:32px; --spacing-8:40px; --spacing-9:48px; --spacing-10:64px;
+  --font-family-text:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-family-mono:'JetBrains Mono',monospace;
+  --font-size-1:12px; --font-size-2:14px; --font-size-3:16px; --font-size-4:18px;
+  --font-size-5:24px; --font-size-6:32px;
+  --font-weight-regular:400; --font-weight-medium:500; --font-weight-semibold:600; --font-weight-bold:700;
+  --radius-1:3px; --radius-2:4px; --radius-3:6px; --radius-4:8px; --radius-full:9999px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--font-family-text);
+  font-size:var(--font-size-2);
+  line-height:1.55;
+  color:var(--text-default);
+  background:var(--surface-subtle);
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:var(--spacing-9) var(--spacing-6) var(--spacing-10)}
+header{margin-bottom:var(--spacing-8)}
+.eyebrow{
+  font-size:var(--font-size-1);font-weight:var(--font-weight-semibold);
+  letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);
+  margin-bottom:var(--spacing-2);
+}
+h1{font-size:var(--font-size-6);font-weight:var(--font-weight-semibold);letter-spacing:-.02em;line-height:1.2}
+.sub{margin-top:var(--spacing-3);font-size:var(--font-size-3);color:var(--text-muted);max-width:76ch}
+.meta{
+  margin-top:var(--spacing-5);padding-top:var(--spacing-4);
+  border-top:1px solid var(--border-default);
+  font-size:var(--font-size-1);color:var(--text-subtle);
+  display:flex;gap:var(--spacing-6);flex-wrap:wrap;
+}
+section{margin-top:var(--spacing-9)}
+h2{
+  font-size:var(--font-size-5);font-weight:var(--font-weight-semibold);
+  letter-spacing:-.01em;margin-bottom:var(--spacing-3);
+}
+h3{
+  font-size:var(--font-size-3);font-weight:var(--font-weight-semibold);
+  margin-bottom:var(--spacing-2);margin-top:var(--spacing-6);
+}
+p{margin-bottom:var(--spacing-3);max-width:82ch}
+p.lead{font-size:var(--font-size-3);color:var(--text-muted)}
+ul{margin:0 0 var(--spacing-4) 0;padding-left:var(--spacing-5);max-width:82ch}
+li{margin-bottom:var(--spacing-2)}
+strong{font-weight:var(--font-weight-semibold)}
+.card{
+  background:var(--surface-default);border:1px solid var(--border-default);
+  border-radius:var(--radius-4);padding:var(--spacing-6);box-shadow:var(--shadow-sm);
+}
+.callout{
+  background:var(--primary-subtle);border:1px solid var(--accent-6);
+  border-radius:var(--radius-4);padding:var(--spacing-5) var(--spacing-6);
+  margin:var(--spacing-5) 0;
+}
+.callout .label{
+  font-size:var(--font-size-1);font-weight:var(--font-weight-semibold);
+  text-transform:uppercase;letter-spacing:.06em;color:var(--accent-12);
+  margin-bottom:var(--spacing-2);
+}
+.callout p:last-child{margin-bottom:0}
+.tablewrap{
+  overflow-x:auto;background:var(--surface-default);
+  border:1px solid var(--border-default);border-radius:var(--radius-4);
+  box-shadow:var(--shadow-sm);
+}
+table{border-collapse:collapse;width:100%;font-size:var(--font-size-1);min-width:1020px}
+thead th{
+  background:var(--accent-12);color:#fff;text-align:left;
+  font-weight:var(--font-weight-semibold);font-size:var(--font-size-1);
+  padding:var(--spacing-3) var(--spacing-3);white-space:nowrap;
+  border-right:1px solid rgba(255,255,255,.12);vertical-align:bottom;
+}
+thead th:last-child{border-right:none}
+tbody td{
+  padding:var(--spacing-3);border-bottom:1px solid var(--border-subtle);
+  border-right:1px solid var(--border-subtle);vertical-align:top;
+}
+tbody td:last-child{border-right:none}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:nth-child(even){background:var(--surface-subtle)}
+td.feat{font-weight:var(--font-weight-semibold);white-space:nowrap;color:var(--text-default)}
+.num{font-family:var(--font-family-mono);font-size:11px;white-space:nowrap}
+.grp td{
+  background:var(--surface-emphasis);font-weight:var(--font-weight-semibold);
+  font-size:var(--font-size-1);text-transform:uppercase;letter-spacing:.05em;
+  color:var(--text-muted);padding:var(--spacing-2) var(--spacing-3);
+}
+tbody tr.grp:nth-child(even) td{background:var(--surface-emphasis)}
+.badge{
+  display:inline-block;padding:2px 8px;border-radius:var(--radius-full);
+  font-size:11px;font-weight:var(--font-weight-medium);white-space:nowrap;
+  border:1px solid transparent;
+}
+.b-ingest{background:var(--accent-3);color:var(--accent-12);border-color:var(--accent-6)}
+.b-standing{background:#FDF3E7;color:#6B4415;border-color:#E8C99B}
+.b-render{background:var(--neutral-3);color:var(--neutral-11);border-color:var(--neutral-6)}
+.b-query{background:#EEF4EC;color:#2C4B29;border-color:#B7CFB2}
+.b-yes{background:var(--accent-3);color:var(--accent-12);border-color:var(--accent-6)}
+.b-no{background:var(--neutral-3);color:var(--neutral-11);border-color:var(--neutral-6)}
+.b-risk{background:#FDECEA;color:var(--error-11);border-color:#F0BDB2}
+.st-live{background:#EEF4EC;color:#2C4B29;border-color:#94BC8C}
+.st-build{background:#FDF3E7;color:#6B4415;border-color:#E8C99B}
+.st-none{background:var(--neutral-3);color:var(--neutral-11);border-color:var(--neutral-7)}
+.stnote{
+  display:block;margin-top:var(--spacing-1);font-size:10px;
+  color:var(--text-muted);font-weight:var(--font-weight-medium);
+}
+.filterbar{
+  display:flex;align-items:center;gap:var(--spacing-4);flex-wrap:wrap;
+  margin:var(--spacing-5) 0 var(--spacing-4);
+}
+.seg{
+  display:inline-flex;background:var(--surface-muted);
+  border:1px solid var(--border-default);border-radius:var(--radius-3);padding:2px;
+}
+.segbtn{
+  font-family:inherit;font-size:var(--font-size-2);font-weight:var(--font-weight-medium);
+  color:var(--text-muted);background:transparent;border:1px solid transparent;
+  padding:var(--spacing-2) var(--spacing-4);border-radius:var(--radius-2);
+  cursor:pointer;transition:background .12s ease,color .12s ease;
+}
+.segbtn:hover{color:var(--text-default)}
+.segbtn:focus-visible{outline:2px solid var(--primary-default);outline-offset:1px}
+.segbtn.is-active{
+  background:var(--surface-default);color:var(--text-default);
+  border-color:var(--border-default);box-shadow:var(--shadow-sm);
+}
+.filtermsg{font-size:var(--font-size-1);color:var(--text-muted)}
+tr.is-hidden,tr.grp.is-hidden{display:none}
+.legend{
+  display:flex;gap:var(--spacing-5);flex-wrap:wrap;margin-top:var(--spacing-4);
+  font-size:var(--font-size-1);color:var(--text-muted);
+}
+.legend span{display:flex;align-items:center;gap:var(--spacing-2)}
+.bundles{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--spacing-4);margin-top:var(--spacing-5)}
+.bundle{
+  background:var(--surface-default);border:1px solid var(--border-default);
+  border-radius:var(--radius-4);padding:var(--spacing-5);box-shadow:var(--shadow-sm);
+  display:flex;flex-direction:column;
+}
+.bundle .name{font-size:var(--font-size-4);font-weight:var(--font-weight-semibold);margin-bottom:var(--spacing-1)}
+.bundle .model{
+  font-size:var(--font-size-1);font-weight:var(--font-weight-semibold);
+  color:var(--accent-11);text-transform:uppercase;letter-spacing:.05em;
+  margin-bottom:var(--spacing-3);
+}
+.bundle ul{padding-left:var(--spacing-4);margin-bottom:var(--spacing-4);font-size:var(--font-size-2)}
+.bundle .why{
+  margin-top:auto;padding-top:var(--spacing-3);border-top:1px solid var(--border-subtle);
+  font-size:var(--font-size-1);color:var(--text-muted);
+}
+.qgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--spacing-4);margin-top:var(--spacing-4)}
+.q{background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-4);padding:var(--spacing-5)}
+.q .n{
+  font-family:var(--font-family-mono);font-size:var(--font-size-1);
+  color:var(--accent-11);font-weight:500;margin-bottom:var(--spacing-2);
+}
+.q .t{font-weight:var(--font-weight-semibold);margin-bottom:var(--spacing-2)}
+.q p{font-size:var(--font-size-2);color:var(--text-muted);margin-bottom:0}
+footer{
+  margin-top:var(--spacing-10);padding-top:var(--spacing-5);
+  border-top:1px solid var(--border-default);
+  font-size:var(--font-size-1);color:var(--text-subtle);
+}
+@media print{
+  body{background:#fff}
+  .tablewrap{overflow:visible;box-shadow:none}
+  table{min-width:0;font-size:9px}
+  section{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Screendragon DAM &middot; Commercial reference</div>
+  <h1>AI Features: Cost Drivers and Pricing Implications</h1>
+  <p class="sub">A working matrix for Sales. It sets out every AI capability in or near the DAM, what we actually get billed on, when that cost is incurred, and how each one should be packaged commercially.</p>
+  <div class="meta">
+    <span>Owner: Product</span>
+    <span>Audience: Sales, Product, Finance</span>
+    <span>Status: Draft for review</span>
+    <span>Costs: public list, August 2026. Mixed provenance, see below</span>
+  </div>
+</header>
+
+<section>
+  <h2>Read this before the matrix</h2>
+  <p class="lead">A list of AI features against a price will misprice deals, because the feature is not the cost driver. Four things are.</p>
+  <div class="qgrid">
+    <div class="q">
+      <div class="n">01</div>
+      <div class="t">The unit we are billed on</div>
+      <p>Per image, per page, per minute of media, or per month of standing infrastructure. These are not interchangeable. One hour of video costs exactly the same to auto tag as six thousand images.</p>
+    </div>
+    <div class="q">
+      <div class="n">02</div>
+      <div class="t">Whether the cost recurs</div>
+      <p>Tagging and OCR are paid once per ingest event and never again. The vector index behind natural language search is paid every month whether anyone searches or not.</p>
+    </div>
+    <div class="q">
+      <div class="n">03</div>
+      <div class="t">Shared infrastructure</div>
+      <p>Natural language search, similarity search and duplicate detection ride the same embedding pipeline and the same index. Sold as three separate line items, we charge three times for one build and invite the client to buy only the cheapest.</p>
+    </div>
+    <div class="q">
+      <div class="n">04</div>
+      <div class="t">Backfill at go live</div>
+      <p>Switching AI on for a client with an existing library is a one off cost that has nothing to do with their ongoing volume. It is the largest single AI number in most deals and it is currently unquoted.</p>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="label">Positioning note</div>
+    <p>Every DAM vendor rents the same underlying models. AI capability is not our differentiator and should not be sold as one. Our differentiator is that the enrichment lands inside the Unity workflow, on assets that already carry approver and rights lineage. Price AI as an enabler of that story, not as the story.</p>
+  </div>
+</section>
+
+<section>
+  <h2>The matrix</h2>
+  <p>Costs shown are Screendragon's wholesale input cost, not price. They exclude pipeline compute, storage and transfer, which add roughly 10 to 15 percent on top of API charges in production. Volume tiers reduce unit costs materially above one million units per month.</p>
+
+  <div class="filterbar">
+    <div class="seg" role="group" aria-label="Filter matrix by availability">
+      <button type="button" class="segbtn is-active" data-view="all" aria-pressed="true">Full AI landscape</button>
+      <button type="button" class="segbtn" data-view="today" aria-pressed="false">What we can sell today</button>
+    </div>
+    <div class="filtermsg" id="filtermsg" role="status">Showing all 14 capabilities, built and unbuilt.</div>
+  </div>
+
+  <div class="tablewrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Status</th>
+        <th>What it does</th>
+        <th>Billing unit</th>
+        <th>Cost timing</th>
+        <th>Indicative unit cost</th>
+        <th>Worked example</th>
+        <th>Shares infra</th>
+        <th>Commercial model</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr class="grp"><td colspan="9">Tier 1 &middot; Enrichment at ingest (in build)</td></tr>
+
+      <tr data-status="live">
+        <td class="feat">AI tagging<br>(images)</td>
+        <td><span class="badge st-live">Live</span><br><span class="stnote">Known gaps</span></td>
+        <td>Suggests up to 25 ranked labels on upload. User accepts or rejects; only accepted tags persist.</td>
+        <td>Per image analysed</td>
+        <td><span class="badge b-ingest">Ingest</span></td>
+        <td class="num">$0.0010 / image<br>$0.0008 above 1M/mo</td>
+        <td class="num">100k images<br>= $100</td>
+        <td><span class="badge b-no">No</span></td>
+        <td>Include in base. Cap by ingest allowance.</td>
+      </tr>
+
+      <tr data-status="none">
+        <td class="feat">AI tagging<br>(video)</td>
+        <td><span class="badge st-none">Not built</span></td>
+        <td>Same label detection applied across video frames.</td>
+        <td>Per minute of video</td>
+        <td><span class="badge b-ingest">Ingest</span></td>
+        <td class="num">$0.10 / minute</td>
+        <td class="num">1,000 hours<br>= $6,000</td>
+        <td><span class="badge b-no">No</span></td>
+        <td>Metered add on. Never bundle with image tagging.</td>
+      </tr>
+
+      <tr data-status="live">
+        <td class="feat">OCR<br>(text in image)</td>
+        <td><span class="badge st-live">Live</span></td>
+        <td>Extracts visible text from images so it is searchable. Auto indexed, no user approval, matching category convention.</td>
+        <td>Per image analysed</td>
+        <td><span class="badge b-ingest">Ingest</span></td>
+        <td class="num">$0.0010 / image</td>
+        <td class="num">100k images<br>= $100</td>
+        <td><span class="badge b-no">No</span></td>
+        <td>Include in base.</td>
+      </tr>
+
+      <tr data-status="live">
+        <td class="feat">Document<br>text extraction</td>
+        <td><span class="badge st-live">Live</span></td>
+        <td>Full text of PDFs, decks and documents pulled into the search index.</td>
+        <td>Per page</td>
+        <td><span class="badge b-ingest">Ingest</span></td>
+        <td class="num">$0.0015 / page<br>$0.0006 above 1M/mo</td>
+        <td class="num">100k pages<br>= $150</td>
+        <td><span class="badge b-no">No</span></td>
+        <td>Include in base. Page count, not file count, is the driver.</td>
+      </tr>
+
+      <tr data-status="none">
+        <td class="feat">Speech to text<br>transcription</td>
+        <td><span class="badge st-none">Not built</span></td>
+        <td>Transcribes audio and video so spoken words are searchable. Underpins any video search claim.</td>
+        <td>Per minute of audio</td>
+        <td><span class="badge b-ingest">Ingest</span></td>
+        <td class="num">$0.024 / minute<br>tiered to $0.0078</td>
+        <td class="num">1,000 hours<br>= $1,440</td>
+        <td><span class="badge b-no">No</span></td>
+        <td>Metered add on with minute allowance.</td>
+      </tr>
+
+      <tr data-status="none">
+        <td class="feat">Content<br>moderation flags</td>
+        <td><span class="badge st-none">Not built</span></td>
+        <td>Flags unsafe or off brand content on upload. Directly answers the brand adjacency concern raised in testing.</td>
+        <td>Per image analysed</td>
+        <td><span class="badge b-ingest">Ingest</span></td>
+        <td class="num">$0.0010 / image</td>
+        <td class="num">100k images<br>= $100</td>
+        <td><span class="badge b-no">No</span></td>
+        <td>Include in base. Sells as governance, not AI.</td>
+      </tr>
+
+      <tr class="grp"><td colspan="9">Tier 2 &middot; Discovery (shared vector infrastructure)</td></tr>
+
+      <tr data-status="live">
+        <td class="feat">Natural<br>language search</td>
+        <td><span class="badge st-live">Live</span></td>
+        <td>Plain language queries resolved semantically rather than by keyword match. Hybrid with existing keyword search.</td>
+        <td>Standing index capacity, plus a trivial per query embedding</td>
+        <td><span class="badge b-standing">Standing</span> <span class="badge b-query">Query</span></td>
+        <td class="num">Index floor from<br>~$350 / month<br>Embedding ~$0.0001 / asset</td>
+        <td class="num">100k assets embedded<br>= ~$10 one off<br>+ index floor</td>
+        <td><span class="badge b-yes">Yes</span></td>
+        <td>Fixed platform fee. Cost is capacity, not usage.</td>
+      </tr>
+
+      <tr data-status="live">
+        <td class="feat">Similarity<br>search</td>
+        <td><span class="badge st-live">Live</span></td>
+        <td>Find visually similar assets from an asset page or an uploaded reference image.</td>
+        <td>Same index, same embeddings</td>
+        <td><span class="badge b-standing">Standing</span></td>
+        <td class="num">Near zero marginal<br>once NLS is live</td>
+        <td class="num">No incremental<br>infra cost</td>
+        <td><span class="badge b-yes">Yes</span></td>
+        <td>Bundle with NLS. Do not price separately.</td>
+      </tr>
+
+      <tr data-status="live">
+        <td class="feat">Duplicate<br>detection</td>
+        <td><span class="badge st-live">Live</span></td>
+        <td>Surfaces exact and near duplicates at upload and in bulk cleanup. Roughly 85 percent shared backend with similarity search.</td>
+        <td>Same index, plus perceptual hash at ingest</td>
+        <td><span class="badge b-standing">Standing</span></td>
+        <td class="num">Near zero marginal</td>
+        <td class="num">No incremental<br>infra cost</td>
+        <td><span class="badge b-yes">Yes</span></td>
+        <td>Bundle with NLS. Strong storage cost saving argument.</td>
+      </tr>
+
+      <tr class="grp"><td colspan="9">Tier 3 &middot; Transform time (per render, not per asset)</td></tr>
+
+      <tr data-status="none">
+        <td class="feat">Smart crop</td>
+        <td><span class="badge st-none">Not built</span></td>
+        <td>Subject aware cropping when generating derivatives for different aspect ratios.</td>
+        <td>Per render requested</td>
+        <td><span class="badge b-render">Render</span></td>
+        <td class="num">Low, but unbounded<br>by asset count</td>
+        <td class="num">Scales with download<br>and share behaviour</td>
+        <td><span class="badge b-no">No</span></td>
+        <td>Fold into the existing transform and delivery line.</td>
+      </tr>
+
+      <tr data-status="none">
+        <td class="feat">Background<br>removal</td>
+        <td><span class="badge st-none">Not built</span></td>
+        <td>Produces cut out variants on demand.</td>
+        <td>Per render requested</td>
+        <td><span class="badge b-render">Render</span></td>
+        <td class="num">Low per render</td>
+        <td class="num">Scales with usage,<br>not library size</td>
+        <td><span class="badge b-no">No</span></td>
+        <td>Fold into transform and delivery line.</td>
+      </tr>
+
+      <tr class="grp"><td colspan="9">Tier 4 &middot; Gated or roadmap (do not quote yet)</td></tr>
+
+      <tr data-status="none">
+        <td class="feat">Facial<br>recognition</td>
+        <td><span class="badge st-none">Not built</span></td>
+        <td>Names a person once, then tags them across the library.</td>
+        <td>Per image, plus face storage</td>
+        <td><span class="badge b-ingest">Ingest</span> <span class="badge b-standing">Standing</span></td>
+        <td class="num">$0.0010 / image<br>plus per face stored</td>
+        <td class="num">Cost is not<br>the constraint</td>
+        <td><span class="badge b-no">No</span></td>
+        <td><span class="badge b-risk">Legal gate</span> Biometric data. Requires a DPA and a GDPR position before it is sellable.</td>
+      </tr>
+
+      <tr data-status="none">
+        <td class="feat">AI generated<br>descriptions</td>
+        <td><span class="badge st-none">Not built</span></td>
+        <td>Drafts alt text, captions and asset descriptions for review.</td>
+        <td>Per asset, token based</td>
+        <td><span class="badge b-ingest">Ingest</span></td>
+        <td class="num">Model dependent,<br>materially above tagging</td>
+        <td class="num">Quote per<br>engagement</td>
+        <td><span class="badge b-no">No</span></td>
+        <td>Not in current scope. Do not commit.</td>
+      </tr>
+
+      <tr data-status="none">
+        <td class="feat">Agentic<br>assistant</td>
+        <td><span class="badge st-none">Not built</span></td>
+        <td>Conversational agent that plans and executes multi step DAM tasks. Bynder, Aprimo, Frontify and Orange Logic all shipped agents across 2025 to 2026.</td>
+        <td>Per session, unbounded tokens</td>
+        <td><span class="badge b-query">Query</span></td>
+        <td class="num">Highly variable.<br>A single request can<br>consume 5 to 10x<br>an expected call</td>
+        <td class="num">Not modellable<br>on flat pricing</td>
+        <td><span class="badge b-no">No</span></td>
+        <td><span class="badge b-risk">Not built</span> Competitive gap to note internally. Must not appear on a customer facing matrix.</td>
+      </tr>
+
+    </tbody>
+  </table>
+  </div>
+  <div class="legend">
+    <span><span class="badge st-live">Live</span> Shipped, demonstrable today</span>
+    <span><span class="badge st-none">Not built</span> No commitment, do not position</span>
+  </div>
+  <div class="legend">
+    <span><span class="badge b-ingest">Ingest</span> Paid once per upload or version, never again</span>
+    <span><span class="badge b-standing">Standing</span> Paid monthly regardless of usage</span>
+    <span><span class="badge b-query">Query</span> Paid per user action</span>
+    <span><span class="badge b-render">Render</span> Paid per derivative generated</span>
+  </div>
+</section>
+
+<section>
+  <h2>Other factors to consider</h2>
+  <p class="lead">Six things that sit outside the matrix but change the number on a quote more than any single unit cost does.</p>
+
+  <h3>1. Library backfill is a separate, quotable line</h3>
+  <p>Turning AI on for a client who already has assets means processing the entire existing library once. That cost is driven by what they already hold, not by what they will upload. For an image heavy library it is small. For a media heavy one it is not: ten thousand hours of existing video costs roughly $60,000 to label and a further $14,400 to transcribe, before any margin. This must be quoted as <strong>AI Library Enablement</strong>, priced per asset and per media minute at the point of migration, and it must be optional. A client can reasonably choose to enrich forward only.</p>
+
+  <h3>2. We are billed per ingest event, not per stored asset</h3>
+  <p>Every new version re-triggers tagging, OCR and re-embedding. A client with 50,000 assets and heavy version churn costs more than a client with 200,000 static assets. Any allowance we write into a contract must be denominated in <strong>ingest events per year</strong>, not asset count. Quoting off library size will systematically undercharge the highest touch accounts.</p>
+
+  <h3>3. Model upgrades force a full re-index at our cost</h3>
+  <p>When we move to a newer embedding model, every vector in every client library has to be regenerated. That is a full backfill we absorb unless the contract says otherwise. We need a position on this before the first NLS contract is signed, not after.</p>
+
+  <h3>4. Uncapped AI on an unlimited upload contract is unpriced exposure</h3>
+  <p>Storage overage is already a familiar commercial mechanic. AI enrichment needs the same shape: an included allowance and a published overage rate. Without it, gross margin on an AI enabled account becomes a function of client upload behaviour we neither control nor forecast.</p>
+
+  <h3>5. The client's own AI stack is a services conversation</h3>
+  <p>Enterprise buyers with an existing Azure or Google commitment will ask us to run enrichment through their tenancy. That is achievable but it changes the deal from a licence with a usage component into a licence plus integration services, and it removes our volume tier benefit. Flag it early in qualification rather than at contract.</p>
+
+  <h3>6. Facial recognition is a legal decision, not a pricing one</h3>
+  <p>Cost is trivial. Biometric processing under GDPR is not. Bynder requires a signed DPA for this feature. We should not list it as available until Legal has a position, and Sales should treat any inbound request for it as an escalation.</p>
+</section>
+
+<section>
+  <h2>How competitors price AI</h2>
+  <p class="lead">Not one enterprise DAM publishes an AI price. Every figure below comes from vendor support documentation, module listings and third party procurement data, not from a rate card. There are four distinct models in the market and only one of them is dominant.</p>
+
+  <div class="tablewrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Vendor</th>
+        <th>Model</th>
+        <th>What is bundled</th>
+        <th>What we know</th>
+        <th>Read across to us</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="feat">Bynder</td>
+        <td>Paid add on module, quote only</td>
+        <td>One SKU, AI Search Experience: natural language search, automated tagging, text in image, speech to text, face recognition, similarity search, duplicate finder</td>
+        <td>Requires a contract upgrade and enablement by the Customer Success contact. Support documentation directs customers to their CS rep to learn about associated costs. Reached 1,000 customers in under two years with triple digit ARR growth in year one, on 100M+ assets processed.</td>
+        <td>The reference case. Note the shape: one bundle, never a per feature price list.</td>
+      </tr>
+      <tr>
+        <td class="feat">Aprimo</td>
+        <td>Paid add on module, quote only</td>
+        <td>AI Elite, plus separately quoted Enhanced Captioning and Content Intelligence</td>
+        <td>Base DAM from roughly $20k per year with unlimited users. Modules custom quoted by user count and scope. Median contract $50k, observed to $172k. Launched Agentic DAM in March 2026.</td>
+        <td>Same structure, priced by seats rather than volume. Their AI is a stack of modules, which fragments the story.</td>
+      </tr>
+      <tr>
+        <td class="feat">Canto</td>
+        <td>Included in tier</td>
+        <td>AI categorisation, AI assisted metadata, visual search, hybrid search, video jump to timestamp, face recognition</td>
+        <td>Positions embedded AI workflows as the value proposition rather than an upsell. Third party estimates put entry around $6k to $12k per year.</td>
+        <td>The mid market challenger play. Closest to the posture we would take.</td>
+      </tr>
+      <tr>
+        <td class="feat">Cloudinary</td>
+        <td>Credit metering, AI billed outside the credit pool</td>
+        <td>Nothing. AI Vision and auto tagging are separate line items</td>
+        <td>Plus $99/mo, Advanced $249/mo for 600 credits. AI and processing add ons are billed separately and explicitly do not consume base credits, so the credit calculator looks healthy while the invoice grows.</td>
+        <td>The only published consumption model in the category, and the only one that has solved metering. Also the clearest example of how metering erodes trust when it is invisible.</td>
+      </tr>
+      <tr>
+        <td class="feat">Frontify</td>
+        <td>Monthly active user pricing</td>
+        <td>AI folded into the MAU price</td>
+        <td>List roughly $8k to $15k per year for 10 to 25 users. Median contract $32k. Semantic search arrived later than the field.</td>
+        <td>MAU pricing decouples price from asset volume entirely, which insulates them from the cost driver that dominates our matrix.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>The pattern that matters most</h3>
+  <p>AI features migrate from paid add on into the base subscription as they commoditise. Bynder launched face recognition inside the paid AI module and then folded it into existing subscriptions at no extra cost during 2024. Automated tagging and OCR are further along that curve than natural language search, and natural language search is further along than agents. Where a feature sits on that curve, not what it costs to run, should decide whether we charge for it.</p>
+
+  <h3>Nobody sells AI as a price list</h3>
+  <p>The consistent structural point across the category: <strong>no competitor prices AI feature by feature</strong>. They sell one bundle, or they include it in the tier. Bynder charges for automated tagging and OCR and has built a fast growing revenue line doing it, so charging is not itself a weak position. Unbundling is. A thirteen line price sheet reads as a vendor who has not decided what their AI is for.</p>
+
+  <div class="callout">
+    <div class="label">The argument against including enrichment in base</div>
+    <p>It deserves stating, because both category leaders have decided the other way. Including enrichment permanently forfeits an expansion lever, sets an anchor that is very hard to raise at renewal, and ties gross margin to upload behaviour we do not control. Bynder's AI module is a material revenue line, not a giveaway. The counter is that we are the challenger: we need the evaluation to be about workflow lineage, not about whether our AI costs extra, and we have a base subscription to protect that they do not.</p>
+  </div>
+
+  <h3>One commercial consequence</h3>
+  <p>Because the entire category is quote only, any published price of ours becomes the only public reference point in a competitive deal, and procurement will use it. This document should stay internal. Customer facing collateral should state capability by tier and nothing else.</p>
+</section>
+
+<section>
+  <h2>Recommended commercial model</h2>
+  <p class="lead">Three bundles, not thirteen line items, plus one optional one off. Per feature pricing fails here because the infrastructure is shared: it lets a client buy the one feature that carries the standing cost and decline the two that are free to serve.</p>
+
+  <div class="bundles">
+    <div class="bundle">
+      <div class="name">AI Enrichment</div>
+      <div class="model">Included in DAM base</div>
+      <ul>
+        <li>Image auto tagging with accept and reject</li>
+        <li>Text in image OCR</li>
+        <li>Document text extraction</li>
+        <li>Content moderation flags</li>
+      </ul>
+      <div class="why">Costs pennies per thousand assets and sits late on the commoditisation curve. Bynder does charge for this, but Bynder is defending an installed base and we are trying to win evaluations. Including it moves the conversation to workflow lineage, where we win. Carry an annual ingest event allowance with a published overage rate.</div>
+    </div>
+
+    <div class="bundle">
+      <div class="name">AI Discovery</div>
+      <div class="model">Paid module, fixed fee</div>
+      <ul>
+        <li>Natural language search</li>
+        <li>Visual similarity search</li>
+        <li>Duplicate detection</li>
+      </ul>
+      <div class="why">All three ride one index and all three are live today, so this is a module we can sell now rather than a roadmap promise. It is also where the standing monthly cost sits, so it must carry a fixed platform fee rather than usage pricing. Sell as one module or the economics break.</div>
+    </div>
+
+    <div class="bundle">
+      <div class="name">AI Media</div>
+      <div class="model">Metered add on</div>
+      <ul>
+        <li>Video label detection</li>
+        <li>Audio and video transcription</li>
+        <li>Scene level search</li>
+      </ul>
+      <div class="why">The only genuinely expensive tier. Priced per media minute with an included allowance. Never bundle this with image enrichment: a single hour of video costs what six thousand images cost.</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="label">Plus one</div>
+    <p><strong>AI Library Enablement.</strong> A one off professional services line covering backfill of the existing library, quoted per asset and per media minute at migration. Optional, so the client can choose to enrich forward only.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Open decisions</h2>
+  <ul>
+    <li><strong>Allowance sizing.</strong> What annual ingest event allowance sits in the base package, and what is the overage rate. Needs Finance input on target gross margin.</li>
+    <li><strong>What the running index actually costs.</strong> Not a decision any more, a measurement. The vector index is live and serving three features, so the standing cost is on the current bill. This is the floor price of the Discovery module and it can be known this week.</li>
+    <li><strong>Whether Discovery is already given away.</strong> Six capabilities are live. If they are inside the first customer contract at no separate charge, the anchor is set and a paid Discovery module becomes a renewal conversation rather than a pricing decision. Needs checking against the signed scope before the model is agreed.</li>
+    <li><strong>Re-index liability.</strong> Who pays when we upgrade the embedding model. Now urgent rather than theoretical, because live vectors exist.</li>
+    <li><strong>Facial recognition availability.</strong> Sellable or not. Needs Legal.</li>
+    <li><strong>Agentic roadmap.</strong> Every major competitor shipped agents between March 2025 and May 2026. We need an internal position before a prospect asks, even though nothing goes on the customer facing matrix.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Provenance of the cost figures</h2>
+  <p class="lead">All figures are public list prices gathered in August 2026. None are drawn from Screendragon's actual AWS bill. Confidence varies by line and is set out here so nobody quotes a weak number as a firm one.</p>
+
+  <div class="tablewrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Figure</th>
+        <th>Source</th>
+        <th>Confidence</th>
+        <th>Caveat</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="feat">Document text extraction<br><span class="num">$0.0015 / page</span></td>
+        <td>AWS Textract pricing page, worked example</td>
+        <td><span class="badge b-yes">High</span></td>
+        <td>AWS example is quoted in US West (Oregon). A third party calculator gives the same rate for us-east-1.</td>
+      </tr>
+      <tr>
+        <td class="feat">Image analysis, tagging,<br>OCR, moderation<br><span class="num">$0.0010 / image</span></td>
+        <td>Five independent aggregators citing AWS Rekognition</td>
+        <td><span class="badge b-yes">High</span></td>
+        <td>Consistent across sources but not read off the AWS page directly. Each API call bills separately, so tagging plus OCR plus moderation on one asset is three charges.</td>
+      </tr>
+      <tr>
+        <td class="feat">Transcription<br><span class="num">$0.024 / minute</span></td>
+        <td>Two aggregators citing AWS Transcribe</td>
+        <td><span class="badge b-yes">Medium</span></td>
+        <td>Rates agree. Sources disagree on the minimum billing increment, 60 seconds versus 15 seconds per request. Material for libraries of short clips. Unresolved.</td>
+      </tr>
+      <tr>
+        <td class="feat">Video label detection<br><span class="num">$0.10 / minute</span></td>
+        <td>Single aggregator</td>
+        <td><span class="badge b-risk">Low</span></td>
+        <td>Weakest figure in this document, and it drives the headline comparison between one hour of video and six thousand images. Verify against AWS before repeating externally.</td>
+      </tr>
+      <tr>
+        <td class="feat">Embedding at ingest<br><span class="num">~$0.0001 / asset</span></td>
+        <td>AWS Bedrock pricing page</td>
+        <td><span class="badge b-risk">Low</span></td>
+        <td>Taken from a video retrieval model used as a proxy. Current multimodal embedding pricing was not retrieved. Order of magnitude only, do not quote.</td>
+      </tr>
+      <tr>
+        <td class="feat">Vector index floor<br><span class="num">~$350 / month</span></td>
+        <td>Multiple aggregators, conflicting. Superseded by our own billing</td>
+        <td><span class="badge b-yes">Obtainable</span></td>
+        <td>List sources split between $0.24 and $0.48 per compute unit hour, a straight 2x. Moot: the index is live and serving natural language, similarity and duplicate search today, so the real figure is on our current AWS bill. Pull it rather than estimating.</td>
+      </tr>
+      <tr>
+        <td class="feat">Pipeline overhead<br><span class="num">10 to 15%</span></td>
+        <td>Third party rule of thumb</td>
+        <td><span class="badge b-no">Indicative</span></td>
+        <td>Not an AWS figure. Directional allowance for compute, storage and transfer around the API calls.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout">
+    <div class="label">Required before this is used commercially</div>
+    <p>Reconcile against a month of actual AWS line items. If any stage of the pipeline runs on a different provider, if we hold an enterprise agreement with negotiated rates, or if any of it routes through a reseller, these numbers move. Owner: Product with Filipe and Finance.</p>
+  </div>
+</section>
+
+<footer>
+  Public list prices gathered August 2026, subject to change and to regional variation. Figures are indicative input costs to Screendragon and exclude pipeline compute, storage, transfer and margin. Not reconciled against actual billing. Not for external distribution.
+</footer>
+
+</div>
+<script>
+(function(){
+  var table = document.querySelector('table');
+  if(!table) return;
+  var rows = Array.prototype.slice.call(table.querySelectorAll('tbody tr'));
+  var msg = document.getElementById('filtermsg');
+  var btns = Array.prototype.slice.call(document.querySelectorAll('.segbtn'));
+
+  function apply(view){
+    var today = view === 'today';
+    var shown = 0;
+    // pass 1: capability rows
+    rows.forEach(function(r){
+      if(r.classList.contains('grp')) return;
+      var st = r.getAttribute('data-status');
+      var hide = today && st !== 'live';
+      r.classList.toggle('is-hidden', hide);
+      if(!hide) shown++;
+    });
+    // pass 2: hide group headers with no visible rows beneath them
+    rows.forEach(function(r,i){
+      if(!r.classList.contains('grp')) return;
+      var any = false;
+      for(var j=i+1;j<rows.length;j++){
+        if(rows[j].classList.contains('grp')) break;
+        if(!rows[j].classList.contains('is-hidden')){ any = true; break; }
+      }
+      r.classList.toggle('is-hidden', !any);
+    });
+    msg.textContent = today
+      ? 'Showing ' + shown + ' of 14 capabilities. Only what is live today. Everything else is hidden.'
+      : 'Showing all 14 capabilities, built and unbuilt.';
+    btns.forEach(function(b){
+      var on = b.getAttribute('data-view') === view;
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){ apply(b.getAttribute('data-view')); });
+  });
+  apply('all');
+})();
+</script>
+</body>
+</html>
