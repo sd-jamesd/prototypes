@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>This Is Your Moment — Campaign Concept &amp; Ad Executions · Screendragon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:#FBF9F5; --canvas-alt:#F3EFE7; --card:#FFFFFF;
+  --ink:#171A1C; --ink-body:#4A4F55; --ink-muted:#82888F;
+  --border:#E7E2D8;
+  --frame:#111214; --frame-deep:#0C0F12;
+  --green:#00D880; --green-deep:#028854;
+  --cyan:#00B3DB;
+  --iris:#7C82FD;
+  --cerulean:#1989A8;
+  --amber:#FFAD1F;
+  --r:22px;
+  --display:'Montserrat',system-ui,sans-serif;
+  --body:'Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--canvas);color:var(--ink-body);font-family:var(--body);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 40px}
+@media(max-width:760px){.wrap{padding:0 22px}}
+h1,h2,h3,h4{font-family:var(--display);color:var(--ink);font-weight:800;line-height:1.08}
+h2{font-size:clamp(26px,3.2vw,36px);letter-spacing:-.8px}
+h3{font-size:19px;letter-spacing:-.3px}
+.lede{font-size:16px;color:var(--ink-body);max-width:64ch;font-weight:400}
+.bold {font-weight: 600;}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:2px;color:var(--green-deep);display:block;margin-bottom:14px}
+p{max-width:64ch}
+small,.small{font-size:13px;color:var(--ink-muted)}
+
+section{padding:86px 0;border-top:1px solid var(--border)}
+section.alt{background:var(--canvas-alt)}
+.sechead{margin-bottom:40px}
+.sechead h2{margin-bottom:14px;max-width:28ch}
+
+/* COVER */
+.cover{
+  position:relative;overflow:hidden;
+  padding:80px 0 70px;
+    background: radial-gradient(ellipse 900px 800px at 88% 0%, rgba(0, 216, 128, .20), transparent 60%), radial-gradient(ellipse 800px 950px at 4% 100%, rgba(124, 130, 253, .09), transparent 60%), var(--canvas);  var(--canvas);border-top:none}
+.cover-icons{position:absolute;inset:0;z-index:0;pointer-events:none}
+.cover-icons svg{position:absolute;stroke-width:1.5}
+.cover .wrap{position:relative;z-index:1}
+.cover .kicker{font-family:var(--mono);font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--green-deep);margin-bottom:22px}
+.cover .header-eyebrow{font-size:20px; font-family: var(--display);text-transform: uppercase;font-weight: 300;color: rgba(7, 5, 5, 0.92);letter-spacing: .2px; margin-bottom: 0px;
+}
+
+.cover .display{font-family:var(--display); text-transform:uppercase;font-size:clamp(40px,6.4vw,76px);letter-spacing:-2px;color:var(--ink);line-height:1.05}
+.cover .display .b2{color:var(--green-deep)}
+.cover .meta{margin-top:34px;display:flex;gap:34px;flex-wrap:wrap}
+.cover .meta div{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--ink-muted)}
+.cover .meta b{display:block;font-family:var(--body);font-weight:600;color:var(--ink);text-transform:none;letter-spacing:0;font-size:14px;margin-top:4px}
+
+/* AD FRAME */
+.adframe{position:relative;overflow:hidden;border-radius:26px;display:flex;align-items:center;background:var(--frame)}
+.adframe.ambient{
+  background:
+    radial-gradient(ellipse 560px 520px at 22% 55%, rgba(0,216,128,.34), transparent 62%),
+    radial-gradient(ellipse 560px 520px at 78% 45%, rgba(0,179,219,.30), transparent 62%),
+    linear-gradient(180deg,#0C0F12 0%, #14181a 60%, #0C0F12 100%);
+}
+
+.rcard-visual.ambient{
+  background:
+    radial-gradient(ellipse 560px 520px at 22% 55%, rgba(0,216,128,.24), transparent 42%),
+    radial-gradient(ellipse 560px 520px at 78% 45%, rgba(0,179,219,.20), transparent 42%),
+    linear-gradient(180deg,#0C0F12 0%, #14181a 60%, #0C0F12 100%);
+}
+.adframe.ambient-fade{
+  background:
+    radial-gradient(ellipse 560px 520px at 22% 55%, rgba(0,216,128,.24), transparent 42%),
+    radial-gradient(ellipse 560px 520px at 78% 45%, rgba(0,179,219,.20), transparent 42%),
+    linear-gradient(180deg,#0C0F12 0%, #14181a 60%, #0C0F12 100%);
+}
+/* Light variant — same construction, for placement on a lighter site/page background */
+.adframe.ambient-light{
+background: radial-gradient(ellipse 560px 520px at 32% 25%, rgba(0, 216, 128, .16), transparent 72%), radial-gradient(ellipse 560px 520px at 98% 55%, rgba(0, 179, 219, .14), transparent 72%), linear-gradient(180deg, #FFFFFF 0%, #F6F2E9 65%, #FFFFFF 100%);
+  border:1px solid var(--border);
+  box-shadow:0 1px 2px rgba(23,26,28,.04);
+}
+.adframe.ambient-light .logolock{color:var(--ink)}
+.adframe.ambient-light .frametag{color:var(--ink-muted)}
+.adframe.ambient-light .headline-stack .line1{color:var(--ink)}
+.adframe.ambient-light .headline-stack .line2{color:var(--ink)}
+.adframe.ambient-light .crosshair{opacity:.35}
+.adframe.ambient-light .crosshair::before,
+.adframe.ambient-light .crosshair::after{background:var(--ink-muted)}
+.adframe.ambient-light .ap-photo-wrap{box-shadow:0 10px 24px rgba(23,26,28,.14)}
+.ap-photo-wrap-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    z-index: 5;
+    padding: 1px;
+    background: conic-gradient(from 180deg, var(--green), var(--cyan), var(--iris), var(--cerulean), var(--green));
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .5);
+}
+.ap-photo-wrap-card img{width: 110px; height:110px;border-radius: 50%;padding: 2px;}
+.adframe.ambient-light .person-tag .stem{background:rgba(23,26,28,.25)}
+.adframe .frametag{position:absolute;bottom:22px;left:26px;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.5);z-index:8}
+.adframe .logolock{position:absolute;top:26px;left:26px;font-family:var(--display);font-weight:800;font-size:25px;color:#fff;letter-spacing:-.3px;z-index:8}
+.adframe .logolock span{color:var(--green)}
+.adframe .cta{position:absolute;bottom:26px;right:26px;font-family:var(--body);font-weight:700;font-size:13px;background:var(--green);color:#06110c;padding:10px 18px;border-radius:8px;z-index:8}
+.capline{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--ink-muted);margin-top:14px}
+.capline b{color:var(--ink);font-weight:600;text-transform:none;letter-spacing:0;font-family:var(--body);display:block;font-size:14px;margin-bottom:3px}
+.crosshair{position:absolute;width:16px;height:16px;opacity:.28;z-index:8}
+.crosshair::before,.crosshair::after{content:"";position:absolute;background:#fff}
+.crosshair::before{left:50%;top:0;width:1px;height:100%;transform:translateX(-50%)}
+.crosshair::after{top:50%;left:0;height:1px;width:100%;transform:translateY(-50%)}
+
+/* HEADLINE STACK — light small line + huge all-caps word with radar pulse */
+.headline-stack{position:relative;z-index:7;flex:none}
+.headline-stack .line1{font-family:var(--display);text-transform:uppercase;font-weight:300;color:rgba(255,255,255,.92);letter-spacing:.2px;margin-bottom:2px}
+.headline-stack .line2{font-family:var(--display);font-weight:800;color:#fff;text-transform:uppercase;line-height:.92;position:relative;white-space:nowrap}
+.o-pulse{position:relative;z-index:0;display:inline-block}
+.pulse-ring{position:absolute;top:50%;left:50%;border-radius:50%;transform:translate(-50%,-50%);border-style:solid;z-index:-1;pointer-events:none}
+
+/* APERTURE component */
+.ap{position:relative;flex:none;z-index:2}
+.ap .ring{position:absolute;top:50%;left:50%;border-radius:50%;transform:translate(-50%,-50%);border-style:solid;box-sizing:border-box}
+.ap .ap-photo-wrap{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;z-index:5;padding:6px;
+  background:conic-gradient(from 180deg, var(--green), var(--cyan), var(--iris), var(--cerulean), var(--green));
+  box-shadow:0 12px 30px rgba(0,0,0,.5);
+}
+.ap .ap-photo-wrap img{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover}
+.ap .anno{position:absolute;display:flex;align-items:center;gap:7px;transform:translate(-50%,-50%);z-index:6}
+.ap .anno .dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex:none}
+.ap .anno .lbl{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#fff;white-space:normal;text-align:center;max-width:20rem;background:rgba(9,13,12,.6);padding:3px 7px;border-radius:5px;border:1px solid rgba(255,255,255,.08)}
+.ap .leader{position:absolute;height:1px;transform-origin:0 0;z-index:4;opacity:.8}
+.ap .icobadge{position:absolute;border-radius:50%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;z-index:6;background:rgba(9,13,12,.65);border:1.5px solid currentColor}
+.ap .icobadge.overlap{z-index:9;box-shadow:0 6px 16px rgba(0,0,0,.5)}
+/* Light-site badges — reversed: solid accent-colour circle, icon stroke goes dark */
+.adframe.ambient-light .icobadge{background:var(--accent);border:none;color:var(--frame-deep)}
+.adframe.ambient-light .icobadge.overlap{box-shadow:0 6px 16px rgba(23,26,28,.22)}
+.person-tag{position:absolute;transform:translate(-50%,0);text-align:center;z-index:6}
+.person-tag .lbl{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:#06110c;text-transform:uppercase;background:var(--green);padding:5px 10px;border-radius:5px;white-space:nowrap}
+.person-tag .stem{width:1px;height:14px;background:rgba(255,255,255,.4);margin:0 auto}
+
+/* rationale card */
+.rgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+@media(max-width:820px){.rgrid{grid-template-columns:1fr}}
+.rcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:30px;overflow:hidden}
+.rcard-visual{
+  margin:-30px -30px 20px;
+  height:80px;
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(180deg,var(--frame) 0%,var(--frame-deep) 100%);
+}
+.rcard-visual .rv-ring{
+  position:absolute;top:50%;right:0;
+  border-radius:50%;border-style:solid;box-sizing:border-box;
+  transform:translate(50%,-50%);
+  pointer-events:none;
+}
+.rcard .num{font-family:var(--mono);color:var(--green-deep);font-size:12px;letter-spacing:1.5px;margin-bottom:12px}
+.rcard h3{margin-bottom:10px}
+.rcard p{font-size:15px}
+
+/* execution grid */
+.exgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+@media(max-width:980px){.exgrid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:620px){.exgrid{grid-template-columns:repeat(2,1fr)}}
+.extile{position:relative;overflow:hidden;border-radius:18px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:var(--frame)}
+.extile .exlabel{position:absolute;bottom:14px;left:14px;right:14px;z-index:8;text-align: center;}
+.extile .exlabel .role{font-family:var(--display);font-weight:800;color:#fff;font-size:12.5px;letter-spacing:-.1px}
+.extile .exlabel .fmt{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+
+/* pillar cards */
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:900px){.pgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.pgrid{grid-template-columns:1fr}}
+.pillar{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:26px}
+.pillar .chip{display:inline-block;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:1px;padding:5px 11px;border-radius:999px;margin-bottom:16px;color:#fff}
+.pillar .pline{font-family:var(--display);font-weight:800;font-size:17px;color:var(--ink);letter-spacing:-.3px;line-height:1.3;margin-bottom:12px}
+.pillar .pfmt{font-family:var(--mono);font-size:10.5px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:1px;margin-top:14px;padding-top:14px;border-top:1px dashed var(--border)}
+.pillar p{font-size:14.5px;max-width:none}
+.pillar .icon-pillar {display:inline-block;padding: 5px 4px;display: flex;}
+.pillar .icon-pillar svg {font-size: 2rem;}
+
+/* spec table */
+.spectable{width:100%;border-collapse:collapse}
+.spectable td{padding:14px 12px;border-top:1px solid var(--border);font-size:14px;vertical-align:top}
+.spectable td.k{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--ink-muted);white-space:nowrap}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:8px;vertical-align:-2px}
+
+.dodont{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media(max-width:760px){.dodont{grid-template-columns:1fr}}
+.dodont .col{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:26px}
+.dodont h4{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px}
+.dodont ul{list-style:none}
+.dodont li{font-size:14.5px;padding:9px 0;border-top:1px solid var(--border)}
+.dodont li:first-child{border-top:none}
+
+/* line table */
+.mtable{width:100%;border-collapse:collapse}
+.mtable td{padding:15px 12px;border-top:1px solid var(--border);font-size:14.5px;vertical-align:top}
+.mtable td.b{color:var(--ink);font-weight:700}
+.mtable td.tag{color:var(--ink-muted);font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
+
+.checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:700px){.checklist{grid-template-columns:1fr}}
+.checklist div{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;font-size:14px;display:flex;gap:10px;align-items:flex-start}
+.checklist div b{color:var(--green-deep);font-family:var(--mono);font-size:12px}
+
+footer{padding:70px 0 50px;text-align:center;background:var(--frame)}
+footer p{margin:0 auto;color:#9aa0a6;font-size:13px;max-width:60ch}
+footer .brand{font-family:var(--display);font-weight:800;font-size:15px;color:#fff;margin-bottom:14px}
+footer .brand span{color:var(--green)}
+
+/* Ripple animation — scoped to the "why this matters" section only, every other .ap/.ring usage in the deck stays static.
+   The .ring-pulse elements are an extra decorative layer behind the static rings; the static rings stay put so the
+   anno leader lines still anchor to something fixed instead of a ring that's constantly resizing/fading. */
+#why-this-matters .ap .ring-pulse{
+  animation: ripple-out 3.6s ease-out infinite;
+}
+#why-this-matters .ap .ring-pulse:nth-of-type(1){ animation-delay:0s; --peak:.42; }
+#why-this-matters .ap .ring-pulse:nth-of-type(2){ animation-delay:.9s; --peak:.26; }
+#why-this-matters .ap .ring-pulse:nth-of-type(3){ animation-delay:1.8s; --peak:.13; }
+@keyframes ripple-out{
+  0%   { transform:translate(-50%,-50%) scale(.5); opacity:0; }
+  18%  { opacity:var(--peak); }
+  100% { transform:translate(-50%,-50%) scale(1.15); opacity:0; }
+}
+
+/* Background glow-ripple — a softer, bigger cousin of .ring-pulse, radiating from the
+   centre of the frame (where the person sits) instead of from the O in the headline.
+   Pseudo-elements so no markup changes; they paint behind .ap (z-index:2) automatically
+   since z-index:auto positioned elements always sit below positive z-index ones. */
+#why-this-matters .adframe.ambient::before,
+#why-this-matters .adframe.ambient::after{
+  content:'';
+  position:absolute;
+  top:50%; left:50%;
+  width:220px; height:220px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(0,216,128,.4), transparent 70%);
+  transform:translate(-50%,-50%) scale(.3);
+  opacity:0;
+  pointer-events:none;
+  animation:bg-ripple 4.8s ease-out infinite;
+}
+#why-this-matters .adframe.ambient::after{
+  background:radial-gradient(circle, rgba(0,179,219,.35), transparent 70%);
+  animation-delay:2.4s;
+}
+@keyframes bg-ripple{
+  0%   { transform:translate(-50%,-50%) scale(.3); opacity:.55; }
+  70%  { opacity:.12; }
+  100% { transform:translate(-50%,-50%) scale(3.2); opacity:0; }
+}
+</style>
+</head>
+<body>
+
+<!-- Lucide icon defs (ISC licensed, lucide.dev) -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="lu-bot" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>
+    </g>
+    <g id="lu-workflow" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/>
+    </g>
+    <g id="lu-share" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/>
+    </g>
+    <g id="lu-shield" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+    </g>
+    <g id="lu-check" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>
+    </g>
+    <g id="lu-layers" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>
+    </g>
+    <g id="lu-package" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/>
+    </g>
+    <g id="lu-activity" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/>
+    </g>
+    <g id="lu-chart-spline" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 16c.5-2 1.5-7 4-7 2 0 2 3 4 3 2.5 0 4.5-5 5-7"/>
+    </g>
+    <g id="lu-pencil-ruler" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M13 7 8.7 2.7a2.41 2.41 0 0 0-3.4 0L2.7 5.3a2.41 2.41 0 0 0 0 3.4L7 13"/><path d="m8 6 2-2"/><path d="m18 16 2-2"/><path d="m17 11 4.3 4.3c.94.94.94 2.46 0 3.4l-2.6 2.6c-.94.94-2.46.94-3.4 0L11 17"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>
+    </g>
+    <g id="lu-circle-slash-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><path d="M22 2 2 22"/>
+    </g>
+    <g id="lu-dices" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/>
+    </g>
+    <g id="lu-dot" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="1"/>
+    </g>
+
+  </defs>
+</svg>
+
+<!-- COVER -->
+<section class="cover">
+  <div class="cover-icons">
+    <svg style="top:8%;left:6%;width:64px;height:64px;color:var(--green);opacity:.18;transform:rotate(-12deg)" viewBox="0 0 24 24"><use href="#lu-workflow"/></svg>
+    <svg style="top:62%;left:3%;width:96px;height:96px;color:var(--cerulean);opacity:.12;transform:rotate(8deg)" viewBox="0 0 24 24"><use href="#lu-layers"/></svg>
+    <svg style="top:14%;left:22%;width:34px;height:34px;color:var(--iris);opacity:.24;transform:rotate(15deg)" viewBox="0 0 24 24"><use href="#lu-dices"/></svg>
+    <svg style="top:78%;left:16%;width:52px;height:52px;color:var(--amber);opacity:.16;transform:rotate(-6deg)" viewBox="0 0 24 24"><use href="#lu-package"/></svg>
+    <svg style="top:4%;left:46%;width:44px;height:44px;color:var(--green-deep);opacity:.2;transform:rotate(20deg)" viewBox="0 0 24 24"><use href="#lu-chart-spline"/></svg>
+    <svg style="top:70%;left:40%;width:28px;height:28px;color:var(--cyan);opacity:.3;transform:rotate(-18deg)" viewBox="0 0 24 24"><use href="#lu-check"/></svg>
+    <svg style="top:20%;left:64%;width:120px;height:120px;color:var(--cerulean);opacity:.1;transform:rotate(-9deg)" viewBox="0 0 24 24"><use href="#lu-share"/></svg>
+    <svg style="top:66%;left:70%;width:40px;height:40px;color:var(--green);opacity:.22;transform:rotate(12deg)" viewBox="0 0 24 24"><use href="#lu-pencil-ruler"/></svg>
+    <svg style="top:8%;left:82%;width:58px;height:58px;color:var(--iris);opacity:.14;transform:rotate(-15deg)" viewBox="0 0 24 24"><use href="#lu-bot"/></svg>
+    <svg style="top:46%;left:90%;width:36px;height:36px;color:var(--amber);opacity:.26;transform:rotate(10deg)" viewBox="0 0 24 24"><use href="#lu-activity"/></svg>
+    <svg style="top:86%;left:56%;width:30px;height:30px;color:var(--cerulean);opacity:.28;transform:rotate(-22deg)" viewBox="0 0 24 24"><use href="#lu-circle-slash-2"/></svg>
+    <svg style="top:38%;left:12%;width:24px;height:24px;color:var(--green-deep);opacity:.2;transform:rotate(6deg)" viewBox="0 0 24 24"><use href="#lu-shield"/></svg>
+  </div>
+  <div class="wrap">
+    <div class="kicker">▸ Campaign concept &amp; ad executions · v7 · August 2026 · Hand-off to marketing</div>
+    <h5 class="header-eyebrow">This is your</h5><br>
+    <h1 class="display">m<span class="o-pulse">
+      <span class="pulse-ring" style="width:70px;height:70px;border-width:2.5px;border-color:var(--green-deep);opacity:.85"></span>
+      <span class="pulse-ring" style="width:132px;height:132px;border-width:2px;border-color:var(--green-deep);opacity:.5"></span>
+      <span class="pulse-ring" style="width:214px;height:214px;border-width:1.5px;border-color:var(--cerulean);opacity:.3"></span>
+      <span class="pulse-ring" style="width:284px;height:284px;border-width:1.5px;border-color:var(--cerulean);opacity:.3"></span>
+      <span style="color:var(--green)">o</span></span>ment.</h1>
+      <br><span class="b2">Put AI where the work happens.</span>
+    
+    <p class="lede" style="margin-top:24px">A campaign built on one key visual: the person at the centre of the system, and the system — governed, orchestrated, scaled — opening around them. Whatever their job title says, they're a systems architect now.</p>
+    <div class="meta">
+      <div>Territory <b>The Control Seat</b></div>
+      <div>Personal identity <b>The Systems Architect</b></div>
+      <div>Device <b>The Aperture, annotated</b></div>
+      <div>Brand system <b>v1.6 · this deck aligns to it</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- 00 WHY THIS MATTERS (emotive case) -->
+<section id="why-this-matters">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">▸ Why this — the emotive case</span>
+      <h2>THE RIPPLE</h2>
+      <p class="lede bold" style="margin-bottom:14px">One decision today. A different person a year from now.</p>
+      <p class="lede">Every execution in this deck sells competence — governed, orchestrated, scaled. This is the argument underneath it. You're not just adopting a tool, you're choosing who you become. Nothing here changes what's already built — this is the felt version of the same thesis, meant to sit near the top so the mechanics that follow land as the "how," not the "why."</p>
+    </div>
+
+    <div class="adframe ambient" style="aspect-ratio:2/1;padding:80px">
+      <div class="logolock">screen<span>dragon</span></div>
+      <div style="display:flex;width:100%;height:100%;align-items:center;justify-content:center">
+        <div class="ap" style="width:640px;height:640px">
+          <!-- ripple layer: purely decorative, pulses behind the static rings below -->
+          <span class="ring ring-pulse" style="width:320px;height:320px;border-width:2.5px;border-color:var(--green);opacity:.42"></span>
+          <span class="ring ring-pulse" style="width:460px;height:460px;border-width:2.5px;border-color:var(--cyan);opacity:.26"></span>
+          <span class="ring ring-pulse" style="width:640px;height:640px;border-width:2.5px;border-color:var(--cerulean);opacity:.13"></span>
+
+          <!-- static rings: fixed in place, anchor the anno leader lines -->
+          <span class="ring" style="width:320px;height:320px;border-width:2.5px;border-color:var(--green);opacity:.42"></span>
+          <span class="ring" style="width:460px;height:460px;border-width:2.5px;border-color:var(--cyan);opacity:.26"></span>
+          <span class="ring" style="width:640px;height:640px;border-width:2.5px;border-color:var(--cerulean);opacity:.13"></span>
+
+          <div class="leader" style="width:55px;top:160px;left:320px;background:var(--green);transform:rotate(-90deg)"></div>
+          <div class="anno" style="top:100px;left:320px;color:var(--green)"><span class="dot"></span><span class="lbl">Today — you start the change, for you and the business</span></div>
+
+          <div class="leader" style="width:60px;top:435px;left:519px;background:var(--cyan);transform:rotate(30deg)"></div>
+          <div class="anno" style="top:487px;left:741px;width:100%;color:var(--cyan)"><span class="dot"></span><span class="lbl">This quarter — the team stops waiting on you</span></div>
+
+          <div class="leader" style="width:55px;top:526px;left:75px;background:var(--cerulean);transform:rotate(140deg)"></div>
+          <div class="anno" style="top:561px;left:33px;color:var(--cerulean)"><span class="dot"></span><span class="lbl">Flexible AI inputs have resulted in scalable and stronger strategies</span></div>
+
+          <div class="ap-photo-wrap" style="width:300px;height:300px">
+            <img src="images/face-02-coral-alt.jpg" alt="A person at the centre of the system, calm and focused, with ripples of change radiating outward">
+          </div>
+          <div class="icobadge" style="width:16px;height:16px;top:526px;left:74px;color:var(--cyan)"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#lu-dot"/></svg></div>
+          <div class="icobadge" style="width:16px;height:16px;top:437px;left:518px;color:var(--cyan)"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#lu-dot"/></svg></div>
+          <div class="icobadge" style="width:16px;height:16px;top:160px;left:321px;color:var(--green)"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#lu-dot"/></svg></div>
+          <div class="icobadge" style="width:32px;height:32px;top:412px;left:159px;color:var(--cyan)"><svg width="18" height="18" viewBox="0 0 24 24"><use href="#lu-check"/></svg></div>
+          <div class="icobadge" style="width:36px;height:36px;top:342px;left:5px;color:var(--green)"><svg width="20" height="20" viewBox="0 0 24 24"><use href="#lu-workflow"/></svg></div>
+          <div class="icobadge" style="width:28px;height:28px;top:197px;left:615px;color:var(--iris)"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#lu-shield"/></svg></div>
+          <div class="icobadge overlap" style="width:50px;height:50px;top:426px;left:426px;color:var(--amber);background:var(--frame-deep)"><svg width="27" height="27" viewBox="0 0 24 24"><use href="#lu-bot"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="capline"><b>Not a new ring effect — the same one, pointed at time instead of function.</b>Every other aperture in this deck labels what surrounds the person (the harness, governance, scale). This one labels when: the ripple isn't the system, it's the consequence of using it — today's decision becoming next quarter's default becoming next year's identity. Stop being the bottleneck. Start being the reason it works.</div>
+  </div>
+</section>
+
+<!-- 01 KEY VISUAL -->
+<section id="key-visual">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">▸ 01 — The key visual</span>
+      <h2>MOMENT gets the weight. The rest of the line steps back.</h2>
+      <p class="lede">"This is your" runs light and small; "MOMENT" carries the headline, all caps, full weight — with a radar pulse radiating from behind the O and bleeding off the frame. The gradient ring is up to 3px now, and the icons no longer sit in one uniform orbit — the bot marker overlaps the photo itself, like a badge.</p>
+    </div>
+
+    <div class="adframe ambient" style="aspect-ratio:16/9;padding:48px">
+      <div class="crosshair" style="top:20px;left:20px"></div>
+      <div class="crosshair" style="top:20px;right:20px"></div>
+      <div class="crosshair" style="bottom:20px;left:20px"></div>
+      <div class="logolock">screen<span>dragon</span></div>
+      <div style="display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px">
+        <div class="headline-stack">
+          <div class="line1" style="font-size:clamp(12px,1.5vw,16px)">This is your</div>
+          <div class="line2" style="font-size:clamp(42px,6.6vw,83px)">M<span class="o-pulse">
+            <span class="pulse-ring" style="width:104px;height:104px;border-width:1.5px;border-color:var(--green);opacity:.55"></span>
+            <span class="pulse-ring" style="width:200px;height:200px;border-width:1.5px;border-color:var(--green);opacity:.32"></span>
+            <span class="pulse-ring" style="width:320px;height:320px;border-width:1.5px;border-color:var(--cyan);opacity:.16"></span>
+            <!-- <span style="color:var(--green)">O</span></span>MENT</div> -->
+            <span style="background:conic-gradient(from 180deg, var(--green), var(--cyan), var(--iris), var(--cerulean), var(--green));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;display:inline-block">o</span></span>MENT</div>
+        </div>
+
+        <div class="ap" style="width:480px;height:480px">
+          <span class="ring" style="width:480px;height:480px;border-width:1.5px;border-color:var(--cerulean);opacity:.16"></span>
+          <span class="ring" style="width:378px;height:378px;border-width:1.5px;border-color:var(--iris);opacity:.26"></span>
+          <span class="ring" style="width:296px;height:296px;border-width:1.5px;border-color:var(--cyan);opacity:.42"></span>
+          <span class="ring" style="width:232px;height:232px;border-width:1.5px;border-color:var(--green);opacity:.55"></span>
+
+          <div class="leader" style="width:40px;top:162px;left:164px;background:var(--cyan);transform:rotate(-127deg)"></div>
+          <div class="anno" style="top:119px;left:124px;color:var(--cyan)"><span class="dot"></span><span class="lbl">The harness</span></div>
+
+          <div class="leader" style="width:40px;top:173px;left:335px;background:var(--green);transform:rotate(-35deg)"></div>
+          <div class="anno" style="top:151px;left:368px;color:var(--green)"><span class="dot"></span><span class="lbl">Orchestration layer</span></div>
+
+          <div class="leader" style="width:40px;top:266px;left:386px;background:var(--iris);transform:rotate(10deg)"></div>
+          <div class="anno" style="top:273px;left:425px;color:var(--iris)"><span class="dot"></span><span class="lbl">Governance</span></div>
+
+          <div class="leader" style="width:27px;top:284px;left:73px;background:var(--cerulean);transform:rotate(0deg)"></div>
+          <div class="anno" style="top:285px;left:17px;color:var(--cerulean)"><span class="dot"></span><span class="lbl">The org chart</span></div>
+
+          <div class="leader" style="width:40px;top:448px;left:361px;background:var(--amber);transform:rotate(60deg)"></div>
+          <div class="anno" style="top:483px;left:380px;color:var(--amber)"><span class="dot"></span><span class="lbl">Scale</span></div>
+
+          <!-- icons at varied radii, off-kilter from the rings, each on a short connector -->
+          <div class="leader" style="width:16px;top:398px;left:166px;background:var(--cyan);opacity:.5;transform:rotate(115deg)"></div>
+          <div class="icobadge" style="width:32px;height:32px;top:412px;left:159px;color:var(--cyan)"><svg width="18" height="18" viewBox="0 0 24 24"><use href="#lu-check"/></svg></div>
+
+          <div class="leader" style="width:18px;top:355px;left:41px;background:var(--green);opacity:.5;transform:rotate(150deg)"></div>
+          <div class="icobadge" style="width:36px;height:36px;top:364px;left:25px;color:var(--green)"><svg width="20" height="20" viewBox="0 0 24 24"><use href="#lu-workflow"/></svg></div>
+
+          <div class="leader" style="width:14px;top:201px;left:95px;background:var(--iris);opacity:.5;transform:rotate(195deg)"></div>
+          <div class="icobadge" style="width:28px;height:28px;top:197px;left:82px;color:var(--iris)"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#lu-shield"/></svg></div>
+
+          <div class="leader" style="width:18px;top:58px;left:135px;background:var(--cerulean);opacity:.5;transform:rotate(240deg)"></div>
+          <div class="icobadge" style="width:54px;height:54px;top:42px;left:126px;color:var(--cerulean)"><svg width="24" height="24" viewBox="0 0 24 24"><use href="#lu-share"/></svg></div>
+
+          <div class="ap-photo-wrap" style="width:226px;height:226px">
+            <img src="images/face-01-emerald-alt.jpg" alt="A person mid-conversation, focused and determined, at the centre of the aperture">
+          </div>
+
+          <!-- bot icon overlapping the photo edge like a badge — attached to the person, not a ring, so no connector -->
+          <div class="icobadge overlap" style="width:46px;height:46px;top:304px;left:317px;color:var(--amber);background:var(--frame-deep)"><svg width="26" height="26" viewBox="0 0 24 24"><use href="#lu-bot"/></svg></div>
+
+          <!-- <div class="person-tag" style="top:364px;left:240px">
+            <div class="stem"></div>
+            <div class="lbl">Systems architect</div>
+          </div> -->
+        </div>
+      </div>
+      <div class="frametag">Master key visual · 16:9 · hero / OOH / YouTube pre-roll</div>
+      <!-- <div class="cta">Request a demo</div> -->
+    </div>
+    <div class="capline"><b>Format: Hero, OOH, pre-roll</b>Headline: "This is your" light/small, "MOMENT" all-caps and full weight, with a three-ring radar pulse behind the O bleeding past the frame edge. Ring around the photo: conic Green→Cyan→Iris→Cerulean gradient at a 3px stroke. Icons sit at varied distances from the centre rather than one orbit; the bot marker overlaps the photo itself like a badge, signalling the agent attached directly to the person.</div>
+
+    <div class="adframe ambient-light" style="aspect-ratio:16/9;padding:48px;margin-top:22px">
+      <div class="crosshair" style="top:20px;left:20px"></div>
+      <div class="crosshair" style="top:20px;right:20px"></div>
+      <div class="crosshair" style="bottom:20px;left:20px"></div>
+      <div class="logolock">screen<span>dragon</span></div>
+      <div style="display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px">
+        <div class="headline-stack">
+          <div class="line1" style="font-size:clamp(12px,1.5vw,16px)">This is your</div>
+          <div class="line2" style="font-size:clamp(42px,6.6vw,83px)">M<span class="o-pulse">
+            <span class="pulse-ring" style="width:104px;height:104px;border-width:2.5px;border-color:var(--green-deep);opacity:.85"></span>
+            <span class="pulse-ring" style="width:200px;height:200px;border-width:2px;border-color:var(--green-deep);opacity:.5"></span>
+            <span class="pulse-ring" style="width:320px;height:320px;border-width:1.5px;border-color:var(--cerulean);opacity:.3"></span>
+            <span style="color:var(--green-deep)">O</span></span>MENT</div>
+        </div>
+
+        <div class="ap" style="width:480px;height:480px">
+          <span class="ring" style="width:480px;height:480px;border-width:1.5px;border-color:var(--cerulean);opacity:.22"></span>
+          <span class="ring" style="width:378px;height:378px;border-width:1.5px;border-color:var(--iris);opacity:.32"></span>
+          <span class="ring" style="width:296px;height:296px;border-width:1.5px;border-color:var(--cyan);opacity:.48"></span>
+          <span class="ring" style="width:232px;height:232px;border-width:1.5px;border-color:var(--green);opacity:.6"></span>
+
+          <div class="leader" style="width:40px;top:152px;left:264px;background:var(--cyan);transform:rotate(-75deg)"></div>
+          <div class="anno" style="top:113px;left:274px;color:var(--cyan)"><span class="dot"></span><span class="lbl">The harness</span></div>
+
+          <div class="leader" style="width:40px;top:173px;left:335px;background:var(--green);transform:rotate(-35deg)"></div>
+          <div class="anno" style="top:151px;left:368px;color:var(--green)"><span class="dot"></span><span class="lbl">Orchestration layer</span></div>
+
+          <div class="leader" style="width:40px;top:266px;left:386px;background:var(--iris);transform:rotate(10deg)"></div>
+          <div class="anno" style="top:273px;left:425px;color:var(--iris)"><span class="dot"></span><span class="lbl">Governance</span></div>
+
+          <div class="leader" style="width:40px;top:385px;left:362px;background:var(--cerulean);transform:rotate(50deg)"></div>
+          <div class="anno" style="top:415px;left:387px;color:var(--cerulean)"><span class="dot"></span><span class="lbl">The org chart</span></div>
+
+          <div class="leader" style="width:40px;top:448px;left:361px;background:var(--amber);transform:rotate(60deg)"></div>
+          <div class="anno" style="top:483px;left:380px;color:var(--amber)"><span class="dot"></span><span class="lbl">Scale</span></div>
+
+          <div class="leader" style="width:16px;top:398px;left:166px;background:var(--cyan);opacity:.5;transform:rotate(115deg)"></div>
+          <div class="icobadge" style="width:32px;height:32px;top:412px;left:159px;--accent:var(--cyan)"><svg width="18" height="18" viewBox="0 0 24 24"><use href="#lu-check"/></svg></div>
+
+          <div class="leader" style="width:18px;top:355px;left:41px;background:var(--green);opacity:.5;transform:rotate(150deg)"></div>
+          <div class="icobadge" style="width:36px;height:36px;top:364px;left:25px;--accent:var(--green)"><svg width="20" height="20" viewBox="0 0 24 24"><use href="#lu-workflow"/></svg></div>
+
+          <div class="leader" style="width:14px;top:201px;left:95px;background:var(--iris);opacity:.5;transform:rotate(195deg)"></div>
+          <div class="icobadge" style="width:28px;height:28px;top:197px;left:82px;--accent:var(--iris)"><svg width="16" height="16" viewBox="0 0 24 24"><use href="#lu-shield"/></svg></div>
+
+          <div class="leader" style="width:18px;top:58px;left:135px;background:var(--cerulean);opacity:.5;transform:rotate(240deg)"></div>
+          <div class="icobadge" style="width:34px;height:34px;top:42px;left:126px;--accent:var(--cerulean)"><svg width="19" height="19" viewBox="0 0 24 24"><use href="#lu-share"/></svg></div>
+
+          <div class="ap-photo-wrap" style="width:226px;height:226px">
+            <img src="images/face-02-coral-light.jpg" alt="A person mid-conversation, focused and determined, at the centre of the aperture — light-site variant">
+          </div>
+
+          <div class="icobadge overlap" style="width:46px;height:46px;top:304px;left:317px;--accent:var(--amber)"><svg width="26" height="26" viewBox="0 0 24 24"><use href="#lu-bot"/></svg></div>
+        </div>
+      </div>
+      <div class="frametag">Light-site key visual · 16:9 · website / blog header / light-mode deck</div>
+      <!-- <div class="cta">Request a demo</div> -->
+    </div>
+    <div class="capline"><b>Light-site variant</b>Same construction, inverted for placement on a lighter page. Frame goes Midnight → white/canvas, type flips white → Ink; gradient ring, aperture strokes and icon badges are untouched. Pulse rings switch to Green-deep/Cerulean at higher opacity and heavier stroke to hold contrast on a light ground.</div>
+  </div>
+</section>
+
+<!-- 02 WHY IT WORKS -->
+<section id="why" class="alt">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">▸ 02 — Why the Control Seat / Aperture device works</span>
+      <h2>One device, doing five jobs at once.</h2>
+      <p class="lede">Every part of the construction is carrying a piece of the brief — including the parts we've just added.</p>
+    </div>
+    <div class="rgrid">
+      <div class="rcard">
+        <div class="rcard-visual">
+          <span class="rv-ring" style="width:350px;height:350px;border-width:2px;border-color:var(--cyan);opacity:.16"></span>
+          <span class="rv-ring" style="width:300px;height:300px;border-width:2px;border-color:var(--green);opacity:.3"></span>
+          <span class="rv-ring" style="width:250px;height:250px;border-width:2px;border-color:var(--green);opacity:.5"></span>
+          <span class="rv-ring" style="width:200px;height:200px;border-width:2px;border-color:var(--green);opacity:.75"></span>
+          <span class="rv-ring" style="width:150px;height:150px;border-width:2px;border-color:var(--green);opacity:.85"></span>
+        </div>
+        <div class="num">01 — The radar pulse/ripple</div>
+        <h3>MOMENT, radiating, ripple</h3>
+        <p>The rings expand from behind the O in MOMENT and bleed past the frame edge — the campaign line isn't just typeset, it's the thing generating the whole system radiating around the person. Read them as ripples: the moment is the point of impact, and everything else in the system — the icons, the orbit, the agent badge — is just what that impact sends outward. Same construction logic as the aperture rings, at headline scale.</p>
+      </div>
+      <div class="rcard">
+        <div class="rcard-visual">
+          <div class="ap-photo-wrap-card" style="width:112px;height:112px"><img src="images/face-01-emerald-alt.jpg" alt="Systems architect, the harness"></div>
+        </div>
+        <div class="num">02 — The gradient ring</div>
+        <h3>Worn, not floating nearby</h3>
+        <p>A 3px conic sweep through Green, Cyan, Iris and Cerulean sits directly on the photo edge — thick enough to read at a glance, still a hairline against the person rather than a heavy frame.</p>
+      </div>
+      <div class="rcard">
+        <div class="rcard-visual">
+          <div class="icobadge" style="width:46px;height:46px; position: absolute; top: 38px; left: 370px; border-radius: 50%;transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center;border: 1.5px solid var(--cyan); color:var(--cyan);background:var(--frame-deep)"><svg width="26" height="26" viewBox="0 0 24 24"><use href="#lu-check"/></svg></div>
+          <div class="icobadge" style="width:46px;height:46px; position: absolute; top: 38px; left: 270px; border-radius: 50%;transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center;border: 1.5px solid var(--green); color:var(--green);background:var(--frame-deep)"><svg width="26" height="26" viewBox="0 0 24 24"><use href="#lu-workflow"/></svg></div>
+          <div class="icobadge" style="width:46px;height:46px; position: absolute; top: 38px; left: 170px; border-radius: 50%;transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center;border: 1.5px solid var(--amber); color:var(--amber);background:var(--frame-deep)"><svg width="26" height="26" viewBox="0 0 24 24"><use href="#lu-bot"/></svg></div>
+        </div>
+        <div class="num">03 — Varied orbit, one overlap</div>
+        <h3>Not everything is equally important</h3>
+        <p>The four system icons now sit at different distances from the centre instead of one uniform ring — some closer, some further. The bot marker breaks the orbit entirely and overlaps the photo edge, like a badge: the clearest possible signal that the agent is attached to this specific person, not just floating in the system nearby.</p>
+      </div>
+      <div class="rcard">
+        <div class="rcard-visual ambient">
+        </div>
+        <div class="num">04 — Why the gradient background appears only once</div>
+        <h3>Restraint is still the brand's signature</h3>
+        <p>The Ambient background gradient stays spent once, hero-scale only. Everything else — including the new pulse and ring treatments — reads as line work and colour accents on flat Midnight, not a second atmosphere.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 EVERYONE IS A SYSTEMS ARCHITECT -->
+<section id="moments">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">▸ 03 — Everyone is a systems architect now</span>
+      <h2>Not four job titles. One identity, four facets of the same thesis.</h2>
+      <p class="lede">Every person wears the same AI-gradient ring, now a visible 6px. The two icons per tile sit at different distances from the centre rather than mirrored equally.</p>
+    </div>
+    <div class="exgrid">
+
+      <div class="extile">
+        <div class="ap" style="width:200px;height:200px">
+          <span class="ring" style="width:200px;height:200px;border-width:1.5px;border-color:var(--cyan);opacity:.2"></span>
+          <span class="ring" style="width:158px;height:158px;border-width:1.5px;border-color:var(--cyan);opacity:.35"></span>
+          <div class="leader" style="width:8px;top:14px;left:150px;background:var(--green);opacity:.5;transform:rotate(-60deg)"></div>
+          <div class="icobadge" style="width:25px;height:25px;top:7px;left:154px;color:var(--green)"><svg width="14" height="14" viewBox="0 0 24 24"><use href="#lu-workflow"/></svg></div>
+          <div class="leader" style="width:8px;top:184px;left:26px;background:var(--cyan);opacity:.5;transform:rotate(131deg)"></div>
+          <div class="icobadge" style="width:30px;height:30px;top:190px;left:21px;color:var(--cyan)"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#lu-check"/></svg></div>
+          <div class="ap-photo-wrap" style="width:112px;height:112px"><img src="images/face-01-emerald-alt.jpg" alt="Systems architect, the harness"></div>
+        </div>
+        <div class="exlabel"><div class="role">Software Engineer</div></div>
+      </div>
+
+      <div class="extile">
+        <div class="ap" style="width:200px;height:200px;transform:translateX(0px)">
+          <span class="ring" style="width:200px;height:200px;border-width:1.5px;border-color:var(--green);opacity:.2"></span>
+          <span class="ring" style="width:158px;height:158px;border-width:1.5px;border-color:var(--green);opacity:.35"></span>
+          <div class="leader" style="width:8px;top:16px;left:32px;background:var(--cerulean);opacity:.5;transform:rotate(231deg)"></div>
+          <div class="icobadge" style="width:30px;height:30px;top:10px;left:27px;color:var(--cerulean)"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#lu-share"/></svg></div>
+          <div class="leader" style="width:8px;top:186px;left:180px;background:var(--green);opacity:.5;transform:rotate(47deg)"></div>
+          <div class="icobadge" style="width:25px;height:25px;top:192px;left:185px;color:var(--green)"><svg width="14" height="14" viewBox="0 0 24 24"><use href="#lu-workflow"/></svg></div>
+          <div class="ap-photo-wrap" style="width:112px;height:112px"><img src="images/face-05-cyan.jpg" alt="Systems architect, orchestration"></div>
+        </div>
+        <div class="exlabel"><div class="role">Product Manager</div></div>
+      </div>
+
+      <div class="extile">
+        <div class="ap" style="width:200px;height:200px;transform:translateX(0px)">
+          <span class="ring" style="width:200px;height:200px;border-width:1.5px;border-color:var(--iris);opacity:.2"></span>
+          <span class="ring" style="width:158px;height:158px;border-width:1.5px;border-color:var(--iris);opacity:.35"></span>
+          <div class="leader" style="width:8px;top:18px;left:178px;background:var(--iris);opacity:.5;transform:rotate(-46deg)"></div>
+          <div class="icobadge" style="width:30px;height:30px;top:12px;left:184px;color:var(--iris)"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#lu-shield"/></svg></div>
+          <div class="leader" style="width:8px;top:182px;left:24px;background:var(--green);opacity:.5;transform:rotate(133deg)"></div>
+          <div class="icobadge" style="width:24px;height:24px;top:188px;left:19px;color:var(--green)"><svg width="13" height="13" viewBox="0 0 24 24"><use href="#lu-check"/></svg></div>
+          <div class="ap-photo-wrap" style="width:112px;height:112px"><img src="images/face-03-gold.png" alt="Systems architect, governance"></div>
+        </div>
+        <div class="exlabel"><div class="role">Engineering Manager</div></div>
+      </div>
+
+      <div class="extile">
+        <div class="ap" style="width:200px;height:200px">
+          <span class="ring" style="width:200px;height:200px;border-width:1.5px;border-color:var(--cerulean);opacity:.2"></span>
+          <span class="ring" style="width:158px;height:158px;border-width:1.5px;border-color:var(--cerulean);opacity:.35"></span>
+          <div class="leader" style="width:8px;top:16px;left:30px;background:var(--green);opacity:.5;transform:rotate(230deg)"></div>
+          <div class="icobadge" style="width:24px;height:24px;top:10px;left:25px;color:var(--green)"><svg width="13" height="13" viewBox="0 0 24 24"><use href="#lu-share"/></svg></div>
+          <div class="icobadge overlap" style="width:32px;height:32px;top:178px;left:180px;color:var(--cerulean);background:var(--frame-deep)"><svg width="18" height="18" viewBox="0 0 24 24"><use href="#lu-bot"/></svg></div>
+          <div class="ap-photo-wrap" style="width:112px;height:112px"><img src="images/face-04-indigo-alt.jpg" alt="Systems architect, the org chart"></div>
+        </div>
+        <div class="exlabel"><div class="role">Data Scientist</div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FORMAT ADAPTATIONS -->
+<section id="formats" class="alt">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">▸ Format adaptations</span>
+      <h2>Same key visual, three channel crops.</h2>
+      <p class="lede">Flat Midnight canvas, no second background gradient. Mockups only; final CTA copy to be confirmed with marketing.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:22px">
+      <div class="adframe ambient-fade " style="aspect-ratio:9/16;padding:28px;grid-row:span 2">
+        <div class="logolock" style="font-size:13px">screen<span>dragon</span></div>
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;gap:18px">
+          <div class="ap" style="width:220px;height:220px">
+            <span class="ring" style="width:220px;height:220px;border-width:1.5px;border-color:var(--cyan);opacity:.2"></span>
+            <span class="ring" style="width:174px;height:174px;border-width:1.5px;border-color:var(--green);opacity:.35"></span>
+            <div class="leader" style="width:9px;top:30px;left:186px;background:var(--green);opacity:.5;transform:rotate(-46deg)"></div>
+            <div class="icobadge" style="width:30px;height:30px;top:24px;left:192px;color:var(--green)"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#lu-workflow"/></svg></div>
+            <div class="icobadge overlap" style="width:34px;height:34px;top:186px;left:174px;color:var(--cyan);background:var(--frame-deep)"><svg width="19" height="19" viewBox="0 0 24 24"><use href="#lu-bot"/></svg></div>
+            <div class="ap-photo-wrap" style="width:122px;height:122px"><img src="images/face-01-emerald.jpg" alt="Story format"></div>
+          </div>
+          <div class="headline-stack" style="text-align:center">
+            <div class="line1" style="font-size:15px">This is your</div>
+            <div class="line2" style="font-size:44px">M<span class="o-pulse">
+              <span class="pulse-ring" style="width:70px;height:70px;border-width:1.5px;border-color:var(--green);opacity:.55"></span>
+              <span class="pulse-ring" style="width:130px;height:130px;border-width:1.5px;border-color:var(--cyan);opacity:.3"></span>
+              <!-- <span style="color:var(--green)">O</span></span>MENT</div> -->
+              <span style="background:conic-gradient(from 180deg, var(--green), var(--cyan), var(--iris), var(--cerulean), var(--green));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;display:inline-block">o</span></span>MENT</div>
+
+          </div>
+        </div>
+        <div class="frametag">9:16 · Story / Reel</div>
+      </div>
+
+
+      <div class="adframe ambient-fade" style="aspect-ratio:1.91/1;padding:36px">
+        <div class="logolock">screen<span>dragon</span></div>
+        <div style="display:flex;width:100%;align-items:center;justify-content:space-between;gap:30px">
+          <div class="headline-stack">
+            <div class="line1" style="font-size:14px">Put AI where the</div>
+            <div class="line2" style="font-size:clamp(28px,3.6vw,42px)">WORK<br><span style="color:var(--green)">HAPPENS</span></div>
+          </div>
+          <div class="ap" style="width:350px;height:350px">
+             <span class="ring" style="width:350px;height:350px;border-width:2px;border-color:var(--cerulean);opacity:.15"></span>
+            <span class="ring" style="width:300px;height:300px;border-width:2px;border-color:var(--iris);opacity:.2"></span>
+            <span class="ring" style="width:250px;height:250px;border-width:2px;border-color:var(--cerulean);opacity:.35"></span>
+            <div class="leader" style="width:9px;top:38px;left:206px;background:var(--iris);opacity:.5;transform:rotate(-40deg)"></div>
+            <div class="icobadge" style="width:30px;height:30px;top:32px;left:213px;color:var(--iris)"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#lu-check"/></svg></div>
+            <div class="icobadge overlap" style="width:46px;height:46px;top:234px;left:87px;color:var(--amber);background:var(--frame-deep)"><svg width="26" height="26" viewBox="0 0 24 24"><use href="#lu-bot"/></svg></div>
+            <div class="ap-photo-wrap" style="width:186px;height:186px"><img src="images/face-04-indigo-alt.jpg" alt="LinkedIn format"></div>
+          </div>
+        </div>
+        <div class="frametag">1.91:1 · LinkedIn / paid social</div>
+        <div class="cta">Request a demo</div>
+      </div>
+
+
+      <div class="adframe ambient-light" style="aspect-ratio:1.91/1;padding:36px">
+        <div class="logolock">screen<span>dragon</span></div>
+        <div style="display:flex;width:100%;align-items:center;justify-content:space-between;gap:30px">
+          <div class="headline-stack">
+            <div class="line1" style="font-size:14px">Move fast now, build for</div>
+            <div class="line2" style="font-size:clamp(28px,3.6vw,42px)"><span style="color:var(--ink)">tomorrow</span></div>
+          </div>
+          <div class="ap" style="width:350px;height:350px">
+             <span class="ring" style="width:350px;height:350px;border-width:2px;border-color:var(--cerulean);opacity:.15"></span>
+            <span class="ring" style="width:300px;height:300px;border-width:2px;border-color:var(--iris);opacity:.2"></span>
+            <span class="ring" style="width:250px;height:250px;border-width:2px;border-color:var(--cerulean);opacity:.35"></span>
+            <div class="leader" style="width:9px;top:38px;left:206px;background:var(--iris);opacity:.5;transform:rotate(-40deg)"></div>
+            <div class="icobadge" style="width:30px;height:30px;top:32px;left:213px;--accent: var(--iris);"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#lu-check"/></svg></div>
+            <div class="icobadge overlap" style="width:46px;height:46px;top:234px;left:87px;--accent: var(--amber);"><svg width="26" height="26" viewBox="0 0 24 24"><use href="#lu-bot"/></svg></div>
+            <div class="icobadge overlap" style="width:34px;height:34px;top:196px;left:324px;--accent: var(--green);"><svg width="19" height="19" viewBox="0 0 24 24"><use href="#lu-workflow"/></svg></div>
+            <div class="ap-photo-wrap" style="width:186px;height:186px"><img src="images/face-03-gold-alt.jpg" alt="LinkedIn format"></div>
+          </div>
+        </div>
+        <div class="frametag">1.91:1 · LinkedIn / paid social</div>
+        <div class="cta">Request a demo</div>
+      </div>
+
+
+
+
+    </div>
+  </div>
+</section>
+
+<!-- 05 CONTENT PILLARS -->
+<section id="pillars">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">▸ 05 — Content pillars for social</span>
+      <h2>Six pillars, Six headlines, ready to brief.</h2>
+      <p class="lede">Each pillar pairs a two-beat headline with a post angle. Hand these straight to whoever's producing the organic and paid social calendar.</p>
+    </div>
+    <div class="pgrid">
+      <div class="pillar">
+        <div class="icon-pillar"><svg style="color:var(--cyan)" width="45" height="45" viewBox="0 0 24 24"><use href="#lu-package"/></svg></div>
+        <span class="chip" style="background:var(--cyan)">The harness</span>
+        <div class="pline">AI isn't a tool you pick up.<br><span style="color:var(--cyan)">It's a harness on a current already running.</span></div>
+        <p>Thought-leadership carousel: how context, retrieval and validation actually work in an agentic workflow — no hype, just mechanics.</p>
+        <div class="pfmt">Format · LinkedIn carousel · organic</div>
+      </div>
+      <div class="pillar">
+      <div class="icon-pillar"><svg style="color:var(--iris)" width="45" height="45" viewBox="0 0 24 24"><use href="#lu-activity"/></svg></div>
+        <span class="chip" style="background:var(--iris)">Governance</span>
+        <div class="pline">Scale, speed, ROI —<br><span style="color:var(--iris)">pick a trade-off. We'll wait.</span></div>
+        <p>Contrarian short post: why "move fast" and "stay governed" are usually pitched as opposites, and why that's the wrong frame.</p>
+        <div class="pfmt">Format · Text-led post · organic</div>
+      </div>
+      <div class="pillar">
+       <div class="icon-pillar"><svg style="color:var(--cerulean)" width="45" height="45" viewBox="0 0 24 24"><use href="#lu-chart-spline"/></svg></div>
+        <span class="chip" style="background:var(--cerulean)">The org chart</span>
+        <div class="pline">They're already on the team.<br><span style="color:var(--cerulean)">Now put them on the chart.</span></div>
+        <p>Practitioner-style post: what it actually looks like to give an agent a role, an owner and an escalation path.</p>
+        <div class="pfmt">Format · Single image + caption · organic</div>
+      </div>
+      <div class="pillar">
+        <div class="icon-pillar"><svg style="color:var(--green)" width="45" height="45" viewBox="0 0 24 24"><use href="#lu-pencil-ruler"/></svg></div>
+        <span class="chip" style="background:var(--green)">The architect</span>
+        <div class="pline">A career spent learning how work moves.<br><span style="color:var(--green-deep)">One moment to redesign it.</span></div>
+        <p>Hero campaign post: the master key visual, campaign line, link to the lander. Paid-led, highest production value.</p>
+        <div class="pfmt">Format · Key visual + CTA · paid</div>
+      </div>
+      <div class="pillar">
+        <div class="icon-pillar"><svg style="color:#B8860B" width="45" height="45" viewBox="0 0 24 24"><use href="#lu-circle-slash-2"/></svg></div>
+        <span class="chip" style="background:var(--amber)">The paradox</span>
+        <div class="pline">Move fast today.<br><span style="color:#B8860B">Build for what changes tomorrow.</span></div>
+        <p>Executive outreach line: the tension every leader in the room is already feeling, named plainly, no resolution pitched until slide two.</p>
+        <div class="pfmt">Format · Exec 1:1 outreach / email</div>
+      </div>
+      <div class="pillar">
+        <div class="icon-pillar"><svg style="color:#FF4D6A" width="45" height="45" viewBox="0 0 24 24"><use href="#lu-dices"/></svg></div>
+        <span class="chip" style="background:#FF4D6A">Random acts of AI</span>
+        <div class="pline">Random acts of AI end here.<br><span style="color:#FF4D6A">Connected. Governed. Scaled.</span></div>
+        <p>The enemy pillar — short, sharp, argumentative. Names the scattered pilot and the bolt-on tool. This is the one people reply to.</p>
+        <div class="pfmt">Format · Poll / text post · organic</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MESSAGING ARCHITECTURE -->
+<section class="alt" id="lines">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">▸ Messaging architecture · line inventory</span>
+      <h2>Two beats. Always.</h2>
+      <p class="lede">Every headline is a moment statement, then a consequence statement. Colour carries the break — never italic, never bold-within-headline.</p>
+    </div>
+    <table class="mtable">
+      <tr><td class="b">This is your moment.</td><td>Put AI where the work happens.</td><td class="tag">Master lockup</td></tr>
+      <tr><td class="b">You're a systems architect now.</td><td>Whatever your title says.</td><td class="tag">Personal identity line</td></tr>
+      <tr><td class="b">You know how the work moves.</td><td>Now change how fast it moves.</td><td class="tag">Campaign lander</td></tr>
+      <tr><td class="b">AI isn't a tool you pick up.</td><td>It's a harness on a current already running.</td><td class="tag">Thought leadership</td></tr>
+      <tr><td class="b">Random acts of AI end here.</td><td>Connected. Governed. Scaled.</td><td class="tag">Product pages</td></tr>
+      <tr><td class="b">A career spent learning how work moves.</td><td>One moment to redesign it.</td><td class="tag">Practitioner content</td></tr>
+      <tr><td class="b">Move fast today.</td><td>Build for what changes tomorrow.</td><td class="tag">Exec outreach</td></tr>
+      <tr><td class="b">They're already on the team.</td><td>Now put them on the chart.</td><td class="tag">LinkedIn organic</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- PRODUCTION SPECS -->
+<section id="specs">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">▸ Production specs &amp; handoff notes</span>
+      <h2>What the team building this needs to know.</h2>
+      <p class="lede">Mapped directly to Brand &amp; Design System v1.6 — no new tokens introduced.</p>
+    </div>
+    <table class="spectable" style="margin-bottom:40px">
+      <tr><td class="k">Type</td><td>Montserrat 800, −1.6 to −2px tracking, for every headline. The campaign line splits weight: light 300 for "This is your," heavy 800 all-caps for "MOMENT." Inter for body copy. JetBrains Mono, uppercase, for eyebrows, ring labels and tags.</td></tr>
+      <tr><td class="k">Radar pulse</td><td>3 concentric rings behind the O in MOMENT, 1.5px stroke, Green fading to Cyan, sized to bleed past the frame edge on hero-scale formats. Same construction logic as the aperture rings, at headline scale.</td></tr>
+      <tr><td class="k">Core voice</td><td><span class="swatch" style="background:var(--green)"></span>Green #00D880 — the moment, the person, the primary identity.</td></tr>
+      <tr><td class="k">System register</td><td><span class="swatch" style="background:var(--cyan)"></span>Cyan <span class="swatch" style="background:var(--iris)"></span>Iris <span class="swatch" style="background:var(--cerulean)"></span>Cerulean — the platform's own AI gradient.</td></tr>
+      <tr><td class="k">Amber</td><td><span class="swatch" style="background:var(--amber)"></span>#FFAD1F — performance/scale moments only.</td></tr>
+      <tr><td class="k">Gradient ring</td><td>3px conic sweep of Green → Cyan → Iris → Cerulean directly on the photo edge, every execution.</td></tr>
+      <tr><td class="k">Background gradient rule</td><td>The full Ambient background gradient (Green + Cyan halos) is spent once, hero-scale only. Every tile, format and card downstream stays flat Midnight.</td></tr>
+      <tr><td class="k">Light-site variant</td><td>For placement on lighter pages (website, blog header, light-mode deck): frame flips from Midnight to white/canvas, headline and logolock flip from white to Ink. Gradient ring, aperture strokes, icon badges and CTA are unchanged — same construction, inverted ground.</td></tr>
+      <tr><td class="k">Icon placement</td><td>System icons sit at varied distances from the centre — never one uniform orbit. The bot glyph is the exception: it overlaps the photo edge directly, like a badge, signalling the agent attached to that person specifically.</td></tr>
+      <tr><td class="k">System iconography</td><td>Lucide-style 2px outline icons — workflow, share, shield, check, bot. No filled colour badges beyond the dark backing circle, no robot or humanoid face.</td></tr>
+      <tr><td class="k">Photography</td><td>Bust/chest-up cutout, filling most of the frame, deep charcoal near-black background blending directly into the frame. Focused, determined, agreeable — not laughing, not confused, not stiff.</td></tr>
+      <tr><td class="k">Personal identity</td><td>Never label a person by department or job title. The identity tag is always "Systems Architect."</td></tr>
+    </table>
+
+    <div class="dodont">
+      <div class="col">
+        <h4 style="color:var(--green-deep)">Do</h4>
+        <ul>
+          <li>Let MOMENT dominate — light small line above, huge all-caps word below</li>
+          <li>Let the radar pulse and outer rings bleed past the frame edge</li>
+          <li>Vary icon distance from centre; let the bot glyph overlap the photo</li>
+          <li>Keep the gradient ring a clean 3px — visible, still a hairline</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4 style="color:#FF4D6A">Don't</h4>
+        <ul>
+          <li>Give every icon equal size and equal distance from the centre</li>
+          <li>Put a halo background gradient on a card, tile or component — hero-scale only</li>
+          <li>Draw a literal robot face — the bot glyph stays geometric and small-scale</li>
+          <li>Label anyone by department, seniority or job title</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DELIVERABLES -->
+<section class="alt">
+  <div class="wrap">
+    <div class="sechead">
+      <span class="eyebrow">▸ Deliverables checklist</span>
+      <h2>What ships in wave one.</h2>
+    </div>
+    <div class="checklist">
+      <div><b>01</b> Master key visual — 16:9 hero, OOH, pre-roll, fully annotated</div>
+      <div><b>02</b> Five systems-architect executions — 1:1 social key art</div>
+      <div><b>03</b> Story/Reel cut — 9:16, campaign line only</div>
+      <div><b>04</b> LinkedIn/paid cut — 1.91:1, headline + CTA</div>
+      <div><b>05</b> Line inventory — approved for copywriters</div>
+      <div><b>06</b> Content pillar brief — six angles, organic + paid</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="brand">screen<span style="color:#00D880">dragon</span></div>
+    <p>This Is Your Moment · Campaign concept &amp; ad executions v7 — built on The Control Seat / Aperture territory established in the July 2026 concept board, aligned to Brand &amp; Design System v1.6. Icons: Lucide (ISC licence, lucide.dev). For review and production sign-off with the marketing team.</p>
+  </div>
+</footer>
+
+</body>
+</html>
