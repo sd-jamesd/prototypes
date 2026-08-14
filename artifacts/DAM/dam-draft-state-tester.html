@@ -921,6 +921,9 @@
             <strong>Open for build:</strong> does an admin need a global drafts view across all contributors, or is <code>createdby = me</code> sufficient? Aprimo scopes to self; Widen exposes an admin queue. At FIFA contributor volume, self-only will strand assets. Governance call for Phil, not a UX one.
           </div>
           <div class="callout">
+            <strong>Discovery is why the saved filter is permanent.</strong> A draft is invisible to everyone except its creator, so no colleague surfaces it and no shared view carries it. <code>My drafts</code> ships as a non-deletable system entry pinned above the user's own filters, resolving <code>status = draft</code> and <code>owner = me</code>. Count when non-zero, never a zero, and never greyed: a first-time user has zero drafts by definition, so greying it removes exactly the case discovery exists for. The row teaches the capability from a resting state, which a toast cannot do because a toast only fires once you have already found the feature.
+          </div>
+          <div class="callout">
             <strong>The transition is one-way.</strong> There is no route back from published to draft. Once in the library an asset may have been shared, collected or downloaded, and returning it to draft would retroactively hide something people have already seen. Neither Aprimo nor Brandfolder offers it. Archive is the existing exit and it is the correct one. State this in the ticket, because it is the first thing QA will ask.
           </div>
         </div>
@@ -1447,7 +1450,7 @@
     var it = [], lc = state.lifecycle;
 
     it.push(['Visibility', lc === 'draft'
-      ? '<span class="b-warn">Scoped to the creator</span> · surfaced through the My drafts saved filter'
+      ? '<span class="b-warn">Scoped to the creator</span> · surfaced through the permanent My drafts saved filter'
       : lc === 'archived'
         ? '<span class="b-warn">Hidden by default</span> · appears with the archived filter on'
         : 'In default library views']);
