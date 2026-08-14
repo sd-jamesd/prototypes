@@ -1,0 +1,1635 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DAM Selection Model — spec harness</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   SCALE TOKENS — light theme only.
+   Semantic tokens are declared on :root and never re-scoped.
+   No dark variant in this harness; the library grid is light.
+   ============================================================ */
+:root{
+  --color-sand-900:#21201c;
+  --accent-3:#E4F5FC; --accent-5:#C4E5F3; --accent-9:#0B6E8A; --accent-10:#005F7B; --accent-11:#197592; --accent-12:#1B404E;
+  --neutral-1:#fdfdfc; --neutral-2:#f9f9f8; --neutral-3:#f1f0ef; --neutral-4:#e9e8e6; --neutral-5:#e2e1de;
+  --neutral-6:#dad9d6; --neutral-7:#d0ceca; --neutral-8:#bcbbb6; --neutral-9:#8e8d86; --neutral-10:#83827c;
+  --neutral-11:#64635e; --neutral-12:#21201c;
+  --color-primary-800:#1b404e;
+
+  --color-red-100:#feebe7; --color-red-500:#e54d2e; --color-red-600:#cf3716;
+  --color-amber-100:#fff0cb; --color-amber-500:#f5a524; --color-amber-600:#a96600;
+  --color-green-100:#e4f7f0; --color-green-500:#29a383; --color-green-600:#008062;
+  --color-purple-100:#f3f0ff; --color-purple-500:#7c3aed; --color-purple-600:#7139d6;
+
+  --surface-default:var(--neutral-1);
+  --surface-subtle:var(--neutral-2);
+  --surface-muted:var(--neutral-3);
+  --surface-emphasis:var(--neutral-4);
+  --text-default:var(--neutral-12);
+  --text-muted:var(--neutral-11);
+  --text-subtle:var(--neutral-10);
+  --text-on-primary:#ffffff;
+  --border-default:var(--neutral-6);
+  --border-subtle:var(--neutral-3);
+  --border-emphasis:var(--neutral-7);
+  --primary-default:var(--accent-9);
+  --primary-hover:var(--accent-10);
+  --primary-subtle:var(--accent-3);
+  --primary-muted:var(--accent-5);
+  --nav-bg:var(--color-primary-800);
+
+  --status-active-bg:var(--color-green-100); --status-active-border:var(--color-green-500); --status-active-fg:var(--color-green-600);
+  --status-pending-bg:var(--color-amber-100); --status-pending-border:var(--color-amber-500); --status-pending-fg:var(--color-amber-600);
+  --status-cancelled-bg:var(--color-red-100); --status-cancelled-border:var(--color-red-500); --status-cancelled-fg:var(--color-red-600);
+  --status-review-bg:var(--color-purple-100); --status-review-border:var(--color-purple-500); --status-review-fg:var(--color-purple-600);
+
+  --filetype-badge-bg:rgba(28,28,25,0.62); --filetype-badge-fg:#ffffff;
+
+  /* Overlay ground — bulk bar and its menu share one surface. */
+  --overlay-ground:#262523;
+  --overlay-fg:#f4f3f0;
+  --overlay-fg-subtle:rgba(255,255,255,0.62);
+  --overlay-fg-disabled:rgba(255,255,255,0.34);
+  --overlay-fg-destructive:#f07a63;
+  --overlay-edge:rgba(255,255,255,0.14);
+  --overlay-hover:rgba(255,255,255,0.09);
+  --overlay-accent:#17817a;
+
+  --spacing-1:4px; --spacing-2:8px; --spacing-3:12px; --spacing-4:16px; --spacing-5:20px;
+  --spacing-6:24px; --spacing-7:32px; --spacing-8:40px; --spacing-9:48px;
+
+  --font-family-text:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-family-mono:'JetBrains Mono',monospace;
+  --font-size-1:12px; --font-size-2:14px; --font-size-3:16px; --font-size-4:18px; --font-size-5:24px;
+  --font-weight-regular:400; --font-weight-medium:500; --font-weight-semibold:600; --font-weight-bold:700;
+  --line-height-1:16px; --line-height-2:20px; --line-height-3:24px;
+  --letter-spacing-tight:-0.01em;
+
+  --btn-height-1:24px; --btn-height-2:32px; --btn-height-3:40px;
+  --radius-1:3px; --radius-2:4px; --radius-3:6px; --radius-4:8px; --radius-full:9999px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:0 1px 3px rgba(0,0,0,0.1),0 1px 2px rgba(0,0,0,0.06);
+  --shadow-lg:0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.1);
+  --error-9:#e54d2e; --error-10:#d13415;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;background:var(--surface-subtle);color:var(--text-default);
+  font-family:var(--font-family-text);font-size:var(--font-size-2);line-height:var(--line-height-2);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- page chrome ---------- */
+.page-head{background:var(--nav-bg);color:#fff;padding:var(--spacing-5) var(--spacing-7);}
+.page-head h1{margin:0;font-size:var(--font-size-4);font-weight:var(--font-weight-semibold);letter-spacing:var(--letter-spacing-tight);}
+.page-head p{margin:var(--spacing-2) 0 0;font-size:var(--font-size-2);color:rgba(255,255,255,0.72);max-width:78ch;}
+.page-head .meta{margin-top:var(--spacing-3);display:flex;gap:var(--spacing-2);flex-wrap:wrap;}
+.tag{background:rgba(255,255,255,0.14);border-radius:var(--radius-2);padding:2px 8px;font-size:var(--font-size-1);font-weight:var(--font-weight-medium);}
+
+.shell{max-width:1400px;margin:0 auto;padding:var(--spacing-7);display:flex;flex-direction:column;gap:var(--spacing-7);}
+section.block{background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-4);overflow:hidden;}
+.block-head{padding:var(--spacing-4) var(--spacing-5);border-bottom:1px solid var(--border-default);background:var(--surface-subtle);}
+.block-head h2{margin:0;font-size:var(--font-size-3);font-weight:var(--font-weight-semibold);letter-spacing:var(--letter-spacing-tight);}
+.block-head p{margin:var(--spacing-1) 0 0;font-size:var(--font-size-1);color:var(--text-muted);max-width:92ch;}
+.block-body{padding:var(--spacing-5);}
+
+/* ---------- buttons: five-tier ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--spacing-2);
+  font-family:var(--font-family-text);font-weight:var(--font-weight-medium);border-radius:var(--radius-2);
+  cursor:pointer;transition:all .15s;border:1px solid transparent;line-height:1;
+  height:var(--btn-height-2);padding:0 12px;font-size:var(--font-size-1);}
+.btn-primary{background:var(--primary-default);color:var(--text-on-primary);}
+.btn-primary:hover{background:var(--primary-hover);}
+.btn-secondary{background:var(--surface-default);color:var(--primary-default);border-color:var(--primary-default);}
+.btn-secondary:hover{background:var(--primary-subtle);}
+.btn-tertiary{background:var(--surface-default);color:var(--text-default);border-color:var(--border-emphasis);}
+.btn-tertiary:hover{background:var(--surface-subtle);}
+.btn-ghost{background:transparent;color:var(--text-muted);}
+.btn-ghost:hover{background:var(--surface-subtle);color:var(--text-default);}
+.btn-destructive{background:var(--error-9);color:#fff;}
+.btn:disabled,.btn[disabled]{opacity:.5;cursor:not-allowed;}
+.btn:focus-visible{outline:2px solid var(--primary-default);outline-offset:2px;}
+
+/* ---------- checkbox ---------- */
+.checkbox-input{appearance:none;width:16px;height:16px;border:1.5px solid var(--border-emphasis);
+  border-radius:var(--radius-1);background:var(--surface-default);cursor:pointer;position:relative;flex-shrink:0;transition:all .15s;}
+.checkbox-input:checked{background:var(--primary-default);border-color:var(--primary-default);}
+.checkbox-input:checked::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:11px;font-weight:700;}
+.checkbox-input.indeterminate{background:var(--primary-default);border-color:var(--primary-default);}
+.checkbox-input.indeterminate::after{content:'–';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:13px;font-weight:700;line-height:1;}
+.checkbox-input:focus-visible{outline:none;box-shadow:0 0 0 3px var(--primary-subtle);}
+.checkbox-input:disabled{opacity:.45;cursor:not-allowed;background:var(--surface-muted);}
+
+/* 16px visual, 32px hit target. The whole reason the current build feels fiddly. */
+.cb-hit{width:32px;height:32px;margin:-8px;display:flex;align-items:center;justify-content:center;
+  border-radius:var(--radius-2);background:rgba(255,255,255,0.82);backdrop-filter:blur(2px);}
+
+/* ---------- badges ---------- */
+.filetype-badge{background:var(--filetype-badge-bg);color:var(--filetype-badge-fg);display:inline-flex;align-items:center;
+  padding:2px 6px;border-radius:var(--radius-2);font-size:10px;font-weight:var(--font-weight-semibold);
+  text-transform:uppercase;letter-spacing:0.05em;}
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:1px 7px;border-radius:var(--radius-2);
+  font-size:11px;font-weight:var(--font-weight-medium);border:1px solid;}
+.st-cleared{background:var(--status-active-bg);border-color:var(--status-active-border);color:var(--status-active-fg);}
+.st-restricted{background:var(--status-pending-bg);border-color:var(--status-pending-border);color:var(--status-pending-fg);}
+.st-expired{background:var(--status-cancelled-bg);border-color:var(--status-cancelled-border);color:var(--status-cancelled-fg);}
+.st-embargoed{background:var(--status-review-bg);border-color:var(--status-review-border);color:var(--status-review-fg);}
+
+/* ---------- sandbox controls ---------- */
+.control-strip{display:flex;flex-wrap:wrap;gap:var(--spacing-5);align-items:center;
+  padding:var(--spacing-3) var(--spacing-5);background:var(--surface-muted);border-bottom:1px solid var(--border-default);}
+.ctl{display:flex;align-items:center;gap:var(--spacing-2);}
+.ctl-label{font-size:var(--font-size-1);color:var(--text-muted);font-weight:var(--font-weight-medium);}
+.seg{display:inline-flex;border:1px solid var(--border-emphasis);border-radius:var(--radius-2);overflow:hidden;background:var(--surface-default);}
+.seg button{border:0;background:transparent;font-family:inherit;font-size:var(--font-size-1);font-weight:var(--font-weight-medium);
+  padding:5px 10px;cursor:pointer;color:var(--text-muted);}
+.seg button + button{border-left:1px solid var(--border-default);}
+.seg button.on{background:var(--primary-default);color:#fff;}
+.chip-filter{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border-emphasis);background:var(--surface-default);
+  border-radius:var(--radius-full);padding:3px 10px;font-size:var(--font-size-1);cursor:pointer;color:var(--text-muted);}
+.chip-filter.on{background:var(--primary-subtle);border-color:var(--primary-default);color:var(--accent-12);}
+
+/* ---------- library surface ---------- */
+/* ---------- Unity host shell. Outside the DAM iframe, fixed, unchangeable.
+   The bulk bar has to behave against this viewport, not against the page. ---------- */
+.stage{padding:var(--spacing-5);background:var(--surface-muted);}
+.unity{width:100%;background:var(--surface-default);border-radius:var(--radius-4);overflow:hidden;
+  box-shadow:var(--shadow-lg);display:flex;}
+.unity-rail{width:56px;flex:0 0 56px;background:#0b3a5c;display:flex;flex-direction:column;
+  align-items:center;padding:var(--spacing-3) 0;gap:var(--spacing-1);}
+.unity-logo{width:40px;height:40px;margin-bottom:var(--spacing-2);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:var(--font-weight-bold);font-size:20px;letter-spacing:-.02em;}
+.ur-item{width:40px;height:40px;border-radius:var(--radius-2);display:flex;align-items:center;
+  justify-content:center;color:rgba(255,255,255,.75);cursor:pointer;}
+.ur-item:hover{background:rgba(255,255,255,.10);color:#fff;}
+.ur-item svg{width:19px;height:19px;}
+.ur-spacer{flex:1;}
+.ur-avatar{width:30px;height:30px;border-radius:50%;margin:var(--spacing-2) 0;
+  background-image:radial-gradient(circle at 50% 38%,#e8b98f,#a86a3e);}
+.unity-body{flex:1;min-width:0;display:flex;flex-direction:column;}
+.unity-crumb{height:48px;flex:0 0 48px;display:flex;align-items:center;padding:0 var(--spacing-5);
+  border-bottom:1px solid var(--border-subtle);background:var(--surface-default);
+  font-size:var(--font-size-2);color:var(--text-subtle);}
+.unity-crumb b{color:var(--text-default);font-weight:var(--font-weight-semibold);}
+.unity-crumb .c-sep{margin:0 var(--spacing-2);opacity:.5;}
+
+/* The DAM iframe area. 644px measured, matching the dashboard harness. */
+.dam-iframe{height:644px;position:relative;display:flex;background:var(--surface-subtle);
+  border-top:1px solid var(--border-default);overflow:hidden;}
+body.frame-released .dam-iframe{height:900px;}
+
+/* DAM's own icon rail, collapsed. Present so grid width is honest. */
+.dam-rail{width:50px;flex:0 0 50px;border-right:1px solid var(--border-default);
+  background:var(--surface-default);display:flex;flex-direction:column;align-items:center;
+  padding:var(--spacing-3) 0;gap:2px;}
+.dr-item{width:34px;height:34px;border-radius:var(--radius-2);display:flex;align-items:center;
+  justify-content:center;color:var(--text-subtle);cursor:pointer;border-left:2px solid transparent;}
+.dr-item:hover{background:var(--surface-subtle);color:var(--text-default);}
+.dr-item.active{background:var(--primary-subtle);color:var(--primary-default);}
+.dr-spacer{flex:1;}
+
+.lib-main{flex:1;min-width:0;display:flex;flex-direction:column;position:relative;
+  background:var(--surface-default);}
+
+/* ---------- DAM toolbar — the surface that actually ships.
+   Select-all sits in the left-hand cluster of the right group,
+   immediately before the sort/count control. Not a new band. ---------- */
+.dam-toolbar{display:flex;align-items:center;gap:var(--spacing-4);padding:var(--spacing-3) var(--spacing-5);
+  border-bottom:1px solid var(--border-default);background:var(--surface-default);min-height:60px;}
+.tb-left{display:flex;align-items:center;gap:var(--spacing-3);min-width:0;flex:1;}
+.tb-right{display:flex;align-items:center;gap:var(--spacing-3);flex-shrink:0;}
+.tb-crumb{display:flex;align-items:center;gap:var(--spacing-2);font-size:var(--font-size-3);
+  font-weight:var(--font-weight-semibold);letter-spacing:var(--letter-spacing-tight);white-space:nowrap;}
+.tb-crumb .sep{color:var(--text-subtle);font-weight:var(--font-weight-regular);}
+.tb-crumb .cur{color:var(--text-default);}
+.tb-crumb .par{color:var(--text-muted);font-weight:var(--font-weight-medium);}
+.tb-search{display:flex;align-items:center;gap:var(--spacing-2);border:1px solid var(--border-default);
+  background:var(--surface-subtle);border-radius:var(--radius-full);height:var(--btn-height-2);
+  padding:0 10px;font-size:var(--font-size-1);color:var(--text-muted);max-width:280px;flex:1;}
+.tb-search .q{color:var(--text-default);font-weight:var(--font-weight-medium);}
+
+.tb-sort{display:inline-flex;align-items:center;gap:6px;height:var(--btn-height-2);padding:0 8px;
+  border-radius:var(--radius-2);cursor:pointer;font-size:var(--font-size-2);
+  font-weight:var(--font-weight-medium);color:var(--text-default);white-space:nowrap;}
+.tb-sort:hover{background:var(--surface-muted);}
+.tb-sort svg{color:var(--text-subtle);}
+.view-toggle{display:inline-flex;border:1px solid var(--border-default);border-radius:var(--radius-2);overflow:hidden;}
+.view-toggle button{border:0;background:var(--surface-default);padding:0 9px;height:32px;cursor:pointer;
+  color:var(--text-subtle);display:flex;align-items:center;}
+.view-toggle button + button{border-left:1px solid var(--border-default);}
+.view-toggle button.on{background:var(--primary-subtle);color:var(--primary-default);}
+.tb-icon{width:36px;height:32px;border:1px solid var(--primary-default);border-radius:var(--radius-2);
+  background:var(--surface-default);color:var(--primary-default);display:flex;align-items:center;
+  justify-content:center;cursor:pointer;}
+.tb-divider{width:1px;height:24px;background:var(--border-default);}
+
+.grid-wrap{position:relative;flex:1;overflow-y:auto;padding:var(--spacing-5);
+  padding-bottom:var(--spacing-9);background:var(--surface-subtle);
+  user-select:none;-webkit-user-select:none;min-height:0;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:var(--spacing-4);position:relative;}
+
+/* ---------- asset card (Scale 3.15) ---------- */
+.asset-card{background:var(--surface-default);border:2px solid var(--border-default);border-radius:var(--radius-3);
+  overflow:hidden;cursor:pointer;transition:border-color .12s,box-shadow .12s;position:relative;}
+.asset-card:hover{border-color:var(--border-emphasis);}
+.asset-card.selected{border-color:var(--primary-default);}
+.asset-card:focus-visible{outline:2px solid var(--primary-default);outline-offset:2px;}
+.asset-card.locked{cursor:default;opacity:.72;}
+.asset-thumb{height:104px;background:var(--surface-subtle);display:flex;align-items:center;justify-content:center;position:relative;}
+.asset-thumb .fill{position:absolute;inset:0;}
+.asset-hover-actions{position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;
+  align-items:flex-start;opacity:0;transition:opacity .12s;z-index:2;}
+.asset-card:hover .asset-hover-actions,
+.asset-card:focus-visible .asset-hover-actions,
+.mode-selection .asset-hover-actions{opacity:1;}
+/* Selection active: the overflow menu is suppressed on every card. One action
+   route at a time. The hover strip drops to a single item. */
+.mode-selection .overflow-dot{display:none;}
+.overflow-dot{width:24px;height:24px;border-radius:var(--radius-2);background:rgba(255,255,255,0.86);
+  display:flex;align-items:center;justify-content:center;color:var(--text-muted);}
+.asset-meta{padding:var(--spacing-2) 10px 10px;}
+.asset-name{font-size:var(--font-size-1);font-weight:var(--font-weight-medium);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.asset-detail{font-size:11px;color:var(--text-subtle);margin-top:3px;display:flex;align-items:center;gap:5px;}
+.gate-slot{position:absolute;left:8px;bottom:8px;z-index:1;}
+.lock-note{position:absolute;right:8px;bottom:8px;z-index:1;background:rgba(28,28,25,0.62);color:#fff;
+  border-radius:var(--radius-2);padding:2px 6px;font-size:10px;font-weight:var(--font-weight-medium);}
+
+/* thumbnail fills — no external assets */
+.f1{background:linear-gradient(135deg,#0B6E8A,#4db5cf);} .f2{background:linear-gradient(135deg,#1B404E,#0d7f9c);}
+.f3{background:linear-gradient(135deg,#c4e8f1,#8dd1e3);} .f4{background:linear-gradient(135deg,#f5a524,#f76707);}
+.f5{background:linear-gradient(135deg,#29a383,#8dd1e3);} .f6{background:linear-gradient(135deg,#7c3aed,#5b5bd6);}
+.f7{background:linear-gradient(135deg,#e54d2e,#f5a524);} .f8{background:linear-gradient(135deg,#dad9d6,#f1f0ef);}
+
+/* ---------- marquee ---------- */
+.marquee{position:absolute;border:1px solid var(--primary-default);background:rgba(11,110,138,0.12);
+  pointer-events:none;z-index:40;border-radius:var(--radius-1);display:none;}
+
+/* ---------- bulk overlay — matched to the built component.
+   Menu and bar collapse onto ONE dark ground separated by a 1px edge.
+   The menu opens upward as part of the same panel, not as a floating popover.
+   Fill step alone never provides meaningful separation. ---------- */
+
+/* Pinned to the bottom of the iframe viewport. Absolute inside .lib-main
+   (not inside the scroll container) so it does not travel with content. */
+.bulk-dock{position:absolute;left:0;right:0;bottom:0;z-index:70;
+  display:flex;justify-content:center;padding:var(--spacing-4);pointer-events:none;}
+
+.bulk-bar{pointer-events:auto;display:none;flex-direction:column;width:560px;
+  background:var(--overlay-ground);color:var(--overlay-fg);
+  border-radius:var(--radius-3);box-shadow:var(--shadow-lg);overflow:hidden;}
+.bulk-bar.on{display:flex;}
+
+/* menu panel — part of the ground, above the edge */
+.bulk-menu-panel{display:none;padding:var(--spacing-2) 0;}
+.bulk-menu-panel.on{display:block;}
+.bulk-item{display:flex;align-items:center;gap:var(--spacing-3);
+  padding:9px var(--spacing-4);font-size:var(--font-size-3);cursor:pointer;}
+.bulk-item:hover:not(.is-disabled){background:var(--overlay-hover);}
+.bulk-item.is-disabled{color:var(--overlay-fg-disabled);cursor:not-allowed;}
+.bulk-item svg{width:17px;height:17px;flex-shrink:0;}
+.bulk-item .bi-label{flex:1;}
+.bulk-item.destructive{color:var(--overlay-fg-destructive);}
+.bulk-item.is-primary .bi-label{font-weight:var(--font-weight-semibold);}
+.bulk-scope{font-size:var(--font-size-1);font-weight:var(--font-weight-medium);
+  color:var(--overlay-fg-subtle);white-space:nowrap;}
+.bulk-sep{height:1px;background:var(--overlay-edge);margin:var(--spacing-2) var(--spacing-4);}
+.bulk-edge{height:1px;background:var(--overlay-edge);}
+
+/* bar row */
+.bulk-row{display:flex;align-items:center;gap:var(--spacing-3);
+  padding:10px var(--spacing-3) 10px var(--spacing-2);font-size:var(--font-size-3);}
+.bulk-pill{display:inline-flex;align-items:center;gap:var(--spacing-2);
+  background:var(--overlay-hover);border-radius:999px;padding:3px 4px 3px 3px;}
+.bulk-count{background:var(--overlay-accent);color:#fff;border-radius:999px;
+  min-width:26px;height:22px;padding:0 8px;display:inline-flex;align-items:center;
+  justify-content:center;font-size:var(--font-size-2);font-weight:var(--font-weight-semibold);}
+.bulk-label{padding-right:var(--spacing-2);font-size:var(--font-size-2);}
+.bulk-close{width:24px;height:24px;border-radius:var(--radius-2);border:0;background:transparent;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--overlay-fg-subtle);cursor:pointer;}
+.bulk-close:hover{background:var(--overlay-hover);color:var(--overlay-fg);}
+.bulk-divider{width:1px;height:20px;background:var(--overlay-edge);}
+.bulk-actions{margin-left:auto;display:flex;align-items:center;}
+.bulk-btn{font-family:inherit;font-size:var(--font-size-3);font-weight:var(--font-weight-semibold);
+  background:var(--overlay-hover);border:1px solid var(--overlay-edge);color:var(--overlay-fg);
+  border-radius:var(--radius-2);padding:5px 12px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;}
+.bulk-btn:hover{background:rgba(255,255,255,0.16);}
+
+/* scope link — inline in the bar row, between the divider and Actions.
+   One slot; its label changes as scope widens. */
+.link-btn{display:none;background:transparent;border:0;color:var(--overlay-fg);font-family:inherit;
+  font-size:var(--font-size-2);font-weight:var(--font-weight-medium);cursor:pointer;
+  text-decoration:underline;text-underline-offset:3px;padding:4px 2px;white-space:nowrap;
+  border-radius:var(--radius-2);}
+.link-btn.on{display:inline-flex;}
+.link-btn:hover{color:#fff;}
+.link-btn:focus-visible{outline:2px solid var(--overlay-fg-subtle);outline-offset:1px;}
+/* Shortcut hint. Shown only beside the loaded-scope link, because ⌘A selects
+   the loaded set and does not escalate to the whole result set. */
+.bulk-kbd{display:none;font-family:var(--font-family-mono);font-size:11px;
+  color:var(--overlay-fg-subtle);background:var(--overlay-hover);
+  border:1px solid var(--overlay-edge);border-radius:var(--radius-1);
+  padding:1px 6px;white-space:nowrap;}
+.bulk-kbd.on{display:inline-flex;}
+.bulk-refusal{display:none;align-items:flex-start;gap:var(--spacing-2);
+  padding:9px var(--spacing-4);font-size:var(--font-size-2);color:#f8c886;}
+.bulk-refusal.on{display:flex;}
+
+/* ---------- state readout / log ---------- */
+.inspector{display:grid;grid-template-columns:260px 1fr;background:var(--surface-default);
+  border-top:1px solid var(--border-default);}
+.insp-col{min-width:0;display:flex;flex-direction:column;}
+.insp-col + .insp-col{border-left:1px solid var(--border-default);}
+.insp-head{padding:var(--spacing-3) var(--spacing-4);border-bottom:1px solid var(--border-default);
+  font-size:var(--font-size-1);font-weight:var(--font-weight-semibold);text-transform:uppercase;
+  letter-spacing:0.04em;color:var(--text-muted);}
+.state-grid{padding:var(--spacing-3) var(--spacing-4);display:grid;grid-template-columns:auto 1fr;gap:6px var(--spacing-3);
+  font-size:var(--font-size-1);align-content:start;}
+.state-grid dt{color:var(--text-subtle);}
+.state-grid dd{margin:0;font-family:var(--font-family-mono);font-size:11.5px;color:var(--text-default);}
+.log{flex:1;overflow:auto;padding:var(--spacing-2) var(--spacing-4) var(--spacing-4);font-family:var(--font-family-mono);
+  font-size:11px;line-height:17px;color:var(--text-muted);height:172px;}
+.log div{padding:2px 0;border-bottom:1px solid var(--border-subtle);}
+.log b{color:var(--accent-11);font-weight:500;}
+.hint{padding:var(--spacing-3) var(--spacing-4);border-top:1px solid var(--border-default);font-size:11px;
+  color:var(--text-subtle);background:var(--surface-subtle);}
+.hint kbd{font-family:var(--font-family-mono);background:var(--surface-default);border:1px solid var(--border-default);
+  border-bottom-width:2px;border-radius:var(--radius-1);padding:0 4px;font-size:10px;color:var(--text-default);}
+
+/* ---------- tables ---------- */
+table.spec{width:100%;border-collapse:collapse;font-size:var(--font-size-1);}
+table.spec th{text-align:left;font-weight:var(--font-weight-medium);color:var(--text-muted);font-size:var(--font-size-1);
+  background:var(--surface-muted);padding:8px 12px;border-bottom:1px solid var(--border-default);white-space:nowrap;}
+table.spec td{padding:9px 12px;border-bottom:1px solid var(--border-subtle);vertical-align:top;}
+table.spec tr:last-child td{border-bottom:0;}
+table.spec code{font-family:var(--font-family-mono);font-size:11px;background:var(--surface-muted);
+  padding:1px 5px;border-radius:var(--radius-1);}
+.mode-tag{display:inline-block;font-size:10px;font-weight:var(--font-weight-semibold);text-transform:uppercase;
+  letter-spacing:0.04em;padding:1px 6px;border-radius:var(--radius-2);}
+.mt-browse{background:var(--surface-emphasis);color:var(--text-muted);}
+.mt-select{background:var(--primary-subtle);color:var(--accent-12);}
+
+/* ---------- state gallery ---------- */
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:var(--spacing-5);}
+.gal-item{display:flex;flex-direction:column;gap:var(--spacing-2);}
+.gal-label{font-size:11px;color:var(--text-muted);}
+.gal-label b{display:block;color:var(--text-default);font-size:var(--font-size-1);font-weight:var(--font-weight-medium);}
+
+/* ---------- decisions ---------- */
+.dec{border:1px solid var(--border-default);border-radius:var(--radius-3);padding:var(--spacing-4);background:var(--surface-default);}
+.dec + .dec{margin-top:var(--spacing-3);}
+.dec h3{margin:0 0 var(--spacing-2);font-size:var(--font-size-2);font-weight:var(--font-weight-semibold);}
+.dec p{margin:0 0 var(--spacing-2);font-size:var(--font-size-1);color:var(--text-muted);}
+.dec p:last-child{margin-bottom:0;}
+.dec ul{margin:0;padding-left:18px;font-size:var(--font-size-1);color:var(--text-muted);}
+.dec li{margin-bottom:4px;}
+.pill{display:inline-block;font-size:10px;font-weight:var(--font-weight-semibold);text-transform:uppercase;
+  letter-spacing:0.04em;padding:2px 7px;border-radius:var(--radius-2);margin-bottom:var(--spacing-2);}
+.p-decided{background:var(--status-active-bg);color:var(--status-active-fg);border:1px solid var(--status-active-border);}
+.p-open{background:var(--status-pending-bg);color:var(--status-pending-fg);border:1px solid var(--status-pending-border);}
+.p-dep{background:var(--primary-subtle);color:var(--accent-12);border:1px solid var(--primary-muted);}
+
+.callout{border-left:3px solid var(--primary-default);background:var(--primary-subtle);padding:var(--spacing-3) var(--spacing-4);
+  border-radius:0 var(--radius-2) var(--radius-2) 0;font-size:var(--font-size-1);color:var(--accent-12);}
+.callout strong{font-weight:var(--font-weight-semibold);}
+
+/* ---------- lightbox stub ---------- */
+.lb-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:200;}
+.lb-overlay.on{display:flex;}
+.lb-panel{background:var(--surface-default);border-radius:var(--radius-4);box-shadow:var(--shadow-lg);
+  width:min(520px,90vw);overflow:hidden;}
+.lb-head{padding:var(--spacing-4) var(--spacing-5);border-bottom:1px solid var(--border-default);
+  font-weight:var(--font-weight-semibold);display:flex;align-items:center;gap:var(--spacing-3);}
+.lb-body{padding:var(--spacing-5);font-size:var(--font-size-1);color:var(--text-muted);}
+.lb-foot{padding:var(--spacing-3) var(--spacing-5);border-top:1px solid var(--border-default);display:flex;justify-content:flex-end;}
+
+@media (max-width:980px){
+  .inspector{grid-template-columns:1fr;}
+  .insp-col + .insp-col{border-left:0;border-top:1px solid var(--border-default);}
+}
+</style>
+</head>
+<body>
+
+<header class="page-head">
+  <h1>DAM library — selection model</h1>
+  <p>Working spec for grid selection: how click, modifier, drag, and keyboard resolve; where select-all lives; and what a query-scoped selection is allowed to do. The sandbox below is the specification. Behaviour there is the acceptance criteria.</p>
+  <div class="meta">
+    <span class="tag">Scale tokens · light theme</span>
+    <span class="tag">Asset card §3.15</span>
+    <span class="tag">Checkbox §3.4</span>
+    <span class="tag">Bulk bar §3.17 (as shipped)</span>
+    <span class="tag">Toolbar unchanged</span>
+    <span class="tag">644px iframe viewport</span>
+  </div>
+</header>
+
+<div class="shell">
+
+<!-- ============================================================
+     1. LIVE SANDBOX
+     ============================================================ -->
+<section class="block">
+  <div class="block-head">
+    <h2>1 · Live model</h2>
+    <p>The DAM renders in a 644px iframe inside the Unity host shell, so the bulk bar is pinned to a real viewport bottom rather than to the page. Every interaction is live. The inspector below the frame is harness, not product; it exposes the state machine, which is the part a developer needs to implement.</p>
+  </div>
+
+  <div class="control-strip">
+    <div class="ctl">
+      <span class="ctl-label">Interaction model</span>
+      <div class="seg" id="modelSeg">
+        <button data-model="current">Current build</button>
+        <button data-model="unconditional" class="on">Spec</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <span class="ctl-label">Query</span>
+      <button class="chip-filter" id="searchChip">Search: "car"</button>
+    </div>
+    <div class="ctl">
+      <span class="ctl-label">Frame</span>
+      <div class="seg" id="frameSeg">
+        <button data-frame="framed" class="on">644px</button>
+        <button data-frame="released">900px</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <span class="ctl-label">Cap</span>
+      <span style="font-family:var(--font-family-mono);font-size:11.5px;">500</span>
+    </div>
+    <div class="ctl" style="margin-left:auto;">
+      <button class="btn btn-ghost" id="resetBtn">Reset sandbox</button>
+    </div>
+  </div>
+  <div style="padding:var(--spacing-3) var(--spacing-5);background:var(--surface-subtle);border-bottom:1px solid var(--border-default);font-size:var(--font-size-1);color:var(--text-muted);">
+    <strong style="color:var(--text-default);font-weight:var(--font-weight-medium);">Spec</strong> is the behaviour to build. <strong style="color:var(--text-default);font-weight:var(--font-weight-medium);">Current build</strong> reproduces today's behaviour for comparison.
+  </div>
+
+  <div class="stage">
+    <div class="unity">
+
+      <!-- UNITY HOST SHELL. Outside the DAM iframe, fixed, unchangeable. -->
+      <nav class="unity-rail" aria-label="Unity global navigation">
+        <div class="unity-logo">S</div>
+        <div class="ur-item" title="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-8h6v8"/></svg></div>
+        <div class="ur-item" title="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg></div>
+        <div class="ur-spacer"></div>
+        <div class="ur-avatar" title="Account"></div>
+        <div class="ur-item" title="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 6 3 7 3 7H3s3-1 3-7"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div>
+        <div class="ur-item" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+      </nav>
+
+      <div class="unity-body">
+        <div class="unity-crumb"><b>Home</b><span class="c-sep">/</span><span>Digital Archive</span></div>
+
+        <!-- DAM IFRAME. 644px viewport. Everything below is inside the iframe. -->
+        <div class="dam-iframe">
+          <nav class="dam-rail" aria-label="DAM navigation">
+        <div class="dr-item" title="Dashboard"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></div>
+        <div class="dr-item active" title="Library"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16M8 4v16M12 5l4 15M18 6l3 14"/></svg></div>
+        <div class="dr-item" title="Collections"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V8h18v11a2 2 0 0 1-2 2zM3 8l1.5-4h15L21 8"/></svg></div>
+        <div class="dr-item" title="Rights"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.4 8.4-8 9-4.6-.6-8-4-8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <div class="dr-spacer"></div>
+        <div class="dr-item" title="Download queue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
+        <div class="dr-item" title="Admin"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="12" r="2"/><circle cx="15" cy="18" r="2"/></svg></div>
+          </nav>
+
+          <div class="lib-main">
+
+      <!-- DAM toolbar exactly as shipped. Nothing is added to it.
+           Both select-all scopes live in the bulk bar, which only exists
+           once a selection exists. -->
+      <div class="dam-toolbar">
+        <div class="tb-left">
+          <span class="tb-crumb" id="tbCrumb"><span class="cur">FIFA World Cup 2026</span></span>
+          <span class="tb-search" id="tbSearch">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <span id="tbSearchText">Search FIFA World Cup 2026</span>
+          </span>
+        </div>
+        <div class="tb-right">
+          <span class="tb-sort" id="tbSort">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 3v18M7 3 4 6M7 3l3 3M17 21V3M17 21l-3-3M17 21l3-3"/></svg>
+            <span id="resultsCount">527 Results</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+          <div class="view-toggle">
+            <button class="on" aria-label="Grid view"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>
+            <button aria-label="List view"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button>
+            <button aria-label="Dense grid view"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="5" height="5"/><rect x="10" y="3" width="5" height="5"/><rect x="17" y="3" width="4" height="5"/><rect x="3" y="10" width="5" height="5"/><rect x="10" y="10" width="5" height="5"/><rect x="17" y="10" width="4" height="5"/></svg></button>
+          </div>
+          <span class="tb-icon" aria-label="Filter options"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></span>
+          <button class="btn btn-tertiary" style="height:32px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Queue</button>
+          <button class="btn btn-primary" style="height:32px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Upload</button>
+        </div>
+      </div>
+
+      <div class="grid-wrap" id="gridWrap">
+        <div class="grid" id="grid" role="grid" aria-label="Asset results">
+          <div class="marquee" id="marquee"></div>
+        </div>
+      </div>
+
+      <!-- Bulk bar sits outside the scroll container, pinned to the bottom
+           of the iframe viewport. It does not travel with grid content. -->
+      <div class="bulk-dock">
+        <div class="bulk-bar" id="bulkBar">
+          <!-- Menu panel, scope ladder, and bar row are one overlay ground,
+               separated by 1px edges. The menu opens upward within the panel. -->
+          <div class="bulk-menu-panel" id="actionsMenu"></div>
+          <div class="bulk-edge" id="menuEdge" style="display:none;"></div>
+          <div class="bulk-refusal" id="bulkRefusal"></div>
+          <div class="bulk-edge" id="rungEdge" style="display:none;"></div>
+          <div class="bulk-row">
+            <span class="bulk-pill">
+              <span class="bulk-count" id="bulkCount">0</span>
+              <span class="bulk-label" id="bulkLabel">selected</span>
+            </span>
+            <button class="bulk-close" id="bulkClose" aria-label="Clear selection">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+            <span class="bulk-divider"></span>
+            <button class="link-btn" id="scopeLink"></button>
+            <span class="bulk-kbd" id="scopeKbd">⌘A</span>
+            <div class="bulk-actions">
+              <button class="bulk-btn" id="actionsBtn">Actions
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+          </div><!-- /.lib-main -->
+        </div><!-- /.dam-iframe -->
+      </div><!-- /.unity-body -->
+    </div><!-- /.unity -->
+  </div><!-- /.stage -->
+
+  <!-- Harness. Outside the frame, because it is not product. -->
+  <aside class="inspector">
+    <div class="insp-col">
+      <div class="insp-head">State machine</div>
+      <dl class="state-grid">
+        <dt>mode</dt><dd id="sMode">browse</dd>
+        <dt>scope</dt><dd id="sScope">loaded</dd>
+        <dt>selected</dt><dd id="sCount">0</dd>
+        <dt>anchor</dt><dd id="sAnchor">null</dd>
+        <dt>focus</dt><dd id="sFocus">0</dd>
+        <dt>scope rung</dt><dd id="sHead">none</dd>
+      </dl>
+    </div>
+    <div class="insp-col">
+      <div class="insp-head">Event log</div>
+      <div class="log" id="log"></div>
+      <div class="hint">
+        <kbd>click</kbd> preview · <kbd>⌘</kbd>/<kbd>ctrl</kbd>+click toggle · <kbd>shift</kbd>+click range ·
+        drag empty space to marquee · <kbd>↑↓←→</kbd> focus · <kbd>shift</kbd>+arrow extend ·
+        <kbd>space</kbd> toggle · <kbd>enter</kbd> preview · <kbd>⌘A</kbd> select loaded · <kbd>esc</kbd> clear
+      </div>
+    </div>
+  </aside>
+</section>
+
+<!-- ============================================================
+     2. CLICK MATRIX
+     ============================================================ -->
+<section class="block">
+  <div class="block-head">
+    <h2>2 · Input resolution</h2>
+    <p>Single click is preview. That is the frequent action and it stays the default gesture. Selection is always deliberate: modifier, marquee, checkbox, or keyboard. Behaviour does not change with selection state, so the same gesture gives the same outcome every time. This table is the contract.</p>
+  </div>
+  <table class="spec">
+    <thead>
+      <tr><th style="width:210px;">Gesture</th><th>Behaviour</th><th style="width:110px;">Sets anchor</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>click</code> on card body</td><td>Opens the lightbox preview. Never selects, at any selection size.</td><td>No</td></tr>
+      <tr><td><code>click</code> on hover checkbox</td><td>Toggles that card. The discoverable, touch, and assistive-technology entry point, carrying primary weight now that plain click does not select.</td><td>Yes</td></tr>
+      <tr><td><code>⌘/ctrl + click</code></td><td>Toggles the card in or out of the selection.</td><td>Yes</td></tr>
+      <tr><td><code>shift + click</code></td><td>Range-selects from anchor to the clicked card. With no anchor, selects that single card and sets the anchor there.</td><td>Yes</td></tr>
+      <tr><td><code>double click</code></td><td>No-op. The first click has already opened the preview.</td><td>No</td></tr>
+      <tr><td><code>drag</code> from empty grid space</td><td>Marquee with live hit-test on move. Merges with the existing selection when a modifier was held at drag start, otherwise replaces it. 4px threshold before a mousedown becomes a drag.</td><td>Yes, at drag end</td></tr>
+      <tr><td><code>drag</code> from a card</td><td>Reserved for drag-and-drop: collection, folder, Unity form field. Never starts a marquee.</td><td>No</td></tr>
+      <tr><td><code>right click</code></td><td>Native browser context menu. Not overridden, so "open image in new tab" and "save image as" keep working on an asset grid.</td><td>No</td></tr>
+      <tr><td><code>click</code> on card overflow (⋯)</td><td>Opens the single-asset menu. Suppressed entirely while a selection is active, on every card. See section 4.</td><td>No</td></tr>
+      <tr><td><code>click</code> on empty grid space</td><td>Clears the selection.</td><td>Clears anchor</td></tr>
+      <tr><td><code>enter</code> on focused card</td><td>Opens the lightbox preview. Keyboard equivalent of single click.</td><td>No</td></tr>
+      <tr><td><code>space</code> on focused card</td><td>Toggles that card. Keyboard equivalent of the checkbox.</td><td>Yes</td></tr>
+      <tr><td><code>↑ ↓ ← →</code></td><td>Moves roving focus. With shift held, extends the range from the anchor.</td><td>Shift only</td></tr>
+      <tr><td><code>⌘/ctrl + A</code></td><td>Selects all loaded cards. Never escalates to the full result set; a second press does not escalate either.</td><td>No</td></tr>
+      <tr><td><code>esc</code></td><td>Clears the selection. The bulk bar goes with it.</td><td>Clears anchor</td></tr>
+    </tbody>
+  </table>
+  <div class="block-body" style="padding-top:var(--spacing-4);display:flex;flex-direction:column;gap:var(--spacing-3);">
+    <div class="callout">
+      <strong>Anchor is never set by a preview click.</strong> Only ctrl-click, shift-click, marquee end, space, and shift-arrow move it. If preview clicks seeded the anchor, a later shift-click would range from wherever the user last happened to look, which is unpredictable and has no visible marker.
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     3. SELECT-ALL SCOPES
+     ============================================================ -->
+<section class="block">
+  <div class="block-head">
+    <h2>3 · Select-all: one inline slot, two scopes, two objects</h2>
+    <p>Both scopes share a single link in the bulk bar row, between the divider and Actions. Its label changes as scope widens; the two never appear at once. Neither is meaningful until a selection exists, which is why neither is in the toolbar. A selection is a client-side list of asset references. "All matching" is a query. They are not the same object and cannot be handed to the same consumers.</p>
+  </div>
+  <table class="spec">
+    <thead><tr><th style="width:170px;">Property</th><th style="width:38%;">Loaded scope</th><th>Query scope (all matching)</th></tr></thead>
+    <tbody>
+      <tr><td>Entry point</td><td>Bar-row link reading <code>Select all N loaded</code>, or <code>⌘A</code></td><td>Same slot, relabelled <code>Select all N matching</code>. Only offered once the loaded set is complete. No keyboard shortcut.</td></tr>
+      <tr><td>Underlying object</td><td><code>Set&lt;assetId&gt;</code>, client-side</td><td>Filter/query descriptor, resolved server-side</td></tr>
+      <tr><td>Enumerable client-side</td><td>Yes</td><td>No</td></tr>
+      <tr><td>Upper bound</td><td>Page/virtual window (48 here)</td><td>Hard cap <code>500</code>. Above it, refuse and ask the user to narrow.</td></tr>
+      <tr><td>Rights resolution</td><td>Client-side from loaded asset records</td><td>Server-side. The mixed-rights LCD logic moves with it.</td></tr>
+      <tr><td>Add To Collection</td><td>Allowed</td><td>Allowed</td></tr>
+      <tr><td>Share</td><td>Allowed</td><td>Allowed</td></tr>
+      <tr><td>Edit Details (delta)</td><td>Allowed</td><td>Allowed</td></tr>
+      <tr><td>Add to Queue</td><td>Allowed</td><td>Allowed</td></tr>
+      <tr><td>Download as… (per-asset config)</td><td>Allowed</td><td>Blocked. The per-asset accordion cannot render an unenumerated set.</td></tr>
+      <tr><td>Delete</td><td>Allowed, with confirm</td><td>Blocked in v1. No undo model makes this safe.</td></tr>
+      <tr><td>Survives filter or query change</td><td>No. Cleared.</td><td>No. Cleared.</td></tr>
+      <tr><td>Survives sort change</td><td>Yes. Sort does not alter membership.</td><td>Yes</td></tr>
+    </tbody>
+  </table>
+  <div class="block-body" style="padding-top:var(--spacing-4);">
+    <div class="callout">
+      <strong>Disable, do not hide.</strong> Blocked actions stay in the Actions menu in a disabled state with the reason in a tooltip. A menu that changes shape between scopes teaches the user that actions are unreliable.
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     4. ACTION MENUS
+     ============================================================ -->
+<section class="block">
+  <div class="block-head">
+    <h2>4 · Action menus: one list, three cardinalities</h2>
+    <p>The card overflow menu and the bulk bar menu are not different scopes of the same thing. They are the same list at different cardinalities. Define the single-asset menu once; the others are derived from it by removing what does not survive. Source list is the menu in the current build.</p>
+  </div>
+  <table class="spec">
+    <thead>
+      <tr>
+        <th style="width:180px;">Action</th>
+        <th style="width:90px;">Single</th>
+        <th style="width:90px;">Bulk (loaded)</th>
+        <th style="width:110px;">Bulk (query scope)</th>
+        <th>Reason it drops</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Add To Collection</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td></tr>
+      <tr><td>Share</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td></tr>
+      <tr><td>Edit Details</td><td>Yes</td><td>Yes, as delta edit</td><td>Yes, as delta edit</td><td>Bulk applies changes as a delta, not a replace, so unedited fields are untouched.</td></tr>
+      <tr><td>Add to Queue</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td></tr>
+      <tr><td>Download</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td></tr>
+      <tr><td>Download as…</td><td>Yes</td><td>Yes</td><td><strong>Disabled</strong></td><td>Per-asset configuration cannot render against a set the client cannot enumerate.</td></tr>
+      <tr><td>Delete</td><td>Yes</td><td>Yes, with confirm</td><td><strong>Disabled</strong></td><td>No undo model makes an unenumerated delete safe in v1.</td></tr>
+      <tr><td>Find Similar Assets</td><td>Yes</td><td><strong>Absent</strong></td><td><strong>Absent</strong></td><td>Takes exactly one asset as its input. Meaningless on many, not blocked on many.</td></tr>
+      <tr><td>Markup</td><td>Yes</td><td><strong>Absent</strong></td><td><strong>Absent</strong></td><td>Annotates a single image. See open question in section 8.</td></tr>
+    </tbody>
+  </table>
+  <div class="block-body" style="padding-top:var(--spacing-4);display:flex;flex-direction:column;gap:var(--spacing-3);">
+    <div class="callout">
+      <strong>Menu and bar are one overlay ground.</strong> The menu opens upward as part of the same dark panel, separated from the bar row by a 1px edge token, not floated above it as a light popover. The bar row itself stays one line: pill, close, divider, scope link, Actions. Scope counts are right-aligned on the item using the existing <code>bulk-scope</code> idiom rather than invented treatment.
+    </div>
+    <div class="callout">
+      <strong>Disabled and absent are different, and the difference is visible.</strong> Disabled means the action is possible in principle but unsafe or unrenderable at this scope, so it stays in the menu greyed with the reason in a tooltip. Absent means the action has no meaning at this cardinality, so it is not in the list at all. Rendering an absent action as permanently disabled fills the bulk menu with dead items that can never be enabled.
+    </div>
+    <div class="callout">
+      <strong>Suppress the card overflow menu while a selection is active.</strong> On every card, including cards outside the selection. Seven of the nine single-asset actions are already in the bulk bar, so nothing is lost for those; the cost is that Find Similar and Markup are one <kbd>esc</kbd> away rather than zero, which is the correct signal that they are single-asset operations. Membership-dependent visibility is worse than blanket suppression: it would leave the user working out which cards have a menu and which do not.
+    </div>
+    <div class="callout" style="border-left-color:var(--color-amber-500);background:var(--color-amber-100);color:var(--color-amber-700);">
+      <strong>This is a live defect, not only a design decision.</strong> Today the overflow menu opens on a card that is part of a multi-selection, and acting from it applies to that one asset while three cards on screen show ticked checkboxes and selection borders. The card displays membership of a group while its menu means the opposite. Delete is in that menu.
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     5. CARD STATES
+     ============================================================ -->
+<section class="block">
+  <div class="block-head">
+    <h2>5 · Card states</h2>
+    <p>One selection carrier: the 2px <code>--primary-default</code> border from Scale §3.15. No tinted fill, no inset ring. The checkbox is the confirmation, the border is the signal.</p>
+  </div>
+  <div class="block-body">
+    <div class="gallery" id="gallery"></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     5. GRID-LEVEL STATES
+     ============================================================ -->
+<section class="block">
+  <div class="block-head">
+    <h2>6 · Grid-level states</h2>
+    <p>What the results header and bulk bar do when there is nothing to select, nothing loaded yet, or the query failed.</p>
+  </div>
+  <div class="block-body" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--spacing-5);">
+
+    <div>
+      <div class="gal-label" style="margin-bottom:var(--spacing-2);"><b>Loading</b>No count until the first page resolves. No selection controls anywhere, because no selection can exist yet.</div>
+      <div style="border:1px solid var(--border-default);border-radius:var(--radius-3);overflow:hidden;">
+        <div class="dam-toolbar" style="min-height:0;padding:var(--spacing-2) var(--spacing-3);">
+          <div class="tb-left"><span class="tb-crumb" style="font-size:var(--font-size-2);"><span class="cur">FIFA World Cup 2026</span></span></div>
+          <div class="tb-right">
+            <div style="width:74px;height:14px;background:var(--surface-muted);border-radius:var(--radius-1);"></div>
+          </div>
+        </div>
+        <div style="padding:var(--spacing-4);display:grid;grid-template-columns:repeat(3,1fr);gap:var(--spacing-3);background:var(--surface-subtle);">
+          <div style="border:1px solid var(--border-default);border-radius:var(--radius-3);overflow:hidden;background:var(--surface-default);">
+            <div style="height:64px;background:var(--surface-muted);"></div>
+            <div style="padding:8px;"><div style="height:10px;width:80%;background:var(--surface-muted);border-radius:var(--radius-1);"></div></div>
+          </div>
+          <div style="border:1px solid var(--border-default);border-radius:var(--radius-3);overflow:hidden;background:var(--surface-default);">
+            <div style="height:64px;background:var(--surface-muted);"></div>
+            <div style="padding:8px;"><div style="height:10px;width:60%;background:var(--surface-muted);border-radius:var(--radius-1);"></div></div>
+          </div>
+          <div style="border:1px solid var(--border-default);border-radius:var(--radius-3);overflow:hidden;background:var(--surface-default);">
+            <div style="height:64px;background:var(--surface-muted);"></div>
+            <div style="padding:8px;"><div style="height:10px;width:70%;background:var(--surface-muted);border-radius:var(--radius-1);"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="gal-label" style="margin-bottom:var(--spacing-2);"><b>Empty result set</b>Nothing to disable and nothing to hide. With both select-all scopes in the bulk bar, an empty result set needs no special handling at all.</div>
+      <div style="border:1px solid var(--border-default);border-radius:var(--radius-3);overflow:hidden;">
+        <div class="dam-toolbar" style="min-height:0;padding:var(--spacing-2) var(--spacing-3);">
+          <div class="tb-left"><span class="tb-crumb" style="font-size:var(--font-size-2);"><span class="par">FIFA World Cup 2026</span><span class="sep">&rsaquo;</span><span class="cur">Results for "xqz"</span></span></div>
+          <div class="tb-right">
+            <span class="tb-sort" style="font-size:var(--font-size-1);color:var(--text-subtle);">0 Results</span>
+          </div>
+        </div>
+        <div style="padding:var(--spacing-8) var(--spacing-4);text-align:center;background:var(--surface-subtle);">
+          <div style="font-size:var(--font-size-2);font-weight:var(--font-weight-medium);">No assets match this search</div>
+          <div style="font-size:var(--font-size-1);color:var(--text-muted);margin-top:4px;">Try fewer keywords, or clear the active filters.</div>
+          <button class="btn btn-secondary" style="margin-top:var(--spacing-4);">Clear all filters</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="gal-label" style="margin-bottom:var(--spacing-2);"><b>Query error</b>Any live selection is cleared, because it can no longer be trusted against the result set. The bulk bar goes with it.</div>
+      <div style="border:1px solid var(--border-default);border-radius:var(--radius-3);overflow:hidden;">
+        <div class="dam-toolbar" style="min-height:0;padding:var(--spacing-2) var(--spacing-3);">
+          <div class="tb-left"><span class="tb-crumb" style="font-size:var(--font-size-2);"><span class="cur">FIFA World Cup 2026</span></span></div>
+          <div class="tb-right">
+            <span class="tb-sort" style="font-size:var(--font-size-1);color:var(--text-subtle);">Unavailable</span>
+          </div>
+        </div>
+        <div style="padding:var(--spacing-7) var(--spacing-4);text-align:center;background:var(--surface-subtle);">
+          <div class="status-badge st-expired" style="margin-bottom:var(--spacing-3);">Search failed</div>
+          <div style="font-size:var(--font-size-1);color:var(--text-muted);">We could not load results. Your selection has been cleared.</div>
+          <button class="btn btn-tertiary" style="margin-top:var(--spacing-4);">Retry</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="gal-label" style="margin-bottom:var(--spacing-2);"><b>Permission-restricted asset</b>Card renders, checkbox disabled with reason. Marquee and select-all skip it silently; the count reflects what was actually selected.</div>
+      <div style="border:1px solid var(--border-default);border-radius:var(--radius-3);padding:var(--spacing-4);background:var(--surface-subtle);">
+        <div style="max-width:172px;">
+          <div class="asset-card locked">
+            <div class="asset-thumb"><div class="fill f8"></div>
+              <div class="asset-hover-actions" style="opacity:1;">
+                <span class="cb-hit"><input type="checkbox" class="checkbox-input" disabled title="You do not have permission to act on this asset"></span>
+                <span class="overflow-dot"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>
+              </div>
+              <span class="lock-note">No access</span>
+            </div>
+            <div class="asset-meta">
+              <div class="asset-name">WC26_Sponsor_Confidential_KV.psd</div>
+              <div class="asset-detail"><span class="filetype-badge">PSD</span> 214 MB</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     6. GAPS IN THE GESTURE SPEC
+     ============================================================ -->
+<section class="block">
+  <div class="block-head">
+    <h2>7 · Gaps to close before build</h2>
+    <p>Behaviour the gesture model does not yet specify, in order of consequence. Each needs an answer before the issues are scoped.</p>
+  </div>
+  <table class="spec">
+    <thead><tr><th style="width:34%;">Gap</th><th style="width:110px;">Severity</th><th>Resolution</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>No keyboard navigation</strong></td>
+        <td><span class="status-badge st-expired">Blocker</span></td>
+        <td>⌘A and Esc are specified, but nothing moves focus between cards. A hover-revealed checkbox is not reachable at all without roving tabindex, arrow keys, Space to toggle, and Enter to open. This closes before build, not after.</td>
+      </tr>
+      <tr>
+        <td><strong>Marquee origin unspecified</strong></td>
+        <td><span class="status-badge st-restricted">High</span></td>
+        <td>Empty grid space only. Mousedown on a card is reserved for drag-and-drop; if the marquee consumes it, drag-to-collection and drag-into-a-Unity-form-field become unbuildable.</td>
+      </tr>
+      <tr>
+        <td><strong>Drag threshold, and what happens below it</strong></td>
+        <td><span class="status-badge st-restricted">High</span></td>
+        <td>4px before a mousedown becomes a drag. Below the threshold on empty canvas it is a click, which clears. With a large selection and a replace-by-default marquee, a small twitch is the difference between nothing and losing the selection. Worth a second look at whether empty-space click should clear at all once the selection is large.</td>
+      </tr>
+      <tr>
+        <td><strong>Double click undefined</strong></td>
+        <td><span class="status-badge st-restricted">Medium</span></td>
+        <td>No-op. The first click has already opened the preview, so without this the lightbox opens twice.</td>
+      </tr>
+      <tr>
+        <td><strong>Permission-restricted assets</strong></td>
+        <td><span class="status-badge st-restricted">Medium</span></td>
+        <td>Marquee and ⌘A skip them silently. The count reports what was actually selected, not what was swept. Checkbox renders disabled with the reason in a tooltip.</td>
+      </tr>
+      <tr>
+        <td><strong>Overflow menu scope during selection</strong></td>
+        <td><span class="status-badge st-expired">Live defect</span></td>
+        <td>In the current build a card's overflow menu can be opened while a multi-selection is active, and acting from it silently applies to that one asset. Delete is in that menu and there is no undo. Resolved by suppression, in section 4, but the defect exists today and wants its own ticket ahead of this work.</td>
+      </tr>
+      <tr>
+        <td><strong>Select-all scope</strong></td>
+        <td><span class="status-badge st-restricted">High</span></td>
+        <td>⌘A selecting the loaded set is right, but the bulk bar scope ladder, the escalation to the full result set, and the cap are not in the gesture table. This is the part with the backend dependency, so it needs to land in the same issue tree rather than being picked up later. See section 3.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============================================================
+     7. DECISIONS
+     ============================================================ -->
+<section class="block">
+  <div class="block-head">
+    <h2>8 · Decisions, dependencies, open questions</h2>
+    <p>What is settled, what needs a build decision, and what blocks on someone else.</p>
+  </div>
+  <div class="block-body">
+
+    <div class="dec">
+      <span class="pill p-decided">Decided</span>
+      <h3>Single click previews. Always, at any selection size.</h3>
+      <p>Selection is deliberate: checkbox, modifier, marquee, or keyboard. The same gesture gives the same outcome regardless of state, so there is no mode to track and no silent deselect.</p>
+    </div>
+
+    <div class="dec">
+      <span class="pill p-decided">Decided</span>
+      <h3>The anchor is never set by a preview click.</h3>
+      <p>Only ctrl-click, shift-click, marquee end, Space, and shift-arrow move it. Otherwise a shift-click ranges from wherever the user last happened to look, which is unpredictable and has no visible marker.</p>
+    </div>
+
+    <div class="dec">
+      <span class="pill p-decided">Decided</span>
+      <h3>Both select-all scopes live in the bulk bar, in one inline slot.</h3>
+      <p>The link sits in the bar row itself, after the divider and before Actions. With a partial selection it reads <code>Select all N loaded</code>; once the loaded set is complete it becomes <code>Select all N matching</code>. One slot, one line, label changes with scope. Each state names its scope in words, so the widening is always stated rather than implied.</p>
+      <p>The <code>⌘A</code> hint sits beside the link on the loaded rung only. The shortcut selects the loaded set and deliberately never escalates, so showing it beside <code>Select all N matching</code> would advertise a shortcut that does something else. Escalation stays click-only, which is also what keeps it deliberate.</p>
+      <p>The cap refusal is the one case that needs its own row, because it is a message rather than a control. It sits above the bar row on the same ground, separated by a 1px edge.</p>
+      <p>Nothing is added to the toolbar. A control that is only meaningful once a selection exists belongs where selections already live, which is also where the user is looking at the moment it becomes relevant. As sibling rungs the two scopes read as what they are: a widening of scope in stated steps.</p>
+      <p>Cold start costs two clicks, one hover checkbox on any card then rung 1, or <code>⌘A</code> as a single keystroke hinted alongside the rung.</p>
+    </div>
+
+    <div class="dec">
+      <span class="pill p-decided">Decided</span>
+      <h3>Checkbox hit target is 32px around a 16px visual.</h3>
+      <p>Checkboxes stay hover-revealed in browse mode and become persistent in selection mode, so what is selected is legible without sweeping the cursor across the grid.</p>
+    </div>
+
+    <div class="dec">
+      <span class="pill p-decided">Decided</span>
+      <h3>Marquee originates from empty grid space only.</h3>
+      <p>Mousedown on a card is reserved for drag-and-drop. If the marquee consumes it, drag-to-collection and drag-into-a-Unity-form-field become unbuildable.</p>
+    </div>
+
+    <div class="dec">
+      <span class="pill p-decided">Decided</span>
+      <h3>One action route at a time.</h3>
+      <p>Browse mode acts through the card overflow menu. Selection mode acts through the bulk bar. The overflow menu is suppressed on every card while a selection is active, so the question of which route is in play and what it applies to never arises.</p>
+      <p>The two menus are one list at different cardinalities, not two lists. Define the single-asset menu once and derive the rest, so they cannot drift.</p>
+    </div>
+
+    <div class="dec">
+      <span class="pill p-decided">Decided</span>
+      <h3>Right click is not overridden.</h3>
+      <p>It would only reproduce a menu already visible on screen, and overriding it on an image grid removes browser behaviour people use on assets: open image in new tab, copy image, save image as. That is a net loss rather than a neutral swap.</p>
+    </div>
+
+    <div class="dec">
+      <span class="pill p-decided">Decided</span>
+      <h3>The bulk bar pins to the iframe viewport, not the document.</h3>
+      <p>It renders outside the scrolling grid container, absolutely positioned against the DAM's own frame, so it holds at the bottom of the 644px viewport while the grid scrolls behind it. Sticky positioning inside the scroll container looks correct on a tall page and fails in the frame: with a short result set it settles at the end of the content rather than at the bottom of the viewport.</p>
+      <p>The grid gets bottom padding equal to the bar's height so the last row is never occluded.</p>
+    </div>
+
+    <div class="dec">
+      <span class="pill p-dep">Dependency</span>
+      <h3>Pointer capture, not document listeners.</h3>
+      <p>The DAM runs as a cross-origin iframe inside Unity. A marquee wired to <code>document.addEventListener('mousemove')</code> freezes the moment the drag crosses the iframe boundary. Use pointer events with <code>setPointerCapture</code> on the grid element. This will not reproduce in a standalone HTML test.</p>
+    </div>
+
+    <div class="dec">
+      <span class="pill p-dep">Dependency</span>
+      <h3>Query-scoped selection needs a resolve endpoint and a count.</h3>
+      <p>The escalation row needs a total for the current filter, and the cap needs a server-side resolve that returns a bounded id set or refuses. This is backend work before it is frontend work, so it sequences behind the gesture model and range select.</p>
+    </div>
+
+    <div class="dec">
+      <span class="pill p-open">Open</span>
+      <h3>Is Markup really single-asset only?</h3>
+      <p>Find Similar Assets takes one asset by definition, so its absence from the bulk menu is settled. Markup is less clear: annotating one asset within a set of three under review is a plausible workflow, and it is the sort of thing that gets requested back after launch. Treated as single-only for now. Worth a decision rather than an assumption.</p>
+    </div>
+
+    <div class="dec">
+      <span class="pill p-open">Open</span>
+      <h3>Does a bulk action bar exist in the build today?</h3>
+      <p>It does not appear in any of the current screenshots. If it does not exist yet, the overflow menu is currently the only action route, and suppression cannot ship before the bar does. That changes the sequencing of the whole tree, so it needs confirming before the issues are scoped.</p>
+    </div>
+
+    <div class="dec">
+      <span class="pill p-open">Open</span>
+      <h3>Is 500 the right cap?</h3>
+      <p>Chosen to keep bulk edit and the download queue tractable. Note that the live result set in the sandbox is 527, so the cap refuses on the default view and only succeeds once the user searches. That is either the cap doing its job or the cap set too low, and the screenshots are from a test library rather than a production one. Validate against the largest realistic bulk-tag or bulk-collection operation before committing to the number.</p>
+    </div>
+
+    <div class="dec">
+      <span class="pill p-open">Open</span>
+      <h3>Does the toolbar ever need a selection affordance at all?</h3>
+      <p>With both scopes in the bulk bar, the toolbar stays exactly as shipped and this strand costs zero toolbar real estate. The open risk is discoverability of the first selection: the hover checkbox on a card is now the only visible entry point, and it is invisible until hover. Worth watching in the first demo. A persistent-on-touch variant is the likely answer if it fails, not a toolbar control.</p>
+    </div>
+
+    <div class="dec">
+      <span class="pill p-open">Open</span>
+      <h3>Right-click context menu: in or out of v1?</h3>
+      <p>It is the accelerator that gives the desktop-native feel without touching the click model, and its contents are already specified because it mirrors the card overflow menu. Cheap, but not load-bearing. It can follow.</p>
+    </div>
+
+  </div>
+</section>
+
+</div>
+
+<!-- lightbox stub -->
+<div class="lb-overlay" id="lbOverlay">
+  <div class="lb-panel">
+    <div class="lb-head"><span id="lbName">asset</span></div>
+    <div class="lb-body">The lightbox would open here. Included only to prove that click-to-open and selection mode do not collide: opening from selection mode leaves the selection intact and returns you to it on close.</div>
+    <div class="lb-foot"><button class="btn btn-tertiary" id="lbClose">Close</button></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  // ============================================================
+  // DATA
+  // ============================================================
+  var NAMES = [
+    ['WC26_Logo_Primary_RGB.svg','SVG','48 KB','cleared'],
+    ['WC26_HostCity_Poster_4x3.jpg','JPG','12.4 MB','cleared'],
+    ['WC26_KV_Master_Layered.psd','PSD','486 MB','restricted'],
+    ['WC26_Trophy_Hero_Studio_01.jpg','JPG','8.2 MB','cleared'],
+    ['WC26_Stadium_Aerial_Dusk.jpg','JPG','22.1 MB','embargoed'],
+    ['WC26_Brand_Guidelines_v4.pdf','PDF','9.8 MB','cleared'],
+    ['WC26_Ball_Product_Cutout.png','PNG','4.1 MB','cleared'],
+    ['WC26_Anthem_Broadcast_Bumper.mp4','MP4','340 MB','restricted'],
+    ['WC26_Mascot_Turnaround_Sheet.ai','AI','16 MB','cleared'],
+    ['WC26_Fanzone_Signage_A0.pdf','PDF','62 MB','expired'],
+    ['WC26_Ticketing_Social_1x1.png','PNG','2.2 MB','cleared'],
+    ['WC26_Volunteer_Portrait_Set.zip','ZIP','118 MB','restricted'],
+    ['Campaign_Q3_Retail_Endframe.mov','MOV','210 MB','cleared'],
+    ['Campaign_Q3_OOH_48Sheet.tif','TIF','780 MB','expired'],
+    ['Partner_Toolkit_Cobrand_Lockups.eps','EPS','3.4 MB','cleared'],
+    ['Partner_Usage_Rules_Onepager.pdf','PDF','1.1 MB','cleared']
+  ];
+  var FILLS = ['f1','f2','f3','f4','f5','f6','f7','f8'];
+  var LOADED = 48;
+  var TOTAL_BASE = 527;     // "FIFA World Cup 2026" — above the cap
+  var TOTAL_SEARCH = 98;    // Results for "car" — within the cap
+  var CAP = 500;
+
+  var assets = [];
+  for (var i = 0; i < LOADED; i++){
+    var n = NAMES[i % NAMES.length];
+    assets.push({
+      id: 'a' + i,
+      name: (i >= NAMES.length ? n[0].replace(/(\.[a-z0-9]+)$/i, '_v' + (Math.floor(i/NAMES.length)+1) + '$1') : n[0]),
+      ext: n[1], size: n[2], rights: n[3],
+      fill: FILLS[i % FILLS.length],
+      locked: (i === 13 || i === 31)
+    });
+  }
+
+  // ============================================================
+  // STATE
+  // ============================================================
+  var S = {
+    model: 'unconditional', // current | unconditional
+    mode: 'browse',         // browse | selection
+    scope: 'loaded',        // loaded | query
+    selected: new Set(),
+    anchor: null,
+    focus: 0,
+    searched: false,
+    menuOpen: false,
+    refusal: false
+  };
+
+  function total(){ return S.searched ? TOTAL_SEARCH : TOTAL_BASE; }
+  function selectableCount(){ return assets.filter(function(a){ return !a.locked; }).length; }
+
+  // ============================================================
+  // DOM
+  // ============================================================
+  var grid = document.getElementById('grid');
+  var gridWrap = document.getElementById('gridWrap');
+  var marqueeEl = document.getElementById('marquee');
+  var resultsCount = document.getElementById('resultsCount');
+  var tbCrumb = document.getElementById('tbCrumb');
+  var tbSearchText = document.getElementById('tbSearchText');
+  var bulkBar = document.getElementById('bulkBar');
+  var bulkCount = document.getElementById('bulkCount');
+  var bulkLabel = document.getElementById('bulkLabel');
+  var scopeLink = document.getElementById('scopeLink');
+  var scopeKbd = document.getElementById('scopeKbd');
+  var bulkRefusal = document.getElementById('bulkRefusal');
+  var actionsBtn = document.getElementById('actionsBtn');
+  var actionsMenu = document.getElementById('actionsMenu');
+  var logEl = document.getElementById('log');
+  var lbOverlay = document.getElementById('lbOverlay');
+  var lbName = document.getElementById('lbName');
+
+  var cardEls = [];
+
+  // ============================================================
+  // RENDER
+  // ============================================================
+  var DOTS = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>';
+
+  function rightsBadge(r){
+    if (r === 'cleared') return '';
+    var map = { restricted:['st-restricted','Restricted'], expired:['st-expired','Expired'], embargoed:['st-embargoed','Embargoed'] };
+    var m = map[r];
+    return '<span class="gate-slot"><span class="status-badge ' + m[0] + '">' + m[1] + '</span></span>';
+  }
+
+  function buildGrid(){
+    grid.innerHTML = '';
+    grid.appendChild(marqueeEl);   // marquee lives inside .grid; survive the clear
+    cardEls = [];
+    assets.forEach(function(a, idx){
+      var el = document.createElement('div');
+      el.className = 'asset-card' + (a.locked ? ' locked' : '');
+      el.dataset.idx = idx;
+      el.setAttribute('role','gridcell');
+      el.setAttribute('tabindex', idx === 0 ? '0' : '-1');
+      el.setAttribute('aria-selected','false');
+      el.setAttribute('aria-label', a.name);
+      el.innerHTML =
+        '<div class="asset-thumb"><div class="fill ' + a.fill + '"></div>' +
+          '<div class="asset-hover-actions">' +
+            '<span class="cb-hit"><input type="checkbox" class="checkbox-input card-cb"' + (a.locked ? ' disabled title="You do not have permission to act on this asset"' : '') + ' tabindex="-1" aria-label="Select ' + a.name + '"></span>' +
+            '<span class="overflow-dot">' + DOTS + '</span>' +
+          '</div>' +
+          rightsBadge(a.rights) +
+          (a.locked ? '<span class="lock-note">No access</span>' : '') +
+        '</div>' +
+        '<div class="asset-meta">' +
+          '<div class="asset-name" title="' + a.name + '">' + a.name + '</div>' +
+          '<div class="asset-detail"><span class="filetype-badge">' + a.ext + '</span> ' + a.size + '</div>' +
+        '</div>';
+      grid.appendChild(el);
+      cardEls.push(el);
+    });
+  }
+
+  // ============================================================
+  // LOG + INSPECTOR
+  // ============================================================
+  function log(evt, detail){
+    var d = document.createElement('div');
+    d.innerHTML = '<b>' + evt + '</b>' + (detail ? ' · ' + detail : '');
+    logEl.insertBefore(d, logEl.firstChild);
+    while (logEl.childNodes.length > 60) logEl.removeChild(logEl.lastChild);
+  }
+
+  function paintInspector(){
+    document.getElementById('sMode').textContent = S.mode;
+    document.getElementById('sScope').textContent = S.scope === 'query' ? 'query (all matching)' : 'loaded';
+    document.getElementById('sCount').textContent = S.scope === 'query' ? total() + ' (unenumerated)' : S.selected.size;
+    document.getElementById('sAnchor').textContent = S.anchor === null ? 'null' : S.anchor;
+    document.getElementById('sFocus').textContent = S.focus;
+    document.getElementById('sHead').textContent = LADDER_RUNG;
+  }
+
+  // ============================================================
+  // PAINT
+  // ============================================================
+  var LADDER_RUNG = 'none';
+
+  function paint(){
+    S.mode = (S.selected.size > 0 || S.scope === 'query') ? 'selection' : 'browse';
+    gridWrap.classList.toggle('mode-selection', S.mode === 'selection');
+
+    cardEls.forEach(function(el, idx){
+      var on = S.scope === 'query' ? !assets[idx].locked : S.selected.has(idx);
+      el.classList.toggle('selected', on);
+      el.setAttribute('aria-selected', on ? 'true' : 'false');
+      el.setAttribute('tabindex', idx === S.focus ? '0' : '-1');
+      var cb = el.querySelector('.card-cb');
+      if (cb && !cb.disabled) cb.checked = on;
+    });
+
+    var sel = S.selected.size;
+    var max = selectableCount();
+
+    // toolbar: unchanged by selection state. Nothing is added to it.
+    resultsCount.textContent = total().toLocaleString() + ' Results';
+    tbCrumb.innerHTML = S.searched
+      ? '<span class="par">FIFA World Cup 2026</span><span class="sep">&rsaquo;</span><span class="cur">Results for "car"</span>'
+      : '<span class="cur">FIFA World Cup 2026</span>';
+    tbSearchText.innerHTML = S.searched
+      ? '<span class="q">car</span>' : 'Search FIFA World Cup 2026';
+
+    // bulk bar
+    var showBar = S.mode === 'selection';
+    bulkBar.classList.toggle('on', showBar);
+    if (S.scope === 'query'){
+      bulkCount.textContent = total().toLocaleString();
+      bulkLabel.textContent = 'matching selected';
+    } else {
+      bulkCount.textContent = sel;
+      bulkLabel.textContent = 'selected';
+    }
+
+    // Scope link. One inline slot in the bar row; the label changes as scope
+    // widens. Rung 1 offers the loaded set, rung 2 the whole result set.
+    var loadedComplete = sel > 0 && sel >= max;
+    var rung = 'none';
+    if (S.scope === 'loaded' && sel > 0 && !loadedComplete) rung = 'loaded';
+    else if (S.scope === 'loaded' && loadedComplete && total() > LOADED) rung = 'query';
+
+    LADDER_RUNG = S.scope === 'query' ? 'query (active)' : rung;
+    scopeLink.classList.toggle('on', rung !== 'none' && !S.refusal);
+    if (rung === 'loaded'){
+      scopeLink.textContent = 'Select all ' + max + ' loaded';
+      scopeLink.onclick = function(){ selectLoaded(); };
+    } else if (rung === 'query'){
+      scopeLink.textContent = 'Select all ' + total().toLocaleString() + ' matching';
+      scopeLink.onclick = escalate;
+    } else {
+      scopeLink.onclick = null;
+    }
+    // ⌘A performs the loaded-scope action only, so the hint appears only there.
+    scopeKbd.classList.toggle('on', rung === 'loaded' && !S.refusal);
+
+    bulkRefusal.classList.toggle('on', S.refusal);
+    document.getElementById('rungEdge').style.display = S.refusal ? 'block' : 'none';
+    if (S.refusal){
+      bulkRefusal.innerHTML =
+        '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="flex-shrink:0;margin-top:2px;"><path d="M8 1.5 1 14h14L8 1.5zM8 6v3M8 11.5v.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+        '<span>' + total().toLocaleString() + ' exceeds the ' + CAP + '-asset limit. Narrow your filters, then select all.</span>';
+    }
+
+    buildMenu();
+    paintInspector();
+  }
+
+  // ============================================================
+  // SELECTION OPS
+  // ============================================================
+  function clearAll(reason){
+    S.selected.clear(); S.scope = 'loaded'; S.anchor = null; S.refusal = false;
+    closeMenu(); paint();
+    if (reason) log('selection.clear', reason);
+  }
+  function selectOnly(idx){
+    S.selected.clear();
+    if (!assets[idx].locked) S.selected.add(idx);
+    S.scope = 'loaded'; S.refusal = false; S.anchor = idx; paint();
+  }
+  function toggle(idx){
+    if (assets[idx].locked) { log('select.blocked', 'no permission · ' + assets[idx].name); return; }
+    if (S.scope === 'query'){ // dropping out of query scope materialises the loaded set first
+      S.selected.clear();
+      cardEls.forEach(function(_, i){ if (!assets[i].locked) S.selected.add(i); });
+      S.scope = 'loaded';
+    }
+    if (S.selected.has(idx)) S.selected.delete(idx); else S.selected.add(idx);
+    S.refusal = false; paint();
+  }
+  function selectRange(from, to){
+    var a = Math.min(from, to), b = Math.max(from, to);
+    S.selected.clear();
+    for (var i = a; i <= b; i++) if (!assets[i].locked) S.selected.add(i);
+    S.scope = 'loaded'; S.refusal = false; paint();
+  }
+  function selectLoaded(){
+    S.selected.clear();
+    assets.forEach(function(a, i){ if (!a.locked) S.selected.add(i); });
+    S.scope = 'loaded'; S.refusal = false; paint();
+    log('selectAll.loaded', S.selected.size + ' of ' + LOADED + ' (2 skipped, no permission)');
+  }
+  function escalate(){
+    if (total() > CAP){
+      S.refusal = true; paint();
+      log('selectAll.query.refused', total() + ' > cap ' + CAP);
+      return;
+    }
+    S.scope = 'query'; S.refusal = false; paint();
+    log('selectAll.query', 'scope=query · ' + total() + ' matching · resolved server-side');
+  }
+
+  function openLightbox(idx){
+    lbName.textContent = assets[idx].name;
+    lbOverlay.classList.add('on');
+    log('lightbox.open', assets[idx].name + ' · selection preserved');
+  }
+
+  // ============================================================
+  // ACTIONS MENU — disable, do not hide
+  // ============================================================
+  // Single-asset menu as it exists in the build. The bulk menu is derived
+  // from it: items with singleOnly are absent, not disabled.
+  var MI = {
+    folder:'<path d="M19 21H5a2 2 0 0 1-2-2V8h18v11a2 2 0 0 1-2 2zM3 8l1.5-4h15L21 8"/>',
+    share:'<path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v14"/>',
+    similar:'<path d="M3 12c2-3 4-3 6 0s4 3 6 0 4-3 6 0"/><path d="M3 18c2-3 4-3 6 0"/>',
+    pencil:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+    markup:'<path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z"/><path d="M2 2l7.6 7.6"/>',
+    queue:'<path d="M3 6h13M3 12h9M3 18h9"/><path d="M17 12v9M21 17l-4 4-4-4"/>',
+    download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
+    trash:'<path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>'
+  };
+  function icon(k){
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
+      'stroke-linecap="round" stroke-linejoin="round">' + MI[k] + '</svg>';
+  }
+
+  var ACTIONS = [
+    { label:'Add To Collection',   icon:'folder'                 },
+    { label:'Share',               icon:'share'                  },
+    { label:'Find Similar Assets', icon:'similar',  singleOnly:true },
+    { label:'Edit Details',        icon:'pencil'                 },
+    { label:'Markup',              icon:'markup',   singleOnly:true },
+    { label:'Add to Queue',        icon:'queue'                  },
+    { sep:true },
+    { label:'Download',            icon:'download'               },
+    { label:'Download as...',      icon:'download', blockInQuery:true,
+      why:'Per-asset configuration needs an enumerated selection' },
+    { sep:true },
+    { label:'Delete',              icon:'trash',    blockInQuery:true, destructive:true,
+      why:'Not available for query-scoped selections' }
+  ];
+
+  function bItem(o){
+    return '<div class="bulk-item' + (o.disabled ? ' is-disabled' : '') +
+      (o.destructive ? ' destructive' : '') + '"' +
+      (o.disabled && o.why ? ' title="' + o.why + '"' : '') + '>' +
+      icon(o.icon) + '<span class="bi-label">' + o.label + '</span>' +
+      (o.scope ? '<span class="bulk-scope">' + o.scope + '</span>' : '') + '</div>';
+  }
+
+  function buildMenu(){
+    var q = S.scope === 'query';
+    var scopeNote = q ? total().toLocaleString() : null;
+    var h = '';
+    ACTIONS.forEach(function(it){
+      if (it.sep){ h += '<div class="bulk-sep"></div>'; return; }
+      if (it.singleOnly) return;                    // absent in bulk, not disabled
+      var blocked = !!(q && it.blockInQuery);
+      h += bItem({
+        label: it.label, icon: it.icon, destructive: it.destructive,
+        disabled: blocked, why: it.why,
+        scope: blocked ? 'unavailable' : scopeNote
+      });
+    });
+    actionsMenu.innerHTML = h;
+    actionsMenu.classList.toggle('on', S.menuOpen);
+    document.getElementById('menuEdge').style.display = S.menuOpen ? 'block' : 'none';
+  }
+  function closeMenu(){
+    S.menuOpen = false;
+    actionsMenu.classList.remove('on');
+    document.getElementById('menuEdge').style.display = 'none';
+  }
+
+  // ============================================================
+  // POINTER — click, modifiers, marquee
+  // ============================================================
+  var drag = { pending:null, active:false, did:false, additive:false, base:null, lastHit:null };
+  var THRESHOLD = 4;
+
+  function gridPoint(cx, cy){
+    var r = grid.getBoundingClientRect();
+    return { x: cx - r.left, y: cy - r.top };
+  }
+
+  grid.addEventListener('click', function(e){
+    if (drag.did) { drag.did = false; return; }
+    var card = e.target.closest('.asset-card');
+    if (!card) return;
+    var idx = parseInt(card.dataset.idx, 10);
+    var onCheckbox = !!e.target.closest('.cb-hit');
+    S.focus = idx;
+
+    if (assets[idx].locked && (onCheckbox || e.metaKey || e.ctrlKey)) {
+      log('select.blocked','no permission · ' + assets[idx].name);
+      paint(); return;
+    }
+
+    // Current build: only the checkbox selects; the card body always opens.
+    if (S.model === 'current'){
+      if (onCheckbox){ toggle(idx); log('current.checkbox', assets[idx].name); }
+      else { openLightbox(idx); }
+      return;
+    }
+
+    // Checkbox: toggle, sets anchor.
+    if (onCheckbox){
+      toggle(idx); S.anchor = idx;
+      log('click.checkbox', 'toggle · anchor=' + idx + ' · ' + assets[idx].name);
+      return;
+    }
+
+    // Shift: range from anchor. With no anchor, select the single card and seed it.
+    if (e.shiftKey){
+      if (S.anchor === null){
+        selectOnly(idx);
+        log('shift.click', 'no anchor · select single · anchor=' + idx);
+      } else {
+        selectRange(S.anchor, idx);
+        log('shift.click', 'range ' + Math.min(S.anchor, idx) + '–' + Math.max(S.anchor, idx));
+      }
+      return;
+    }
+
+    // Modifier: toggle, sets anchor.
+    if (e.metaKey || e.ctrlKey){
+      toggle(idx); S.anchor = idx;
+      log('meta.click', 'toggle · anchor=' + idx + ' · ' + assets[idx].name);
+      return;
+    }
+
+    // Plain click always previews, at any selection size.
+    // Deliberately does NOT set the anchor.
+    log('click', 'preview · selection of ' + S.selected.size + ' untouched · anchor unchanged');
+    openLightbox(idx);
+  });
+
+  grid.addEventListener('dblclick', function(e){
+    var card = e.target.closest('.asset-card');
+    if (!card) return;
+    log('dblclick', 'no-op · first click already opened the preview');
+  });
+
+  // Right click is deliberately NOT overridden. The native browser menu keeps
+  // "open image in new tab" and "save image as" working on an asset grid.
+
+  // Card overflow menu: single-asset only, and suppressed while a selection exists.
+  grid.addEventListener('click', function(e){
+    var dot = e.target.closest('.overflow-dot');
+    if (!dot) return;
+    e.stopPropagation();
+    var card = dot.closest('.asset-card');
+    var idx = parseInt(card.dataset.idx, 10);
+    if (S.mode === 'selection'){
+      log('overflow.suppressed', 'selection active · act through the bulk bar');
+      return;
+    }
+    log('overflow.open', 'single asset · ' + assets[idx].name);
+  }, true);
+
+  // marquee: empty grid space only. Pointer events + setPointerCapture for iframe safety.
+  gridWrap.addEventListener('pointerdown', function(e){
+    if (e.button !== 0) return;
+    if (e.target.closest('.asset-card')) return;   // reserved for drag-and-drop
+    if (e.target.closest('.bulk-bar')) return;
+    var p = gridPoint(e.clientX, e.clientY);
+    drag.pending = { cx:e.clientX, cy:e.clientY, x:p.x, y:p.y };
+    drag.additive = e.shiftKey || e.metaKey || e.ctrlKey;
+    drag.base = drag.additive ? new Set(S.selected) : new Set();
+    try { gridWrap.setPointerCapture(e.pointerId); } catch(err){}
+  });
+
+  gridWrap.addEventListener('pointermove', function(e){
+    if (!drag.pending) return;
+    if (!drag.active){
+      if (Math.abs(e.clientX - drag.pending.cx) < THRESHOLD && Math.abs(e.clientY - drag.pending.cy) < THRESHOLD) return;
+      drag.active = true; drag.did = true;
+      marqueeEl.style.display = 'block';
+      log('marquee.start', drag.additive ? 'additive' : 'replace');
+    }
+    autoScroll(e.clientY);
+
+    var cur = gridPoint(e.clientX, e.clientY);
+    var x1 = Math.min(drag.pending.x, cur.x), y1 = Math.min(drag.pending.y, cur.y);
+    var x2 = Math.max(drag.pending.x, cur.x), y2 = Math.max(drag.pending.y, cur.y);
+    marqueeEl.style.left = x1 + 'px'; marqueeEl.style.top = y1 + 'px';
+    marqueeEl.style.width = (x2 - x1) + 'px'; marqueeEl.style.height = (y2 - y1) + 'px';
+
+    var gr = grid.getBoundingClientRect();
+    var next = new Set(drag.base);
+    cardEls.forEach(function(el, idx){
+      if (assets[idx].locked) return;
+      var cr = el.getBoundingClientRect();
+      var cx1 = cr.left - gr.left, cy1 = cr.top - gr.top, cx2 = cr.right - gr.left, cy2 = cr.bottom - gr.top;
+      if (cx1 < x2 && cx2 > x1 && cy1 < y2 && cy2 > y1){ next.add(idx); drag.lastHit = idx; }
+    });
+    S.selected = next; S.scope = 'loaded'; S.refusal = false; paint();
+  });
+
+  function endDrag(e){
+    if (!drag.pending) return;
+    if (drag.active){
+      if (drag.lastHit !== null) S.anchor = drag.lastHit;
+      log('marquee.end', S.selected.size + ' selected · anchor=' + S.anchor);
+      paint();
+    }
+    try { gridWrap.releasePointerCapture(e.pointerId); } catch(err){}
+    drag.pending = null; drag.active = false; drag.lastHit = null;
+    marqueeEl.style.display = 'none';
+    stopAutoScroll();
+    setTimeout(function(){ drag.did = false; }, 0);
+  }
+  gridWrap.addEventListener('pointerup', endDrag);
+  gridWrap.addEventListener('pointercancel', endDrag);
+
+  var scrollRAF = null;
+  function autoScroll(clientY){
+    var r = gridWrap.getBoundingClientRect(), EDGE = 44, SPEED = 12, dy = 0;
+    if (clientY < r.top + EDGE) dy = -SPEED;
+    else if (clientY > r.bottom - EDGE) dy = SPEED;
+    stopAutoScroll();
+    if (dy !== 0){
+      var step = function(){ gridWrap.scrollTop += dy; scrollRAF = requestAnimationFrame(step); };
+      scrollRAF = requestAnimationFrame(step);
+    }
+  }
+  function stopAutoScroll(){ if (scrollRAF) cancelAnimationFrame(scrollRAF); scrollRAF = null; }
+
+  // click empty space clears (browse-mode restore)
+  gridWrap.addEventListener('click', function(e){
+    if (drag.did) return;
+    if (e.target.closest('.asset-card')) return;
+    if (e.target.closest('.bulk-bar')) return;
+    if (S.mode === 'selection') clearAll('clicked empty space');
+  });
+
+  // ============================================================
+  // KEYBOARD — roving tabindex
+  // ============================================================
+  function columns(){
+    var t = getComputedStyle(grid).gridTemplateColumns;
+    return Math.max(1, t.split(' ').filter(Boolean).length);
+  }
+  function moveFocus(delta, shift){
+    var next = Math.min(cardEls.length - 1, Math.max(0, S.focus + delta));
+    S.focus = next;
+    cardEls[next].focus();
+    if (shift && S.anchor !== null) selectRange(S.anchor, next); else paint();
+  }
+
+  grid.addEventListener('keydown', function(e){
+    var card = e.target.closest('.asset-card');
+    if (!card) return;
+    var idx = parseInt(card.dataset.idx, 10);
+    S.focus = idx;
+    var cols = columns();
+    if (e.key === 'ArrowRight'){ e.preventDefault(); moveFocus(1, e.shiftKey); }
+    else if (e.key === 'ArrowLeft'){ e.preventDefault(); moveFocus(-1, e.shiftKey); }
+    else if (e.key === 'ArrowDown'){ e.preventDefault(); moveFocus(cols, e.shiftKey); }
+    else if (e.key === 'ArrowUp'){ e.preventDefault(); moveFocus(-cols, e.shiftKey); }
+    else if (e.key === ' '){ e.preventDefault(); toggle(idx); S.anchor = idx; log('key.space','toggle · ' + assets[idx].name); }
+    else if (e.key === 'Enter'){ e.preventDefault(); openLightbox(idx); }
+  });
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape'){
+      if (lbOverlay.classList.contains('on')){ lbOverlay.classList.remove('on'); return; }
+      if (S.menuOpen){ closeMenu(); paint(); return; }
+      if (S.mode === 'selection'){ clearAll('esc'); }
+    }
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'a'){
+      e.preventDefault(); selectLoaded();
+    }
+  });
+
+  // ============================================================
+  // BULK BAR
+  // ============================================================
+  actionsBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    S.menuOpen = !S.menuOpen; buildMenu();
+    log('bulk.actions', S.menuOpen ? 'open · scope=' + S.scope : 'close');
+  });
+  document.getElementById('bulkClose').addEventListener('click', function(){ clearAll('bulk bar close'); });
+  document.addEventListener('click', function(e){
+    if (S.menuOpen && !e.target.closest('.bulk-bar')){ closeMenu(); paintInspector(); }
+  });
+
+  // ============================================================
+  // CONTROLS
+  // ============================================================
+  var MODEL_NOTE = {
+    current: 'checkbox-only selection · card body always opens',
+    unconditional: 'click always previews · selection always deliberate'
+  };
+  document.getElementById('modelSeg').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if (!b) return;
+    [].forEach.call(this.querySelectorAll('button'), function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    S.model = b.dataset.model;
+    clearAll(null);
+    log('model.switch', S.model + ' · ' + MODEL_NOTE[S.model]);
+  });
+
+  // Query change via search navigation. Easy to miss when only the facet
+  // filters have been wired, so it is demonstrated explicitly.
+  document.getElementById('searchChip').addEventListener('click', function(){
+    S.searched = !S.searched;
+    this.classList.toggle('on', S.searched);
+    clearAll('query changed · selection no longer valid against the result set');
+    log('query.change', (S.searched ? 'search "car" · ' : 'cleared search · ') + total() +
+        ' results ' + (total() > CAP ? '(above cap · escalation refuses)' : '(within cap · escalation succeeds)'));
+  });
+
+  document.getElementById('frameSeg').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if (!b) return;
+    [].forEach.call(this.querySelectorAll('button'), function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    document.body.classList.toggle('frame-released', b.dataset.frame === 'released');
+    log('frame.height', b.dataset.frame === 'released' ? '900px' : '644px measured');
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    S.searched = false;
+    document.getElementById('searchChip').classList.remove('on');
+    clearAll(null); logEl.innerHTML = ''; S.focus = 0; paint();
+    log('reset','sandbox reset');
+  });
+
+  document.getElementById('lbClose').addEventListener('click', function(){ lbOverlay.classList.remove('on'); });
+  lbOverlay.addEventListener('click', function(e){ if (e.target === lbOverlay) lbOverlay.classList.remove('on'); });
+
+  // ============================================================
+  // STATE GALLERY
+  // ============================================================
+  function galCard(name, ext, size, fill, opts){
+    opts = opts || {};
+    return '<div class="asset-card' + (opts.selected ? ' selected' : '') + (opts.locked ? ' locked' : '') + '"' +
+      (opts.focus ? ' style="outline:2px solid var(--primary-default);outline-offset:2px;"' : '') + '>' +
+      '<div class="asset-thumb"><div class="fill ' + fill + '"></div>' +
+        (opts.hover || opts.selected || opts.locked ?
+          '<div class="asset-hover-actions" style="opacity:1;">' +
+            '<span class="cb-hit"><input type="checkbox" class="checkbox-input"' +
+              (opts.selected ? ' checked' : '') + (opts.locked ? ' disabled' : '') + ' onclick="return false;"></span>' +
+            '<span class="overflow-dot">' + DOTS + '</span>' +
+          '</div>' : '') +
+        (opts.badge || '') +
+      '</div>' +
+      '<div class="asset-meta"><div class="asset-name">' + name + '</div>' +
+      '<div class="asset-detail"><span class="filetype-badge">' + ext + '</span> ' + size + '</div></div></div>';
+  }
+
+  var galleryItems = [
+    ['Default','Browse mode. No chrome until hover.', galCard('WC26_Logo_Primary_RGB.svg','SVG','48 KB','f1',{})],
+    ['Hover','Checkbox top-left in a 32px hit target, overflow top-right. Scale §3.15.', galCard('WC26_Trophy_Hero_Studio_01.jpg','JPG','8.2 MB','f2',{hover:true})],
+    ['Selected','2px <code>--primary-default</code> border. One carrier, no fill tint.', galCard('WC26_KV_Master_Layered.psd','PSD','486 MB','f6',{selected:true,hover:true})],
+    ['Keyboard focus','Focus ring is offset from the selection border so both read at once.', galCard('WC26_Ball_Product_Cutout.png','PNG','4.1 MB','f3',{focus:true})],
+    ['Selected + focused','The roving-focus card inside a multi-selection.', galCard('WC26_Stadium_Aerial_Dusk.jpg','JPG','22.1 MB','f5',{selected:true,hover:true,focus:true})],
+    ['With gate badge','Rights state occupies the gate slot bottom-left. Independent of selection.', galCard('WC26_Fanzone_Signage_A0.pdf','PDF','62 MB','f7',{hover:true,badge:'<span class="gate-slot"><span class="status-badge st-expired">Expired</span></span>'})],
+    ['Permission-restricted','Checkbox disabled with reason. Marquee and select-all skip it.', galCard('WC26_Sponsor_Confidential_KV.psd','PSD','214 MB','f8',{locked:true})],
+    ['Selection mode, unselected','In selection mode every card shows its checkbox, selected or not.', galCard('Partner_Toolkit_Cobrand_Lockups.eps','EPS','3.4 MB','f4',{hover:true})]
+  ];
+  document.getElementById('gallery').innerHTML = galleryItems.map(function(g){
+    return '<div class="gal-item">' + g[2] +
+      '<div class="gal-label"><b>' + g[0] + '</b>' + g[1] + '</div></div>';
+  }).join('');
+
+  // ============================================================
+  // BOOT
+  // ============================================================
+  buildGrid();
+  paint();
+  log('ready','48 loaded of 527 · 2 permission-restricted · cap 500');
+
+})();
+</script>
+</body>
+</html>
