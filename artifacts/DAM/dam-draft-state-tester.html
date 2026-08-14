@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DAM · Draft State Tester</title>
+<style>
+  :root {
+    --color-stone-50: #f8f7f4;
+    --color-stone-100: #f2f1ee;
+    --color-stone-200: #e7e6e1;
+    --color-stone-300: #d4d2cb;
+    --color-stone-400: #a8a59b;
+    --color-stone-500: #7d7a6f;
+    --color-stone-600: #525049;
+    --color-stone-700: #3a3a35;
+    --color-stone-800: #2a2a26;
+    --color-stone-900: #1c1c19;
+
+    --color-red-100: #feebe7;
+    --color-red-500: #e54d2e;
+    --color-red-600: #d13415;
+    --color-red-700: #582C29;
+
+    --color-amber-100: #ffefd5;
+    --color-amber-500: #f5a524;
+    --color-amber-600: #985b00;
+    --color-amber-700: #4E350D;
+
+    --color-green-600: #208368;
+    --color-purple-100: #f3ebff;
+    --color-purple-500: #8e4ec6;
+    --color-purple-700: #5B21B6;
+    --color-blue-500: #3b82f6;
+
+    --color-primary-50: #e8f1f5;
+    --color-primary-100: #d3e5ec;
+    --color-primary-500: #0B6E8A;
+    --color-primary-600: #0a5d75;
+    --color-primary-700: #1a3a46;
+
+    --surface-default: #ffffff;
+    --surface-subtle: var(--color-stone-50);
+    --surface-muted: var(--color-stone-100);
+    --surface-hover: var(--color-stone-100);
+    --text-default: var(--color-stone-900);
+    --text-subtle: var(--color-stone-500);
+    --text-hint: var(--color-stone-400);
+    --border-default: var(--color-stone-200);
+    --border-strong: var(--color-stone-300);
+    --primary-default: var(--color-primary-500);
+    --primary-hover: var(--color-primary-600);
+
+    /* Gate badge namespace — PROPOSED. Absorbs the existing rights badge slot
+       and extends it to lifecycle gates. One badge renders at a time. */
+    --gate-draft-bg: var(--color-stone-100);
+    --gate-draft-border: var(--color-stone-400);
+    --gate-draft-fg: var(--color-stone-700);
+    --gate-embargoed-bg: var(--color-amber-100);
+    --gate-embargoed-border: var(--color-amber-500);
+    --gate-embargoed-fg: var(--color-amber-700);
+    --gate-expired-bg: var(--color-red-100);
+    --gate-expired-border: var(--color-red-500);
+    --gate-expired-fg: var(--color-red-700);
+
+    --filetype-badge-bg: rgba(28,28,25,0.62);
+    --filetype-badge-fg: #ffffff;
+
+    /* Overlay ground — bulk bar + its menu share one surface.
+       Same family as the --icon-nav-* dark-surface treatment. */
+    --overlay-ground: #262523;
+    --overlay-fg: #f4f3f0;
+    --overlay-fg-subtle: rgba(255,255,255,0.62);
+    --overlay-fg-disabled: rgba(255,255,255,0.34);
+    --overlay-fg-destructive: #f07a63;
+    --overlay-edge: rgba(255,255,255,0.14);
+    --overlay-hover: rgba(255,255,255,0.09);
+    --overlay-accent: #17817a;
+
+    /* Edit-mode shell — dark chrome, from the editor prototype */
+    --ed-chrome: #161311;
+    --ed-panel: #211c19;
+    --ed-bg: #1c1815;
+    --ed-line: rgba(255,255,255,0.08);
+    --ed-value: rgba(255,255,255,0.92);
+    --ed-label: rgba(255,255,255,0.55);
+    --ed-faint: rgba(255,255,255,0.40);
+    --ed-error: #ec7a6e;
+    --cerulean-dark: #7ec7dd;
+    --primary-tint-dark: rgba(77,181,207,0.16);
+
+    --spacing-1: 4px; --spacing-2: 8px; --spacing-3: 12px; --spacing-4: 16px;
+    --spacing-5: 20px; --spacing-6: 24px; --spacing-7: 32px;
+    --radius-1: 3px; --radius-2: 4px; --radius-3: 6px; --radius-4: 8px;
+
+    --font-family-text: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-family-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --font-size-1: 12px; --font-size-2: 13px; --font-size-3: 14px;
+    --font-weight-medium: 500; --font-weight-semibold: 600;
+
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.06);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: var(--font-family-text); color: var(--text-default);
+    background: var(--surface-muted); font-size: var(--font-size-3); line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3,h4 { margin: 0; font-weight: var(--font-weight-semibold); }
+
+  .layout { display: grid; grid-template-columns: 340px 1fr; min-height: 100vh; }
+
+  .control-panel {
+    background: var(--surface-default); border-right: 1px solid var(--border-default);
+    padding: var(--spacing-5) var(--spacing-6) var(--spacing-7);
+    overflow-y: auto; max-height: 100vh; position: sticky; top: 0;
+  }
+  .panel-header { margin-bottom: var(--spacing-5); padding-bottom: var(--spacing-4); border-bottom: 1px solid var(--border-default); }
+  .panel-header h1 { font-size: 16px; letter-spacing: -0.01em; }
+  .panel-header p { margin: 6px 0 0; font-size: var(--font-size-1); color: var(--text-subtle); line-height: 1.45; }
+
+  .mode-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--surface-muted); padding: 3px; border-radius: var(--radius-3); margin-bottom: var(--spacing-5); }
+  .mode-btn {
+    font-family: inherit; font-size: var(--font-size-1); font-weight: var(--font-weight-semibold);
+    padding: 7px 8px; border: 0; border-radius: var(--radius-2); background: transparent;
+    color: var(--text-subtle); cursor: pointer;
+  }
+  .mode-btn.active { background: var(--surface-default); color: var(--text-default); box-shadow: var(--shadow-sm); }
+
+  .panel-section { margin-bottom: var(--spacing-5); }
+  .section-label {
+    display: flex; align-items: baseline; justify-content: space-between;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
+    font-weight: 700; color: var(--text-subtle); margin-bottom: var(--spacing-2);
+  }
+  .axis-hint { font-size: 10px; letter-spacing: 0; text-transform: none; font-weight: var(--font-weight-medium); color: var(--text-hint); }
+
+  .axis-group { display: flex; flex-direction: column; gap: 2px; }
+  .axis-option {
+    display: flex; align-items: center; gap: var(--spacing-2);
+    padding: 7px var(--spacing-2); border-radius: var(--radius-2);
+    cursor: pointer; font-size: var(--font-size-2); color: var(--text-default);
+    border: 1px solid transparent;
+  }
+  .axis-option:hover { background: var(--surface-hover); }
+  .axis-option.active { background: var(--color-primary-50); border-color: var(--color-primary-100); color: var(--color-primary-700); font-weight: var(--font-weight-medium); }
+  .axis-dot { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--border-strong); flex-shrink: 0; background: var(--surface-default); }
+  .axis-option.active .axis-dot { border-color: var(--primary-default); border-width: 4px; }
+  .axis-label { flex: 1; }
+  .axis-default { font-size: 10px; color: var(--text-hint); }
+
+  .preset-row { display: flex; flex-wrap: wrap; gap: var(--spacing-1); }
+  .preset-btn {
+    font-family: inherit; font-size: var(--font-size-1); font-weight: var(--font-weight-medium);
+    padding: 5px 10px; border-radius: var(--radius-2);
+    border: 1px solid var(--border-strong); background: var(--surface-default);
+    color: var(--text-default); cursor: pointer;
+  }
+  .preset-btn:hover { border-color: var(--primary-default); color: var(--primary-default); }
+  .preset-btn.is-issue { border-color: var(--color-amber-500); color: var(--color-amber-600); }
+
+  .panel-note {
+    font-size: 11px; line-height: 1.5; color: var(--text-subtle);
+    background: var(--surface-subtle); border: 1px solid var(--border-default);
+    border-radius: var(--radius-2); padding: var(--spacing-3);
+  }
+  .panel-note strong { color: var(--text-default); }
+  .panel-note + .panel-note { margin-top: var(--spacing-2); }
+
+  .preview-stage { padding: var(--spacing-6) var(--spacing-7) var(--spacing-7); overflow-x: hidden; }
+  .stage-header { margin-bottom: var(--spacing-4); }
+  .stage-header h2 { font-size: 18px; letter-spacing: -0.01em; }
+  .stage-header p { margin: 6px 0 0; font-size: var(--font-size-2); color: var(--text-subtle); max-width: 78ch; }
+
+  .rule-banner, .issue-banner {
+    display: flex; gap: var(--spacing-3); align-items: flex-start;
+    border-radius: var(--radius-3); padding: var(--spacing-3) var(--spacing-4);
+    font-size: var(--font-size-1); line-height: 1.55; margin-bottom: var(--spacing-4);
+  }
+  .rule-banner { background: var(--color-primary-50); border: 1px solid var(--color-primary-100); color: var(--color-primary-700); }
+  .rule-banner svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+  .rule-banner.cut { background: var(--surface-subtle); border-color: var(--border-strong); color: var(--text-default); }
+  .issue-banner { background: var(--color-amber-100); border: 1px solid var(--color-amber-500); color: var(--color-amber-700); display: none; }
+  .issue-banner.visible { display: flex; }
+  .issue-banner strong { flex-shrink: 0; }
+
+  .stage-grid { display: grid; gap: var(--spacing-4); }
+  .preview-block {
+    background: var(--surface-default); border: 1px solid var(--border-default);
+    border-radius: var(--radius-4); padding: var(--spacing-5);
+  }
+  .preview-block > h3 {
+    font-size: var(--font-size-2); margin-bottom: var(--spacing-4);
+    padding-bottom: var(--spacing-2); border-bottom: 1px solid var(--border-default);
+  }
+  .block-row { display: grid; grid-template-columns: 280px 1fr; gap: var(--spacing-5); align-items: start; }
+  .menu-row { display: grid; grid-template-columns: 280px 1fr; gap: var(--spacing-5); align-items: start; }
+  @media (max-width: 1100px) { .layout { grid-template-columns: 1fr; } .control-panel { position: static; max-height: none; } .block-row, .menu-row { grid-template-columns: 1fr; } }
+
+  /* ===== CARD ===== */
+  .card-frame { display: flex; justify-content: center; padding: var(--spacing-5) 0; background: var(--surface-subtle); border-radius: var(--radius-3); }
+  .asset-card {
+    width: 220px; background: var(--surface-default);
+    border: 2px solid var(--border-default); border-radius: var(--radius-3);
+    overflow: hidden; position: relative; box-shadow: var(--shadow-sm);
+  }
+  .asset-card.is-dimmed .asset-thumb { opacity: 0.5; }
+  .asset-thumb {
+    height: 140px; position: relative;
+    background: linear-gradient(135deg, var(--color-primary-700) 0%, var(--color-primary-500) 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .asset-thumb .glyph { color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 700; letter-spacing: 0.14em; }
+  .asset-card.is-draft .asset-thumb::after {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(45deg, rgba(255,255,255,0.16) 0 6px, transparent 6px 12px);
+    pointer-events: none;
+  }
+  .card-corner {
+    position: absolute; width: 20px; height: 20px; border-radius: var(--radius-1);
+    background: rgba(255,255,255,0.92); display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: var(--color-stone-700);
+  }
+  .corner-tl { top: 8px; left: 8px; }
+  .corner-tr { top: 8px; right: 8px; }
+  .filetype-badge {
+    position: absolute; bottom: 8px; right: 8px;
+    background: var(--filetype-badge-bg); color: var(--filetype-badge-fg);
+    font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+    padding: 2px 6px; border-radius: var(--radius-1);
+  }
+  .gate-badge {
+    position: absolute; bottom: 8px; left: 8px;
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px; border-radius: var(--radius-2);
+    font-size: 11px; font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.04em; border: 1px solid;
+  }
+  .gate-badge svg { width: 11px; height: 11px; }
+  .gate-badge.draft { background: var(--gate-draft-bg); color: var(--gate-draft-fg); border-color: var(--gate-draft-border); }
+  .gate-badge.embargoed { background: var(--gate-embargoed-bg); color: var(--gate-embargoed-fg); border-color: var(--gate-embargoed-border); }
+  .gate-badge.expired { background: var(--gate-expired-bg); color: var(--gate-expired-fg); border-color: var(--gate-expired-border); }
+
+  .card-detail { padding: 10px var(--spacing-3) var(--spacing-3); }
+  .asset-name { font-size: var(--font-size-3); font-weight: var(--font-weight-semibold); line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .card-meta-row { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; gap: var(--spacing-2); }
+  .card-meta { font-size: var(--font-size-1); color: var(--text-subtle); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .state-indicators { display: inline-flex; gap: 5px; flex-shrink: 0; }
+  .state-badge { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 0 2px var(--surface-default), 0 0 0 3px rgba(0,0,0,0.08); position: relative; cursor: help; }
+  .state-badge.archived { background: var(--color-stone-500); }
+  .state-badge.approval { background: var(--color-blue-500); }
+  .state-badge.workflow { background: var(--color-purple-500); }
+  .state-badge[data-tooltip]:hover::after {
+    content: attr(data-tooltip); position: absolute; bottom: 150%; right: -4px;
+    background: var(--color-stone-900); color: #fff; font-size: 10px;
+    padding: 3px 7px; border-radius: var(--radius-1); white-space: nowrap; z-index: 20;
+  }
+
+  /* ===== LIST ===== */
+  .list-wrap { border: 1px solid var(--border-default); border-radius: var(--radius-3); overflow: hidden; }
+  .list-row {
+    display: grid; grid-template-columns: 26px 34px 1fr auto 96px;
+    align-items: center; gap: var(--spacing-3); padding: 9px var(--spacing-3);
+    font-size: var(--font-size-2); border-bottom: 1px solid var(--border-default); background: var(--surface-default);
+  }
+  .list-row:last-child { border-bottom: 0; }
+  .list-row.is-dimmed .list-thumb, .list-row.is-dimmed .list-name { opacity: 0.55; }
+  .list-row.is-context { color: var(--text-subtle); }
+  .list-check { width: 14px; height: 14px; border: 1.5px solid var(--border-strong); border-radius: var(--radius-1); }
+  .list-thumb { width: 34px; height: 26px; border-radius: var(--radius-1); background: linear-gradient(135deg, var(--color-primary-700), var(--color-primary-500)); }
+  .list-row.is-context .list-thumb { background: linear-gradient(135deg, var(--color-stone-400), var(--color-stone-300)); }
+  .list-name { font-weight: var(--font-weight-medium); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .list-state { display: flex; gap: 5px; align-items: center; justify-content: flex-end; flex-wrap: wrap; }
+  .list-date { font-size: var(--font-size-1); color: var(--text-subtle); text-align: right; }
+
+  .gate-pill-mini, .state-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: var(--font-weight-semibold);
+    padding: 2px 7px; border-radius: var(--radius-2); border: 1px solid; white-space: nowrap;
+  }
+  .gate-pill-mini.draft { background: var(--gate-draft-bg); color: var(--gate-draft-fg); border-color: var(--gate-draft-border); }
+  .gate-pill-mini.embargoed { background: var(--gate-embargoed-bg); color: var(--gate-embargoed-fg); border-color: var(--gate-embargoed-border); }
+  .gate-pill-mini.expired { background: var(--gate-expired-bg); color: var(--gate-expired-fg); border-color: var(--gate-expired-border); }
+  .state-chip { font-weight: var(--font-weight-medium); }
+  .chip-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .state-chip.archived { background: var(--color-stone-100); border-color: var(--color-stone-300); color: var(--color-stone-700); }
+  .state-chip.archived .chip-dot { background: var(--color-stone-500); }
+  .state-chip.approval { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+  .state-chip.approval .chip-dot { background: var(--color-blue-500); }
+  .state-chip.workflow { background: var(--color-purple-100); border-color: #d8b4fe; color: var(--color-purple-700); }
+  .state-chip.workflow .chip-dot { background: var(--color-purple-500); }
+
+  /* ===== MENUS ===== */
+  .menu-frame { display: flex; justify-content: center; padding: var(--spacing-4) 0; background: var(--surface-subtle); border-radius: var(--radius-3); }
+  .ctx-menu {
+    width: 264px; background: var(--surface-default);
+    border: 1px solid var(--border-default); border-radius: var(--radius-3);
+    box-shadow: var(--shadow-lg); padding: var(--spacing-1) 0; overflow: hidden;
+  }
+  .ctx-item {
+    display: flex; align-items: flex-start; gap: var(--spacing-3);
+    padding: 7px var(--spacing-3); font-size: var(--font-size-2); cursor: pointer;
+  }
+  .ctx-item:hover:not(.is-disabled) { background: var(--surface-hover); }
+  .ctx-item.is-disabled { cursor: not-allowed; color: var(--text-hint); }
+  .ctx-icon { width: 15px; height: 15px; flex-shrink: 0; margin-top: 2px; opacity: 0.75; }
+  .ctx-icon svg { width: 15px; height: 15px; }
+  .ctx-body { min-width: 0; flex: 1; }
+  .ctx-label { display: block; line-height: 1.35; }
+  .ctx-item.is-primary .ctx-label { font-weight: var(--font-weight-semibold); }
+  .ctx-sub { display: block; font-size: 11px; line-height: 1.35; margin-top: 2px; color: var(--text-subtle); }
+  .ctx-sub.err { color: var(--color-red-600); font-weight: var(--font-weight-medium); }
+  .ctx-sub.warn { color: var(--color-amber-600); font-weight: var(--font-weight-medium); }
+  .ctx-item.destructive .ctx-label { color: var(--color-red-600); }
+  .ctx-sep { height: 1px; background: var(--border-default); margin: var(--spacing-1) 0; }
+  .ctx-count { font-size: 11px; color: var(--text-subtle); font-weight: var(--font-weight-medium); white-space: nowrap; margin-top: 2px; }
+
+  /* Bulk overlay — menu and bar collapse onto ONE dark ground,
+     separated by a 1px edge. Menu opens UPWARD from the bar. */
+  .bulk-overlay {
+    width: 420px; background: var(--overlay-ground); color: var(--overlay-fg);
+    border-radius: var(--radius-3); box-shadow: var(--shadow-lg); overflow: hidden;
+  }
+  .bulk-menu-panel { padding: var(--spacing-2) 0; }
+  .bulk-edge { height: 1px; background: var(--overlay-edge); }
+  .bulk-item {
+    display: flex; align-items: center; gap: var(--spacing-3);
+    padding: 9px var(--spacing-4); font-size: var(--font-size-3); cursor: pointer;
+  }
+  .bulk-item:hover:not(.is-disabled) { background: var(--overlay-hover); }
+  .bulk-item.is-disabled { color: var(--overlay-fg-disabled); cursor: not-allowed; }
+  .bulk-item svg { width: 17px; height: 17px; flex-shrink: 0; }
+  .bulk-item .bi-label { flex: 1; }
+  .bulk-item.destructive { color: var(--overlay-fg-destructive); }
+  .bulk-item.is-primary .bi-label { font-weight: var(--font-weight-semibold); }
+  .bulk-scope {
+    font-size: var(--font-size-1); font-weight: var(--font-weight-medium);
+    color: var(--overlay-fg-subtle); white-space: nowrap;
+  }
+  .bulk-sep { height: 1px; background: var(--overlay-edge); margin: var(--spacing-2) var(--spacing-4); }
+
+  .bulk-bar {
+    display: flex; align-items: center; gap: var(--spacing-3);
+    padding: 10px var(--spacing-3) 10px var(--spacing-2);
+    font-size: var(--font-size-3);
+  }
+  .bulk-pill {
+    display: inline-flex; align-items: center; gap: var(--spacing-2);
+    background: var(--overlay-hover); border-radius: 999px; padding: 3px 4px 3px 3px;
+  }
+  .bulk-pill .bp-count {
+    background: var(--overlay-accent); color: #fff; border-radius: 999px;
+    min-width: 26px; height: 22px; padding: 0 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: var(--font-size-2); font-weight: var(--font-weight-semibold);
+  }
+  .bulk-pill .bp-label { padding-right: var(--spacing-2); }
+  .bulk-x {
+    width: 24px; height: 24px; border-radius: var(--radius-2);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--overlay-fg-subtle); cursor: pointer;
+  }
+  .bulk-x:hover { background: var(--overlay-hover); }
+  .bulk-divider { width: 1px; height: 20px; background: var(--overlay-edge); }
+  .bulk-actions-btn {
+    margin-left: auto; font-family: inherit; font-size: var(--font-size-3);
+    font-weight: var(--font-weight-semibold); background: var(--overlay-hover);
+    border: 1px solid var(--overlay-edge); color: var(--overlay-fg);
+    border-radius: var(--radius-2); padding: 5px 12px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+
+  /* ===== EDIT-MODE SHELL ===== */
+  .ed-shell {
+    background: var(--ed-panel); border: 1px solid var(--ed-line);
+    border-radius: var(--radius-4); overflow: hidden; box-shadow: var(--shadow-md);
+  }
+  .ed-top {
+    display: flex; align-items: center; gap: var(--spacing-3);
+    padding: 14px var(--spacing-5); background: var(--ed-chrome);
+    border-bottom: 1px solid var(--ed-line);
+  }
+  .ed-top .ed-ic { color: var(--cerulean-dark); display: flex; }
+  .ed-top .ed-ic svg { width: 18px; height: 18px; }
+  .ed-top .ed-word { font-size: var(--font-size-3); font-weight: 700; color: var(--ed-value); }
+  .ed-top .ed-dot { color: var(--ed-faint); }
+  .ed-top .ed-fn { font-size: var(--font-size-3); color: var(--ed-label); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .ed-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 10px; font-weight: var(--font-weight-semibold); letter-spacing: 0.06em;
+    padding: 2px 7px; border-radius: var(--radius-2);
+    background: rgba(255,255,255,0.09); color: var(--ed-value);
+    border: 1px solid rgba(255,255,255,0.30);
+  }
+  .ed-pill svg { width: 10px; height: 10px; }
+  .ed-actions { margin-left: auto; display: flex; align-items: center; gap: var(--spacing-2); flex-shrink: 0; }
+  .ed-actions > span { display: flex; align-items: center; gap: var(--spacing-2); }
+  .ed-btn {
+    font-family: inherit; font-size: var(--font-size-3); font-weight: var(--font-weight-semibold);
+    height: 34px; padding: 0 13px; border-radius: var(--radius-2);
+    border: 1px solid transparent; cursor: pointer; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: var(--spacing-2);
+  }
+  .ed-btn.pri { background: var(--primary-default); color: #fff; }
+  .ed-btn.pri:hover { background: #095c74; }
+  .ed-btn.pri.is-disabled { background: rgba(255,255,255,0.09); color: var(--ed-faint); cursor: not-allowed; }
+  .ed-btn.sec { background: transparent; color: var(--cerulean-dark); border-color: var(--cerulean-dark); }
+  .ed-btn.sec:hover { background: var(--primary-tint-dark); }
+  .ed-primary-wrap { position: relative; display: inline-flex; }
+  .ed-tip {
+    position: absolute; top: calc(100% + 7px); right: 0;
+    background: var(--color-stone-900); color: #fff;
+    font-size: 11px; line-height: 1.4; font-weight: var(--font-weight-medium);
+    padding: 5px 9px; border-radius: var(--radius-2); white-space: nowrap;
+    opacity: 0; pointer-events: none; transition: opacity .12s; z-index: 30;
+    box-shadow: var(--shadow-md);
+  }
+  .ed-primary-wrap:hover .ed-tip { opacity: 1; }
+  .ed-tip-hint { font-size: 11px; color: var(--ed-faint); margin-left: var(--spacing-2); align-self: center; }
+
+  .ed-body { display: grid; grid-template-columns: 132px 1fr; min-height: 148px; }
+  .ed-rail { border-right: 1px solid var(--ed-line); padding: var(--spacing-2) 0; background: var(--ed-bg); }
+  .ed-ri { padding: 7px var(--spacing-4); font-size: var(--font-size-2); color: var(--ed-label); position: relative; }
+  .ed-ri.on { color: var(--cerulean-dark); background: var(--primary-tint-dark); font-weight: var(--font-weight-medium); }
+  .ed-ri.on::before { content: ''; position: absolute; left: 0; top: 5px; bottom: 5px; width: 3px; background: var(--cerulean-dark); border-radius: 0 2px 2px 0; }
+  .ed-panel-body { padding: var(--spacing-5); min-width: 0; }
+  .ed-h { font-size: 18px; font-weight: var(--font-weight-semibold); color: var(--ed-value); margin-bottom: var(--spacing-3); }
+  .ed-frow { display: grid; grid-template-columns: 120px 1fr; gap: var(--spacing-3); padding: 7px 0; border-bottom: 1px solid var(--ed-line); font-size: var(--font-size-2); }
+  .ed-frow:last-child { border-bottom: 0; }
+  .ed-fk { color: var(--ed-label); }
+  .ed-fv { color: var(--ed-value); }
+  .ed-fv.missing { color: var(--ed-error); font-weight: var(--font-weight-medium); }
+  .ed-fv.delta { color: var(--ed-faint); font-style: italic; }
+
+  .menu-explainer { font-size: var(--font-size-1); color: var(--text-subtle); line-height: 1.6; }
+  .menu-explainer strong { color: var(--text-default); }
+  .menu-explainer ul { margin: 8px 0 0; padding-left: 18px; }
+  .menu-explainer li { margin-bottom: 5px; }
+
+  /* ===== LIGHTBOX ===== */
+  .lightbox { border: 1px solid var(--border-strong); border-radius: var(--radius-3); overflow: hidden; box-shadow: var(--shadow-md); background: var(--surface-default); }
+  .lightbox-head { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-4); padding: var(--spacing-3) var(--spacing-4); border-bottom: 1px solid var(--border-default); }
+  .lightbox-title { display: flex; align-items: center; gap: var(--spacing-3); min-width: 0; }
+  .lightbox-title-name { font-weight: var(--font-weight-semibold); font-size: var(--font-size-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lightbox-state-chips { display: flex; gap: 5px; }
+  .lh-btn {
+    font-family: inherit; font-size: var(--font-size-2); font-weight: var(--font-weight-semibold);
+    height: 32px; padding: 0 14px; border-radius: var(--radius-2);
+    border: 1px solid transparent; background: var(--primary-default); color: #fff; cursor: pointer; white-space: nowrap;
+  }
+  .lh-btn.is-disabled { background: var(--color-stone-200); color: var(--color-stone-400); cursor: not-allowed; }
+  .lh-btn.secondary { background: transparent; color: var(--primary-default); border-color: var(--primary-default); }
+  .lightbox-body { display: grid; grid-template-columns: 1fr 220px; min-height: 200px; }
+  .lightbox-canvas { background: var(--color-stone-800); display: flex; align-items: center; justify-content: center; color: var(--color-stone-400); font-size: var(--font-size-1); }
+  .lightbox-side { border-left: 1px solid var(--border-default); padding: var(--spacing-4); font-size: var(--font-size-1); }
+  .side-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--text-subtle); margin-bottom: 6px; }
+  .side-row { display: flex; justify-content: space-between; gap: var(--spacing-2); padding: 4px 0; border-bottom: 1px solid var(--border-default); }
+  .side-row:last-child { border-bottom: 0; }
+  .side-row .k { color: var(--text-subtle); }
+  .side-row .v { font-weight: var(--font-weight-medium); text-align: right; }
+  .side-row .v.missing { color: var(--color-red-600); font-weight: var(--font-weight-semibold); }
+
+  .gate-banner { display: flex; align-items: center; gap: var(--spacing-2); padding: 9px var(--spacing-4); font-size: var(--font-size-2); border-bottom: 1px solid; }
+  .gate-banner svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .gate-banner .gb-primary { font-weight: var(--font-weight-semibold); }
+  .gate-banner .gb-sep { opacity: 0.5; }
+  .gate-banner .gb-secondary { opacity: 0.85; }
+  .gate-banner .gb-action { margin-left: auto; font-weight: var(--font-weight-semibold); text-decoration: underline; cursor: pointer; white-space: nowrap; }
+  .gate-banner.draft { background: var(--gate-draft-bg); border-color: var(--gate-draft-border); color: var(--gate-draft-fg); }
+  .gate-banner.embargoed { background: var(--gate-embargoed-bg); border-color: var(--gate-embargoed-border); color: var(--gate-embargoed-fg); }
+  .gate-banner.expired { background: var(--gate-expired-bg); border-color: var(--gate-expired-border); color: var(--gate-expired-fg); }
+
+  /* ===== LADDER ===== */
+  .ladder { display: flex; flex-direction: column; gap: 3px; }
+  .ladder-item { display: grid; grid-template-columns: 22px 116px 1fr; gap: var(--spacing-3); align-items: center; padding: 8px var(--spacing-3); border-radius: var(--radius-2); font-size: var(--font-size-1); border: 1px solid transparent; }
+  .ladder-item .rank { font-family: var(--font-family-mono); font-size: 11px; color: var(--text-hint); }
+  .ladder-item .why { color: var(--text-subtle); }
+  .ladder-item.is-active { background: var(--color-primary-50); border-color: var(--color-primary-100); }
+  .ladder-item.is-active .why { color: var(--color-primary-700); }
+  .ladder-item.is-inactive { opacity: 0.4; }
+  .ladder-item.is-outranked { opacity: 0.75; background: var(--surface-subtle); }
+  .ladder-item.is-outranked .why::after { content: ' · true but outranked, not rendered'; font-style: italic; color: var(--color-amber-600); }
+
+  .behaviour-list { list-style: none; margin: 0; padding: 0; }
+  .behaviour-list li { display: grid; grid-template-columns: 130px 1fr; gap: var(--spacing-3); padding: 7px 0; border-bottom: 1px solid var(--border-default); font-size: var(--font-size-1); }
+  .behaviour-list li:last-child { border-bottom: 0; }
+  .b-key { color: var(--text-subtle); font-weight: var(--font-weight-medium); }
+  .b-allow { color: var(--color-green-600); font-weight: var(--font-weight-semibold); }
+  .b-block { color: var(--color-red-600); font-weight: var(--font-weight-semibold); }
+  .b-warn { color: var(--color-amber-600); font-weight: var(--font-weight-semibold); }
+
+  .token-block { font-family: var(--font-family-mono); font-size: 11px; line-height: 1.75; background: var(--color-stone-900); color: var(--color-stone-300); padding: var(--spacing-4); border-radius: var(--radius-3); overflow-x: auto; }
+  .tk-comment { color: var(--color-stone-500); }
+  .tk-var { color: #7dd3fc; }
+  .tk-val { color: #fcd34d; }
+
+  table.spec { width: 100%; border-collapse: collapse; font-size: var(--font-size-1); }
+  table.spec th, table.spec td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border-default); vertical-align: top; }
+  table.spec th { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-subtle); font-weight: 700; }
+  table.spec td.name { font-weight: var(--font-weight-semibold); white-space: nowrap; }
+  table.spec code { font-family: var(--font-family-mono); font-size: 11px; background: var(--surface-muted); padding: 1px 4px; border-radius: var(--radius-1); }
+
+  /* ===== UPLOAD ===== */
+  /* ===== UPLOAD MODE — same shell as edit, three columns ===== */
+  .ed-body-3 { grid-template-columns: 132px 320px minmax(0, 1fr); }
+  .ed-eyebrow {
+    font-size: var(--font-size-1); font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--ed-faint); margin-bottom: var(--spacing-3);
+  }
+  .ed-stage { border-left: 1px solid var(--ed-line); background: var(--ed-bg); display: flex; flex-direction: column; }
+  .ed-stage-head {
+    display: flex; align-items: center; gap: var(--spacing-3);
+    padding: 12px var(--spacing-4); border-bottom: 1px solid var(--ed-line);
+    font-size: var(--font-size-2); color: var(--ed-label);
+  }
+  .ed-stage-add { margin-left: auto; color: var(--cerulean-dark); font-weight: var(--font-weight-semibold); cursor: pointer; }
+  .ed-cbx {
+    width: 14px; height: 14px; border: 1.5px solid var(--ed-input-bd, rgba(255,255,255,0.40));
+    border-radius: var(--radius-1); flex-shrink: 0; position: relative;
+  }
+  .ed-cbx.on, .ed-cbx.ind { background: var(--primary-default); border-color: var(--primary-default); }
+  .ed-cbx.ind::after { content: ''; position: absolute; left: 2px; right: 2px; top: 5px; height: 2px; background: #fff; }
+  .ed-row {
+    display: grid; grid-template-columns: 14px 40px minmax(0, 1fr) auto;
+    align-items: center; gap: var(--spacing-3);
+    padding: 12px var(--spacing-4); border-bottom: 1px solid var(--ed-line);
+    font-size: var(--font-size-2);
+  }
+  .ed-row:last-child { border-bottom: 0; }
+  .ed-row-thumb { width: 40px; height: 30px; border-radius: var(--radius-1); background: linear-gradient(135deg, var(--color-primary-700), var(--color-primary-500)); }
+  .ed-row-body { min-width: 0; }
+  .ed-row-name { display: block; color: var(--ed-value); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ed-row-sub { display: block; font-size: 11px; line-height: 1.4; color: var(--ed-faint); margin-top: 3px; }
+  .ed-row-sub.err { color: var(--ed-error); }
+  .ed-row-meta { font-size: 11px; color: var(--ed-faint); white-space: nowrap; }
+  .ed-row.dup .ed-row-thumb { background: linear-gradient(135deg, #4a453f, #6b655c); }
+  .ed-dup-chip {
+    display: inline-flex; align-items: center; font-size: 10px; font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.04em; padding: 2px 7px; border-radius: var(--radius-2);
+    background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.30); color: var(--ed-value);
+  }
+  .ed-empty { padding: var(--spacing-6); text-align: center; font-size: var(--font-size-2); color: var(--ed-faint); }
+  .ed-empty strong { display: block; color: var(--ed-value); font-size: var(--font-size-3); margin-bottom: 4px; }
+  .ed-foot {
+    padding: 12px var(--spacing-5); border-top: 1px solid var(--ed-line);
+    background: var(--ed-chrome); font-size: var(--font-size-1); color: var(--ed-label);
+  }
+  .ed-outcome strong { color: var(--ed-value); font-weight: var(--font-weight-semibold); }
+  .ed-field { margin-bottom: var(--spacing-4); }
+  .ed-field label { display: block; font-size: var(--font-size-1); color: var(--ed-label); margin-bottom: 5px; }
+  .ed-field label .req { color: var(--ed-error); margin-left: 2px; }
+  .ed-input {
+    height: 34px; border: 1px solid rgba(255,255,255,0.40); border-radius: var(--radius-2);
+    background: rgba(255,255,255,0.05); padding: 0 10px; display: flex; align-items: center;
+    font-size: var(--font-size-2); color: var(--ed-value);
+  }
+  .ed-input.empty { color: var(--ed-faint); }
+  .ed-input.is-error { border-color: var(--ed-error); }
+  .ed-hint { font-size: 11px; color: var(--ed-faint); margin-top: 4px; }
+  .ed-hint.err { color: var(--ed-error); }
+
+  .landing-strip { display: flex; align-items: center; gap: var(--spacing-3); padding: var(--spacing-3) var(--spacing-4); border-radius: var(--radius-3); background: var(--surface-subtle); border: 1px solid var(--border-default); font-size: var(--font-size-2); margin-top: var(--spacing-4); }
+  .landing-strip .ls-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--text-subtle); }
+
+  .view-pane { display: none; }
+  .view-pane.active { display: block; }
+
+  .callout { border-left: 3px solid var(--primary-default); background: var(--surface-subtle); padding: var(--spacing-3) var(--spacing-4); font-size: var(--font-size-1); line-height: 1.6; color: var(--text-default); border-radius: 0 var(--radius-2) var(--radius-2) 0; }
+  .callout + .callout { margin-top: var(--spacing-2); }
+  .callout strong { font-weight: var(--font-weight-semibold); }
+  .callout.warn { border-left-color: var(--color-amber-500); }
+  .callout.cut { border-left-color: var(--color-stone-400); }
+  .callout code { font-family: var(--font-family-mono); font-size: 11px; background: var(--surface-muted); padding: 1px 4px; border-radius: var(--radius-1); }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <aside class="control-panel">
+    <div class="panel-header">
+      <h1>Draft State</h1>
+      <p>Draft as a status on the asset, in the library UI. Scheduled release is cut: embargo already covers it.</p>
+    </div>
+
+    <div class="mode-switch">
+      <button class="mode-btn active" data-view="library">Library states</button>
+      <button class="mode-btn" data-view="upload">Upload mode</button>
+    </div>
+
+    <div id="controls-library">
+      <div class="panel-section">
+        <div class="section-label"><span>Presets</span></div>
+        <div class="preset-row">
+          <button class="preset-btn" data-preset="draft-ready">Draft · ready</button>
+          <button class="preset-btn" data-preset="draft-untagged">Draft · fields missing</button>
+          <button class="preset-btn" data-preset="active">Active</button>
+          <button class="preset-btn" data-preset="embargoed">Embargoed</button>
+          <button class="preset-btn" data-preset="expired">Expired</button>
+          <button class="preset-btn" data-preset="archived">Archived</button>
+          <button class="preset-btn is-issue" data-preset="collision">Draft + expired</button>
+          <button class="preset-btn is-issue" data-preset="all-states">All states on</button>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label"><span>Lifecycle</span><span class="axis-hint">Single value</span></div>
+        <div class="axis-group" data-axis="lifecycle">
+          <label class="axis-option" data-value="draft"><span class="axis-dot"></span><span class="axis-label">Draft</span></label>
+          <label class="axis-option active" data-value="active"><span class="axis-dot"></span><span class="axis-label">Active</span><span class="axis-default">default</span></label>
+          <label class="axis-option" data-value="archived"><span class="axis-dot"></span><span class="axis-label">Archived</span></label>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label"><span>Rights</span><span class="axis-hint">Date-driven, exists</span></div>
+        <div class="axis-group" data-axis="rights">
+          <label class="axis-option active" data-value="active"><span class="axis-dot"></span><span class="axis-label">Active</span><span class="axis-default">default</span></label>
+          <label class="axis-option" data-value="embargoed"><span class="axis-dot"></span><span class="axis-label">Embargoed</span></label>
+          <label class="axis-option" data-value="expired"><span class="axis-dot"></span><span class="axis-label">Expired</span></label>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label"><span>Metadata</span><span class="axis-hint">Drives validation</span></div>
+        <div class="axis-group" data-axis="metadata">
+          <label class="axis-option active" data-value="complete"><span class="axis-dot"></span><span class="axis-label">Required fields complete</span></label>
+          <label class="axis-option" data-value="incomplete"><span class="axis-dot"></span><span class="axis-label">2 required fields missing</span></label>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label"><span>Approval flow</span><span class="axis-hint">Binary · blue</span></div>
+        <div class="axis-group" data-axis="approval">
+          <label class="axis-option active" data-value="none"><span class="axis-dot"></span><span class="axis-label">Not in approval</span><span class="axis-default">default</span></label>
+          <label class="axis-option" data-value="in-approval"><span class="axis-dot"></span><span class="axis-label">In approval</span></label>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label"><span>Workflows</span><span class="axis-hint">Binary · purple</span></div>
+        <div class="axis-group" data-axis="workflows">
+          <label class="axis-option active" data-value="none"><span class="axis-dot"></span><span class="axis-label">Not on a workflow</span><span class="axis-default">default</span></label>
+          <label class="axis-option" data-value="on-workflow"><span class="axis-dot"></span><span class="axis-label">On a workflow</span></label>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label"><span>Edit mode scope</span><span class="axis-hint">Single reads Metadata</span></div>
+        <div class="axis-group" data-axis="editScope">
+          <label class="axis-option active" data-value="single-draft"><span class="axis-dot"></span><span class="axis-label">Single draft</span></label>
+          <label class="axis-option" data-value="single-published"><span class="axis-dot"></span><span class="axis-label">Single published</span></label>
+          <label class="axis-option" data-value="bulk-drafts"><span class="axis-dot"></span><span class="axis-label">5 drafts</span></label>
+          <label class="axis-option" data-value="bulk-mixed"><span class="axis-dot"></span><span class="axis-label">3 drafts + 2 published</span></label>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label"><span>Staged edits</span><span class="axis-hint">Drives the outcome line</span></div>
+        <div class="axis-group" data-axis="editDirty">
+          <label class="axis-option active" data-value="dirty"><span class="axis-dot"></span><span class="axis-label">Unsaved changes in the panel</span></label>
+          <label class="axis-option" data-value="clean"><span class="axis-dot"></span><span class="axis-label">No changes staged</span></label>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label"><span>Bulk selection</span><span class="axis-hint">Drives Actions menu</span></div>
+        <div class="axis-group" data-axis="bulkMix">
+          <label class="axis-option active" data-value="all-ready"><span class="axis-dot"></span><span class="axis-label">5 drafts, all ready</span></label>
+          <label class="axis-option" data-value="partial"><span class="axis-dot"></span><span class="axis-label">5 drafts, 2 incomplete</span></label>
+          <label class="axis-option" data-value="mixed"><span class="axis-dot"></span><span class="axis-label">3 drafts + 2 published</span></label>
+          <label class="axis-option" data-value="none"><span class="axis-dot"></span><span class="axis-label">5 published, no drafts</span></label>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label"><span>Viewing as</span><span class="axis-hint">Not asset state</span></div>
+        <div class="axis-group" data-axis="viewer">
+          <label class="axis-option active" data-value="owner"><span class="axis-dot"></span><span class="axis-label">Owner (uploader)</span></label>
+          <label class="axis-option" data-value="admin"><span class="axis-dot"></span><span class="axis-label">Library admin</span></label>
+          <label class="axis-option" data-value="other"><span class="axis-dot"></span><span class="axis-label">Another contributor</span></label>
+        </div>
+      </div>
+
+      <div class="panel-note">
+        <strong>Draft is not a place.</strong> It is a value on the lifecycle axis, rendered in the library UI. Upload mode has no residency.
+      </div>
+      <div class="panel-note">
+        <strong>Scheduled release is cut.</strong> Embargo Date already does this job and shipped in SCR-71 / SCR-21 / SCR-119. A second date field would have duplicated it.
+      </div>
+    </div>
+
+    <div id="controls-upload" style="display:none">
+      <div class="panel-section">
+        <div class="section-label"><span>Files in queue</span></div>
+        <div class="axis-group" data-axis="files">
+          <label class="axis-option" data-value="0"><span class="axis-dot"></span><span class="axis-label">None · empty state</span></label>
+          <label class="axis-option" data-value="1"><span class="axis-dot"></span><span class="axis-label">1 file</span></label>
+          <label class="axis-option active" data-value="3"><span class="axis-dot"></span><span class="axis-label">3 files</span></label>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label"><span>Required metadata</span><span class="axis-hint">Rights owner, usage</span></div>
+        <div class="axis-group" data-axis="uMeta">
+          <label class="axis-option active" data-value="complete"><span class="axis-dot"></span><span class="axis-label">Complete</span></label>
+          <label class="axis-option" data-value="incomplete"><span class="axis-dot"></span><span class="axis-label">Incomplete</span></label>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label"><span>Uploader permission</span></div>
+        <div class="axis-group" data-axis="uPerm">
+          <label class="axis-option active" data-value="publish"><span class="axis-dot"></span><span class="axis-label">Can add to library</span></label>
+          <label class="axis-option" data-value="approval"><span class="axis-dot"></span><span class="axis-label">Upload requires approval</span></label>
+        </div>
+      </div>
+
+      <div class="panel-note">
+        <strong>Draft suppresses validation.</strong> Required fields block <em>Upload to library</em>. They never block <em>Save as draft</em>, or holding an untagged file would be impossible.
+      </div>
+      <div class="panel-note">
+        <strong>No release control here.</strong> Embargo Date is set in the Rights panel, where it already lives, and it is reachable in bulk edit via the shared rail (SCR-209).
+      </div>
+    </div>
+  </aside>
+
+  <main class="preview-stage">
+
+    <!-- ===== LIBRARY ===== -->
+    <div class="view-pane active" id="view-library">
+      <div class="stage-header">
+        <h2>Library states</h2>
+        <p>Draft joins the lifecycle axis. It is a gate on delivery, so it renders in the bottom-left thumb slot alongside the rights gates, under one precedence ladder. Approval and workflow stay in the detail-row indicator slot as context, not gates.</p>
+      </div>
+
+      <div class="rule-banner cut">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        <div>
+          <strong>Cut from this revision: scheduled release and <code style="font-family:var(--font-family-mono)">available_from</code>.</strong>
+          Timed release already ships as Embargo Date, with the daily state job, the card badge and the lift-date copy all built. A second date field would have duplicated a live feature. The one real gap is a <em>hidden-until-release</em> tier, which is a fourth value on the existing pre-release enum in SCR-177, not a new field. Cycle 7.
+        </div>
+      </div>
+
+      <div class="rule-banner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        <div>
+          <strong>Slot map change:</strong> the bottom-left thumb slot is renamed from <em>rights badge</em> to <strong>gate badge</strong>. It answers one question, "can this asset be delivered, and if not why", and now carries draft alongside expired and embargoed. One badge at a time by precedence. The detail-row indicator slot is unchanged.
+        </div>
+      </div>
+
+      <div class="issue-banner" id="issue-banner">
+        <strong>Precedence applied</strong>
+        <span id="issue-text"></span>
+      </div>
+
+      <div class="stage-grid">
+
+        <div class="preview-block">
+          <h3>Card and list row</h3>
+          <div class="block-row">
+            <div class="card-frame">
+              <div class="asset-card" id="asset-card">
+                <div class="asset-thumb">
+                  <span class="glyph">FWC26</span>
+                  <span class="card-corner corner-tl">☐</span>
+                  <span class="card-corner corner-tr">⋯</span>
+                  <div id="gate-slot"></div>
+                  <span class="filetype-badge">SVG</span>
+                </div>
+                <div class="card-detail">
+                  <div class="asset-name">FIFA_WC2026_Logo_Primary_RGB.svg</div>
+                  <div class="card-meta-row">
+                    <span class="card-meta" id="card-meta">Uploaded 12 Aug 2026</span>
+                    <span class="state-indicators" id="card-indicators"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="list-wrap">
+                <div class="list-row" id="list-row">
+                  <span class="list-check"></span>
+                  <span class="list-thumb"></span>
+                  <span class="list-name">FIFA_WC2026_Logo_Primary_RGB.svg</span>
+                  <span class="list-state" id="list-state"></span>
+                  <span class="list-date" id="list-date">12 Aug 2026</span>
+                </div>
+                <div class="list-row is-context">
+                  <span class="list-check"></span><span class="list-thumb"></span>
+                  <span class="list-name">FWC26_Mascot_Lockup_Horizontal_CMYK.ai</span>
+                  <span class="list-state"></span><span class="list-date">11 Aug 2026</span>
+                </div>
+                <div class="list-row is-context">
+                  <span class="list-check"></span><span class="list-thumb"></span>
+                  <span class="list-name">FWC26_Stadium_Hero_Wide_3840.jpg</span>
+                  <span class="list-state"></span><span class="list-date">09 Aug 2026</span>
+                </div>
+              </div>
+              <div class="landing-strip">
+                <span class="ls-label">Visible to</span>
+                <span id="visibility-text"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-block">
+          <h3>Edit mode shell <span style="font-weight:400;color:var(--text-subtle)">· action slot, from the design contract</span></h3>
+          <p style="margin:0 0 14px;font-size:12px;color:var(--text-subtle)">§1 Panel header: "Global Save stays in the shell, not here." Two slots, exactly one Primary. Nothing is added for drafts. <em>Download</em> has nothing to do on a draft, so it vacates the Secondary slot and Save moves into it. Unavailable reasons follow the disabled-button precedent: tooltip on the control, error state on the fields, never a caption.</p>
+          <div class="ed-shell">
+            <div class="ed-top">
+              <span class="ed-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+              <span class="ed-word">Editing</span><span class="ed-dot">•</span>
+              <span class="ed-fn" id="ed-fn">FWC26_Sponsor_Board_Template_v3.psd</span>
+              <span id="ed-pill-slot"></span>
+              <span class="ed-actions" id="ed-actions"></span>
+            </div>
+            <div class="ed-body">
+              <nav class="ed-rail">
+                <div class="ed-ri">Details</div>
+                <div class="ed-ri on">Attributes</div>
+                <div class="ed-ri">Tags</div>
+                <div class="ed-ri">Rights</div>
+                <div class="ed-ri">Access</div>
+              </nav>
+              <div class="ed-panel-body">
+                <div class="ed-h">Attributes</div>
+                <div id="ed-fields"></div>
+              </div>
+            </div>
+            <div class="ed-foot">
+              <span class="ed-outcome" id="ed-outcome"></span>
+            </div>
+          </div>
+          <div class="menu-explainer" style="margin-top:14px" id="ed-explain"></div>
+        </div>
+
+        <div class="preview-block">
+          <h3>Card ⋯ menu</h3>
+          <div class="menu-row">
+            <div class="menu-frame"><div class="ctx-menu" id="ctx-menu"></div></div>
+            <div class="menu-explainer" id="ctx-explain"></div>
+          </div>
+        </div>
+
+        <div class="preview-block">
+          <h3>Bulk action bar and Actions menu <span style="font-weight:400;color:var(--text-subtle)">· corrected to the built component</span></h3>
+          <div class="menu-row">
+            <div>
+              <div class="menu-frame">
+                <div class="bulk-overlay">
+                  <div class="bulk-menu-panel" id="bulk-menu"></div>
+                  <div class="bulk-edge"></div>
+                  <div class="bulk-bar">
+                    <span class="bulk-pill">
+                      <span class="bp-count" id="bulk-count">5</span>
+                      <span class="bp-label">files selected</span>
+                    </span>
+                    <span class="bulk-x">✕</span>
+                    <span class="bulk-divider"></span>
+                    <button class="bulk-actions-btn">Actions <span style="font-size:10px">▾</span></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="menu-explainer" id="bulk-explain"></div>
+          </div>
+        </div>
+
+        <div class="preview-block">
+          <h3>Lightbox</h3>
+          <div class="lightbox">
+            <div class="lightbox-head">
+              <div class="lightbox-title">
+                <span class="lightbox-title-name">FIFA_WC2026_Logo_Primary_RGB.svg</span>
+                <span class="lightbox-state-chips" id="lb-chips"></span>
+              </div>
+              <div style="display:flex;gap:8px" id="lb-actions"></div>
+            </div>
+            <div id="lb-banner-slot"></div>
+            <div class="lightbox-body">
+              <div class="lightbox-canvas">Asset preview</div>
+              <aside class="lightbox-side">
+                <div class="side-label">Attributes</div>
+                <div class="side-row"><span class="k">Campaign</span><span class="v">FWC26 Brand</span></div>
+                <div class="side-row"><span class="k">Rights owner</span><span class="v" id="attr-owner">Global Brand</span></div>
+                <div class="side-row"><span class="k">Usage rights</span><span class="v" id="attr-usage">Worldwide</span></div>
+                <div class="side-row"><span class="k">Embargo date</span><span class="v" id="attr-embargo">Not set</span></div>
+              </aside>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-block">
+          <h3>Gate slot precedence</h3>
+          <p style="margin:0 0 12px;font-size:12px;color:var(--text-subtle)">One badge in the slot. The highest applicable gate wins, because it is the first thing that stops delivery. Everything below it is true but not actionable yet.</p>
+          <div class="ladder" id="ladder"></div>
+        </div>
+
+        <div class="preview-block">
+          <h3>System behaviour</h3>
+          <ul class="behaviour-list" id="behaviour-list"></ul>
+        </div>
+
+        <div class="preview-block">
+          <h3>Data model</h3>
+          <table class="spec">
+            <thead><tr><th>Field</th><th>Values</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td class="name"><code>status</code></td><td><code>draft</code> · <code>published</code> · <code>archived</code></td><td>The only net-new field. Explicit intent, set by the user. Default on upload depends on which footer action was used.</td></tr>
+              <tr><td class="name"><code>embargo_date</code></td><td>datetime, nullable</td><td><strong>Exists.</strong> Carries timed release. Daily job flips state on the date. Not evaluated while <code>status = draft</code>.</td></tr>
+              <tr><td class="name"><code>expiry_date</code></td><td>datetime, nullable</td><td><strong>Exists.</strong> Unchanged by this work.</td></tr>
+              <tr><td class="name"><code>pre_release_access</code></td><td><code>none</code> · <code>preview</code> · <code>grantable</code></td><td><strong>SCR-177, backlog.</strong> Add a fourth value <code>hidden</code> for hidden-until-release. Cycle 7.</td></tr>
+              <tr><td class="name">lifecycle <em>(derived)</em></td><td><code>draft</code> · <code>active</code> · <code>archived</code></td><td>Display value. Never stored.</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:14px" class="callout warn">
+            <strong>Open for build:</strong> does an admin need a global drafts view across all contributors, or is <code>createdby = me</code> sufficient? Aprimo scopes to self; Widen exposes an admin queue. At FIFA contributor volume, self-only will strand assets. Governance call for Phil, not a UX one.
+          </div>
+          <div class="callout">
+            <strong>The transition is one-way.</strong> There is no route back from published to draft. Once in the library an asset may have been shared, collected or downloaded, and returning it to draft would retroactively hide something people have already seen. Neither Aprimo nor Brandfolder offers it. Archive is the existing exit and it is the correct one. State this in the ticket, because it is the first thing QA will ask.
+          </div>
+        </div>
+
+        <div class="preview-block">
+          <h3>Tokens in use</h3>
+          <div class="token-block" id="token-block"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== UPLOAD ===== -->
+    <div class="view-pane" id="view-upload">
+      <div class="stage-header">
+        <h2>Upload mode</h2>
+        <p>Upload is not a modal. It is the same dark shell as edit and bulk edit, at a third density: rail, panel, and the file list in the stage column. SCR-209 brought the rails into upload and bulk edit for exactly this reason. Two commit paths, one Primary.</p>
+      </div>
+
+      <div class="rule-banner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        <div>
+          <strong>One shell, three modes.</strong> The contract holds the rail as "one component shown at two densities, never two rails. Density follows context, not mode-as-a-flag." Upload is a context, not a flag: same chrome, same rail set, same field-row kit, same action slot. Only the stage column differs, carrying the file list instead of a canvas. If it looks like a separate component in build, that is drift.
+        </div>
+      </div>
+
+      <div class="rule-banner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        <div>
+          <strong>Button tiers:</strong> <em>Upload to library</em> is Primary, it advances the workflow and creates the published record. <em>Save as draft</em> is Secondary. Scale's five tiers have no tier for an alternative commit, and Secondary is the closest fit without introducing a second Primary in one context. Flagged as a Scale evolution candidate, not a silent deviation.
+        </div>
+      </div>
+
+      <div class="ed-shell">
+        <div class="ed-top">
+          <span class="ed-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13"/><path d="m7 8 5-5 5 5"/><path d="M4 21h16"/></svg></span>
+          <span class="ed-word">Uploading</span><span class="ed-dot">&#8226;</span>
+          <span class="ed-fn" id="um-scope">3 files &#183; FWC26 Brand</span>
+          <span class="ed-actions">
+            <span id="um-actions"></span>
+          </span>
+        </div>
+        <div class="ed-body ed-body-3">
+          <nav class="ed-rail">
+            <div class="ed-ri">Details</div>
+            <div class="ed-ri on">Attributes</div>
+            <div class="ed-ri">Tags</div>
+            <div class="ed-ri">Rights</div>
+            <div class="ed-ri">Access</div>
+          </nav>
+          <div class="ed-panel-body">
+            <div class="ed-h">Attributes</div>
+            <div class="ed-eyebrow" id="um-scope-label">Applying to 3 files</div>
+            <div id="um-form"></div>
+          </div>
+          <div class="ed-stage">
+            <div class="ed-stage-head">
+              <span class="ed-cbx on"></span>
+              <span id="um-list-head">3 files</span>
+              <span class="ed-stage-add">+ Add files</span>
+            </div>
+            <div id="um-queue"></div>
+            <div id="um-empty" class="ed-empty" style="display:none">
+              <strong>Drop files here</strong>
+              or browse to select. Up to 250 files per upload.
+            </div>
+          </div>
+        </div>
+        <div class="ed-foot">
+          <span class="ed-outcome" id="um-outcome"></span>
+        </div>
+      </div>
+
+      <div class="stage-grid" style="margin-top:20px">
+        <div class="preview-block">
+          <h3>What lands in the library</h3>
+          <div class="landing-strip" id="um-landing" style="margin-top:0"></div>
+          <div style="margin-top:14px" class="callout">
+            <strong>Copy discipline.</strong> The action names what happens and keeps its name downstream. <em>Upload to library</em> produces "3 assets added to the library". <em>Save as draft</em> produces "3 drafts saved". The card menu uses the same verb, <em>Add to library</em>. No infrastructure vocabulary anywhere in the flow, and no "Complete Upload", which describes a step that already happened.
+          </div>
+          <div class="callout cut">
+            <strong>Not called Publish.</strong> The DAM has no publish concept in the rights model, the download surfaces or the lightbox. Publish imports a CMS mental model where content goes live to an audience. The asset is already in the library, it is just gated. Aprimo's verb for the same transition is "make available", which is close, but "library" is the noun already in the nav.
+          </div>
+        </div>
+
+        <div class="preview-block">
+          <h3>Action slot matrix</h3>
+          <table class="spec">
+            <thead><tr><th>Condition</th><th>Primary</th><th>Secondary</th><th>Rule</th></tr></thead>
+            <tbody>
+              <tr><td class="name">Queue empty</td><td>Upload to library · disabled</td><td>Save as draft · disabled</td><td>Disable-don't-hide. Both stay visible so the slot does not reflow when files arrive. Reason on hover, matching the edit shell.</td></tr>
+              <tr><td class="name">Required fields missing</td><td>Upload to library · disabled + tooltip</td><td>Save as draft · enabled</td><td>Draft suppresses validation. This is the whole point of the feature.</td></tr>
+              <tr><td class="name">Fields complete</td><td>Upload to library</td><td>Save as draft</td><td>Both paths open. Primary is the default and carries the return key.</td></tr>
+              <tr><td class="name">Uploader needs approval</td><td>Submit for approval</td><td>Save as draft</td><td>Permission-locked leaf action with a live recovery path, so it swaps rather than hides.</td></tr>
+              <tr><td class="name">Row is a duplicate</td><td>unchanged</td><td>unchanged</td><td>SCR-168 / SCR-170: "Using existing" rows keep their checkbox enabled, because Remove from batch is still valid. Drafts change nothing here.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="preview-block">
+          <h3>Where this leaves upload mode</h3>
+          <div class="callout">
+            <strong>Upload mode gains one control and loses its residency claim.</strong> It stays a transient surface with no list, no filters, no persistence. Nothing lives there. The moment a file commits by either path it is an asset in the library, findable through normal search and filter, editable in the normal detail panel, and subject to the normal bulk actions.
+          </div>
+          <div class="callout">
+            <strong>The draft state already exists in production.</strong> Files are written to storage before the current Complete Upload action fires. This work names a state that has been silently live since launch and gives the user a way to see and manage it, rather than adding a new one.
+          </div>
+          <div class="callout warn">
+            <strong>SCR-230 is written against the rejected model.</strong> Its scope persists "an in-progress upload batch as a draft (files + metadata + tag state + destination)", which is a batch object with its own storage and expiry. Under status-on-the-asset, four of its five open questions stop existing. Rewrite before Dylan scopes against it.
+          </div>
+          <div class="callout cut">
+            <strong>Not in scope:</strong> abandoned-draft expiry. No competitor auto-deletes drafts and the failure mode is severe. If storage pressure becomes real, surface age in the drafts view and let a human decide.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var I = {
+    clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+    alert: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+    pencil: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+    library: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v13h18V7"/><path d="M3 7 5 3h14l2 4Z"/><path d="M9 12h6"/></svg>',
+    download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg>',
+    sliders: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="8" cy="18" r="2"/></svg>',
+    key: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4"/><path d="m10.5 12.5 8-8"/><path d="m16 7 2 2"/></svg>',
+    folder: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h6l2 2h10v10H3Z"/></svg>',
+    queue: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 6h10M11 12h10M11 18h10"/><path d="m3 6 1.5 1.5L7.5 4"/><path d="m3 12 1.5 1.5L7.5 10"/><path d="m3 18 1.5 1.5L7.5 16"/></svg>',
+    share: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>',
+    archive: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="4"/><path d="M5 8v12h14V8"/><path d="M10 12h4"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7v13h12V7"/></svg>'
+  };
+
+  var state = {
+    lifecycle: 'active', rights: 'active', metadata: 'complete',
+    approval: 'none', workflows: 'none', viewer: 'owner',
+    bulkMix: 'all-ready', editScope: 'single-draft', editDirty: 'dirty',
+    files: '3', uMeta: 'complete', uPerm: 'publish'
+  };
+
+  var PRESETS = {
+    'draft-ready':    { lifecycle:'draft',    rights:'active',    metadata:'complete',   approval:'none', workflows:'none' },
+    'draft-untagged': { lifecycle:'draft',    rights:'active',    metadata:'incomplete', approval:'none', workflows:'none' },
+    'active':         { lifecycle:'active',   rights:'active',    metadata:'complete',   approval:'none', workflows:'none' },
+    'embargoed':      { lifecycle:'active',   rights:'embargoed', metadata:'complete',   approval:'none', workflows:'none' },
+    'expired':        { lifecycle:'active',   rights:'expired',   metadata:'complete',   approval:'none', workflows:'none' },
+    'archived':       { lifecycle:'archived', rights:'active',    metadata:'complete',   approval:'none', workflows:'none' },
+    'collision':      { lifecycle:'draft',    rights:'expired',   metadata:'incomplete', approval:'none', workflows:'none' },
+    'all-states':     { lifecycle:'draft',    rights:'embargoed', metadata:'incomplete', approval:'in-approval', workflows:'on-workflow' }
+  };
+
+  var LADDER = [
+    { key:'draft',     label:'Draft',     why:'Nothing downstream is evaluated. The asset is not deliverable to anyone but its owner.' },
+    { key:'expired',   label:'Expired',   why:'Licence has lapsed. Terminal, so it outranks embargo.' },
+    { key:'embargoed', label:'Embargoed', why:'Embargo date is in the future. Temporal, it resolves on its own.' },
+    { key:'none',      label:'No gate',   why:'Deliverable. Slot renders empty.' }
+  ];
+
+  function gate() {
+    if (state.lifecycle === 'draft') return 'draft';
+    if (state.rights === 'expired') return 'expired';
+    if (state.rights === 'embargoed') return 'embargoed';
+    return 'none';
+  }
+
+  var COPY = {
+    draft:     { pill:'DRAFT',     icon:I.pencil, primary:'Draft, visible only to you',     secondary:'Complete the required fields to add it to the library.', action:'Add to library' },
+    expired:   { pill:'EXPIRED',   icon:I.alert,  primary:'Licence expired on 04 Jun 2026', secondary:'Downloads are not available. Request access to escalate.', action:'Request access' },
+    embargoed: { pill:'EMBARGOED', icon:I.clock,  primary:'Embargoed until 15 Jul 2026',    secondary:'Downloads open automatically on the lift date.', action:'Change date' }
+  };
+
+  // ===== CARD MENU =====
+  function item(o) {
+    return '<div class="ctx-item' + (o.disabled ? ' is-disabled' : '') +
+      (o.primary ? ' is-primary' : '') + (o.destructive ? ' destructive' : '') + '">' +
+      '<span class="ctx-icon">' + (o.icon || '') + '</span>' +
+      '<span class="ctx-body"><span class="ctx-label">' + o.label + '</span>' +
+      (o.sub ? '<span class="ctx-sub ' + (o.subTone || '') + '">' + o.sub + '</span>' : '') +
+      '</span>' + (o.count ? '<span class="ctx-count">' + o.count + '</span>' : '') + '</div>';
+  }
+  var SEP = '<div class="ctx-sep"></div>';
+
+  function renderCardMenu() {
+    var g = gate(), h = '', ex = '';
+    var incomplete = state.metadata === 'incomplete';
+
+    if (state.lifecycle === 'draft') {
+      h += item({
+        label: incomplete ? 'Add to library…' : 'Add to library',
+        icon: I.library, primary: true,
+        sub: incomplete ? '2 required fields missing' : null,
+        subTone: 'err'
+      });
+      h += SEP;
+      h += item({ label: 'Edit', icon: I.pencil });
+      h += item({ label: 'Add to collection', icon: I.folder });
+      h += SEP;
+      h += item({ label: 'Delete draft', icon: I.trash, destructive: true });
+
+      ex = '<strong>The download group is gone.</strong> A draft blocks delivery entirely, so there is nothing to download, nothing to configure and nothing to request. That empties the top of the menu, and <em>Add to library</em> takes the first slot as the only meaningful action for the state. Not a special case: the same rule makes <em>Request access…</em> primary on an expired asset.' +
+        '<ul>' +
+        (incomplete
+          ? '<li><strong>Add to library…</strong> carries the ellipsis because a dialog follows. It opens edit scoped to the missing fields.</li><li>Disabling it instead would tell the user something is wrong and then make them go find out what. The ellipsis puts the fix one click away.</li>'
+          : '<li><strong>Add to library</strong> is a bare verb, so it acts immediately. No confirm dialog: the metadata check is the gate.</li><li>With fields missing the same item becomes <em>Add to library…</em> and opens edit instead. Same slot, state-adaptive, exactly like Download / Download as…</li>') +
+        '<li><strong>Delete draft</strong>, not <em>Delete</em>. Deleting a draft destroys nothing anyone else has seen, and the label should say so.</li>' +
+        '<li>No <em>Share</em>. A draft has no shareable form.</li>' +
+        '</ul>';
+    } else {
+      if (g === 'none') {
+        h += item({ label: 'Download', icon: I.download });
+        h += item({ label: 'Download as…', icon: I.sliders });
+      } else if (g === 'embargoed') {
+        h += item({ label: 'Download', icon: I.download, disabled: true, sub: 'Embargoed until 15 Jul 2026', subTone: 'warn' });
+      } else if (g === 'expired') {
+        h += item({ label: 'Download', icon: I.download, disabled: true, sub: 'Licence expired', subTone: 'err' });
+        h += item({ label: 'Request access…', icon: I.key, primary: true });
+      }
+      h += SEP;
+      h += item({ label: 'Edit', icon: I.pencil });
+      h += item({ label: 'Add to collection', icon: I.folder });
+      h += item({ label: 'Share', icon: I.share });
+      h += SEP;
+      h += item({ label: state.lifecycle === 'archived' ? 'Restore from archive' : 'Archive', icon: I.archive });
+      h += item({ label: 'Delete', icon: I.trash, destructive: true });
+
+      ex = '<strong>Unchanged from SCR-179.</strong> The download group is the settled state-adaptive model and this work does not touch it.' +
+        '<ul>' +
+        (g === 'none' ? '<li>Two sibling items. <em>Download</em> acts immediately with the best version rights allow; <em>Download as…</em> opens the configurator.</li>' : '') +
+        (g === 'embargoed' ? '<li>Single disabled <em>Download</em> with the lift date. No second slot: embargo is temporal, so there is nothing to request and nothing to configure. A dead <em>Download as…</em> here would be pure tease.</li>' : '') +
+        (g === 'expired' ? '<li><em>Download</em> disabled with the state explainer, second slot becomes <em>Request access…</em>, the live recovery. Dead <em>Download as…</em> is hidden, not shown disabled.</li>' : '') +
+        '<li>No <em>Add to library</em> item. There is no route back to draft, so the transition appears in one direction only.</li>' +
+        (state.lifecycle === 'archived' ? '<li>Archive swaps to <em>Restore from archive</em>. Archive is the exit route for a published asset, and it is reversible where the draft transition is not.</li>' : '') +
+        '</ul>';
+    }
+    document.getElementById('ctx-menu').innerHTML = h;
+    document.getElementById('ctx-explain').innerHTML = ex;
+  }
+
+  // ===== EDIT MODE SHELL =====
+  // Single-asset scopes derive readiness from the Metadata axis — one source of
+  // truth for one property. Bulk scopes carry a fixed mix, because a single
+  // complete/incomplete toggle cannot express a partially-eligible selection.
+  var EDIT = {
+    'single-draft':     { label:'FWC26_Sponsor_Board_Template_v3.psd', draft:true,  bulk:false, total:1, drafts:1 },
+    'single-published': { label:'FIFA_WC2026_Logo_Primary_RGB.svg',    draft:false, bulk:false, total:1, drafts:0 },
+    'bulk-drafts':      { label:'5 assets', draft:true,  bulk:true, total:5, drafts:5, ready:3 },
+    'bulk-mixed':       { label:'5 assets', draft:true,  bulk:true, total:5, drafts:3, ready:3 }
+  };
+
+  function renderEditShell() {
+    var e = EDIT[state.editScope];
+    if (!e.bulk) e.ready = (state.metadata === 'complete') ? e.drafts : 0;
+    document.getElementById('ed-fn').textContent = e.label;
+
+    document.getElementById('ed-pill-slot').innerHTML = !e.draft ? '' :
+      '<span class="ed-pill">' + I.pencil + (e.bulk ? (e.drafts + ' DRAFT' + (e.drafts === 1 ? '' : 'S')) : 'DRAFT') + '</span>';
+
+    var a = '', tip = '';
+    if (!e.draft) {
+      a = '<button class="ed-btn sec">Download</button>' +
+          '<div class="ed-primary-wrap"><button class="ed-btn pri">Save</button></div>';
+    } else {
+      var blocked = e.ready === 0;
+      var lbl = 'Add to library';
+      if (blocked) tip = e.bulk
+        ? 'No asset in this selection has its required fields'
+        : 'Licence owner and licensed channels are required';
+      a = '<button class="ed-btn sec">Save</button>' +
+          '<div class="ed-primary-wrap"><button class="ed-btn pri' + (blocked ? ' is-disabled' : '') + '">' + lbl + '</button>' +
+          (tip ? '<span class="ed-tip">' + tip + '</span>' : '') + '</div>' +
+          (tip ? '<span class="ed-tip-hint">hover</span>' : '');
+    }
+    document.getElementById('ed-actions').innerHTML = a;
+
+    var f = '';
+    if (e.bulk) {
+      f += frow('Campaign', 'FWC26 Brand', '');
+      f += frow('Licence type', 'Mixed across 5 assets', 'delta');
+      f += frow('Rights owner', 'Global Brand', '');
+      f += frow('Usage rights', 'No change', 'delta');
+    } else if (e.draft) {
+      f += frow('Campaign', 'FWC26 Brand', '');
+      f += frow('Licence type', 'Rights-Managed', '');
+      f += frow('Licence owner', e.ready ? 'Getty Images' : 'Not set', e.ready ? '' : 'missing');
+      f += frow('Licensed channels', e.ready ? 'Social, Web, Print' : 'Not set', e.ready ? '' : 'missing');
+    } else {
+      f += frow('Campaign', 'FWC26 Brand', '');
+      f += frow('Licence type', 'Royalty-Free', '');
+      f += frow('Rights owner', 'Global Brand', '');
+      f += frow('Usage rights', 'Worldwide, all channels', '');
+    }
+    document.getElementById('ed-fields').innerHTML = f;
+
+    // Outcome line — the button carries the verb, this carries the scope.
+    // Dirty-aware: patching nothing to an already-complete asset is a no-op,
+    // so "applies to N" is only stated when there is something to apply.
+    var dirty = state.editDirty === 'dirty';
+    var o = '';
+    if (!e.draft) {
+      o = dirty ? '<strong>Unsaved changes</strong> to this asset.' : 'No changes staged.';
+    } else if (!e.bulk) {
+      o = e.ready
+        ? (dirty ? '<strong>Unsaved changes.</strong> Add to library saves them and moves this asset into the library.'
+                 : 'This asset will be added to the library.')
+        : 'Licence owner and licensed channels are required before this asset can leave draft.';
+    } else {
+      var behind = e.total - e.ready;
+      var tail = (state.editScope === 'bulk-mixed')
+        ? (behind + ' are already in the library and stay as they are.')
+        : (behind + ' are missing required fields and stay as drafts.');
+      o = (dirty ? '<strong>Changes apply to ' + e.total + ' assets.</strong> ' : '')
+          + e.ready + ' will be added to the library. ' + tail;
+    }
+    document.getElementById('ed-outcome').innerHTML = o;
+
+    var x = '';
+    if (state.editScope === 'single-draft') {
+      x = '<strong>Save as draft does not appear here, and should not.</strong> At upload it answers "where does this file land". In edit the asset is already a draft, so there is no choice left to make. Offering it would imply the alternative is "save as not-a-draft", which is the transition wearing a Save label.<ul>' +
+          '<li><strong>Secondary Save</strong> persists staged field edits. The asset stays a draft. Tier fits: modifies the current context, advances nothing.</li>' +
+          '<li><strong>Primary Add to library</strong> is the terminal step of the whole draft flow, which is the tier definition of Primary: creates data or advances the critical workflow.</li>' +
+          '<li>Not a misclick trap, because <strong>Add to library implies Save</strong>. You cannot transition without persisting. The two are not parallel; one contains the other, the same relationship as Download and Download as…</li>' +
+          '<li>The <strong>DRAFT pill</strong> sits next to the filename. The contract bans a header subtitle as redundant, but a state pill is not a subtitle, and without it the two footers are indistinguishable at a glance.</li></ul>' +
+          (state.metadata === 'incomplete'
+            ? '<p style="margin:10px 0 0"><strong>No ellipsis in the shell.</strong> In the card menu <em>Add to library…</em> is right, because a dialog follows: it opens edit scoped to the missing fields. In edit mode there is nowhere to open. The button goes <strong>disabled</strong> and the reason moves to a tooltip, which is the exact precedent already set for the embargoed asset: a single disabled Download carrying its lift date on hover. A caption floating under the button was a third pattern with no basis in the contract.</p>' +
+              '<p style="margin:8px 0 0">The reason is also, and more usefully, <strong>in the panel</strong>. Licence owner and licensed channels render <span style="color:var(--color-red-600);font-weight:600">Not set</span> in <code style="font-family:var(--font-family-mono)">--ed-error</code>, which is the existing field-row treatment. That is where the fix happens, so that is where the error belongs. The tooltip explains the button; the fields explain the work.</p>'
+            : '<p style="margin:10px 0 0">Required fields are satisfied, so the Primary is a <strong>bare verb</strong> and acts immediately. No confirm dialog: the metadata check is the gate.</p>');
+    } else if (state.editScope === 'single-published') {
+      x = '<strong>Unchanged. This is the shell as built.</strong> Secondary Download, Primary Save.<ul>' +
+          '<li>No <em>Add to library</em> item anywhere. There is no route back to draft, so the transition appears in one direction only.</li>' +
+          '<li>Compare with the draft case: nothing is added to the shell, the same two slots carry different actions.</li></ul>';
+    } else if (state.editScope === 'bulk-drafts') {
+      x = '<strong>Same two slots, same tiers.</strong> The shell reads <em>Editing • 5 assets</em>.<ul>' +
+          '<li><strong>Save</strong> patches the delta across all five. They stay drafts. Bulk is a delta editor, not a form, so it patches rather than overwrites.</li>' +
+          '<li><strong>Add to library</strong> patches all five <em>and</em> transitions the eligible subset. Two fail validation and stay behind. The counts sit in the outcome line, not on the button, because the two scopes differ.</li>' +
+          '<li>If none were eligible the Primary stays <strong>visible and disabled with a reason</strong>. It is a structural control in the shell, and the contract holds structural controls visible-disabled while only rights-locked leaf actions hide.</li>' +
+          '<li>That is the opposite of the bulk Actions menu, where the item disappears on an all-published selection. Correct: a menu item is a leaf, a mode exit is structural.</li></ul>';
+    } else {
+      x = '<strong>The action has two scopes, so the count came off the button.</strong><ul>' +
+          '<li><strong>Add to library patches all five and transitions three.</strong> The patch is unconditional, because bulk is a delta editor and the selection is five. Narrowing it would silently discard the field edits made to the two published assets.</li>' +
+          '<li>So <em>Add to library · 3 of 5</em> was wrong. It reads as "this touches 3". It touches 5, in two different ways. A button label carries one number; this action has two.</li>' +
+          '<li>The verb stays on the control, the scope moves to the <strong>outcome line</strong> in the shell footer, where both numbers are stated <em>before</em> the click. A confirmation after the fact cannot un-mislead someone.</li>' +
+          '<li><strong>Save is unscoped and needs no count.</strong> It patches all five and nothing transitions.</li>' +
+          '<li>Toggle <em>No changes staged</em>: with a clean panel, "applies to 5" is vacuous, so the line drops it and states the transition only. The shell already tracks dirty state for the unsaved-changes model, so this is free.</li>' +
+          '<li>Hiding the Primary on a mixed selection was considered and rejected. It forces the user to abandon bulk edit, deselect, and re-enter.</li>' +
+          '<li><strong>After the action</strong> the mode exits to the library with the three filtered out of My drafts. Confirmed as current behaviour, so no build change.</li></ul>';
+    }
+    document.getElementById('ed-explain').innerHTML = x;
+  }
+
+  function frow(k, v, cls) {
+    return '<div class="ed-frow"><span class="ed-fk">' + k + '</span><span class="ed-fv ' + cls + '">' + v + '</span></div>';
+  }
+
+  // ===== BULK MENU =====
+  // Matches the built component: menu and bar share ONE dark overlay ground,
+  // separated by a 1px edge, menu opening upward from the bar.
+  var BULK = {
+    'all-ready': { total:5, drafts:5, ready:5, published:0 },
+    'partial':   { total:5, drafts:5, ready:3, published:0 },
+    'mixed':     { total:5, drafts:3, ready:3, published:2 },
+    'none':      { total:5, drafts:0, ready:0, published:5 }
+  };
+
+  function bItem(o) {
+    return '<div class="bulk-item' + (o.disabled ? ' is-disabled' : '') +
+      (o.primary ? ' is-primary' : '') + (o.destructive ? ' destructive' : '') + '">' +
+      (o.icon || '') + '<span class="bi-label">' + o.label + '</span>' +
+      (o.scope ? '<span class="bulk-scope">' + o.scope + '</span>' : '') + '</div>';
+  }
+  var BSEP = '<div class="bulk-sep"></div>';
+
+  function renderBulkMenu() {
+    var b = BULK[state.bulkMix], h = '', ex = '';
+    document.getElementById('bulk-count').textContent = String(b.total);
+
+    if (b.drafts > 0) {
+      h += bItem({
+        label: 'Add to library', icon: I.library, primary: true,
+        scope: b.ready < b.total ? (b.ready + ' of ' + b.total) : null,
+        disabled: b.ready === 0
+      });
+      h += BSEP;
+    }
+    if (b.published > 0) {
+      h += bItem({ label: 'Download', icon: I.download, scope: b.drafts > 0 ? String(b.published) : null });
+      h += bItem({ label: 'Download as...', icon: I.download, scope: b.drafts > 0 ? String(b.published) : null });
+      h += bItem({ label: 'Add to download queue', icon: I.queue, scope: b.drafts > 0 ? String(b.published) : null });
+    }
+    h += bItem({ label: 'Add to Collection', icon: I.folder });
+    h += bItem({ label: 'Bulk Edit', icon: I.pencil });
+    h += BSEP;
+    h += bItem({ label: 'Delete', icon: I.trash, destructive: true });
+    document.getElementById('bulk-menu').innerHTML = h;
+
+    ex = '<strong>Corrected to the built component.</strong> The menu and the bar are one overlay ground separated by a 1px edge, and the menu opens upward from the bar. Add to library is the only net-new item: everything else is the shipped menu untouched.<ul>';
+
+    if (state.bulkMix === 'all-ready') {
+      ex += '<li><em>Add to library</em> with no scope count. All five are drafts and all five are complete, so a fraction would be noise.</li>' +
+            '<li>The download group is absent. Nothing in the selection is deliverable, and a disabled download trio would be pure tease.</li>';
+    } else if (state.bulkMix === 'partial') {
+      ex += '<li><em>Add to library · 3 of 5</em>. Two are missing required fields and stay behind as drafts. The action is not blocked by them.</li>' +
+            '<li>No per-asset field fixing from a bulk menu. The confirmation reports what was left: "3 assets added to the library. 2 stayed as drafts."</li>' +
+            '<li>Report after, do not confirm before. SCR-49 set that pattern with "3 fields updated across 50 assets".</li>';
+    } else if (state.bulkMix === 'mixed') {
+      ex += '<li>Two scoped groups in one menu. <em>Add to library · 3 of 5</em> rides the drafts, the download trio carries <em>2</em> and rides the published.</li>' +
+            '<li>This is the case that proves the rule. Neither group is gated on the selection being uniform, and neither is hidden because it is mixed.</li>' +
+            '<li>Scope counts appear only when the selection is mixed. On a uniform selection they would restate the bar.</li>';
+    } else {
+      ex += '<li>No <em>Add to library</em> item. Nothing in the selection is a draft, so the action does not render rather than rendering disabled.</li>' +
+            '<li>A state-transition action with no eligible subset is a dead action, and dead actions hide. Structural controls stay visible-disabled; this is not one.</li>' +
+            '<li>This is the shipped menu exactly as it stands today.</li>';
+    }
+    ex += '</ul><p style="margin:10px 0 0"><strong>Two build notes.</strong> The shipped labels are Title Case (<em>Add to Collection</em>, <em>Bulk Edit</em>) and <em>Download as...</em> uses three dots, not an ellipsis character. The dev context says card and bulk menus were swept to sentence case, so either the sweep missed this menu or the note is stale. Worth a separate conformance line rather than folding it into the drafts work. Also: <em>Download</em> and <em>Download as...</em> currently share one icon; the settled model distinguishes acting immediately from opening a configurator, so the second should carry its own.</p>';
+    document.getElementById('bulk-explain').innerHTML = ex;
+  }
+
+  // ===== LIBRARY =====
+  function renderLibrary() {
+    var g = gate();
+    var card = document.getElementById('asset-card');
+    var row = document.getElementById('list-row');
+    var isDraft = state.lifecycle === 'draft';
+
+    card.classList.toggle('is-draft', isDraft);
+    card.classList.toggle('is-dimmed', isDraft || state.lifecycle === 'archived');
+    row.classList.toggle('is-dimmed', isDraft || state.lifecycle === 'archived');
+
+    document.getElementById('gate-slot').innerHTML = g === 'none' ? '' :
+      '<span class="gate-badge ' + g + '">' + COPY[g].icon + COPY[g].pill + '</span>';
+
+    document.getElementById('card-meta').textContent = isDraft ? 'Saved 12 Aug 2026' : 'Uploaded 12 Aug 2026';
+
+    var ind = '';
+    if (state.lifecycle === 'archived') ind += '<span class="state-badge archived" data-tooltip="Archived"></span>';
+    if (state.approval === 'in-approval') ind += '<span class="state-badge approval" data-tooltip="In approval"></span>';
+    if (state.workflows === 'on-workflow') ind += '<span class="state-badge workflow" data-tooltip="On a workflow"></span>';
+    document.getElementById('card-indicators').innerHTML = ind;
+
+    var ls = '';
+    if (g !== 'none') ls += '<span class="gate-pill-mini ' + g + '">' + COPY[g].pill + '</span>';
+    if (state.lifecycle === 'archived') ls += '<span class="state-chip archived"><span class="chip-dot"></span>Archived</span>';
+    if (state.approval === 'in-approval') ls += '<span class="state-chip approval"><span class="chip-dot"></span>In approval</span>';
+    if (state.workflows === 'on-workflow') ls += '<span class="state-chip workflow"><span class="chip-dot"></span>On workflow</span>';
+    document.getElementById('list-state').innerHTML = ls;
+
+    document.getElementById('lb-banner-slot').innerHTML = g === 'none' ? '' :
+      '<div class="gate-banner ' + g + '">' + COPY[g].icon +
+      '<span class="gb-primary">' + COPY[g].primary + '</span><span class="gb-sep">·</span>' +
+      '<span class="gb-secondary">' + COPY[g].secondary + '</span>' +
+      '<span class="gb-action">' + COPY[g].action + '</span></div>';
+
+    var chips = '';
+    if (state.lifecycle === 'archived') chips += '<span class="state-chip archived"><span class="chip-dot"></span>Archived</span>';
+    if (state.approval === 'in-approval') chips += '<span class="state-chip approval"><span class="chip-dot"></span>In approval</span>';
+    if (state.workflows === 'on-workflow') chips += '<span class="state-chip workflow"><span class="chip-dot"></span>On workflow</span>';
+    document.getElementById('lb-chips').innerHTML = chips;
+
+    var acts = document.getElementById('lb-actions');
+    if (isDraft) {
+      acts.innerHTML = '<button class="lh-btn secondary">Delete draft</button>' +
+        '<button class="lh-btn">' + (state.metadata === 'incomplete' ? 'Add to library…' : 'Add to library') + '</button>';
+    } else {
+      acts.innerHTML = '<button class="lh-btn secondary">Share</button>' +
+        '<button class="lh-btn' + (g === 'none' ? '' : ' is-disabled') + '">Download</button>';
+    }
+
+    var miss = state.metadata === 'incomplete';
+    var o = document.getElementById('attr-owner'), u = document.getElementById('attr-usage');
+    o.textContent = miss ? 'Not set' : 'Global Brand';
+    u.textContent = miss ? 'Not set' : 'Worldwide, all channels';
+    o.className = 'v' + (miss ? ' missing' : '');
+    u.className = 'v' + (miss ? ' missing' : '');
+    document.getElementById('attr-embargo').textContent = state.rights === 'embargoed' ? '15 Jul 2026' : 'Not set';
+
+    renderLadder(g);
+    renderVisibility();
+    renderBehaviour(g);
+    renderTokens(g);
+    renderIssue();
+    renderCardMenu();
+    renderEditShell();
+    renderBulkMenu();
+    syncAxis();
+  }
+
+  function renderLadder(g) {
+    var passed = false;
+    document.getElementById('ladder').innerHTML = LADDER.map(function (it, i) {
+      var applies = (it.key === 'draft' && state.lifecycle === 'draft') ||
+                    (it.key === 'expired' && state.rights === 'expired') ||
+                    (it.key === 'embargoed' && state.rights === 'embargoed');
+      var active = it.key === g;
+      var cls = 'ladder-item';
+      if (active) { cls += ' is-active'; passed = true; }
+      else if (applies && passed) cls += ' is-outranked';
+      else cls += ' is-inactive';
+      return '<div class="' + cls + '"><span class="rank">' + (it.key === 'none' ? '—' : (i + 1)) + '</span>' +
+             '<strong>' + it.label + '</strong><span class="why">' + it.why + '</span></div>';
+    }).join('');
+  }
+
+  function renderVisibility() {
+    var t = document.getElementById('visibility-text'), v = state.viewer;
+    if (state.lifecycle === 'draft') {
+      if (v === 'owner') t.innerHTML = 'Owner only. This row is <strong>visible</strong> because you created it.';
+      else if (v === 'admin') t.innerHTML = 'Owner only, plus admins if the global drafts view ships. <strong>Open decision.</strong>';
+      else t.innerHTML = 'Owner only. This row would <strong>not render</strong> for another contributor.';
+    } else if (state.lifecycle === 'archived') {
+      t.innerHTML = 'Everyone with folder access, but <strong>only behind the archived filter</strong>.';
+    } else if (state.rights === 'embargoed') {
+      t.innerHTML = 'Everyone with folder access. <strong>Visible, download blocked</strong> until 15 Jul 2026.';
+    } else {
+      t.innerHTML = 'Everyone with folder access.';
+    }
+  }
+
+  function renderBehaviour(g) {
+    var it = [], lc = state.lifecycle;
+
+    it.push(['Visibility', lc === 'draft'
+      ? '<span class="b-warn">Scoped to the creator</span> · surfaced through the My drafts saved filter'
+      : lc === 'archived'
+        ? '<span class="b-warn">Hidden by default</span> · appears with the archived filter on'
+        : 'In default library views']);
+
+    it.push(['Field validation', lc === 'draft'
+      ? '<span class="b-block">Suppressed</span> · required fields do not block save'
+      : '<span class="b-allow">Enforced</span> · required fields block the transition']);
+
+    it.push(['Rights enforcement', lc === 'draft'
+      ? '<span class="b-warn">Not evaluated</span> · nothing can be minted from a draft'
+      : '<span class="b-allow">Evaluated at the mint endpoint</span>']);
+
+    it.push(['Download', g === 'draft' ? '<span class="b-block">No delivery</span> · the asset has no shareable form yet'
+      : g === 'expired' ? '<span class="b-block">Blocked</span> · full resolution. Request access is the live recovery.'
+      : g === 'embargoed' ? '<span class="b-block">Blocked</span> · opens automatically on 15 Jul 2026'
+      : '<span class="b-allow">Allowed</span> · all renditions']);
+
+    it.push(['Search', lc === 'draft' ? 'Indexed with a rank penalty · returned only to the creator'
+      : lc === 'archived' ? 'Indexed · excluded from default search · appears with the archived filter'
+      : 'Indexed · appears in default search']);
+
+    it.push(['AI tagging', lc === 'draft'
+      ? 'Runs on ingest · suggestions wait in the draft for acceptance'
+      : 'Complete · accepted tags are first-class with <code>source: ai</code>']);
+
+    it.push(['Rights ownership', lc === 'draft'
+      ? '<span class="b-warn">Uploader owns rights</span> · window stays open while draft'
+      : 'Admin only · the uploader window closed at the transition']);
+
+    it.push(['Reverse transition', lc === 'draft'
+      ? 'Draft to library is available'
+      : '<span class="b-block">Not available</span> · no route back to draft. Archive is the exit.']);
+
+    if (state.approval === 'in-approval') it.push(['Approval', '<span class="b-warn">In approval flow</span> · stage and approver shown in the lightbox']);
+    if (state.workflows === 'on-workflow') it.push(['Workflows', '<span class="b-warn">On a Unity workflow</span> · workflow name and stage shown in the lightbox']);
+
+    document.getElementById('behaviour-list').innerHTML = it.map(function (x) {
+      return '<li><span class="b-key">' + x[0] + '</span><span>' + x[1] + '</span></li>';
+    }).join('');
+  }
+
+  function renderTokens(g) {
+    var L = [];
+    L.push('<span class="tk-comment">/* Filetype — bottom right, always rendered */</span>');
+    L.push('<span class="tk-var">--filetype-badge-bg</span>: <span class="tk-val">rgba(28,28,25,0.62)</span>;');
+    if (g !== 'none') {
+      var map = { draft:['stone-100','stone-400','stone-700'], expired:['red-100','red-500','red-700'], embargoed:['amber-100','amber-500','amber-700'] };
+      L.push('');
+      L.push('<span class="tk-comment">/* Gate badge — bottom left, one at a time */</span>');
+      L.push('<span class="tk-var">--gate-' + g + '-bg</span>: <span class="tk-val">var(--color-' + map[g][0] + ')</span>;');
+      L.push('<span class="tk-var">--gate-' + g + '-border</span>: <span class="tk-val">var(--color-' + map[g][1] + ')</span>;');
+      L.push('<span class="tk-var">--gate-' + g + '-fg</span>: <span class="tk-val">var(--color-' + map[g][2] + ')</span>;');
+    }
+    if (g === 'draft') {
+      L.push('');
+      L.push('<span class="tk-comment">/* Scale already declares the status ramp — reuse, do not invent */</span>');
+      L.push('<span class="tk-var">--status-draft-bg</span>: <span class="tk-val">var(--neutral-2)</span>;');
+      L.push('<span class="tk-var">--status-draft-border</span>: <span class="tk-val">var(--neutral-4)</span>;');
+      L.push('<span class="tk-var">--status-draft-fg</span>: <span class="tk-val">var(--neutral-9)</span>;');
+      L.push('<span class="tk-comment">/* On-thumbnail contrast needs more than --neutral-4. */</span>');
+      L.push('<span class="tk-comment">/* Proposed: --gate-draft-border = --neutral-8. Same class of gap */</span>');
+      L.push('<span class="tk-comment">/* as the --border-interactive 3:1 issue already logged for Scale. */</span>');
+    }
+    if (state.lifecycle === 'archived') { L.push(''); L.push('<span class="tk-comment">/* Lifecycle indicator dot */</span>'); L.push('<span class="tk-var">--state-archived-bg</span>: <span class="tk-val">var(--color-stone-500)</span>;'); }
+    if (state.approval === 'in-approval') { L.push(''); L.push('<span class="tk-comment">/* Approval indicator dot */</span>'); L.push('<span class="tk-var">--state-approval-bg</span>: <span class="tk-val">#3b82f6</span>;'); }
+    if (state.workflows === 'on-workflow') { L.push(''); L.push('<span class="tk-comment">/* Workflow indicator dot */</span>'); L.push('<span class="tk-var">--state-workflow-bg</span>: <span class="tk-val">var(--color-purple-500)</span>;'); }
+    document.getElementById('token-block').innerHTML = L.join('<br>');
+  }
+
+  function renderIssue() {
+    var b = document.getElementById('issue-banner'), t = document.getElementById('issue-text'), msg = null;
+    if (state.lifecycle === 'draft' && state.rights !== 'active') {
+      msg = 'Draft outranks the ' + state.rights + ' rights gate. The rights badge is suppressed, and rights are not evaluated at all while the asset is a draft, because nothing can be minted from it. This is the case that would have produced two badges in one slot under the old model.';
+    } else if (state.lifecycle === 'archived' && state.rights !== 'active') {
+      msg = 'Archived is lifecycle context, not a delivery gate, so it stays in the indicator slot as a dot. The rights gate takes the badge slot. Two axes, two locations, no collision.';
+    } else if (state.lifecycle !== 'draft' && state.metadata === 'incomplete') {
+      msg = 'A published asset with required fields missing should not be reachable. Validation runs on the draft-to-library transition. If this state appears in production it is a data integrity bug, not a display case.';
+    }
+    if (msg) { t.textContent = msg; b.classList.add('visible'); } else { b.classList.remove('visible'); }
+  }
+
+  // ===== UPLOAD =====
+  var FILES = [
+    ['FWC26_Mascot_Lockup_Horizontal_CMYK.ai', '4.2 MB'],
+    ['FWC26_Stadium_Hero_Wide_3840.jpg', '11.8 MB'],
+    ['FWC26_Sponsor_Board_Template_v3.psd', '86.4 MB']
+  ];
+
+  function renderUpload() {
+    var n = parseInt(state.files, 10);
+    var inc = state.uMeta === 'incomplete';
+    var appr = state.uPerm === 'approval';
+
+    document.getElementById('um-scope').textContent =
+      n === 0 ? 'No files selected' : (n + (n === 1 ? ' file' : ' files') + ' \u00b7 FWC26 Brand');
+    document.getElementById('um-scope-label').textContent =
+      n === 0 ? 'No selection' : ('Applying to ' + n + (n === 1 ? ' file' : ' files'));
+    document.getElementById('um-list-head').textContent =
+      n === 0 ? 'No files' : (n + (n === 1 ? ' file' : ' files'));
+
+    document.getElementById('um-empty').style.display = n === 0 ? 'block' : 'none';
+    var q = document.getElementById('um-queue');
+    q.innerHTML = FILES.slice(0, n).map(function (f, i) {
+      var dup = (i === 2);
+      return '<div class="ed-row' + (dup ? ' dup' : '') + '">' +
+        '<span class="ed-cbx on"></span>' +
+        '<span class="ed-row-thumb"></span>' +
+        '<span class="ed-row-body"><span class="ed-row-name">' + f[0] + '</span>' +
+        (dup ? '<span class="ed-row-sub">Using existing \u00b7 matched on checksum</span>'
+             : (inc ? '<span class="ed-row-sub err">Missing: rights owner, usage rights</span>' : '')) + '</span>' +
+        (dup ? '<span class="ed-dup-chip">DUPLICATE</span>' : '<span class="ed-row-meta">' + f[1] + '</span>') +
+        '</div>';
+    }).join('');
+
+    document.getElementById('um-form').innerHTML =
+      edField('Rights owner', true, inc ? '' : 'Global Brand', inc) +
+      edField('Usage rights', true, inc ? '' : 'Worldwide, all channels', inc) +
+      edField('Campaign', false, 'FWC26 Brand', false) +
+      edField('Tags', false, inc ? '' : 'logo, primary, rgb', false, 'AI suggestions arrive once processing completes');
+
+    var pBlocked = n === 0 || inc;
+    var tip = n === 0 ? 'Add at least one file'
+      : inc ? 'Rights owner and usage rights are required' : '';
+    document.getElementById('um-actions').innerHTML =
+      '<button class="ed-btn sec' + (n === 0 ? ' is-disabled' : '') + '">Save as draft</button>' +
+      '<span class="ed-primary-wrap"><button class="ed-btn pri' + (pBlocked ? ' is-disabled' : '') + '">' +
+      (appr ? 'Submit for approval' : 'Upload to library') + '</button>' +
+      (tip ? '<span class="ed-tip">' + tip + '</span>' : '') + '</span>';
+
+    var out = document.getElementById('um-outcome');
+    if (n === 0) out.innerHTML = 'Drag files in, or browse to select.';
+    else if (inc) out.innerHTML = '<strong>Save as draft</strong> holds ' + n + ' ' + (n === 1 ? 'file' : 'files') + ' against you with no required fields. Finish tagging any time from <strong>My drafts</strong>.';
+    else if (appr) out.innerHTML = n + ' ' + (n === 1 ? 'file goes' : 'files go') + ' to an approver before ' + (n === 1 ? 'it appears' : 'they appear') + ' in the library.';
+    else out.innerHTML = n + ' ' + (n === 1 ? 'asset' : 'assets') + ' added to the library and available immediately.';
+
+    var land = document.getElementById('um-landing');
+    if (n === 0) {
+      land.innerHTML = '<span class="ls-label">Nothing yet</span><span>Add files to see what the commit produces.</span>';
+    } else {
+      var pill, text;
+      if (inc) {
+        pill = '<span class="gate-pill-mini draft">DRAFT</span>';
+        text = '<code>status: draft</code> \u00b7 owner-scoped \u00b7 validation suppressed \u00b7 appears under My drafts with a draft gate badge.';
+      } else if (appr) {
+        pill = '<span class="state-chip approval"><span class="chip-dot"></span>In approval</span>';
+        text = '<code>status: draft</code> until an approver acts, plus an approval-flow indicator. Two axes, both true at once.';
+      } else {
+        pill = '<span style="color:var(--text-hint);font-size:12px">No gate badge</span>';
+        text = '<code>status: published</code> \u00b7 <code>embargo_date: null</code> \u00b7 renders as a normal library asset.';
+      }
+      land.innerHTML = '<span class="ls-label">Result</span>' + pill +
+        '<span style="font-size:12px;color:var(--text-subtle)">' + text + '</span>';
+    }
+    syncAxis();
+  }
+
+  function edField(label, req, value, err, hint) {
+    return '<div class="ed-field"><label>' + label + (req ? '<span class="req">*</span>' : '') + '</label>' +
+      '<div class="ed-input' + (value ? '' : ' empty') + (err ? ' is-error' : '') + '">' + (value || 'Not set') + '</div>' +
+      (err ? '<div class="ed-hint err">Required to add to the library</div>'
+           : (hint ? '<div class="ed-hint">' + hint + '</div>' : '')) + '</div>';
+  }
+
+  // ===== WIRING =====
+  function syncAxis() {
+    document.querySelectorAll('.axis-group').forEach(function (g) {
+      var a = g.getAttribute('data-axis');
+      g.querySelectorAll('.axis-option').forEach(function (o) {
+        o.classList.toggle('active', o.getAttribute('data-value') === state[a]);
+      });
+    });
+  }
+
+  document.querySelectorAll('.axis-group').forEach(function (g) {
+    var a = g.getAttribute('data-axis');
+    g.querySelectorAll('.axis-option').forEach(function (o) {
+      o.addEventListener('click', function () {
+        state[a] = o.getAttribute('data-value');
+        renderLibrary(); renderUpload();
+      });
+    });
+  });
+
+  document.querySelectorAll('.preset-btn').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var p = PRESETS[b.getAttribute('data-preset')];
+      Object.keys(p).forEach(function (k) { state[k] = p[k]; });
+      renderLibrary();
+    });
+  });
+
+  document.querySelectorAll('.mode-btn').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var v = b.getAttribute('data-view');
+      document.querySelectorAll('.mode-btn').forEach(function (x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      document.getElementById('view-library').classList.toggle('active', v === 'library');
+      document.getElementById('view-upload').classList.toggle('active', v === 'upload');
+      document.getElementById('controls-library').style.display = v === 'library' ? 'block' : 'none';
+      document.getElementById('controls-upload').style.display = v === 'upload' ? 'block' : 'none';
+      window.scrollTo(0, 0);
+    });
+  });
+
+  renderLibrary();
+  renderUpload();
+})();
+</script>
+</body>
+</html>
