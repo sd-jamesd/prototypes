@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resource Planner Feature Matrix — Screendragon vs category</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Scale v1.6.0 — Sand neutrals, Cerulean action, Jade/Amber/Tomato status */
+  --neutral-1:#fdfdfc; --neutral-2:#f9f9f8; --neutral-3:#f0f0ef; --neutral-4:#e9e9e6;
+  --neutral-5:#e2e1de; --neutral-6:#dad9d6; --neutral-7:#cfcfca; --neutral-8:#bcbbb5;
+  --neutral-9:#8e8d86; --neutral-11:#63635e; --neutral-12:#21201c;
+  --accent-3:#e3f5f8; --accent-6:#addae2; --accent-9:#0c818f; --accent-11:#006c78; --accent-12:#1b3c41;
+  --green-3:#e4f7f0; --green-9:#29a383; --green-11:#008062; --green-12:#1d3b31;
+  --amber-3:#fff0cb; --amber-9:#f5a524; --amber-11:#a96600; --amber-12:#4d3618;
+  --red-3:#feebe7; --red-9:#e54d2e; --red-11:#cf3716; --red-12:#5c281c;
+
+  --text-default:var(--neutral-12);
+  --text-subtle:var(--neutral-11);
+  --border-default:var(--neutral-6);
+
+  --row-h:38px;
+  --fs-0:11px; --fs-1:13px; --fs-2:14px; --fs-3:16px; --fs-4:20px; --fs-5:26px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:var(--fs-2); line-height:1.5; color:var(--text-default);
+  background:var(--neutral-2); -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1440px;margin:0 auto;padding:28px 24px 64px}
+
+/* ---------- header ---------- */
+.eyebrow{
+  font-size:var(--fs-0); text-transform:uppercase; letter-spacing:.08em;
+  font-weight:600; color:var(--accent-11); margin:0 0 6px;
+}
+h1{font-size:var(--fs-5); line-height:1.2; font-weight:700; letter-spacing:-.02em; margin:0 0 8px}
+.standfirst{font-size:var(--fs-3); color:var(--text-subtle); max-width:72ch; margin:0 0 20px}
+
+.notice{
+  display:flex; gap:10px; align-items:flex-start;
+  background:var(--amber-3); color:var(--amber-12);
+  border:1px solid var(--amber-9); border-left-width:3px;
+  border-radius:6px; padding:12px 14px; margin:0 0 22px; font-size:var(--fs-1);
+}
+.notice svg{flex:0 0 auto;margin-top:2px}
+.notice b{font-weight:600}
+
+/* ---------- toolbar ---------- */
+.toolbar{
+  display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+  padding:10px 0 14px; border-bottom:1px solid var(--border-default); margin-bottom:0;
+}
+.btn{
+  font:inherit; font-size:var(--fs-1); font-weight:500;
+  padding:6px 12px; border-radius:6px; cursor:pointer;
+  border:1px solid var(--neutral-8); background:var(--neutral-1); color:var(--text-default);
+  transition:background .12s,border-color .12s;
+}
+.btn:hover{background:var(--neutral-3)}
+.btn:focus-visible{outline:2px solid var(--accent-9); outline-offset:2px}
+.btn.primary{background:var(--accent-9); border-color:var(--accent-9); color:#fff}
+.btn.primary:hover{background:var(--accent-11)}
+.btn[aria-pressed="true"]{background:var(--accent-3); border-color:var(--accent-9); color:var(--accent-12)}
+.progress{
+  margin-left:auto; font-size:var(--fs-1); color:var(--text-subtle);
+  display:flex; align-items:center; gap:8px;
+}
+.bar{width:130px;height:6px;border-radius:3px;background:var(--neutral-4);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent-9);width:0%;transition:width .2s}
+
+/* ---------- table ---------- */
+.tablewrap{
+  border:1px solid var(--border-default); border-radius:8px; overflow:auto;
+  background:var(--neutral-1); max-height:78vh; margin-top:14px;
+}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:var(--fs-1)}
+thead th{
+  position:sticky; top:0; z-index:3; background:var(--neutral-2);
+  font-size:var(--fs-0); text-transform:uppercase; letter-spacing:.05em;
+  font-weight:600; color:var(--text-subtle); text-align:center;
+  padding:10px 8px; border-bottom:2px solid var(--neutral-7); white-space:nowrap;
+}
+thead th.cap{text-align:left; padding-left:14px; min-width:330px}
+thead th.sd{background:var(--accent-3); color:var(--accent-12); border-bottom-color:var(--accent-9)}
+thead th .sub{display:block;text-transform:none;letter-spacing:0;font-weight:400;font-size:10px;color:var(--neutral-9);margin-top:2px}
+thead th.sd .sub{color:var(--accent-11)}
+
+tbody td{
+  border-bottom:1px solid var(--neutral-4); padding:0 8px; height:var(--row-h);
+  text-align:center; vertical-align:middle;
+}
+tbody td.cap{
+  text-align:left; padding-left:14px; padding-right:12px;
+  position:sticky; left:0; z-index:2; background:var(--neutral-1);
+  border-right:1px solid var(--neutral-4);
+}
+tbody tr:hover td{background:var(--neutral-2)}
+tbody tr:hover td.cap{background:var(--neutral-3)}
+tbody td.sdcell{background:#fbfdfe;border-left:1px solid var(--accent-6);border-right:1px solid var(--accent-6)}
+tbody tr:hover td.sdcell{background:var(--accent-3)}
+
+tr.tier td{
+  background:var(--neutral-3); font-size:var(--fs-0); font-weight:600;
+  text-transform:uppercase; letter-spacing:.07em; color:var(--neutral-12);
+  height:32px; text-align:left; padding-left:14px; position:sticky; left:0;
+  border-bottom:1px solid var(--neutral-6); border-top:1px solid var(--neutral-6);
+}
+tr.tier td .tdesc{
+  text-transform:none; letter-spacing:0; font-weight:400; color:var(--text-subtle); margin-left:10px;
+}
+
+.rowlabel{display:flex;align-items:center;gap:8px;cursor:pointer}
+.rowlabel .name{font-weight:500}
+.chev{color:var(--neutral-9);flex:0 0 auto;transition:transform .15s}
+tr.open .chev{transform:rotate(90deg)}
+
+/* cell marks */
+.mark{
+  display:inline-flex;align-items:center;justify-content:center;gap:3px;
+  min-width:40px;height:22px;padding:0 7px;border-radius:11px;
+  font-size:var(--fs-1);font-weight:600;line-height:1;
+}
+.mark .g{font-size:14px}
+.m-full{background:var(--green-3);color:var(--green-12)}
+.m-partial{background:var(--amber-3);color:var(--amber-12)}
+.m-none{background:var(--red-3);color:var(--red-12)}
+.m-unknown{background:var(--neutral-3);color:var(--neutral-11)}
+.conf{
+  font-family:"JetBrains Mono",monospace;font-size:9px;font-weight:500;
+  color:var(--neutral-9);margin-left:4px;vertical-align:super;
+}
+
+/* screendragon control */
+.sdbtn{
+  font:inherit;font-size:var(--fs-1);font-weight:600;cursor:pointer;
+  min-width:44px;height:24px;padding:0 8px;border-radius:12px;
+  border:1px dashed var(--neutral-8);background:transparent;color:var(--neutral-9);
+}
+.sdbtn:hover{border-color:var(--accent-9);color:var(--accent-11)}
+.sdbtn:focus-visible{outline:2px solid var(--accent-9);outline-offset:2px}
+.sdbtn.set{border-style:solid}
+.sdbtn.v-full{background:var(--green-3);color:var(--green-12);border-color:var(--green-9)}
+.sdbtn.v-partial{background:var(--amber-3);color:var(--amber-12);border-color:var(--amber-9)}
+.sdbtn.v-none{background:var(--red-3);color:var(--red-12);border-color:var(--red-9)}
+
+/* detail row */
+tr.detail td{
+  padding:0 14px 14px 34px;height:auto;text-align:left;
+  background:var(--neutral-2);border-bottom:1px solid var(--neutral-5);
+}
+.detail-inner{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;padding-top:4px}
+.detail-inner h4{
+  margin:0 0 4px;font-size:var(--fs-0);text-transform:uppercase;letter-spacing:.06em;
+  color:var(--text-subtle);font-weight:600;
+}
+.detail-inner p{margin:0;font-size:var(--fs-1);color:var(--neutral-12);max-width:80ch}
+.detail-inner .ev{color:var(--text-subtle)}
+
+/* ---------- pricing + legend ---------- */
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;margin-top:26px}
+.card{background:var(--neutral-1);border:1px solid var(--border-default);border-radius:8px;padding:16px 18px}
+.card h3{margin:0 0 10px;font-size:var(--fs-2);font-weight:600}
+.card table{font-size:var(--fs-1)}
+.card td{height:30px;text-align:left;border-bottom:1px solid var(--neutral-4);padding:0}
+.card td:first-child{font-weight:500;padding-right:14px;white-space:nowrap}
+.key{display:flex;flex-direction:column;gap:7px;font-size:var(--fs-1)}
+.key div{display:flex;align-items:center;gap:9px}
+.key .lbl{color:var(--text-subtle)}
+.key .conf{margin:0;vertical-align:baseline;font-size:11px;min-width:14px;display:inline-block}
+
+footer{margin-top:28px;padding-top:18px;border-top:1px solid var(--border-default);font-size:var(--fs-1);color:var(--text-subtle)}
+footer p{margin:0 0 8px;max-width:88ch}
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(12px);
+  background:var(--neutral-12);color:var(--neutral-1);font-size:var(--fs-1);
+  padding:9px 16px;border-radius:6px;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (max-width:900px){.grid2,.detail-inner{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="eyebrow">Screendragon Resource Manager · competitor benchmark</p>
+  <h1>Feature matrix, sourced cell by cell</h1>
+  <p class="standfirst">Every competitor cell carries a confidence label. The Screendragon column is deliberately empty: click each cell to set it yourself. Rows are grouped by what a tick actually buys, because a flat list makes table stakes and differentiators look equally valuable.</p>
+
+  <div class="notice">
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1.5 15 14H1L8 1.5Zm0 3.6-4.3 7.6h8.6L8 5.1ZM7.3 7h1.4v3H7.3V7Zm0 3.7h1.4V12H7.3v-1.3Z"/></svg>
+    <div><b>Internal only.</b> This replaces the 29-row matrix that could not be shown to a customer. It is customer-ready only when every <span class="conf" style="vertical-align:baseline">U</span> and <span class="conf" style="vertical-align:baseline">I</span> cell has been verified against a primary source (vendor docs, live trial, or a dated review corpus). Marking a competitor as missing something they ship is the single fastest way to lose credibility in a bake-off.</div>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn" id="expandAll">Expand all rows</button>
+    <button class="btn" id="filterUnfilled" aria-pressed="false">Show only unfilled</button>
+    <button class="btn" id="filterUnverified" aria-pressed="false">Show only unverified cells</button>
+    <button class="btn primary" id="copyMd">Copy as Markdown</button>
+    <button class="btn" id="reset">Clear Screendragon column</button>
+    <div class="progress">
+      <span id="progressText">0 of 28 filled</span>
+      <span class="bar"><i id="progressBar"></i></span>
+    </div>
+  </div>
+
+  <div class="tablewrap">
+    <table id="matrix">
+      <thead>
+        <tr>
+          <th class="cap">Capability</th>
+          <th>Float<span class="sub">benchmark</span></th>
+          <th>Resource Guru</th>
+          <th>Runn</th>
+          <th>Productive.io</th>
+          <th>Smartsheet RM<span class="sub">ex-10,000ft</span></th>
+          <th class="sd">Screendragon<span class="sub">click to set</span></th>
+        </tr>
+      </thead>
+      <tbody id="body"></tbody>
+    </table>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Reading the matrix</h3>
+      <div class="key">
+        <div><span class="mark m-full"><span class="g">●</span></span><span class="lbl">Ships it, at parity or better</span></div>
+        <div><span class="mark m-partial"><span class="g">◐</span></span><span class="lbl">Ships something narrower: tier-gated, fixed rather than configurable, or shallow</span></div>
+        <div><span class="mark m-none"><span class="g">○</span></span><span class="lbl">Does not ship it</span></div>
+        <div><span class="mark m-unknown"><span class="g">?</span></span><span class="lbl">Not established this pass. Absence of evidence, not evidence of absence.</span></div>
+        <div style="margin-top:6px"><span class="conf">S</span><span class="lbl">Sourced: traceable to a named source</span></div>
+        <div><span class="conf">I</span><span class="lbl">Inferred from marketing, screenshots, or indirect evidence</span></div>
+        <div><span class="conf">J</span><span class="lbl">Judgement: the researcher's assessment</span></div>
+        <div><span class="conf">U</span><span class="lbl">Unverified: do not use externally</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Pricing, 2026 list</h3>
+      <table>
+        <tr><td>Float</td><td>Starter $6&ndash;7.50, Pro $10&ndash;12.50 per user/mo. Free viewers.</td></tr>
+        <tr><td>Resource Guru</td><td>$5 / $8 / $12 per person/mo monthly; $4.16&ndash;10 annual. Approvals and SSO on Master.</td></tr>
+        <tr><td>Runn</td><td>Free to 5; $7&ndash;14 per person/mo; 20-seat minimum on paid.</td></tr>
+        <tr><td>Productive.io</td><td>Per seat, mid-tier suite pricing. <b>Unconfirmed.</b></td></tr>
+        <tr><td>Smartsheet RM</td><td>Module tied to Smartsheet; enterprise quote.</td></tr>
+        <tr><td style="border:none">The 300-seat maths</td><td style="border:none">Float Pro at 300 scheduled people is roughly $36k&ndash;45k a year, 500 is $60k&ndash;75k. That is the budget a client is choosing to spend <i>alongside</i> Screendragon.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    <p><b>What this matrix cannot show you.</b> The bake-off is being lost on decision legibility, not feature count. Screendragon can tick almost every row here and still lose, because the questions a resource manager asks eight times a day are answered on Float by shape and colour and on Screendragon by reading a number. Use this to stop making false claims about competitors and to find the two or three rows worth funding. Do not use it as the argument.</p>
+    <p><b>Columns dropped.</b> Teamwork.com, Kantata, Planview and Adobe Workfront were not verified in this research pass. An unverified column is worse than no column, which is what went wrong last time. Accelo is excluded because Forecast.app no longer exists as an independent product: Accelo acquired it in July 2025 and brand integration completed 28 May 2026.</p>
+    <p>Sources behind the sourced cells: G2 and Capterra review corpora (Capterra aggregate updated 20 Aug 2026, 1,620 Float reviews), vendor help centres and pricing pages, SelectHub 2026, Smartsheet SEC Q1 FY2020 filing, Accelo press release 22 Jul 2025. Screendragon Resource Manager has essentially no public review footprint, so nothing in this matrix is derived from Screendragon reviews.</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const GLYPH={full:'●',partial:'◐',none:'○',unknown:'?'};
+const SDLABEL={full:'● Yes',partial:'◐ Partial',none:'○ No'};
+
+// v = full | partial | none | unknown ; c = S | I | J | U
+const c=(v,conf)=>({v,c:conf});
+
+const TIERS=[
+ {id:'stakes',name:'Table stakes in 2026',
+  desc:'A gap here is a loss condition. A tick buys nothing on its own.',
+  rows:[
+  {n:'Drag-and-drop timeline scheduling',
+   cells:[c('full','S'),c('full','I'),c('full','I'),c('full','I'),c('full','I')],
+   buys:'Nothing. This is the price of being in the category at all.',
+   ev:'Float\'s drag-and-drop is named as the category benchmark across the G2/Capterra corpus; the others are inferred from product marketing and screenshots rather than verified hands-on.'},
+  {n:'Live capacity recalculation on drag',
+   cells:[c('full','S'),c('full','S'),c('unknown','U'),c('unknown','U'),c('unknown','U')],
+   buys:'The answer to "what happens if I move this", which a manager asks many times a day. If the recalculation is not instant and visible, the row is effectively a no.',
+   ev:'Float: live recalculation on drag is the benchmark behaviour reviewers describe. Resource Guru raised the baseline with Total Hours plus Rigid/Limited/Fluid booking flexibility.'},
+  {n:'Utilisation heat on the timeline',
+   cells:[c('full','S'),c('full','S'),c('unknown','U'),c('unknown','U'),c('unknown','U')],
+   buys:'Nothing new. Screendragon already has a capacity heatmap. The work is making it legible, not building it.',
+   ev:'Float surfaces utilisation heat and capacity indicators directly; Resource Guru does the same. The earlier deck marked Float as partial here, which understated it.'},
+  {n:'Density modes (compact / comfortable / spacious)',
+   cells:[c('full','S'),c('unknown','U'),c('unknown','U'),c('unknown','U'),c('unknown','U')],
+   buys:'The ability to show a 200-person tenant about 20 rows instead of about 9. Highest-leverage row in the table and the one that must be built into the React component API now, because retrofitting density into fixed-height rows is expensive.',
+   ev:'Float documents Compact, Comfortable and Spacious in its own help centre. This single fact kills the "adopt Float-style generous padding" argument: Float lets users turn whitespace off.'},
+  {n:'Dark mode',
+   cells:[c('full','S'),c('unknown','U'),c('unknown','U'),c('unknown','U'),c('unknown','U')],
+   buys:'Demo credibility and nothing else. Cheap, expected, not a talking point.',
+   ev:'Float ships dark mode alongside its density modes.'},
+  {n:'Recurring / repeat bookings',
+   cells:[c('full','I'),c('full','S'),c('full','I'),c('unknown','U'),c('unknown','U')],
+   buys:'Nothing. The old matrix marked Resource Guru, Runn and Productive as missing this. At least two of those were wrong.',
+   ev:'Resource Guru documents repeat bookings on daily, weekly, fortnightly, monthly, yearly and custom patterns. Runn has repeat allocation patterns. Productive is genuinely unconfirmed.'},
+  {n:'Role / placeholder bookings for unassigned demand',
+   cells:[c('full','I'),c('full','S'),c('full','I'),c('unknown','U'),c('unknown','U')],
+   buys:'Nothing. Another row the old matrix got wrong on Resource Guru.',
+   ev:'Resource Guru placeholders carry skills and departments.'},
+  {n:'Skills and competency matching',
+   cells:[c('full','S'),c('full','S'),c('unknown','U'),c('unknown','U'),c('unknown','U')],
+   buys:'Nothing. Claiming Float lacks this is the most damaging error in the old matrix, because Float ships it under a name the buyer already knows.',
+   ev:'Float Smart Assign matches on skills, role, seniority and availability; person tags support skills search. Resource Guru carries skills on placeholders.'},
+  {n:'AI staffing suggestions',
+   cells:[c('full','S'),c('unknown','U'),c('unknown','U'),c('unknown','U'),c('unknown','U')],
+   buys:'Less than the deck assumes. Buyers discount AI scheduling claims, and every shipping product here is a suggestion engine, not autonomous scheduling. Do not fund this as a priority.',
+   ev:'Float Smart Assign is exactly this capability, with a Talent Graph in build. The claim that only Forecast.app had something comparable was wrong twice over: Float has it, and Forecast is now Accelo.'},
+  {n:'Time off and leave, with approval',
+   cells:[c('full','S'),c('full','S'),c('unknown','U'),c('unknown','U'),c('unknown','U')],
+   buys:'Nothing at the basic level. See the configurable multi-step approvals row for the claim that actually survives.',
+   ev:'Float shipped time-off approvals with a Manager role in December 2022. Resource Guru has an approval workflow on its Master plan.'},
+  {n:'Clash and double-booking detection',
+   cells:[c('partial','J'),c('full','S'),c('unknown','U'),c('unknown','U'),c('unknown','U')],
+   buys:'The "who is free to take this work" job. Resource Guru is the tool to benchmark here, not Float.',
+   ev:'Resource Guru\'s first-come, first-served clash engine and availability view are its strongest differentiator in reviews.'},
+  {n:'Saved and shared filter views',
+   cells:[c('full','J'),c('full','J'),c('partial','J'),c('unknown','U'),c('unknown','U')],
+   buys:'Nothing. "No competitor offers shared filter presets with URLs" is unfalsifiable as worded and no buyer will weigh whether a saved view carries a shareable URL. Drop the claim.',
+   ev:'Float and Resource Guru both offer saved and shared views. The URL detail is not a moat.'},
+  {n:'CSV import',
+   cells:[c('full','S'),c('partial','S'),c('full','S'),c('unknown','U'),c('unknown','U')],
+   buys:'Time-to-first-booking in a trial. Relevant only because bake-offs are often decided in the first hour.',
+   ev:'Float: CSV import plus 20+ integrations. Resource Guru: CSV import on higher tiers only. Runn: CSV bulk import.'},
+  {n:'Self-serve trial or free tier',
+   cells:[c('full','S'),c('full','S'),c('full','S'),c('unknown','U'),c('unknown','U')],
+   buys:'This is the row Screendragon loses structurally and should stop trying to win. Mark it "no" and compensate: the guided first session has to answer the four daily questions visibly in five minutes, on a demo tenant with clean data and no resource groups named "100".',
+   ev:'Float: 30-day free trial. Resource Guru: 30-day, no credit card, "up and running in under an hour". Runn: free for up to 5 people.'}
+ ]},
+
+ {id:'quality',name:'Contested quality',
+  desc:'Everyone can tick these. Execution decides the bake-off, and the matrix cannot measure it.',
+  rows:[
+  {n:'Capacity summary in the group header',
+   cells:[c('unknown','U'),c('unknown','U'),c('unknown','U'),c('unknown','U'),c('unknown','U')],
+   buys:'The "who is over capacity" answer without expanding a 58-person role group. Open field: no competitor is verified as doing this well, which makes it a cheap place to be first.',
+   ev:'"58 User(s)" collapsed under one role heading is a genuine legibility failure in the current planner. A count is not an answer.'},
+  {n:'Non-colour encoding of over-allocation (WCAG 1.4.1)',
+   cells:[c('unknown','U'),c('unknown','U'),c('unknown','U'),c('unknown','U'),c('unknown','U')],
+   buys:'Removal of a losable procurement point, plus instant legibility for colour-blind users and everyone else. Screendragon is currently a no: over-allocation exists in cell colour only.',
+   ev:'Colour-only status fails WCAG 1.4.1 Use of Color and forces every user to learn a legend. Add shape, icon, pattern or a threshold marker while the render layer is being rewritten.'},
+  {n:'Keyboard alternative to drag (WCAG 2.2 SC 2.5.7)',
+   cells:[c('unknown','U'),c('unknown','U'),c('unknown','U'),c('unknown','U'),c('unknown','U')],
+   buys:'Enterprise and public-sector accessibility, at a fraction of the cost of bolting it on later. Build it into the new React components with the W3C grid/treegrid keyboard model.',
+   ev:'Not established for any competitor this pass. Both dhtmlx and Bryntum document keyboard support at the component layer.'},
+  {n:'Utilisation as shape over threshold, not a raw percentage',
+   cells:[c('full','J'),c('full','J'),c('unknown','U'),c('unknown','U'),c('unknown','U'),],
+   buys:'The single clearest legibility win available. "178.57% for 8 day(s)" is a number a human has to parse; a bar crossing a threshold line is not.',
+   ev:'Float reviewers describe seeing over-allocation rather than reading it. That inversion is the whole problem.'},
+  {n:'Performance at 500+ scheduled people',
+   cells:[c('partial','S'),c('unknown','U'),c('unknown','U'),c('unknown','U'),c('unknown','U')],
+   buys:'Screendragon\'s home ground and its strongest counter-position. Float degrades in exactly the range where Screendragon\'s customers live.',
+   ev:'Capterra\'s aggregated summary (20 Aug 2026, 1,620 reviews) reports lag, slow loading and sluggish response with larger datasets, and laggy scrolling with large teams. Float\'s own positioning is teams of roughly 30 to 200. No single named reviewer says "unusable above 200", so treat the ceiling as inferred.'},
+  {n:'Granular permissions for complex org structures',
+   cells:[c('partial','S'),c('unknown','U'),c('unknown','U'),c('unknown','U'),c('unknown','U')],
+   buys:'A real enterprise objection to Float that Screendragon can answer. Worth a slide.',
+   ev:'Float permissions are described as too limited or confusing for more complex team structures (SelectHub, 2026).'},
+  {n:'Utilisation and billability reporting depth',
+   cells:[c('partial','S'),c('unknown','U'),c('unknown','U'),c('unknown','U'),c('unknown','U')],
+   buys:'A genuine Float weakness. Reviewers repeatedly call its reporting shallow and note it requires CSV export.',
+   ev:'Screendragon\'s five report types beat Float on depth. That claim is internal and needs a side-by-side artefact before it goes in front of a customer.'},
+  {n:'Custom and configurable dashboards',
+   cells:[c('partial','S'),c('unknown','U'),c('unknown','U'),c('unknown','U'),c('unknown','U')],
+   buys:'Modest. Float\'s reporting is real but shallow, so partial is fair rather than generous.',
+   ev:'This was one of the few cells the old matrix scored correctly.'}
+ ]},
+
+ {id:'diff',name:'Real differentiators',
+  desc:'Where the field is genuinely uneven and a tick earns something. Fund here.',
+  rows:[
+  {n:'Scenario planning (what-if, side by side)',
+   cells:[c('none','J'),c('none','I'),c('full','S'),c('unknown','U'),c('full','S')],
+   buys:'The clearest feature gap versus Runn and Smartsheet, and a genuine differentiator versus Float. This is the one Priority 1 feature from the old roadmap that survives scrutiny.',
+   ev:'Float\'s baseline-versus-adjusted-scope comparison is close but not full scenario planning. Judgement, and defensible.'},
+  {n:'Demand forecasting and pipeline-weighted planning',
+   cells:[c('partial','J'),c('none','I'),c('full','S'),c('unknown','U'),c('full','I')],
+   buys:'The weekly "who is idle next month" job. Second-order, not Priority 1.',
+   ev:'Runn and Smartsheet Resource Management are stronger here than Float.'},
+  {n:'Rates, cost and margin modelling',
+   cells:[c('partial','I'),c('unknown','U'),c('full','S'),c('full','I'),c('full','I')],
+   buys:'Suite-level credibility. Standalone schedulers are thinner here than suites, which is the structural argument for buying the module you already own.',
+   ev:'Runn is explicitly stronger on forecasting and financials than on timeline scanning.'},
+  {n:'Configurable multi-step approval workflow',
+   cells:[c('partial','S'),c('partial','S'),c('unknown','U'),c('unknown','U'),c('unknown','U')],
+   buys:'A real strength, but only when stated correctly. "Float, Resource Guru and Runn have no approval system at all" is false and will be corrected in the room. The true claim is configurable, multi-step approvals on a general workflow engine, versus narrow fixed ones.',
+   ev:'Float has time-off approvals with a Manager role. Resource Guru has an approval workflow gated to the Master plan.'},
+  {n:'Provisional / pencil bookings with priority ranking',
+   cells:[c('partial','I'),c('partial','S'),c('unknown','U'),c('unknown','U'),c('unknown','U')],
+   buys:'Less than claimed. The 7-rank colour-coded priority construct is distinctive as literally worded, but priority-ordered booking logic exists elsewhere. Use it as a feature, not as a moat.',
+   ev:'Resource Guru\'s first-come, first-served clash logic covers adjacent ground.'},
+  {n:'Part of a wider work-management suite',
+   cells:[c('none','S'),c('none','S'),c('none','S'),c('full','S'),c('full','S')],
+   buys:'The strongest commercial argument in the table, and it is not a planner feature at all. The client is already paying for Screendragon. The job is to remove the reason the manager still wants Float, not to undercut Float\'s price.',
+   ev:'Float, Resource Guru and Runn are standalone schedulers. Smartsheet RM is a module; Productive is a suite.'},
+  {n:'Published VPAT / accessibility conformance report',
+   cells:[c('unknown','U'),c('unknown','U'),c('unknown','U'),c('unknown','U'),c('partial','S')],
+   buys:'Removal of a procurement gate that neither deck mentions. It decides deals in US public sector under Section 508, and increasingly in enterprise under the European Accessibility Act.',
+   ev:'Smartsheet publishes partial WCAG 2.1 AA conformance with a VPAT by request, audited by Level Access. Float, Resource Guru, Runn and Productive VPAT status was not established this pass; absence of a found VPAT is not proof one does not exist.'}
+ ]}
+];
+
+const KEYS=['float','guru','runn','productive','smartsheet'];
+const HEADS=['Float','Resource Guru','Runn','Productive.io','Smartsheet RM'];
+const CYCLE=[null,'full','partial','none'];
+let sd={}, storageOK=true;
+const flat=[]; TIERS.forEach(t=>t.rows.forEach(r=>flat.push(r)));
+
+function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,48);}
+
+function markHTML(cell){
+  return '<span class="mark m-'+cell.v+'" title="'+cell.v+'"><span class="g" aria-hidden="true">'+GLYPH[cell.v]+'</span></span>'
+       + '<span class="conf" title="confidence">'+cell.c+'</span>';
+}
+
+function render(){
+  const tb=document.getElementById('body'); tb.innerHTML='';
+  TIERS.forEach(t=>{
+    const tr=document.createElement('tr'); tr.className='tier';
+    tr.innerHTML='<td colspan="7">'+t.name+'<span class="tdesc">'+t.desc+'</span></td>';
+    tb.appendChild(tr);
+    t.rows.forEach(r=>{
+      const id=slug(r.n);
+      const row=document.createElement('tr');
+      row.dataset.id=id;
+      row.dataset.unverified=r.cells.some(x=>x&&x.c==='U')?'1':'0';
+      let html='<td class="cap"><span class="rowlabel" role="button" tabindex="0" aria-expanded="false">'
+        +'<svg class="chev" width="10" height="10" viewBox="0 0 10 10" fill="currentColor" aria-hidden="true"><path d="M3 1l5 4-5 4z"/></svg>'
+        +'<span class="name">'+r.n+'</span></span></td>';
+      r.cells.slice(0,5).forEach(cell=>{ html+='<td>'+markHTML(cell)+'</td>'; });
+      const v=sd[id]||null;
+      html+='<td class="sdcell"><button class="sdbtn'+(v?' set v-'+v:'')+'" data-id="'+id+'" '
+        +'aria-label="Screendragon: '+r.n+'. Currently '+(v?v:'unset')+'. Click to change.">'
+        +(v?SDLABEL[v]:'Set')+'</button></td>';
+      row.innerHTML=html;
+      tb.appendChild(row);
+
+      const det=document.createElement('tr');
+      det.className='detail'; det.dataset.for=id; det.style.display='none';
+      det.innerHTML='<td colspan="7"><div class="detail-inner">'
+        +'<div><h4>What a tick buys</h4><p>'+r.buys+'</p></div>'
+        +'<div><h4>Evidence and caveats</h4><p class="ev">'+r.ev+'</p></div></div></td>';
+      tb.appendChild(det);
+    });
+  });
+  updateProgress();
+  applyFilters();
+}
+
+function updateProgress(){
+  const filled=flat.filter(r=>sd[slug(r.n)]).length;
+  document.getElementById('progressText').textContent=filled+' of '+flat.length+' filled';
+  document.getElementById('progressBar').style.width=(filled/flat.length*100)+'%';
+}
+
+async function save(){
+  if(!storageOK) return;
+  try{ await window.storage.set('sd-matrix-v1', JSON.stringify(sd)); }
+  catch(e){ storageOK=false; toast('Saved for this session only'); }
+}
+async function load(){
+  try{
+    const r=await window.storage.get('sd-matrix-v1');
+    if(r&&r.value) sd=JSON.parse(r.value);
+  }catch(e){ /* no saved state yet, or storage unavailable */ }
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),1900);
+}
+
+document.addEventListener('click',e=>{
+  const btn=e.target.closest('.sdbtn');
+  if(btn){
+    const id=btn.dataset.id;
+    const cur=sd[id]||null;
+    const next=CYCLE[(CYCLE.indexOf(cur)+1)%CYCLE.length];
+    if(next) sd[id]=next; else delete sd[id];
+    btn.className='sdbtn'+(next?' set v-'+next:'');
+    btn.textContent=next?SDLABEL[next]:'Set';
+    updateProgress(); save(); applyFilters();
+    return;
+  }
+  const lbl=e.target.closest('.rowlabel');
+  if(lbl){ toggleRow(lbl.closest('tr')); }
+});
+document.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ')&&e.target.classList.contains('rowlabel')){
+    e.preventDefault(); toggleRow(e.target.closest('tr'));
+  }
+});
+function toggleRow(tr){
+  const det=document.querySelector('.detail[data-for="'+tr.dataset.id+'"]');
+  const open=det.style.display!=='none';
+  det.style.display=open?'none':'';
+  tr.classList.toggle('open',!open);
+  tr.querySelector('.rowlabel').setAttribute('aria-expanded',String(!open));
+}
+
+document.getElementById('expandAll').addEventListener('click',e=>{
+  const anyClosed=[...document.querySelectorAll('.detail')].some(d=>d.style.display==='none');
+  document.querySelectorAll('#body tr[data-id]').forEach(tr=>{
+    const det=document.querySelector('.detail[data-for="'+tr.dataset.id+'"]');
+    det.style.display=anyClosed?'':'none';
+    tr.classList.toggle('open',anyClosed);
+    tr.querySelector('.rowlabel').setAttribute('aria-expanded',String(anyClosed));
+  });
+  e.target.textContent=anyClosed?'Collapse all rows':'Expand all rows';
+  applyFilters();
+});
+
+let fUnfilled=false,fUnverified=false;
+document.getElementById('filterUnfilled').addEventListener('click',e=>{
+  fUnfilled=!fUnfilled; e.target.setAttribute('aria-pressed',String(fUnfilled)); applyFilters();
+});
+document.getElementById('filterUnverified').addEventListener('click',e=>{
+  fUnverified=!fUnverified; e.target.setAttribute('aria-pressed',String(fUnverified)); applyFilters();
+});
+function applyFilters(){
+  document.querySelectorAll('#body tr[data-id]').forEach(tr=>{
+    const id=tr.dataset.id;
+    let show=true;
+    if(fUnfilled && sd[id]) show=false;
+    if(fUnverified && tr.dataset.unverified!=='1') show=false;
+    tr.style.display=show?'':'none';
+    const det=document.querySelector('.detail[data-for="'+id+'"]');
+    if(!show) det.style.display='none';
+    else if(tr.classList.contains('open')) det.style.display='';
+  });
+}
+
+document.getElementById('reset').addEventListener('click',()=>{
+  sd={}; save(); render(); toast('Screendragon column cleared');
+});
+
+document.getElementById('copyMd').addEventListener('click',async()=>{
+  let md='| Capability | '+HEADS.join(' | ')+' | Screendragon |\n';
+  md+='|'+' --- |'.repeat(7)+'\n';
+  TIERS.forEach(t=>{
+    md+='| **'+t.name.toUpperCase()+'** |'+' |'.repeat(6)+'\n';
+    t.rows.forEach(r=>{
+      const cells=r.cells.slice(0,5).map(x=>GLYPH[x.v]+' <sup>'+x.c+'</sup>').join(' | ');
+      const v=sd[slug(r.n)];
+      md+='| '+r.n+' | '+cells+' | '+(v?GLYPH[v]:'—')+' |\n';
+    });
+  });
+  md+='\nKey: ● ships it · ◐ narrower or shallower · ○ does not ship it · ? not established.\n';
+  md+='Confidence: S sourced · I inferred · J judgement · U unverified, do not use externally.\n';
+  try{ await navigator.clipboard.writeText(md); toast('Markdown copied'); }
+  catch(e){
+    const ta=document.createElement('textarea'); ta.value=md; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy'); ta.remove(); toast('Markdown copied');
+  }
+});
+
+(async()=>{ await load(); render(); })();
+</script>
+</body>
+</html>
