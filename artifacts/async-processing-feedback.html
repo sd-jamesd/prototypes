@@ -16,7 +16,8 @@
   --orange-500:#f76707;--orange-700:#582d19;
   --amber-100:#fff0cb;--amber-500:#f5a524;--amber-600:#a96600;--amber-700:#4d3618;
   --green-100:#e4f7f0;--green-500:#29a383;--green-600:#008062;--green-700:#1d3b31;
-  --red-100:#feebe7;--red-500:#e54d2e;--red-600:#cf3716;
+  --red-100:#feebe7;--red-500:#e54d2e;--red-600:#cf3716;--red-700:#641723;
+  --anno-a:#7139d6;--anno-b:#c2298a;--anno-c:#0d74ce;
   --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:24px;--s7:32px;
   --r2:4px;--r3:6px;--r4:8px;--rfull:9999px;
   --fs1:12px;--fs2:14px;--fs3:16px;
@@ -29,27 +30,29 @@
 body{margin:0;font-family:var(--font);font-size:var(--fs2);color:var(--n12);background:var(--n3);-webkit-font-smoothing:antialiased}
 
 /* Inspector controls — scaffolding, not part of the product */
-.inspector{background:var(--n1);border-bottom:1px solid var(--n6);padding:var(--s4) var(--s6);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s6)}
-.inspector .brand{display:flex;flex-direction:column;gap:2px;margin-right:var(--s4)}
+.inspector{background:var(--n1);border-bottom:1px solid var(--n6);padding:var(--s4) var(--s6);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s5)}
+.inspector .brand{display:flex;flex-direction:column;gap:2px;margin-right:var(--s3)}
 .inspector .brand b{font-size:var(--fs2);font-weight:600}
 .inspector .brand .badge{font-family:var(--mono);font-size:11px;color:var(--n10)}
 .ctrl{display:flex;align-items:center;gap:var(--s3)}
 .ctrl .lab{font-size:11px;font-weight:600;color:var(--n11);letter-spacing:.04em;text-transform:uppercase}
-.seg{display:inline-flex;background:var(--n2);border:1px solid var(--n6);border-radius:var(--r4);padding:3px;gap:3px}
-.seg button{font:inherit;font-size:var(--fs2);font-weight:500;border:0;background:transparent;color:var(--n11);padding:7px 14px;border-radius:var(--r3);cursor:pointer;transition:.15s}
+.seg{display:inline-flex;background:var(--n2);border:1px solid var(--n6);border-radius:var(--r4);padding:3px;gap:3px;flex-wrap:wrap}
+.seg button{font:inherit;font-size:var(--fs2);font-weight:500;border:0;background:transparent;color:var(--n11);padding:7px 12px;border-radius:var(--r3);cursor:pointer;transition:.15s}
 .seg button:hover{color:var(--n12)}
 .seg button[aria-pressed="true"]{background:var(--primary-50);color:var(--primary-700);box-shadow:var(--shadow-md)}
-.inspector .hint{flex-basis:100%;font-size:var(--fs1);color:var(--n10);margin:0;max-width:120ch}
+.inspector .hint{flex-basis:100%;font-size:var(--fs1);color:var(--n10);margin:0;max-width:130ch;line-height:1.5}
+.inspector .hint code{font-family:var(--mono);font-size:11px;background:var(--n3);padding:1px 5px;border-radius:3px;color:var(--n11)}
 
-/* App frame */
+/* App frame — mirrors the real shell: body grid, content column = breadcrumb / banner / outlet rows */
 .frame{display:flex;height:720px;overflow:hidden;background:var(--n1)}
 .rail{width:56px;background:var(--primary-800);display:flex;flex-direction:column;align-items:center;padding:var(--s3) 0;gap:var(--s5);flex-shrink:0}
 .rail .logo{width:32px;height:32px;border-radius:var(--r3);background:var(--primary-600);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
 .rail .ico{width:22px;height:22px;color:#c4e8f1;opacity:.75}
 .rail .ico.mt{margin-top:auto}
 
-.main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative}
-.crumb{height:52px;border-bottom:1px solid var(--n6);display:flex;align-items:center;padding:0 var(--s6);gap:var(--s2);font-size:var(--fs2);color:var(--n11);flex-shrink:0}
+/* content column = CSS grid: breadcrumb (auto) / banner mount (auto) / outlet (1fr) */
+.main{flex:1;min-width:0;position:relative;display:grid;grid-template-rows:52px auto minmax(0,1fr)}
+.crumb{position:relative;border-bottom:1px solid var(--n6);display:flex;align-items:center;padding:0 var(--s6);gap:var(--s2);font-size:var(--fs2);color:var(--n11)}
 .crumb b{color:var(--n12);font-weight:600}
 .crumb .sep{color:var(--n8)}
 .only-tasks,.only-rp{display:inline}
@@ -58,49 +61,69 @@ body{margin:0;font-family:var(--font);font-size:var(--fs2);color:var(--n12);back
 .frame[data-surface="tasks"] .surface-rp{display:none}
 .frame[data-surface="rp"] .surface-tasks{display:none}
 
-.content{flex:1;overflow:auto;padding:var(--s6)}
+/* row 2 — the banner mount (new shell grid row this feature adds) */
+.bannerslot{position:relative;padding:0 var(--s6)}
+.frame[data-stage="queued"] .bannerslot,
+.frame[data-stage="progress"] .bannerslot,
+.frame[data-stage="delayed"] .bannerslot,
+.frame[data-stage="failed"] .bannerslot{padding-top:var(--s5)}
 
-/* ---- Banner (the only in-surface signal) ---- */
-.banner{display:none;align-items:flex-start;gap:var(--s3);padding:var(--s3) var(--s4);border-radius:var(--r4);margin:0;border:1px solid}
-.bannerslot{padding:0 var(--s6)}
-.frame[data-placement="inline"] .banner{margin-top:var(--s5)}
-.frame[data-placement="bottom"] .bannerslot{position:absolute;left:0;right:0;bottom:0;padding:var(--s4) var(--s6);background:var(--n1);border-top:1px solid var(--n6);box-shadow:0 -4px 14px rgba(0,0,0,.07);z-index:15}
-.frame[data-placement="bottom"] .banner{border-radius:var(--r4)}
-.banner .txt{flex:1;min-width:0}
+/* row 3 — the content outlet: owns its own scroll, mirrors #sectionContainer */
+.content{position:relative;overflow:auto;padding:var(--s6)}
+
+/* ---- Banner (persistent, per-surface signal) ---- */
+.banner{display:none;align-items:flex-start;gap:var(--s3);padding:var(--s3) var(--s4);border-radius:var(--r4);border:1px solid;position:relative}
+.banner.hidden{display:none!important}
+.banner .txt{flex:1;min-width:0;padding-right:var(--s5)}
 .banner .h{font-weight:600;font-size:var(--fs2);margin:0 0 2px}
-.banner .b{font-size:var(--fs2);color:var(--n11);margin:0}
-.banner .rot{font-size:var(--fs1);color:var(--n11);margin-top:4px;min-height:16px;transition:opacity .25s}
-.banner.processing{background:var(--accent-a3);border-color:var(--accent-a6);color:var(--n12)}
-.banner.completing{background:var(--primary-50);border-color:var(--primary-100);color:var(--n12)}
-.banner.partial{background:var(--amber-100);border-color:var(--amber-500)}
-.banner.partial .h,.banner.partial .b{color:var(--amber-700)}
+.banner .b{font-size:var(--fs2);margin:0}
+.banner .rot{font-size:var(--fs1);margin-top:4px;min-height:16px;transition:opacity .25s}
+.banner .byline{font-size:11px;color:var(--n10);margin:6px 0 0;font-weight:500}
+.banner.failed .byline{color:var(--red-600);opacity:.8}
+.banner .x{position:absolute;top:8px;right:8px;width:24px;height:24px;border:0;background:transparent;border-radius:var(--r2);cursor:pointer;color:inherit;opacity:.6;font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center}
+.banner .x:hover{opacity:1;background:rgba(0,0,0,.05)}
+.banner.queued,.banner.processing{background:var(--accent-a3);border-color:var(--accent-a6);color:var(--n12)}
+.banner.queued .b,.banner.processing .b,.banner.queued .rot,.banner.processing .rot{color:var(--n11)}
+.banner.failed{background:var(--red-100);border-color:var(--red-500)}
+.banner.failed .h,.banner.failed .b{color:var(--red-700)}
 .banner .acts{display:flex;gap:var(--s2);margin-top:var(--s3)}
-.frame[data-stage="processing"] .banner.processing{display:flex}
-.frame[data-stage="completing"] .banner.completing{display:flex}
-.frame[data-stage="partial"] .banner.partial{display:flex}
+
+/* banner visibility per stage */
+.frame[data-stage="queued"] .banner.queued{display:flex}
+.frame[data-stage="progress"] .banner.processing,
+.frame[data-stage="delayed"] .banner.processing{display:flex}
+.frame[data-stage="failed"] .banner.failed{display:flex}
+.banner.processing .delayed{display:none}
+.frame[data-stage="delayed"] .banner.processing .normal{display:none}
+.frame[data-stage="delayed"] .banner.processing .delayed{display:block}
 
 .btn{height:32px;padding:0 14px;border-radius:var(--r2);font:inherit;font-size:var(--fs2);font-weight:500;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:6px}
-.btn-amber{background:var(--amber-600);color:#fff}
-.btn-amber:hover{background:var(--amber-700)}
-.btn-ghost-amber{background:transparent;color:var(--amber-700);border-color:var(--amber-500)}
+.btn-red{background:var(--red-600);color:#fff}
+.btn-red:hover{background:var(--red-700)}
+.btn-ghost-red{background:transparent;color:var(--red-700);border-color:var(--red-500)}
 
 /* Spinner */
-.spin{width:18px;height:18px;flex-shrink:0}
+.spin{width:20px;height:20px;flex-shrink:0}
 .spin circle{fill:none;stroke-width:4}
-.spin .tk{stroke:var(--n5)}
-.spin .hd{stroke:var(--primary-600);stroke-linecap:round;stroke-dasharray:90 200;transform-origin:center;animation:sp 1s linear infinite}
+.spin .tk{stroke:var(--n6)}
+.spin .hd{stroke:var(--primary-600);stroke-linecap:round;stroke-dasharray:34 90;transform-origin:center;animation:sp .9s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.spin .hd{animation:none}}
-.warn-ico{width:18px;height:18px;flex-shrink:0;color:var(--amber-600)}
+.err-ico{width:18px;height:18px;flex-shrink:0;color:var(--red-600);margin-top:1px}
 
-/* ---- Toasts ---- */
+/* ---- Toasts (Scale component — reuses existing #messageDisplay shell element) ---- */
 .toasts{position:absolute;top:var(--s5);right:var(--s5);display:flex;flex-direction:column;gap:var(--s3);z-index:20;max-width:360px}
 .toast{display:none;align-items:flex-start;gap:10px;padding:12px 16px;border-radius:var(--r3);box-shadow:var(--shadow-md);font-size:var(--fs2);font-weight:500;line-height:1.4;border:1px solid}
 .toast svg{flex-shrink:0;margin-top:1px}
 .toast.info{background:var(--primary-50);color:var(--primary-700);border-color:var(--primary-600)}
-.toast.success{background:var(--green-100);color:var(--green-700);border-color:var(--green-500)}
+.toast.error{background:var(--red-100);color:var(--red-700);border-color:var(--red-500)}
 .frame[data-stage="submit"] .toast.submit{display:flex}
 .frame[data-stage="done"] .toast.done{display:flex}
+.frame[data-stage="failed"] .toast.fail{display:flex}
+.toast-note{display:none;align-self:flex-end;font-family:var(--mono);font-size:10px;color:var(--n11);background:var(--n2);border:1px solid var(--n5);border-radius:var(--rfull);padding:3px 10px;box-shadow:var(--shadow-md)}
+.frame[data-stage="submit"] .toast-note,
+.frame[data-stage="done"] .toast-note,
+.frame[data-stage="failed"] .toast-note{display:block}
 
 /* ---- Tasks table ---- */
 .tabs{display:flex;gap:var(--s5);border-bottom:1px solid var(--n6);margin-bottom:var(--s5)}
@@ -119,12 +142,8 @@ tbody tr:hover{background:var(--n2)}
 .pill .dot{width:6px;height:6px;border-radius:50%}
 .pill.todo{background:var(--primary-50);border-color:var(--primary-100);color:var(--primary-700)}
 .pill.todo .dot{background:var(--primary-600)}
-
-/* new rows only appear after the queue creates them (post-refresh) */
 .rownew{display:none}
-.frame[data-stage="done"] .rownew.grpA,
-.frame[data-stage="done"] .rownew.grpB,
-.frame[data-stage="partial"] .rownew.grpA{display:table-row}
+.frame[data-stage="done"] .rownew{display:table-row}
 
 /* ---- Resource planner ---- */
 .rp-toolbar{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s5);flex-wrap:wrap}
@@ -147,21 +166,37 @@ tbody tr:hover{background:var(--n2)}
 .bar{position:absolute;height:34px;top:9px;border-radius:var(--r2);padding:4px 8px;overflow:hidden;display:flex;flex-direction:column;justify-content:center;line-height:1.15}
 .bar .bl{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bar .bs{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* settled booking — orange with accessible dark text (5.36:1) */
 .bar.book{background:var(--orange-500);color:var(--n12)}
 .bar.book .bs{color:var(--orange-700)}
 .bar.sel{background:var(--primary-600);color:#fff}
 .bar.sel .bs{color:var(--primary-100)}
 .barnew{display:none}
-.frame[data-stage="done"] .barnew.grpA,
-.frame[data-stage="done"] .barnew.grpB,
-.frame[data-stage="partial"] .barnew.grpA{display:flex}
+.frame[data-stage="done"] .barnew{display:flex}
+
+/* ===== Placement annotation layer (dev view) ===== */
+.anno{display:none}
+.frame.annotate .anno{display:block}
+.frame.annotate .crumb{box-shadow:inset 3px 0 0 var(--anno-a)}
+.frame.annotate .bannerslot{box-shadow:inset 3px 0 0 var(--anno-b);min-height:64px;padding-top:var(--s5)}
+.frame.annotate .content{box-shadow:inset 3px 0 0 var(--anno-c)}
+/* empty-state placeholder so the mount point is visible even when idle */
+.mount-ph{display:none;border:1px dashed var(--anno-b);border-radius:var(--r4);padding:var(--s3) var(--s4);color:var(--anno-b);font-size:var(--fs1);font-weight:500;background:rgba(194,41,138,.04)}
+.frame.annotate[data-stage="submit"] .mount-ph,
+.frame.annotate[data-stage="done"] .mount-ph{display:block}
+/* legend */
+.legend{position:absolute;left:var(--s5);bottom:var(--s5);z-index:25;background:var(--n1);border:1px solid var(--n6);border-radius:var(--r4);box-shadow:var(--shadow-lg);padding:var(--s3) var(--s4);max-width:340px;font-size:var(--fs1);line-height:1.45}
+.legend .lh{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--n10);margin-bottom:var(--s2)}
+.legend .lrow{display:flex;gap:8px;align-items:flex-start;margin:5px 0}
+.legend .sw{width:10px;height:10px;border-radius:2px;flex-shrink:0;margin-top:3px}
+.legend code{font-family:var(--mono);font-size:10px;background:var(--n3);padding:1px 4px;border-radius:3px;color:var(--n11)}
+.legend .rpn{margin-top:var(--s2);padding-top:var(--s2);border-top:1px solid var(--n4);color:var(--n11)}
+.frame[data-surface="tasks"] .legend .rpn{display:none}
 </style>
 </head>
 <body>
 
 <div class="inspector">
-  <div class="brand"><b>Async task processing — feedback</b><span class="badge">v0.4 · 2026-07-29</span></div>
+  <div class="brand"><b>Async task processing — feedback</b><span class="badge">v0.12 · 2026-07-29</span></div>
   <div class="ctrl"><span class="lab">Surface</span>
     <div class="seg" id="surface-seg" role="group" aria-label="Surface">
       <button data-surface="tasks" aria-pressed="true">Tasks</button>
@@ -171,22 +206,23 @@ tbody tr:hover{background:var(--n2)}
   <div class="ctrl"><span class="lab">Stage</span>
     <div class="seg" id="stage-seg" role="group" aria-label="Stage">
       <button data-stage="submit" aria-pressed="true">Submit</button>
-      <button data-stage="processing" aria-pressed="false">Processing</button>
-      <button data-stage="completing" aria-pressed="false">Completing</button>
+      <button data-stage="queued" aria-pressed="false">Queued</button>
+      <button data-stage="progress" aria-pressed="false">In progress</button>
+      <button data-stage="delayed" aria-pressed="false">Delayed</button>
       <button data-stage="done" aria-pressed="false">Done</button>
-      <button data-stage="partial" aria-pressed="false">Partial failure</button>
+      <button data-stage="failed" aria-pressed="false">Failed</button>
     </div>
   </div>
-  <div class="ctrl"><span class="lab">Placement</span>
-    <div class="seg" id="place-seg" role="group" aria-label="Placement">
-      <button data-place="inline" aria-pressed="true">Inline (shell slot)</button>
-      <button data-place="bottom" aria-pressed="false">Bottom bar</button>
+  <div class="ctrl"><span class="lab">Placement labels</span>
+    <div class="seg" id="anno-seg" role="group" aria-label="Placement labels">
+      <button data-anno="off" aria-pressed="true">Off</button>
+      <button data-anno="on" aria-pressed="false">On</button>
     </div>
   </div>
-  <p class="hint">No in-view processing treatment — the banner is the only signal on each surface. During processing the list/planner shows current server data (the new items aren't created yet); on completion the view refreshes and they appear. Partial failure is banner-only: only the items that succeeded appear, the banner reports the rest and retries them. Placement toggles the container: Inline mounts in the app shell above the content and reflows it (persistent above scroll); Bottom bar floats over the content's bottom edge without reflow — no template change, but it can occlude the last rows.</p>
+  <p class="hint">Exact placement: the app shell is a <code>display:grid</code> on <code>&lt;body&gt;</code>. The banner is a new <code>auto</code> grid row inserted between <code>#globalBreadcrumb</code> and the <code>#sectionContainer</code> outlet, which becomes <code>minmax(0,1fr)</code>. One shell change, inherited by every surface — no page-template edits. Turn Placement labels On to see the three rows and the mount point. Tasks: outlet owns its scroll, reflow is automatic. RP: outlet is <code>overflow:hidden</code> with a DHTMLX timeline that caches its height — banner show/hide must fire a resize (<code>updateView()</code> / window resize) so it recomputes.</p>
 </div>
 
-<div class="frame" data-surface="tasks" data-stage="submit" data-placement="inline">
+<div class="frame" data-surface="tasks" data-stage="submit">
   <div class="rail">
     <div class="logo">sd</div>
     <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
@@ -203,48 +239,65 @@ tbody tr:hover{background:var(--n2)}
     </div>
 
     <div class="toasts">
+      <div class="toast-note">Prototype note — toast auto-dismisses after ~4s</div>
       <div class="toast submit info">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-        <span>Estimate saved. Creating <span class="only-tasks">tasks</span><span class="only-rp">bookings</span> in the background.</span>
+        <span>Estimate saved. Creating <span class="only-tasks">tasks</span><span class="only-rp">bookings</span> in the background — we'll notify you when it's done.</span>
       </div>
-      <div class="toast done success">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
-        <span>4 <span class="only-tasks">tasks</span><span class="only-rp">bookings</span> created for this estimate.</span>
+      <div class="toast done info">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        <span>Processing finished for this estimate. View your <span class="only-tasks">tasks</span><span class="only-rp">bookings</span>.</span>
+      </div>
+      <div class="toast fail error">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+        <span>Couldn't finish processing this estimate. Open it to retry.</span>
       </div>
     </div>
 
     <div class="bannerslot">
+      <!-- empty-state placeholder (annotate view only) marks the mount point when idle -->
+      <div class="mount-ph anno">Banner mounts here — new shell grid row (empty when idle)</div>
 
-      <!-- BANNERS -->
+      <!-- QUEUED -->
+      <div class="banner queued">
+        <svg class="spin" viewBox="0 0 24 24"><circle class="tk" cx="12" cy="12" r="9"/><circle class="hd" cx="12" cy="12" r="9"/></svg>
+        <div class="txt">
+          <p class="h">Tasks queued for this estimate</p>
+          <p class="b">Waiting in the queue to begin. This <span class="only-tasks">list</span><span class="only-rp">planner</span> updates automatically, so keep working.</p>
+          <p class="byline">Requested by Sarah Chen</p>
+        </div>
+        <button class="x" aria-label="Dismiss" onclick="this.closest('.banner').classList.add('hidden')">×</button>
+      </div>
+
+      <!-- IN PROGRESS / DELAYED -->
       <div class="banner processing">
         <svg class="spin" viewBox="0 0 24 24"><circle class="tk" cx="12" cy="12" r="9"/><circle class="hd" cx="12" cy="12" r="9"/></svg>
         <div class="txt">
-          <p class="h">Creating <span class="only-tasks">tasks</span><span class="only-rp">bookings</span> for this estimate</p>
-          <p class="b">This <span class="only-tasks">list</span><span class="only-rp">planner</span> updates automatically. Keep working — we'll refresh it when processing finishes.</p>
-          <p class="rot" id="rot">Processing your estimate…</p>
+          <p class="h normal">Creating <span class="only-tasks">tasks</span><span class="only-rp">bookings</span> for this estimate</p>
+          <p class="h delayed">Still creating <span class="only-tasks">tasks</span><span class="only-rp">bookings</span> for this estimate</p>
+          <p class="b normal">This <span class="only-tasks">list</span><span class="only-rp">planner</span> updates automatically. Keep working — we'll notify you when it's done.</p>
+          <p class="b delayed">This is taking longer than usual. It's still running — we'll notify you when it's done.</p>
+          <p class="rot normal" id="rot">Processing your estimate…</p>
+          <p class="byline">Requested by Sarah Chen</p>
         </div>
+        <button class="x" aria-label="Dismiss" onclick="this.closest('.banner').classList.add('hidden')">×</button>
       </div>
 
-      <div class="banner completing">
-        <svg class="spin" viewBox="0 0 24 24"><circle class="tk" cx="12" cy="12" r="9"/><circle class="hd" cx="12" cy="12" r="9"/></svg>
+      <!-- FAILED (full operation) -->
+      <div class="banner failed">
+        <svg class="err-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
         <div class="txt">
-          <p class="h">Refreshing now…</p>
-          <p class="b">Processing finished. Updating this <span class="only-tasks">list</span><span class="only-rp">planner</span>.</p>
-        </div>
-      </div>
-
-      <div class="banner partial">
-        <svg class="warn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L14.4 3.9a2 2 0 00-3.4 0z"/></svg>
-        <div class="txt">
-          <p class="h">2 of 4 <span class="only-tasks">tasks</span><span class="only-rp">bookings</span> created</p>
-          <p class="b">2 couldn't be created — a rate lookup timed out. They're not in this <span class="only-tasks">list</span><span class="only-rp">planner</span> yet. Retry them, or review the errors.</p>
+          <p class="h">Couldn't create <span class="only-tasks">tasks</span><span class="only-rp">bookings</span> for this estimate</p>
+          <p class="b">Processing failed and stopped. Retry to run it again, or review the error log.</p>
           <div class="acts">
-            <button class="btn btn-amber">Retry failed</button>
-            <button class="btn btn-ghost-amber">Review errors</button>
+            <button class="btn btn-red">Retry</button>
+            <button class="btn btn-ghost-red">Review error log</button>
           </div>
+          <p class="byline">Requested by Sarah Chen</p>
         </div>
+        <button class="x" aria-label="Dismiss" onclick="this.closest('.banner').classList.add('hidden')">×</button>
       </div>
-    </div><!-- /bannerslot -->
+    </div><!-- /bannerslot (grid row 2) -->
 
     <div class="content">
       <!-- ===== TASKS SURFACE ===== -->
@@ -259,12 +312,10 @@ tbody tr:hover{background:var(--n2)}
             <tr><td class="tid">2</td><td class="tname">2 Sell Price Override = Cost…</td><td><span class="date-chip">Wed, 11 Feb 2026</span></td><td><span class="date-chip">Thu, 12 Feb 2026</span></td><td>2d</td><td><span class="assignee"><span class="av" style="background:#0d74ce">AE</span>Account Executive</span></td><td><span class="pill todo"><span class="dot"></span>To Be Done</span></td></tr>
             <tr><td class="tid">3</td><td class="tname">test</td><td><span class="date-chip">Wed, 11 Feb 2026</span></td><td><span class="date-chip">Thu, 12 Feb 2026</span></td><td>2d</td><td><span class="assignee"><span class="av" style="background:#d44a00">DR</span>Designer</span></td><td><span class="pill todo"><span class="dot"></span>To Be Done</span></td></tr>
             <tr><td class="tid">4</td><td class="tname">test</td><td><span class="date-chip">Mon, 16 Feb 2026</span></td><td><span class="date-chip">Tue, 17 Feb 2026</span></td><td>2d</td><td><span class="assignee"><span class="av" style="background:#e54d2e">PM</span>Project Manager</span></td><td><span class="pill todo"><span class="dot"></span>To Be Done</span></td></tr>
-
-            <!-- new tasks — appear only after the queue creates them -->
-            <tr class="rownew grpA"><td class="tid">5</td><td class="tname">Rate card apply</td><td><span class="date-chip">Wed, 18 Feb 2026</span></td><td><span class="date-chip">Thu, 19 Feb 2026</span></td><td>2d</td><td><span class="assignee"><span class="av" style="background:#7139d6">DR</span>Developer</span></td><td><span class="pill todo"><span class="dot"></span>To Be Done</span></td></tr>
-            <tr class="rownew grpA"><td class="tid">6</td><td class="tname">Sell price sync</td><td><span class="date-chip">Wed, 18 Feb 2026</span></td><td><span class="date-chip">Thu, 19 Feb 2026</span></td><td>2d</td><td><span class="assignee"><span class="av" style="background:#0d74ce">AE</span>Account Executive</span></td><td><span class="pill todo"><span class="dot"></span>To Be Done</span></td></tr>
-            <tr class="rownew grpB"><td class="tid">7</td><td class="tname">Margin check</td><td><span class="date-chip">Fri, 20 Feb 2026</span></td><td><span class="date-chip">Mon, 23 Feb 2026</span></td><td>2d</td><td><span class="assignee"><span class="av" style="background:#d44a00">DR</span>Designer</span></td><td><span class="pill todo"><span class="dot"></span>To Be Done</span></td></tr>
-            <tr class="rownew grpB"><td class="tid">8</td><td class="tname">Approval route</td><td><span class="date-chip">Fri, 20 Feb 2026</span></td><td><span class="date-chip">Mon, 23 Feb 2026</span></td><td>2d</td><td><span class="assignee"><span class="av" style="background:#e54d2e">PM</span>Project Manager</span></td><td><span class="pill todo"><span class="dot"></span>To Be Done</span></td></tr>
+            <tr class="rownew"><td class="tid">5</td><td class="tname">Rate card apply</td><td><span class="date-chip">Wed, 18 Feb 2026</span></td><td><span class="date-chip">Thu, 19 Feb 2026</span></td><td>2d</td><td><span class="assignee"><span class="av" style="background:#7139d6">DR</span>Developer</span></td><td><span class="pill todo"><span class="dot"></span>To Be Done</span></td></tr>
+            <tr class="rownew"><td class="tid">6</td><td class="tname">Sell price sync</td><td><span class="date-chip">Wed, 18 Feb 2026</span></td><td><span class="date-chip">Thu, 19 Feb 2026</span></td><td>2d</td><td><span class="assignee"><span class="av" style="background:#0d74ce">AE</span>Account Executive</span></td><td><span class="pill todo"><span class="dot"></span>To Be Done</span></td></tr>
+            <tr class="rownew"><td class="tid">7</td><td class="tname">Margin check</td><td><span class="date-chip">Fri, 20 Feb 2026</span></td><td><span class="date-chip">Mon, 23 Feb 2026</span></td><td>2d</td><td><span class="assignee"><span class="av" style="background:#d44a00">DR</span>Designer</span></td><td><span class="pill todo"><span class="dot"></span>To Be Done</span></td></tr>
+            <tr class="rownew"><td class="tid">8</td><td class="tname">Approval route</td><td><span class="date-chip">Fri, 20 Feb 2026</span></td><td><span class="date-chip">Mon, 23 Feb 2026</span></td><td>2d</td><td><span class="assignee"><span class="av" style="background:#e54d2e">PM</span>Project Manager</span></td><td><span class="pill todo"><span class="dot"></span>To Be Done</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -287,47 +338,52 @@ tbody tr:hover{background:var(--n2)}
               <div class="d">20/07</div><div class="d">21/07</div><div class="d">22/07</div><div class="d">23/07</div><div class="d">24/07</div><div class="d">25/07</div><div class="d">26/07</div><div class="d">27/07</div><div class="d">28/07</div><div class="d today">29/07</div><div class="d">30/07</div><div class="d">31/07</div>
             </div>
           </div>
-
           <div class="rp-row">
             <div class="res"><span class="rav" style="background:#0d74ce">AE</span><div><div class="rn">Account Executive</div><div class="ru">0 Users</div></div></div>
             <div class="track">
               <div class="wknd" style="left:41.6%;width:16.6%"></div><div class="wknd" style="left:83.3%;width:16.6%"></div>
               <div class="bar book" style="left:0;width:41%"><span class="bl">Test test test</span><span class="bs">6.13% for 5 day(s)</span></div>
               <div class="bar book" style="left:58%;width:25%"><span class="bl">TEST DELIVERABLES</span><span class="bs">6.25% for 4 day(s)</span></div>
-              <div class="bar barnew grpA book" style="left:75%;width:22%"><span class="bl">Rate card apply</span><span class="bs">2.5% for 2 day(s)</span></div>
+              <div class="bar barnew book" style="left:75%;width:22%"><span class="bl">Rate card apply</span><span class="bs">2.5% for 2 day(s)</span></div>
             </div>
           </div>
-
           <div class="rp-row">
             <div class="res"><span class="rav" style="background:#7139d6">DR</span><div><div class="rn">Developer</div><div class="ru">12 Users</div></div></div>
             <div class="track">
               <div class="wknd" style="left:41.6%;width:16.6%"></div><div class="wknd" style="left:83.3%;width:16.6%"></div>
               <div class="bar book" style="left:16%;width:33%"><span class="bl">MMCI Test 4</span><span class="bs">27.78% for 8 day(s)</span></div>
-              <div class="bar barnew grpA book" style="left:58%;width:20%"><span class="bl">Sell price sync</span><span class="bs">3.13% for 2 day(s)</span></div>
+              <div class="bar barnew book" style="left:58%;width:20%"><span class="bl">Sell price sync</span><span class="bs">3.13% for 2 day(s)</span></div>
             </div>
           </div>
-
           <div class="rp-row">
             <div class="res"><span class="rav" style="background:#d44a00">DR</span><div><div class="rn">Designer</div><div class="ru">8 Users</div></div></div>
             <div class="track">
               <div class="wknd" style="left:41.6%;width:16.6%"></div><div class="wknd" style="left:83.3%;width:16.6%"></div>
               <div class="bar sel" style="left:58%;width:25%"><span class="bl">Create New Deliverable</span><span class="bs">2.5% for 5 day(s)</span></div>
-              <div class="bar barnew grpB book" style="left:8%;width:20%"><span class="bl">Margin check</span><span class="bs">4.17% for 2 day(s)</span></div>
+              <div class="bar barnew book" style="left:8%;width:20%"><span class="bl">Margin check</span><span class="bs">4.17% for 2 day(s)</span></div>
             </div>
           </div>
-
           <div class="rp-row">
             <div class="res"><span class="rav" style="background:#e54d2e">PM</span><div><div class="rn">Project Manager</div><div class="ru">3 Users</div></div></div>
             <div class="track">
               <div class="wknd" style="left:41.6%;width:16.6%"></div><div class="wknd" style="left:83.3%;width:16.6%"></div>
               <div class="bar book" style="left:25%;width:22%"><span class="bl">no.2 per column</span><span class="bs">6.25% for 2 day(s)</span></div>
-              <div class="bar barnew grpB book" style="left:66%;width:20%"><span class="bl">Approval route</span><span class="bs">4.17% for 3 day(s)</span></div>
+              <div class="bar barnew book" style="left:66%;width:20%"><span class="bl">Approval route</span><span class="bs">4.17% for 3 day(s)</span></div>
             </div>
           </div>
         </div>
       </div>
-
     </div>
+
+    <!-- Placement annotation legend (dev view) -->
+    <div class="legend anno">
+      <div class="lh">Shell grid — content column rows</div>
+      <div class="lrow"><span class="sw" style="background:var(--anno-a)"></span><div><code>#globalBreadcrumb</code> · 48px row</div></div>
+      <div class="lrow"><span class="sw" style="background:var(--anno-b)"></span><div>Banner mount · new <code>auto</code> row (this feature)</div></div>
+      <div class="lrow"><span class="sw" style="background:var(--anno-c)"></span><div><code>#sectionContainer</code> · <code>minmax(0,1fr)</code> · owns scroll</div></div>
+      <div class="rpn"><b>RP only:</b> outlet is <code>overflow:hidden</code>; the DHTMLX timeline caches its height. Fire a resize on banner show/hide so it recomputes.</div>
+    </div>
+
   </div>
 </div>
 
@@ -335,8 +391,9 @@ tbody tr:hover{background:var(--n2)}
   const frame = document.querySelector('.frame');
   const surfaceBtns = document.querySelectorAll('#surface-seg button');
   const stageBtns = document.querySelectorAll('#stage-seg button');
+  const annoBtns = document.querySelectorAll('#anno-seg button');
   const rotEl = document.getElementById('rot');
-  const rotLines = ['Processing your estimate…','Creating tasks and bookings…','Setting rates and durations…','Assigning resources…','Almost done…'];
+  const rotLines = ['Processing your estimate…','Creating tasks and bookings…','Setting rates and durations…','Assigning resources…'];
   let rotTimer;
 
   function runRot(){
@@ -351,22 +408,22 @@ tbody tr:hover{background:var(--n2)}
   function setStage(stage){
     frame.dataset.stage = stage;
     stageBtns.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.stage===stage)));
-    if(stage==='processing') runRot(); else clearInterval(rotTimer);
+    document.querySelectorAll('.banner.hidden').forEach(b=>b.classList.remove('hidden'));
+    if(stage==='progress') runRot(); else clearInterval(rotTimer);
   }
   function setSurface(s){
     frame.dataset.surface = s;
     surfaceBtns.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.surface===s)));
   }
-  const placeBtns = document.querySelectorAll('#place-seg button');
-  function setPlace(p){
-    frame.dataset.placement = p;
-    placeBtns.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.place===p)));
+  function setAnno(v){
+    frame.classList.toggle('annotate', v==='on');
+    annoBtns.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.anno===v)));
   }
   surfaceBtns.forEach(b=>b.addEventListener('click',()=>setSurface(b.dataset.surface)));
   stageBtns.forEach(b=>b.addEventListener('click',()=>setStage(b.dataset.stage)));
-  placeBtns.forEach(b=>b.addEventListener('click',()=>setPlace(b.dataset.place)));
+  annoBtns.forEach(b=>b.addEventListener('click',()=>setAnno(b.dataset.anno)));
   setStage('submit');
-  setPlace('inline');
+  setAnno('off');
 </script>
 </body>
 </html>
