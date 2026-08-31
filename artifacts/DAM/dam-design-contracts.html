@@ -337,6 +337,22 @@ table.roles{width:100%;border-collapse:collapse;background:#fff;border:1px solid
 .c-edit .map td:first-child{font-weight:600;color:var(--ed-value);white-space:nowrap;}
 .c-edit .map td:nth-child(2){color:var(--ed-label);}
 .c-edit .divider{height:1px;background:var(--ed-line);margin:24px 0;}
+.c-edit /* ---- territory picker (composed: find field + accordion + checkbox + chip) ---- */
+.terr-list{max-height:252px;overflow-y:auto;margin-top:10px;padding-right:8px;}
+.c-edit .terr-list .acc-item{padding:10px 0 10px 11px;}
+.c-edit .terr-list .acc-body{gap:11px;padding-left:26px;}
+.c-edit .flab .rollup{font-size:11px;font-weight:600;color:var(--c-primary-300);background:rgba(77,181,207,.16);border-radius:var(--radius-pill);padding:1px 8px;}
+.c-edit .chip.more{background:transparent;border-style:dashed;color:var(--ed-label);}
+.c-edit .hl{color:var(--c-primary-300);font-weight:600;}
+.c-edit .terr-hint{margin-left:auto;font-size:11px;color:var(--ed-faint);}
+.c-edit .terr-count{font-size:11px;color:var(--ed-faint);font-weight:400;font-variant-numeric:tabular-nums;}
+.c-edit .sel-box.open{border-color:var(--c-primary);box-shadow:0 0 0 3px rgba(11,110,138,.30);}
+.c-edit .sel-box.open .chev svg{transform:rotate(0deg);}
+.c-edit .selmenu{position:relative;z-index:2;margin-top:4px;background:#241f1c;border:1px solid var(--ed-line);border-radius:var(--radius-2);box-shadow:0 10px 26px rgba(0,0,0,.5);padding:4px;}
+.c-edit .selmenu-item{display:flex;gap:9px;align-items:flex-start;padding:9px 10px;border-radius:var(--radius-2);font-size:14px;color:var(--ed-value);cursor:default;}
+.c-edit .selmenu-item.on{background:rgba(77,181,207,.12);}
+.c-edit .selmenu-item .tick{flex:none;width:13px;font-size:12px;font-weight:700;color:var(--c-primary-300);line-height:21px;}
+.c-edit .selmenu-item .sm{display:block;font-size:12px;color:var(--ed-label);margin-top:2px;font-weight:400;}
 .c-filter{font-family:var(--font);background:#f3f1ef;color:var(--text);padding:34px 30px 80px;-webkit-font-smoothing:antialiased;line-height:1.5;;min-height:100vh;}
 .c-filter .wrap{max-width:980px;margin:0 auto;}
 .c-filter h1{font-size:16px;font-weight:700;letter-spacing:-.02em;}
@@ -1094,9 +1110,112 @@ table.roles{width:100%;border-collapse:collapse;background:#fff;border:1px solid
     </ul></div></div>
   </div>
 
+
+  <!-- ============ TERRITORY PICKER ============ -->
+  <div class="block">
+    <h2>4 &middot; Territory picker &middot; composed, not net-new</h2>
+    <p class="lede">Rights territories are a closed, hierarchical set of roughly 200 entries. The live build splits them into three mutually exclusive modes (Global / Region / Country-specific) and renders the country mode as a two-column grid of every country. Both go. The replacement is one list built from the &sect;3 kit: find field, accordion group, checkbox (including indeterminate), chip.</p>
+
+    <div class="row">
+      <div class="demo">
+        <div class="lbl">Default &middot; restricted, regions collapsed</div>
+        <div class="sec">
+          <div class="eyebrow">This licence permits use</div>
+          <div class="field">
+            <div class="flab">In territories <span class="opt">OPTIONAL</span></div>
+            <div class="sel-box open" style="color:var(--ed-value);">Restricted to<span class="chev"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div><div class="selmenu"><div class="selmenu-item"><span class="tick"></span><span>Global<span class="sm">Cleared for use in all territories.</span></span></div><div class="selmenu-item on"><span class="tick">&#10003;</span><span>Restricted to<span class="sm">Choose the regions and countries this licence covers.</span></span></div></div>
+            <div class="help">Select where this asset may be used in market.</div>
+          </div>
+          <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 5h20"/><path d="M6 12h12"/><path d="M9 19h6"/></svg><span style="font-style:italic;">Find territories&hellip;</span></div>
+          <div class="terr-list"><div class="acc"><div class="acc-item"><div class="acc-head"><span class="cbx"></span>EMEA <span class="terr-count">79 countries</span><span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div></div><div class="acc-item"><div class="acc-head"><span class="cbx"></span>NA <span class="terr-count">3 countries</span><span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div></div><div class="acc-item"><div class="acc-head"><span class="cbx"></span>APAC <span class="terr-count">24 countries</span><span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div></div><div class="acc-item"><div class="acc-head"><span class="cbx"></span>LATAM <span class="terr-count">33 countries</span><span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div></div><div class="acc-item"><div class="acc-head"><span class="cbx"></span>ANZ <span class="terr-count">2 countries</span><span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div></div></div></div>
+        </div>
+      </div>
+      <div class="note"><ul>
+        <li><b>Two scope states, not three.</b> The select carries exactly two options, each with a one-line description of what it does to the record: <i>Global</i> writes a wildcard and collapses the picker, <i>Restricted to</i> reveals it. Region-versus-country was never a scope decision, it was a picker mode leaking into the data model. A licence covering "EMEA plus Japan" cannot be expressed in the current UI without hand-expanding EMEA into 79 checkboxes.</li>
+        <li><b>Five rows on open, not two hundred.</b> Regions are the parent level of the same accordion group used by Attributes (&sect;3). Countries live underneath. Structure does the narrowing that a blank-until-typed field would push onto recall.</li>
+        <li><b>Find field, not search field.</b> List-filter icon, verb "Find" (&sect;1.4). The magnifier and the word "Search" belong to global asset search only. The live build ships "Search countries" with the wrong tier.</li>
+        <li><b>Threshold:</b> the find field appears above 12 options. The current Region view renders a search box for five items, which is chrome with no job.</li>
+        <li>Every country must belong to exactly one region or it becomes unreachable in the tree. The region taxonomy has to be exhaustive before this ships.</li>
+      </ul></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+      <div class="demo">
+        <div class="lbl">Selection &middot; region-level and country-level in one tree</div>
+        <div class="field" style="margin-bottom:12px;"><div class="flab">In territories <span class="opt">OPTIONAL</span><span class="rollup">2 selected</span></div><div class="chips" style="margin-top:0;"><span class="chip">EMEA <span class="count">79</span><span class="x">&#10005;</span></span><span class="chip">Japan <span class="x">&#10005;</span></span></div><div class="help" style="margin-top:12px;">Excluding</div><div class="chips" style="margin-top:6px;"><span class="chip">Russia <span class="x">&#10005;</span></span></div></div><div class="terr-list" style="margin-top:0;max-height:300px;"><div class="acc"><div class="acc-item sel"><div class="acc-head"><span class="cbx on"></span>EMEA <span class="terr-count">79 countries &middot; 1 excluded</span><span class="chev"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div><div class="acc-body"><div class="opt-row"><span class="cbx on"></span>Austria<span class="terr-hint">via EMEA</span></div><div class="opt-row"><span class="cbx on"></span>Belgium<span class="terr-hint">via EMEA</span></div><div class="opt-row"><span class="cbx"></span>Russia<span class="terr-hint">excluded from EMEA</span></div></div></div><div class="acc-item"><div class="acc-head"><span class="cbx"></span>NA <span class="terr-count">3 countries</span><span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div></div><div class="acc-item sel"><div class="acc-head"><span class="cbx ind"></span>APAC <span class="terr-count">24 countries</span><span class="chev"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div><div class="acc-body"><div class="opt-row"><span class="cbx"></span>Australia</div><div class="opt-row"><span class="cbx"></span>China</div><div class="opt-row"><span class="cbx on"></span>Japan</div></div></div><div class="acc-item"><div class="acc-head"><span class="cbx"></span>LATAM <span class="terr-count">33 countries</span><span class="chev closed"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div></div></div></div>
+        
+      </div>
+      <div class="note"><ul>
+        <li><b>No new checkbox state.</b> The kit has three (unchecked, checked, indeterminate) and this field adds none. Solid checked on a parent = the region is granted. Indeterminate = some children granted individually. Solid checked on a child = granted, same glyph as everywhere else in the product.</li><li><b>Covered children stay unlockable.</b> A country covered by its region renders checked and fully interactive, with "via EMEA" in the hint slot. Unchecking it writes an <b>exclusion</b> against the region grant, not a removal of a country grant. Clicking again re-includes it. Excluded rows stay in place, unchecked, reading "excluded from EMEA", so the carve-out is a visible object rather than an absence.</li><li><b>The region parent stays checked when a child is excluded</b>, with the count reading "79 countries, 1 excluded". Dropping it to indeterminate would say "you picked some countries in EMEA", which is a different fact and loses the moving-set meaning of the region grant. The exclusion modifies the grant, it does not downgrade it to per-country picking.</li><li><b>Exclusions get their own labelled chip row.</b> One row for what the licence covers, a second headed "Excluding" for what is carved out. Folding a carve-out into the coverage count (EMEA 78) hides the legally significant part of the record.</li><li><b>Two guards.</b> Excluding every child of a region clears the region grant rather than storing 79 exclusions. A country granted directly while its region is also granted dedupes to the region grant, so the same territory never appears twice.</li>
+        <li><b>Children indent by one control column</b> (26px, the 16px checkbox plus its 10px gap), so a child's checkbox aligns under its parent's <i>label</i>, not under its parent's checkbox. Without it both levels start on the same edge and the tree reads as a flat list. This is the one place the kit needed it: in Attributes the parent is a label and the children are checkboxes, so the form difference carries the level. Here both levels are checkboxes, so spacing has to do the work.</li><li><b>No nesting rail.</b> The <code>.gchildren</code> hairline exists for section-to-group nesting, one level up. Repeating it inside every expanded region would draw a line per open region on a list that can have five open at once. Structure from spacing and weight, not from drawn lines.</li><li><b>Selected rows do not reorder to the top.</b> They stay in place, checked, with the cerulean active edge (<code>.acc-item.sel</code>). Sticky-to-top means the row you just clicked jumps away and the next one you wanted slides under the cursor. On a legal field that is a misselect generator.</li>
+        <li><b>The chip row sits above the picker, not below it</b>, directly under the field label. It is the field's <i>value</i>; the list underneath is the editor. Below the scroll container it would drift down the panel and could itself be scrolled out of view, which defeats the point.</li><li><b>Same position in every state.</b> Edit shows label, chips, find field, list. Read (Rights panel not in edit, and the lightbox Rights tab) shows label and chips only, no &#10005;, no find, no list. One position across both beats matching the Tags panel's input-then-chips order, because Tags has no scrolling list underneath.</li><li><b>Count entries, not countries.</b> "2 selected" counts EMEA as one, and the region chip discloses its 79 members. Counting expanded members would read 80 here and disagree with the chips.</li><li><code>.rollup</code> is currently scoped to <code>.gparent</code>. It is the same pill doing the same job in a field label, so promote it to a shared class rather than duplicating it.</li>
+        <li>Region roll-up: selecting every child of a region collapses to the region chip only if the user picked the region. See the storage decision below, the two are not interchangeable.</li>
+      </ul></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+      <div class="demo">
+        <div class="lbl">Find &middot; tree flattens, region becomes context</div>
+        <div class="search focus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 5h20"/><path d="M6 12h12"/><path d="M9 19h6"/></svg><span>ger</span></div>
+        <div class="terr-list" style="max-height:none;"><div class="acc-body" style="padding-top:0;"><div class="opt-row"><span class="cbx"></span><span><span class="hl">Ger</span>many</span><span class="terr-hint">EMEA</span></div><div class="opt-row"><span class="cbx"></span><span>Al<span class="hl">ger</span>ia</span><span class="terr-hint">EMEA</span></div><div class="opt-row"><span class="cbx"></span><span>Ni<span class="hl">ger</span></span><span class="terr-hint">EMEA</span></div><div class="opt-row"><span class="cbx"></span><span>Ni<span class="hl">ger</span>ia</span><span class="terr-hint">EMEA</span></div></div></div>
+      </div>
+      <div class="demo" style="flex:0 1 290px;">
+        <div class="lbl">No match</div>
+        <div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+          <div class="e1">No territory matches "Yugoslavia".<br><span style="color:var(--ed-faint);font-size:12px;">Territories follow the ISO 3166 list.</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:14px;"><div class="note" style="flex:1 1 100%;"><ul>
+      <li><b>Flattening is the point of find.</b> Results drop the tree and carry their region as right-aligned context, so the hierarchy the search removed is still legible. Matching is substring, not prefix: "ger" reaches Algeria and Niger, which prefix matching would hide.</li>
+      <li><b>Match on name, ISO code, region name, and alias.</b> UK, USA, Holland, Korea, UAE. Diacritic-insensitive, so "cote divoire" finds C&ocirc;te d'Ivoire. Alias matching is most of what makes a country picker feel fast, and it is the part that gets cut first.</li>
+      <li><b>No-match uses the specific empty state</b>, naming the vocabulary in play, not a generic "nothing here" (&sect;3).</li>
+    </ul></div></div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+      <div class="demo">
+        <div class="lbl">Overflow &middot; 37 selected &middot; read state</div>
+        <div class="chips" style="margin-top:0;"><span class="chip">EMEA <span class="count">79</span><span class="x">✕</span></span><span class="chip">Japan <span class="x">✕</span></span><span class="chip">Canada <span class="x">✕</span></span><span class="chip">Mexico <span class="x">✕</span></span><span class="chip">Brazil <span class="x">✕</span></span><span class="chip">Argentina <span class="x">✕</span></span><span class="chip">Chile <span class="x">✕</span></span><span class="chip">Colombia <span class="x">✕</span></span><span class="chip more">+29 more</span></div>
+        <div class="lbl" style="margin-top:24px;">Global &middot; read state</div>
+        <div class="field" style="margin-bottom:0;">
+          <div class="flab">In territories <span class="opt">OPTIONAL</span></div>
+          <div class="sel-box" style="color:var(--ed-value);">Global<span class="chev"><svg viewBox="0 0 96.154 96.154" fill="currentColor"><path d="M0.561,20.971l45.951,57.605c0.76,0.951,2.367,0.951,3.127,0l45.956-57.609c0.547-0.689,0.709-1.716,0.414-2.61c-0.061-0.187-0.129-0.33-0.186-0.437c-0.351-0.65-1.025-1.056-1.765-1.056H2.093c-0.736,0-1.414,0.405-1.762,1.056c-0.059,0.109-0.127,0.253-0.184,0.426C-0.15,19.251,0.011,20.28,0.561,20.971z"/></svg></span></div>
+          <div class="help">Cleared for use in all territories.</div>
+        </div>
+      </div>
+      <div class="note"><ul>
+        <li><b>Cap the chip row at 8 plus a dashed overflow chip</b> that expands in place. Thirty-seven chips is a wall that stops being read.</li>
+        <li><b>Global is a wildcard, not a selection of every country.</b> "Select All" on the country list currently writes ~200 codes for a state that already has a token, and <code>dam-rights-and-permissions.md</code> warns explicitly that storing Global as a literal country list makes the matching logic messy. Select All survives only scoped inside a region, where it means the region grant.</li>
+        <li><b>Two-column checkbox grid goes.</b> It breaks vertical scan order and truncates at panel width ("Bosnia and Herzego&hellip;"). A truncated territory name on a rights record is not a cosmetic problem: the user cannot confirm what they granted.</li>
+      </ul></div>
+    </div>
+
+    <div class="row" style="margin-top:18px;">
+      <div class="note" style="flex:1 1 100%;">
+        <div class="lbl">Today's drift &rarr; fix</div>
+        <table class="drift">
+          <tr><td class="strike">Global / Region / Country-specific mode select</td><td>Global / Restricted to, one picker underneath</td></tr>
+          <tr><td class="strike">"Search countries" / "Search regions" (magnifier tier)</td><td>"Find territories" (list-filter tier, &sect;1.4)</td></tr>
+          <tr><td class="strike">Find field over a 5-item region list</td><td>No find field below 12 options</td></tr>
+          <tr><td class="strike">Two-column country grid, names truncated</td><td>Single column, region-grouped, scrolled</td></tr>
+          <tr><td class="strike">Select All across ~200 countries</td><td>Global wildcard; Select All scoped per region</td></tr>
+        </table>
+        <div class="inert" style="margin-top:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <div class="t2"><b>Storage.</b> A region grant records the expanded member list as the <i>enforced</i> set, plus the region label and any exclusions as the <i>stated</i> intent. Mint reads the expanded set, so enforcement never depends on the taxonomy's state at request time. Intent drives display: the chip reads EMEA with 79 members and an Excluding row, not 78 country chips.<br><br><b>The vocabulary has to split.</b> The territory taxonomy currently sits in the settings attribute list, under tag-vocabulary governance: rename propagates to every asset immediately, merge rewrites all assets and drops the source term, delete is blocked only while usage is above zero. That is correct governance for a tag and wrong for a rights-bearing value, where a merge is a bulk rewrite of legal permissions with no approval event. <b>Countries become a system vocabulary</b> (ISO 3166), read-only in settings, no rename, merge or delete. <b>Regions stay tenant-editable</b>, because which countries count as EMEA is legitimately a per-client decision, but they carry no enforcement: a region is a selection shortcut plus an intent label.<br><br><b>Consequences.</b> The region label is snapshotted onto the rights record, so renaming or deleting a region in settings never alters what a licence appears to say. Editing a region's membership leaves existing records untouched and raises a review flag against assets carrying that region, routed through the same widening approval gate as a later expiry or an added territory.<br><br><b>Open for build.</b> Does the settings attribute list support two-level grouping? The picker needs region as parent and country as child. If the list is flat, that parentage does not exist as data yet.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ============ RULES ============ -->
   <div class="block">
-    <h2>4 · Cross-cutting rules</h2>
+    <h2>5 · Cross-cutting rules</h2>
     <div class="note" style="flex:1 1 100%;"><ul>
       <li><b>Casing:</b> header = sentence case · section eyebrow = UPPERCASE · field label = sentence case. (Today: "TIME-BASED RIGHTS", "File Versions", "Attributes & tags" all disagree.)</li>
       <li><b>Borders</b> encode grouping/state, not default chrome. Grouped items use the border-collapsed list; no per-item floating pill. Filter/search fields carry no resting border (ring on focus only) — equal-weight borders on parent, search, and every row are what create the "border, border, border" wall and kill hierarchy.</li>
@@ -1109,13 +1228,13 @@ table.roles{width:100%;border-collapse:collapse;background:#fff;border:1px solid
 
   <!-- ============ CONFORMANCE ============ -->
   <div class="block">
-    <h2>5 · Conformance map — every tab = template + kit</h2>
+    <h2>6 · Conformance map — every tab = template + kit</h2>
     <table class="map">
       <tr><th>Tab</th><th>Body archetype(s) from the kit</th></tr>
       <tr><td>Details</td><td>Field rows (editable + read-only) + File-metadata section (accordion · allowlisted, read-only) — SCR-174</td></tr>
       <tr><td>Attributes</td><td>Attribute group (accordion + option)</td></tr>
       <tr><td>Tags</td><td>Token / chip input + chips · bulk tri-state (delta)</td></tr>
-      <tr><td>Rights</td><td>Sections + field rows + optional-badge fields + radio/checkbox + select + accordion</td></tr>
+      <tr><td>Rights</td><td>Sections + field rows + optional-badge fields + radio/checkbox + select + accordion + territory picker (find field + accordion group + checkbox incl. inherited + chips), §4</td></tr>
       <tr><td>Access</td><td>Field row (search) + list rows + empty state</td></tr>
       <tr><td>Versions</td><td>List rows + secondary action</td></tr>
       <tr><td>Activity</td><td>List rows (read-only, filterable)</td></tr>
