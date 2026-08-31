@@ -3,67 +3,82 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex">
+<meta name="robots" content="noindex, nofollow">
 <title>Import dialog — prototype + handoff</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --teal:#0B6E8A; --teal-dark:#095A71; --ink:#211E1A; --muted:#6E6862;
-    --line:#E5E0D9; --line-soft:#EFEBE4; --surface:#FFFFFF; --canvas:#F5F2ED;
-    --teal-tint:#E6F1F4;
-    --s1:8px; --s2:16px; --s3:24px; --s4:32px; --radius:12px;
+    /* Scale tokens — aligned to scale-design-system.html */
+    --primary-50:#e8f6fa; --primary-100:#c4e8f1; --primary-600:#0b6e8a; --primary-700:#005f7b;
+    --n1:#fdfdfc;--n2:#f9f9f8;--n3:#f1f0ef;--n4:#e9e8e6;--n5:#e2e1de;--n6:#dad9d6;--n7:#d0ceca;--n8:#bcbbb6;--n9:#8e8d86;--n10:#83827c;--n11:#64635e;--n12:#21201c;
+    --amber-100:#fff0cb;--amber-500:#f5a524;--amber-600:#a96600;--amber-700:#4d3618;
+    --red-600:#cf3716;
+    --s1:8px; --s2:16px; --s3:24px; --s4:32px;
+    --r2:6px; --r3:8px; --r4:12px;
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--canvas);-webkit-font-smoothing:antialiased}
+  body{margin:0;font-family:'Inter',system-ui,sans-serif;color:var(--n12);background:var(--n3);-webkit-font-smoothing:antialiased}
   .page{max-width:1080px;margin:0 auto;padding:var(--s4) var(--s3) 64px}
 
-  header{padding:var(--s4) 0 var(--s3);border-bottom:1px solid var(--line);margin-bottom:var(--s4)}
+  header{padding:var(--s4) 0 var(--s3);border-bottom:1px solid var(--n6);margin-bottom:var(--s4)}
+  .titlebar{display:flex;align-items:baseline;gap:12px}
   header h1{font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 6px}
-  header p{font-size:15px;color:var(--muted);margin:0;max-width:62ch;line-height:1.5}
+  header .badge{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--n10)}
+  header p{font-size:15px;color:var(--n11);margin:0;max-width:62ch;line-height:1.5}
 
-  .section-label{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin:0 0 var(--s2)}
+  .section-label{font-size:12px;font-weight:600;color:var(--n11);letter-spacing:.06em;text-transform:uppercase;margin:0 0 var(--s2)}
 
   /* Controls */
   .controls{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s2)}
   .ctrl-group{display:flex;align-items:center;gap:10px}
-  .ctrl-group .glabel{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
-  .seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
-  .seg button{font:inherit;font-size:14px;font-weight:500;border:0;background:transparent;color:var(--muted);padding:8px 16px;border-radius:7px;cursor:pointer;transition:all .15s ease}
-  .seg button:hover{color:var(--ink)}
-  .seg button[aria-pressed="true"]{background:var(--teal-tint);color:var(--teal);box-shadow:0 1px 2px rgba(33,30,26,.06)}
+  .ctrl-group .glabel{font-size:11px;font-weight:600;color:var(--n11);letter-spacing:.04em;text-transform:uppercase}
+  .seg{display:inline-flex;background:var(--n1);border:1px solid var(--n6);border-radius:10px;padding:3px;gap:3px;flex-wrap:wrap}
+  .seg button{font:inherit;font-size:14px;font-weight:500;border:0;background:transparent;color:var(--n11);padding:8px 14px;border-radius:7px;cursor:pointer;transition:all .15s ease}
+  .seg button:hover{color:var(--n12)}
+  .seg button[aria-pressed="true"]{background:var(--primary-50);color:var(--primary-700);box-shadow:0 1px 2px rgba(33,30,26,.06)}
   .vgroup{transition:opacity .2s ease}
   .vgroup.disabled{opacity:.35;pointer-events:none}
 
   /* Stage + dialog */
-  .stage{background:var(--ink);border-radius:var(--radius);padding:var(--s4);display:flex;align-items:center;justify-content:center;min-height:340px}
-  .dialog{width:100%;max-width:400px;background:var(--surface);border-radius:var(--radius);box-shadow:0 20px 48px -16px rgba(0,0,0,.4);padding:var(--s4);text-align:center}
+  .stage{background:var(--n12);border-radius:var(--r4);padding:var(--s4);display:flex;align-items:center;justify-content:center;min-height:360px}
+  .dialog{width:100%;max-width:400px;background:var(--n1);border-radius:var(--r4);box-shadow:0 20px 48px -16px rgba(0,0,0,.4);padding:var(--s4);text-align:center}
   .visual{height:60px;display:flex;align-items:center;justify-content:center;margin-bottom:var(--s3)}
-  .spinner{width:42px;height:42px}
-  .spinner circle{fill:none;stroke-width:4}
-  .spinner .track{stroke:var(--line-soft)}
-  .spinner .head{stroke:var(--teal);stroke-linecap:round;stroke-dasharray:90 200;transform-origin:center;animation:spin 1s linear infinite}
+
+  /* Spinner — tuned for legibility (clear ~60% arc, visible track) */
+  .spinner{width:40px;height:40px}
+  .spinner circle{fill:none;stroke-width:2.5}
+  .spinner .track{stroke:var(--n6)}
+  .spinner .head{stroke:var(--primary-600);stroke-linecap:round;stroke-dasharray:34 90;transform-origin:center;animation:spin .9s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
   @media (prefers-reduced-motion:reduce){ .spinner .head{animation:none} }
-  .check{width:48px;height:48px;border-radius:50%;background:var(--teal-tint);display:flex;align-items:center;justify-content:center}
-  .check svg{width:24px;height:24px;stroke:var(--teal);stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  .check{width:48px;height:48px;border-radius:50%;background:var(--primary-50);display:flex;align-items:center;justify-content:center}
+  .check svg{width:24px;height:24px;stroke:var(--primary-600);stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
   .check path{stroke-dasharray:30;stroke-dashoffset:30;animation:draw .4s ease forwards .1s}
   @keyframes draw{to{stroke-dashoffset:0}}
+  .warn{width:48px;height:48px;border-radius:50%;background:var(--amber-100);display:flex;align-items:center;justify-content:center}
+  .warn svg{width:24px;height:24px;stroke:var(--amber-600);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
   .dialog h2{font-size:18px;font-weight:600;margin:0 0 var(--s1);letter-spacing:-.01em}
-  .dialog .body{font-size:14px;line-height:1.5;color:var(--muted);margin:0 auto;max-width:33ch}
-  .queue{display:inline-flex;align-items:baseline;gap:6px;margin-bottom:var(--s2);padding:6px 14px;background:var(--teal-tint);border-radius:999px}
-  .queue .pos{font-size:15px;font-weight:600;color:var(--teal)}
-  .queue .pos-label{font-size:13px;color:var(--teal);opacity:.8}
+  .dialog .body{font-size:14px;line-height:1.5;color:var(--n11);margin:0 auto;max-width:34ch}
+  .queue{display:inline-flex;align-items:baseline;gap:6px;margin-bottom:var(--s2);padding:6px 14px;background:var(--primary-50);border-radius:999px}
+  .queue .pos{font-size:15px;font-weight:600;color:var(--primary-700)}
+  .queue .pos-label{font-size:13px;color:var(--primary-700);opacity:.8}
   .count{font-size:14px;font-weight:600;margin-bottom:var(--s2)}
-  .bar{height:6px;background:var(--line-soft);border-radius:999px;overflow:hidden;margin:0 auto var(--s2);max-width:270px}
-  .bar .fill{height:100%;background:var(--teal);border-radius:999px;width:0;transition:width .4s ease}
-  .rotating{font-size:13px;color:var(--muted);min-height:19px;transition:opacity .25s ease}
-  .footer{margin-top:var(--s3)}
-  .btn-link{font:inherit;font-size:13px;font-weight:500;background:transparent;border:0;color:var(--teal);cursor:pointer;padding:8px;border-radius:6px}
-  .btn-link:hover{background:var(--canvas)}
-  .refreshing{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-top:var(--s2)}
-  .refreshing .spinner{width:14px;height:14px}
+  .bar{height:6px;background:var(--n4);border-radius:999px;overflow:hidden;margin:0 auto var(--s2);max-width:270px}
+  .bar .fill{height:100%;background:var(--primary-600);border-radius:999px;width:0;transition:width .4s ease}
+  .rotating{font-size:13px;color:var(--n11);min-height:19px;transition:opacity .25s ease}
+  .fails{font-size:14px;font-weight:600;color:var(--amber-700);margin-bottom:var(--s2)}
+  .fails b{color:var(--red-600)}
+  .footer{margin-top:var(--s3);display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}
+  .btn-link{font:inherit;font-size:13px;font-weight:500;background:transparent;border:0;color:var(--primary-700);cursor:pointer;padding:8px 10px;border-radius:var(--r2)}
+  .btn-link:hover{background:var(--n3)}
+  .btn-primary{font:inherit;font-size:13px;font-weight:500;background:var(--primary-600);color:#fff;border:0;cursor:pointer;padding:9px 16px;border-radius:var(--r2)}
+  .btn-primary:hover{background:var(--primary-700)}
+  .refreshing{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--n11);margin-top:var(--s2)}
+  .refreshing .spinner{width:16px;height:16px}
 
   [data-show]{display:none}
   [data-show].active{display:block}
@@ -72,27 +87,29 @@
 
   /* Handoff */
   .handoff{margin-top:56px}
-  .row{display:grid;grid-template-columns:400px 1fr;gap:var(--s4);align-items:start;padding:var(--s4) 0;border-top:1px solid var(--line)}
+  .row{display:grid;grid-template-columns:400px 1fr;gap:var(--s4);align-items:start;padding:var(--s4) 0;border-top:1px solid var(--n6)}
   @media (max-width:880px){ .row{grid-template-columns:1fr} .controls{gap:var(--s2)} }
   .row .stage{min-height:280px;padding:var(--s3)}
   .row .dialog{max-width:344px;padding:var(--s3)}
-  .state-tag{display:inline-block;font-size:12px;font-weight:600;color:var(--teal);background:var(--teal-tint);padding:4px 10px;border-radius:6px;letter-spacing:.02em;margin-bottom:var(--s2)}
+  .state-tag{display:inline-block;font-size:12px;font-weight:600;color:var(--primary-700);background:var(--primary-50);padding:4px 10px;border-radius:var(--r2);letter-spacing:.02em;margin-bottom:var(--s2)}
+  .state-tag.amber{color:var(--amber-700);background:var(--amber-100)}
   .spec h3{font-size:16px;font-weight:600;margin:0 0 var(--s2)}
   .spec dl{margin:0;display:grid;grid-template-columns:120px 1fr;gap:0}
-  .spec dt{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:10px 0;border-top:1px solid var(--line-soft)}
-  .spec dd{font-size:14px;line-height:1.5;margin:0;padding:10px 0;border-top:1px solid var(--line-soft)}
-  .spec dd .copy{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:2px 7px;display:inline-block;margin:2px 0}
+  .spec dt{font-size:12px;font-weight:600;color:var(--n11);text-transform:uppercase;letter-spacing:.04em;padding:10px 0;border-top:1px solid var(--n4)}
+  .spec dd{font-size:14px;line-height:1.5;margin:0;padding:10px 0;border-top:1px solid var(--n4)}
+  .spec dd .copy{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--n1);border:1px solid var(--n6);border-radius:var(--r2);padding:2px 7px;display:inline-block;margin:2px 0}
   .spec dd ul{margin:4px 0 0;padding-left:18px}
   .spec dd li{margin:3px 0}
-  .note{font-size:13px;color:var(--muted);margin-top:var(--s2);line-height:1.5;padding:10px 12px;background:var(--surface);border-left:3px solid var(--teal);border-radius:0 6px 6px 0}
+  .note{font-size:13px;color:var(--n11);margin-top:var(--s2);line-height:1.5;padding:10px 12px;background:var(--n1);border-left:3px solid var(--primary-600);border-radius:0 var(--r2) var(--r2) 0}
+  .note.amber{border-left-color:var(--amber-500)}
 </style>
 </head>
 <body>
 <div class="page">
 
   <header>
-    <h1>Bulk import dialog — states</h1>
-    <p>One dialog, three backend statuses. It updates in place and auto-refreshes the screen on completion. Use the live preview to step through states; the handoff section below has the copy strings to pull verbatim.</p>
+    <div class="titlebar"><h1>Bulk import dialog — states</h1><span class="badge">v0.3 · 2026-07-29</span></div>
+    <p>One dialog, mapped to backend status. It updates in place and auto-refreshes on completion. Step through states in the live preview; the handoff below has the copy strings to pull verbatim.</p>
   </header>
 
   <!-- LIVE PREVIEW -->
@@ -103,12 +120,14 @@
       <div class="seg" role="group" aria-label="Dialog state">
         <button data-state="queued" aria-pressed="true">Queued</button>
         <button data-state="progress" aria-pressed="false">In progress</button>
+        <button data-state="delayed" aria-pressed="false">Delayed</button>
         <button data-state="complete" aria-pressed="false">Complete</button>
+        <button data-state="partial" aria-pressed="false">Partial failure</button>
       </div>
     </div>
     <div class="ctrl-group vgroup disabled" id="vgroup">
-      <span class="glabel">Progress variant</span>
-      <div class="seg vseg" role="group" aria-label="Progress variant">
+      <span class="glabel">Result reporting</span>
+      <div class="seg vseg" role="group" aria-label="Result reporting">
         <button data-v="nocount" aria-pressed="true">No count</button>
         <button data-v="count" aria-pressed="false">With count</button>
       </div>
@@ -120,7 +139,7 @@
 
       <!-- QUEUED -->
       <div data-show="queued" class="active">
-        <div class="visual"><svg class="spinner" viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="18"/><circle class="head" cx="22" cy="22" r="18"/></svg></div>
+        <div class="visual"><svg class="spinner" viewBox="0 0 24 24"><circle class="track" cx="12" cy="12" r="9"/><circle class="head" cx="12" cy="12" r="9"/></svg></div>
         <div class="queue"><span class="pos" id="queue-pos">3rd</span><span class="pos-label">in queue</span></div>
         <h2 id="dlg-title">Waiting to start</h2>
         <p class="body" id="queue-body">Your import is queued. It'll begin shortly.</p>
@@ -129,7 +148,7 @@
 
       <!-- IN PROGRESS -->
       <div data-show="progress">
-        <div class="visual"><svg class="spinner" viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="18"/><circle class="head" cx="22" cy="22" r="18"/></svg></div>
+        <div class="visual"><svg class="spinner" viewBox="0 0 24 24"><circle class="track" cx="12" cy="12" r="9"/><circle class="head" cx="12" cy="12" r="9"/></svg></div>
         <h2>Importing tasks</h2>
         <div data-variant="count">
           <div class="count"><span id="count-now">0</span> of 340 added</div>
@@ -143,12 +162,30 @@
         <div class="footer"><button class="btn-link">Close and notify me when it's done</button></div>
       </div>
 
+      <!-- DELAYED (timeout fallback) -->
+      <div data-show="delayed">
+        <div class="visual"><svg class="spinner" viewBox="0 0 24 24"><circle class="track" cx="12" cy="12" r="9"/><circle class="head" cx="12" cy="12" r="9"/></svg></div>
+        <h2>Still importing</h2>
+        <p class="body">This is taking longer than usual. It's still running — close this and we'll notify you when it's done.</p>
+        <div class="footer"><button class="btn-link">Close and notify me when it's done</button></div>
+      </div>
+
       <!-- COMPLETE -->
       <div data-show="complete">
         <div class="visual"><div class="check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></div>
-        <h2>Import complete</h2>
-        <p class="body">All 340 tasks added to your project.</p>
-        <div class="refreshing"><svg class="spinner" viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="18"/><circle class="head" cx="22" cy="22" r="18"/></svg>Refreshing now…</div>
+        <h2>Import finished</h2>
+        <div data-variant="nocount" class="active"><p class="body">Import finished. Review your tasks in your project.</p></div>
+        <div data-variant="count"><p class="body">All 340 tasks added to your project.</p></div>
+        <div class="refreshing"><svg class="spinner" viewBox="0 0 24 24"><circle class="track" cx="12" cy="12" r="9"/><circle class="head" cx="12" cy="12" r="9"/></svg>Refreshing now…</div>
+      </div>
+
+      <!-- PARTIAL FAILURE -->
+      <div data-show="partial">
+        <div class="visual"><div class="warn"><svg viewBox="0 0 24 24"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L14.4 3.9a2 2 0 0 0-3.4 0z"/></svg></div></div>
+        <h2>Import finished with errors</h2>
+        <div class="fails">332 of 340 tasks added. <b>8 couldn't be imported.</b></div>
+        <p class="body">Retry the 8 that failed, or review what went wrong.</p>
+        <div class="footer"><button class="btn-primary">Review errors</button><button class="btn-link">Retry 8 failed</button></div>
       </div>
 
     </div>
@@ -162,7 +199,7 @@
     <div class="row">
       <div class="stage">
         <div class="dialog">
-          <div class="visual"><svg class="spinner" viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="18"/><circle class="head" cx="22" cy="22" r="18"/></svg></div>
+          <div class="visual"><svg class="spinner" viewBox="0 0 24 24"><circle class="track" cx="12" cy="12" r="9"/><circle class="head" cx="12" cy="12" r="9"/></svg></div>
           <div class="queue"><span class="pos">3rd</span><span class="pos-label">in queue</span></div>
           <h2>Waiting to start</h2>
           <p class="body">Your import is queued. It'll begin shortly.</p>
@@ -192,7 +229,7 @@
     <div class="row">
       <div class="stage">
         <div class="dialog">
-          <div class="visual"><svg class="spinner" viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="18"/><circle class="head" cx="22" cy="22" r="18"/></svg></div>
+          <div class="visual"><svg class="spinner" viewBox="0 0 24 24"><circle class="track" cx="12" cy="12" r="9"/><circle class="head" cx="12" cy="12" r="9"/></svg></div>
           <h2>Importing tasks</h2>
           <p class="body">This is running now. Large imports take a few minutes.</p>
           <p class="rotating" style="margin-top:16px">Adding tasks to your project…</p>
@@ -200,7 +237,7 @@
         </div>
       </div>
       <div class="spec">
-        <span class="state-tag">STATUS: queue started — no count (default)</span>
+        <span class="state-tag">STATUS: in progress — no count (default)</span>
         <h3>Importing tasks</h3>
         <dl>
           <dt>Title</dt><dd><span class="copy">Importing tasks</span></dd>
@@ -211,20 +248,19 @@
               <li><span class="copy">Validating fields…</span></li>
               <li><span class="copy">Adding tasks to your project…</span></li>
               <li><span class="copy">Linking assignees and dates…</span></li>
-              <li><span class="copy">Almost there…</span></li>
             </ul>
           </dd>
           <dt>Action</dt><dd><span class="copy">Close and notify me when it's done</span></dd>
         </dl>
-        <p class="note">Default version, since the count isn't available mid-import. Indeterminate spinner, no progress bar. The rotating line must keep moving — a static line on an infinite spinner reads as hung.</p>
+        <p class="note">Default version, since the count isn't available mid-import. Indeterminate spinner, no progress bar. The rotating line must keep moving — a static line on an infinite spinner reads as hung. No "almost there" copy: don't imply imminent completion the system can't confirm.</p>
       </div>
     </div>
 
-    <!-- WITH COUNT (fallback) -->
+    <!-- WITH COUNT -->
     <div class="row">
       <div class="stage">
         <div class="dialog">
-          <div class="visual"><svg class="spinner" viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="18"/><circle class="head" cx="22" cy="22" r="18"/></svg></div>
+          <div class="visual"><svg class="spinner" viewBox="0 0 24 24"><circle class="track" cx="12" cy="12" r="9"/><circle class="head" cx="12" cy="12" r="9"/></svg></div>
           <h2>Importing tasks</h2>
           <div class="count">184 of 340 added</div>
           <div class="bar"><div class="fill" style="width:54%"></div></div>
@@ -233,7 +269,7 @@
         </div>
       </div>
       <div class="spec">
-        <span class="state-tag">STATUS: queue started — with count</span>
+        <span class="state-tag">STATUS: in progress — with count</span>
         <h3>Importing tasks (count available)</h3>
         <dl>
           <dt>Title</dt><dd><span class="copy">Importing tasks</span></dd>
@@ -241,7 +277,31 @@
           <dt>Rotating</dt><dd>Same lines as the no-count version.</dd>
           <dt>Action</dt><dd><span class="copy">Close and notify me when it's done</span></dd>
         </dl>
-        <p class="note">Only use if the poll ever starts returning a reliable count. A real number is proof, not a promise — it beats any reassurance copy. Kept here as the upgrade path.</p>
+        <p class="note">Only use if the poll returns a reliable count. A real number is proof, not a promise — it beats any reassurance copy.</p>
+      </div>
+    </div>
+
+    <!-- DELAYED -->
+    <div class="row">
+      <div class="stage">
+        <div class="dialog">
+          <div class="visual"><svg class="spinner" viewBox="0 0 24 24"><circle class="track" cx="12" cy="12" r="9"/><circle class="head" cx="12" cy="12" r="9"/></svg></div>
+          <h2>Still importing</h2>
+          <p class="body">This is taking longer than usual. It's still running — close this and we'll notify you when it's done.</p>
+          <div class="footer"><button class="btn-link">Close and notify me when it's done</button></div>
+        </div>
+      </div>
+      <div class="spec">
+        <span class="state-tag">STATUS: in progress — timeout fallback</span>
+        <h3>Still importing (delayed)</h3>
+        <dl>
+          <dt>Title</dt><dd><span class="copy">Still importing</span></dd>
+          <dt>Body</dt><dd><span class="copy">This is taking longer than usual. It's still running — close this and we'll notify you when it's done.</span></dd>
+          <dt>Trigger</dt><dd>Client-side timer, ~60s at in-progress with no completion. Threshold to tune against real queue depth.</dd>
+          <dt>Rotating</dt><dd>None. Stop cycling — the calm static line stops implying imminent completion.</dd>
+          <dt>Action</dt><dd><span class="copy">Close and notify me when it's done</span></dd>
+        </dl>
+        <p class="note">Safety net for a silently-hung run. Without it the dialog spins forever under "Adding tasks…", implying progress that isn't happening.</p>
       </div>
     </div>
 
@@ -250,20 +310,44 @@
       <div class="stage">
         <div class="dialog">
           <div class="visual"><div class="check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div></div>
-          <h2>Import complete</h2>
-          <p class="body">All 340 tasks added to your project.</p>
-          <div class="refreshing"><svg class="spinner" viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="18"/><circle class="head" cx="22" cy="22" r="18"/></svg>Refreshing now…</div>
+          <h2>Import finished</h2>
+          <p class="body">Import finished. Review your tasks in your project.</p>
+          <div class="refreshing"><svg class="spinner" viewBox="0 0 24 24"><circle class="track" cx="12" cy="12" r="9"/><circle class="head" cx="12" cy="12" r="9"/></svg>Refreshing now…</div>
         </div>
       </div>
       <div class="spec">
-        <span class="state-tag">STATUS: queue completed</span>
-        <h3>Import complete</h3>
+        <span class="state-tag">STATUS: complete</span>
+        <h3>Import finished</h3>
         <dl>
-          <dt>Title</dt><dd><span class="copy">Import complete</span></dd>
-          <dt>Body</dt><dd><span class="copy">All {total} tasks added to your project.</span></dd>
-          <dt>State</dt><dd><span class="copy">Refreshing now…</span> — hold briefly, then auto-refresh the screen.</dd>
+          <dt>Body — no count</dt><dd><span class="copy">Import finished. Review your tasks in your project.</span> — default. States nothing it can't confirm.</dd>
+          <dt>Body — with count</dt><dd><span class="copy">All {total} tasks added to your project.</span> — only when the final tally is confirmable.</dd>
+          <dt>State</dt><dd><span class="copy">Refreshing now…</span> — hold ~1s, then auto-refresh the screen.</dd>
         </dl>
-        <p class="note">Show the complete state for ~1s before the refresh so it reads as intentional, not a glitch. Partial-failure copy (e.g. <span class="copy" style="font-size:12px">332 of 340 added — 8 failed. Review</span>) is a separate state — flag if you need it.</p>
+        <p class="note">Don't over-claim. If the backend can't confirm every task landed, use the neutral copy — never assert a count you can't stand behind. Count copy only where the tally is trustworthy.</p>
+      </div>
+    </div>
+
+    <!-- PARTIAL FAILURE -->
+    <div class="row">
+      <div class="stage">
+        <div class="dialog">
+          <div class="visual"><div class="warn"><svg viewBox="0 0 24 24"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L14.4 3.9a2 2 0 0 0-3.4 0z"/></svg></div></div>
+          <h2>Import finished with errors</h2>
+          <div class="fails">332 of 340 tasks added. <b>8 couldn't be imported.</b></div>
+          <p class="body">Retry the 8 that failed, or review what went wrong.</p>
+          <div class="footer"><button class="btn-primary">Review errors</button><button class="btn-link">Retry 8 failed</button></div>
+        </div>
+      </div>
+      <div class="spec">
+        <span class="state-tag amber">STATUS: complete — partial failure</span>
+        <h3>Import finished with errors</h3>
+        <dl>
+          <dt>Title</dt><dd><span class="copy">Import finished with errors</span></dd>
+          <dt>Tally</dt><dd><span class="copy">{added} of {total} tasks added. {failed} couldn't be imported.</span></dd>
+          <dt>Body</dt><dd><span class="copy">Retry the {failed} that failed, or review what went wrong.</span></dd>
+          <dt>Actions</dt><dd><span class="copy">Review errors</span> (primary) · <span class="copy">Retry {failed} failed</span> — retry is scoped to the failed rows only.</dd>
+        </dl>
+        <p class="note amber">Reference implementation of the partial-failure pattern (PR-011). Viable here because the import backend reports counts, so it can report which rows failed. Retry acts only on the failed set. This is the pattern the system-wide queued-actions spec inherits — the estimate queue couldn't support it, this can.</p>
       </div>
     </div>
 
@@ -277,7 +361,7 @@
   const panels = document.querySelectorAll('.stage [data-show]');
   let progressTimer, rotateTimer, queueTimer;
 
-  const rotatingLines = ['Validating fields…','Adding tasks to your project…','Linking assignees and dates…','Almost there…'];
+  const rotatingLines = ['Validating fields…','Adding tasks to your project…','Linking assignees and dates…'];
 
   function clearTimers(){ clearInterval(progressTimer); clearInterval(rotateTimer); clearInterval(queueTimer); }
 
@@ -324,7 +408,7 @@
     clearTimers();
     panels.forEach(p => p.classList.toggle('active', p.dataset.show === state));
     segBtns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.state === state)));
-    vgroup.classList.toggle('disabled', state !== 'progress');
+    vgroup.classList.toggle('disabled', !(state === 'progress' || state === 'complete'));
     if(state === 'progress') runProgress();
     if(state === 'queued') runQueue();
   }
