@@ -14,8 +14,6 @@
   --accent-a3:rgba(0,145,171,.08); --accent-a6:rgba(0,145,171,.2);
   --n1:#fdfdfc;--n2:#f9f9f8;--n3:#f1f0ef;--n4:#e9e8e6;--n5:#e2e1de;--n6:#dad9d6;--n7:#d0ceca;--n8:#bcbbb6;--n9:#8e8d86;--n10:#83827c;--n11:#64635e;--n12:#21201c;
   --orange-500:#f76707;--orange-700:#582d19;
-  --amber-100:#fff0cb;--amber-500:#f5a524;--amber-600:#a96600;--amber-700:#4d3618;
-  --green-100:#e4f7f0;--green-500:#29a383;--green-600:#008062;--green-700:#1d3b31;
   --red-100:#feebe7;--red-500:#e54d2e;--red-600:#cf3716;--red-700:#641723;
   --anno-a:#7139d6;--anno-b:#c2298a;--anno-c:#0d74ce;
   --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:24px;--s7:32px;
@@ -29,7 +27,6 @@
 *{box-sizing:border-box}
 body{margin:0;font-family:var(--font);font-size:var(--fs2);color:var(--n12);background:var(--n3);-webkit-font-smoothing:antialiased}
 
-/* Inspector controls — scaffolding, not part of the product */
 .inspector{background:var(--n1);border-bottom:1px solid var(--n6);padding:var(--s4) var(--s6);display:flex;flex-wrap:wrap;align-items:center;gap:var(--s5)}
 .inspector .brand{display:flex;flex-direction:column;gap:2px;margin-right:var(--s3)}
 .inspector .brand b{font-size:var(--fs2);font-weight:600}
@@ -43,14 +40,12 @@ body{margin:0;font-family:var(--font);font-size:var(--fs2);color:var(--n12);back
 .inspector .hint{flex-basis:100%;font-size:var(--fs1);color:var(--n10);margin:0;max-width:130ch;line-height:1.5}
 .inspector .hint code{font-family:var(--mono);font-size:11px;background:var(--n3);padding:1px 5px;border-radius:3px;color:var(--n11)}
 
-/* App frame — mirrors the real shell: body grid, content column = breadcrumb / banner / outlet rows */
 .frame{display:flex;height:720px;overflow:hidden;background:var(--n1)}
 .rail{width:56px;background:var(--primary-800);display:flex;flex-direction:column;align-items:center;padding:var(--s3) 0;gap:var(--s5);flex-shrink:0}
 .rail .logo{width:32px;height:32px;border-radius:var(--r3);background:var(--primary-600);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
 .rail .ico{width:22px;height:22px;color:#c4e8f1;opacity:.75}
 .rail .ico.mt{margin-top:auto}
 
-/* content column = CSS grid: breadcrumb (auto) / banner mount (auto) / outlet (1fr) */
 .main{flex:1;min-width:0;position:relative;display:grid;grid-template-rows:52px auto minmax(0,1fr)}
 .crumb{position:relative;border-bottom:1px solid var(--n6);display:flex;align-items:center;padding:0 var(--s6);gap:var(--s2);font-size:var(--fs2);color:var(--n11)}
 .crumb b{color:var(--n12);font-weight:600}
@@ -61,69 +56,60 @@ body{margin:0;font-family:var(--font);font-size:var(--fs2);color:var(--n12);back
 .frame[data-surface="tasks"] .surface-rp{display:none}
 .frame[data-surface="rp"] .surface-tasks{display:none}
 
-/* row 2 — the banner mount (new shell grid row this feature adds) */
 .bannerslot{position:relative;padding:0 var(--s6)}
 .frame[data-stage="queued"] .bannerslot,
 .frame[data-stage="progress"] .bannerslot,
-.frame[data-stage="delayed"] .bannerslot,
 .frame[data-stage="failed"] .bannerslot{padding-top:var(--s5)}
 
-/* row 3 — the content outlet: owns its own scroll, mirrors #sectionContainer */
 .content{position:relative;overflow:auto;padding:var(--s6)}
 
-/* ---- Banner (persistent, per-surface signal) ---- */
-.banner{display:none;align-items:flex-start;gap:var(--s3);padding:var(--s3) var(--s4);border-radius:var(--r4);border:1px solid;position:relative}
+/* ---- Banner ---- */
+.banner{display:none;align-items:flex-start;gap:var(--s3);padding:10px var(--s4);border-radius:var(--r4);border:1px solid;position:relative}
 .banner.hidden{display:none!important}
-.banner .txt{flex:1;min-width:0;padding-right:var(--s5)}
-.banner .h{font-weight:600;font-size:var(--fs2);margin:0 0 2px}
-.banner .b{font-size:var(--fs2);margin:0}
-.banner .rot{font-size:var(--fs1);margin-top:4px;min-height:16px;transition:opacity .25s}
-.banner .byline{font-size:11px;color:var(--n10);margin:6px 0 0;font-weight:500}
-.banner.failed .byline{color:var(--red-600);opacity:.8}
-.banner .x{position:absolute;top:8px;right:8px;width:24px;height:24px;border:0;background:transparent;border-radius:var(--r2);cursor:pointer;color:inherit;opacity:.6;font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center}
+.banner .txt{flex:1;min-width:0}
+.banner .bhead{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);padding-right:22px}
+.banner .h{font-weight:600;font-size:var(--fs2);margin:0}
+.banner .byline{font-size:11px;font-weight:500;color:var(--n10);white-space:nowrap;flex-shrink:0}
+.banner .b{font-size:var(--fs2);margin:2px 0 0}
+.banner .rot{font-size:var(--fs1);margin-top:3px;min-height:15px;transition:opacity .25s}
+.banner .x{position:absolute;top:8px;right:8px;width:22px;height:22px;border:0;background:transparent;border-radius:var(--r2);cursor:pointer;color:inherit;opacity:.6;font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center}
 .banner .x:hover{opacity:1;background:rgba(0,0,0,.05)}
 .banner.queued,.banner.processing{background:var(--accent-a3);border-color:var(--accent-a6);color:var(--n12)}
 .banner.queued .b,.banner.processing .b,.banner.queued .rot,.banner.processing .rot{color:var(--n11)}
 .banner.failed{background:var(--red-100);border-color:var(--red-500)}
 .banner.failed .h,.banner.failed .b{color:var(--red-700)}
-.banner .acts{display:flex;gap:var(--s2);margin-top:var(--s3)}
+.banner.failed .byline{color:var(--red-600);opacity:.85}
+.banner .acts{display:flex;gap:var(--s2);margin-top:10px}
 
-/* banner visibility per stage */
 .frame[data-stage="queued"] .banner.queued{display:flex}
-.frame[data-stage="progress"] .banner.processing,
-.frame[data-stage="delayed"] .banner.processing{display:flex}
+.frame[data-stage="progress"] .banner.processing{display:flex}
 .frame[data-stage="failed"] .banner.failed{display:flex}
-.banner.processing .delayed{display:none}
-.frame[data-stage="delayed"] .banner.processing .normal{display:none}
-.frame[data-stage="delayed"] .banner.processing .delayed{display:block}
 
 .btn{height:32px;padding:0 14px;border-radius:var(--r2);font:inherit;font-size:var(--fs2);font-weight:500;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:6px}
 .btn-red{background:var(--red-600);color:#fff}
 .btn-red:hover{background:var(--red-700)}
-.btn-ghost-red{background:transparent;color:var(--red-700);border-color:var(--red-500)}
 
-/* Spinner */
 .spin{width:20px;height:20px;flex-shrink:0}
 .spin circle{fill:none;stroke-width:4}
 .spin .tk{stroke:var(--n6)}
 .spin .hd{stroke:var(--primary-600);stroke-linecap:round;stroke-dasharray:34 90;transform-origin:center;animation:sp .9s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.spin .hd{animation:none}}
-.err-ico{width:18px;height:18px;flex-shrink:0;color:var(--red-600);margin-top:1px}
+.err-ico{width:20px;height:20px;flex-shrink:0;color:var(--red-600);margin-top:1px}
 
-/* ---- Toasts (Scale component — reuses existing #messageDisplay shell element) ---- */
+/* ---- Toasts ---- */
 .toasts{position:absolute;top:var(--s5);right:var(--s5);display:flex;flex-direction:column;gap:var(--s3);z-index:20;max-width:360px}
-.toast{display:none;align-items:flex-start;gap:10px;padding:12px 16px;border-radius:var(--r3);box-shadow:var(--shadow-md);font-size:var(--fs2);font-weight:500;line-height:1.4;border:1px solid}
-.toast svg{flex-shrink:0;margin-top:1px}
+.toast{display:none;align-items:flex-start;gap:10px;padding:12px 14px 12px 16px;border-radius:var(--r3);box-shadow:var(--shadow-md);border:1px solid;position:relative}
+.toast svg.tico{flex-shrink:0;margin-top:1px}
 .toast.info{background:var(--primary-50);color:var(--primary-700);border-color:var(--primary-600)}
-.toast.error{background:var(--red-100);color:var(--red-700);border-color:var(--red-500)}
-.frame[data-stage="submit"] .toast.submit{display:flex}
+.toast .tbody{flex:1;min-width:0;padding-right:18px}
+.toast .tmsg{font-size:var(--fs2);font-weight:500;line-height:1.4;margin:0}
+.toast .tbtn{margin-top:10px;height:30px;padding:0 14px;border-radius:var(--r2);font:inherit;font-size:13px;font-weight:500;cursor:pointer;background:var(--primary-600);color:#fff;border:0}
+.toast .tbtn:hover{background:var(--primary-700)}
+.toast .tx{position:absolute;top:7px;right:7px;width:22px;height:22px;border:0;background:transparent;border-radius:var(--r2);cursor:pointer;color:inherit;opacity:.6;font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center}
+.toast .tx:hover{opacity:1;background:rgba(0,0,0,.06)}
+.toast.hidden{display:none!important}
 .frame[data-stage="done"] .toast.done{display:flex}
-.frame[data-stage="failed"] .toast.fail{display:flex}
-.toast-note{display:none;align-self:flex-end;font-family:var(--mono);font-size:10px;color:var(--n11);background:var(--n2);border:1px solid var(--n5);border-radius:var(--rfull);padding:3px 10px;box-shadow:var(--shadow-md)}
-.frame[data-stage="submit"] .toast-note,
-.frame[data-stage="done"] .toast-note,
-.frame[data-stage="failed"] .toast-note{display:block}
 
 /* ---- Tasks table ---- */
 .tabs{display:flex;gap:var(--s5);border-bottom:1px solid var(--n6);margin-bottom:var(--s5)}
@@ -177,13 +163,10 @@ tbody tr:hover{background:var(--n2)}
 .anno{display:none}
 .frame.annotate .anno{display:block}
 .frame.annotate .crumb{box-shadow:inset 3px 0 0 var(--anno-a)}
-.frame.annotate .bannerslot{box-shadow:inset 3px 0 0 var(--anno-b);min-height:64px;padding-top:var(--s5)}
+.frame.annotate .bannerslot{box-shadow:inset 3px 0 0 var(--anno-b);min-height:56px;padding-top:var(--s5)}
 .frame.annotate .content{box-shadow:inset 3px 0 0 var(--anno-c)}
-/* empty-state placeholder so the mount point is visible even when idle */
-.mount-ph{display:none;border:1px dashed var(--anno-b);border-radius:var(--r4);padding:var(--s3) var(--s4);color:var(--anno-b);font-size:var(--fs1);font-weight:500;background:rgba(194,41,138,.04)}
-.frame.annotate[data-stage="submit"] .mount-ph,
+.mount-ph{display:none;border:1px dashed var(--anno-b);border-radius:var(--r4);padding:10px var(--s4);color:var(--anno-b);font-size:var(--fs1);font-weight:500;background:rgba(194,41,138,.04)}
 .frame.annotate[data-stage="done"] .mount-ph{display:block}
-/* legend */
 .legend{position:absolute;left:var(--s5);bottom:var(--s5);z-index:25;background:var(--n1);border:1px solid var(--n6);border-radius:var(--r4);box-shadow:var(--shadow-lg);padding:var(--s3) var(--s4);max-width:340px;font-size:var(--fs1);line-height:1.45}
 .legend .lh{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--n10);margin-bottom:var(--s2)}
 .legend .lrow{display:flex;gap:8px;align-items:flex-start;margin:5px 0}
@@ -196,7 +179,7 @@ tbody tr:hover{background:var(--n2)}
 <body>
 
 <div class="inspector">
-  <div class="brand"><b>Async task processing — feedback</b><span class="badge">v0.12 · 2026-07-29</span></div>
+  <div class="brand"><b>Async task processing — feedback</b><span class="badge">v0.14 · 2026-07-29</span></div>
   <div class="ctrl"><span class="lab">Surface</span>
     <div class="seg" id="surface-seg" role="group" aria-label="Surface">
       <button data-surface="tasks" aria-pressed="true">Tasks</button>
@@ -205,10 +188,8 @@ tbody tr:hover{background:var(--n2)}
   </div>
   <div class="ctrl"><span class="lab">Stage</span>
     <div class="seg" id="stage-seg" role="group" aria-label="Stage">
-      <button data-stage="submit" aria-pressed="true">Submit</button>
-      <button data-stage="queued" aria-pressed="false">Queued</button>
+      <button data-stage="queued" aria-pressed="true">Queued</button>
       <button data-stage="progress" aria-pressed="false">In progress</button>
-      <button data-stage="delayed" aria-pressed="false">Delayed</button>
       <button data-stage="done" aria-pressed="false">Done</button>
       <button data-stage="failed" aria-pressed="false">Failed</button>
     </div>
@@ -219,10 +200,10 @@ tbody tr:hover{background:var(--n2)}
       <button data-anno="on" aria-pressed="false">On</button>
     </div>
   </div>
-  <p class="hint">Exact placement: the app shell is a <code>display:grid</code> on <code>&lt;body&gt;</code>. The banner is a new <code>auto</code> grid row inserted between <code>#globalBreadcrumb</code> and the <code>#sectionContainer</code> outlet, which becomes <code>minmax(0,1fr)</code>. One shell change, inherited by every surface — no page-template edits. Turn Placement labels On to see the three rows and the mount point. Tasks: outlet owns its scroll, reflow is automatic. RP: outlet is <code>overflow:hidden</code> with a DHTMLX timeline that caches its height — banner show/hide must fire a resize (<code>updateView()</code> / window resize) so it recomputes.</p>
+  <p class="hint">No submit step — the run enters the queue after a workflow action, so the flow starts at Queued. Task-centric copy (the trigger is a workflow action; the subject is tasks/bookings). Banner carries Queued and In progress, requester beside the heading to keep it short. Completion is a persistent toast with a View action (stays until closed). Failure is a red banner with Retry. Placement mounts as an <code>auto</code> grid row between <code>#globalBreadcrumb</code> and <code>#sectionContainer</code>; RP needs a resize on show/hide so DHTMLX recomputes. Turn Placement labels On to see it.</p>
 </div>
 
-<div class="frame" data-surface="tasks" data-stage="submit">
+<div class="frame" data-surface="tasks" data-stage="queued">
   <div class="rail">
     <div class="logo">sd</div>
     <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
@@ -239,61 +220,47 @@ tbody tr:hover{background:var(--n2)}
     </div>
 
     <div class="toasts">
-      <div class="toast-note">Prototype note — toast auto-dismisses after ~4s</div>
-      <div class="toast submit info">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-        <span>Estimate saved. Creating <span class="only-tasks">tasks</span><span class="only-rp">bookings</span> in the background — we'll notify you when it's done.</span>
-      </div>
       <div class="toast done info">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-        <span>Processing finished for this estimate. View your <span class="only-tasks">tasks</span><span class="only-rp">bookings</span>.</span>
-      </div>
-      <div class="toast fail error">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
-        <span>Couldn't finish processing this estimate. Open it to retry.</span>
+        <svg class="tico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        <div class="tbody">
+          <p class="tmsg">Processing finished.</p>
+          <button class="tbtn">View <span class="only-tasks">tasks</span><span class="only-rp">bookings</span></button>
+        </div>
+        <button class="tx" aria-label="Dismiss" onclick="this.closest('.toast').classList.add('hidden')">×</button>
       </div>
     </div>
 
     <div class="bannerslot">
-      <!-- empty-state placeholder (annotate view only) marks the mount point when idle -->
       <div class="mount-ph anno">Banner mounts here — new shell grid row (empty when idle)</div>
 
       <!-- QUEUED -->
       <div class="banner queued">
         <svg class="spin" viewBox="0 0 24 24"><circle class="tk" cx="12" cy="12" r="9"/><circle class="hd" cx="12" cy="12" r="9"/></svg>
         <div class="txt">
-          <p class="h">Tasks queued for this estimate</p>
+          <div class="bhead"><p class="h"><span class="only-tasks">Tasks</span><span class="only-rp">Bookings</span> queued</p><span class="byline">Requested by Sarah Chen</span></div>
           <p class="b">Waiting in the queue to begin. This <span class="only-tasks">list</span><span class="only-rp">planner</span> updates automatically, so keep working.</p>
-          <p class="byline">Requested by Sarah Chen</p>
         </div>
         <button class="x" aria-label="Dismiss" onclick="this.closest('.banner').classList.add('hidden')">×</button>
       </div>
 
-      <!-- IN PROGRESS / DELAYED -->
+      <!-- IN PROGRESS -->
       <div class="banner processing">
         <svg class="spin" viewBox="0 0 24 24"><circle class="tk" cx="12" cy="12" r="9"/><circle class="hd" cx="12" cy="12" r="9"/></svg>
         <div class="txt">
-          <p class="h normal">Creating <span class="only-tasks">tasks</span><span class="only-rp">bookings</span> for this estimate</p>
-          <p class="h delayed">Still creating <span class="only-tasks">tasks</span><span class="only-rp">bookings</span> for this estimate</p>
-          <p class="b normal">This <span class="only-tasks">list</span><span class="only-rp">planner</span> updates automatically. Keep working — we'll notify you when it's done.</p>
-          <p class="b delayed">This is taking longer than usual. It's still running — we'll notify you when it's done.</p>
-          <p class="rot normal" id="rot">Processing your estimate…</p>
-          <p class="byline">Requested by Sarah Chen</p>
+          <div class="bhead"><p class="h">Creating <span class="only-tasks">tasks</span><span class="only-rp">bookings</span></p><span class="byline">Requested by Sarah Chen</span></div>
+          <p class="b">This <span class="only-tasks">list</span><span class="only-rp">planner</span> updates automatically. Keep working — we'll notify you when it's done.</p>
+          <p class="rot" id="rot">Getting things ready…</p>
         </div>
         <button class="x" aria-label="Dismiss" onclick="this.closest('.banner').classList.add('hidden')">×</button>
       </div>
 
-      <!-- FAILED (full operation) -->
+      <!-- FAILED -->
       <div class="banner failed">
         <svg class="err-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
         <div class="txt">
-          <p class="h">Couldn't create <span class="only-tasks">tasks</span><span class="only-rp">bookings</span> for this estimate</p>
-          <p class="b">Processing failed and stopped. Retry to run it again, or review the error log.</p>
-          <div class="acts">
-            <button class="btn btn-red">Retry</button>
-            <button class="btn btn-ghost-red">Review error log</button>
-          </div>
-          <p class="byline">Requested by Sarah Chen</p>
+          <div class="bhead"><p class="h">Couldn't create <span class="only-tasks">tasks</span><span class="only-rp">bookings</span></p><span class="byline">Requested by Sarah Chen</span></div>
+          <p class="b">Processing failed and stopped. Retry to run it again.</p>
+          <div class="acts"><button class="btn btn-red">Retry</button></div>
         </div>
         <button class="x" aria-label="Dismiss" onclick="this.closest('.banner').classList.add('hidden')">×</button>
       </div>
@@ -375,7 +342,6 @@ tbody tr:hover{background:var(--n2)}
       </div>
     </div>
 
-    <!-- Placement annotation legend (dev view) -->
     <div class="legend anno">
       <div class="lh">Shell grid — content column rows</div>
       <div class="lrow"><span class="sw" style="background:var(--anno-a)"></span><div><code>#globalBreadcrumb</code> · 48px row</div></div>
@@ -393,7 +359,7 @@ tbody tr:hover{background:var(--n2)}
   const stageBtns = document.querySelectorAll('#stage-seg button');
   const annoBtns = document.querySelectorAll('#anno-seg button');
   const rotEl = document.getElementById('rot');
-  const rotLines = ['Processing your estimate…','Creating tasks and bookings…','Setting rates and durations…','Assigning resources…'];
+  const rotLines = ['Getting things ready…','Creating tasks and bookings…','Setting rates and durations…','Assigning resources…'];
   let rotTimer;
 
   function runRot(){
@@ -408,7 +374,7 @@ tbody tr:hover{background:var(--n2)}
   function setStage(stage){
     frame.dataset.stage = stage;
     stageBtns.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.stage===stage)));
-    document.querySelectorAll('.banner.hidden').forEach(b=>b.classList.remove('hidden'));
+    document.querySelectorAll('.banner.hidden,.toast.hidden').forEach(b=>b.classList.remove('hidden'));
     if(stage==='progress') runRot(); else clearInterval(rotTimer);
   }
   function setSurface(s){
@@ -422,7 +388,7 @@ tbody tr:hover{background:var(--n2)}
   surfaceBtns.forEach(b=>b.addEventListener('click',()=>setSurface(b.dataset.surface)));
   stageBtns.forEach(b=>b.addEventListener('click',()=>setStage(b.dataset.stage)));
   annoBtns.forEach(b=>b.addEventListener('click',()=>setAnno(b.dataset.anno)));
-  setStage('submit');
+  setStage('queued');
   setAnno('off');
 </script>
 </body>
