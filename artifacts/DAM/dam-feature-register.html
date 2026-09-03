@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DAM Feature Register</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Radix accent — cerulean */
+  --accent-1:#FAFEFF; --accent-2:#F3FAFD; --accent-3:#E4F5FC; --accent-4:#D5EFF9;
+  --accent-5:#C4E5F3; --accent-6:#B0D9E9; --accent-7:#95C9DD; --accent-8:#6CB3CE;
+  --accent-9:#0B6E8A; --accent-10:#005F7B; --accent-11:#197592; --accent-12:#1B404E;
+  /* Radix neutral — stone */
+  --neutral-1:#fdfdfc; --neutral-2:#f9f9f8; --neutral-3:#f1f0ef; --neutral-4:#e9e8e6;
+  --neutral-5:#e2e1de; --neutral-6:#dad9d6; --neutral-7:#d0ceca; --neutral-8:#bcbbb6;
+  --neutral-9:#8e8d86; --neutral-10:#83827c; --neutral-11:#64635e; --neutral-12:#21201c;
+  --gray-a3:rgba(0,0,0,.045); --gray-a4:rgba(0,0,0,.065);
+  --gray-a5:rgba(0,0,0,.09); --gray-a6:rgba(0,0,0,.13);
+  --gray-a7:rgba(0,0,0,.18); --gray-a8:rgba(0,0,0,.26); --gray-a9:rgba(0,0,0,.38);
+
+  /* Scale semantic layer */
+  --primary-default:var(--accent-9); --primary-hover:var(--accent-10);
+  --primary-text:var(--accent-11); --primary-subtle:var(--accent-3);
+  --primary-subtle-hover:var(--accent-4); --primary-border:var(--accent-7);
+  --text-default:var(--neutral-12); --text-subtle:var(--neutral-11);
+  --text-disabled:var(--gray-a9);
+  --border-subtle:var(--gray-a5); --border-default:var(--gray-a6);
+  --border-emphasis:var(--gray-a7); --border-strong:var(--gray-a8);
+  --surface-base:var(--neutral-1);
+  --surface-subtle:var(--neutral-2); --surface-muted:var(--neutral-3);
+  --surface-emphasis:var(--neutral-4);
+  --surface-hover:var(--gray-a3); --surface-active:var(--gray-a4);
+
+  /* status badge ramp — light bg + border = status */
+  --st-ship-bg:#e4f7f0; --st-ship-fg:#00664e; --st-ship-bd:#a8e6d1;
+  --st-build-bg:var(--accent-3); --st-build-fg:var(--accent-11); --st-build-bd:var(--accent-6);
+  --st-scope-bg:#fff0cb; --st-scope-fg:#8a5400; --st-scope-bd:#f0d79a;
+  --st-defer-bg:var(--neutral-3); --st-defer-fg:var(--neutral-11); --st-defer-bd:var(--neutral-6);
+  --st-none-bg:transparent; --st-none-fg:var(--neutral-10); --st-none-bd:var(--neutral-7);
+
+  /* type ladder */
+  --type-0-size:11px; --type-0-line:16px;
+  --type-1-size:12px; --type-1-line:16px;
+  --type-2-size:14px; --type-2-line:20px;
+  --type-3-size:16px; --type-3-line:24px;
+  --weight-regular:400; --weight-medium:500; --weight-semibold:600; --weight-bold:700;
+
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
+  --space-5:24px; --space-6:32px; --space-7:40px;
+  --radius-1:3px; --radius-2:5px; --radius-3:7px; --radius-full:999px;
+}
+body.dark{
+  --accent-1:#071317; --accent-2:#0d1b20; --accent-3:#032b38; --accent-4:#00394b;
+  --accent-5:#00465c; --accent-6:#00556d; --accent-7:#006884; --accent-8:#0080a3;
+  --accent-9:#0b6e8a; --accent-10:#005f7b; --accent-11:#62c9ed; --accent-12:#baedff;
+  --neutral-1:#12110e; --neutral-2:#191915; --neutral-3:#23221e; --neutral-4:#2a2924;
+  --neutral-5:#32302b; --neutral-6:#3b3a33; --neutral-7:#494741; --neutral-8:#626059;
+  --neutral-9:#6f6d66; --neutral-10:#7d7b73; --neutral-11:#b5b3ab; --neutral-12:#eeedea;
+  --gray-a3:rgba(255,255,255,.055); --gray-a4:rgba(255,255,255,.08);
+  --gray-a5:rgba(255,255,255,.11); --gray-a6:rgba(255,255,255,.15);
+  --gray-a7:rgba(255,255,255,.2); --gray-a8:rgba(255,255,255,.28); --gray-a9:rgba(255,255,255,.4);
+  --st-ship-bg:#0d2d24; --st-ship-fg:#60d1af; --st-ship-bd:#1d3b31;
+  --st-scope-bg:#2f200d; --st-scope-fg:#fbb554; --st-scope-bd:#4d3618;
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth; scroll-padding-top:var(--space-6);}
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} *{transition:none!important;} }
+body{
+  margin:0; background:var(--surface-base); color:var(--text-default);
+  font-family:Inter,-apple-system,system-ui,sans-serif;
+  font-size:var(--type-2-size); line-height:var(--type-2-line);
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--primary-text); text-decoration:none;}
+a:hover{text-decoration:underline;}
+:focus-visible{outline:2px solid var(--primary-default); outline-offset:2px; border-radius:var(--radius-1);}
+
+/* ---------- masthead ---------- */
+.masthead{
+  border-bottom:1px solid var(--border-default);
+  padding:var(--space-6) var(--space-6) var(--space-5);
+  max-width:1440px; margin:0 auto;
+}
+.eyebrow{
+  font-size:var(--type-0-size); line-height:var(--type-0-line);
+  font-weight:var(--weight-bold); letter-spacing:.08em; text-transform:uppercase;
+  color:var(--text-subtle);
+}
+h1{
+  font-size:28px; line-height:34px; font-weight:var(--weight-bold);
+  letter-spacing:-.02em; margin:var(--space-2) 0 var(--space-2);
+}
+.deck{
+  font-size:var(--type-2-size); color:var(--text-subtle);
+  max-width:74ch; margin:0 0 var(--space-4);
+}
+.meta-line{
+  font-size:var(--type-1-size); line-height:var(--type-1-line);
+  color:var(--text-subtle); display:flex; gap:var(--space-3); flex-wrap:wrap;
+  align-items:center;
+}
+.meta-line span.sep{opacity:.5;}
+
+/* ---------- view switch (signature) ---------- */
+.viewbar{
+  display:flex; gap:var(--space-2); align-items:flex-start;
+  flex-wrap:wrap; margin-top:var(--space-5);
+}
+.viewbtn{
+  appearance:none; cursor:pointer; text-align:left;
+  background:var(--surface-subtle); border:1px solid var(--border-default);
+  border-radius:var(--radius-3); padding:var(--space-3) var(--space-4);
+  color:var(--text-default); font-family:inherit; min-width:186px;
+  transition:background .12s ease, border-color .12s ease;
+}
+.viewbtn:hover{background:var(--surface-hover);}
+.viewbtn strong{
+  display:block; font-size:var(--type-2-size); font-weight:var(--weight-semibold);
+}
+.viewbtn small{
+  display:block; font-size:var(--type-1-size); line-height:var(--type-1-line);
+  color:var(--text-subtle); margin-top:2px;
+}
+.viewbtn[aria-pressed="true"]{
+  background:var(--primary-subtle); border-color:var(--primary-border);
+}
+.viewbtn[aria-pressed="true"] strong{color:var(--primary-text);}
+
+/* ---------- controls ---------- */
+.controls{
+  position:sticky; top:0; z-index:20;
+  background:var(--surface-base);
+  border-bottom:1px solid var(--border-default);
+}
+.controls-inner{
+  max-width:1440px; margin:0 auto;
+  padding:var(--space-3) var(--space-6);
+  display:flex; gap:var(--space-4); align-items:center; flex-wrap:wrap;
+}
+.grp{display:flex; gap:var(--space-1); align-items:center;}
+.grp-label{
+  font-size:var(--type-0-size); font-weight:var(--weight-bold);
+  letter-spacing:.06em; text-transform:uppercase; color:var(--text-subtle);
+  margin-right:var(--space-1);
+}
+.chip{
+  appearance:none; cursor:pointer; font-family:inherit;
+  font-size:var(--type-1-size); line-height:var(--type-1-line);
+  font-weight:var(--weight-medium);
+  padding:4px 10px; border-radius:var(--radius-full);
+  border:1px solid var(--border-default); background:transparent;
+  color:var(--text-subtle); transition:background .12s ease;
+}
+.chip:hover{background:var(--surface-hover);}
+.chip[aria-pressed="true"]{
+  background:var(--primary-subtle); border-color:var(--primary-border);
+  color:var(--primary-text);
+}
+.chip .n{opacity:.65; margin-left:5px; font-variant-numeric:tabular-nums;}
+.find{
+  position:relative; margin-left:auto; display:flex; align-items:center;
+}
+.find svg{
+  position:absolute; left:9px; width:14px; height:14px;
+  color:var(--text-subtle); pointer-events:none;
+}
+.find input{
+  height:32px; width:230px; font-family:inherit;
+  font-size:var(--type-2-size); color:var(--text-default);
+  background:var(--surface-muted); border:1px solid transparent;
+  border-radius:var(--radius-2); padding:0 var(--space-3) 0 30px;
+}
+.find input::placeholder{color:var(--text-subtle);}
+.find input:focus{border-color:var(--primary-border); background:var(--surface-base);}
+.iconbtn{
+  appearance:none; cursor:pointer; width:32px; height:32px;
+  display:inline-flex; align-items:center; justify-content:center;
+  border:1px solid var(--border-default); border-radius:var(--radius-2);
+  background:transparent; color:var(--text-subtle);
+}
+.iconbtn:hover{background:var(--surface-hover); color:var(--text-default);}
+.iconbtn svg{width:16px; height:16px;}
+
+/* ---------- layout ---------- */
+.shell{
+  max-width:1440px; margin:0 auto; display:flex; gap:var(--space-6);
+  padding:var(--space-5) var(--space-6) var(--space-7);
+  align-items:flex-start;
+}
+nav.toc{
+  position:sticky; top:64px; width:224px; flex:none;
+  max-height:calc(100vh - 96px); overflow-y:auto;
+}
+.toc-h{
+  font-size:var(--type-0-size); font-weight:var(--weight-bold);
+  letter-spacing:.06em; text-transform:uppercase; color:var(--text-subtle);
+  padding:0 var(--space-2) var(--space-2);
+}
+.toc a{
+  display:flex; justify-content:space-between; gap:var(--space-2);
+  align-items:baseline;
+  font-size:var(--type-1-size); line-height:var(--type-1-line);
+  color:var(--text-subtle); padding:6px var(--space-2);
+  border-radius:var(--radius-2); border-left:2px solid transparent;
+}
+.toc a:hover{background:var(--surface-hover); color:var(--text-default); text-decoration:none;}
+.toc a.on{
+  color:var(--text-default); font-weight:var(--weight-semibold);
+  border-left-color:var(--primary-default); background:var(--surface-hover);
+}
+.toc a .c{font-variant-numeric:tabular-nums; opacity:.6;}
+main{flex:1; min-width:0;}
+
+/* ---------- sections ---------- */
+section{margin-bottom:var(--space-7); scroll-margin-top:64px;}
+.sec-head{
+  display:flex; align-items:baseline; gap:var(--space-3);
+  padding-bottom:var(--space-2);
+}
+.sec-num{
+  font-size:var(--type-1-size); font-weight:var(--weight-bold);
+  color:var(--primary-text); font-variant-numeric:tabular-nums;
+  letter-spacing:.04em;
+}
+h2{
+  font-size:var(--type-3-size); line-height:var(--type-3-line);
+  font-weight:var(--weight-semibold); letter-spacing:-.01em; margin:0;
+}
+.sec-count{
+  font-size:var(--type-0-size); font-weight:var(--weight-semibold);
+  color:var(--text-subtle); background:var(--surface-emphasis);
+  border-radius:var(--radius-full); padding:1px 8px; margin-left:auto;
+  font-variant-numeric:tabular-nums;
+}
+.sec-intro{
+  font-size:var(--type-2-size); color:var(--text-subtle);
+  max-width:88ch; margin:0 0 var(--space-4);
+  padding-left:var(--space-3); border-left:2px solid var(--border-default);
+}
+
+/* ---------- table ---------- */
+table{width:100%; border-collapse:collapse; table-layout:fixed;}
+thead th{
+  text-align:left; font-size:var(--type-0-size); line-height:var(--type-0-line);
+  font-weight:var(--weight-bold); letter-spacing:.06em; text-transform:uppercase;
+  color:var(--text-subtle); padding:0 var(--space-3) var(--space-2);
+  border-bottom:1px solid var(--border-emphasis);
+}
+tbody td{
+  padding:var(--space-3); vertical-align:top;
+  border-bottom:1px solid var(--border-subtle);
+  font-size:var(--type-1-size); line-height:var(--type-1-line);
+  color:var(--text-subtle);
+}
+tbody tr:hover{background:var(--surface-hover);}
+td.f{
+  font-size:var(--type-2-size); line-height:var(--type-2-line);
+  font-weight:var(--weight-semibold); color:var(--text-default);
+}
+td.w{font-size:var(--type-2-size); line-height:var(--type-2-line); color:var(--text-default);}
+col.c-f{width:17%;} col.c-w{width:27%;} col.c-s{width:8%;}
+col.c-c{width:9%;} col.c-u{width:11%;} col.c-l{width:9%;} col.c-n{width:19%;}
+body[data-view="commercial"] col.c-l, body[data-view="commercial"] .col-l{display:none;}
+
+.badge{
+  display:inline-block; white-space:nowrap;
+  font-size:var(--type-0-size); line-height:16px; font-weight:var(--weight-semibold);
+  padding:1px 7px; border-radius:var(--radius-full); border:1px solid;
+}
+.b-Shipped{background:var(--st-ship-bg); color:var(--st-ship-fg); border-color:var(--st-ship-bd);}
+.b-Inbuild{background:var(--st-build-bg); color:var(--st-build-fg); border-color:var(--st-build-bd);}
+.b-Scoped{background:var(--st-scope-bg); color:var(--st-scope-fg); border-color:var(--st-scope-bd);}
+.b-Deferred{background:var(--st-defer-bg); color:var(--st-defer-fg); border-color:var(--st-defer-bd);}
+.b-Notplanned{background:var(--st-none-bg); color:var(--st-none-fg); border-color:var(--st-none-bd);}
+
+.cls{font-weight:var(--weight-medium);}
+.cls-diff{color:var(--primary-text); font-weight:var(--weight-semibold);}
+.uni{
+  display:inline-block; margin-top:5px;
+  font-size:var(--type-0-size); line-height:14px; font-weight:var(--weight-semibold);
+  letter-spacing:.03em; text-transform:uppercase;
+  color:var(--text-subtle); border:1px dashed var(--border-emphasis);
+  border-radius:var(--radius-1); padding:0 5px;
+}
+td.lk a{font-variant-numeric:tabular-nums; display:block;}
+
+/* ---------- prose sections ---------- */
+.pair{
+  display:grid; grid-template-columns:minmax(180px,26%) 1fr; gap:var(--space-4);
+  padding:var(--space-3) 0; border-bottom:1px solid var(--border-subtle);
+}
+.pair .k{font-weight:var(--weight-semibold); color:var(--text-default);
+  font-size:var(--type-2-size);}
+.pair .v{color:var(--text-subtle); font-size:var(--type-2-size);}
+ul.decisions{list-style:none; padding:0; margin:0;}
+ul.decisions li{
+  padding:var(--space-3) 0 var(--space-3) var(--space-4);
+  border-bottom:1px solid var(--border-subtle);
+  position:relative; color:var(--text-subtle); font-size:var(--type-2-size);
+}
+ul.decisions li::before{
+  content:""; position:absolute; left:0; top:19px;
+  width:5px; height:5px; border-radius:50%; background:var(--primary-default);
+}
+ul.decisions li strong{color:var(--text-default); font-weight:var(--weight-semibold);}
+
+.empty{
+  padding:var(--space-5); text-align:center; color:var(--text-subtle);
+  font-size:var(--type-2-size);
+  border:1px dashed var(--border-default); border-radius:var(--radius-3);
+}
+footer{
+  max-width:1440px; margin:0 auto; padding:var(--space-5) var(--space-6) var(--space-7);
+  border-top:1px solid var(--border-default);
+  font-size:var(--type-1-size); line-height:var(--type-1-line); color:var(--text-subtle);
+}
+
+@media (max-width:1080px){
+  nav.toc{display:none;}
+  .shell{padding-left:var(--space-4); padding-right:var(--space-4);}
+  .masthead, .controls-inner{padding-left:var(--space-4); padding-right:var(--space-4);}
+  table, thead, tbody, tr, td{display:block; width:100%;}
+  thead{display:none;}
+  col{display:none;}
+  tbody tr{
+    border:1px solid var(--border-default); border-radius:var(--radius-3);
+    padding:var(--space-3); margin-bottom:var(--space-3);
+  }
+  tbody td{border:0; padding:2px 0;}
+  tbody td::before{
+    content:attr(data-l) " "; font-size:var(--type-0-size);
+    text-transform:uppercase; letter-spacing:.06em; color:var(--text-subtle);
+    font-weight:var(--weight-bold); display:block; margin-top:var(--space-2);
+  }
+  td.f::before{display:none;}
+  .pair{grid-template-columns:1fr; gap:var(--space-1);}
+}
+@media print{
+  .controls,nav.toc,.viewbar,.find,.iconbtn{display:none;}
+  body{font-size:10pt;} .shell{display:block; padding:0;}
+  tbody tr{break-inside:avoid;} section{break-inside:auto;}
+}
+</style>
+</head>
+<body data-view="build">
+
+<header class="masthead">
+  <div class="eyebrow">Screendragon &middot; Digital Asset Management</div>
+  <h1>DAM Feature Register</h1>
+  <p class="deck">The single source for what the DAM does. Organised by capability domain, not by screen and not by release phase. Sales and roadmap views are derived from this list by filtering, not maintained separately.</p>
+  <div class="meta-line">
+    <span>Version 1.0</span><span class="sep">/</span>
+    <span>14 August 2026</span><span class="sep">/</span>
+    <span>204 capabilities across 16 domains</span><span class="sep">/</span>
+    <span>Status sourced from Linear</span>
+  </div>
+  <div class="viewbar" role="group" aria-label="Document view">
+    <button class="viewbtn" data-vw="build" aria-pressed="true">
+      <strong>Build view</strong><small>Everything, with Linear references</small></button>
+    <button class="viewbtn" data-vw="commercial" aria-pressed="false">
+      <strong>Commercial view</strong><small>What a customer can buy today</small></button>
+    <button class="viewbtn" data-vw="roadmap" aria-pressed="false">
+      <strong>Roadmap view</strong><small>Committed and deferred work only</small></button>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="controls-inner">
+    <div class="grp" id="fstatus"><span class="grp-label">Status</span></div>
+    <div class="grp" id="fclass"><span class="grp-label">Class</span></div>
+    <div class="grp"><button class="chip" id="funity" aria-pressed="false">Unity-dependent only</button></div>
+    <div class="find">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
+      <input type="search" id="q" placeholder="Find a capability" aria-label="Find a capability">
+    </div>
+    <button class="iconbtn" id="theme" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5Z"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="shell">
+  <nav class="toc" aria-label="Sections"><div class="toc-h">Domains</div><div id="toc"></div></nav>
+  <main id="main"></main>
+</div>
+
+<footer>
+  Status is sourced from Linear, which is authoritative for build state. Design behaviour is sourced from the DAM design contracts. Where the PRD phasing documents conflict with either, they are stale and should not be used. Built on Scale tokens: cerulean accent, stone neutral, Inter.
+</footer>
+
+<script>
+const DATA = [{"num": 1, "title": "Platform and asset model", "intro": "The DAM is a native module that loads as a cross-origin iframe inside the Unity workflow platform. It is not a bolt-on integration to a third-party DAM, and it is not a standalone product with a Unity connector. That architecture is the reason the workflow lineage and point-of-use enforcement capabilities exist at all.", "rows": [{"feature": "Embedded DAM module", "what": "DAM runs as a first-class module inside the host platform, sharing identity, permissions and navigation", "status": "Shipped", "cls": "Differentiator", "surface": "All", "linear": "", "notes": "Unity-dependent"}, {"feature": "Host version gate", "what": "DAM requires Unity v8. No v7 accommodation", "status": "Shipped", "cls": "", "surface": "Platform", "linear": "", "notes": "Policy decision. v7 top nav breaks the lightbox and costs vertical space"}, {"feature": "Breadcrumb passthrough", "what": "DAM iframe location is passed up to the host top bar so the breadcrumb stays truthful", "status": "Shipped", "cls": "Table stakes", "surface": "Global nav", "linear": "SCR-128", "notes": "Unity-dependent"}, {"feature": "Net-new DAM asset on promotion", "what": "An asset promoted from a Unity form becomes a first-class DAM asset with its own independent lifecycle", "status": "Shipped", "cls": "Differentiator", "surface": "Upload, library", "linear": "SCR-77", "notes": "Deleting the source Unity form does not cascade to the DAM asset"}, {"feature": "Promotion user flow", "what": "End-user-facing design for the Unity to DAM promotion path", "status": "Deferred", "cls": "Differentiator", "surface": "Unity forms", "linear": "SCR-78", "notes": "Unity-dependent. Dev flow is shipped; the user-facing flow is not"}, {"feature": "Scope resolution", "what": "Dashboard and navigation resolve automatically between single-folder and multi-folder based on what the user can see", "status": "Shipped", "cls": "Parity", "surface": "Dashboard", "linear": "SCR-7, SCR-220", "notes": "Prevents a permanent per-client dashboard split"}, {"feature": "Asset ownership", "what": "Owner is recorded on every asset and can be reassigned by an admin", "status": "Shipped", "cls": "Table stakes", "surface": "Admin, edit", "linear": "SCR-80", "notes": ""}, {"feature": "Maintenance mode page", "what": "Branded holding page during planned downtime", "status": "Scoped", "cls": "Table stakes", "surface": "Global", "linear": "SCR-161", "notes": ""}, {"feature": "Session instrumentation", "what": "Session replay works correctly through the iframe boundary", "status": "Shipped", "cls": "", "surface": "Global", "linear": "SCR-95", "notes": ""}, {"feature": "Mobile responsive layout", "what": "Full responsive treatment across DAM surfaces", "status": "Deferred", "cls": "Table stakes", "surface": "All", "linear": "SCR-83", "notes": "Currently desktop-first"}, {"feature": "Nomenclature consistency", "what": "One canonical term per concept across UI, schema and documentation", "status": "In build", "cls": "", "surface": "All", "linear": "SCR-6, SCR-44", "notes": "Folder vs event vs library naming remains an open decision"}], "other": []}, {"num": 2, "title": "Ingest and upload", "intro": "Upload is where governance is cheapest to apply and most expensive to retrofit. The design intent throughout is to capture structure at entry rather than clean up afterwards.", "rows": [{"feature": "Multi-file upload", "what": "Drag and drop or browse, multiple files per session, per-file progress", "status": "Shipped", "cls": "Table stakes", "surface": "Upload", "linear": "", "notes": ""}, {"feature": "Background upload", "what": "Uploads continue while the user works elsewhere in the DAM", "status": "Shipped", "cls": "Parity", "surface": "Upload", "linear": "", "notes": ""}, {"feature": "Upload-time duplicate check", "what": "Detects duplicate files at upload and offers a per-file resolution before commit", "status": "Shipped", "cls": "Parity", "surface": "Upload", "linear": "SCR-168", "notes": "Parent for the detection service, resolution UI and commit handling"}, {"feature": "Duplicate detection service", "what": "Per-file detection status feeding the resolution UI", "status": "Shipped", "cls": "Parity", "surface": "Upload", "linear": "SCR-171", "notes": ""}, {"feature": "Duplicate resolution UI", "what": "Per-file choice: keep both, replace, skip", "status": "Shipped", "cls": "Parity", "surface": "Upload", "linear": "SCR-169", "notes": ""}, {"feature": "Duplicate commit handling", "what": "Commit path and signal logging for the chosen resolution", "status": "Shipped", "cls": "Parity", "surface": "Upload", "linear": "SCR-172", "notes": ""}, {"feature": "Multi-select and bulk edit in upload", "what": "Apply metadata across a subset of the upload batch before commit", "status": "Shipped", "cls": "Parity", "surface": "Upload", "linear": "SCR-170", "notes": ""}, {"feature": "Auto-attribution from filename", "what": "Maps a filename schema to attribute values so structured metadata lands without manual entry", "status": "Shipped", "cls": "Differentiator", "surface": "Upload", "linear": "SCR-132", "notes": "Upload interface is preserved when schema mapping is active"}, {"feature": "AI auto-tagging on upload", "what": "Runs once at upload, produces suggestions, never re-applies silently", "status": "Shipped", "cls": "Table stakes", "surface": "Upload", "linear": "SCR-120", "notes": "Full model in section 5"}, {"feature": "Save as draft in upload", "what": "Commit files to the DAM without publishing them to the library", "status": "Scoped", "cls": "Table stakes", "surface": "Upload", "linear": "SCR-258", "notes": ""}, {"feature": "Post-upload processing pipeline", "what": "Rendition generation, metadata extraction and embedding after commit", "status": "Shipped", "cls": "Table stakes", "surface": "Backend", "linear": "", "notes": ""}, {"feature": "Link asset to existing asset", "what": "Attach a new file to an existing asset record rather than creating a new one", "status": "Deferred", "cls": "Parity", "surface": "Upload, edit", "linear": "SCR-79", "notes": "Distinct from versioning"}, {"feature": "Promotion from Unity form", "what": "Files attached to a workflow form can be promoted into the DAM", "status": "Shipped", "cls": "Differentiator", "surface": "Unity forms", "linear": "SCR-77", "notes": "Unity-dependent"}], "other": []}, {"num": 3, "title": "Asset lifecycle and states", "intro": "Lifecycle state is a property of the asset record, not a separate storage mode or a parallel object. That decision is load-bearing: it is what lets a single asset carry draft, rights, workflow and approval state simultaneously without four competing sources of truth.", "rows": [{"feature": "Draft as status on the asset", "what": "Draft is a status on the asset record, not a separate upload mode or holding area", "status": "Scoped", "cls": "Table stakes", "surface": "DAM-wide", "linear": "SCR-230", "notes": "Parent issue. Model is settled; issue text needs rewriting against draft-as-status"}, {"feature": "Draft status and validation gate", "what": "The status itself, the metadata completeness gate, and the transition mechanics", "status": "Scoped", "cls": "Table stakes", "surface": "DAM-wide", "linear": "SCR-256", "notes": ""}, {"feature": "Add to library", "what": "One-way promotion from draft into the library. State-adaptive: complete metadata acts immediately, incomplete metadata opens a scoped edit", "status": "Scoped", "cls": "Table stakes", "surface": "Card menu, edit, upload, bulk", "linear": "SCR-259", "notes": "Named \"Add to library\", not \"Publish\". No route back to draft"}, {"feature": "My drafts saved filter", "what": "Permanent saved filter scoped to the current user's drafts", "status": "Scoped", "cls": "Parity", "surface": "Library filters", "linear": "SCR-260", "notes": ""}, {"feature": "Gate badge and precedence ladder", "what": "One badge slot on the card, resolved by precedence: Draft, then Scheduled, then Expired, then Embargoed", "status": "Scoped", "cls": "Parity", "surface": "Library view", "linear": "SCR-257", "notes": "Scheduled is cut from the current build but retains its ladder position"}, {"feature": "Rights status badge", "what": "Active, Embargoed or Expired shown on the card", "status": "Shipped", "cls": "Table stakes", "surface": "Library view", "linear": "SCR-71, SCR-21", "notes": ""}, {"feature": "Asset card state model", "what": "Rights badges plus lifecycle dot, with filetype badges demoted to neutral so colour is reserved for state", "status": "Shipped", "cls": "Parity", "surface": "Library view", "linear": "SCR-119, SCR-125", "notes": "Light background and border means status; solid fill means filetype"}, {"feature": "Automatic expiry on event date", "what": "Rights expiry fires automatically against a configured event date", "status": "Shipped", "cls": "Differentiator", "surface": "Rights", "linear": "SCR-74", "notes": ""}, {"feature": "Archiving", "what": "Single and bulk archive with a redesigned action model", "status": "Deferred", "cls": "Table stakes", "surface": "Library view", "linear": "SCR-136", "notes": "Include-archived toggle already exists in filters"}, {"feature": "Approval status label", "what": "Approved or unapproved shown on the card", "status": "Deferred", "cls": "Table stakes", "surface": "Library view", "linear": "SCR-22", "notes": "Depends on the approval model in section 12"}, {"feature": "Workflow linkage state", "what": "Shows which Unity workflows an asset is attached to", "status": "Deferred", "cls": "Differentiator", "surface": "Lightbox, edit", "linear": "", "notes": "Unity-dependent. Reference versus in-use semantics are an open decision"}, {"feature": "Scheduled release", "what": "Asset becomes available automatically at a future date", "status": "Not planned", "cls": "Parity", "surface": "", "linear": "", "notes": "Cut from the current build. Distinct from embargo and from hidden-until-date"}], "other": []}, {"num": 4, "title": "Metadata architecture", "intro": "Three sibling concepts, deliberately not nested. Attributes are structured and controlled. Tags are free-form, with AI provenance as a property rather than a separate class. File metadata is extracted and read-only. Collapsing any two of these is the most common architectural mistake in this category and the one that makes governance impossible later.", "rows": [{"feature": "Attributes", "what": "Structured, controlled-vocabulary fields defined per tenant", "status": "Shipped", "cls": "Table stakes", "surface": "Edit, lightbox, filters", "linear": "SCR-127", "notes": "Split from Details into its own section"}, {"feature": "Tags", "what": "Free-form keywords, with provenance carried on the asset-tag link", "status": "Shipped", "cls": "Table stakes", "surface": "Edit, lightbox, filters", "linear": "SCR-120", "notes": ""}, {"feature": "File metadata", "what": "EXIF, IPTC and XMP extracted at upload, displayed read-only", "status": "Shipped", "cls": "Table stakes", "surface": "Details section", "linear": "SCR-174", "notes": "Demoted from a rail tab to a section inside Details"}, {"feature": "File metadata curation", "what": "System-level noise removed from the file metadata view", "status": "Shipped", "cls": "Parity", "surface": "Details section", "linear": "SCR-155", "notes": "Also closed a temp-path leak"}, {"feature": "File metadata consistency", "what": "Same fields, same order, same formatting across every surface that shows them", "status": "Shipped", "cls": "Parity", "surface": "Edit, lightbox", "linear": "SCR-211", "notes": ""}, {"feature": "Unified Details tab", "what": "Details renders identically in edit mode and lightbox, read-only being a state of the kit rather than a separate build", "status": "Shipped", "cls": "Parity", "surface": "Edit, lightbox", "linear": "SCR-154", "notes": ""}, {"feature": "Extract everything, index selectively", "what": "All extractable metadata is captured; a defined subset is indexed for search and filtering", "status": "Shipped", "cls": "Differentiator", "surface": "Backend", "linear": "", "notes": "Three indexing tiers: always indexed, conditionally indexed, stored only"}, {"feature": "Attribute selection controls", "what": "Multi-select and single-select attribute editing behaviour", "status": "Shipped", "cls": "Table stakes", "surface": "Edit", "linear": "SCR-207", "notes": ""}, {"feature": "Tag Manager: tag values", "what": "Central administration of the tag registry and its values", "status": "Shipped", "cls": "Table stakes", "surface": "DAM settings", "linear": "SCR-236", "notes": ""}, {"feature": "Tag Manager: categories", "what": "Tag categorisation, plus cutover of the registry from Unity settings into DAM settings", "status": "Shipped", "cls": "Parity", "surface": "DAM settings", "linear": "SCR-239", "notes": "Unity-dependent for the cutover only. Registry stays global with folder-scoped filtering"}, {"feature": "File metadata iconography", "what": "Consistent glyph treatment for metadata field types", "status": "Shipped", "cls": "", "surface": "Filters, details", "linear": "SCR-93", "notes": ""}, {"feature": "Metadata templates", "what": "Save and apply a named set of metadata values across assets", "status": "Deferred", "cls": "Parity", "surface": "Edit, bulk edit", "linear": "", "notes": ""}, {"feature": "Tenant-configurable schema", "what": "Admin-defined attribute fields without engineering involvement", "status": "Deferred", "cls": "Table stakes", "surface": "DAM settings", "linear": "", "notes": "Currently configured per tenant during implementation"}], "other": []}, {"num": 5, "title": "AI enrichment", "intro": "AI auto-tagging is table stakes and should never lead a sales conversation. What is defensible here is the provenance architecture: a three-level model separating the tag record, the asset-tag link and the suggestion ledger. That model is what makes AI-derived metadata governable, auditable and removable at scale, which is the part competitors handle poorly.", "rows": [{"feature": "AI auto-tagging", "what": "Generates tag suggestions from image content at upload", "status": "Shipped", "cls": "Table stakes", "surface": "Upload, edit", "linear": "SCR-120", "notes": "Runs once at upload. Never silently re-applies"}, {"feature": "Unified Tags collection", "what": "Accepted AI tags join the same Tags collection as manual tags, retaining source provenance", "status": "Shipped", "cls": "Differentiator", "surface": "Edit, upload, bulk edit", "linear": "SCR-121, SCR-150", "notes": "The standalone AI tab is removed from the left rail across all surfaces"}, {"feature": "Three-level provenance model", "what": "Tag record, asset-tag link and suggestion ledger are separate structures. Provenance lives on the link, not the tag", "status": "Shipped", "cls": "Differentiator", "surface": "Backend", "linear": "SCR-231", "notes": "Parent for the restructure. Corrects the original model, which put provenance on the tag record"}, {"feature": "Additive provenance on the link", "what": "A tag applied by both AI and a human carries both, rather than one overwriting the other", "status": "Shipped", "cls": "Differentiator", "surface": "Backend", "linear": "SCR-233", "notes": ""}, {"feature": "Registry collapse and migration", "what": "Single tag registry replacing the separate AI and manual partitions, with migration of existing data", "status": "Shipped", "cls": "Differentiator", "surface": "Backend", "linear": "SCR-237", "notes": ""}, {"feature": "Suggestion ledger", "what": "Records every suggestion and its outcome, including rejections, with a terminal state and explicit re-run", "status": "Shipped", "cls": "Differentiator", "surface": "Backend, edit", "linear": "SCR-238", "notes": "Rejected suggestions do not resurrect on re-run"}, {"feature": "Cross-partition merge", "what": "Merging tags works across the former AI and manual partitions", "status": "Shipped", "cls": "Parity", "surface": "Tag Manager", "linear": "SCR-234", "notes": ""}, {"feature": "AI provenance marker", "what": "Astroid glyph at accent-11 on the chip, pointed at applied_via", "status": "Shipped", "cls": "Parity", "surface": "Edit, lightbox", "linear": "SCR-235, SCR-47", "notes": "The only accessible provenance carrier at 5.11:1 contrast. Editing a tag's text reclassifies it to manual"}, {"feature": "Confidence-threshold partition", "what": "Suggestions above a threshold are auto-accepted server-side; below it they require review", "status": "Shipped", "cls": "Parity", "surface": "Upload, edit", "linear": "SCR-151", "notes": ""}, {"feature": "Bulk-edit tagging", "what": "Tri-state Tags collection across a selection, with per-asset AI suggestions held inert", "status": "Shipped", "cls": "Parity", "surface": "Bulk edit", "linear": "SCR-173", "notes": ""}, {"feature": "Confidence score display", "what": "Surfaces the model's confidence on each suggestion", "status": "Deferred", "cls": "Parity", "surface": "Lightbox", "linear": "SCR-45", "notes": ""}, {"feature": "Disable AI tagging on unsupported types", "what": "Suppresses the AI surface entirely where the file type cannot be processed", "status": "Deferred", "cls": "Table stakes", "surface": "Edit, upload", "linear": "SCR-51", "notes": ""}, {"feature": "Suggestion blocklist", "what": "Tenant-level list of terms the model must never suggest", "status": "Deferred", "cls": "Differentiator", "surface": "DAM settings", "linear": "SCR-240", "notes": "Prevents category problems at source rather than cleaning up afterwards"}, {"feature": "Tag generation quality and taxonomy mapping", "what": "Maps model output onto the tenant's controlled vocabulary", "status": "Deferred", "cls": "Differentiator", "surface": "Backend", "linear": "SCR-241", "notes": "Needs breakdown"}, {"feature": "OCR text extraction", "what": "Extracts text from images and documents and indexes it for search", "status": "Shipped", "cls": "Table stakes", "surface": "Backend, search", "linear": "SCR-33", "notes": "Infrastructure, not user-approved content metadata"}, {"feature": "OCR match highlighting", "what": "Shows where in an asset a search term was matched", "status": "Shipped", "cls": "Parity", "surface": "Search results", "linear": "SCR-107, SCR-108, SCR-109", "notes": ""}, {"feature": "OCR match flag in quick search", "what": "Indicates that a result matched on extracted text rather than metadata", "status": "Shipped", "cls": "Parity", "surface": "Quick search", "linear": "SCR-35", "notes": ""}, {"feature": "OCR extracted-text viewer", "what": "Read-only view of the full extracted text on an asset", "status": "Deferred", "cls": "Parity", "surface": "Lightbox", "linear": "SCR-152", "notes": "Image-only in the current scope"}, {"feature": "Visually similar assets", "what": "Finds assets similar to a reference asset, with score badges and a threshold control", "status": "Shipped", "cls": "Parity", "surface": "Lightbox", "linear": "SCR-117", "notes": "Lightbox only. Discovery has no authoring role in edit"}, {"feature": "Similarity search admin control", "what": "Enable or disable similarity search per tenant", "status": "Shipped", "cls": "Parity", "surface": "DAM settings", "linear": "SCR-124", "notes": ""}, {"feature": "Natural language search", "what": "Interprets a plain-sentence query into structured filters", "status": "Deferred", "cls": "Parity", "surface": "Search", "linear": "SCR-11", "notes": "Front-end logic outstanding"}], "other": []}, {"num": 6, "title": "Organisation", "intro": "Two structures, deliberately different in kind. Folders are the permission boundary and the primary navigation. Collections are curatorial, cut across folders, and are the unit that gets shared externally.", "rows": [{"feature": "Folder hierarchy", "what": "Nested folders as the primary organisational and permission structure", "status": "Shipped", "cls": "Table stakes", "surface": "Library, nav", "linear": "", "notes": "Canonical internal term is folder; per-tenant display label is an open decision"}, {"feature": "Collections", "what": "User-created groupings that cut across folders", "status": "Shipped", "cls": "Table stakes", "surface": "Collections", "linear": "SCR-147", "notes": ""}, {"feature": "Collection filters and detail layout", "what": "Filters on the left, collection detail on the right", "status": "Shipped", "cls": "Parity", "surface": "Collections", "linear": "SCR-140, SCR-153", "notes": ""}, {"feature": "Collection ownership grouping", "what": "My Collections and Shared with me as grouped sections", "status": "Shipped", "cls": "Parity", "surface": "Collections", "linear": "", "notes": ""}, {"feature": "Collection visibility states", "what": "Three visibility states on the collection record", "status": "Shipped", "cls": "Parity", "surface": "Collections", "linear": "", "notes": "Public and open state deferred"}, {"feature": "Public and private collections", "what": "Explicit public or private visibility as a first-class setting", "status": "Deferred", "cls": "Parity", "surface": "Collections", "linear": "SCR-156", "notes": "The visibility flag also serves share-scoped collections in section 13"}, {"feature": "Shared collection visibility across folders", "what": "Global collections surface outside their originating folder; folder-scoped and personal collections do not", "status": "Deferred", "cls": "Parity", "surface": "Dashboard, collections", "linear": "SCR-64", "notes": ""}, {"feature": "Collection iconography", "what": "Consistent glyph treatment for collection types and states", "status": "Shipped", "cls": "", "surface": "Collections", "linear": "SCR-158", "notes": ""}, {"feature": "Favourites", "what": "Per-user favourite marking on assets", "status": "Shipped", "cls": "Table stakes", "surface": "Library view", "linear": "", "notes": ""}, {"feature": "Dashboard framework", "what": "One dashboard, scope-resolved, composed entirely of widgets", "status": "Shipped", "cls": "Parity", "surface": "Dashboard", "linear": "SCR-7, SCR-220", "notes": "Replaces the per-client dashboard split"}, {"feature": "Dashboard template builder", "what": "Admin configuration of which widgets appear and in what order", "status": "Shipped", "cls": "Parity", "surface": "DAM settings", "linear": "SCR-219", "notes": ""}, {"feature": "Folder navigator widget", "what": "Swim-lane folder browsing on the dashboard", "status": "Shipped", "cls": "Parity", "surface": "Dashboard", "linear": "SCR-224", "notes": ""}, {"feature": "Collections widget", "what": "Surfaces collections on the dashboard", "status": "Shipped", "cls": "Parity", "surface": "Dashboard", "linear": "SCR-226", "notes": ""}, {"feature": "Recently added and recent downloads widgets", "what": "Activity-driven entry points into the library", "status": "Shipped", "cls": "Parity", "surface": "Dashboard", "linear": "SCR-227", "notes": ""}, {"feature": "Event banner widget", "what": "Configurable hero banner for a folder or event", "status": "Shipped", "cls": "Parity", "surface": "Dashboard", "linear": "SCR-228", "notes": "Config-flagged. Retained on a usage review"}, {"feature": "Card faces", "what": "Consistent card treatment for folders, assets and collections", "status": "Shipped", "cls": "", "surface": "Dashboard, library", "linear": "SCR-225", "notes": "Folders stack to signal depth; assets are full-bleed"}], "other": []}, {"num": 7, "title": "Search and filtering", "intro": "Search is attached to the global navigation, which is what separates it from DAM-contextual filtering. Anywhere a control narrows an existing list rather than querying the whole system, it is a filter and is labelled and iconographed as one.", "rows": [{"feature": "Global search", "what": "Full-text search across metadata, tags, attributes and extracted text", "status": "Shipped", "cls": "Table stakes", "surface": "Global nav", "linear": "SCR-12", "notes": "Scope and configuration under investigation"}, {"feature": "Quick search", "what": "Type-ahead results from the search field", "status": "Shipped", "cls": "Table stakes", "surface": "Global nav", "linear": "SCR-163", "notes": "Quick and full search now return consistent results"}, {"feature": "Faceted filter panel", "what": "Collapsible facet groups over attributes, tags, file metadata, rights, dates and uploader", "status": "Shipped", "cls": "Table stakes", "surface": "Library", "linear": "SCR-8", "notes": ""}, {"feature": "Advanced facets", "what": "File metadata, rights state, date ranges and uploader as filterable facets", "status": "Shipped", "cls": "Parity", "surface": "Library filters", "linear": "SCR-8", "notes": "Dimensions and duration use preset buckets"}, {"feature": "Active-group indicator", "what": "2px edge on the facet header plus an n-of-total count pill, working collapsed and expanded", "status": "Shipped", "cls": "Parity", "surface": "Library filters", "linear": "SCR-118", "notes": ""}, {"feature": "Filter chips", "what": "Active filters shown as removable chips above the results", "status": "Shipped", "cls": "Table stakes", "surface": "Library", "linear": "SCR-115", "notes": ""}, {"feature": "Text search state", "what": "Query bound to the URL and page title, with a defined zero-results state", "status": "Shipped", "cls": "Parity", "surface": "Library", "linear": "SCR-116", "notes": ""}, {"feature": "Saved filters", "what": "Save, name and re-apply a filter set", "status": "Shipped", "cls": "Table stakes", "surface": "Library filters", "linear": "SCR-14", "notes": "Active-state and chip-reflection refinements outstanding (SCR-15, SCR-18)"}, {"feature": "Filter find field", "what": "Narrows the facet list itself, using the list-filter icon rather than a magnifier", "status": "Shipped", "cls": "Parity", "surface": "Library filters", "linear": "SCR-213, SCR-208", "notes": "Magnifier is reserved for global search"}, {"feature": "Result priority scoring", "what": "Weighted relevance model across match sources", "status": "Shipped", "cls": "Differentiator", "surface": "Search results", "linear": "SCR-31, SCR-110, SCR-111", "notes": ""}, {"feature": "Search results header", "what": "Two-cluster page header with inline title block and result meta", "status": "Shipped", "cls": "Parity", "surface": "Library", "linear": "SCR-114, SCR-115", "notes": ""}, {"feature": "Include archived toggle", "what": "Single lifecycle control in the filter panel", "status": "Shipped", "cls": "Parity", "surface": "Library filters", "linear": "", "notes": ""}, {"feature": "Sort with applied indicator", "what": "Sort control shows which sort is active", "status": "Shipped", "cls": "Table stakes", "surface": "Library", "linear": "SCR-23", "notes": ""}, {"feature": "Grid and list views", "what": "Toggle between mosaic and list density", "status": "Shipped", "cls": "Table stakes", "surface": "Library", "linear": "SCR-104", "notes": ""}, {"feature": "Search telemetry", "what": "Captures queries, refinements and zero-result events", "status": "Shipped", "cls": "Differentiator", "surface": "Backend", "linear": "SCR-206", "notes": "Feeds the demand-signal reporting in section 16"}, {"feature": "Advanced search builder", "what": "Explicit query construction with boolean logic", "status": "Deferred", "cls": "Parity", "surface": "Search", "linear": "SCR-10", "notes": "Cancelled in its original form. Faceted filtering covers the majority case"}], "other": []}, {"num": 8, "title": "Preview and image tools", "intro": "The lightbox is a viewer and recedes so the asset is the hero. Edit mode scaffolds because it is a work surface. Both run one navigation rail component at two densities, never two rails.", "rows": [{"feature": "Lightbox", "what": "Full-screen single-asset viewer with metadata, rights and download in a side panel", "status": "Shipped", "cls": "Table stakes", "surface": "Lightbox", "linear": "SCR-113", "notes": ""}, {"feature": "Multi-format preview", "what": "Native preview for images, video, documents and presentations", "status": "Shipped", "cls": "Table stakes", "surface": "Lightbox", "linear": "", "notes": ""}, {"feature": "Video preview behaviour", "what": "Correct thumbnails, centring and autoplay across grid and list", "status": "Shipped", "cls": "Table stakes", "surface": "Library, lightbox", "linear": "SCR-24, SCR-25, SCR-52", "notes": ""}, {"feature": "Lightbox drawer", "what": "Side navigation behaves as a pull-out drawer rather than a fixed rail", "status": "Shipped", "cls": "Parity", "surface": "Lightbox", "linear": "SCR-210", "notes": "Supersedes the fixed rail on this surface only. Edit is unaffected"}, {"feature": "Shared rail spine", "what": "Details, Attributes and Rights appear identically in lightbox and edit", "status": "Shipped", "cls": "Parity", "surface": "Lightbox, edit", "linear": "SCR-191", "notes": "Lightbox adds Similar and Download; edit adds Adjustments, Template, Versions and Access"}, {"feature": "Contextual menu suppression", "what": "Menu items irrelevant to the asset type are hidden or disabled per a defined matrix", "status": "Shipped", "cls": "Parity", "surface": "Lightbox", "linear": "SCR-43, SCR-86", "notes": ""}, {"feature": "Downloads on lightbox", "what": "Download configuration surfaced within the lightbox rather than a separate modal", "status": "Scoped", "cls": "Parity", "surface": "Lightbox", "linear": "SCR-255", "notes": ""}, {"feature": "Lightbox to edit transition", "what": "Animated transition preserving spatial continuity", "status": "Deferred", "cls": "", "surface": "Lightbox", "linear": "SCR-40", "notes": ""}, {"feature": "Image adjustments", "what": "Crop, resize and rotate within the DAM", "status": "Deferred", "cls": "Parity", "surface": "Edit", "linear": "", "notes": "Explicitly not shipping at launch. Not ready, and no customer is asking"}, {"feature": "Watermarking scope", "what": "Applying and configuring watermarks", "status": "Deferred", "cls": "Parity", "surface": "Rights, downloads", "linear": "SCR-82", "notes": "Watermarked version tier is shipped; authoring controls are not"}, {"feature": "Annotation and markup", "what": "Drawing, commenting and threaded review on the asset", "status": "Not planned", "cls": "", "surface": "", "linear": "", "notes": "Lives in the host platform's proofing tools"}], "other": []}, {"num": 9, "title": "Versioning", "intro": "The stable public URL across versions is the quiet requirement here. It is what makes a DAM link safe to embed in anything long-lived, and it is why version replacement is a first-class operation rather than a delete-and-reupload.", "rows": [{"feature": "Version history", "what": "Full timeline of versions with uploader, date, file details and notes", "status": "Shipped", "cls": "Table stakes", "surface": "Edit", "linear": "", "notes": ""}, {"feature": "Upload new version", "what": "Replaces the live file while preserving the asset record, its metadata and its links", "status": "Shipped", "cls": "Table stakes", "surface": "Edit", "linear": "", "notes": ""}, {"feature": "Download previous version", "what": "Any historical version can be retrieved", "status": "Shipped", "cls": "Table stakes", "surface": "Edit, downloads", "linear": "", "notes": ""}, {"feature": "Restore previous version", "what": "Promotes a historical version back to live", "status": "Shipped", "cls": "Table stakes", "surface": "Edit", "linear": "", "notes": ""}, {"feature": "Stable public URL", "what": "The public URL does not change when a new version is uploaded", "status": "Shipped", "cls": "Table stakes", "surface": "Delivery", "linear": "", "notes": "Load-bearing for embedded and syndicated use"}, {"feature": "Version-aware downloads", "what": "Download configuration is aware of which version is being retrieved", "status": "Shipped", "cls": "Parity", "surface": "Downloads", "linear": "SCR-133", "notes": ""}], "other": []}, {"num": 10, "title": "Rights and governance", "intro": "This is the strongest area of the product and the one that most rewards detail in a sales conversation. Two decisions carry it. First, the version tiers are the enforcement mechanism rather than a labelling convention: degrading the file is a control, a label is not. Second, enforcement lives at the signed-URL mint endpoint, never in the UI and never at the CDN edge.", "rows": [{"feature": "Rights metadata", "what": "Owner, licence scope, restrictions and expiry captured on the asset", "status": "Shipped", "cls": "Table stakes", "surface": "Rights panel", "linear": "", "notes": ""}, {"feature": "Territory rights editing", "what": "Region, country and territory scoping with dedicated editing panel and dialogs", "status": "Shipped", "cls": "Differentiator", "surface": "Rights panel", "linear": "SCR-126", "notes": ""}, {"feature": "Default rights", "what": "Tenant-level defaults applied to new assets", "status": "Shipped", "cls": "Parity", "surface": "DAM settings", "linear": "SCR-72", "notes": ""}, {"feature": "Mandatory rights checks", "what": "Enforced completion of required rights fields before an asset can proceed", "status": "Shipped", "cls": "Differentiator", "surface": "Rights, upload", "linear": "SCR-160", "notes": ""}, {"feature": "Automatic expiry on event", "what": "Rights expire automatically against a configured event date", "status": "Shipped", "cls": "Differentiator", "surface": "Rights", "linear": "SCR-74", "notes": ""}, {"feature": "DAM-wide expiry behaviour", "what": "Expiry consequence configured once at tenant level rather than per asset", "status": "Shipped", "cls": "Parity", "surface": "DAM settings", "linear": "SCR-175", "notes": ""}, {"feature": "Version tiers as enforcement", "what": "Preview, Watermarked and Original. Degradation is the control", "status": "Shipped", "cls": "Differentiator", "surface": "Downloads", "linear": "", "notes": "A template renders from the best version the user's rights allow"}, {"feature": "Channel gating", "what": "Original is gated by licensed channel, released against a channel attestation", "status": "Shipped", "cls": "Differentiator", "surface": "Downloads", "linear": "", "notes": "In-scope channel is a logged download, not a grant. Out-of-scope is a reviewed request"}, {"feature": "Channel-gated templates", "what": "Format templates are offered only where the template's channel is licensed on the asset", "status": "Shipped", "cls": "Differentiator", "surface": "Downloads", "linear": "", "notes": "Offering an unlicensed crop would be a point-of-use breach"}, {"feature": "Request access", "what": "Single request component rendered standalone from the card or inline in the configurator", "status": "Shipped", "cls": "Parity", "surface": "Card, downloads", "linear": "", "notes": "Opens straight to the form, no intro step"}, {"feature": "Embargo pre-release policy", "what": "Embargo as a policy with three settings: none, preview and grantable", "status": "Deferred", "cls": "Differentiator", "surface": "Rights panel", "linear": "SCR-177", "notes": "Hidden-until-date is scoped as a fourth enum value for a future cycle"}, {"feature": "Expiry as renewal", "what": "Requests against expired assets route to the rights owner as renewal, capturing demand signal", "status": "Deferred", "cls": "Differentiator", "surface": "Rights, downloads", "linear": "SCR-178", "notes": "Expiry is terminal; embargo trends toward usable. The ladders are deliberately different"}, {"feature": "Mint-endpoint enforcement", "what": "Every rights decision is made server-side when a signed URL is minted", "status": "Shipped", "cls": "Differentiator", "surface": "Delivery", "linear": "", "notes": "The CDN makes no rights decisions"}, {"feature": "Embedded rights metadata in downloads", "what": "Rights data written into the downloaded file's own metadata", "status": "Scoped", "cls": "Differentiator", "surface": "Downloads", "linear": "SCR-131", "notes": "Embedded at mint time. Declarative and advisory; enforcement remains server-side. C2PA and EU AI Act Article 50 are a noted future seam"}, {"feature": "Rights change impact warning", "what": "Warns before a rights change that would break live external links", "status": "Deferred", "cls": "Parity", "surface": "Rights panel", "linear": "", "notes": "A qualitative warning with typed confirmation is sufficient. A precise link count is not obtainable with a customer-owned CDN"}, {"feature": "Rights edit authority", "what": "Uploader sets rights at upload; admin-only thereafter", "status": "Deferred", "cls": "Parity", "surface": "Rights panel", "linear": "", "notes": "Open decision: the uploader's window should close on first add-to-library or first share, not on upload completion"}], "other": []}, {"num": 11, "title": "Permissions and access", "intro": "Permissioning is inherited from the host platform's group and organisation model rather than reimplemented in the DAM. For a DAM-first customer this is an advantage rather than a dependency: they get an enterprise permission model with organisational hierarchy that standalone DAMs typically charge extra for.", "rows": [{"feature": "Role-based access", "what": "Roles determine what a user can see and do across the DAM", "status": "Shipped", "cls": "Table stakes", "surface": "Global", "linear": "", "notes": "Unity-dependent"}, {"feature": "Group and organisation permissioning", "what": "Access granted through groups and organisations with forms attached for metadata capture", "status": "Shipped", "cls": "Differentiator", "surface": "Admin", "linear": "", "notes": "Unity-dependent"}, {"feature": "Organisational hierarchy", "what": "Parent and child organisations with permission inheritance, or explicit specification", "status": "Shipped", "cls": "Differentiator", "surface": "Org Manager", "linear": "SCR-85", "notes": "Unity-dependent. Child permissions are bounded by the parent"}, {"feature": "Folder-level access", "what": "Access granted or withheld at the folder boundary", "status": "Shipped", "cls": "Table stakes", "surface": "Admin", "linear": "", "notes": ""}, {"feature": "Asset-level restriction", "what": "Individual assets can be restricted independently of their folder", "status": "Shipped", "cls": "Parity", "surface": "Rights, admin", "linear": "", "notes": ""}, {"feature": "Disable-don't-hide rule", "what": "Structural and navigational controls stay visible and disabled to explain state; rights-locked leaf actions hide unless there is a live recovery to show", "status": "Shipped", "cls": "Differentiator", "surface": "All", "linear": "SCR-88", "notes": "Rail tabs always stay active with panel messages. Only in-panel controls and action buttons disable"}, {"feature": "User and role administration", "what": "Creating users, assigning roles and managing permission sets", "status": "Deferred", "cls": "Table stakes", "surface": "Admin", "linear": "SCR-135", "notes": "Currently uses the host platform's admin. Revamp is scoped but not committed"}], "other": []}, {"num": 12, "title": "Review and approval", "intro": "Native DAM approval is deliberately constrained: three outcomes, no conditional logic, no custom builder. That is a positioning decision as much as a scoping one. Complex approval routing already exists in the host platform's workflow engine, and rebuilding a weaker version of it inside the DAM would produce two competing approval systems and a worse answer than either. The line that matters commercially is that approval is where pure-play DAM competitors stop and where this product starts.", "rows": [{"feature": "Native asset approval", "what": "Approve, Reject or Send for Revision on an asset", "status": "Scoped", "cls": "Table stakes", "surface": "Lightbox, edit", "linear": "SCR-75", "notes": "Three outcomes only"}, {"feature": "Access and content approval design", "what": "Unified model covering both access requests and content approval", "status": "Deferred", "cls": "Table stakes", "surface": "Multiple", "linear": "SCR-141", "notes": "Needs breakdown"}, {"feature": "Approval status on the card", "what": "Approved or unapproved surfaced in the library view", "status": "Deferred", "cls": "Table stakes", "surface": "Library view", "linear": "SCR-22", "notes": ""}, {"feature": "Full workflow approval", "what": "Multi-step, conditional, role-routed approval with full lineage", "status": "Shipped", "cls": "Differentiator", "surface": "Unity workflow", "linear": "", "notes": "Unity-dependent. The handoff gap that pure-play DAMs cannot carry"}, {"feature": "Approver lineage on the asset", "what": "Approval history from the originating workflow travels with the promoted asset", "status": "Shipped", "cls": "Differentiator", "surface": "Lightbox, edit", "linear": "SCR-201", "notes": "Unity-dependent. Captured as provenance at asset entry"}, {"feature": "Conditional approval logic", "what": "Branching, conditional routing and a custom rule builder inside the DAM", "status": "Not planned", "cls": "", "surface": "", "linear": "", "notes": "Deliberate. Lives in the workflow engine"}], "other": []}, {"num": 13, "title": "Sharing and distribution", "intro": "External sharing is the current schedule risk. The DAM side is straightforward; the landing page that holds an external link lives in the host platform, which makes it the only item in scope that requires a host core change.", "rows": [{"feature": "Internal sharing", "what": "Share assets and collections with other platform users", "status": "Shipped", "cls": "Table stakes", "surface": "Card, collections", "linear": "", "notes": ""}, {"feature": "Share collection as primary action", "what": "Sharing is the primary call to action on a collection", "status": "Shipped", "cls": "Parity", "surface": "Collections", "linear": "SCR-66", "notes": ""}, {"feature": "External sharing", "what": "Share assets and collections with people who have no platform account", "status": "In build", "cls": "Table stakes", "surface": "Card, collections", "linear": "SCR-130", "notes": ""}, {"feature": "Collection external share", "what": "Collection-level external share link with lifecycle controls", "status": "Scoped", "cls": "Table stakes", "surface": "Collections", "linear": "SCR-162", "notes": ""}, {"feature": "External share landing page", "what": "Host-side page that receives an external link and routes the recipient correctly", "status": "Scoped", "cls": "Table stakes", "surface": "Host login", "linear": "SCR-62, SCR-87", "notes": "Unity-dependent. The one item requiring a host core change. Schedule risk"}, {"feature": "Ad-hoc multi-file share", "what": "Select several files and share them as one revocable link", "status": "Scoped", "cls": "Parity", "surface": "Library view", "linear": "", "notes": "Creates a share-scoped collection so the link stays killable and auditable"}, {"feature": "Link lifecycle controls", "what": "Expiry, revocation and access state on a share link", "status": "Scoped", "cls": "Table stakes", "surface": "Share dialog", "linear": "", "notes": ""}, {"feature": "Guest verification flow", "what": "Email entry and code verification for external recipients, with defined success, failure and revoked states", "status": "Scoped", "cls": "Table stakes", "surface": "Host login", "linear": "", "notes": "Unity-dependent"}, {"feature": "Share notification copy", "what": "Default email wording across all share and notification types", "status": "Scoped", "cls": "Table stakes", "surface": "Notifications", "linear": "SCR-176", "notes": ""}, {"feature": "Form-attach inside the host", "what": "Assets are attached to workflow forms directly from the DAM, with rights enforced at the moment of attachment", "status": "Shipped", "cls": "Differentiator", "surface": "Unity forms", "linear": "", "notes": "Unity-dependent. Enforcement at the point of use rather than at download"}, {"feature": "Syndication and publishing API", "what": "Push approved assets to external systems", "status": "Deferred", "cls": "Parity", "surface": "Backend", "linear": "SCR-91", "notes": "Benchmarking outstanding"}, {"feature": "General integration contract", "what": "A defined contract for pushing assets to and pulling assets from external systems of record", "status": "Deferred", "cls": "Differentiator", "surface": "Backend", "linear": "", "notes": "Built as a general contract rather than per-customer connectors"}], "other": []}, {"num": 14, "title": "Download and delivery", "intro": "Delivery is architecturally and commercially separate from the governed origin. The principle: govern the asset, control the gate, let delivery happen downstream. The CDN caches and transforms; it makes no rights decisions. Rights expiry is enforced through short TTLs and origin refusal rather than edge purge, because individual transformed variants cannot be purged on demand.", "rows": [{"feature": "Download and Download as", "what": "Two sibling actions. Download acts directly at the best version rights allow; Download as opens the configurator", "status": "Shipped", "cls": "Parity", "surface": "Card, lightbox, bulk", "linear": "SCR-179", "notes": "Flat, not nested. Download as appears only when there is a real choice"}, {"feature": "State-adaptive action slot", "what": "The second action names the actual available action for the rights state", "status": "Shipped", "cls": "Differentiator", "surface": "Card menu", "linear": "SCR-179", "notes": "Download as when downloadable, Request access when blocked, hidden when embargoed"}, {"feature": "Download configurator", "what": "Version picker plus format templates, with a per-asset toggle in bulk", "status": "Shipped", "cls": "Parity", "surface": "Modal", "linear": "SCR-133", "notes": ""}, {"feature": "Format templates", "what": "Predefined output crops and formats per channel", "status": "Shipped", "cls": "Table stakes", "surface": "Configurator", "linear": "", "notes": "Channel-gated, see section 10"}, {"feature": "Template exclusion for video", "what": "Image templates are correctly suppressed on video assets", "status": "Shipped", "cls": "", "surface": "Configurator", "linear": "SCR-61", "notes": ""}, {"feature": "Edit individual downloads", "what": "Per-item configuration within a staged download", "status": "Shipped", "cls": "Parity", "surface": "Downloads page", "linear": "SCR-134", "notes": ""}, {"feature": "Bulk download", "what": "Multi-asset download with subset scoping by rights eligibility", "status": "Shipped", "cls": "Differentiator", "surface": "Bulk bar", "linear": "SCR-148", "notes": "Rights readiness rides the items, never the bar"}, {"feature": "Downloads page and queue", "what": "Staged download items with per-row configuration chips. The page is the configuration surface", "status": "Shipped", "cls": "Parity", "surface": "Downloads page", "linear": "SCR-94, SCR-58", "notes": ""}, {"feature": "Download cart", "what": "Tray and checkout model for accumulating assets across a session", "status": "Shipped", "cls": "Parity", "surface": "Library, downloads", "linear": "SCR-60", "notes": ""}, {"feature": "Export progress indicator", "what": "Progress feedback on large or slow exports", "status": "Deferred", "cls": "Table stakes", "surface": "Downloads page", "linear": "SCR-59", "notes": ""}, {"feature": "CDN delivery", "what": "Assets served through a CDN rather than directly from origin", "status": "Shipped", "cls": "Table stakes", "surface": "Delivery", "linear": "SCR-81", "notes": ""}, {"feature": "CDN delivery model", "what": "Full delivery architecture including customer-owned CDN scenarios", "status": "Deferred", "cls": "Table stakes", "surface": "Delivery", "linear": "SCR-129", "notes": "Needs breakdown. Model C, an all-inclusive fixed-price delivery bundle, is explicitly ruled out"}, {"feature": "Signed URL mint endpoint", "what": "Every delivery URL is minted server-side against current rights", "status": "Shipped", "cls": "Differentiator", "surface": "Delivery", "linear": "SCR-203", "notes": "The single enforcement point"}, {"feature": "Short TTL and origin refusal", "what": "Expired rights are enforced by short-lived URLs and a 403 at origin refresh rather than edge purge", "status": "Scoped", "cls": "Differentiator", "surface": "Delivery", "linear": "", "notes": "Individual transformed variants cannot be purged on demand"}, {"feature": "Image transformation", "what": "On-the-fly resize, format conversion and optimisation at the edge", "status": "Deferred", "cls": "Table stakes", "surface": "Delivery", "linear": "", "notes": "Vendor selection open. Focal-point and crop-anchor support is the disqualifying requirement, not transformation count"}, {"feature": "Video transformation", "what": "Format, dimension and duration transformation for video", "status": "Deferred", "cls": "Table stakes", "surface": "Delivery", "linear": "", "notes": "Ships with image transformation, not before it. Transformation cannot be sold as a capability with image-only support"}], "other": []}, {"num": 15, "title": "Bulk operations and administration", "intro": "Bulk is where a DAM either scales or does not. The governing rule throughout: any action that can be taken on one asset should be available across a selection, and any destructive bulk action carries an impact count, a typed confirmation and a reason.", "rows": [{"feature": "Bulk action bar", "what": "Dark overlay bar showing selection count and an actions menu", "status": "Shipped", "cls": "Table stakes", "surface": "Library view", "linear": "SCR-97", "notes": "Bar and menu collapse onto a single overlay ground per mode, separated by a 1px edge token"}, {"feature": "Selection gesture model", "what": "Click, shift-click and modifier-click behaviour across the grid", "status": "Scoped", "cls": "Table stakes", "surface": "Library view", "linear": "SCR-263", "notes": "Parent: SCR-262"}, {"feature": "Keyboard selection", "what": "Roving focus and keyboard-driven selection across the grid", "status": "Scoped", "cls": "Table stakes", "surface": "Library view", "linear": "SCR-264", "notes": ""}, {"feature": "Marquee drag-select", "what": "Drag a selection rectangle across the grid", "status": "Scoped", "cls": "Parity", "surface": "Library view", "linear": "SCR-265", "notes": ""}, {"feature": "Query-scope selection", "what": "Select all results matching the current query, beyond the loaded page, with a defined cap", "status": "Scoped", "cls": "Differentiator", "surface": "Library view", "linear": "SCR-267", "notes": ""}, {"feature": "Bulk bar scope link", "what": "Bar states and links the current selection scope", "status": "Scoped", "cls": "Parity", "surface": "Library view", "linear": "SCR-266", "notes": ""}, {"feature": "Overflow menu scoping fix", "what": "Card overflow menu must act on the selection, not the single card, when multi-selected", "status": "Scoped", "cls": "Table stakes", "surface": "Library view", "linear": "SCR-268", "notes": "Blocker"}, {"feature": "Additive bulk editing", "what": "Bulk metadata edits add rather than replace, with tri-state fields for mixed values", "status": "Shipped", "cls": "Differentiator", "surface": "Bulk edit", "linear": "SCR-49", "notes": "Rejects the first-file-as-base pattern, which silently overwrites"}, {"feature": "Bulk archive", "what": "Archive across a selection", "status": "Deferred", "cls": "Table stakes", "surface": "Library view", "linear": "SCR-136", "notes": ""}, {"feature": "Bulk tag removal", "what": "Remove a tag across every asset carrying it, with impact count, typed confirmation and a required reason", "status": "Deferred", "cls": "Differentiator", "surface": "Tag Manager", "linear": "", "notes": "Writes a per-asset audit entry. Depends on the consolidated event schema"}, {"feature": "DAM settings", "what": "Consolidated settings area with a consistent left-hand menu treatment", "status": "Shipped", "cls": "Table stakes", "surface": "DAM settings", "linear": "SCR-138, SCR-143", "notes": ""}, {"feature": "Tag Manager", "what": "Central tag registry administration inside DAM settings", "status": "Shipped", "cls": "Table stakes", "surface": "DAM settings", "linear": "SCR-236, SCR-239", "notes": "Global registry with folder-scoped filtering, not folder-scoped tags"}, {"feature": "Similarity search toggle", "what": "Enable or disable similarity search per tenant", "status": "Shipped", "cls": "Parity", "surface": "DAM settings", "linear": "SCR-124", "notes": ""}, {"feature": "Dashboard configuration", "what": "Widget selection and ordering per tenant", "status": "Shipped", "cls": "Parity", "surface": "DAM settings", "linear": "SCR-219", "notes": ""}, {"feature": "Organisation Manager", "what": "Administration of organisations, groups and hierarchy", "status": "Shipped", "cls": "Differentiator", "surface": "Admin", "linear": "SCR-85", "notes": "Unity-dependent. Design pass outstanding"}, {"feature": "Asset owner reassignment", "what": "Change the recorded owner of an asset", "status": "Shipped", "cls": "Parity", "surface": "Admin", "linear": "SCR-80", "notes": ""}], "other": []}, {"num": 16, "title": "Reporting, telemetry and audit", "intro": "The event schema is the highest-leverage decision in this section and the one that cannot be retrofitted. Everything is captured append-only against a single envelope; display is selective. The audit trail interface can follow the launch, but the capture cannot.", "rows": [{"feature": "Consolidated event schema", "what": "Single append-only event log with one envelope: actor, verb, object type, object id, context, timestamp, payload", "status": "Shipped", "cls": "Differentiator", "surface": "Backend", "linear": "SCR-199, SCR-200", "notes": "Replaces events scattered across tables. Shared dependency for telemetry, audit and bulk tag removal"}, {"feature": "Correlation key", "what": "Host-side context id joining DAM events to workflow activity", "status": "Shipped", "cls": "Differentiator", "surface": "Backend", "linear": "SCR-200", "notes": "Unity-dependent"}, {"feature": "Lifecycle and usage emitters", "what": "Events fired on lifecycle change, rights change, version create, share, download, upload and promotion", "status": "Shipped", "cls": "Differentiator", "surface": "Backend", "linear": "SCR-202", "notes": ""}, {"feature": "Provenance at asset entry", "what": "Records how an asset entered the DAM and what it carried with it", "status": "Shipped", "cls": "Differentiator", "surface": "Backend", "linear": "SCR-201", "notes": "Underpins the workflow lineage claim"}, {"feature": "Mint-endpoint access logging", "what": "Every signed-URL mint is logged with its rights decision", "status": "Shipped", "cls": "Differentiator", "surface": "Backend", "linear": "SCR-203", "notes": ""}, {"feature": "Search telemetry", "what": "Query, refinement and zero-result capture", "status": "Shipped", "cls": "Differentiator", "surface": "Backend", "linear": "SCR-206", "notes": ""}, {"feature": "AI tagging telemetry", "what": "Suggestion, acceptance and rejection rates", "status": "Shipped", "cls": "Differentiator", "surface": "Backend", "linear": "SCR-205", "notes": ""}, {"feature": "Retention policy", "what": "Separate retention rules for audit events and analytics events", "status": "Scoped", "cls": "Table stakes", "surface": "Backend", "linear": "SCR-204", "notes": ""}, {"feature": "Reporting coverage audit", "what": "Confirms what is currently tracked against what reporting requires", "status": "Scoped", "cls": "", "surface": "Backend", "linear": "SCR-218", "notes": ""}, {"feature": "Asset audit trail", "what": "Who changed what, when, and to what value, surfaced on the asset", "status": "Deferred", "cls": "Differentiator", "surface": "Lightbox, edit", "linear": "", "notes": "Admin-only. High-frequency events roll up at read time rather than rendering individually"}, {"feature": "DAM reporting section", "what": "Usage, download and demand reporting inside the DAM", "status": "Deferred", "cls": "Table stakes", "surface": "DAM", "linear": "", "notes": "Belongs in the DAM, not the host, because most new customers are DAM-first. Should be built as a shared component renderable in both shells"}, {"feature": "Demand signal reporting", "what": "Surfaces what people searched for, requested and could not get", "status": "Deferred", "cls": "Differentiator", "surface": "Reporting", "linear": "SCR-178, SCR-206", "notes": "The commercially distinctive report. Depends on search telemetry and renewal requests"}], "other": []}, {"num": 17, "title": "Deliberate exclusions", "intro": "Silence on a capability reads as a gap. A stated position reads as a decision. These are excluded on purpose.", "rows": [], "other": [{"a": "**Conditional approval logic and a custom rule builder inside the DAM**", "b": "Complex routing already exists in the workflow engine. Building a weaker second approval system would produce two competing sources of truth and a worse answer than either. Native DAM approval is deliberately three outcomes with no branching"}, {"a": "**Annotation, markup and threaded proofing inside the DAM**", "b": "Proofing is a workflow capability, not an asset-management one. It lives in the host platform where the review participants and the routing already are"}, {"a": "**Scheduled asset release**", "b": "Cut from the current build. Distinct from embargo, which is a rights state, and from hidden-until-date, which is scoped separately. Retains its position in the gate badge precedence ladder for when it returns"}, {"a": "**A per-feature price list**", "b": "No competitor uses one. It invites line-by-line negotiation and prices the platform as a sum of parts rather than as a capability"}, {"a": "**Model C delivery bundle**", "b": "An all-inclusive fixed-price delivery bundle transfers unbounded egress and transformation risk onto the vendor. Delivery is priced separately from the governed origin"}, {"a": "**Edge-level rights enforcement**", "b": "The CDN makes no rights decisions. Distributing enforcement across the edge makes it unauditable and unrevocable. Enforcement is one server-side endpoint"}, {"a": "**Rights enforcement in the UI**", "b": "The interface reflects rights; it does not enforce them. Anything enforced only in the interface is not enforced"}, {"a": "**Silent AI re-tagging**", "b": "AI tagging runs once at upload and never re-applies without an explicit re-run. Rejected suggestions do not resurrect"}, {"a": "**A separate AI destination**", "b": "AI is a property of features, not a place. There is no AI tab in the rail and no AI facet in filters. Provenance renders as a marker on the chip"}, {"a": "**Folder-scoped tag vocabularies**", "b": "Fragments the vocabulary for no benefit. The registry is global; filtering is contextual"}, {"a": "**Precise link-impact counts on rights change**", "b": "Not obtainable with a customer-owned CDN and unreliable with ours. A qualitative warning with typed confirmation changes behaviour just as well and ships now"}]}, {"num": 18, "title": "Open decisions carried", "intro": "These affect what goes into the register next. None is blocked on engineering.", "rows": [], "other": [{"a": "**Folder, event or library.** The canonical internal term and whether the display label is per-tenant configurable", "b": ""}, {"a": "**Reference versus in-use.** What sets workflow attachment, when it detaches, and what a non-admin sees on an attached asset", "b": ""}, {"a": "**Rights edit authority window.** Whether the uploader's window closes on add-to-library or on first share", "b": ""}, {"a": "**Multi-folder collection visibility.** Whether only explicitly global collections bubble to the dashboard", "b": ""}, {"a": "**Reporting location.** DAM or host, and whether the reporting component is built to render in both shells", "b": ""}, {"a": "**Transformation vendor.** Focal-point and crop-anchor support is the decision criterion, not transformation count", "b": ""}, {"a": "**External share landing page.** Whether it is built on the legacy stack now or waits for the HTML migration", "b": ""}]}];
+const STATUSES = ["Shipped","In build","Scoped","Deferred","Not planned"];
+const CLASSES  = ["Table stakes","Parity","Differentiator"];
+const VIEWS = {
+  build:      {statuses:STATUSES.slice()},
+  commercial: {statuses:["Shipped","In build","Scoped"]},
+  roadmap:    {statuses:["Scoped","Deferred","Not planned"]}
+};
+const state = {view:"build", statuses:new Set(STATUSES), classes:new Set(CLASSES), unity:false, q:""};
+
+const esc = s => s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const bkey = s => "b-"+s.replace(/\s+/g,"");
+const isUnity = r => /Unity-dependent/i.test(r.notes);
+const linearURL = id => "https://linear.app/screendragon/issue/"+id;
+
+function refs(cell){
+  if(!cell) return "";
+  return cell.split(",").map(s=>s.trim()).filter(Boolean)
+    .map(id=>`<a href="${linearURL(id)}" target="_blank" rel="noopener">${esc(id)}</a>`).join("");
+}
+
+function match(r){
+  if(!state.statuses.has(r.status)) return false;
+  if(r.cls && !state.classes.has(r.cls)) return false;
+  if(state.unity && !isUnity(r)) return false;
+  if(state.q){
+    const hay = (r.feature+" "+r.what+" "+r.surface+" "+r.linear+" "+r.notes).toLowerCase();
+    if(!hay.includes(state.q)) return false;
+  }
+  return true;
+}
+
+function buildChips(){
+  const sc = document.getElementById("fstatus");
+  STATUSES.forEach(s=>{
+    const n = DATA.reduce((a,x)=>a+x.rows.filter(r=>r.status===s).length,0);
+    const b = document.createElement("button");
+    b.className="chip"; b.dataset.st=s; b.setAttribute("aria-pressed","true");
+    b.innerHTML = esc(s)+`<span class="n">${n}</span>`;
+    b.onclick=()=>{ state.statuses.has(s)?state.statuses.delete(s):state.statuses.add(s);
+      b.setAttribute("aria-pressed", state.statuses.has(s)); render(); };
+    sc.appendChild(b);
+  });
+  const cc = document.getElementById("fclass");
+  CLASSES.forEach(s=>{
+    const n = DATA.reduce((a,x)=>a+x.rows.filter(r=>r.cls===s).length,0);
+    const b = document.createElement("button");
+    b.className="chip"; b.dataset.cl=s; b.setAttribute("aria-pressed","true");
+    b.innerHTML = esc(s)+`<span class="n">${n}</span>`;
+    b.onclick=()=>{ state.classes.has(s)?state.classes.delete(s):state.classes.add(s);
+      b.setAttribute("aria-pressed", state.classes.has(s)); render(); };
+    cc.appendChild(b);
+  });
+}
+
+function syncChips(){
+  document.querySelectorAll("[data-st]").forEach(b=>b.setAttribute("aria-pressed", state.statuses.has(b.dataset.st)));
+  document.querySelectorAll("[data-cl]").forEach(b=>b.setAttribute("aria-pressed", state.classes.has(b.dataset.cl)));
+  document.getElementById("funity").setAttribute("aria-pressed", state.unity);
+  document.querySelectorAll(".viewbtn").forEach(b=>b.setAttribute("aria-pressed", b.dataset.vw===state.view));
+  document.body.dataset.view = state.view;
+}
+
+function render(){
+  syncChips();
+  const main = document.getElementById("main");
+  const toc  = document.getElementById("toc");
+  main.innerHTML=""; toc.innerHTML="";
+  let shown = 0;
+
+  DATA.forEach(sec=>{
+    const isTable = sec.rows.length>0;
+    const rows = isTable ? sec.rows.filter(match) : [];
+    if(isTable && rows.length===0) return;
+    shown += rows.length;
+
+    const a = document.createElement("a");
+    a.href="#s"+sec.num; a.innerHTML=`<span>${esc(sec.title)}</span>`+
+      (isTable?`<span class="c">${rows.length}</span>`:"");
+    toc.appendChild(a);
+
+    const s = document.createElement("section");
+    s.id="s"+sec.num;
+    let h = `<div class="sec-head"><span class="sec-num">${String(sec.num).padStart(2,"0")}</span>
+      <h2>${esc(sec.title)}</h2>`+(isTable?`<span class="sec-count">${rows.length}</span>`:"")+`</div>`;
+    if(sec.intro) h += `<p class="sec-intro">${esc(sec.intro)}</p>`;
+
+    if(isTable){
+      h += `<table><colgroup><col class="c-f"><col class="c-w"><col class="c-s"><col class="c-c"><col class="c-u"><col class="c-l"><col class="c-n"></colgroup>
+      <thead><tr><th>Feature</th><th>What it does</th><th>Status</th><th>Class</th><th>Surface</th><th class="col-l">Linear</th><th>Notes</th></tr></thead><tbody>`;
+      rows.forEach(r=>{
+        h += `<tr>
+          <td class="f">${esc(r.feature)}${isUnity(r)?'<span class="uni">Unity-dependent</span>':''}</td>
+          <td class="w" data-l="Does">${esc(r.what)}</td>
+          <td data-l="Status"><span class="badge ${bkey(r.status)}">${esc(r.status)}</span></td>
+          <td data-l="Class"><span class="cls${r.cls==='Differentiator'?' cls-diff':''}">${esc(r.cls)}</span></td>
+          <td data-l="Surface">${esc(r.surface)}</td>
+          <td class="lk col-l" data-l="Linear">${refs(r.linear)}</td>
+          <td data-l="Notes">${esc(r.notes)}</td></tr>`;
+      });
+      h += `</tbody></table>`;
+    } else {
+      if(sec.num===17){
+        sec.other.forEach(o=>{ h += `<div class="pair"><div class="k">${esc(o.a.replace(/\*\*/g,""))}</div><div class="v">${esc(o.b)}</div></div>`; });
+      } else {
+        h += `<ul class="decisions">`;
+        sec.other.forEach(o=>{
+          const t = o.a.replace(/\*\*(.+?)\*\*/g, (m,p)=>"§§"+p+"§§");
+          h += `<li>${esc(t).replace(/§§(.+?)§§/g,"<strong>$1</strong>")}</li>`;
+        });
+        h += `</ul>`;
+      }
+    }
+    s.innerHTML = h;
+    main.appendChild(s);
+  });
+
+  if(shown===0){
+    main.innerHTML = `<div class="empty">No capabilities match the current filters. Clear the search or re-enable a status.</div>`;
+  }
+  spy();
+}
+
+function spy(){
+  const secs = [...document.querySelectorAll("section")];
+  const links = [...document.querySelectorAll(".toc a")];
+  const io = new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        links.forEach(l=>l.classList.toggle("on", l.getAttribute("href")==="#"+e.target.id));
+      }
+    });
+  },{rootMargin:"-70px 0px -75% 0px"});
+  secs.forEach(s=>io.observe(s));
+}
+
+document.querySelectorAll(".viewbtn").forEach(b=>{
+  b.onclick=()=>{
+    state.view=b.dataset.vw;
+    state.statuses=new Set(VIEWS[state.view].statuses);
+    render();
+  };
+});
+document.getElementById("funity").onclick=()=>{ state.unity=!state.unity; render(); };
+document.getElementById("q").oninput=e=>{ state.q=e.target.value.trim().toLowerCase(); render(); };
+document.getElementById("theme").onclick=()=>document.body.classList.toggle("dark");
+
+buildChips();
+render();
+</script>
+</body>
+</html>
