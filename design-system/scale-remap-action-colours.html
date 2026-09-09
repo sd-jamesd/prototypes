@@ -1,0 +1,278 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Action colour remap</title><style>
+:root{--sand-1:#fdfdfc;--sand-2:#f9f9f8;--sand-3:#f0f0ef;--sand-4:#e9e9e6;--sand-6:#dad9d6;--sand-8:#bcbbb5;--sand-11:#63635e;--sand-12:#21201c;--accent-9:#0c818f;--accent-11:#006c78;--r:6px}
+*{box-sizing:border-box}
+body{margin:0;padding:34px 26px 90px;background:var(--sand-2);color:var(--sand-12);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1040px;margin:0 auto}
+h1{font-size:21px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:15px;font-weight:600;margin:42px 0 6px}
+p{margin:0 0 13px;max-width:70ch;color:var(--sand-11)}
+p.lead{color:var(--sand-12)}
+.meta{color:#8a8a85;font-size:12px;margin-bottom:24px}
+.bar{position:sticky;top:0;background:var(--sand-2);padding:12px 0;z-index:5;border-bottom:1px solid var(--sand-4);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.bar input{height:34px;padding:0 12px;border:1px solid var(--sand-6);border-radius:var(--r);font:inherit;font-size:13px;min-width:230px;background:#fff}
+.bar input:focus{outline:2px solid var(--accent-9);outline-offset:-1px}
+.bar .count{font-size:12px;color:var(--sand-11);font-family:"JetBrains Mono",ui-monospace,monospace}
+.bar button{font:inherit;font-size:12px;font-weight:500;padding:7px 12px;border:1px solid var(--accent-9);background:transparent;color:var(--accent-11);border-radius:var(--r);cursor:pointer}
+.bar button[aria-pressed="true"]{background:var(--accent-9);color:#fff}
+.map{background:#fff;border:1px solid var(--sand-4);border-radius:var(--r);overflow:hidden;margin-top:12px}
+.hd,.row{display:grid;grid-template-columns:32px 190px 86px 26px 92px 148px 1fr;gap:12px;align-items:center;padding:9px 16px}
+.hd{background:var(--sand-3);font-size:10.5px;font-weight:600;color:var(--sand-11);letter-spacing:.04em}
+.row{border-top:1px solid var(--sand-3);font-size:12.5px}
+.row:hover{background:var(--sand-2)}
+.sw{width:26px;height:26px;border-radius:4px;border:1px solid rgba(0,0,0,.12)}
+.cls{font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis}
+.hex,.newtok{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;color:var(--sand-11)}
+.newtok{color:var(--sand-12)}
+.arw{color:var(--sand-8);text-align:center}
+.roles{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.rbadge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;border:1px solid;flex:none}
+.rchip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:var(--r);border:1px solid;font-size:11px;font-weight:600;white-space:nowrap}
+.rdot{width:12px;height:12px;border-radius:50%;display:inline-block;flex:none}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.pcell{display:flex;flex-direction:column;gap:3px}
+.wsw{height:46px;border-radius:4px;border:1px solid rgba(0,0,0,.1)}
+.wn{font-size:11.5px;font-weight:600}
+.wh{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:10px;color:var(--sand-11)}
+.semrow{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+table.spec{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+.spec th{text-align:left;font-weight:600;font-size:11px;color:#8a8a85;padding:0 14px 9px 0;border-bottom:1px solid var(--sand-4)}
+.spec td{padding:9px 14px 9px 0;border-bottom:1px solid var(--sand-3);vertical-align:top}
+.spec td:first-child{white-space:nowrap;font-weight:500;color:var(--sand-12)}
+code{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11.5px;background:var(--sand-3);padding:1px 5px;border-radius:3px}
+.warn{border-left:3px solid #cc4e00;background:#fff7ed;padding:11px 14px;border-radius:0 4px 4px 0;color:#582d1d;font-size:13px;max-width:74ch;margin:14px 0}
+.hidden{display:none}
+</style></head><body><div class="wrap">
+<h1>Action colour remap</h1>
+<div class="meta">Unity 8.0 &middot; 39 legacy classes and 14 shipped options, both to 10 identity families &middot; built against the live semantic tokens</div>
+<p class="lead">Two migrations, one destination. The <code>cv-*</code> dictionary in form config and the light and dark options already implemented both resolve to the same ten families. Config stores a family name and nothing else; every family renders as a step 3 fill, step 8 border, step 11 icon and step 12 text.</p>
+
+<h2>Reserved by the semantic layer</h2>
+<p>Six families are the semantic tokens. An identity choice landing on one of these makes a workflow marker read as a system state.</p>
+<div class="map" style="padding:18px"><div class="semrow"><div class="pcell"><span class="wsw" style="background:#e54d2e"></span><span class="wn">Error</span><span class="wh">#e54d2e</span></div><div class="pcell"><span class="wsw" style="background:#f5a524"></span><span class="wn">Warning</span><span class="wh">#f5a524</span></div><div class="pcell"><span class="wsw" style="background:#29a383"></span><span class="wn">Success</span><span class="wh">#29a383</span></div><div class="pcell"><span class="wsw" style="background:#0090ff"></span><span class="wn">Info</span><span class="wh">#0090ff</span></div><div class="pcell"><span class="wsw" style="background:#8e4ec6"></span><span class="wn">Discovery</span><span class="wh">#8e4ec6</span></div><div class="pcell"><span class="wsw" style="background:#0c818f"></span><span class="wn">Accent</span><span class="wh">#0c818f</span></div></div></div>
+
+<h2>The ten</h2>
+<div class="map" style="padding:18px"><div class="pgrid"><div class="pcell"><span class="wsw" style="background:#b02a2d"></span><span class="wn">Red</span>
+<span class="wh">--colors-red</span><span class="wh">icon 5.01:1 &middot; text 10.05:1</span>
+<span class="wh">Error 28.4</span></div><div class="pcell"><span class="wsw" style="background:#e93d82"></span><span class="wn">Crimson</span>
+<span class="wh">--colors-crimson</span><span class="wh">icon 4.66:1 &middot; text 10.73:1</span>
+<span class="wh">Error 47.3</span></div><div class="pcell"><span class="wsw" style="background:#d6409f"></span><span class="wn">Pink</span>
+<span class="wh">--colors-pink</span><span class="wh">icon 4.57:1 &middot; text 10.48:1</span>
+<span class="wh">Discovery 38.1</span></div><div class="pcell"><span class="wsw" style="background:#f76b15"></span><span class="wn">Orange</span>
+<span class="wh">--colors-orange</span><span class="wh">icon 3.99:1 &middot; text 10.27:1</span>
+<span class="wh">Error 13.3</span></div><div class="pcell"><span class="wsw" style="background:#ad7f58"></span><span class="wn">Brown</span>
+<span class="wh">--colors-brown</span><span class="wh">icon 5.05:1 &middot; text 10.65:1</span>
+<span class="wh">Warning 39.6</span></div><div class="pcell"><span class="wsw" style="background:#bdee63"></span><span class="wn">Lime</span>
+<span class="wh">--colors-lime</span><span class="wh">icon 4.29:1 &middot; text 9.82:1</span>
+<span class="wh">Success 32.4</span></div><div class="pcell"><span class="wsw" style="background:#46a758"></span><span class="wn">Grass</span>
+<span class="wh">--colors-grass</span><span class="wh">icon 4.54:1 &middot; text 10.85:1</span>
+<span class="wh">Success 21.3</span></div><div class="pcell"><span class="wsw" style="background:#3e63dd"></span><span class="wn">Indigo</span>
+<span class="wh">--colors-indigo</span><span class="wh">icon 5.35:1 &middot; text 11.8:1</span>
+<span class="wh">Info 13.2</span></div><div class="pcell"><span class="wsw" style="background:#714ba9"></span><span class="wn">Plum</span>
+<span class="wh">--colors-plum</span><span class="wh">icon 5.02:1 &middot; text 10.18:1</span>
+<span class="wh">Discovery 17.7</span></div><div class="pcell"><span class="wsw" style="background:#8d8d8d"></span><span class="wn">Gray</span>
+<span class="wh">--colors-gray</span><span class="wh">icon 5.19:1 &middot; text 14.3:1</span>
+<span class="wh">Accent 25.7</span></div></div></div>
+<p>Minimum mutual separation 17.8, Lime against Grass. Every family clears 3:1 for its icon and 4.5:1 for its text by construction, so no individual choice is ever checked.</p>
+
+<h2>Mapping</h2>
+<div class="bar">
+  <input id="q" type="text" placeholder="Filter by class, option, hex or family" aria-label="Filter">
+  <span class="count" id="n"></span>
+  <button class="mb" data-m="all" aria-pressed="true">All</button>
+  <button class="mb" data-m="rcv" aria-pressed="false">Legacy cv-* (39)</button>
+  <button class="mb" data-m="rtone" aria-pressed="false">Shipped options (14)</button>
+</div>
+<div class="map">
+  <div class="hd"><span></span><span>Source</span><span>Hex</span><span></span><span>Becomes</span><span>Token</span><span>Renders as</span></div>
+<div class="row rcv" data-s="cv-babyblue-bg #7ce2fe indigo">
+  <span class="sw" style="background:#7ce2fe"></span><span class="cls">cv-babyblue-bg</span><span class="hex">#7ce2fe</span>
+  <span class="arw">&rarr;</span><span class="cls">Indigo</span><span class="newtok">--colors-indigo</span>
+  <span class="roles"><span class="rbadge" style="background:#edf2fe;border-color:#8da4ef;color:#3a5bc7"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#3e63dd"></span></span></div><div class="row rcv" data-s="cv-beerorange-bg #f5a524 orange">
+  <span class="sw" style="background:#f5a524"></span><span class="cls">cv-beerorange-bg</span><span class="hex">#f5a524</span>
+  <span class="arw">&rarr;</span><span class="cls">Orange</span><span class="newtok">--colors-orange</span>
+  <span class="roles"><span class="rbadge" style="background:#ffefd6;border-color:#ec9455;color:#cc4e00"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#f76b15"></span></span></div><div class="row rcv" data-s="cv-blue-bg #0090ff indigo">
+  <span class="sw" style="background:#0090ff"></span><span class="cls">cv-blue-bg</span><span class="hex">#0090ff</span>
+  <span class="arw">&rarr;</span><span class="cls">Indigo</span><span class="newtok">--colors-indigo</span>
+  <span class="roles"><span class="rbadge" style="background:#edf2fe;border-color:#8da4ef;color:#3a5bc7"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#3e63dd"></span></span></div><div class="row rcv" data-s="cv-bluepearl-bg #3e63dd indigo">
+  <span class="sw" style="background:#3e63dd"></span><span class="cls">cv-bluepearl-bg</span><span class="hex">#3e63dd</span>
+  <span class="arw">&rarr;</span><span class="cls">Indigo</span><span class="newtok">--colors-indigo</span>
+  <span class="roles"><span class="rbadge" style="background:#edf2fe;border-color:#8da4ef;color:#3a5bc7"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#3e63dd"></span></span></div><div class="row rcv" data-s="cv-camouflage-bg #8e8d86 gray">
+  <span class="sw" style="background:#8e8d86"></span><span class="cls">cv-camouflage-bg</span><span class="hex">#8e8d86</span>
+  <span class="arw">&rarr;</span><span class="cls">Gray</span><span class="newtok">--colors-gray</span>
+  <span class="roles"><span class="rbadge" style="background:#f0f0f0;border-color:#bbbbbb;color:#646464"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#8d8d8d"></span></span></div><div class="row rcv" data-s="cv-candypink-bg #d6409f pink">
+  <span class="sw" style="background:#d6409f"></span><span class="cls">cv-candypink-bg</span><span class="hex">#d6409f</span>
+  <span class="arw">&rarr;</span><span class="cls">Pink</span><span class="newtok">--colors-pink</span>
+  <span class="roles"><span class="rbadge" style="background:#fee9f5;border-color:#dd93c2;color:#c2298a"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#d6409f"></span></span></div><div class="row rcv" data-s="cv-chocolate-bg #ad7f58 brown">
+  <span class="sw" style="background:#ad7f58"></span><span class="cls">cv-chocolate-bg</span><span class="hex">#ad7f58</span>
+  <span class="arw">&rarr;</span><span class="cls">Brown</span><span class="newtok">--colors-brown</span>
+  <span class="roles"><span class="rbadge" style="background:#f6eee7;border-color:#cea37e;color:#815e46"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#ad7f58"></span></span></div><div class="row rcv" data-s="cv-crimson-bg #e93d82 crimson">
+  <span class="sw" style="background:#e93d82"></span><span class="cls">cv-crimson-bg</span><span class="hex">#e93d82</span>
+  <span class="arw">&rarr;</span><span class="cls">Crimson</span><span class="newtok">--colors-crimson</span>
+  <span class="roles"><span class="rbadge" style="background:#ffe9f0;border-color:#e093b2;color:#cb1d63"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#e93d82"></span></span></div><div class="row rcv" data-s="cv-crimsonglory-bg #e5484d red">
+  <span class="sw" style="background:#e5484d"></span><span class="cls">cv-crimsonglory-bg</span><span class="hex">#e5484d</span>
+  <span class="arw">&rarr;</span><span class="cls">Red</span><span class="newtok">--colors-red</span>
+  <span class="roles"><span class="rbadge" style="background:#ffeae6;border-color:#f3817a;color:#b13e3c"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#b02a2d"></span></span></div><div class="row rcv" data-s="cv-cyan-bg #00a2c7 indigo">
+  <span class="sw" style="background:#00a2c7"></span><span class="cls">cv-cyan-bg</span><span class="hex">#00a2c7</span>
+  <span class="arw">&rarr;</span><span class="cls">Indigo</span><span class="newtok">--colors-indigo</span>
+  <span class="roles"><span class="rbadge" style="background:#edf2fe;border-color:#8da4ef;color:#3a5bc7"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#3e63dd"></span></span></div><div class="row rcv" data-s="cv-darkorange-bg #f76b15 orange">
+  <span class="sw" style="background:#f76b15"></span><span class="cls">cv-darkorange-bg</span><span class="hex">#f76b15</span>
+  <span class="arw">&rarr;</span><span class="cls">Orange</span><span class="newtok">--colors-orange</span>
+  <span class="roles"><span class="rbadge" style="background:#ffefd6;border-color:#ec9455;color:#cc4e00"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#f76b15"></span></span></div><div class="row rcv" data-s="cv-deepredpearl-bg #e54666 red">
+  <span class="sw" style="background:#e54666"></span><span class="cls">cv-deepredpearl-bg</span><span class="hex">#e54666</span>
+  <span class="arw">&rarr;</span><span class="cls">Red</span><span class="newtok">--colors-red</span>
+  <span class="roles"><span class="rbadge" style="background:#ffeae6;border-color:#f3817a;color:#b13e3c"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#b02a2d"></span></span></div><div class="row rcv" data-s="cv-electricblue-bg #0090ff indigo">
+  <span class="sw" style="background:#0090ff"></span><span class="cls">cv-electricblue-bg</span><span class="hex">#0090ff</span>
+  <span class="arw">&rarr;</span><span class="cls">Indigo</span><span class="newtok">--colors-indigo</span>
+  <span class="roles"><span class="rbadge" style="background:#edf2fe;border-color:#8da4ef;color:#3a5bc7"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#3e63dd"></span></span></div><div class="row rcv" data-s="cv-emerald-bg #007a3c grass">
+  <span class="sw" style="background:#007a3c"></span><span class="cls">cv-emerald-bg</span><span class="hex">#007a3c</span>
+  <span class="arw">&rarr;</span><span class="cls">Grass</span><span class="newtok">--colors-grass</span>
+  <span class="roles"><span class="rbadge" style="background:#e9f6e9;border-color:#65ba74;color:#2a7e3b"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#46a758"></span></span></div><div class="row rcv" data-s="cv-fuschiapearl-bg #d6409f pink">
+  <span class="sw" style="background:#d6409f"></span><span class="cls">cv-fuschiapearl-bg</span><span class="hex">#d6409f</span>
+  <span class="arw">&rarr;</span><span class="cls">Pink</span><span class="newtok">--colors-pink</span>
+  <span class="roles"><span class="rbadge" style="background:#fee9f5;border-color:#dd93c2;color:#c2298a"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#d6409f"></span></span></div><div class="row rcv" data-s="cv-gentleplum-bg #5b5bd6 indigo">
+  <span class="sw" style="background:#5b5bd6"></span><span class="cls">cv-gentleplum-bg</span><span class="hex">#5b5bd6</span>
+  <span class="arw">&rarr;</span><span class="cls">Indigo</span><span class="newtok">--colors-indigo</span>
+  <span class="roles"><span class="rbadge" style="background:#edf2fe;border-color:#8da4ef;color:#3a5bc7"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#3e63dd"></span></span></div><div class="row rcv" data-s="cv-grannysmith-bg #46a758 grass">
+  <span class="sw" style="background:#46a758"></span><span class="cls">cv-grannysmith-bg</span><span class="hex">#46a758</span>
+  <span class="arw">&rarr;</span><span class="cls">Grass</span><span class="newtok">--colors-grass</span>
+  <span class="roles"><span class="rbadge" style="background:#e9f6e9;border-color:#65ba74;color:#2a7e3b"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#46a758"></span></span></div><div class="row rcv" data-s="cv-green-bg #007a3c grass">
+  <span class="sw" style="background:#007a3c"></span><span class="cls">cv-green-bg</span><span class="hex">#007a3c</span>
+  <span class="arw">&rarr;</span><span class="cls">Grass</span><span class="newtok">--colors-grass</span>
+  <span class="roles"><span class="rbadge" style="background:#e9f6e9;border-color:#65ba74;color:#2a7e3b"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#46a758"></span></span></div><div class="row rcv" data-s="cv-greenblue-bg #29a383 grass">
+  <span class="sw" style="background:#29a383"></span><span class="cls">cv-greenblue-bg</span><span class="hex">#29a383</span>
+  <span class="arw">&rarr;</span><span class="cls">Grass</span><span class="newtok">--colors-grass</span>
+  <span class="roles"><span class="rbadge" style="background:#e9f6e9;border-color:#65ba74;color:#2a7e3b"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#46a758"></span></span></div><div class="row rcv" data-s="cv-hotpink-bg #e93d82 crimson">
+  <span class="sw" style="background:#e93d82"></span><span class="cls">cv-hotpink-bg</span><span class="hex">#e93d82</span>
+  <span class="arw">&rarr;</span><span class="cls">Crimson</span><span class="newtok">--colors-crimson</span>
+  <span class="roles"><span class="rbadge" style="background:#ffe9f0;border-color:#e093b2;color:#cb1d63"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#e93d82"></span></span></div><div class="row rcv" data-s="cv-hotred-bg #e5484d red">
+  <span class="sw" style="background:#e5484d"></span><span class="cls">cv-hotred-bg</span><span class="hex">#e5484d</span>
+  <span class="arw">&rarr;</span><span class="cls">Red</span><span class="newtok">--colors-red</span>
+  <span class="roles"><span class="rbadge" style="background:#ffeae6;border-color:#f3817a;color:#b13e3c"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#b02a2d"></span></span></div><div class="row rcv" data-s="cv-leafgreen-bg #007a3c grass">
+  <span class="sw" style="background:#007a3c"></span><span class="cls">cv-leafgreen-bg</span><span class="hex">#007a3c</span>
+  <span class="arw">&rarr;</span><span class="cls">Grass</span><span class="newtok">--colors-grass</span>
+  <span class="roles"><span class="rbadge" style="background:#e9f6e9;border-color:#65ba74;color:#2a7e3b"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#46a758"></span></span></div><div class="row rcv" data-s="cv-lemonade-bg #ffe629 lime">
+  <span class="sw" style="background:#ffe629"></span><span class="cls">cv-lemonade-bg</span><span class="hex">#ffe629</span>
+  <span class="arw">&rarr;</span><span class="cls">Lime</span><span class="newtok">--colors-lime</span>
+  <span class="roles"><span class="rbadge" style="background:#eef6d6;border-color:#8db654;color:#5c7c2f"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#bdee63"></span></span></div><div class="row rcv" data-s="cv-lightbluepearl-bg #7ce2fe indigo">
+  <span class="sw" style="background:#7ce2fe"></span><span class="cls">cv-lightbluepearl-bg</span><span class="hex">#7ce2fe</span>
+  <span class="arw">&rarr;</span><span class="cls">Indigo</span><span class="newtok">--colors-indigo</span>
+  <span class="roles"><span class="rbadge" style="background:#edf2fe;border-color:#8da4ef;color:#3a5bc7"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#3e63dd"></span></span></div><div class="row rcv" data-s="cv-lime-bg #bdee63 lime">
+  <span class="sw" style="background:#bdee63"></span><span class="cls">cv-lime-bg</span><span class="hex">#bdee63</span>
+  <span class="arw">&rarr;</span><span class="cls">Lime</span><span class="newtok">--colors-lime</span>
+  <span class="roles"><span class="rbadge" style="background:#eef6d6;border-color:#8db654;color:#5c7c2f"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#bdee63"></span></span></div><div class="row rcv" data-s="cv-limegreen-bg #46a758 grass">
+  <span class="sw" style="background:#46a758"></span><span class="cls">cv-limegreen-bg</span><span class="hex">#46a758</span>
+  <span class="arw">&rarr;</span><span class="cls">Grass</span><span class="newtok">--colors-grass</span>
+  <span class="roles"><span class="rbadge" style="background:#e9f6e9;border-color:#65ba74;color:#2a7e3b"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#46a758"></span></span></div><div class="row rcv" data-s="cv-midnightpurple-bg #714ba9 plum">
+  <span class="sw" style="background:#714ba9"></span><span class="cls">cv-midnightpurple-bg</span><span class="hex">#714ba9</span>
+  <span class="arw">&rarr;</span><span class="cls">Plum</span><span class="newtok">--colors-plum</span>
+  <span class="roles"><span class="rbadge" style="background:#f5eeff;border-color:#b296e5;color:#7756aa"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#714ba9"></span></span></div><div class="row rcv" data-s="cv-orange-bg #f76b15 orange">
+  <span class="sw" style="background:#f76b15"></span><span class="cls">cv-orange-bg</span><span class="hex">#f76b15</span>
+  <span class="arw">&rarr;</span><span class="cls">Orange</span><span class="newtok">--colors-orange</span>
+  <span class="roles"><span class="rbadge" style="background:#ffefd6;border-color:#ec9455;color:#cc4e00"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#f76b15"></span></span></div><div class="row rcv" data-s="cv-pink-bg #d6409f pink">
+  <span class="sw" style="background:#d6409f"></span><span class="cls">cv-pink-bg</span><span class="hex">#d6409f</span>
+  <span class="arw">&rarr;</span><span class="cls">Pink</span><span class="newtok">--colors-pink</span>
+  <span class="roles"><span class="rbadge" style="background:#fee9f5;border-color:#dd93c2;color:#c2298a"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#d6409f"></span></span></div><div class="row rcv" data-s="cv-purple-bg #714ba9 plum">
+  <span class="sw" style="background:#714ba9"></span><span class="cls">cv-purple-bg</span><span class="hex">#714ba9</span>
+  <span class="arw">&rarr;</span><span class="cls">Plum</span><span class="newtok">--colors-plum</span>
+  <span class="roles"><span class="rbadge" style="background:#f5eeff;border-color:#b296e5;color:#7756aa"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#714ba9"></span></span></div><div class="row rcv" data-s="cv-red-bg #e5484d red">
+  <span class="sw" style="background:#e5484d"></span><span class="cls">cv-red-bg</span><span class="hex">#e5484d</span>
+  <span class="arw">&rarr;</span><span class="cls">Red</span><span class="newtok">--colors-red</span>
+  <span class="roles"><span class="rbadge" style="background:#ffeae6;border-color:#f3817a;color:#b13e3c"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#b02a2d"></span></span></div><div class="row rcv" data-s="cv-redorange-bg #e54d2e orange">
+  <span class="sw" style="background:#e54d2e"></span><span class="cls">cv-redorange-bg</span><span class="hex">#e54d2e</span>
+  <span class="arw">&rarr;</span><span class="cls">Orange</span><span class="newtok">--colors-orange</span>
+  <span class="roles"><span class="rbadge" style="background:#ffefd6;border-color:#ec9455;color:#cc4e00"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#f76b15"></span></span></div><div class="row rcv" data-s="cv-stringbean-bg #898e87 gray">
+  <span class="sw" style="background:#898e87"></span><span class="cls">cv-stringbean-bg</span><span class="hex">#898e87</span>
+  <span class="arw">&rarr;</span><span class="cls">Gray</span><span class="newtok">--colors-gray</span>
+  <span class="roles"><span class="rbadge" style="background:#f0f0f0;border-color:#bbbbbb;color:#646464"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#8d8d8d"></span></span></div><div class="row rcv" data-s="cv-sweetpotato-bg #f76b15 orange">
+  <span class="sw" style="background:#f76b15"></span><span class="cls">cv-sweetpotato-bg</span><span class="hex">#f76b15</span>
+  <span class="arw">&rarr;</span><span class="cls">Orange</span><span class="newtok">--colors-orange</span>
+  <span class="roles"><span class="rbadge" style="background:#ffefd6;border-color:#ec9455;color:#cc4e00"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#f76b15"></span></span></div><div class="row rcv" data-s="cv-tranquility-bg #7ce2fe indigo">
+  <span class="sw" style="background:#7ce2fe"></span><span class="cls">cv-tranquility-bg</span><span class="hex">#7ce2fe</span>
+  <span class="arw">&rarr;</span><span class="cls">Indigo</span><span class="newtok">--colors-indigo</span>
+  <span class="roles"><span class="rbadge" style="background:#edf2fe;border-color:#8da4ef;color:#3a5bc7"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#3e63dd"></span></span></div><div class="row rcv" data-s="cv-turquoise-bg #0c818f indigo">
+  <span class="sw" style="background:#0c818f"></span><span class="cls">cv-turquoise-bg</span><span class="hex">#0c818f</span>
+  <span class="arw">&rarr;</span><span class="cls">Indigo</span><span class="newtok">--colors-indigo</span>
+  <span class="roles"><span class="rbadge" style="background:#edf2fe;border-color:#8da4ef;color:#3a5bc7"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#3e63dd"></span></span></div><div class="row rcv" data-s="cv-violet-bg #6e56cf plum">
+  <span class="sw" style="background:#6e56cf"></span><span class="cls">cv-violet-bg</span><span class="hex">#6e56cf</span>
+  <span class="arw">&rarr;</span><span class="cls">Plum</span><span class="newtok">--colors-plum</span>
+  <span class="roles"><span class="rbadge" style="background:#f5eeff;border-color:#b296e5;color:#7756aa"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#714ba9"></span></span></div><div class="row rcv" data-s="cv-yellow-bg #ffe629 lime">
+  <span class="sw" style="background:#ffe629"></span><span class="cls">cv-yellow-bg</span><span class="hex">#ffe629</span>
+  <span class="arw">&rarr;</span><span class="cls">Lime</span><span class="newtok">--colors-lime</span>
+  <span class="roles"><span class="rbadge" style="background:#eef6d6;border-color:#8db654;color:#5c7c2f"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#bdee63"></span></span></div><div class="row rcv" data-s="cv-yellowgreen-bg #bdee63 lime">
+  <span class="sw" style="background:#bdee63"></span><span class="cls">cv-yellowgreen-bg</span><span class="hex">#bdee63</span>
+  <span class="arw">&rarr;</span><span class="cls">Lime</span><span class="newtok">--colors-lime</span>
+  <span class="roles"><span class="rbadge" style="background:#eef6d6;border-color:#8db654;color:#5c7c2f"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#bdee63"></span></span></div><div class="row rtone" data-s="red light red">
+  <span class="roles" style="grid-column:span 3"><span class="rbadge" style="background:#ffeae6;border-color:#f3817a;color:#b13e3c"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rchip" style="background:#ffeae6;border-color:#ffb9b2;color:#582c29">Red Light</span></span>
+  <span class="arw">&rarr;</span><span class="cls">Red</span><span class="newtok">--colors-red</span>
+  <span class="roles"><span class="rbadge" style="background:#ffeae6;border-color:#f3817a;color:#b13e3c"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#b02a2d"></span></span></div><div class="row rtone" data-s="red dark crimson">
+  <span class="roles" style="grid-column:span 3"><span class="rbadge" style="background:#b13e3c;border-color:#b13e3c;color:#fff"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rchip" style="background:#b13e3c;border-color:#b13e3c;color:#fff">Red Dark</span></span>
+  <span class="arw">&rarr;</span><span class="cls">Crimson</span><span class="newtok">--colors-crimson</span>
+  <span class="roles"><span class="rbadge" style="background:#ffe9f0;border-color:#e093b2;color:#cb1d63"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#e93d82"></span></span></div><div class="row rtone" data-s="orange light orange">
+  <span class="roles" style="grid-column:span 3"><span class="rbadge" style="background:#ffefd6;border-color:#ec9455;color:#cc4e00"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rchip" style="background:#ffefd6;border-color:#ffc182;color:#582d1d">Orange Light</span></span>
+  <span class="arw">&rarr;</span><span class="cls">Orange</span><span class="newtok">--colors-orange</span>
+  <span class="roles"><span class="rbadge" style="background:#ffefd6;border-color:#ec9455;color:#cc4e00"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#f76b15"></span></span></div><div class="row rtone" data-s="orange dark brown">
+  <span class="roles" style="grid-column:span 3"><span class="rbadge" style="background:#cc4e00;border-color:#cc4e00;color:#fff"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rchip" style="background:#cc4e00;border-color:#cc4e00;color:#fff">Orange Dark</span></span>
+  <span class="arw">&rarr;</span><span class="cls">Brown</span><span class="newtok">--colors-brown</span>
+  <span class="roles"><span class="rbadge" style="background:#f6eee7;border-color:#cea37e;color:#815e46"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#ad7f58"></span></span></div><div class="row rtone" data-s="yellow light lime">
+  <span class="roles" style="grid-column:span 3"><span class="rbadge" style="background:#fffab8;border-color:#d5ae39;color:#9e6c00"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rchip" style="background:#fffab8;border-color:#f3d768;color:#473b1f">Yellow Light</span></span>
+  <span class="arw">&rarr;</span><span class="cls">Lime</span><span class="newtok">--colors-lime</span>
+  <span class="roles"><span class="rbadge" style="background:#eef6d6;border-color:#8db654;color:#5c7c2f"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#bdee63"></span></span></div><div class="row rtone" data-s="yellow dark brown">
+  <span class="roles" style="grid-column:span 3"><span class="rbadge" style="background:#9e6c00;border-color:#9e6c00;color:#fff"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rchip" style="background:#9e6c00;border-color:#9e6c00;color:#fff">Yellow Dark</span></span>
+  <span class="arw">&rarr;</span><span class="cls">Brown</span><span class="newtok">--colors-brown</span>
+  <span class="roles"><span class="rbadge" style="background:#f6eee7;border-color:#cea37e;color:#815e46"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#ad7f58"></span></span></div><div class="row rtone" data-s="green light grass">
+  <span class="roles" style="grid-column:span 3"><span class="rbadge" style="background:#e3f9e9;border-color:#63be86;color:#008048"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rchip" style="background:#e3f9e9;border-color:#abe0bc;color:#1e442d">Green Light</span></span>
+  <span class="arw">&rarr;</span><span class="cls">Grass</span><span class="newtok">--colors-grass</span>
+  <span class="roles"><span class="rbadge" style="background:#e9f6e9;border-color:#65ba74;color:#2a7e3b"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#46a758"></span></span></div><div class="row rtone" data-s="green dark grass">
+  <span class="roles" style="grid-column:span 3"><span class="rbadge" style="background:#008048;border-color:#008048;color:#fff"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rchip" style="background:#008048;border-color:#008048;color:#fff">Green Dark</span></span>
+  <span class="arw">&rarr;</span><span class="cls">Grass</span><span class="newtok">--colors-grass</span>
+  <span class="roles"><span class="rbadge" style="background:#e9f6e9;border-color:#65ba74;color:#2a7e3b"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#46a758"></span></span></div><div class="row rtone" data-s="blue light indigo">
+  <span class="roles" style="grid-column:span 3"><span class="rbadge" style="background:#edf2fe;border-color:#8da4ef;color:#3a5bc7"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rchip" style="background:#edf2fe;border-color:#c1d0ff;color:#1f2d5c">Blue Light</span></span>
+  <span class="arw">&rarr;</span><span class="cls">Indigo</span><span class="newtok">--colors-indigo</span>
+  <span class="roles"><span class="rbadge" style="background:#edf2fe;border-color:#8da4ef;color:#3a5bc7"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#3e63dd"></span></span></div><div class="row rtone" data-s="blue dark indigo">
+  <span class="roles" style="grid-column:span 3"><span class="rbadge" style="background:#3a5bc7;border-color:#3a5bc7;color:#fff"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rchip" style="background:#3a5bc7;border-color:#3a5bc7;color:#fff">Blue Dark</span></span>
+  <span class="arw">&rarr;</span><span class="cls">Indigo</span><span class="newtok">--colors-indigo</span>
+  <span class="roles"><span class="rbadge" style="background:#edf2fe;border-color:#8da4ef;color:#3a5bc7"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#3e63dd"></span></span></div><div class="row rtone" data-s="purple light plum">
+  <span class="roles" style="grid-column:span 3"><span class="rbadge" style="background:#f5eeff;border-color:#b296e5;color:#7756aa"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rchip" style="background:#f5eeff;border-color:#d8c7fa;color:#403355">Purple Light</span></span>
+  <span class="arw">&rarr;</span><span class="cls">Plum</span><span class="newtok">--colors-plum</span>
+  <span class="roles"><span class="rbadge" style="background:#f5eeff;border-color:#b296e5;color:#7756aa"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#714ba9"></span></span></div><div class="row rtone" data-s="purple dark pink">
+  <span class="roles" style="grid-column:span 3"><span class="rbadge" style="background:#7756aa;border-color:#7756aa;color:#fff"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rchip" style="background:#7756aa;border-color:#7756aa;color:#fff">Purple Dark</span></span>
+  <span class="arw">&rarr;</span><span class="cls">Pink</span><span class="newtok">--colors-pink</span>
+  <span class="roles"><span class="rbadge" style="background:#fee9f5;border-color:#dd93c2;color:#c2298a"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#d6409f"></span></span></div><div class="row rtone" data-s="grey light gray">
+  <span class="roles" style="grid-column:span 3"><span class="rbadge" style="background:#f1f0ef;border-color:#bcbbb5;color:#63635e"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rchip" style="background:#f1f0ef;border-color:#dad9d6;color:#21201c">Grey Light</span></span>
+  <span class="arw">&rarr;</span><span class="cls">Gray</span><span class="newtok">--colors-gray</span>
+  <span class="roles"><span class="rbadge" style="background:#f0f0f0;border-color:#bbbbbb;color:#646464"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#8d8d8d"></span></span></div><div class="row rtone" data-s="grey dark gray">
+  <span class="roles" style="grid-column:span 3"><span class="rbadge" style="background:#63635e;border-color:#63635e;color:#fff"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rchip" style="background:#63635e;border-color:#63635e;color:#fff">Grey Dark</span></span>
+  <span class="arw">&rarr;</span><span class="cls">Gray</span><span class="newtok">--colors-gray</span>
+  <span class="roles"><span class="rbadge" style="background:#f0f0f0;border-color:#bbbbbb;color:#646464"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="rdot" style="background:#8d8d8d"></span></span></div>
+</div>
+
+<h2>Notes on the legacy dictionary</h2>
+<table class="spec"><thead><tr><th>Point</th><th>Detail</th></tr></thead><tbody>
+<tr><td>16 of 39 are aliases</td><td>Three names resolve to <code>#d6409f</code>, three to <code>#f76b15</code>, three to <code>#007a3c</code>, three to <code>#7ce2fe</code>, two each to four more values. Config has been choosing between options that render identically.</td></tr>
+<tr><td>Nine land on Indigo</td><td>Babyblue, blue, bluepearl, cyan, electricblue, gentleplum, lightbluepearl, tranquility and turquoise. Blue is Info and teal and cyan are Accent, so Indigo is the only cool family available. Nine legacy values collapsing to one is the single largest consolidation.</td></tr>
+<tr><td><code>cv-turquoise-bg</code> is the brand accent</td><td><code>#0c818f</code> is <code>--colors-accent-accent-9</code> exactly. A workflow marker has been rendering in the brand colour, so it reads as an interactive control. It moves to Indigo.</td></tr>
+<tr><td>Yellow has no home</td><td><code>cv-yellow-bg</code> and <code>cv-lemonade-bg</code> go to Lime. The Yellow family sits 8.4 from the Warning semantic, inside the reserved band.</td></tr>
+</tbody></table>
+
+<h2>Notes on the shipped options</h2>
+<table class="spec"><thead><tr><th>Point</th><th>Detail</th></tr></thead><tbody>
+<tr><td>Tone is gone</td><td>Light and dark were two ways of rendering one family. Each shipped option now becomes one family and every family renders identically, so the seven Dark options change appearance from a solid fill to a tinted one.</td></tr>
+<tr><td>Four consolidations</td><td>Both Greens to Grass, both Blues to Indigo, both Greys to Gray, and Orange Dark and Yellow Dark to Brown. Each is forced by a reservation rather than chosen.</td></tr>
+<tr><td>Ruby dropped</td><td>It was in an eleven-family draft. Against Crimson it measured 13.8 at step 11 and 10.0 at step 12, the two channels that actually distinguish a badge, so it could not be told apart. Red Dark goes to Crimson instead.</td></tr>
+</tbody></table>
+
+<div class="warn"><strong>Ten is the ceiling, not a starting point.</strong> Six families are reserved by the semantic layer, seven more are neutrals sitting 2.2 to 4.4 from Gray, and everything else falls inside 20 of a semantic. The palette is exhausted. When the request comes for more options, the answer is that there is no eleventh colour to give, and further distinctions have to come from a second channel such as an icon or a label. That is a better answer anyway, since a second channel survives greyscale and colour-vision deficiency and a colour does not.</div>
+<script>
+const all=[...document.querySelectorAll('.row')];const cnt=document.getElementById('n');
+let mode='all';
+function apply(){const q=document.getElementById('q').value.toLowerCase();let n=0;
+ all.forEach(r=>{const inMode = mode==='all' || r.classList.contains(mode);
+  const ok=inMode && r.dataset.s.includes(q);r.classList.toggle('hidden',!ok);if(ok)n++});
+ cnt.textContent=n+' of '+all.length;}
+document.getElementById('q').addEventListener('input',apply);
+document.querySelectorAll('.mb').forEach(b=>b.addEventListener('click',e=>{
+ mode=e.currentTarget.dataset.m;
+ document.querySelectorAll('.mb').forEach(x=>x.setAttribute('aria-pressed',String(x===e.currentTarget)));
+ apply();}));
+apply();
+</script></div></body></html>

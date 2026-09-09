@@ -1,0 +1,326 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Scale · Colour scheme and usage rules</title><style>
+:root{--sand-1:#fdfdfc;--sand-2:#f9f9f8;--sand-3:#f0f0ef;--sand-4:#e9e9e6;--sand-6:#dad9d6;--sand-8:#b9b8b1;--sand-11:#63635e;--sand-12:#21201c;--accent-3:#e3f5f8;--accent-9:#0c818f;--accent-11:#006c78;--r:6px}
+*{box-sizing:border-box}
+body{margin:0;padding:36px 28px 100px;background:var(--sand-2);color:var(--sand-12);
+ font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto}
+h1{font-size:22px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:16px;font-weight:600;margin:46px 0 6px}
+h3{font-size:13px;font-weight:600;color:var(--sand-11);margin:26px 0 10px}
+p{margin:0 0 13px;max-width:72ch;color:var(--sand-11)}
+p.lead{color:var(--sand-12)}
+.meta{color:#8a8a85;font-size:12px;margin-bottom:28px}
+.stage{background:#fff;border:1px solid var(--sand-4);border-radius:var(--r);padding:22px;margin:12px 0}
+.stage.g{background:var(--sand-2)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+th{text-align:left;font-weight:600;font-size:11px;color:#8a8a85;padding:0 14px 9px 0;border-bottom:1px solid var(--sand-4)}
+td{padding:9px 14px 9px 0;border-bottom:1px solid var(--sand-3);vertical-align:top}
+td:first-child{white-space:nowrap;font-weight:500;color:var(--sand-12)}
+code{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11.5px;background:var(--sand-3);padding:1px 5px;border-radius:3px}
+.ramp{margin-bottom:16px}
+.rn{font-size:12px;font-weight:600;display:flex;align-items:baseline;gap:8px;margin-bottom:5px}
+.tok{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:10px;font-weight:400;color:#a8a8a3}
+.sws{display:grid;grid-template-columns:repeat(12,1fr);gap:3px}
+.sw i{display:block;height:28px;border-radius:3px;border:1px solid rgba(0,0,0,.06)}
+.sw b{display:block;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:9px;font-weight:400;color:#b5b5b0;text-align:center;padding-top:2px}
+.sw.u i{height:38px;box-shadow:0 0 0 2px var(--sand-12)}
+.sw.u b{color:var(--sand-12);font-weight:600}
+.strip{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:var(--r);border:1px solid;font-size:12px;font-weight:600;white-space:nowrap}
+.bdg{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:1px solid;flex:none}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%}
+.plan{background:#fff;border:1px solid var(--sand-4);border-radius:var(--r);overflow:hidden}
+.prow{border-bottom:1px solid var(--sand-3);padding:0 0 10px}
+.prow:last-child{border-bottom:0}
+.cap{height:4px;margin-bottom:8px}
+.caplbl{font-size:10px;color:#8a8a85;padding:6px 12px 2px;font-family:"JetBrains Mono",ui-monospace,monospace}
+.gbar{border-left:4px solid;padding:6px 10px;font-size:11.5px;font-weight:500;margin:0 12px 5px;border-radius:0 3px 3px 0}
+.gbar small{display:block;font-weight:400;opacity:.8;font-size:10.5px}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--sand-11);margin-top:10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:22px;height:4px;display:inline-block}
+.ntc{padding:9px 13px;border-left:3px solid;border-radius:0 4px 4px 0;font-size:13px;max-width:62ch}
+.wdg{background:#fff;border:1px solid var(--sand-4);border-radius:var(--r);overflow:hidden;max-width:420px}
+.wh{padding:10px 14px;font-size:13px;font-weight:600;border-bottom:1px solid}
+.wb{padding:12px 14px;font-size:13px;color:var(--sand-12)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{padding:0 12px 8px 0;color:var(--sand-11);font-size:11px}
+.tbl td{padding:9px 12px 9px 0;border-bottom:1px solid var(--sand-3);color:var(--sand-12)}
+.tbl tr.sel td{background:var(--accent-3)}
+.tbl tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--accent-9)}
+.btns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;height:34px;padding:0 14px;border-radius:var(--r);font-size:13px;font-weight:500;border:1px solid transparent;cursor:pointer;font-family:inherit}
+.b1{background:var(--accent-9);color:#fff}
+.b2{color:var(--accent-11);border-color:var(--accent-9);background:transparent}
+.b3{color:var(--accent-11);background:transparent}
+.states{width:100%;border-collapse:collapse;font-size:12.5px}
+.states th{text-align:left;font-weight:600;font-size:11px;color:#8a8a85;padding:0 10px 9px 0;border-bottom:1px solid var(--sand-4)}
+.states td{padding:9px 10px 9px 0;border-bottom:1px solid var(--sand-3);vertical-align:middle}
+.states td:first-child{white-space:nowrap;font-weight:500;color:var(--sand-12)}
+.states code{font-size:11px}
+.demo{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.dchip{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:var(--r);border:1px solid;font-size:12px;font-weight:600}
+.drow{display:grid;grid-template-columns:60px 1fr 150px;gap:0;font-size:13px;align-items:center;padding:9px 12px;border-bottom:1px solid var(--sand-3)}
+.rounds{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.warn{border-left:3px solid #cc4e00;background:#fff7ed;padding:11px 14px;border-radius:0 4px 4px 0;color:#582d1d;font-size:13px;max-width:72ch;margin:12px 0}
+</style></head><body><div class="wrap">
+
+<h1>Colour scheme and usage rules</h1>
+<div class="meta">Scale · Unity 8.0 · One rule set for the whole product, three exceptions</div>
+
+<p class="lead">The rules do not differ by section. They differ by role. A chip is a chip whether it sits in a table, a modal, a trail or a widget, so the step it uses is the same in all four. What changes between sections is which roles are present, not what a role does.</p>
+
+<p>Three exceptions exist and each is structural rather than stylistic: global chrome, annotation over user content, and charts. They are at the end, with the reason each one cannot follow the general rule.</p>
+
+<h2>1. The palette</h2>
+<p class="lead">Four layers. Only one of them is a choice.</p>
+<table><thead><tr><th>Layer</th><th>Families</th><th>Who picks it</th></tr></thead><tbody>
+<tr><td>Semantic</td><td>Error, Warning, Success, Info, Discovery</td><td>Nobody. The component knows its own state.</td></tr>
+<tr><td>Accent</td><td>One</td><td>Nobody. Interaction only.</td></tr>
+<tr><td>Identity</td><td>Ten</td><td>Config, for workflow actions, project colours, chart series and annotation.</td></tr>
+<tr><td>Neutral</td><td>Sand</td><td>Nobody. Every surface, every border, all body text.</td></tr>
+</tbody></table>
+
+<h3>Semantic and accent, reserved</h3>
+<p>These are fixed against the live token layer. An identity choice landing on one of them makes an arbitrary marker read as a system state, which is why the identity set excludes them and everything within 20 in CIE76 of them.</p>
+<div class="stage">
+<div class="ramp"><div class="rn">Error<span class="tok">--colors-semantic-error</span></div><div class="sws"><div class="sw u"><i style="background:#feebe7"></i><b>3</b></div><div class="sw"><i style="background:#f9c6b8"></i><b>6</b></div><div class="sw"><i style="background:#ec8e7b"></i><b>8</b></div><div class="sw u"><i style="background:#e54d2e"></i><b>9</b></div><div class="sw u"><i style="background:#cf3716"></i><b>11</b></div><div class="sw u"><i style="background:#5c281c"></i><b>12</b></div></div></div>
+<div class="ramp"><div class="rn">Warning<span class="tok">--colors-semantic-warning</span></div><div class="sws"><div class="sw u"><i style="background:#fff0cb"></i><b>3</b></div><div class="sw"><i style="background:#ffcf6b"></i><b>6</b></div><div class="sw"><i style="background:#e2a336"></i><b>8</b></div><div class="sw u"><i style="background:#f5a524"></i><b>9</b></div><div class="sw u"><i style="background:#a96600"></i><b>11</b></div><div class="sw u"><i style="background:#4d3618"></i><b>12</b></div></div></div>
+<div class="ramp"><div class="rn">Success<span class="tok">--colors-semantic-success</span></div><div class="sws"><div class="sw u"><i style="background:#e4f7f0"></i><b>3</b></div><div class="sw"><i style="background:#a8e0c8"></i><b>6</b></div><div class="sw"><i style="background:#5fc9a0"></i><b>8</b></div><div class="sw u"><i style="background:#29a383"></i><b>9</b></div><div class="sw u"><i style="background:#008062"></i><b>11</b></div><div class="sw u"><i style="background:#1d3b31"></i><b>12</b></div></div></div>
+<div class="ramp"><div class="rn">Info<span class="tok">--colors-semantic-info</span></div><div class="sws"><div class="sw u"><i style="background:#e9f3ff"></i><b>3</b></div><div class="sw"><i style="background:#acd8fc"></i><b>6</b></div><div class="sw"><i style="background:#5eb1ef"></i><b>8</b></div><div class="sw u"><i style="background:#0090ff"></i><b>9</b></div><div class="sw u"><i style="background:#0073dd"></i><b>11</b></div><div class="sw u"><i style="background:#003463"></i><b>12</b></div></div></div>
+<div class="ramp"><div class="rn">Discovery<span class="tok">--colors-semantic-discovery</span></div><div class="sws"><div class="sw u"><i style="background:#f5eeff"></i><b>3</b></div><div class="sw"><i style="background:#d8c7fa"></i><b>6</b></div><div class="sw"><i style="background:#be93e4"></i><b>8</b></div><div class="sw u"><i style="background:#8e4ec6"></i><b>9</b></div><div class="sw u"><i style="background:#8145b5"></i><b>11</b></div><div class="sw u"><i style="background:#411f5f"></i><b>12</b></div></div></div>
+<div class="ramp"><div class="rn">Accent<span class="tok">--colors-accent-accent</span></div><div class="sws"><div class="sw u"><i style="background:#e3f5f8"></i><b>3</b></div><div class="sw"><i style="background:#a9dbe6"></i><b>6</b></div><div class="sw"><i style="background:#65b5c2"></i><b>8</b></div><div class="sw u"><i style="background:#0c818f"></i><b>9</b></div><div class="sw u"><i style="background:#006c78"></i><b>11</b></div><div class="sw u"><i style="background:#1b3c41"></i><b>12</b></div></div></div>
+</div>
+
+<h3>Identity, ten families</h3>
+<div class="stage">
+<div class="ramp"><div class="rn">Red<span class="tok">--colors-red</span></div><div class="sws"><div class="sw"><i style="background:#fffbfa"></i><b>1</b></div><div class="sw"><i style="background:#fff4f2"></i><b>2</b></div><div class="sw u"><i style="background:#ffeae6"></i><b>3</b></div><div class="sw"><i style="background:#ffdcd7"></i><b>4</b></div><div class="sw"><i style="background:#ffccc6"></i><b>5</b></div><div class="sw"><i style="background:#ffb9b2"></i><b>6</b></div><div class="sw"><i style="background:#ffa29a"></i><b>7</b></div><div class="sw u"><i style="background:#f3817a"></i><b>8</b></div><div class="sw"><i style="background:#e54d2e"></i><b>9</b></div><div class="sw"><i style="background:#9f151e"></i><b>10</b></div><div class="sw u"><i style="background:#b13e3c"></i><b>11</b></div><div class="sw u"><i style="background:#582c29"></i><b>12</b></div></div></div>
+<div class="ramp"><div class="rn">Crimson<span class="tok">--colors-crimson</span></div><div class="sws"><div class="sw"><i style="background:#fffcfd"></i><b>1</b></div><div class="sw"><i style="background:#fef7f9"></i><b>2</b></div><div class="sw u"><i style="background:#ffe9f0"></i><b>3</b></div><div class="sw"><i style="background:#fedce7"></i><b>4</b></div><div class="sw"><i style="background:#facedd"></i><b>5</b></div><div class="sw"><i style="background:#f3bed1"></i><b>6</b></div><div class="sw"><i style="background:#eaacc3"></i><b>7</b></div><div class="sw u"><i style="background:#e093b2"></i><b>8</b></div><div class="sw"><i style="background:#e93d82"></i><b>9</b></div><div class="sw"><i style="background:#df3478"></i><b>10</b></div><div class="sw u"><i style="background:#cb1d63"></i><b>11</b></div><div class="sw u"><i style="background:#621639"></i><b>12</b></div></div></div>
+<div class="ramp"><div class="rn">Pink<span class="tok">--colors-pink</span></div><div class="sws"><div class="sw"><i style="background:#fffcfe"></i><b>1</b></div><div class="sw"><i style="background:#fef7fb"></i><b>2</b></div><div class="sw u"><i style="background:#fee9f5"></i><b>3</b></div><div class="sw"><i style="background:#fbdcef"></i><b>4</b></div><div class="sw"><i style="background:#f6cee7"></i><b>5</b></div><div class="sw"><i style="background:#efbfdd"></i><b>6</b></div><div class="sw"><i style="background:#e7acd0"></i><b>7</b></div><div class="sw u"><i style="background:#dd93c2"></i><b>8</b></div><div class="sw"><i style="background:#d6409f"></i><b>9</b></div><div class="sw"><i style="background:#cf3897"></i><b>10</b></div><div class="sw u"><i style="background:#c2298a"></i><b>11</b></div><div class="sw u"><i style="background:#651249"></i><b>12</b></div></div></div>
+<div class="ramp"><div class="rn">Orange<span class="tok">--colors-orange</span></div><div class="sws"><div class="sw"><i style="background:#fefcfb"></i><b>1</b></div><div class="sw"><i style="background:#fff7ed"></i><b>2</b></div><div class="sw u"><i style="background:#ffefd6"></i><b>3</b></div><div class="sw"><i style="background:#ffdfb5"></i><b>4</b></div><div class="sw"><i style="background:#ffd19a"></i><b>5</b></div><div class="sw"><i style="background:#ffc182"></i><b>6</b></div><div class="sw"><i style="background:#f5ae73"></i><b>7</b></div><div class="sw u"><i style="background:#ec9455"></i><b>8</b></div><div class="sw"><i style="background:#f76b15"></i><b>9</b></div><div class="sw"><i style="background:#ef5f00"></i><b>10</b></div><div class="sw u"><i style="background:#cc4e00"></i><b>11</b></div><div class="sw u"><i style="background:#582d1d"></i><b>12</b></div></div></div>
+<div class="ramp"><div class="rn">Brown<span class="tok">--colors-brown</span></div><div class="sws"><div class="sw"><i style="background:#fefdfc"></i><b>1</b></div><div class="sw"><i style="background:#fcf9f6"></i><b>2</b></div><div class="sw u"><i style="background:#f6eee7"></i><b>3</b></div><div class="sw"><i style="background:#f0e4d9"></i><b>4</b></div><div class="sw"><i style="background:#ebdaca"></i><b>5</b></div><div class="sw"><i style="background:#e4cdb7"></i><b>6</b></div><div class="sw"><i style="background:#dcbc9f"></i><b>7</b></div><div class="sw u"><i style="background:#cea37e"></i><b>8</b></div><div class="sw"><i style="background:#ad7f58"></i><b>9</b></div><div class="sw"><i style="background:#a07553"></i><b>10</b></div><div class="sw u"><i style="background:#815e46"></i><b>11</b></div><div class="sw u"><i style="background:#3e332e"></i><b>12</b></div></div></div>
+<div class="ramp"><div class="rn">Lime<span class="tok">--colors-lime</span></div><div class="sws"><div class="sw"><i style="background:#fcfdfa"></i><b>1</b></div><div class="sw"><i style="background:#f8faf3"></i><b>2</b></div><div class="sw u"><i style="background:#eef6d6"></i><b>3</b></div><div class="sw"><i style="background:#e2f0bd"></i><b>4</b></div><div class="sw"><i style="background:#d3e7a6"></i><b>5</b></div><div class="sw"><i style="background:#c2da91"></i><b>6</b></div><div class="sw"><i style="background:#abc978"></i><b>7</b></div><div class="sw u"><i style="background:#8db654"></i><b>8</b></div><div class="sw"><i style="background:#bdee63"></i><b>9</b></div><div class="sw"><i style="background:#b0e64c"></i><b>10</b></div><div class="sw u"><i style="background:#5c7c2f"></i><b>11</b></div><div class="sw u"><i style="background:#37401c"></i><b>12</b></div></div></div>
+<div class="ramp"><div class="rn">Grass<span class="tok">--colors-grass</span></div><div class="sws"><div class="sw"><i style="background:#fbfefb"></i><b>1</b></div><div class="sw"><i style="background:#f5fbf5"></i><b>2</b></div><div class="sw u"><i style="background:#e9f6e9"></i><b>3</b></div><div class="sw"><i style="background:#daf1db"></i><b>4</b></div><div class="sw"><i style="background:#c9e8ca"></i><b>5</b></div><div class="sw"><i style="background:#b2ddb5"></i><b>6</b></div><div class="sw"><i style="background:#94ce9a"></i><b>7</b></div><div class="sw u"><i style="background:#65ba74"></i><b>8</b></div><div class="sw"><i style="background:#29a383"></i><b>9</b></div><div class="sw"><i style="background:#3e9b4f"></i><b>10</b></div><div class="sw u"><i style="background:#2a7e3b"></i><b>11</b></div><div class="sw u"><i style="background:#203c25"></i><b>12</b></div></div></div>
+<div class="ramp"><div class="rn">Indigo<span class="tok">--colors-indigo</span></div><div class="sws"><div class="sw"><i style="background:#fdfdfe"></i><b>1</b></div><div class="sw"><i style="background:#f7f9ff"></i><b>2</b></div><div class="sw u"><i style="background:#edf2fe"></i><b>3</b></div><div class="sw"><i style="background:#e1e9ff"></i><b>4</b></div><div class="sw"><i style="background:#d2deff"></i><b>5</b></div><div class="sw"><i style="background:#c1d0ff"></i><b>6</b></div><div class="sw"><i style="background:#abbdf9"></i><b>7</b></div><div class="sw u"><i style="background:#8da4ef"></i><b>8</b></div><div class="sw"><i style="background:#3e63dd"></i><b>9</b></div><div class="sw"><i style="background:#3358d4"></i><b>10</b></div><div class="sw u"><i style="background:#3a5bc7"></i><b>11</b></div><div class="sw u"><i style="background:#1f2d5c"></i><b>12</b></div></div></div>
+<div class="ramp"><div class="rn">Plum<span class="tok">--colors-plum</span></div><div class="sws"><div class="sw"><i style="background:#fdfcff"></i><b>1</b></div><div class="sw"><i style="background:#faf7ff"></i><b>2</b></div><div class="sw u"><i style="background:#f5eeff"></i><b>3</b></div><div class="sw"><i style="background:#eee4ff"></i><b>4</b></div><div class="sw"><i style="background:#e4d7ff"></i><b>5</b></div><div class="sw"><i style="background:#d8c7fa"></i><b>6</b></div><div class="sw"><i style="background:#c8b3f2"></i><b>7</b></div><div class="sw u"><i style="background:#b296e5"></i><b>8</b></div><div class="sw"><i style="background:#714ba9"></i><b>9</b></div><div class="sw"><i style="background:#633d98"></i><b>10</b></div><div class="sw u"><i style="background:#7756aa"></i><b>11</b></div><div class="sw u"><i style="background:#403355"></i><b>12</b></div></div></div>
+<div class="ramp"><div class="rn">Gray<span class="tok">--colors-gray</span></div><div class="sws"><div class="sw"><i style="background:#fcfcfc"></i><b>1</b></div><div class="sw"><i style="background:#f9f9f9"></i><b>2</b></div><div class="sw u"><i style="background:#f0f0f0"></i><b>3</b></div><div class="sw"><i style="background:#e8e8e8"></i><b>4</b></div><div class="sw"><i style="background:#e0e0e0"></i><b>5</b></div><div class="sw"><i style="background:#d9d9d9"></i><b>6</b></div><div class="sw"><i style="background:#cecece"></i><b>7</b></div><div class="sw u"><i style="background:#bbbbbb"></i><b>8</b></div><div class="sw"><i style="background:#8d8d8d"></i><b>9</b></div><div class="sw"><i style="background:#838383"></i><b>10</b></div><div class="sw u"><i style="background:#646464"></i><b>11</b></div><div class="sw u"><i style="background:#202020"></i><b>12</b></div></div></div>
+</div>
+<p>Minimum mutual separation is 17.8, Lime against Grass. <strong>Ten is the ceiling, not a starting point.</strong> Six families are reserved above, seven more are neutrals sitting 2.2 to 4.4 from Gray, and everything else falls inside 20 of a semantic. When a surface needs more than ten distinctions it needs a second channel, an icon or a label, not an eleventh colour.</p>
+
+<h2>2. The role table</h2>
+<p>This is the whole system. Worst case is measured across all ten identity families, so no family ever needs checking individually.</p>
+<table><thead><tr><th>Role</th><th>Step</th><th>Worst case</th><th>Threshold</th></tr></thead><tbody>
+<tr><td>Page and panel surface</td><td><code>--sand-1</code> / white</td><td>n/a</td><td>n/a</td></tr>
+<tr><td>Subtle fill: chip, badge, notice, bar, header</td><td>3</td><td>n/a</td><td>n/a</td></tr>
+<tr><td>Hover on a subtle fill</td><td>4</td><td>n/a</td><td>n/a</td></tr>
+<tr><td>Decorative border</td><td>6</td><td>n/a</td><td>n/a</td></tr>
+<tr><td>Component edge, badge border</td><td>8</td><td>1.82:1 on sand-2</td><td>decorative only</td></tr>
+<tr><td>Solid object with nothing on it: dot, rail, series</td><td>9</td><td>1.20:1 on sand-2</td><td>see note</td></tr>
+<tr><td>Solid hover</td><td>10</td><td>n/a</td><td>n/a</td></tr>
+<tr><td>Icon or glyph</td><td>11</td><td>3.99:1 on own step 3</td><td>3:1</td></tr>
+<tr><td>Text of any size</td><td>12</td><td>9.82:1 on own step 3</td><td>4.5:1</td></tr>
+</tbody></table>
+
+<div class="warn"><strong>Step 11 is not a text step in this product.</strong> It holds only on literal <code>#ffffff</code> at 4.51:1 worst case across the identity set. On sand-1 it drops to 4.43, on sand-2 to 4.28, on step 3 to 3.95. Unity's page is sand-1 and its cards are sand-2, so step 11 never renders on white here. Icons are graphical objects at 3:1 and step 11 clears that everywhere.</div>
+
+<div class="warn"><strong>Step 9 carries no foreground.</strong> White on step 9 runs from 1.26:1 on yellow to 6.53:1 on red across the palette. Use it only where nothing sits on top. Anything with an icon or a label uses step 3 with step 11 or 12.</div>
+
+<h2>3. The same rules, applied</h2>
+
+<h3>Status chip: table, modal, trail, widget, all identical</h3>
+<div class="stage"><div class="strip">
+<span class="chip" style="background:#e9f6e9;color:#203c25;border-color:#b2ddb5">Complete</span>
+<span class="chip" style="background:#ffefd6;color:#582d1d;border-color:#ffc182">In review</span>
+<span class="chip" style="background:#ffeae6;color:#582c29;border-color:#ffb9b2">Blocked</span>
+<span class="chip" style="background:#e6f4fe;color:#113264;border-color:#acd8fc">Scheduled</span>
+<span class="chip" style="background:#f7edfe;color:#402060;border-color:#e0c4f4">Draft</span>
+<span class="chip" style="background:#f0f0f0;color:#202020;border-color:#d9d9d9">Archived</span>
+</div></div>
+
+<h3>Badge: audit trail, timeline, avatar</h3>
+<div class="stage"><div class="strip">
+<span class="bdg" style="background:#e9f6e9;border-color:#65ba74;color:#2a7e3b;width:22px;height:22px"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+<span class="bdg" style="background:#ffefd6;border-color:#ec9455;color:#cc4e00;width:22px;height:22px"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+<span class="bdg" style="background:#ffeae6;border-color:#f3817a;color:#b13e3c;width:22px;height:22px"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+<span class="bdg" style="background:#e6f4fe;border-color:#5eb1ef;color:#0d74ce;width:22px;height:22px"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+<span class="bdg" style="background:#f7edfe;border-color:#be93e4;color:#8145b5;width:22px;height:22px"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+<span class="bdg" style="background:#f0f0f0;border-color:#bbbbbb;color:#646464;width:22px;height:22px"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+</div></div>
+
+<h3>Solid dot: legend, timeline marker, series key</h3>
+<div class="stage"><div class="strip">
+<span class="dot" style="background:#46a758"></span>
+<span class="dot" style="background:#f76b15"></span>
+<span class="dot" style="background:#b02a2d"></span>
+<span class="dot" style="background:#0090ff"></span>
+<span class="dot" style="background:#8e4ec6"></span>
+<span class="dot" style="background:#8d8d8d"></span>
+<span class="dot" style="background:#d6409f"></span>
+<span class="dot" style="background:#ad7f58"></span>
+<span class="dot" style="background:#29a383"></span>
+<span class="dot" style="background:#3e63dd"></span>
+</div></div>
+
+<h3>Timeline row: two independent channels</h3>
+<p>The planner is the only surface carrying a second hue system. The bar at the top of a row is <strong>capacity</strong>, a RAG state across the whole row. The left border on each bar is <strong>booking identity</strong>, drawn from the family palette. They never mix, and everything else on the bar is neutral.</p>
+<div class="stage g">
+<div class="plan">
+  <div class="prow">
+    <div class="caplbl">Aisling O&rsquo;Connor &middot; capacity available</div>
+    <div class="cap" style="width:520px;margin:0 12px 8px;background:#29a383"></div>
+    <div class="gbar" style="width:420px;background:#e9f6e9;border-left-color:#2a7e3b;color:#203c25">Standard Life<small>8 hours over 5 days</small></div>
+    <div class="gbar" style="width:360px;background:#e6f7ed;border-left-color:#208368;color:#1d3b31">HH Global<small>3 hours over 5 days</small></div>
+    <div class="gbar" style="width:300px;background:#e6f4fe;border-left-color:#0d74ce;color:#113264">Aviva<small>5 hours over 5 days</small></div>
+  </div>
+  <div class="prow">
+    <div class="caplbl">Alex O&rsquo;Brien &middot; capacity limited</div>
+    <div class="cap" style="width:520px;margin:0 12px 8px;background:#f5a524"></div>
+    <div class="gbar" style="width:340px;background:#ffeae6;border-left-color:#b13e3c;color:#582c29">Bulletproof Release<small>5 hours over 5 days</small></div>
+    <div class="gbar" style="width:260px;background:#f5eeff;border-left-color:#7756aa;color:#403355">NVS Studio Ops<small>15 hours over 3 days</small></div>
+  </div>
+  <div class="prow">
+    <div class="caplbl">Anna Brennan &middot; no capacity</div>
+    <div class="cap" style="width:520px;margin:0 12px 8px;background:#e54d2e"></div>
+    <div class="gbar" style="width:300px;background:#edf2fe;border-left-color:#3a5bc7;color:#1f2d5c">Config Team Internal Work<small>4 hours over 3 days</small></div>
+    <div class="gbar" style="width:240px;background:#fee9f5;border-left-color:#c2298a;color:#651249">BT The Exchange<small>5 hours over 3 days</small></div>
+  </div>
+</div>
+<div class="legend">
+  <span><i style="background:#29a383"></i>Available</span>
+  <span><i style="background:#f5a524"></i>Limited</span>
+  <span><i style="background:#e54d2e"></i>None</span>
+</div>
+</div>
+<table><thead><tr><th>Element</th><th>Step</th><th>Why</th></tr></thead><tbody>
+<tr><td>Capacity bar</td><td>Semantic step 9, 4px<br><code>success</code> <code>warning</code> <code>error</code></td><td>Capacity is a state, so it takes the state tokens. The planner is already using <code>#29a383</code> and <code>#f5a524</code>, which are success-9 and warning-9 exactly. This is a token reference, not a colour change.</td></tr>
+<tr><td>Booking left border</td><td>11, 4px</td><td>Sole carrier of booking identity, so it needs 3:1 against its own fill. Step 3 with step 11 gives 3.99:1 worst case across the ten identity families.</td></tr>
+<tr><td>Booking fill</td><td>3</td><td>Read from the ramp, not derived from a base colour.</td></tr>
+<tr><td>Booking label</td><td><code>--sand-12</code></td><td>9.82:1 worst case on step 3.</td></tr>
+<tr><td>Weekend and non-working hatch</td><td><code>--sand-4</code> on <code>--sand-1</code></td><td>Background, not data.</td></tr>
+<tr><td>Today marker</td><td>accent 9</td><td>The only element on the timeline allowed accent.</td></tr>
+</tbody></table>
+<div class="warn"><strong>Capacity is a state, so it uses the state tokens.</strong> Available <code>--colors-semantic-success-9</code> <code>#29a383</code>, limited <code>--colors-semantic-warning-9</code> <code>#f5a524</code>, none <code>--colors-semantic-error-9</code> <code>#e54d2e</code>. Live sampling of the planner returns <code>#29a383</code> and <code>#f5a524</code>, deltaE 0.0 against those tokens, so the colours are already correct and simply not referenced as tokens. Mutual separation is 47.4 to 106.8 and greyscale luminance spreads 0.222 to 0.465.</div>
+<div class="warn"><strong>Why these do not need 3:1, and what has to be true for that to hold.</strong> 1.4.11 applies to graphical objects <em>required to understand the content</em>. If capacity is also stated as text in the row header, the bar is not required and the threshold does not bind. The text is what makes the bright values legal. Without it the bar is the sole carrier, 3:1 binds, and the values have to drop to step 11 where the triad loses most of its separation. Ship the text channel first, then the existing colours are both compliant and better.</div>
+
+<h3>Notice: form body, modal, panel</h3>
+<div class="stage">
+<div class="ntc" style="background:#e6f4fe;border-left-color:#0d74ce;color:#113264"><strong>Heads up.</strong> Tasks fall on the same date and may occasionally occur on weekends.</div>
+<div style="height:8px"></div>
+<div class="ntc" style="background:#ffefd6;border-left-color:#cc4e00;color:#582d1d"><strong>Estimate expires 30 September.</strong> Rates are held until then, after which approvals are void.</div>
+</div>
+
+<h3>Widget header</h3>
+<div class="stage g">
+<div class="wdg"><div class="wh" style="background:#e6f4fe;border-bottom-color:#acd8fc;color:#113264">Upcoming builds</div><div class="wb">Body content is always <code>--sand-12</code> on white, whichever family the widget belongs to.</div></div>
+</div>
+
+<h3>Table row: neutral, with accent for selection only</h3>
+<div class="stage">
+<table class="tbl"><thead><tr><th>ID</th><th>Title</th><th>Status</th><th>Owner</th></tr></thead><tbody>
+<tr class="sel"><td>624215</td><td>Export Report Builder v2</td><td><span class="chip" style="background:#ffefd6;color:#582d1d;border-color:#ffc182">Creating tech spec</span></td><td>Gilvan Almeida</td></tr>
+<tr><td>623895</td><td>Migrate Resource Manager</td><td><span class="chip" style="background:#e6f4fe;color:#113264;border-color:#acd8fc">With dev</span></td><td>Colin Kelly</td></tr>
+<tr><td>586480</td><td>Group form field update triggers</td><td><span class="chip" style="background:#ffeae6;color:#582c29;border-color:#ffb9b2">Cancelled</span></td><td>Ciaran Wilkinson</td></tr>
+</tbody></table>
+</div>
+
+<h3>Buttons: accent only, never an identity family</h3>
+<div class="stage"><div class="btns">
+<button class="btn b1">Create new</button>
+<button class="btn b2">Filter</button>
+<button class="btn b3">Export</button>
+</div></div>
+
+<h2>4. Surfaces</h2>
+<p>Four backgrounds exist. Every role above holds on all four, which is why no section needs its own rules.</p>
+<table><thead><tr><th>Surface</th><th>Token</th><th>Used for</th></tr></thead><tbody>
+<tr><td>White</td><td><code>#ffffff</code></td><td>Cards, widgets, modals, table rows, anything behind imagery</td></tr>
+<tr><td>Page</td><td><code>--sand-1</code></td><td>Page background, filter panels</td></tr>
+<tr><td>Recessed</td><td><code>--sand-2</code></td><td>Zebra rows, inset panels, log cards</td></tr>
+<tr><td>Header</td><td><code>--sand-3</code></td><td>Table headers, toolbars, disabled fields</td></tr>
+</tbody></table>
+<p>Nothing deeper than sand-3 exists as a light-mode surface. A family step is never a surface at any level of the ramp.</p>
+
+<h2>5. Shape</h2>
+<p class="lead">One shape. Rounded rectangle at <code>--radius-2</code>, 6px, for every object inside a table cell. The Release Requests list already does this; the task list uses a pill for the same object.</p>
+<div class="stage"><div class="rounds">
+  <div><div style="font-size:11px;color:#8a8a85;margin-bottom:6px">Recommended</div><span class="dchip" style="background:#e6f4fe;border-color:#acd8fc;color:#113264"><span style="width:6px;height:6px;border-radius:50%;background:#0d74ce"></span>To be done</span></div>
+  <div><div style="font-size:11px;color:#8a8a85;margin-bottom:6px">Current, task list</div><span class="dchip" style="background:#e6f4fe;border-color:#acd8fc;color:#113264;border-radius:99px"><span style="width:6px;height:6px;border-radius:50%;background:#0d74ce"></span>To be done</span></div>
+</div></div>
+<p>The argument for the rectangle is that a pill reads as a static tag and this object is a select: it has a chevron and it opens a menu. Everything else interactive in the product is <code>--radius-2</code>, so a pill inside a table row reads as a different class of object than the date fields beside it, which it is not.</p>
+<p>Do not load shape with meaning. It is tempting to say pill for static and rectangle for interactive, but that convention will be violated within a release by someone who does not know it, and then shape means nothing while looking like it means something. One radius, and let the chevron carry the affordance. The only exception is the avatar, which stays a circle because a person is a genuinely different class of object.</p>
+
+<h2>6. Interaction states</h2>
+<p class="lead">Text never changes. Through every state on every component, text stays step 12 and the icon stays step 11, so contrast is fixed once and never re-checked. Only the fill and the border move.</p>
+
+<div class="stage">
+<table class="states"><thead><tr><th>Component</th><th>Rest</th><th>Hover</th><th>Pressed</th><th>Selected</th><th>Disabled</th></tr></thead><tbody>
+<tr><td>Chip, static</td><td>fill 3, border 6</td><td colspan="2"><em>none</em></td><td>n/a</td><td>n/a</td></tr>
+<tr><td>Chip, interactive</td><td>fill 3, border 6</td><td>fill 4, border 7</td><td>fill 5, border 8</td><td>fill 5, border 9</td><td>sand-2, sand-6, text sand-9</td></tr>
+<tr><td>Badge</td><td>fill 3, border 8</td><td colspan="2"><em>none</em></td><td>n/a</td><td>n/a</td></tr>
+<tr><td>Primary button</td><td>accent 9</td><td>accent 10</td><td>accent 11</td><td>n/a</td><td>sand-3, text sand-9</td></tr>
+<tr><td>Secondary button</td><td>border accent 9</td><td>fill accent 3</td><td>fill accent 4</td><td>fill accent 3, border accent 11</td><td>sand-6 border, sand-9 text</td></tr>
+<tr><td>Ghost button</td><td>transparent</td><td>sand-3</td><td>sand-4</td><td>n/a</td><td>text sand-9</td></tr>
+<tr><td>Icon button</td><td>transparent, icon sand-11</td><td>sand-3, icon sand-12</td><td>sand-4</td><td>n/a</td><td>icon sand-8</td></tr>
+<tr><td>Table row</td><td>white</td><td>sand-2</td><td>n/a</td><td>accent-3 <strong>plus</strong> 3px accent-9 leading rule</td><td>n/a</td></tr>
+<tr><td>Nav item, light</td><td>transparent</td><td>sand-3</td><td>sand-4</td><td>accent-3, text accent-11, 3px rule</td><td>text sand-9</td></tr>
+<tr><td>Nav item, dark chrome</td><td>field</td><td>field, one step lighter</td><td>n/a</td><td>lighter fill <strong>plus</strong> 3px white leading rule</td><td>white at 40%</td></tr>
+<tr><td>Link</td><td>accent 11</td><td>accent 12, underline</td><td>accent 12</td><td>n/a</td><td>sand-9</td></tr>
+<tr><td>Focus, everything</td><td colspan="5">2px <code>--accent-9</code> outline, 2px offset. Never the family colour, so it is recognisable on any surface</td></tr>
+</tbody></table>
+</div>
+
+<h3>Live</h3>
+<div class="stage"><div class="demo">
+  <div style="text-align:center"><div style="font-size:11px;color:#8a8a85;margin-bottom:6px">Rest</div><span class="dchip" style="background:#e6f4fe;border-color:#acd8fc;color:#113264"><span style="width:6px;height:6px;border-radius:50%;background:#0d74ce"></span>To be done</span></div>
+  <div style="text-align:center"><div style="font-size:11px;color:#8a8a85;margin-bottom:6px">Hover</div><span class="dchip" style="background:#d5efff;border-color:#8ec8f6;color:#113264"><span style="width:6px;height:6px;border-radius:50%;background:#0d74ce"></span>To be done</span></div>
+  <div style="text-align:center"><div style="font-size:11px;color:#8a8a85;margin-bottom:6px">Pressed</div><span class="dchip" style="background:#c2e5ff;border-color:#5eb1ef;color:#113264"><span style="width:6px;height:6px;border-radius:50%;background:#0d74ce"></span>To be done</span></div>
+  <div style="text-align:center"><div style="font-size:11px;color:#8a8a85;margin-bottom:6px">Focus</div><span style="display:inline-block;outline:2px solid #0c818f;outline-offset:2px;border-radius:var(--r)"><span class="dchip" style="background:#e6f4fe;border-color:#acd8fc;color:#113264"><span style="width:6px;height:6px;border-radius:50%;background:#0d74ce"></span>To be done</span></span></div>
+  <div style="text-align:center"><div style="font-size:11px;color:#8a8a85;margin-bottom:6px">Disabled</div><span class="dchip" style="background:#f9f9f8;border-color:#dad9d6;color:#8d8d86"><span style="width:6px;height:6px;border-radius:50%;background:#8d8d86"></span>To be done</span></div>
+</div></div>
+
+<h3>Table rows</h3>
+<div class="stage" style="padding:0">
+  <div class="drow" style="background:#fff"><span>1</span><span>Rest, white</span><span style="color:#63635e;font-size:12px">Rodger Corcoran</span></div>
+  <div class="drow" style="background:#f9f9f8"><span>2</span><span>Hover, sand-2</span><span style="color:#63635e;font-size:12px">Rodger Corcoran</span></div>
+  <div class="drow" style="background:#e3f5f8;box-shadow:inset 3px 0 0 #0c818f"><span>3</span><span>Selected, accent-3 plus leading rule</span><span style="color:#63635e;font-size:12px">Godfrey McCarthy</span></div>
+  <div class="drow" style="background:#d3eff3;box-shadow:inset 3px 0 0 #0c818f;border-bottom:0"><span>4</span><span>Selected and hovered, accent-4</span><span style="color:#63635e;font-size:12px">Godfrey McCarthy</span></div>
+</div>
+
+<h3>Four rules behind that table</h3>
+<table><thead><tr><th>Rule</th><th>Why</th></tr></thead><tbody>
+<tr><td>If it does not hover, it is not clickable</td><td>A hover change is an affordance claim. A static chip that lightens on hover invites a click that does nothing. Badges and static chips have no hover state at all.</td></tr>
+<tr><td>Hover moves the fill one step, never the text</td><td>Text at step 12 measures 9.82:1 on step 3, worst case across the ten identity families. Contrast is fixed once and cannot be broken by a state.</td></tr>
+<tr><td>Selected is not a darker hover</td><td>One step is a luminance ratio of roughly 1.06 to 1.13. That is correct for hover, which is transient and confirmed by the cursor, and wrong for selection, which persists and must be readable with no cursor present. Selection needs a second channel: a leading rule, a check, or a weight change.</td></tr>
+<tr><td>Focus is always accent, never the family</td><td>Focus must be recognisable as the same thing on every surface in the product. A focus ring that changes colour with the component is not a focus ring, it is decoration.</td></tr>
+</tbody></table>
+
+<div class="warn"><strong>This is the drawer defect.</strong> The nav drawer marks its selected item with a fill at 1.74:1 against the field and nothing else. No leading rule, no weight change. Which item is selected is carried entirely by a fill difference that is below the threshold for a persistent state. Adding the rule fixes it without needing to find a fill that contrasts against a saturated field, which is hard.</div>
+
+<div class="warn"><strong>Primary button runs 9, 10, 11.</strong> Against white the accent ramp reads 4.61:1 at step 9, 5.57:1 at step 10 and 6.15:1 at step 11, so each state is darker than the last and the press feedback reads correctly. Note that step 11 here is hand-corrected in the ramp; if the accent is ever regenerated, re-apply the correction or step 10 and 11 will invert.</div>
+
+<h2>7. The three exceptions</h2>
+
+<h3>Global chrome</h3>
+<p>The rail and drawer are the one place a saturated field is correct, because they hold navigation labels and nothing else. Everything on them is white at 4.5:1 or better. Active and hover states must differ from the field by 3:1, not by a tint, which is where the drawer currently fails at 1.74:1.</p>
+<p>This is an exception because the general rule assumes content sits on the surface. Chrome has no content, only labels.</p>
+
+<h3>Annotation over user content</h3>
+<p>Annotations sit on assets of unknown colour, so no palette can guarantee contrast. Every annotation stroke carries its own 2px outline, white or black chosen by the luminance underneath. Hue is then pure identity, which is what annotation colour is for.</p>
+<p>This is an exception because every other rule is a relationship between a foreground and a known background. Here the background is not known.</p>
+
+<h3>Charts</h3>
+<p>Series colour optimises for separation between series, not for contrast against a surface. Step 9 is correct here and correct nowhere else, because a series is a solid object with nothing on it. Two additional constraints apply that no other surface has: consecutive series must alternate in luminance so the chart survives greyscale printing, and lines below 3px need step 11 rather than step 9 to clear 1.4.11.</p>
+<p>This is an exception because the constraint is perceptual distance rather than contrast ratio.</p>
+
+<h2>8. What this replaces</h2>
+<table><thead><tr><th>Was</th><th>Now</th></tr></thead><tbody>
+<tr><td>39 <code>cv-*</code> classes in the action picker</td><td>14 families, mapped</td></tr>
+<tr><td>The same 39 in the proofing annotation picker</td><td>Same 14 families, one change not two</td></tr>
+<tr><td>18 Tailwind swatches in the WYSIWYG</td><td>7 token references, or removed entirely</td></tr>
+<tr><td>Hand-mixed pastels in the planner</td><td>Step 3 of the booking family</td></tr>
+<tr><td>Full colour fills on dashboard widgets</td><td>Step 3 header, white surface</td></tr>
+<tr><td>Per-step workflow hue on the status bar</td><td>Accent at rest, warning when assigned</td></tr>
+</tbody></table>
+
+</div></body></html>

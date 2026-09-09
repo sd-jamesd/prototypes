@@ -1,0 +1,232 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Annotation colour remap</title><style>
+:root{--sand-1:#fdfdfc;--sand-2:#f9f9f8;--sand-3:#f0f0ef;--sand-4:#e9e9e6;--sand-6:#dad9d6;--sand-8:#bcbbb5;--sand-11:#63635e;--sand-12:#21201c;--accent-3:#e3f5f8;--accent-9:#0c818f;--accent-11:#006c78;--r:6px}
+*{box-sizing:border-box}
+body{margin:0;padding:34px 26px 90px;background:var(--sand-2);color:var(--sand-12);
+ font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1020px;margin:0 auto}
+h1{font-size:21px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:15px;font-weight:600;margin:40px 0 6px}
+p{margin:0 0 13px;max-width:70ch;color:var(--sand-11)}
+p.lead{color:var(--sand-12)}
+.meta{color:#8a8a85;font-size:12px;margin-bottom:24px}
+.bar{position:sticky;top:0;background:var(--sand-2);padding:12px 0;z-index:5;border-bottom:1px solid var(--sand-4);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.bar input{height:34px;padding:0 12px;border:1px solid var(--sand-6);border-radius:var(--r);font:inherit;font-size:13px;min-width:240px;background:#fff}
+.bar input:focus{outline:2px solid var(--accent-9);outline-offset:-1px}
+.bar .count{font-size:12px;color:var(--sand-11);font-family:"JetBrains Mono",ui-monospace,monospace}
+.bar button{font:inherit;font-size:12px;font-weight:500;padding:7px 12px;border:1px solid var(--accent-9);background:transparent;color:var(--accent-11);border-radius:var(--r);cursor:pointer}
+.bar button[aria-pressed="true"]{background:var(--accent-9);color:#fff}
+.map{background:#fff;border:1px solid var(--sand-4);border-radius:var(--r);overflow:hidden;margin-top:14px}
+.hd,.row{display:grid;grid-template-columns:32px 200px 86px 26px 32px 148px 1fr;gap:12px;align-items:center;padding:9px 16px}
+.hd{background:var(--sand-3);font-size:10.5px;font-weight:600;color:var(--sand-11);letter-spacing:.04em}
+.row{border-top:1px solid var(--sand-3);font-size:12.5px}
+.row:hover{background:var(--sand-2)}
+.sw{width:26px;height:26px;border-radius:4px;border:1px solid rgba(0,0,0,.12)}
+.cls{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11.5px;overflow:hidden;text-overflow:ellipsis}
+.hex,.newtok{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;color:var(--sand-11)}
+.newtok{color:var(--sand-12)}
+.arw{color:var(--sand-8);text-align:center}
+.roles{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.rbadge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;border:1px solid}
+.rchip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:var(--r);border:1px solid;font-size:11px;font-weight:600}
+.rdot{width:12px;height:12px;border-radius:50%;display:inline-block}
+.stroke{width:52px;height:6px;border-radius:3px;display:inline-block}
+table.spec{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+.spec th{text-align:left;font-weight:600;font-size:11px;color:#8a8a85;padding:0 14px 9px 0;border-bottom:1px solid var(--sand-4)}
+.spec td{padding:9px 14px 9px 0;border-bottom:1px solid var(--sand-3);vertical-align:top}
+.spec td:first-child{white-space:nowrap;font-weight:500;color:var(--sand-12)}
+code{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11.5px;background:var(--sand-3);padding:1px 5px;border-radius:3px}
+.warn{border-left:3px solid #cc4e00;background:#fff7ed;padding:11px 14px;border-radius:0 4px 4px 0;color:#582d1d;font-size:13px;max-width:72ch;margin:14px 0}
+.canvas{border-radius:var(--r);padding:20px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.hidden{display:none}
+</style></head><body><div class="wrap">
+<h1>Annotation colour remap</h1>
+<div class="meta">Proofing &middot; annotation colour picker &middot; 15 swatches to 15</div>
+<p class="lead">The proofing picker draws on the same <code>cv-*</code> dictionary as the action picker, so this is the second half of one change rather than a separate migration. The palette differs in two ways, and both follow from annotations sitting on user content rather than on product chrome.</p>
+<div class="bar">
+  <input id="q" type="text" placeholder="Filter by hex or family" aria-label="Filter">
+  <span class="count" id="n"></span>
+</div>
+<div class="map">
+  <div class="hd"><span></span><span>Existing</span><span>Shift</span><span></span><span></span><span>Scale token</span><span>Stroke on light and dark</span></div>
+<div class="row" data-s="#e5484d red">
+  <span class="sw" style="background:#e5484d"></span>
+  <span class="cls">#e5484d</span>
+  <span class="hex">&Delta;E 15.9</span>
+  <span class="arw">&rarr;</span>
+  <span class="sw" style="background:#b02a2d"></span>
+  <span class="newtok">--colors-red-9</span>
+  <span class="roles"><span class="stroke" style="background:#b02a2d;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="background:#b02a2d;box-shadow:0 0 0 2px #12110e"></span></span>
+</div>
+<div class="row" data-s="#e54d2f tomato">
+  <span class="sw" style="background:#e54d2f"></span>
+  <span class="cls">#e54d2f</span>
+  <span class="hex">&Delta;E 0.5</span>
+  <span class="arw">&rarr;</span>
+  <span class="sw" style="background:#e54d2e"></span>
+  <span class="newtok">--colors-tomato-9</span>
+  <span class="roles"><span class="stroke" style="background:#e54d2e;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="background:#e54d2e;box-shadow:0 0 0 2px #12110e"></span></span>
+</div>
+<div class="row" data-s="#f76b14 orange">
+  <span class="sw" style="background:#f76b14"></span>
+  <span class="cls">#f76b14</span>
+  <span class="hex">&Delta;E 0.3</span>
+  <span class="arw">&rarr;</span>
+  <span class="sw" style="background:#f76b15"></span>
+  <span class="newtok">--colors-orange-9</span>
+  <span class="roles"><span class="stroke" style="background:#f76b15;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="background:#f76b15;box-shadow:0 0 0 2px #12110e"></span></span>
+</div>
+<div class="row" data-s="#ffe628 yellow">
+  <span class="sw" style="background:#ffe628"></span>
+  <span class="cls">#ffe628</span>
+  <span class="hex">&Delta;E 0.2</span>
+  <span class="arw">&rarr;</span>
+  <span class="sw" style="background:#ffe629"></span>
+  <span class="newtok">--colors-yellow-9</span>
+  <span class="roles"><span class="stroke" style="background:#ffe629;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="background:#ffe629;box-shadow:0 0 0 2px #12110e"></span></span>
+</div>
+<div class="row" data-s="#bdee63 lime">
+  <span class="sw" style="background:#bdee63"></span>
+  <span class="cls">#bdee63</span>
+  <span class="hex">&Delta;E 0.0</span>
+  <span class="arw">&rarr;</span>
+  <span class="sw" style="background:#bdee63"></span>
+  <span class="newtok">--colors-lime-9</span>
+  <span class="roles"><span class="stroke" style="background:#bdee63;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="background:#bdee63;box-shadow:0 0 0 2px #12110e"></span></span>
+</div>
+<div class="row" data-s="#46a758 grass">
+  <span class="sw" style="background:#46a758"></span>
+  <span class="cls">#46a758</span>
+  <span class="hex">&Delta;E 0.0</span>
+  <span class="arw">&rarr;</span>
+  <span class="sw" style="background:#46a758"></span>
+  <span class="newtok">--colors-grass-9</span>
+  <span class="roles"><span class="stroke" style="background:#46a758;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="background:#46a758;box-shadow:0 0 0 2px #12110e"></span></span>
+</div>
+<div class="row" data-s="#1e7a3b grass">
+  <span class="sw" style="background:#1e7a3b"></span>
+  <span class="cls">#1e7a3b</span>
+  <span class="hex">&Delta;E 17.9</span>
+  <span class="arw">&rarr;</span>
+  <span class="sw" style="background:#46a758"></span>
+  <span class="newtok">--colors-grass-9</span>
+  <span class="roles"><span class="stroke" style="background:#46a758;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="background:#46a758;box-shadow:0 0 0 2px #12110e"></span></span>
+</div>
+<div class="row" data-s="#29a383 jade">
+  <span class="sw" style="background:#29a383"></span>
+  <span class="cls">#29a383</span>
+  <span class="hex">&Delta;E 0.0</span>
+  <span class="arw">&rarr;</span>
+  <span class="sw" style="background:#29a383"></span>
+  <span class="newtok">--colors-jade-9</span>
+  <span class="roles"><span class="stroke" style="background:#29a383;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="background:#29a383;box-shadow:0 0 0 2px #12110e"></span></span>
+</div>
+<div class="row" data-s="#24a2c7 cyan">
+  <span class="sw" style="background:#24a2c7"></span>
+  <span class="cls">#24a2c7</span>
+  <span class="hex">&Delta;E 1.9</span>
+  <span class="arw">&rarr;</span>
+  <span class="sw" style="background:#00a2c7"></span>
+  <span class="newtok">--colors-cyan-9</span>
+  <span class="roles"><span class="stroke" style="background:#00a2c7;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="background:#00a2c7;box-shadow:0 0 0 2px #12110e"></span></span>
+</div>
+<div class="row" data-s="#7ce2fe cyan">
+  <span class="sw" style="background:#7ce2fe"></span>
+  <span class="cls">#7ce2fe</span>
+  <span class="hex">&Delta;E 24.1</span>
+  <span class="arw">&rarr;</span>
+  <span class="sw" style="background:#00a2c7"></span>
+  <span class="newtok">--colors-cyan-9</span>
+  <span class="roles"><span class="stroke" style="background:#00a2c7;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="background:#00a2c7;box-shadow:0 0 0 2px #12110e"></span></span>
+</div>
+<div class="row" data-s="#1290ff blue">
+  <span class="sw" style="background:#1290ff"></span>
+  <span class="cls">#1290ff</span>
+  <span class="hex">&Delta;E 0.5</span>
+  <span class="arw">&rarr;</span>
+  <span class="sw" style="background:#0090ff"></span>
+  <span class="newtok">--colors-blue-9</span>
+  <span class="roles"><span class="stroke" style="background:#0090ff;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="background:#0090ff;box-shadow:0 0 0 2px #12110e"></span></span>
+</div>
+<div class="row" data-s="#6e56cf purple">
+  <span class="sw" style="background:#6e56cf"></span>
+  <span class="cls">#6e56cf</span>
+  <span class="hex">&Delta;E 11.7</span>
+  <span class="arw">&rarr;</span>
+  <span class="sw" style="background:#8e4ec6"></span>
+  <span class="newtok">--colors-purple-9</span>
+  <span class="roles"><span class="stroke" style="background:#8e4ec6;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="background:#8e4ec6;box-shadow:0 0 0 2px #12110e"></span></span>
+</div>
+<div class="row" data-s="#714ba9 plum">
+  <span class="sw" style="background:#714ba9"></span>
+  <span class="cls">#714ba9</span>
+  <span class="hex">&Delta;E 0.0</span>
+  <span class="arw">&rarr;</span>
+  <span class="sw" style="background:#714ba9"></span>
+  <span class="newtok">--colors-plum-9</span>
+  <span class="roles"><span class="stroke" style="background:#714ba9;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="background:#714ba9;box-shadow:0 0 0 2px #12110e"></span></span>
+</div>
+<div class="row" data-s="#d6409f pink">
+  <span class="sw" style="background:#d6409f"></span>
+  <span class="cls">#d6409f</span>
+  <span class="hex">&Delta;E 0.0</span>
+  <span class="arw">&rarr;</span>
+  <span class="sw" style="background:#d6409f"></span>
+  <span class="newtok">--colors-pink-9</span>
+  <span class="roles"><span class="stroke" style="background:#d6409f;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="background:#d6409f;box-shadow:0 0 0 2px #12110e"></span></span>
+</div>
+<div class="row" data-s="#ffffff white">
+  <span class="sw" style="background:#ffffff"></span>
+  <span class="cls">#ffffff</span>
+  <span class="hex">kept</span>
+  <span class="arw">&rarr;</span>
+  <span class="sw" style="background:#ffffff"></span>
+  <span class="newtok">--annotation-white</span>
+  <span class="roles"><span class="stroke" style="background:#ffffff;box-shadow:0 0 0 2px #000000"></span><span class="stroke" style="background:#ffffff;box-shadow:0 0 0 2px #000000"></span></span>
+</div>
+<div class="row" data-s="black new">
+  <span class="sw" style="background:#000000"></span>
+  <span class="cls">new</span>
+  <span class="hex">added</span>
+  <span class="arw">&rarr;</span>
+  <span class="sw" style="background:#12110e"></span>
+  <span class="newtok">--annotation-black</span>
+  <span class="roles"><span class="stroke" style="background:#000000;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="background:#000000;box-shadow:0 0 0 2px #fff"></span></span>
+</div>
+</div>
+
+<h2>Two rules that differ from everywhere else</h2>
+<div class="warn"><strong>Every stroke carries a 2px outline.</strong> Annotations sit on assets of unknown colour, so no palette can guarantee contrast and no ratio can be quoted. The outline is white or black, chosen by the luminance under the stroke. This is what makes the hue free to be pure identity, which is what annotation colour is actually for.</div>
+<div class="warn"><strong>Cyan is allowed here and excluded from the action picker.</strong> Teal is the brand accent, so a cyan workflow badge would read as an interactive control. An annotation sits on an image, not beside a button, so nothing competes and cyan is genuinely useful over photography. This is why the two pickers do not share a palette even though they share a dictionary.</div>
+
+<h2>The palette</h2>
+<p>Thirteen families at <code>--colors-{family}-9</code>, plus <code>--annotation-white</code> and <code>--annotation-black</code>. Step 9 is the solid-fill step: nothing sits on top of an annotation stroke, so the icon and text steps do not apply. Same reasoning as chart series.</p>
+<div class="canvas" style="background:#fff;border:1px solid var(--sand-4)"><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#b02a2d;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#e54d2e;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#f76b15;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#ffe629;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#bdee63;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#46a758;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#29a383;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#00a2c7;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#0090ff;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#3e63dd;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#8e4ec6;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#714ba9;box-shadow:0 0 0 2px #fff"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#d6409f;box-shadow:0 0 0 2px #fff"></span></div>
+<div class="canvas" style="background:#12110e"><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#b02a2d;box-shadow:0 0 0 2px #12110e"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#e54d2e;box-shadow:0 0 0 2px #12110e"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#f76b15;box-shadow:0 0 0 2px #12110e"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#ffe629;box-shadow:0 0 0 2px #12110e"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#bdee63;box-shadow:0 0 0 2px #12110e"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#46a758;box-shadow:0 0 0 2px #12110e"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#29a383;box-shadow:0 0 0 2px #12110e"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#00a2c7;box-shadow:0 0 0 2px #12110e"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#0090ff;box-shadow:0 0 0 2px #12110e"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#3e63dd;box-shadow:0 0 0 2px #12110e"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#8e4ec6;box-shadow:0 0 0 2px #12110e"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#714ba9;box-shadow:0 0 0 2px #12110e"></span><span class="stroke" style="width:36px;height:36px;border-radius:50%;background:#d6409f;box-shadow:0 0 0 2px #12110e"></span></div>
+<p>Minimum separation across the thirteen is 15.9 in CIE76, between Purple and Plum. That is the closest pair and the one to watch if the palette ever needs trimming.</p>
+
+<h2>Are these all tokens</h2>
+<p>Fourteen of the sixteen are: every hue resolves to <code>--colors-{family}-9</code> straight from the ramp. Two are not, and deliberately.</p>
+<table class="spec"><thead><tr><th>Token</th><th>Value</th><th>Why it sits outside the ramp</th></tr></thead><tbody>
+<tr><td><code>--annotation-white</code></td><td><code>#ffffff</code></td><td>Sand-1 is <code>#fdfdfc</code>, slightly warm. Over photography a warm near-white reads cream and loses the maximum-contrast property the marker exists for.</td></tr>
+<tr><td><code>--annotation-black</code></td><td><code>#000000</code></td><td>Sand-12 is <code>#21201c</code>, warm enough to read brown against an image. A marker whose only job is contrast against unknown content should be at the extreme.</td></tr>
+<tr><td><code>--annotation-outline-light</code></td><td><code>#ffffff</code></td><td>The 2px stroke outline, used when the content underneath is dark.</td></tr>
+<tr><td><code>--annotation-outline-dark</code></td><td><code>#000000</code></td><td>Used when the content underneath is light. Chosen at render time from the local luminance, not authored.</td></tr>
+</tbody></table>
+<p>Naming them matters more than which value they hold. If they stay as raw hex in the component they will drift, and if they are forced into the neutral ramp they stop doing their job. A named token outside the ramp is the honest answer, the same way the capacity triad and the chart series are named signal palettes rather than ramp applications.</p>
+<div class="warn"><strong>One more value needs a token.</strong> The proofing canvas is <code>#12110e</code>, hardcoded. It is the only legitimate dark surface in the product, since it is a viewing environment rather than chrome, and it should read from a dark-mode surface token rather than a literal.</div>
+
+<h2>What changed from today</h2>
+<table class="spec"><thead><tr><th>Change</th><th>Detail</th></tr></thead><tbody>
+<tr><td>Gray and Brown excluded</td><td>Neither appears in the current picker and both have low salience over photography.</td></tr>
+<tr><td><code>#1e7a3b</code> merges into Grass</td><td>A dark green sitting 17.9 from <code>#46a758</code>. Two greens in a fifteen-swatch palette is one too many.</td></tr>
+<tr><td><code>#7ce2fe</code> merges into Cyan</td><td>Sky at 24.1 from Cyan. A pale sky blue is close to invisible over light imagery even with an outline.</td></tr>
+<tr><td>Black added</td><td>The current palette has white and no black, so there is no marker for light imagery that does not rely on the outline alone.</td></tr>
+<tr><td>Everything else is a token swap</td><td>Nine of the fifteen move by 2.0 or less in CIE76, so most of the palette looks unchanged.</td></tr>
+</tbody></table>
+<script>
+const rows=[...document.querySelectorAll('.row')];const cnt=document.getElementById('n');
+function apply(){const q=document.getElementById('q').value.toLowerCase();let n=0;
+ rows.forEach(r=>{const ok=r.dataset.s.includes(q);r.classList.toggle('hidden',!ok);if(ok)n++});
+ cnt.textContent=n+' of '+rows.length;}
+document.getElementById('q').addEventListener('input',apply);apply();
+</script></div></body></html>
