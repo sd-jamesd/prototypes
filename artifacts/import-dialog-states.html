@@ -100,8 +100,8 @@
 <div class="page">
 
   <header>
-    <div class="titlebar"><h1>Dynamic Loader — states</h1><span class="badge">v0.5 · 2026-07-29</span></div>
-    <p>Generic loader for any queued action where the user chooses to wait. Two triggers live today (a tasks trigger and an AI trigger); the copy stays object-agnostic so it serves any of them. Updates in place and auto-refreshes on completion, with a close-and-notify escape. Step through states in the live preview; the handoff below has the copy strings to pull verbatim.</p>
+    <div class="titlebar"><h1>Dynamic Loader — states</h1><span class="badge">v0.6 · 2026-07-30</span></div>
+    <p>Generic loader for any queued action where the user chooses to wait. Two triggers live today (a tasks trigger and an AI trigger); the copy stays object-agnostic so it serves any of them. Updates in place while open and auto-refreshes on completion. Closing keeps it running in the background — no notification this release, so the result shows when the user reopens or reloads. Step through states in the live preview; the handoff below has the copy strings to pull verbatim.</p>
   </header>
 
   <!-- LIVE PREVIEW -->
@@ -134,7 +134,7 @@
         <div class="queue"><span class="pos" id="queue-pos">3rd</span><span class="pos-label">in queue</span></div>
         <h2 id="dlg-title">Waiting to start</h2>
         <p class="body" id="queue-body">Your request is queued. It'll begin shortly.</p>
-        <div class="footer"><button class="btn-link">Close and notify me when it's done</button></div>
+        <div class="footer"><button class="btn-link">Close and keep working</button></div>
       </div>
 
       <!-- IN PROGRESS -->
@@ -150,7 +150,7 @@
           <div style="height:16px"></div>
         </div>
         <p class="rotating" id="rotating">Getting started…</p>
-        <div class="footer"><button class="btn-link">Close and notify me when it's done</button></div>
+        <div class="footer"><button class="btn-link">Close and keep working</button></div>
       </div>
 
       <!-- COMPLETE -->
@@ -185,7 +185,7 @@
           <div class="queue"><span class="pos">3rd</span><span class="pos-label">in queue</span></div>
           <h2>Waiting to start</h2>
           <p class="body">Your request is queued. It'll begin shortly.</p>
-          <div class="footer"><button class="btn-link">Close and notify me when it's done</button></div>
+          <div class="footer"><button class="btn-link">Close and keep working</button></div>
         </div>
       </div>
       <div class="spec">
@@ -201,7 +201,7 @@
               <li>1st: <span class="copy">You're next. Starting any moment.</span></li>
             </ul>
           </dd>
-          <dt>Action</dt><dd><span class="copy">Close and notify me when it's done</span> — dismisses dialog, job continues, fires notification on complete.</dd>
+          <dt>Action</dt><dd><span class="copy">Close and keep working</span> — dismisses the dialog; the job keeps running in the background. No notification this release — the result shows on reopen or reload.</dd>
         </dl>
         <p class="note">Generic copy — the dialog serves any queued action, so nothing names a specific object type. The ticking position proves the job is alive while nothing else moves. If position can't be resolved, fall back to <span class="copy" style="font-size:12px">Larger jobs can take a few minutes.</span> and keep the spinner.</p>
       </div>
@@ -215,7 +215,7 @@
           <h2>Working on it</h2>
           <p class="body">This is running now. Larger jobs take a few minutes.</p>
           <p class="rotating" style="margin-top:16px">Working through your request…</p>
-          <div class="footer"><button class="btn-link">Close and notify me when it's done</button></div>
+          <div class="footer"><button class="btn-link">Close and keep working</button></div>
         </div>
       </div>
       <div class="spec">
@@ -232,7 +232,7 @@
               <li><span class="copy">Still processing…</span></li>
             </ul>
           </dd>
-          <dt>Action</dt><dd><span class="copy">Close and notify me when it's done</span></dd>
+          <dt>Action</dt><dd><span class="copy">Close and keep working</span></dd>
         </dl>
         <p class="note">Default version. Indeterminate spinner, no progress bar. The rotating line must keep moving — a static line on an infinite spinner reads as hung. No "almost there" copy: don't imply imminent completion the system can't confirm.</p>
       </div>
@@ -247,7 +247,7 @@
           <div class="count">184 of 340 done</div>
           <div class="bar"><div class="fill" style="width:54%"></div></div>
           <p class="rotating">Working through your request…</p>
-          <div class="footer"><button class="btn-link">Close and notify me when it's done</button></div>
+          <div class="footer"><button class="btn-link">Close and keep working</button></div>
         </div>
       </div>
       <div class="spec">
@@ -257,7 +257,7 @@
           <dt>Title</dt><dd><span class="copy">Working on it</span></dd>
           <dt>Count</dt><dd><span class="copy">{done} of {total} done</span> — drives the progress bar width.</dd>
           <dt>Rotating</dt><dd>Same lines as the no-count version.</dd>
-          <dt>Action</dt><dd><span class="copy">Close and notify me when it's done</span></dd>
+          <dt>Action</dt><dd><span class="copy">Close and keep working</span></dd>
         </dl>
         <p class="note">Only use if the poll returns a reliable count. A real number is proof, not a promise.</p>
       </div>
