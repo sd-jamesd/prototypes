@@ -1,0 +1,103 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gray identity vs disabled</title><style>
+:root{--sand-1:#fdfdfc;--sand-2:#f9f9f8;--sand-3:#f1f0ef;--sand-4:#e9e9e6;--sand-6:#dad9d6;--sand-11:#63635e;--sand-12:#21201c;--accent-9:#0c818f;--r:6px}
+*{box-sizing:border-box}
+body{margin:0;padding:34px 26px 90px;background:var(--sand-2);color:var(--sand-12);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:960px;margin:0 auto}
+h1{font-size:21px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:15px;font-weight:600;margin:40px 0 6px}
+h3{font-size:12px;font-weight:600;color:var(--sand-11);margin:22px 0 8px}
+p{margin:0 0 13px;max-width:70ch;color:var(--sand-11)}
+p.lead{color:var(--sand-12)}
+.meta{color:#8a8a85;font-size:12px;margin-bottom:26px}
+.stage{background:#fff;border:1px solid var(--sand-4);border-radius:var(--r);padding:22px;margin:12px 0}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.col{display:flex;flex-direction:column;gap:10px}
+.ttl{font-size:11.5px;font-weight:600}
+.rw{display:flex;gap:9px;align-items:center;min-height:34px}
+.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:10.5px;color:#8a8a85;margin-top:2px}
+.bdg{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:1px solid;flex:none}
+.chp{display:inline-flex;align-items:center;padding:3px 10px;border-radius:var(--r);border:1px solid;font-size:12px;font-weight:600;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;height:32px;padding:0 14px;border-radius:var(--r);border:1px solid;font-size:13px;font-weight:500}
+.dt{width:12px;height:12px;border-radius:50%;display:inline-block;flex:none}
+.lbl{font-size:12.5px}
+.side{display:flex;flex-direction:column;gap:12px}
+.pr{display:grid;grid-template-columns:70px 1fr 1fr;gap:16px;align-items:center}
+.prl{font-size:11px;color:#8a8a85;font-weight:600}
+.hdr{display:grid;grid-template-columns:70px 1fr 1fr;gap:16px;font-size:11px;font-weight:600;color:#8a8a85;padding-bottom:8px;border-bottom:1px solid var(--sand-4);margin-bottom:12px}
+.tbl{border:1px solid var(--sand-4);border-radius:var(--r);overflow:hidden;background:#fff}
+.tr{display:grid;grid-template-columns:50px 1fr 200px;gap:14px;padding:11px 16px;border-top:1px solid var(--sand-3);align-items:center;font-size:13px}
+.tr.th{border-top:0;background:var(--sand-3);font-size:11px;font-weight:600;color:var(--sand-11)}
+.mut{color:var(--sand-11)}
+.warn{border-left:3px solid #cc4e00;background:#fff7ed;padding:11px 14px;border-radius:0 4px 4px 0;color:#582d1d;font-size:13px;max-width:72ch;margin:14px 0}
+code{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11.5px;background:var(--sand-3);padding:1px 5px;border-radius:3px}
+body.gs .stage{filter:grayscale(1)}
+.bar{display:flex;gap:8px;margin:16px 0 0}
+.bar button{font:inherit;font-size:12px;font-weight:500;padding:7px 12px;border:1px solid var(--accent-9);background:transparent;color:var(--accent-9);border-radius:var(--r);cursor:pointer}
+.bar button[aria-pressed="true"]{background:var(--accent-9);color:#fff}
+</style></head><body><div class="wrap">
+<h1>Gray identity against disabled</h1>
+<div class="meta">Gray is <code>--colors-gray</code>. Disabled is <code>--colors-sand</code> at lower steps. Both are grey, which is the problem.</div>
+
+<h2>Three treatments, same components</h2>
+<div class="stage"><div class="cols"><div class="col">
+  <div class="ttl">Gray identity, as specced</div>
+  <div class="rw"><span class="bdg" style="background:#f0f0f0;border-color:#bbbbbb;color:#646464;width:22px;height:22px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="bdg" style="background:#f0f0f0;border-color:#bbbbbb;color:#646464;width:28px;height:28px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="bdg" style="background:#f0f0f0;border-color:#bbbbbb;color:#646464;width:36px;height:36px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></div>
+  <div class="rw"><span class="chp" style="background:#f0f0f0;border-color:#bbbbbb;color:#646464">Uncategorised</span></div>
+  <div class="rw"><span class="btn" style="background:#f0f0f0;border-color:#bbbbbb;color:#646464">Apply</span></div>
+  <div class="rw"><span class="dt" style="background:#646464"></span><span class="lbl" style="color:#646464">Timeline marker</span></div>
+  <div class="num">icon on fill 5.19:1</div>
+</div><div class="col">
+  <div class="ttl">Gray identity, step 12 icon</div>
+  <div class="rw"><span class="bdg" style="background:#f0f0f0;border-color:#bbbbbb;color:#202020;width:22px;height:22px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="bdg" style="background:#f0f0f0;border-color:#bbbbbb;color:#202020;width:28px;height:28px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="bdg" style="background:#f0f0f0;border-color:#bbbbbb;color:#202020;width:36px;height:36px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></div>
+  <div class="rw"><span class="chp" style="background:#f0f0f0;border-color:#bbbbbb;color:#202020">Uncategorised</span></div>
+  <div class="rw"><span class="btn" style="background:#f0f0f0;border-color:#bbbbbb;color:#202020">Apply</span></div>
+  <div class="rw"><span class="dt" style="background:#202020"></span><span class="lbl" style="color:#202020">Timeline marker</span></div>
+  <div class="num">icon on fill 14.30:1</div>
+</div><div class="col">
+  <div class="ttl">Disabled</div>
+  <div class="rw"><span class="bdg" style="background:#f9f9f8;border-color:#dad9d6;color:#8d8d86;width:22px;height:22px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="bdg" style="background:#f9f9f8;border-color:#dad9d6;color:#8d8d86;width:28px;height:28px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="bdg" style="background:#f9f9f8;border-color:#dad9d6;color:#8d8d86;width:36px;height:36px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></div>
+  <div class="rw"><span class="chp" style="background:#f9f9f8;border-color:#dad9d6;color:#8d8d86">Uncategorised</span></div>
+  <div class="rw"><span class="btn" style="background:#f9f9f8;border-color:#dad9d6;color:#8d8d86">Apply</span></div>
+  <div class="rw"><span class="dt" style="background:#8d8d86"></span><span class="lbl" style="color:#8d8d86">Timeline marker</span></div>
+  <div class="num">icon on fill 3.17:1</div>
+</div></div></div>
+<p>The left column is the collision: a live Gray badge and a disabled badge are both pale grey at low contrast, 5.19:1 against 3.17:1. The middle column takes the icon to step 12, which is 14.30:1 and reads as unmistakably present.</p>
+
+<h2>Side by side, the test that matters</h2>
+<p>Gray identity on the left of each pair, disabled on the right. No labels, nothing to compare against.</p>
+<h3>As specced, icon at step 11</h3>
+<div class="stage"><div class="hdr"><span></span><span>Gray identity</span><span>Disabled</span></div><div class="side">
+<div class="pr"><span class="prl">Badge</span><span class="bdg" style="background:#f0f0f0;border-color:#bbbbbb;color:#646464;width:26px;height:26px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="bdg" style="background:#f9f9f8;border-color:#dad9d6;color:#8d8d86;width:26px;height:26px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></div>
+<div class="pr"><span class="prl">Chip</span><span class="chp" style="background:#f0f0f0;border-color:#bbbbbb;color:#646464">Uncategorised</span><span class="chp" style="background:#f9f9f8;border-color:#dad9d6;color:#8d8d86">Uncategorised</span></div>
+<div class="pr"><span class="prl">Button</span><span class="btn" style="background:#f0f0f0;border-color:#bbbbbb;color:#646464">Apply</span><span class="btn" style="background:#f9f9f8;border-color:#dad9d6;color:#8d8d86">Apply</span></div>
+<div class="pr"><span class="prl">Dot</span><span class="dt" style="background:#646464"></span><span class="dt" style="background:#8d8d86"></span></div>
+</div></div>
+<h3>Proposed, icon at step 12</h3>
+<div class="stage"><div class="hdr"><span></span><span>Gray identity</span><span>Disabled</span></div><div class="side">
+<div class="pr"><span class="prl">Badge</span><span class="bdg" style="background:#f0f0f0;border-color:#bbbbbb;color:#202020;width:26px;height:26px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><span class="bdg" style="background:#f9f9f8;border-color:#dad9d6;color:#8d8d86;width:26px;height:26px"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></div>
+<div class="pr"><span class="prl">Chip</span><span class="chp" style="background:#f0f0f0;border-color:#bbbbbb;color:#202020">Uncategorised</span><span class="chp" style="background:#f9f9f8;border-color:#dad9d6;color:#8d8d86">Uncategorised</span></div>
+<div class="pr"><span class="prl">Button</span><span class="btn" style="background:#f0f0f0;border-color:#bbbbbb;color:#202020">Apply</span><span class="btn" style="background:#f9f9f8;border-color:#dad9d6;color:#8d8d86">Apply</span></div>
+<div class="pr"><span class="prl">Dot</span><span class="dt" style="background:#202020"></span><span class="dt" style="background:#8d8d86"></span></div>
+</div></div>
+
+<h2>In a row, next to a real colour</h2>
+<div class="stage"><div class="tbl">
+<div class="tr th"><span>Step</span><span>Owner</span><span>Category</span></div>
+<div class="tr"><span>1</span><span>Colin Kelly</span><span><span class="chp" style="background:#e9f6e9;border-color:#b2ddb5;color:#203c25">Release work</span></span></div>
+<div class="tr"><span>2</span><span>Maria Coleman</span><span><span class="chp" style="background:#f0f0f0;border-color:#bbbbbb;color:#202020">Uncategorised</span></span></div>
+<div class="tr"><span>3</span><span class="mut">Not assigned</span><span><span class="chp" style="background:#f9f9f8;border-color:#dad9d6;color:#8d8d86">Unavailable</span></span></div>
+</div></div>
+<p>Row 1 is a chromatic family. Row 2 is Gray at step 12, a deliberate choice meaning uncategorised. Row 3 is disabled. The three should read as three different things.</p>
+
+<div class="bar"><button id="gs" aria-pressed="false">Greyscale</button></div>
+<p style="margin-top:10px">Greyscale changes nothing here, which is the point: this pair was never distinguished by hue, only by contrast.</p>
+
+<div class="warn"><strong>The rule this establishes.</strong> Disabled is signalled by contrast, not by hue. A live state never renders below roughly 5:1 and disabled never renders above roughly 3.5:1. That gap is the whole signal, and it holds for chips, buttons, rows and inputs, not only badges. The nine chromatic families keep step 11 because they are told apart from disabled by hue, a channel disabled does not use.</div>
+
+<div class="warn"><strong>What this does not fix.</strong> Grey still means uncategorised. If config picks Gray for a live workflow step it will read as "no category chosen" even at 14.30:1. That is guidance for config, not a token problem.</div>
+<script>
+document.getElementById('gs').addEventListener('click',e=>{const on=e.currentTarget.getAttribute('aria-pressed')==='true';
+e.currentTarget.setAttribute('aria-pressed',String(!on));document.body.classList.toggle('gs',!on);});
+</script>
+</div></body></html>
