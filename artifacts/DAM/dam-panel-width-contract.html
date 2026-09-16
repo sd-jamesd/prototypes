@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DAM panel width contract — lightbox and edit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --neutral-1:#fdfdfc; --neutral-2:#f9f9f8; --neutral-3:#f1f0ef; --neutral-4:#e9e8e6;
+  --neutral-5:#e2e1de; --neutral-6:#dad9d6; --neutral-7:#d0ceca; --neutral-8:#bcbbb6;
+  --neutral-9:#8e8d86; --neutral-10:#83827c; --neutral-11:#64635e; --neutral-12:#21201c;
+  --accent-3:#E4F5FC; --accent-5:#C4E5F3; --accent-7:#95C9DD; --accent-9:#0B6E8A;
+  --accent-10:#005F7B; --accent-11:#197592; --accent-12:#1B404E;
+  --surface-default:var(--neutral-1); --surface-subtle:var(--neutral-2);
+  --surface-muted:var(--neutral-3); --surface-emphasis:var(--neutral-4);
+  --text-default:var(--neutral-12); --text-muted:var(--neutral-11); --text-subtle:var(--neutral-10);
+  --border-subtle:var(--neutral-3); --border-default:var(--neutral-6); --border-emphasis:var(--neutral-7);
+  --primary-default:var(--accent-9);
+  --nav-bg:#1b404e;
+  --font-size-1:12px; --font-size-2:14px; --font-size-3:16px;
+  --font-size-4:18px; --font-size-5:24px; --font-size-6:32px;
+  --spacing-1:4px; --spacing-2:8px; --spacing-3:12px; --spacing-4:16px;
+  --spacing-5:20px; --spacing-6:24px; --spacing-7:32px; --spacing-9:48px;
+  --radius-1:3px; --radius-2:4px; --radius-3:6px; --radius-4:8px; --radius-full:9999px;
+  --region-panel:var(--accent-9);
+  --region-panel-fill:var(--accent-3);
+  --region-media:var(--neutral-5);
+  --region-rail:var(--neutral-8);
+  --scrim:rgba(33,32,28,.30);
+  --warn:#8a4b0b;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --neutral-1:#12110e; --neutral-2:#191915; --neutral-3:#23221e; --neutral-4:#2a2924;
+    --neutral-5:#32302b; --neutral-6:#3b3a33; --neutral-7:#494741; --neutral-8:#626059;
+    --neutral-9:#6f6d66; --neutral-10:#7d7b73; --neutral-11:#b5b3ab; --neutral-12:#eeedea;
+    --accent-3:#032b38; --accent-5:#00465c; --accent-7:#006884; --accent-9:#0b6e8a;
+    --accent-11:#62c9ed; --accent-12:#baedff;
+    --region-panel:#1a95b3; --region-panel-fill:#00465c;
+    --region-media:var(--neutral-5); --region-rail:var(--neutral-7);
+    --scrim:rgba(0,0,0,.45); --warn:#e0a56a;
+  }
+}
+:root[data-theme="dark"]{
+  --neutral-1:#12110e; --neutral-2:#191915; --neutral-3:#23221e; --neutral-4:#2a2924;
+  --neutral-5:#32302b; --neutral-6:#3b3a33; --neutral-7:#494741; --neutral-8:#626059;
+  --neutral-9:#6f6d66; --neutral-10:#7d7b73; --neutral-11:#b5b3ab; --neutral-12:#eeedea;
+  --accent-3:#032b38; --accent-5:#00465c; --accent-7:#006884; --accent-9:#0b6e8a;
+  --accent-11:#62c9ed; --accent-12:#baedff;
+  --region-panel:#1a95b3; --region-panel-fill:#00465c;
+  --region-media:var(--neutral-5); --region-rail:var(--neutral-7);
+  --scrim:rgba(0,0,0,.45); --warn:#e0a56a;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--surface-default); color:var(--text-default);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:var(--font-size-2); line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px; margin:0 auto; padding:var(--spacing-7) var(--spacing-6) 96px}
+h1{font-size:var(--font-size-6); font-weight:700; letter-spacing:-.02em; margin:0 0 var(--spacing-3); line-height:1.15}
+h2{font-size:var(--font-size-5); font-weight:600; letter-spacing:-.01em; margin:0 0 var(--spacing-3)}
+h3{font-size:var(--font-size-3); font-weight:600; margin:0 0 var(--spacing-2)}
+p{margin:0 0 var(--spacing-4); max-width:74ch; color:var(--text-muted)}
+p.lede{font-size:var(--font-size-3); color:var(--text-default)}
+strong{color:var(--text-default); font-weight:600}
+code{font-family:Inter,sans-serif; font-weight:600; font-size:.94em;
+  background:var(--surface-muted); border:1px solid var(--border-subtle);
+  border-radius:var(--radius-2); padding:1px 5px; color:var(--text-default)}
+
+.masthead{border-bottom:1px solid var(--border-default); padding-bottom:var(--spacing-6); margin-bottom:var(--spacing-7)}
+.meta{display:flex; flex-wrap:wrap; gap:var(--spacing-2); margin-top:var(--spacing-4)}
+.tag{font-size:var(--font-size-1); font-weight:600; border-radius:var(--radius-full);
+  padding:3px 10px; border:1px solid var(--border-default); color:var(--text-muted);
+  background:var(--surface-subtle)}
+.tag.live{border-color:var(--accent-7); color:var(--accent-11); background:var(--accent-3)}
+
+section{margin-bottom:64px}
+.sechead{display:flex; align-items:baseline; gap:var(--spacing-3); margin-bottom:var(--spacing-4);
+  border-top:1px solid var(--border-default); padding-top:var(--spacing-5)}
+.sechead h2{margin:0}
+.sechead .n{font-size:var(--font-size-2); font-weight:600; color:var(--text-subtle); flex:none}
+
+/* controls */
+.controls{background:var(--surface-subtle); border:1px solid var(--border-default);
+  border-radius:var(--radius-4); padding:var(--spacing-5); margin-bottom:var(--spacing-5)}
+.ctl-row{display:flex; flex-wrap:wrap; gap:var(--spacing-5); align-items:flex-end}
+.ctl{flex:1 1 240px; min-width:220px}
+.ctl label{display:block; font-size:var(--font-size-1); font-weight:600;
+  color:var(--text-muted); margin-bottom:var(--spacing-2)}
+.ctl output{font-weight:600; color:var(--text-default); font-variant-numeric:tabular-nums}
+input[type=range]{width:100%; accent-color:var(--primary-default); height:22px}
+.seg{display:inline-flex; border:1px solid var(--border-default); border-radius:var(--radius-3);
+  overflow:hidden; background:var(--surface-default)}
+.seg button{appearance:none; border:0; background:transparent; font:inherit; font-weight:600;
+  font-size:var(--font-size-2); padding:7px 16px; cursor:pointer; color:var(--text-muted)}
+.seg button+button{border-left:1px solid var(--border-default)}
+.seg button[aria-pressed=true]{background:var(--primary-default); color:#fff}
+.seg button:focus-visible{outline:2px solid var(--accent-11); outline-offset:-2px}
+.presets{display:flex; flex-wrap:wrap; gap:var(--spacing-2); margin-top:var(--spacing-4)}
+.presets button{appearance:none; font:inherit; font-size:var(--font-size-1); font-weight:600;
+  border:1px solid var(--border-default); background:var(--surface-default); color:var(--text-muted);
+  border-radius:var(--radius-full); padding:4px 12px; cursor:pointer}
+.presets button:hover{border-color:var(--border-emphasis); color:var(--text-default)}
+.presets button:focus-visible{outline:2px solid var(--accent-11); outline-offset:1px}
+
+/* diagrams */
+.stage{display:grid; grid-template-columns:1fr 1fr; gap:var(--spacing-5)}
+@media(max-width:860px){.stage{grid-template-columns:1fr}}
+.pane{border:1px solid var(--border-default); border-radius:var(--radius-4);
+  background:var(--surface-subtle); padding:var(--spacing-4); overflow:hidden}
+.pane h3{display:flex; align-items:center; gap:var(--spacing-2); margin-bottom:var(--spacing-3)}
+.pane h3 .dot{width:7px; height:7px; border-radius:var(--radius-full); flex:none}
+.pane.now h3 .dot{background:var(--neutral-8)}
+.pane.next h3 .dot{background:var(--primary-default)}
+
+.viewport{position:relative; background:var(--surface-emphasis);
+  border:1px solid var(--border-emphasis); border-radius:var(--radius-2); overflow:hidden}
+.vrail{position:absolute; left:0; top:0; bottom:0; background:var(--nav-bg)}
+.vgrid{position:absolute; top:0; bottom:0; right:0;
+  background-image:linear-gradient(var(--border-default) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--border-default) 1px,transparent 1px);
+  background-size:26px 26px; opacity:.6}
+.scrim{position:absolute; inset:0; background:var(--scrim)}
+.modal{position:absolute; display:flex; background:var(--surface-default);
+  border:1px solid var(--border-emphasis); border-radius:var(--radius-2);
+  overflow:hidden; box-shadow:0 6px 24px rgba(0,0,0,.18)}
+.chromebar{position:absolute; left:0; right:0; background:var(--surface-muted);
+  border-bottom:1px solid var(--border-default); z-index:2}
+.chromebar.foot{border-bottom:0; border-top:1px solid var(--border-default)}
+.cols{display:flex; width:100%; height:100%}
+.reg{position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden}
+.reg .lab{font-size:10px; font-weight:700; letter-spacing:.02em; white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+.reg-media{background:var(--region-media)}
+.reg-media .lab{color:var(--text-subtle)}
+.reg-rail{background:var(--region-rail)}
+.reg-panel{background:var(--region-panel-fill); border-left:2px solid var(--region-panel)}
+.reg-panel.left{border-left:0; border-right:2px solid var(--region-panel)}
+.reg-panel .lab{color:var(--accent-11)}
+.asset{position:absolute; background:var(--neutral-9); border-radius:1px; opacity:.85}
+
+.readout{margin-top:var(--spacing-4); border-top:1px solid var(--border-default); padding-top:var(--spacing-3)}
+.rrow{display:flex; justify-content:space-between; gap:var(--spacing-3); padding:3px 0;
+  font-size:var(--font-size-1); font-variant-numeric:tabular-nums}
+.rrow span:first-child{color:var(--text-muted)}
+.rrow span:last-child{font-weight:600}
+.delta{font-size:10px; font-weight:600; margin-left:6px; color:var(--accent-11)}
+.delta.neg{color:var(--warn)}
+.flag{margin-top:var(--spacing-3); font-size:var(--font-size-1); font-weight:600;
+  color:var(--warn); background:var(--surface-muted); border:1px solid var(--border-default);
+  border-left:2px solid var(--warn); border-radius:var(--radius-2); padding:7px 10px; display:none}
+.flag.on{display:block}
+
+/* legend */
+.legend{display:flex; flex-wrap:wrap; gap:var(--spacing-4); margin-top:var(--spacing-4);
+  font-size:var(--font-size-1); color:var(--text-muted)}
+.legend i{display:inline-block; width:11px; height:11px; border-radius:2px;
+  margin-right:6px; vertical-align:-1px}
+
+/* spec table */
+.spec{width:100%; border-collapse:collapse; margin-bottom:var(--spacing-5)}
+.spec th,.spec td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--border-subtle);
+  vertical-align:top; font-size:var(--font-size-2)}
+.spec th{font-size:var(--font-size-1); font-weight:600; color:var(--text-subtle);
+  border-bottom:1px solid var(--border-default)}
+.spec td:first-child{font-weight:600; white-space:nowrap}
+.spec td:last-child{color:var(--text-muted)}
+.spec tr:last-child td{border-bottom:0}
+.tablewrap{overflow-x:auto; border:1px solid var(--border-default);
+  border-radius:var(--radius-4); background:var(--surface-subtle)}
+
+/* aspect evidence */
+.aspects{display:grid; grid-template-columns:repeat(4,1fr); gap:var(--spacing-4)}
+@media(max-width:780px){.aspects{grid-template-columns:repeat(2,1fr)}}
+.acard{border:1px solid var(--border-default); border-radius:var(--radius-4);
+  background:var(--surface-subtle); padding:var(--spacing-4)}
+.acard h3{font-size:var(--font-size-2); margin-bottom:var(--spacing-1)}
+.acard .sub{font-size:var(--font-size-1); color:var(--text-subtle); margin-bottom:var(--spacing-3);
+  font-variant-numeric:tabular-nums}
+.abox{position:relative; background:var(--region-media); border:1px solid var(--border-default);
+  border-radius:var(--radius-1); margin-bottom:var(--spacing-2)}
+.abox .fitnow{position:absolute; border:1px dashed var(--neutral-9); background:transparent}
+.abox .fitnext{position:absolute; background:var(--accent-7); opacity:.65}
+.again{font-size:var(--font-size-1); font-weight:600; color:var(--accent-11);
+  font-variant-numeric:tabular-nums}
+
+/* rule list */
+.rules{list-style:none; padding:0; margin:0 0 var(--spacing-5); max-width:78ch}
+.rules li{border-left:2px solid var(--border-default); padding:0 0 var(--spacing-4) var(--spacing-4);
+  margin-bottom:var(--spacing-4); color:var(--text-muted)}
+.rules li:last-child{margin-bottom:0; padding-bottom:0}
+.rules li b{display:block; color:var(--text-default); font-weight:600; margin-bottom:2px}
+.rules li.hot{border-left-color:var(--primary-default)}
+
+.callout{border:1px solid var(--border-default); border-left:2px solid var(--warn);
+  background:var(--surface-subtle); border-radius:var(--radius-3);
+  padding:var(--spacing-4) var(--spacing-5); margin-bottom:var(--spacing-5); max-width:78ch}
+.callout p:last-child{margin-bottom:0}
+.callout b{color:var(--text-default)}
+.foot{border-top:1px solid var(--border-default); padding-top:var(--spacing-4);
+  font-size:var(--font-size-1); color:var(--text-subtle)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <h1>Panel width contract</h1>
+  <p class="lede">Two surfaces, two allocation rules. The lightbox gives reclaimed width to the panel because its media box is already height-constrained. Edit gives it to the panel because the panel is the work.</p>
+  <p>Revised 15 Sep. Both panels are now a flat <code>400px</code> under one shared token, the percentages having failed the resolution test in section 03. The step to 520 is deferred to Phase 3 and applies to edit only. Small screens are handled by narrowing the modal gutter rather than the panel.</p>
+  <div class="meta">
+    <span class="tag live">Proposal, not yet ratified</span>
+    <span class="tag">Measured from build captures, 14 and 15 Sep 2026</span>
+    <span class="tag">Lightbox half blocked on SCR-210</span>
+  </div>
+</header>
+
+<section>
+  <div class="sechead"><span class="n">01</span><h2>Simulator</h2></div>
+  <p>Drag the viewport. Today's behaviour is on the left, the proposed contract on the right, drawn to the same scale so the regions compare directly.</p>
+
+  <div class="controls">
+    <div class="ctl-row">
+      <div style="flex:none">
+        <label>Surface</label>
+        <div class="seg" role="group" aria-label="Surface">
+          <button id="sLight" aria-pressed="true">Lightbox</button>
+          <button id="sEdit" aria-pressed="false">Edit</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <label for="vw">Viewport width <output id="vwOut">1865</output> px</label>
+        <input type="range" id="vw" min="1100" max="3440" step="4" value="1865">
+      </div>
+      <div class="ctl">
+        <label for="vh">Viewport height <output id="vhOut">1003</output> px</label>
+        <input type="range" id="vh" min="700" max="1600" step="4" value="1003">
+      </div>
+    </div>
+    <div class="presets">
+      <button data-w="1280" data-h="800">1280 × 800</button>
+      <button data-w="1512" data-h="945">1512 × 945 MacBook</button>
+      <button data-w="1865" data-h="1003">1865 × 1003 your capture</button>
+      <button data-w="1920" data-h="1080">1920 × 1080</button>
+      <button data-w="2560" data-h="1440">2560 × 1440</button>
+      <button data-w="3440" data-h="1440">3440 × 1440 ultrawide</button>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="pane now">
+      <h3><span class="dot"></span>Today</h3>
+      <div class="viewport" id="vpNow"></div>
+      <div class="readout" id="roNow"></div>
+      <div class="flag" id="flagNow"></div>
+    </div>
+    <div class="pane next">
+      <h3><span class="dot"></span>Proposed</h3>
+      <div class="viewport" id="vpNext"></div>
+      <div class="readout" id="roNext"></div>
+      <div class="flag" id="flagNext"></div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span><i style="background:var(--region-panel-fill);border:1px solid var(--region-panel)"></i>Panel</span>
+    <span><i style="background:var(--region-rail)"></i>Rail, fixed, outside the clamp</span>
+    <span><i style="background:var(--region-media)"></i>Media or canvas, absorbs slack</span>
+    <span><i style="background:var(--nav-bg)"></i>Unity rail, not ours</span>
+  </div>
+</section>
+
+<section>
+  <div class="sechead"><span class="n">02</span><h2>The contract</h2></div>
+  <p>Two tokens, not one. The surfaces have different jobs and different panel content, and a single shared band gets one of them right and the other wrong.</p>
+
+  <div class="tablewrap">
+  <table class="spec">
+    <thead><tr><th>Token</th><th>Value</th><th>Applies to</th><th>Why this number</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>--asset-panel-width</code></td>
+        <td><code>400px</code></td>
+        <td>Both surfaces: lightbox panes and all seven edit destinations</td>
+        <td>One value, two allocation rules. Same content family in both places, read-only in one and editable in the other, so the panel should not jump width when a user moves between them. Set by the Rights territory picker at 400, and by the audit rows coming to both surfaces.</td>
+      </tr>
+      <tr>
+        <td><code>--asset-panel-width-wide</code></td>
+        <td><code>520px</code> above 2170px of surface</td>
+        <td>Deferred to Phase 3, edit only</td>
+        <td>Only earns its place alongside the two-column value list, which needs about 460px of panel to resolve a second column. Without that work the step buys longer sliders and roomier version rows, and nothing that changes what fits.</td>
+      </tr>
+      <tr style="display:none"><td></td><td></td><td></td><td></td></tr>
+      <tr>
+        <td><code>--lightbox-rail-width</code></td>
+        <td><code>56px</code></td>
+        <td>Icon-only lightbox rail</td>
+        <td>Icon-sized. Never scales, sits outside the clamp.</td>
+      </tr>
+      <tr>
+        <td><code>--edit-rail-width</code></td>
+        <td><code>88px</code></td>
+        <td>Labelled stacked edit rail</td>
+        <td>Contract value. The build measures around 77, which needs verifying as drift rather than capture scaling.</td>
+      </tr>
+      <tr>
+        <td><code>--lightbox-gutter</code></td>
+        <td><code>48px</code> horizontal, <code>32px</code> vertical. Horizontal drops to <code>24px</code> below a 1400px viewport.</td>
+        <td>Modal inset from the content area</td>
+        <td>Fixed, not a percentage, so the modal does not become the page on a large monitor. Enough margin to still read as dismissible. The gutter is what flexes on small screens, not the panel: a content-sized element should not shrink because the window did.</td>
+      </tr>
+      <tr>
+        <td><code>--lightbox-max-width</code></td>
+        <td><code>2200px</code></td>
+        <td>Modal outer width</td>
+        <td>Past this the media box runs beyond 2:1 and starts letterboxing from the other direction.</td>
+      </tr>
+      <tr>
+        <td><code>--edit-canvas-min</code></td>
+        <td><code>640px</code></td>
+        <td>Edit canvas</td>
+        <td>Below this the panel overlays the canvas with a scrim instead of pushing it, so Adjustments never works in a letterbox.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout">
+    <p><b>Do not reuse Scale's <code>--layout-main-width</code> and <code>--layout-panel-width</code> (65 / 35).</b> That is a page-level two-column pattern. Thirty-five per cent of the edit surface is 633px, well past the point where metadata rows stop improving. Both tokens here are net-new and should go to whoever owns Scale as evolution candidates rather than get added quietly.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sechead"><span class="n">03</span><h2>Why both are flat</h2></div>
+  <p>A proportional rule only does work in the range where it sits between its own bounds. Outside that range the bounds decide and the percentage is decoration. Here is where each rule is live, at the viewports people actually use.</p>
+  <div class="tablewrap" style="margin-bottom:var(--spacing-5)">
+    <table class="spec" id="resTable">
+      <thead><tr><th>Viewport</th><th>Edit at 24%</th><th>Resolves to</th><th>Lightbox at 26%</th><th>Resolves to</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <p>The edit rule is pinned to a bound at every common resolution except 1920. For it to give 400 at a 1440 laptop it would need to be 29%, and for it to give 520 at 2560 it would need to be 21%. Both cannot be true, so what looks like a proportional rule is a two-value step wearing one.</p>
+  <p>The lightbox rule fails the same test, which is not what I expected it to do. It is live only at 1440, 1512 and 1680, across a span of 62px, and pinned at 1280 and at everything from 1920 up. Sixty-two pixels of variation is not a proportional system, it is noise around a number.</p>
+  <p>So both are flat, at the same value. That is where this started three revisions ago, before the different-jobs argument split them into two tokens. The allocation rules genuinely do differ, and that part stands: the lightbox gives horizontal slack to the panel and vertical slack to the media, edit gives slack to the canvas. But the width itself is set by content, and both surfaces carry the same content family. One number, two rules.</p>
+  <p>The small-screen case is handled by the gutter rather than the panel. At 1280 a flat 400 would leave the media at 672 against 727 today, a regression. Narrowing the horizontal gutter to 24 below a 1400 viewport puts it back to 720. The margin is the right thing to flex, because it is the only element on the surface that is not sized by what it holds.</p>
+</section>
+
+<section>
+  <div class="sechead"><span class="n">04</span><h2>Why the lightbox gain is vertical</h2></div>
+  <p>The media box today is 1101 × 635, a ratio of 1.73. Anything squarer than that is height-constrained, and horizontal width lands as letterbox rather than a bigger asset. In a real DAM corpus that is nearly everything: 3:2 photography, 4:3 product shots, square social crops, portrait, logos. Only 16:9 and wider converts extra width into a larger image.</p>
+  <p>So the horizontal reclaim goes to the panel, which is the only element that can reliably use it, and the media gain comes from cutting the 135px of top margin and 87px of bottom margin. Dashed outline is today, solid fill is proposed, both at the capture viewport.</p>
+  <div class="aspects" id="aspects"></div>
+  <p style="margin-top:var(--spacing-5)">Everything squarer than 1.73 gains the same 25% in linear size and 56% in area, and all of it comes from the vertical axis.</p>
+</section>
+
+<section>
+  <div class="sechead"><span class="n">05</span><h2>Behaviour rules</h2></div>
+  <ul class="rules">
+    <li class="hot"><b>The ceiling is a hard stop, not a starting point</b>Widening the surface does not raise it. When a panel genuinely outgrows its ceiling, it either goes two-column internally or escalates to a full surface behind a terminal navigation control, per the widget terminal control rule. That keeps the contract permanent instead of renegotiating it every time a panel gets richer.</li>
+    <li><b>Audit trail and version history are sections, not destinations</b>They fold into Details the way file metadata did under SCR-174. Rail stops are for destinations, sections are for content. This is the rule that stops the futureproofing question from becoming a width question every six months.</li>
+    <li><b>Panel width holds constant across rail tabs</b>In edit, a panel that resizes on tab change reflows the canvas every time and breaks predictability. Size to the widest destination and let the narrow ones sit inside it.</li>
+    <li><b>Below the canvas floor the panel overlays instead of pushing</b>Triggers around a 1184px viewport in edit. The lightbox equivalent falls out of SCR-210, since a drawer overlays by definition.</li>
+    <li><b>Rails never scale</b>They are icon-sized and sit outside the clamp in both surfaces.</li>
+    <li><b>Attributes does not set the number</b>It is a faceted checkbox list, not label and input pairs. Its longest real value is 152 px in a row that already has 209 px, so it has headroom today and gains only dead space from more. Rights sets the 400. Its height problem is answered by restoring the missing count pill on group headers, not by width.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="sechead"><span class="n">06</span><h2>Out of scope</h2></div>
+  <ul class="rules">
+    <li><b>The lightbox push-versus-overlay rule, SCR-210</b>Narrowed from an earlier reading. SCR-210 changes which side the panel sits on and whether it overlays the media or compresses it. It does not change how wide the panel needs to be for its content, nor the modal gutters or max-width, so the width contract is not blocked by it. What is blocked is the allocation sentence: if the panel becomes an overlay drawer, the media box keeps the full modal width and the horizontal reclaim stops being a trade at all.</li>
+    <li><b>Drag-to-resize</b>The right end state for edit, and not this cycle. Long-dwell surface with heterogeneous panel content is exactly the case where the user should decide and the decision should stick. Needs persisted per-user state, continuous canvas re-fit during drag, and a reset. Phase 3, with this token as the default and drag bounds of 360 to 640. No handle on the lightbox: short-dwell inspection surface whose job is to recede.</li>
+    <li><b>Panel content and rail destinations</b>Untouched by this. So is the counter and chevron move into the lightbox header.</li>
+  </ul>
+</section>
+
+<footer class="foot">
+  Measurements taken from two build captures at 1865 × 1003. Proposed figures are computed live by this page from the tokens in section 02, so they move with any change to those values.
+</footer>
+
+</div>
+
+<script>
+(function(){
+  var surface='lightbox';
+  var vw=document.getElementById('vw'), vh=document.getElementById('vh');
+  var vwOut=document.getElementById('vwOut'), vhOut=document.getElementById('vhOut');
+  var sLight=document.getElementById('sLight'), sEdit=document.getElementById('sEdit');
+
+  var UNITY=56, LB_RAIL=56, ED_RAIL_NOW=77, ED_RAIL_NEXT=88;
+  var LB_HEAD=89, LB_FOOT=57;
+  var GUT_X=48, GUT_Y=32, LB_MAX=2200;
+  var ED_CANVAS_MIN=640;
+
+  function clamp(min,pref,max){return Math.round(Math.max(min,Math.min(pref,max)));}
+
+  function calc(w,h){
+    var content=w-UNITY;
+    var o={content:content};
+
+    // lightbox today: modal is 80% x 78%, panel 20% of modal
+    var mwNow=Math.round(content*0.80), mhNow=Math.round(h*0.78);
+    var pNow=Math.round(mwNow*0.20);
+    o.lbNow={modalW:mwNow, modalH:mhNow, rail:LB_RAIL, panel:pNow,
+             media:mwNow-LB_RAIL-pNow, mediaH:mhNow-LB_HEAD-LB_FOOT,
+             gutX:Math.round((content-mwNow)/2), gutY:Math.round((h-mhNow)/2)};
+
+    // lightbox proposed: flat 400 panel, gutter narrows below 1400
+    var gx = w<1400 ? 24 : GUT_X;
+    var mwNext=Math.min(content-gx*2, LB_MAX);
+    var mhNext=h-GUT_Y*2;
+    var pNext=400;
+    o.lbNext={modalW:mwNext, modalH:mhNext, rail:LB_RAIL, panel:pNext,
+              media:mwNext-LB_RAIL-pNext, mediaH:mhNext-LB_HEAD-LB_FOOT,
+              gutX:Math.round((content-mwNext)/2), gutY:GUT_Y,
+              narrowGutter:(w<1400),
+              capped:(content-gx*2)>LB_MAX};
+
+    // edit today: panel 20% of content
+    var epNow=Math.round(content*0.20);
+    o.edNow={rail:ED_RAIL_NOW, panel:epNow, canvas:content-ED_RAIL_NOW-epNow};
+
+    // edit proposed: flat 400 for Cycle 7. The 400/520 step is deferred to Phase 3.
+    var epNext=400;
+    var wouldBe=clamp(400, content*0.24, 520);
+    var cvNext=content-ED_RAIL_NEXT-epNext;
+    o.edNext={rail:ED_RAIL_NEXT, panel:epNext, canvas:cvNext,
+              overlay:cvNext<ED_CANVAS_MIN,
+              wouldBe:wouldBe,
+              stepped:content>=2167};
+    return o;
+  }
+
+  function reg(cls,wpx,scale,label,extra){
+    var d=document.createElement('div');
+    d.className='reg '+cls;
+    d.style.width=(wpx*scale)+'px';
+    d.style.flex='0 0 '+(wpx*scale)+'px';
+    if(extra) d.style.cssText+=extra;
+    if(wpx*scale>34){
+      var s=document.createElement('span');
+      s.className='lab'; s.textContent=label||Math.round(wpx);
+      d.appendChild(s);
+    }
+    return d;
+  }
+
+  function drawLightbox(host, m, scale, w, h){
+    host.innerHTML='';
+    host.style.width=(w*scale)+'px';
+    host.style.height=(h*scale)+'px';
+
+    var rail=document.createElement('div');
+    rail.className='vrail'; rail.style.width=(UNITY*scale)+'px';
+    host.appendChild(rail);
+
+    var grid=document.createElement('div');
+    grid.className='vgrid'; grid.style.left=(UNITY*scale)+'px';
+    host.appendChild(grid);
+
+    var scrim=document.createElement('div'); scrim.className='scrim';
+    host.appendChild(scrim);
+
+    var modal=document.createElement('div');
+    modal.className='modal';
+    modal.style.width=(m.modalW*scale)+'px';
+    modal.style.height=(m.modalH*scale)+'px';
+    modal.style.left=((UNITY+m.gutX)*scale)+'px';
+    modal.style.top=(m.gutY*scale)+'px';
+
+    var head=document.createElement('div');
+    head.className='chromebar'; head.style.top='0'; head.style.height=(LB_HEAD*scale)+'px';
+    var foot=document.createElement('div');
+    foot.className='chromebar foot'; foot.style.bottom='0'; foot.style.height=(LB_FOOT*scale)+'px';
+
+    var cols=document.createElement('div'); cols.className='cols';
+    var mediaCol=reg('reg-media', m.media, scale, Math.round(m.media)+' × '+Math.round(m.mediaH),
+      'padding-top:'+(LB_HEAD*scale)+'px;padding-bottom:'+(LB_FOOT*scale)+'px;');
+    cols.appendChild(mediaCol);
+    cols.appendChild(reg('reg-rail', m.rail, scale, ''));
+    cols.appendChild(reg('reg-panel', m.panel, scale, Math.round(m.panel)));
+
+    modal.appendChild(cols); modal.appendChild(head); modal.appendChild(foot);
+    host.appendChild(modal);
+  }
+
+  function drawEdit(host, m, scale, w, h){
+    host.innerHTML='';
+    host.style.width=(w*scale)+'px';
+    host.style.height=(h*scale)+'px';
+
+    var cols=document.createElement('div'); cols.className='cols';
+    cols.appendChild(reg('', UNITY, scale, '', 'background:var(--nav-bg);'));
+    cols.appendChild(reg('reg-rail', m.rail, scale, ''));
+    if(m.overlay){
+      cols.appendChild(reg('reg-media', m.canvas+m.panel, scale, 'canvas, panel overlays'));
+    }else{
+      cols.appendChild(reg('reg-panel left', m.panel, scale, Math.round(m.panel)));
+      cols.appendChild(reg('reg-media', m.canvas, scale, Math.round(m.canvas)));
+    }
+    host.appendChild(cols);
+
+    if(m.overlay){
+      var ov=document.createElement('div');
+      ov.className='reg reg-panel left';
+      ov.style.cssText='position:absolute;top:0;bottom:0;left:'+((UNITY+m.rail)*scale)+'px;'+
+        'width:'+(m.panel*scale)+'px;box-shadow:4px 0 14px rgba(0,0,0,.28);';
+      var s=document.createElement('span'); s.className='lab'; s.textContent=Math.round(m.panel);
+      ov.appendChild(s);
+      host.appendChild(ov);
+    }
+  }
+
+  function rows(host, list){
+    host.innerHTML='';
+    list.forEach(function(r){
+      var d=document.createElement('div'); d.className='rrow';
+      var a=document.createElement('span'); a.textContent=r[0];
+      var b=document.createElement('span'); b.innerHTML=r[1];
+      d.appendChild(a); d.appendChild(b); host.appendChild(d);
+    });
+  }
+
+  function delta(next, now){
+    var d=Math.round(next-now);
+    if(d===0) return '';
+    return '<span class="delta'+(d<0?' neg':'')+'">'+(d>0?'+':'')+d+'</span>';
+  }
+
+  function render(){
+    var w=+vw.value, h=+vh.value;
+    vwOut.textContent=w; vhOut.textContent=h;
+    var o=calc(w,h);
+
+    var host1=document.getElementById('vpNow'), host2=document.getElementById('vpNext');
+    var avail=host1.parentElement.clientWidth-34;
+    var scale=Math.min(avail/w, 0.34);
+
+    var f1=document.getElementById('flagNow'), f2=document.getElementById('flagNext');
+    f1.className='flag'; f2.className='flag';
+
+    if(surface==='lightbox'){
+      drawLightbox(host1,o.lbNow,scale,w,h);
+      drawLightbox(host2,o.lbNext,scale,w,h);
+      var n=o.lbNow, x=o.lbNext;
+      rows(document.getElementById('roNow'),[
+        ['Modal', n.modalW+' × '+n.modalH],
+        ['Media box', Math.round(n.media)+' × '+Math.round(n.mediaH)],
+        ['Panel', n.panel+' px, '+(n.panel/n.modalW*100).toFixed(1)+'% of modal'],
+        ['Margin spent', (n.gutX*2)+' px across, '+(n.gutY*2)+' px down']
+      ]);
+      rows(document.getElementById('roNext'),[
+        ['Modal', x.modalW+' × '+x.modalH+delta(x.modalW,n.modalW)],
+        ['Media box', Math.round(x.media)+' × '+Math.round(x.mediaH)+delta(x.mediaH,n.mediaH)],
+        ['Panel', x.panel+' px'+delta(x.panel,n.panel)],
+        ['Margin spent', (x.gutX*2)+' px across, '+(GUT_Y*2)+' px down']
+      ]);
+      f1.textContent='Everything here is a percentage: modal 80% × 78%, panel 20% of modal. That is why the panel is narrowest exactly where content pressure is highest.';
+      f1.className='flag on';
+      if(x.capped){ f2.textContent='Modal capped at the 2200 max-width. Extra viewport width now goes to margin, which is correct: past this the media box runs beyond 2:1.'; f2.className='flag on'; }
+      else if(x.narrowGutter){ f2.textContent='Below 1400 the horizontal gutter narrows to 24 so the media holds parity with today. The gutter flexes, the panel does not.'; f2.className='flag on'; }
+      else { f2.textContent='Panel flat at 400, same value as edit. All further width goes to the media.'; f2.className='flag on'; }
+    }else{
+      drawEdit(host1,o.edNow,scale,w,h);
+      drawEdit(host2,o.edNext,scale,w,h);
+      var en=o.edNow, ex=o.edNext;
+      rows(document.getElementById('roNow'),[
+        ['Rail', en.rail+' px, measured'],
+        ['Panel', en.panel+' px, '+(en.panel/o.content*100).toFixed(1)+'% of surface'],
+        ['Canvas', en.canvas+' px']
+      ]);
+      rows(document.getElementById('roNext'),[
+        ['Rail', ex.rail+' px, contract'+delta(ex.rail,en.rail)],
+        ['Panel', ex.panel+' px'+delta(ex.panel,en.panel)],
+        ['Canvas', ex.canvas+' px'+delta(ex.canvas,en.canvas)]
+      ]);
+      f1.textContent='Panel is a percentage of the surface, so it shrinks as the laptop gets smaller and the content pressure gets worse. It measures 20.0% on the 1865 capture and 22.3% on the 1440 one, so it is not reliably a percentage or a fixed value today.';
+      f1.className='flag on';
+      if(ex.overlay){ f2.textContent='Canvas below its 640 floor. Panel switches from push to overlay with a scrim.'; f2.className='flag on'; }
+      else if(ex.stepped){ f2.textContent='A 24% rule would have given '+ex.wouldBe+' px here. The step to 520 is deferred to Phase 3 and tied to the two-column value list, which is the only thing that uses the extra width.'; f2.className='flag on'; }
+      else { f2.textContent='Flat 400. A 24% rule would have given '+ex.wouldBe+' px here, which is either the same number or 47 px of dead space next to a checkbox.'; f2.className='flag on'; }
+    }
+  }
+
+  function setSurface(s){
+    surface=s;
+    sLight.setAttribute('aria-pressed', s==='lightbox');
+    sEdit.setAttribute('aria-pressed', s==='edit');
+    render();
+  }
+  sLight.addEventListener('click',function(){setSurface('lightbox');});
+  sEdit.addEventListener('click',function(){setSurface('edit');});
+  vw.addEventListener('input',render);
+  vh.addEventListener('input',render);
+  Array.prototype.forEach.call(document.querySelectorAll('.presets button'),function(b){
+    b.addEventListener('click',function(){
+      vw.value=b.dataset.w; vh.value=b.dataset.h; render();
+    });
+  });
+  window.addEventListener('resize',render);
+
+  // aspect evidence, fixed at the capture viewport
+  (function(){
+    var boxNow={w:1101,h:635}, boxNext={w:1257,h:793};
+    var ratios=[
+      {n:'3:2 photography', r:1.5},
+      {n:'16:9', r:1.7778},
+      {n:'Square social', r:1},
+      {n:'2:3 portrait', r:0.6667}
+    ];
+    var host=document.getElementById('aspects');
+    var DISP=200; // display width of the proposed box
+    var sc=DISP/boxNext.w;
+    ratios.forEach(function(a){
+      function fit(box){
+        var w=box.w, h=box.w/a.r;
+        if(h>box.h){ h=box.h; w=box.h*a.r; }
+        return {w:w,h:h};
+      }
+      var fn=fit(boxNow), fx=fit(boxNext);
+      var gain=((fx.w*fx.h)/(fn.w*fn.h)-1)*100;
+
+      var c=document.createElement('div'); c.className='acard';
+      c.innerHTML='<h3>'+a.n+'</h3><div class="sub">'+Math.round(fn.w)+' × '+Math.round(fn.h)+
+        ' &rarr; '+Math.round(fx.w)+' × '+Math.round(fx.h)+'</div>';
+      var box=document.createElement('div');
+      box.className='abox';
+      box.style.width=(boxNext.w*sc)+'px';
+      box.style.height=(boxNext.h*sc)+'px';
+      var next=document.createElement('div');
+      next.className='fitnext';
+      next.style.cssText='left:'+((boxNext.w-fx.w)/2*sc)+'px;top:'+((boxNext.h-fx.h)/2*sc)+
+        'px;width:'+(fx.w*sc)+'px;height:'+(fx.h*sc)+'px;';
+      var now=document.createElement('div');
+      now.className='fitnow';
+      now.style.cssText='left:'+((boxNext.w-fn.w)/2*sc)+'px;top:'+((boxNext.h-fn.h)/2*sc)+
+        'px;width:'+(fn.w*sc)+'px;height:'+(fn.h*sc)+'px;';
+      box.appendChild(next); box.appendChild(now);
+      c.appendChild(box);
+      var g=document.createElement('div'); g.className='again';
+      g.textContent='+'+gain.toFixed(0)+'% area';
+      c.appendChild(g);
+      host.appendChild(c);
+    });
+  })();
+
+  // resolution table for section 03
+  (function(){
+    var VPS=[1280,1440,1512,1680,1920,2240,2560,3440];
+    var tb=document.querySelector('#resTable tbody');
+    if(!tb) return;
+    VPS.forEach(function(w){
+      var content=w-UNITY;
+      var ed=Math.round(content*0.24);
+      var edR=clamp(400,ed,520);
+      var edPin = edR!==ed ? (edR===400?'pinned to 400':'pinned to 520') : 'live at '+ed;
+      var modal=Math.min(content-(w<1400?24:GUT_X)*2, LB_MAX);
+      var lb=Math.round(modal*0.26);
+      var lbR=clamp(320,lb,400);
+      var lbPin = lbR!==lb ? (lbR===320?'pinned to 320':'pinned to 400') : 'live at '+lb;
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td>'+w+'</td><td>'+ed+' px</td><td>'+edPin+'</td>'+
+                   '<td>'+lb+' px</td><td>'+lbPin+'</td>';
+      if(edR===ed) tr.style.background='var(--accent-3)';
+      tb.appendChild(tr);
+    });
+  })();
+
+  render();
+})();
+</script>
+</body>
+</html>

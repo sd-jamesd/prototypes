@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edit panel width — what each destination actually needs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --neutral-1:#fdfdfc; --neutral-2:#f9f9f8; --neutral-3:#f1f0ef; --neutral-4:#e9e8e6;
+  --neutral-5:#e2e1de; --neutral-6:#dad9d6; --neutral-7:#d0ceca; --neutral-8:#bcbbb6;
+  --neutral-9:#8e8d86; --neutral-10:#83827c; --neutral-11:#64635e; --neutral-12:#21201c;
+  --accent-3:#E4F5FC; --accent-5:#C4E5F3; --accent-7:#95C9DD; --accent-9:#0B6E8A;
+  --accent-11:#197592;
+  --surface-default:var(--neutral-1); --surface-subtle:var(--neutral-2);
+  --surface-muted:var(--neutral-3); --surface-emphasis:var(--neutral-4);
+  --text-default:var(--neutral-12); --text-muted:var(--neutral-11); --text-subtle:var(--neutral-10);
+  --border-subtle:var(--neutral-3); --border-default:var(--neutral-6); --border-emphasis:var(--neutral-7);
+  --primary-default:var(--accent-9);
+  --font-size-1:12px; --font-size-2:14px; --font-size-3:16px;
+  --font-size-4:18px; --font-size-5:24px; --font-size-6:32px;
+  --spacing-1:4px; --spacing-2:8px; --spacing-3:12px; --spacing-4:16px;
+  --spacing-5:20px; --spacing-6:24px; --spacing-7:32px;
+  --radius-1:3px; --radius-2:4px; --radius-3:6px; --radius-4:8px; --radius-full:9999px;
+  --warn:#8a4b0b; --warn-bg:#fdf3e8;
+  --ok:#1f6b45;
+  /* edit-mode dark chrome, used inside specimens only */
+  --ed-bg:#26241f; --ed-bg-deep:#1c1b17; --ed-rail:#161511;
+  --ed-line:rgba(255,255,255,.09); --ed-line-strong:rgba(255,255,255,.16);
+  --ed-text:#eeedea; --ed-label:#b5b3ab; --ed-value:#eeedea;
+  --ed-accent:#1a95b3; --ed-chip:#32302b;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --neutral-1:#12110e; --neutral-2:#191915; --neutral-3:#23221e; --neutral-4:#2a2924;
+    --neutral-5:#32302b; --neutral-6:#3b3a33; --neutral-7:#494741; --neutral-8:#626059;
+    --neutral-9:#6f6d66; --neutral-10:#7d7b73; --neutral-11:#b5b3ab; --neutral-12:#eeedea;
+    --accent-3:#032b38; --accent-7:#006884; --accent-11:#62c9ed;
+    --warn:#e0a56a; --warn-bg:#2a2016; --ok:#6fcf9b;
+  }
+}
+:root[data-theme="dark"]{
+  --neutral-1:#12110e; --neutral-2:#191915; --neutral-3:#23221e; --neutral-4:#2a2924;
+  --neutral-5:#32302b; --neutral-6:#3b3a33; --neutral-7:#494741; --neutral-8:#626059;
+  --neutral-9:#6f6d66; --neutral-10:#7d7b73; --neutral-11:#b5b3ab; --neutral-12:#eeedea;
+  --accent-3:#032b38; --accent-7:#006884; --accent-11:#62c9ed;
+  --warn:#e0a56a; --warn-bg:#2a2016; --ok:#6fcf9b;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--surface-default); color:var(--text-default);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:var(--font-size-2); line-height:1.55; -webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px; margin:0 auto; padding:var(--spacing-7) var(--spacing-6) 96px}
+h1{font-size:var(--font-size-6); font-weight:700; letter-spacing:-.02em; margin:0 0 var(--spacing-3); line-height:1.15}
+h2{font-size:var(--font-size-5); font-weight:600; letter-spacing:-.01em; margin:0}
+h3{font-size:var(--font-size-3); font-weight:600; margin:0 0 var(--spacing-2)}
+p{margin:0 0 var(--spacing-4); max-width:74ch; color:var(--text-muted)}
+p.lede{font-size:var(--font-size-3); color:var(--text-default)}
+strong{color:var(--text-default); font-weight:600}
+code{font-family:Inter,sans-serif; font-weight:600; font-size:.94em;
+  background:var(--surface-muted); border:1px solid var(--border-subtle);
+  border-radius:var(--radius-2); padding:1px 5px; color:var(--text-default)}
+.masthead{border-bottom:1px solid var(--border-default); padding-bottom:var(--spacing-6); margin-bottom:var(--spacing-7)}
+.meta{display:flex; flex-wrap:wrap; gap:var(--spacing-2); margin-top:var(--spacing-4)}
+.tag{font-size:var(--font-size-1); font-weight:600; border-radius:var(--radius-full);
+  padding:3px 10px; border:1px solid var(--border-default); color:var(--text-muted); background:var(--surface-subtle)}
+.tag.live{border-color:var(--accent-7); color:var(--accent-11); background:var(--accent-3)}
+section{margin-bottom:64px}
+.sechead{display:flex; align-items:baseline; gap:var(--spacing-3); margin-bottom:var(--spacing-4);
+  border-top:1px solid var(--border-default); padding-top:var(--spacing-5)}
+.sechead .n{font-size:var(--font-size-2); font-weight:600; color:var(--text-subtle); flex:none}
+
+.controls{background:var(--surface-subtle); border:1px solid var(--border-default);
+  border-radius:var(--radius-4); padding:var(--spacing-5); margin-bottom:var(--spacing-5);
+  position:sticky; top:0; z-index:20}
+.ctl-row{display:flex; flex-wrap:wrap; gap:var(--spacing-5); align-items:flex-end}
+.ctl{flex:1 1 320px; min-width:260px}
+.ctl label{display:block; font-size:var(--font-size-1); font-weight:600; color:var(--text-muted); margin-bottom:var(--spacing-2)}
+.ctl output{font-weight:600; color:var(--text-default); font-variant-numeric:tabular-nums}
+input[type=range]{width:100%; accent-color:var(--primary-default); height:22px}
+.presets{display:flex; flex-wrap:wrap; gap:var(--spacing-2); margin-top:var(--spacing-4); align-items:center}
+.presets button{appearance:none; font:inherit; font-size:var(--font-size-1); font-weight:600;
+  border:1px solid var(--border-default); background:var(--surface-default); color:var(--text-muted);
+  border-radius:var(--radius-full); padding:4px 12px; cursor:pointer}
+.presets button:hover{border-color:var(--border-emphasis); color:var(--text-default)}
+.presets button:focus-visible{outline:2px solid var(--accent-11); outline-offset:1px}
+.verdict{margin-top:var(--spacing-4); font-size:var(--font-size-2); font-weight:600;
+  padding:9px 12px; border-radius:var(--radius-2); border:1px solid var(--border-default);
+  border-left:2px solid var(--border-emphasis); background:var(--surface-default)}
+.verdict.bad{border-left-color:var(--warn); color:var(--warn); background:var(--warn-bg)}
+.verdict.good{border-left-color:var(--ok); color:var(--ok)}
+
+/* specimen grid */
+.specs{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:var(--spacing-5); align-items:start}
+.spec{border:1px solid var(--border-default); border-radius:var(--radius-4);
+  background:var(--surface-subtle); overflow:hidden}
+.spec-head{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-3);
+  padding:var(--spacing-3) var(--spacing-4); border-bottom:1px solid var(--border-default)}
+.spec-head h3{margin:0; font-size:var(--font-size-2)}
+.spec-head .need{font-size:var(--font-size-1); font-weight:600; color:var(--text-subtle); font-variant-numeric:tabular-nums}
+.spec-body{padding:var(--spacing-4); background:var(--surface-muted); display:flex; justify-content:center}
+.spec-status{padding:9px var(--spacing-4); font-size:var(--font-size-1); font-weight:600;
+  border-top:1px solid var(--border-default); color:var(--ok)}
+.spec-status.wrap{color:var(--warn); background:var(--warn-bg)}
+.spec.isbreak{border-color:var(--warn)}
+
+/* dark edit panel chrome */
+.panel{background:var(--ed-bg); border:1px solid rgba(0,0,0,.4); border-radius:var(--radius-2);
+  box-shadow:0 2px 10px rgba(0,0,0,.25); overflow:hidden; flex:none;
+  font-size:var(--font-size-2); color:var(--ed-text)}
+.panel .pin{padding:var(--spacing-3) var(--spacing-4)}
+.frow{display:flex; gap:var(--spacing-3); padding:7px 0; border-bottom:1px solid var(--ed-line); align-items:baseline}
+.frow:last-child{border-bottom:0}
+.frow .k{flex:0 0 40%; font-size:var(--font-size-1); font-weight:500; color:var(--ed-label)}
+.frow .v{flex:1 1 auto; font-weight:500; color:var(--ed-value); word-break:break-word; font-size:13px}
+.frow.side .k{flex:0 0 132px}
+.acchead{display:flex; align-items:center; gap:var(--spacing-2); padding:9px 0;
+  border-bottom:1px solid var(--ed-line); font-weight:600; font-size:var(--font-size-2)}
+.acchead .tri{width:0;height:0;border-left:6px solid var(--ed-label);border-top:4px solid transparent;border-bottom:4px solid transparent;flex:none}
+.acchead .nm{flex:1 1 auto; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.pill{font-size:11px; font-weight:600; color:var(--ed-label); background:var(--ed-chip);
+  border-radius:var(--radius-full); padding:1px 8px; white-space:nowrap; flex:none}
+.field{display:block; width:100%; background:var(--ed-bg-deep); border:1px solid var(--ed-line-strong);
+  border-radius:var(--radius-2); padding:7px 10px; color:var(--ed-value); font:inherit; font-size:13px}
+.cbrow{display:flex; align-items:center; gap:10px; padding:5px 0; font-size:13px; min-width:0}
+.cbrow .cb{flex:none; width:14px; height:14px; border-radius:2px;
+  border:1px solid var(--ed-line-strong); background:var(--ed-bg-deep)}
+.cbrow span{min-width:0}
+.more{font-size:var(--font-size-1); font-weight:600; color:var(--ed-accent); padding:6px 0 2px}
+.vals{padding:2px 0}
+.vals.two{display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); column-gap:var(--spacing-4)}
+.colnote{margin-top:var(--spacing-3); font-size:var(--font-size-1); font-weight:600;
+  color:var(--text-muted)}
+.stack .lb{display:block; font-size:var(--font-size-1); font-weight:500; color:var(--ed-label); margin-bottom:5px}
+.stack .grp{padding:7px 0; border-bottom:1px solid var(--ed-line)}
+.side2 .grp{display:flex; gap:var(--spacing-3); align-items:center; padding:6px 0; border-bottom:1px solid var(--ed-line)}
+.side2 .lb{flex:0 0 132px; font-size:var(--font-size-1); font-weight:500; color:var(--ed-label)}
+.side2 .field{flex:1 1 auto; width:auto}
+.slider{display:flex; align-items:center; gap:var(--spacing-3); padding:8px 0; border-bottom:1px solid var(--ed-line)}
+.slider .lb{flex:0 0 92px; font-size:var(--font-size-1); color:var(--ed-label); font-weight:500}
+.slider .track{flex:1 1 auto; min-width:40px; height:3px; background:var(--ed-chip); border-radius:2px; position:relative}
+.slider .track i{position:absolute; left:0; top:0; bottom:0; width:62%; background:var(--ed-accent); border-radius:2px}
+.slider .track b{position:absolute; left:62%; top:50%; width:11px; height:11px; margin:-6px 0 0 -6px;
+  background:var(--ed-text); border-radius:50%}
+.slider .num{flex:0 0 52px; font-size:12px; font-variant-numeric:tabular-nums; color:var(--ed-value);
+  background:var(--ed-bg-deep); border:1px solid var(--ed-line-strong); border-radius:var(--radius-2);
+  padding:3px 6px; text-align:right}
+.vrow{display:flex; gap:var(--spacing-3); align-items:center; padding:9px 0; border-bottom:1px solid var(--ed-line)}
+.vthumb{flex:none; width:34px; height:34px; border-radius:var(--radius-2); background:var(--ed-chip)}
+.vmeta{flex:1 1 auto; min-width:0}
+.vmeta .t{font-weight:600; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.vmeta .s{font-size:var(--font-size-1); color:var(--ed-label)}
+.status{flex:none; font-size:11px; font-weight:600; padding:2px 9px; border-radius:var(--radius-full);
+  background:rgba(26,149,179,.18); color:#7fd0e8; border:1px solid rgba(26,149,179,.4); white-space:nowrap}
+.chips{display:flex; flex-wrap:wrap; gap:6px; padding:9px 0}
+.chip{font-size:var(--font-size-1); font-weight:500; background:var(--ed-chip); color:var(--ed-text);
+  border:1px solid var(--ed-line-strong); border-radius:var(--radius-full); padding:3px 10px; white-space:nowrap}
+.seg2{display:flex; border:1px solid var(--ed-line-strong); border-radius:var(--radius-2); overflow:hidden; margin-bottom:4px}
+.seg2 span{flex:1 1 0; text-align:center; font-size:var(--font-size-1); font-weight:600;
+  padding:6px 8px; color:var(--ed-label); white-space:nowrap}
+.seg2 span.on{background:var(--ed-accent); color:#fff}
+.arow{display:flex; gap:var(--spacing-3); align-items:center; padding:8px 0; border-bottom:1px solid var(--ed-line)}
+.av{flex:none; width:28px; height:28px; border-radius:50%; background:var(--ed-accent); opacity:.65}
+.arow .nm2{flex:1 1 auto; min-width:0; font-size:13px; font-weight:500;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.role{flex:none; font-size:var(--font-size-1); font-weight:500; color:var(--ed-label);
+  border:1px solid var(--ed-line-strong); border-radius:var(--radius-2); padding:3px 9px; white-space:nowrap}
+.trow{display:flex; gap:var(--spacing-3); align-items:center; padding:8px 0; border-bottom:1px solid var(--ed-line)}
+.tthumb{flex:none; width:30px; height:42px; border-radius:var(--radius-1); background:var(--ed-chip)}
+.trow .nm3{flex:1 1 auto; min-width:0; font-size:13px; font-weight:500}
+.trow .or{flex:none; font-size:11px; color:var(--ed-label)}
+
+/* height comparison */
+.hcmp{display:grid; grid-template-columns:1fr 1fr; gap:var(--spacing-5); align-items:start}
+@media(max-width:780px){.hcmp{grid-template-columns:1fr}}
+.hcard{border:1px solid var(--border-default); border-radius:var(--radius-4); background:var(--surface-subtle); overflow:hidden}
+.hcard.win{border-color:var(--accent-7)}
+.hcard-head{padding:var(--spacing-3) var(--spacing-4); border-bottom:1px solid var(--border-default);
+  display:flex; justify-content:space-between; align-items:center; gap:var(--spacing-3)}
+.hcard-head h3{margin:0; font-size:var(--font-size-2)}
+.hcard-head .px{font-size:var(--font-size-1); font-weight:600; font-variant-numeric:tabular-nums; color:var(--text-subtle)}
+.hcard.win .hcard-head .px{color:var(--accent-11)}
+.hcard-body{padding:var(--spacing-4); background:var(--surface-muted); display:flex; justify-content:center}
+
+.tablewrap{overflow-x:auto; border:1px solid var(--border-default); border-radius:var(--radius-4); background:var(--surface-subtle)}
+table.t{width:100%; border-collapse:collapse}
+table.t th,table.t td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--border-subtle); font-size:var(--font-size-2); vertical-align:top}
+table.t th{font-size:var(--font-size-1); font-weight:600; color:var(--text-subtle); border-bottom:1px solid var(--border-default)}
+table.t td:first-child{font-weight:600; white-space:nowrap}
+table.t td.num{font-variant-numeric:tabular-nums; font-weight:600; white-space:nowrap}
+table.t td:last-child{color:var(--text-muted)}
+table.t tr:last-child td{border-bottom:0}
+table.t tr.sets td:first-child{color:var(--accent-11)}
+
+.rules{list-style:none; padding:0; margin:0; max-width:78ch}
+.rules li{border-left:2px solid var(--border-default); padding:0 0 var(--spacing-4) var(--spacing-4);
+  margin-bottom:var(--spacing-4); color:var(--text-muted)}
+.rules li:last-child{margin-bottom:0; padding-bottom:0}
+.rules li b{display:block; color:var(--text-default); font-weight:600; margin-bottom:2px}
+.rules li.hot{border-left-color:var(--primary-default)}
+.callout{border:1px solid var(--border-default); border-left:2px solid var(--warn);
+  background:var(--surface-subtle); border-radius:var(--radius-3);
+  padding:var(--spacing-4) var(--spacing-5); margin:var(--spacing-5) 0; max-width:78ch}
+.callout p{margin:0; color:var(--text-muted)}
+.callout b{color:var(--text-default)}
+.foot{border-top:1px solid var(--border-default); padding-top:var(--spacing-4); font-size:var(--font-size-1); color:var(--text-subtle)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <h1>What each edit destination actually needs</h1>
+  <p class="lede">The panel width holds constant across all seven rail tabs, so it has to be sized to the widest one. This page renders the densest row from each destination at a width you control and reports which ones break. Nothing here is asserted: the wrap detection measures the real rendered rows.</p>
+  <p>Revised 15 Sep against the Attributes capture. Attributes is a faceted checkbox list, not label and input pairs, which is a different structure from what the first version of this page assumed. It turns out to be the destination with the <em>lowest</em> width need, not a beneficiary of extra width, and its real problem is height. Section 03 is rewritten accordingly.</p>
+  <div class="meta">
+    <span class="tag live">Evidence for the 400 to 520 band</span>
+    <span class="tag">Companion to the panel width contract</span>
+    <span class="tag">FIFA World Cup 2026 content</span>
+  </div>
+</header>
+
+<section>
+  <div class="sechead"><span class="n">01</span><h2>Specimens</h2></div>
+  <p>Drag the width. Rows are live DOM in the dark edit chrome, so what you see wrapping is what will wrap in the build.</p>
+
+  <div class="controls">
+    <div class="ctl-row">
+      <div class="ctl">
+        <label for="pw">Panel width <output id="pwOut">434</output> px</label>
+        <input type="range" id="pw" min="300" max="620" step="2" value="434">
+      </div>
+    </div>
+    <div class="presets">
+      <button data-w="361">361 today at your capture</button>
+      <button data-w="400">400 proposed floor</button>
+      <button data-w="434">434 proposed at your capture</button>
+      <button data-w="520">520 proposed ceiling</button>
+      <button data-w="294">294 today at 1280</button>
+    </div>
+    <div class="verdict" id="verdict"></div>
+  </div>
+
+  <div class="specs" id="specs"></div>
+</section>
+
+<section>
+  <div class="sechead"><span class="n">02</span><h2>Width needed, by destination</h2></div>
+  <p>Minimum viable width is the point at which that destination's densest row stops wrapping, measured by this page at load. Attributes and Details are the narrow pair and are the reason the panel sits at 361 today. They are not the ones that should set the number.</p>
+  <div class="tablewrap">
+    <table class="t">
+      <thead><tr><th>Destination</th><th>Densest content</th><th>Needs</th><th>Note</th></tr></thead>
+      <tbody id="needTable"></tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sechead"><span class="n">03</span><h2>What width does and does not buy Attributes</h2></div>
+  <p>Attributes is a faceted checkbox list: fifteen groups, each expanding to its values. Official Mark alone holds 53. The longest real value in the FIFA schema, <strong>Official Hospitality Logo</strong>, renders at 152 px inside a row that already has 209 px at today's width. So the panel is not width-starved here. Extra width lands as dead space to the right of every checkbox.</p>
+  <p>The one thing width can buy is a second column in the value list, which halves the height of every long group. Below, the same twenty Official Mark values in one column and in a responsive grid, both at the current panel width.</p>
+  <div class="hcmp">
+    <div class="hcard">
+      <div class="hcard-head"><h3>One column, today</h3><span class="px" id="hStack">—</span></div>
+      <div class="hcard-body" id="bStack"></div>
+    </div>
+    <div class="hcard win">
+      <div class="hcard-head"><h3>Responsive grid</h3><span class="px" id="hSide">—</span></div>
+      <div class="hcard-body" id="bSide"></div>
+    </div>
+  </div>
+  <p style="margin-top:var(--spacing-5)" id="hNote"></p>
+  <div class="callout">
+    <p><b>The cheaper fix is a conformance fix.</b> The contract specifies Attributes at parity with library filters: an active-group edge plus an <code>n of total</code> count on the header. Neither is in the build. Without the count, a collapsed group tells you nothing about whether it holds selections, so the only way to check is to open it, which is exactly the all-groups-expanded state in the capture. Restoring the count pill removes the reason to expand and buys back more height than any amount of width. Do that before reaching for columns.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sechead"><span class="n">04</span><h2>How the band was derived</h2></div>
+  <ul class="rules">
+    <li class="hot"><b>Floor is 400, set by Rights</b>The territory picker holds a chip row of ISO country names above the picker list. Country names run long, and a chip row that can only hold one chip per line turns a carve-out with six territories into a six-line block. 400 is the point where three of the longest names fit across two lines rather than six.</li>
+    <li><b>Ceiling is 520, set by Versions and Adjustments</b>A version row carries thumbnail, version, actor, timestamp and status, and needs the actor and timestamp on one line to stay scannable. Adjustments sliders are monotonically better with width until the track stops being the constraint. Past 520 neither improves and key and value rows get worse, because the value column just stretches.</li>
+    <li><b>Sized to the widest, not the average</b>A panel that changes width on tab change reflows the canvas every time you move between Attributes and Rights. Predictability before novelty: pick one width, let the narrow destinations sit inside it.</li>
+    <li><b>The percentage is 24%, not a fixed number</b>Between the floor and the ceiling the panel tracks the surface, so a 27" monitor gets a usefully wider panel without a preference to set. Outside that range the clamp pins it. On a 1280 laptop you are at the floor, on anything above about 2170 you are at the ceiling.</li>
+    <li><b>Attributes does not vote</b>It is the narrowest destination in the panel and it tolerates whatever the others need. Its longest real value is 152 px in a 209 px row, so it has headroom today and gains only dead space from more. The band rests on three destinations: Rights, Versions and Adjustments. That is narrower evidence than seven, and worth saying out loud.</li>
+    <li><b>What is not solved by width</b>Fifteen groups, one of them holding 53 values, is a height problem with three separate fixes and only one of them is width. In order of cost: restore the missing count pill so groups do not need opening, keep the existing show-more truncation, and only then consider a second column in long value lists. Reaching for width first solves the cheapest third of the problem at the highest price.</li>
+  </ul>
+</section>
+
+<footer class="foot">
+  Specimen content drawn from the FIFA World Cup 2026 attribute schema in the build capture. Minimum widths are measured by this page at load by rendering each specimen across the range and recording where it stops wrapping, so they move if the row markup changes.
+</footer>
+
+</div>
+
+<script>
+(function(){
+  var DEST=[
+    { id:'details', name:'Details', dense:'Key and value rows with long file names',
+      note:'Narrow. Value wraps onto a second line rather than breaking the layout, so it degrades gracefully.',
+      html:'<div class="pin">'+
+        '<div class="frow"><span class="k">File name</span><span class="v">FIFA_WC2026_Logo_Primary_RGB.svg</span></div>'+
+        '<div class="frow"><span class="k">Dimensions</span><span class="v">4096 × 4096 px</span></div>'+
+        '<div class="frow"><span class="k">Uploaded by</span><span class="v">Ruaidhrí Nolan</span></div>'+
+      '</div>', probe:'.frow .v' },
+
+    { id:'attributes', name:'Attributes', dense:'Accordion header, then a checkbox value list',
+      note:'The narrowest destination by a wide margin. The longest real value is 152 px in a row that already has 209 px. Extra width lands as dead space, not relief.',
+      html:'<div class="pin">'+
+        '<div class="acchead"><i class="tri"></i><span class="nm">Official Mark</span><span class="pill">2 of 53</span></div>'+
+        '<div class="vals">'+
+          '<div class="cbrow"><i class="cb"></i><span>Host City Poster</span></div>'+
+          '<div class="cbrow"><i class="cb"></i><span>Official Hospitality Logo</span></div>'+
+          '<div class="cbrow"><i class="cb"></i><span>26 Tournament Device</span></div>'+
+          '<div class="cbrow"><i class="cb"></i><span>Wordmark</span></div>'+
+        '</div>'+
+        '<div class="more">Show more (47 more)</div>'+
+      '</div>', probe:'.cbrow' },
+
+    { id:'adjustments', name:'Adjustments', dense:'Label, track and numeric field on one line',
+      note:'Monotonically better with width. The track is the thing that gets squeezed first.',
+      html:'<div class="pin">'+
+        '<div class="slider"><span class="lb">Brightness</span><span class="track"><i></i><b></b></span><span class="num">+12</span></div>'+
+        '<div class="slider"><span class="lb">Saturation</span><span class="track"><i></i><b></b></span><span class="num">−4</span></div>'+
+        '<div class="slider"><span class="lb">Highlights</span><span class="track"><i></i><b></b></span><span class="num">0</span></div>'+
+      '</div>', probe:'.slider' },
+
+    { id:'template', name:'Template', dense:'Thumbnail, template name and orientation',
+      note:'Mid-range. The name truncates before the row breaks.',
+      html:'<div class="pin">'+
+        '<div class="trow"><span class="tthumb"></span><span class="nm3">WC2026 Event Poster A1</span><span class="or">Portrait</span></div>'+
+        '<div class="trow"><span class="tthumb"></span><span class="nm3">Host City Banner 3×1</span><span class="or">Landscape</span></div>'+
+      '</div>', probe:'.trow' },
+
+    { id:'versions', name:'Versions', dense:'Thumbnail, version, actor, timestamp and status',
+      note:'Sets the ceiling with Adjustments. Actor and timestamp have to hold one line to stay scannable.',
+      html:'<div class="pin">'+
+        '<div class="vrow"><span class="vthumb"></span><span class="vmeta"><span class="t">v4 · Ruaidhrí Nolan</span><span class="s">12 Sep 2026, 14:02</span></span><span class="status">Current</span></div>'+
+        '<div class="vrow"><span class="vthumb"></span><span class="vmeta"><span class="t">v3 · Padraic McAteer</span><span class="s">28 Aug 2026, 09:41</span></span><span class="status">Superseded</span></div>'+
+      '</div>', probe:'.vrow' },
+
+    { id:'rights', name:'Rights', dense:'Territory chip row above the picker list',
+      note:'Sets the floor. ISO country names are long and a one-chip-per-line row is unreadable.',
+      html:'<div class="pin">'+
+        '<div class="seg2"><span>Global</span><span class="on">Restricted to</span></div>'+
+        '<div class="chips"><span class="chip">United Arab Emirates</span><span class="chip">United Kingdom</span>'+
+        '<span class="chip">United States</span><span class="chip">Saudi Arabia</span></div>'+
+      '</div>', probe:'.chips' },
+
+    { id:'access', name:'Access', dense:'Avatar, group name and role',
+      note:'Mid-range. Long group names truncate rather than wrap.',
+      html:'<div class="pin">'+
+        '<div class="arow"><span class="av"></span><span class="nm2">FIFA Brand &amp; Marketing</span><span class="role">Can edit</span></div>'+
+        '<div class="arow"><span class="av"></span><span class="nm2">Host City Comms</span><span class="role">Can view</span></div>'+
+      '</div>', probe:'.arow' }
+  ];
+
+  var VALUES=['Host City Poster','Official Emblem','Official Hospitality Logo',
+    '26 Tournament Device','Wordmark','Official Slogan','Official Mascot',
+    'Trophy Device','Host City Wordmark','Official Ball Device','Confederation Mark',
+    'Qualifiers Emblem','Volunteer Programme Mark','Fan Festival Logo',
+    'Sustainability Mark','Official Partner Lockup','Broadcast Bug',
+    'Ticketing Lockup','Anthem Mark','Legacy Programme Mark'];
+
+  var pw=document.getElementById('pw'), pwOut=document.getElementById('pwOut');
+  var specsHost=document.getElementById('specs');
+  var nodes={};
+
+  // build specimen cards
+  DEST.forEach(function(d){
+    var card=document.createElement('div');
+    card.className='spec'; card.id='spec-'+d.id;
+    card.innerHTML=
+      '<div class="spec-head"><h3>'+d.name+'</h3><span class="need" id="need-'+d.id+'">—</span></div>'+
+      '<div class="spec-body"><div class="panel" id="panel-'+d.id+'">'+d.html+'</div></div>'+
+      '<div class="spec-status" id="st-'+d.id+'">—</div>';
+    specsHost.appendChild(card);
+    nodes[d.id]={card:card, panel:card.querySelector('.panel'),
+                 st:card.querySelector('.spec-status'), need:card.querySelector('.need')};
+  });
+
+  // attribute field columns
+  function buildValues(host, two){
+    host.innerHTML='';
+    var p=document.createElement('div'); p.className='panel';
+    var inner=document.createElement('div'); inner.className='pin';
+    inner.innerHTML='<div class="acchead"><i class="tri"></i><span class="nm">Official Mark</span>'+
+      '<span class="pill">2 of 53</span></div>';
+    var list=document.createElement('div');
+    list.className='vals'+(two?' two':'');
+    VALUES.forEach(function(v){
+      var r=document.createElement('div'); r.className='cbrow';
+      r.innerHTML='<i class="cb"></i><span>'+v+'</span>';
+      list.appendChild(r);
+    });
+    inner.appendChild(list);
+    p.appendChild(inner); host.appendChild(p); return {panel:p, list:list};
+  }
+  var vOne=buildValues(document.getElementById('bStack'), false);
+  var vTwo=buildValues(document.getElementById('bSide'), true);
+
+  // measure wrap: compare rendered height of probe rows against their height at a generous width
+  function probeHeight(d, width){
+    var p=nodes[d.id].panel;
+    var prev=p.style.width;
+    p.style.width=width+'px';
+    var els=p.querySelectorAll(d.probe);
+    var total=0;
+    for(var i=0;i<els.length;i++) total+=els[i].getBoundingClientRect().height;
+    p.style.width=prev;
+    return total;
+  }
+
+  var baseline={}, minWidth={};
+  function calibrate(){
+    DEST.forEach(function(d){
+      baseline[d.id]=probeHeight(d, 620);
+      // walk down to find where it first exceeds baseline
+      var found=300;
+      for(var w=300; w<=620; w+=2){
+        if(probeHeight(d,w) <= baseline[d.id]+1){ found=w; break; }
+      }
+      minWidth[d.id]=found;
+    });
+  }
+
+  function render(){
+    var w=+pw.value;
+    pwOut.textContent=w;
+    var breaking=[];
+    DEST.forEach(function(d){
+      var n=nodes[d.id];
+      n.panel.style.width=w+'px';
+      var h=probeHeight(d,w);
+      var wrapped = h > baseline[d.id]+1;
+      n.st.className='spec-status'+(wrapped?' wrap':'');
+      n.card.className='spec'+(wrapped?' isbreak':'');
+      n.st.textContent = wrapped
+        ? 'Wrapping. Needs '+minWidth[d.id]+' px to sit on one line.'
+        : 'Holds. '+(w-minWidth[d.id])+' px of headroom.';
+      n.need.textContent=minWidth[d.id]+' px';
+      if(wrapped) breaking.push(d.name);
+    });
+
+    var v=document.getElementById('verdict');
+    if(breaking.length===0){
+      v.className='verdict good';
+      v.textContent='All seven destinations hold at '+w+' px.';
+    }else{
+      v.className='verdict bad';
+      v.textContent=breaking.length+' of 7 wrapping at '+w+' px: '+breaking.join(', ')+'.';
+    }
+
+    // value list column comparison
+    vOne.panel.style.width=w+'px'; vTwo.panel.style.width=w+'px';
+    var hs=Math.round(vOne.panel.getBoundingClientRect().height);
+    var hd=Math.round(vTwo.panel.getBoundingClientRect().height);
+    var cols=1;
+    var cs=window.getComputedStyle(vTwo.list).getPropertyValue('grid-template-columns');
+    if(cs && cs.indexOf('px')>-1) cols=cs.trim().split(/\s+/).length;
+    document.getElementById('hStack').textContent=hs+' px tall';
+    document.getElementById('hSide').textContent=hd+' px tall, '+cols+(cols===1?' column':' columns');
+
+    var saved=hs-hd, pct=hs>0?Math.round(saved/hs*100):0;
+    var note;
+    if(cols<2){
+      note='At <strong>'+w+' px</strong> the grid still resolves to a single column, so the two treatments are identical. '+
+        'A 190 px minimum column plus the checkbox, the gutter and the panel padding needs roughly <strong>460 px</strong> of panel before a second column appears. '+
+        'That is above the 400 floor and below the 520 ceiling, which means columns are available on a large monitor and never on a 1440 laptop.';
+    }else{
+      note='At <strong>'+w+' px</strong> the grid resolves to '+cols+' columns. Twenty values take <strong>'+hs+' px</strong> in one column and <strong>'+hd+' px</strong> in '+cols+
+        ', a saving of '+saved+' px or '+pct+'%. On the 53-value Official Mark group that is the difference between a page of scrolling and a glance.';
+    }
+    note+=' Two columns are only worth it on groups past roughly eight values, and only row-major: a facet list is a flat set, not a ranked one, so reading order across then down is fine here in a way it would not be in Versions or Access.';
+    document.getElementById('hNote').innerHTML=note;
+  }
+
+  pw.addEventListener('input',render);
+  Array.prototype.forEach.call(document.querySelectorAll('.presets button'),function(b){
+    b.addEventListener('click',function(){ pw.value=b.dataset.w; render(); });
+  });
+
+  function buildNeedTable(){
+    var tb=document.getElementById('needTable');
+    tb.innerHTML='';
+    var sorted=DEST.slice().sort(function(a,b){return minWidth[b.id]-minWidth[a.id];});
+    var top=minWidth[sorted[0].id];
+    sorted.forEach(function(d){
+      var tr=document.createElement('tr');
+      if(minWidth[d.id]===top) tr.className='sets';
+      tr.innerHTML='<td>'+d.name+'</td><td>'+d.dense+'</td>'+
+        '<td class="num">'+minWidth[d.id]+' px</td><td>'+d.note+'</td>';
+      tb.appendChild(tr);
+    });
+  }
+
+  function boot(){
+    calibrate();
+    buildNeedTable();
+    render();
+  }
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(boot); }
+  else { window.addEventListener('load', boot); }
+})();
+</script>
+</body>
+</html>
