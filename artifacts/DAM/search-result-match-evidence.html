@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Search results: why each result matched</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  /* Scale v1.9.0 (2026-09-15), light values */
+  --accent-3:#e3f5f8;--accent-5:#c1e6ec;--accent-8:#65b5c2;--accent-9:#0c818f;--accent-10:#007381;--accent-11:#006c78;--accent-12:#1b3c41;
+  --accent-alpha-4:#00a3ba2c;--accent-alpha-5:#0099b13e;--accent-alpha-6:#008ca552;--accent-alpha-7:#00869b6d;
+  --neutral-1:#fdfdfc;--neutral-2:#f9f9f8;--neutral-3:#f0f0ef;--neutral-4:#e9e9e6;--neutral-5:#e2e1de;--neutral-6:#dad9d6;--neutral-7:#cfcfca;--neutral-8:#bcbbb5;--neutral-9:#8e8d86;--neutral-10:#83827c;--neutral-11:#63635e;--neutral-12:#21201c;
+  --neutral-alpha-3:#10100010;--neutral-alpha-5:#1f180021;
+  --red-3:#feebe7;--red-9:#e54d2e;--red-11:#cf3716;
+  --indigo-3:#edf2fe;--indigo-9:#3e63dd;--indigo-11:#3a5bc7;
+  --surface-default:var(--neutral-1);--surface-subtle:var(--neutral-2);--surface-muted:var(--neutral-3);--surface-emphasis:var(--neutral-4);
+  --text-default:var(--neutral-12);--text-muted:var(--neutral-11);--text-subtle:var(--neutral-10);--text-on-primary:#ffffff;
+  --border-default:var(--neutral-6);--border-subtle:var(--neutral-3);--border-emphasis:var(--neutral-7);--border-strong:var(--neutral-9);
+  --primary-default:var(--accent-9);--primary-hover:var(--accent-10);--primary-subtle:var(--accent-3);--primary-muted:var(--accent-5);
+  --filetype-badge-bg:rgba(28,28,25,0.62);--filetype-badge-fg:#ffffff;
+  --spacing-1:4px;--spacing-2:8px;--spacing-3:12px;--spacing-4:16px;--spacing-5:20px;--spacing-6:24px;
+  --font-family-text:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --radius-1:3px;--radius-2:4px;--radius-3:6px;--radius-4:8px;--radius-full:9999px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:0 1px 3px rgba(0,0,0,0.1),0 1px 2px rgba(0,0,0,0.06);
+  --shadow-lg:0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.1);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font-family-text);font-size:14px;line-height:20px;color:var(--text-default);background:var(--surface-subtle);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--primary-default);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Tester bar */
+.tbar{position:sticky;top:0;z-index:60;background:var(--surface-default);border-bottom:1px solid var(--border-default);padding:10px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px}
+.tbar .ttl{margin-right:auto;min-width:240px}
+.tbar h1{font-size:16px;line-height:24px;font-weight:600;margin:0;letter-spacing:-0.01em}
+.tbar .sub{font-size:12px;line-height:16px;color:var(--text-muted)}
+.seg{display:inline-flex;background:var(--surface-emphasis);border-radius:var(--radius-3);padding:2px}
+.seg button{border:0;background:transparent;height:28px;padding:0 12px;border-radius:var(--radius-2);font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface-default);color:var(--text-default);box-shadow:var(--shadow-md)}
+.field{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted)}
+.field select{height:28px;border:1px solid var(--border-default);border-radius:var(--radius-2);background:var(--surface-default);font:inherit;font-size:13px;color:var(--text-default);padding:0 4px}
+.chk{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-default);cursor:pointer}
+.chk input{accent-color:var(--primary-default);width:16px;height:16px;margin:0}
+.tbtn{height:28px;padding:0 10px;border:1px solid var(--border-default);background:var(--surface-default);border-radius:var(--radius-2);font-size:13px;font-weight:500;cursor:pointer}
+.tbtn:disabled{color:var(--neutral-8);cursor:default}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;padding:24px;align-items:start}
+@media (max-width:1320px){.layout{grid-template-columns:1fr}}
+
+/* Library backdrop */
+.app{position:relative;height:780px;background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-4);overflow:hidden;display:flex;flex-direction:column}
+.app-top{height:44px;flex:none;display:flex;align-items:center;gap:6px;padding:0 16px;border-bottom:1px solid var(--border-default);font-size:13px;color:var(--text-muted)}
+.app-top b{color:var(--text-default);font-weight:500}
+.app-body{flex:1;display:flex;min-height:0}
+.filters{width:200px;flex:none;border-right:1px solid var(--border-default);padding:16px;display:flex;flex-direction:column;gap:10px}
+.filters .fh{font-size:13px;font-weight:600;margin-bottom:4px}
+.filters .bar{height:10px;border-radius:var(--radius-full);background:var(--surface-emphasis)}
+.grid-wrap{flex:1;overflow:auto;padding:16px}
+.grid-wrap h2{font-size:14px;line-height:20px;font-weight:600;margin:0 0 12px}
+.grid-wrap h2 span{font-weight:400;color:var(--text-muted);margin-left:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:12px}
+.tile{border:1px solid var(--border-default);border-radius:var(--radius-3);background:var(--surface-default);padding:0;cursor:pointer;text-align:left;overflow:hidden;display:block;width:100%}
+.tile:hover{border-color:var(--border-emphasis)}
+.tile:focus-visible{outline-offset:1px}
+.tile .th{aspect-ratio:4/3;background:var(--surface-muted);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.tile .th svg{width:100%;height:100%;display:block}
+.tile .nm{font-size:11px;line-height:16px;padding:6px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-muted)}
+.ftb{position:absolute;right:6px;bottom:6px;background:var(--filetype-badge-bg);color:var(--filetype-badge-fg);padding:1px 6px;border-radius:var(--radius-2);font-size:10px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase}
+.mini-page{width:46%;height:86%;background:#fff;box-shadow:var(--shadow-md);padding:10% 8%;display:flex;flex-direction:column;gap:5px}
+.mini-page i{display:block;height:3px;background:#d6d4cf;border-radius:2px}
+.mini-page i.h{height:5px;width:60%;background:#8f8d87}
+.mini-page i.t{height:14px;background:#e6e4df}
+.scrim{position:absolute;inset:0;background:rgba(33,32,28,.55);display:flex;align-items:center;justify-content:center;padding:28px;z-index:10}
+
+/* Lightbox */
+.lb{position:relative;width:100%;height:100%;max-width:1200px;background:var(--surface-default);border-radius:var(--radius-4);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;overflow:hidden}
+.lb:focus{outline:none}
+.lb-head{display:flex;align-items:center;gap:12px;padding:10px 12px;border-bottom:1px solid var(--border-default);min-height:64px;flex:none}
+.nav{display:flex;align-items:center;gap:2px;position:relative;flex:none}
+.ib{width:28px;height:28px;border:0;background:transparent;border-radius:var(--radius-2);display:inline-flex;align-items:center;justify-content:center;color:var(--text-muted);cursor:pointer;position:relative;flex:none;padding:0}
+.ib:hover{background:var(--neutral-alpha-3);color:var(--text-default)}
+.ib:active{background:var(--accent-alpha-4);color:var(--primary-default)}
+.ib[aria-disabled="true"],.ib:disabled{color:var(--neutral-8);background:transparent;cursor:default}
+.count{font-size:13px;font-weight:500;color:var(--text-muted);font-variant-numeric:tabular-nums;padding:0 4px;white-space:nowrap}
+.count b{color:var(--text-default);font-weight:600}
+.title{min-width:0;flex:1;position:relative}
+.facts .pin{position:relative;top:auto;left:auto;display:inline-flex;vertical-align:middle;margin-left:8px;width:18px;height:18px;box-shadow:none}
+.fn{font-size:16px;line-height:24px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.01em}
+.facts{font-size:12px;line-height:16px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.src-chip{position:relative;display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px 0 8px;border-radius:var(--radius-full);background:var(--primary-subtle);border:1px solid var(--primary-default);color:var(--accent-12);font-size:12px;font-weight:500;max-width:220px;cursor:pointer;flex:none}
+.src-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.actions{display:flex;align-items:center;gap:8px;flex:none;margin-left:auto}
+.btn{height:32px;padding:0 12px;border-radius:var(--radius-2);font-size:14px;font-weight:500;display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap}
+.btn-sec{background:transparent;border:1px solid var(--neutral-9);color:var(--neutral-12)}
+.btn-sec:hover{background:var(--neutral-3);border-color:var(--neutral-10)}
+.legacy .btn-sec{border-color:var(--primary-default);color:var(--primary-default)}
+.btn-pri{background:var(--primary-default);border:1px solid var(--primary-default);color:var(--text-on-primary)}
+.btn-pri:hover{background:var(--primary-hover)}
+.lb-main{flex:1;display:flex;min-height:0}
+.stage{flex:1;position:relative;background:var(--surface-muted);overflow:hidden;min-width:0}
+.art{position:absolute;inset:40px 72px 76px;display:flex;align-items:center;justify-content:center}
+.zoomer{width:100%;height:100%;transition:transform .15s ease}
+.zoomer svg{width:100%;height:100%;display:block}
+.fade{animation:fade .15s ease-in-out}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.doc{position:absolute;inset:0;overflow:auto;padding:24px 24px 60%}
+.doc:focus-visible{outline-offset:-3px}
+.pages{display:flex;flex-direction:column;align-items:center;gap:16px}
+.pagew{width:calc(612px * var(--z,1));height:calc(792px * var(--z,1));flex:none;box-shadow:var(--shadow-md);background:#fff;overflow:hidden}
+.page{width:612px;height:792px;transform:scale(var(--z,1));transform-origin:0 0;padding:72px 80px;color:#1c1c1a}
+.page h3{font-size:22px;line-height:28px;font-weight:700;margin:0 0 12px}
+.page .meta{font-size:15px;color:#5a5955;font-weight:500;margin-bottom:22px}
+.page table{border-collapse:collapse;width:100%;font-size:13px;margin-bottom:22px}
+.page th{background:#2b3740;color:#fff;text-align:left;padding:7px 10px;font-weight:600}
+.page td{border:1px solid #bdbbb6;padding:6px 10px}
+.page p{font-size:13px;line-height:20px;margin:0 0 12px}
+.page .swatches{display:flex;gap:10px;margin:8px 0 22px}
+.page .swatches i{flex:1;height:64px;border-radius:4px}
+.page .foot{position:relative;margin-top:28px;font-size:11px;color:#8b8a85}
+
+.ov{position:absolute;z-index:3}
+.pill{background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-full);box-shadow:var(--shadow-md);height:32px;display:inline-flex;align-items:center;padding:0 10px;font-size:13px;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+.zoomp{left:50%;bottom:16px;transform:translateX(-50%);padding:0 3px;gap:2px}
+.zoomp.teal{background:var(--primary-default);border-color:var(--primary-default)}
+.zoomp.teal .ib{color:#fff}
+.zoomp.teal .ib:hover{background:rgba(255,255,255,.15)}
+.stepper{right:16px;bottom:16px;padding:0 2px;gap:0}
+.stepper .lbl{padding:0 8px;min-width:118px;text-align:center}
+.pos-bl{left:16px;bottom:16px}
+.pos-br{right:16px;bottom:16px}
+.ovarrow{top:50%;margin-top:-20px;width:40px;height:40px;border-radius:50%;border:0;background:var(--accent-11);opacity:.8;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.ovarrow.l{left:16px}.ovarrow.r{right:16px}
+
+.rail{width:56px;flex:none;border-left:1px solid var(--border-default);display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:4px;background:var(--surface-default)}
+.rail .ib{width:40px;height:40px}
+.rail .ib[aria-selected="true"]{background:var(--primary-subtle);color:var(--primary-default)}
+.rail .ib[aria-selected="true"]::before{content:"";position:absolute;left:-8px;top:6px;bottom:6px;width:2px;border-radius:2px;background:var(--primary-default)}
+.panel{width:292px;flex:none;border-left:1px solid var(--border-default);padding:20px 16px;overflow:auto;position:relative}
+.panel h4{font-size:16px;line-height:24px;font-weight:600;margin:0 0 12px}
+.panel dl{margin:0}
+.frow{position:relative;display:grid;grid-template-columns:108px 1fr;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-subtle);font-size:13px;line-height:18px}
+.frow dt{color:var(--text-muted)}
+.frow dd{margin:0;word-break:break-all}
+.thumbs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.thumb{border:2px solid transparent;border-radius:var(--radius-3);padding:2px;background:none;cursor:pointer;position:relative;display:block}
+.thumb:hover{border-color:var(--border-emphasis)}
+.thumb[aria-current="true"]{border-color:var(--primary-default)}
+.thumb .tv{aspect-ratio:16/9;border-radius:var(--radius-2);overflow:hidden;background:var(--surface-muted);display:flex;align-items:center;justify-content:center}
+.thumb.pg .tv{aspect-ratio:3/4}
+.thumb .tv svg{width:100%;height:100%;display:block}
+.thumb .n{position:absolute;left:6px;bottom:6px;font-size:10px;font-weight:600;line-height:16px;background:var(--filetype-badge-bg);color:#fff;border-radius:var(--radius-1);padding:0 5px}
+.panel-msg{font-size:13px;color:var(--text-muted);margin:0}
+
+.lb-foot{position:relative;display:flex;align-items:center;gap:20px;padding:0 16px;height:52px;border-top:1px solid var(--border-default);font-size:13px;color:var(--text-muted);flex:none}
+.kg{display:flex;align-items:center;gap:4px;position:relative;white-space:nowrap}
+.kg .l{margin-left:6px;color:var(--text-default)}
+kbd{min-width:24px;height:22px;padding:0 6px;border:1px solid var(--border-default);border-bottom-width:2px;border-radius:var(--radius-2);background:var(--surface-default);font:inherit;font-size:11px;line-height:1;display:inline-flex;align-items:center;justify-content:center;color:var(--text-muted)}
+.lb-foot .kg > .pin,.foot-count > .pin{top:-16px;left:-12px}
+.lb-foot > .pin{left:6px}
+.foot-count{margin-left:auto;position:relative;font-variant-numeric:tabular-nums}
+.foot-count b{color:var(--text-default)}
+
+/* Annotation pins */
+.pin{position:absolute;top:-10px;left:-10px;width:20px;height:20px;border-radius:50%;background:var(--indigo-9);color:#fff;font-size:11px;font-weight:600;line-height:1;display:flex;align-items:center;justify-content:center;z-index:30;pointer-events:none;box-shadow:0 0 0 2px #fff}
+.pin.issue{background:var(--red-9)}
+.pin.in{top:10px;left:10px}
+.no-pins .pin{display:none}
+
+
+/* Side column */
+.side{display:flex;flex-direction:column;gap:16px}
+.card{background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-4);padding:16px}
+.card h2{font-size:14px;line-height:20px;font-weight:600;margin:0 0 4px}
+.card .hint{font-size:12px;line-height:16px;color:var(--text-muted);margin:0 0 12px}
+.notes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.notes li{display:grid;grid-template-columns:20px 1fr;gap:10px;font-size:13px;line-height:19px}
+.notes li.off{opacity:.45}
+.num{width:20px;height:20px;border-radius:50%;background:var(--indigo-9);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.num.issue{background:var(--red-9)}
+.notes b{font-weight:600;display:block}
+.notes p{margin:2px 0 0;color:var(--text-muted)}
+.notes .cond{display:block;font-size:11px;color:var(--text-subtle);margin-top:2px}
+.log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;min-height:40px}
+.log li{font-size:12px;line-height:17px;padding:6px 8px;background:var(--surface-muted);border-radius:var(--radius-2)}
+.log li:first-child{background:var(--indigo-3);color:var(--indigo-11)}
+.log li.warn:first-child{background:var(--red-3);color:var(--red-11)}
+.log li.empty{background:none;color:var(--text-subtle);padding-left:0}
+.keys{width:100%;border-collapse:collapse;font-size:12px;line-height:17px}
+.keys td{padding:6px 0;border-bottom:1px solid var(--border-subtle);vertical-align:top}
+.keys td:first-child{width:108px;white-space:nowrap}
+.keys kbd{margin-right:2px}
+.keys tr:last-child td{border-bottom:0}
+
+@media (prefers-reduced-motion:reduce){.fade{animation:none}.zoomer{transition:none}}
+
+
+/* Highlight role. Primitive: Radix Yellow (@radix-ui/colors 3.0.0), light only. */
+:root{
+  --yellow-a4:#ffe3016b; --yellow-a5:#ffd5008f; --yellow-a6:#ebbc0097; --yellow-11:#9e6c00;
+  --highlight-match-bg:var(--yellow-a5);
+  --highlight-current-bg:var(--yellow-a6);
+  --highlight-line-bg:var(--yellow-a4);
+  --highlight-line-current-bg:var(--yellow-a5);
+  --highlight-current-ring:var(--yellow-11);
+  --blue-6:#b2d6ff; --blue-11:#0073dd;
+}
+mark{color:inherit;background:var(--highlight-match-bg);border-radius:2px}
+
+/* Tester bar extras */
+.qwrap{display:flex;align-items:center;gap:6px}
+.qfield{display:flex;align-items:center;gap:6px;height:32px;padding:0 10px;border:1px solid var(--border-default);border-radius:var(--radius-2);background:var(--surface-default);min-width:220px}
+.qfield:focus-within{border-color:var(--accent-9);box-shadow:0 0 0 1px var(--accent-9)}
+.qfield input{border:0;outline:0;background:transparent;font:inherit;font-size:14px;flex:1;min-width:0}
+.qfield svg{color:var(--text-muted);flex:none}
+.presets{display:flex;gap:4px;flex-wrap:wrap}
+.preset{height:28px;padding:0 10px;border:1px solid var(--border-default);background:var(--surface-default);border-radius:var(--radius-full);font-size:12px;cursor:pointer;color:var(--text-default)}
+.preset[aria-pressed="true"]{background:var(--neutral-3);border-color:var(--neutral-9)}
+
+/* Library */
+.app{height:auto;min-height:780px}
+.grid-wrap{overflow:visible}
+.app .grid{grid-template-columns:repeat(auto-fill,272px);gap:16px;align-items:start}
+.rc{position:relative;display:flex;flex-direction:column;width:272px;padding:0;text-align:left;border:1px solid var(--border-default);border-radius:var(--radius-3);background:var(--surface-default);overflow:visible;font:inherit;color:inherit;cursor:pointer}
+.rc:hover{border-color:var(--border-emphasis)}
+.rc .th{aspect-ratio:4/3;background:var(--surface-muted);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:var(--radius-3) var(--radius-3) 0 0}
+.rc .th svg.thumbart{width:100%;height:100%;display:block}
+.rc .tb{position:relative;height:36px;margin:10px 10px 0;font-size:12px;line-height:18px}
+.rc .t2{font-weight:600;color:var(--text-default);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.rc .t1{font-weight:600;color:var(--text-default);display:flex;min-width:0;white-space:nowrap;height:18px}
+.rc .t1 .a{overflow:hidden;text-overflow:ellipsis;min-width:0;white-space:pre}
+.rc .t1 .b{flex:none;white-space:pre}
+.rc .ev{display:flex;align-items:center;gap:4px;height:18px;color:var(--text-muted);white-space:nowrap;min-width:0}
+.rc .ev svg{flex:none;color:var(--text-muted)}
+.rc .ev .st{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.rc .ev .lbl{flex:none}
+.rc .ev .plus{flex:none;margin-left:auto;padding-left:4px;font-variant-numeric:tabular-nums}
+.rc .dt{margin:6px 10px 10px;font-size:11px;line-height:16px;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:20px}
+.rc.active{outline:2px solid var(--accent-9);outline-offset:1px}
+.ocr-chip{display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 6px;border-radius:var(--radius-2);font-size:11px;font-weight:500;white-space:nowrap;background:var(--surface-default);border:1px solid var(--blue-6);color:var(--blue-11)}
+.empty-state{padding:48px 0;color:var(--text-muted);font-size:14px}
+
+/* Side: inspector */
+.insp .fn{font-size:13px;font-weight:600;margin:0 0 8px;overflow-wrap:anywhere}
+.srcs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.srcs li{display:grid;grid-template-columns:18px 88px 1fr;gap:8px;align-items:start;font-size:12px;line-height:17px;padding:6px 8px;border-radius:var(--radius-2);background:var(--surface-subtle)}
+.srcs li.no{color:var(--text-subtle);background:none}
+.srcs li.shown{background:var(--neutral-3);box-shadow:inset 2px 0 0 var(--neutral-12)}
+.srcs .n{font-variant-numeric:tabular-nums;color:var(--text-muted)}
+.srcs .k{font-weight:500}
+.srcs .v{overflow-wrap:anywhere}
+.srcs .tagshown{display:inline-block;margin-left:6px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--neutral-12)}
+.aname{margin-top:10px;font-size:12px;line-height:17px;padding:8px;border-radius:var(--radius-2);background:var(--indigo-3);color:var(--indigo-11)}
+
+/* Lightbox (simplified) */
+.scrim{position:fixed;inset:0;z-index:80;padding:40px}
+.lb{max-width:1100px;height:min(700px,calc(100vh - 80px));margin:auto}
+.stage .preview{position:absolute;inset:24px 24px 24px;display:flex;align-items:center;justify-content:center}
+.stage .preview.with-band{top:60px}
+.imgbox{position:relative;height:100%;max-width:100%;aspect-ratio:3/4;background:#111;box-shadow:var(--shadow-md)}
+.imgbox.land{aspect-ratio:4/3}
+.imgbox svg{width:100%;height:100%;display:block}
+.ocr-box{position:absolute;background:var(--highlight-line-bg);border-radius:2px}
+.ocr-box.cur{background:var(--highlight-line-current-bg);box-shadow:0 0 0 2px var(--highlight-current-ring)}
+.docpage{position:relative;height:100%;aspect-ratio:612/792;background:#fff;box-shadow:var(--shadow-md);padding:7% 8%;overflow:hidden;color:#1c1c1a;font-size:12px;line-height:19px;color-scheme:light}
+.docpage h3{font-size:17px;margin:0 0 10px}
+.docpage .ln{display:block;white-space:nowrap}
+.docpage mark.hl-line{background:var(--highlight-line-bg)}
+.docpage mark.hl-line.cur{background:var(--highlight-line-current-bg);box-shadow:0 0 0 2px var(--highlight-current-ring)}
+.band{position:absolute;left:0;right:0;top:64px;height:36px;z-index:6;display:flex;align-items:center;gap:12px;padding:0 12px 0 0;background:var(--accent-3);border-bottom:1px solid var(--accent-5);font-size:12px}
+.band .bl{display:flex;align-items:center;gap:6px;font-weight:500;white-space:nowrap;padding:0 12px;border-left:2px solid var(--primary-default);border-right:1px solid var(--accent-5);height:20px}
+.band .bq{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.band .bq mark{padding:0 2px;font-weight:500}
+.band .bn{display:flex;align-items:center;gap:2px;white-space:nowrap}
+.band .ib{width:24px;height:24px;color:var(--neutral-11)}
+.band .cnt{margin-left:6px;font-variant-numeric:tabular-nums}
+.panel .sec{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-muted);margin:16px 0 8px}
+.panel .sec:first-of-type{margin-top:0}
+.tagrow{display:flex;flex-wrap:wrap;gap:6px}
+.tagchip{display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:var(--radius-full);border:1px solid var(--border-default);background:var(--surface-default);font-size:12px}
+.frow.hit{scroll-margin:40px}
+.hdr-note{font-size:12px;color:var(--text-muted)}
+.lb.has-band .panel{padding-top:56px}
+.lb.has-band .rail{padding-top:44px}
+.fn mark{padding:0 1px}
+</style>
+</head>
+<body>
+<header class="tbar">
+  <div class="ttl">
+    <h1>Search results: why each result matched</h1>
+    <div class="sub">SCR-300. One evidence slot on the result card. Sources and precedence follow the SCR-31 search weights.</div>
+  </div>
+  <div class="seg" role="group" aria-label="Version">
+    <button data-mode="current" aria-pressed="false">Current build</button>
+    <button data-mode="proposed" aria-pressed="true">Proposed</button>
+  </div>
+  <div class="qwrap">
+    <label class="qfield"><svg aria-hidden="true" focusable="false" class="lucide lucide-search" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg><input id="q" type="text" value="nightingale" aria-label="Search the library" autocomplete="off" spellcheck="false"></label>
+    <div class="presets" role="group" aria-label="Example queries">
+      <button class="preset" data-q="nightingale">nightingale</button>
+      <button class="preset" data-q="keynote">keynote</button>
+      <button class="preset" data-q="key">key</button>
+      <button class="preset" data-q="cafe">cafe</button>
+      <button class="preset" data-q="tree">tree</button>
+      <button class="preset" data-q="n">n</button>
+    </div>
+  </div>
+</header>
+
+<main class="layout">
+  <div id="app" class="app"></div>
+  <aside class="side">
+    <section class="card insp" aria-live="polite">
+      <h2>Match inspector</h2>
+      <p class="hint">Hover or focus a card to see every source that matched, and which one the card shows.</p>
+      <div id="insp"></div>
+    </section>
+    <section class="card">
+      <h2 id="notes-h">What changed</h2>
+      <p class="hint" id="notes-hint"></p>
+      <ol class="notes" id="notes"></ol>
+    </section>
+  </aside>
+</main>
+<div id="app-lb"></div>
+
+<script>
+const ICONS = {"chevron-left": "<svg class=\"lucide lucide-chevron-left\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"m15 18-6-6 6-6\" /> </svg>", "chevron-right": "<svg class=\"lucide lucide-chevron-right\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"m9 18 6-6-6-6\" /> </svg>", "chevron-up": "<svg class=\"lucide lucide-chevron-up\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"m18 15-6-6-6 6\" /> </svg>", "chevron-down": "<svg class=\"lucide lucide-chevron-down\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"m6 9 6 6 6-6\" /> </svg>", "x": "<svg class=\"lucide lucide-x\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M18 6 6 18\" /> <path d=\"m6 6 12 12\" /> </svg>", "download": "<svg class=\"lucide lucide-download\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M12 15V3\" /> <path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\" /> <path d=\"m7 10 5 5 5-5\" /> </svg>", "inbox": "<svg class=\"lucide lucide-inbox\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\" /> <path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\" /> </svg>", "ellipsis": "<svg class=\"lucide lucide-ellipsis\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <circle cx=\"12\" cy=\"12\" r=\"1\" /> <circle cx=\"19\" cy=\"12\" r=\"1\" /> <circle cx=\"5\" cy=\"12\" r=\"1\" /> </svg>", "panel-right-close": "<svg class=\"lucide lucide-panel-right-close\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" /> <path d=\"M15 3v18\" /> <path d=\"m8 9 3 3-3 3\" /> </svg>", "info": "<svg class=\"lucide lucide-info\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <circle cx=\"12\" cy=\"12\" r=\"10\" /> <path d=\"M12 16v-4\" /> <path d=\"M12 8h.01\" /> </svg>", "layers": "<svg class=\"lucide lucide-layers\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z\" /> <path d=\"M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12\" /> <path d=\"M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17\" /> </svg>", "zoom-in": "<svg class=\"lucide lucide-zoom-in\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <circle cx=\"11\" cy=\"11\" r=\"8\" /> <line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\" /> <line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\" /> <line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\" /> </svg>", "zoom-out": "<svg class=\"lucide lucide-zoom-out\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <circle cx=\"11\" cy=\"11\" r=\"8\" /> <line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\" /> <line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\" /> </svg>", "shrink": "<svg class=\"lucide lucide-shrink\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"m15 15 6 6m-6-6v4.8m0-4.8h4.8\" /> <path d=\"M9 19.8V15m0 0H4.2M9 15l-6 6\" /> <path d=\"M15 4.2V9m0 0h4.8M15 9l6-6\" /> <path d=\"M9 4.2V9m0 0H4.2M9 9 3 3\" /> </svg>", "undo-2": "<svg class=\"lucide lucide-undo-2\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M9 14 4 9l5-5\" /> <path d=\"M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11\" /> </svg>", "attributes": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"currentColor\" stroke=\"none\"><g><path d=\"M7.1.1c1.8,0,3.3,1.5,3.3,3.3,0,1.5-1.1,2.8-2.5,3.2v3.8h5.1c.4-1.4,1.6-2.5,3.2-2.5,1.8,0,3.3,1.5,3.3,3.3,0,1.8-1.5,3.3-3.3,3.3-1.6,0-2.9-1.1-3.2-2.6h-5.1v5.3c0,1.2,1,2.2,2.2,2.2h2.8c.3-1.4,1.6-2.5,3.2-2.5s3.3,1.5,3.3,3.3c0,1.8-1.5,3.3-3.3,3.3-1.5,0-2.8-1.1-3.2-2.5h-2.8c-2.1,0-3.7-1.7-3.7-3.7V6.6c-1.4-.3-2.5-1.6-2.5-3.2,0-1.8,1.5-3.3,3.3-3.3ZM16.1,18.4c-1,0-1.8.8-1.8,1.8,0,1,.8,1.8,1.8,1.8,1,0,1.8-.8,1.8-1.8,0-1-.8-1.8-1.8-1.8ZM16.1,9.4c-1,0-1.8.8-1.8,1.8,0,1,.8,1.8,1.8,1.8,1,0,1.8-.8,1.8-1.8,0-1-.8-1.8-1.8-1.8ZM7.1,1.6c-1,0-1.8.8-1.8,1.8,0,1,.8,1.8,1.8,1.8,1,0,1.8-.8,1.8-1.8,0-1-.8-1.8-1.8-1.8Z\"></path><path d=\"M16.2,16.6c-1.6,0-2.9,1.1-3.3,2.5h-3c-1.1,0-2-.9-2-2v-5.1h5c.4,1.4,1.7,2.5,3.3,2.5s3.5-1.5,3.5-3.5-1.5-3.5-3.5-3.5-2.8,1-3.3,2.4h-5v-3c1.4-.4,2.4-1.7,2.4-3.3S8.8.3,6.9.3s-3.5,1.5-3.5,3.5,1.1,2.9,2.5,3.3v10.1c0,2.2,1.8,4,4,4h3c.4,1.4,1.7,2.4,3.3,2.4s3.5-1.5,3.5-3.5-1.5-3.5-3.5-3.5ZM16.2,9.6c.8,0,1.5.7,1.5,1.5s-.7,1.5-1.5,1.5-1.5-.7-1.5-1.5.7-1.5,1.5-1.5ZM5.4,3.8c0-.8.7-1.5,1.5-1.5s1.5.7,1.5,1.5-.7,1.5-1.5,1.5-1.5-.7-1.5-1.5ZM16.2,21.5c-.8,0-1.5-.7-1.5-1.5s.7-1.5,1.5-1.5,1.5.7,1.5,1.5-.7,1.5-1.5,1.5Z\"></path></g></svg>", "similar": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 9c2.8-3.4 6.2-3.4 9 0s6.2 3.4 9 0\"/><path d=\"M3 15c2.8-3.4 6.2-3.4 9 0s6.2 3.4 9 0\"/></svg>", "search": "<svg class=\"lucide lucide-search\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"m21 21-4.34-4.34\" /> <circle cx=\"11\" cy=\"11\" r=\"8\" /> </svg>", "scan-text": "<svg class=\"lucide lucide-scan-text\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M3 7V5a2 2 0 0 1 2-2h2\" /> <path d=\"M17 3h2a2 2 0 0 1 2 2v2\" /> <path d=\"M21 17v2a2 2 0 0 1-2 2h-2\" /> <path d=\"M7 21H5a2 2 0 0 1-2-2v-2\" /> <path d=\"M7 8h8\" /> <path d=\"M7 12h10\" /> <path d=\"M7 16h6\" /> </svg>", "scan-search": "<svg class=\"lucide lucide-scan-search\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M3 7V5a2 2 0 0 1 2-2h2\" /> <path d=\"M17 3h2a2 2 0 0 1 2 2v2\" /> <path d=\"M21 17v2a2 2 0 0 1-2 2h-2\" /> <path d=\"M7 21H5a2 2 0 0 1-2-2v-2\" /> <circle cx=\"12\" cy=\"12\" r=\"3\" /> <path d=\"m16 16-1.9-1.9\" /> </svg>", "tag": "<svg class=\"lucide lucide-tag\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z\" /> <circle cx=\"7.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\" /> </svg>", "text-align-start": "<svg class=\"lucide lucide-text-align-start\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M21 5H3\" /> <path d=\"M15 12H3\" /> <path d=\"M17 19H3\" /> </svg>", "play": "<svg class=\"lucide lucide-play\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\" /> </svg>", "image": "<svg class=\"lucide lucide-image\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" ry=\"2\" /> <circle cx=\"9\" cy=\"9\" r=\"2\" /> <path d=\"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21\" /> </svg>", "tags": "<svg class=\"lucide lucide-tags\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z\" /> <path d=\"M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193\" /> <circle cx=\"10.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\" /> </svg>", "file": "<svg class=\"lucide lucide-file\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\" /> <path d=\"M14 2v5a1 1 0 0 0 1 1h5\" /> </svg>", "sparkle": "<svg class=\"lucide lucide-sparkle\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z\" /> </svg>"};
+const ic = (n, s = 16) => ICONS[n].replace(/width="24"/, `width="${s}"`).replace(/height="24"/, `height="${s}"`).replace('<svg', '<svg aria-hidden="true" focusable="false"');
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+const fold = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const MAC = /Mac|iPhone|iPad/.test(navigator.platform);
+const MOD = MAC ? '⌘' : 'Ctrl';
+const MIN = 2;
+
+/* ---------- Placeholder artwork ---------- */
+let uid = 0;
+const art = {
+  slide: () => `<div class="slide-mini" style="width:78%;aspect-ratio:16/9;background:#fff;box-shadow:var(--shadow-md);padding:8%;display:flex;flex-direction:column;gap:6px"><i style="display:block;height:10px;width:55%;background:#8f8d87;border-radius:2px"></i><i style="display:block;height:6px;background:#d6d4cf;border-radius:2px"></i><i style="display:block;height:6px;width:70%;background:#d6d4cf;border-radius:2px"></i></div>`,
+  page: () => `<div style="width:46%;height:86%;background:#fff;box-shadow:var(--shadow-md);padding:10% 8%;display:flex;flex-direction:column;gap:5px"><i style="display:block;height:5px;width:60%;background:#8f8d87;border-radius:2px"></i><i style="display:block;height:3px;background:#d6d4cf"></i><i style="display:block;height:14px;background:#e6e4df"></i><i style="display:block;height:3px;background:#d6d4cf"></i><i style="display:block;height:3px;width:70%;background:#d6d4cf"></i></div>`,
+  photo: (h1, h2) => { const id = 'g' + (++uid); return `<svg class="thumbart" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${h1}"/><stop offset="1" stop-color="${h2}"/></linearGradient></defs><rect width="400" height="300" fill="url(#${id})"/><rect x="0" y="190" width="400" height="110" fill="#000" opacity=".25"/><circle cx="300" cy="90" r="40" fill="#fff" opacity=".35"/><rect x="40" y="150" width="120" height="90" rx="6" fill="#fff" opacity=".2"/></svg>`; },
+  banner: () => `<svg class="thumbart" viewBox="0 0 400 300"><rect width="400" height="300" fill="#e9e8e6"/><rect x="30" y="110" width="340" height="80" rx="4" fill="#1d3fb8"/><rect x="50" y="135" width="160" height="12" rx="2" fill="#fff"/><rect x="50" y="155" width="100" height="8" rx="2" fill="#fff" opacity=".7"/><rect x="300" y="132" width="50" height="36" rx="4" fill="#ffd400"/></svg>`,
+  video: () => `<svg class="thumbart" viewBox="0 0 400 300"><rect width="400" height="300" fill="#2b3740"/><rect x="0" y="0" width="400" height="300" fill="#0c818f" opacity=".25"/><circle cx="200" cy="150" r="34" fill="#fff" opacity=".9"/><path d="M191 134 L218 150 L191 166 Z" fill="#2b3740"/></svg>`,
+  poster: () => `<svg class="thumbart" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice"><rect width="300" height="400" fill="#101a3a"/><circle cx="220" cy="120" r="90" fill="#6a5cff" opacity=".8"/><rect x="24" y="250" width="200" height="22" rx="2" fill="#fff"/><rect x="24" y="282" width="150" height="12" rx="2" fill="#fff" opacity=".7"/></svg>`,
+  vector: () => `<svg class="thumbart" viewBox="0 0 400 300"><rect width="400" height="300" fill="#f4f2ee"/><g fill="none" stroke="#21201c" stroke-width="10"><rect x="60" y="80" width="120" height="140" rx="10"/><path d="M230 150 h100 M300 120 l30 30 l-30 30"/></g></svg>`
+};
+
+/* ---------- Data ----------
+   Searchable sources mirror the SCR-31 index. Each asset: title (asset name), file (original file name),
+   attrs (structured: select / multi-select / date), custom (free-text fields), description,
+   tags (manual, free-form), aiTags (accepted), text (OCR lines), textKind. EXIF/IPTC is not indexed. */
+const DOC_LINES = [
+  'This page belongs to the internal review known as PROJECT NIGHTINGALE.',
+  'It checks that a single-page keyword search returns exactly one match.',
+  'PROJECT NIGHTINGALE is referenced twice within this page. This is the',
+  'first mention, used to open the discussion of the review scope and timeline.',
+  'Later in the same document, PROJECT NIGHTINGALE is mentioned again in',
+  'the closing summary, so a multi-hit search on this page returns two.',
+  'Spend for PROJECT NIGHTINGALE is tracked separately from operating costs.',
+  'Closing summary for PROJECT NIGHTINGALE. The review is complete.',
+  'Owners should archive PROJECT NIGHTINGALE materials once signed off.',
+  'Supplier onboarding notes for the Café Kiosk programme follow below.'
+];
+const A = (o) => Object.assign({ attrs: {}, custom: {}, tags: [], aiTags: [], text: [], textKind: 'document', description: '' }, o);
+const ASSETS = [
+  A({ title: 'Project Nightingale steering group kickoff deck', file: 'SG_kickoff_v7.pptx', type: 'PPTX', art: 'slide', date: 'Last week',
+    tags: ['Nightingale', 'Steering group'], attrs: { Campaign: 'Project Nightingale' }, description: 'Kickoff deck for the Nightingale steering group.' }),
+  A({ title: 'Ticketing email header, round 3', file: 'CWC26_ticketing_header_v3.png', type: 'PNG', art: 'banner', date: '3 days ago', textKind: 'image',
+    tags: ['Ticketing', 'Email'], attrs: { Campaign: 'Project Nightingale Q3', Channel: 'CRM email' }, description: 'Header for the third ticketing email.' }),
+  A({ title: 'Volunteer briefing, cut 2', file: 'CWC26_volunteer_briefing_02.mp4', type: 'MP4', art: 'video', date: 'Yesterday',
+    tags: ['Volunteers', 'Briefing'], attrs: { Venue: 'Hard Rock Stadium' },
+    description: 'Briefing for Nightingale volunteers ahead of the opening fixture in Miami, covering accreditation and the keynote stage.' }),
+  A({ title: 'Mascot concept sketches', file: 'CWC26_mascot_sketches_batch1.pdf', type: 'PDF', art: 'page', date: '6 days ago',
+    tags: ['Mascot', 'Concept'], attrs: { Status: 'In review' }, custom: { Notes: 'Early sketches from the Nightingale workshop with the illustration agency.' },
+    description: 'First batch of mascot sketches.' }),
+  A({ title: 'Miami park birdlife 02', file: 'IMG_20260611_0712.jpg', type: 'JPG', art: 'photo', hues: ['#7fa36b', '#2f4a3a'], date: '5 days ago', textKind: 'image',
+    tags: ['Miami', 'B-roll'], aiTags: ['Bird', 'Nightingale', 'Tree', 'Outdoor'], description: 'Park b-roll for the host city film.' }),
+  A({ title: 'Hospitality lounge hero 01', file: 'CWC26_hospitality_hero_01.jpg', type: 'JPG', art: 'photo', hues: ['#c28b5a', '#3b3228'], date: '2 days ago', textKind: 'image',
+    tags: ['Hospitality', 'Nightingale', 'Hero image', 'Café culture'], attrs: { Venue: 'MetLife Stadium' }, description: 'Hero image for the premium hospitality lounge.' }),
+  A({ title: 'Steering group photo, March', file: 'nightingale_steering_group_IMG_4471.jpg', type: 'JPG', art: 'photo', hues: ['#8a93a6', '#2a3345'], date: '3 weeks ago', textKind: 'image',
+    tags: ['Internal', 'People'], description: 'Group photo from the March session.' }),
+  A({ title: 'FIFA CWC internal governance review pack appendix v2 final', file: 'governance_appendix_v2_final.pdf', type: 'PDF', art: 'page', date: 'Yesterday',
+    tags: ['Governance'], attrs: { Owner: 'Legal and compliance' }, description: 'Internal governance appendix.', text: DOC_LINES }),
+  A({ title: 'Fan zone poster A2 print', file: 'CWC26_fanzone_poster_A2.jpg', type: 'JPG', art: 'poster', date: '4 days ago', textKind: 'image',
+    tags: ['Fan zone', 'Print'], attrs: { Format: 'A2 portrait' }, description: 'Print poster for the fan zone.',
+    text: ['NIGHTINGALE FAN FESTIVAL', 'CAFÉ AND FOOD COURT OPEN FROM 11:00', 'KEYNOTE STAGE LINE-UP INSIDE'] }),
+  A({ title: 'Stadium wayfinding signage pack', file: 'CWC26_wayfinding_pack.ai', type: 'AI', art: 'vector', date: 'Last week', textKind: 'image',
+    tags: ['Wayfinding', 'Signage'], attrs: { Venue: 'Nightingale Park', Format: 'Vector' }, description: 'Wayfinding signage pack.',
+    text: ['NIGHTINGALE PARK GATE B', 'EXIT TO PARKING'] }),
+  A({ title: 'Keynote stage run of show v4', file: 'run_of_show_v4.docx', type: 'DOCX', art: 'page', date: '5 days ago',
+    tags: ['Run of show'], attrs: { Owner: 'Event operations' }, description: 'Timings for the opening ceremony stage.',
+    text: ['Keynote stage opens at 18:00 with the welcome address.'] }),
+  A({ title: 'Press conference backdrop', file: 'CWC26_press_backdrop.png', type: 'PNG', art: 'banner', date: '2 weeks ago', textKind: 'image',
+    tags: ['Press', 'Keynote', 'Backdrop'], attrs: { Channel: 'Media operations' }, description: 'Step-and-repeat backdrop for press conferences.' }),
+  A({ title: 'Host city activation guidelines', file: 'CWC26_host_city_guidelines_final.pdf', type: 'PDF', art: 'page', date: '2 days ago',
+    tags: ['Host cities'], attrs: { Owner: 'Brand team' }, description: 'Guidelines for host city activations, including cafe and street food partners.' })
+];
+
+/* Evidence precedence follows the SCR-31 field weights. Ties: controlled before free text, authored before machine-derived. */
+const SOURCES = [
+  { k: 'title',       name: 'Title / asset name',   w: 5 },
+  { k: 'attr',        name: 'Structured attribute', w: 4 },
+  { k: 'description', name: 'Description',          w: 3 },
+  { k: 'custom',      name: 'Free-text field',      w: 3 },
+  { k: 'aitag',       name: 'AI tag',               w: 3 },
+  { k: 'tag',         name: 'Manual tag',           w: 2 },
+  { k: 'file',        name: 'File name',            w: 2 },
+  { k: 'text',        name: 'Text in file (OCR)',   w: 1 },
+];
+const SOURCE_ORDER = SOURCES.map(s => s.k);
+
+/* ---------- Matching ---------- */
+const S = { mode: 'proposed', q: 'nightingale', open: null, cur: 0, active: null, bandClosed: false };
+const P = () => S.mode === 'proposed';
+const tokens = () => fold(S.q).trim().split(/\s+/).filter(Boolean);
+const allIn = (s, toks) => toks.every(t => fold(s).includes(t));
+
+function sourcesFor(a) {
+  const toks = tokens(), kv = o => Object.entries(o).filter(([, v]) => allIn(v, toks)).map(([k, v]) => ({ k, v }));
+  return {
+    title: allIn(a.title, toks) ? [a.title] : [],
+    attr: kv(a.attrs),
+    description: a.description && allIn(a.description, toks) ? [a.description] : [],
+    custom: kv(a.custom),
+    aitag: a.aiTags.filter(t => allIn(t, toks)),
+    tag: a.tags.filter(t => allIn(t, toks)),
+    file: allIn(a.file, toks) ? [a.file] : [],
+    text: a.text.filter(l => allIn(l, toks)),
+  };
+}
+const topSource = src => SOURCE_ORDER.find(k => src[k].length);
+
+// Mark ranges. Free text: substring. Controlled values (tags, structured attributes): whole words only.
+function ranges(value, structured) {
+  const f = fold(value), out = [];
+  tokens().forEach(t => {
+    if (t.length < MIN) return;
+    let i = f.indexOf(t);
+    while (i > -1) {
+      const before = i === 0 || !/[a-z0-9]/.test(f[i - 1]);
+      const after = i + t.length === f.length || !/[a-z0-9]/.test(f[i + t.length]);
+      if (!structured || (before && after)) out.push([i, i + t.length]);
+      i = f.indexOf(t, i + 1);
+    }
+  });
+  return out.sort((x, y) => x[0] - y[0]);
+}
+function markHTML(value, structured, offset = 0, len = value.length) {
+  const seg = value.slice(offset, offset + len);
+  const rs = ranges(value, structured).filter(r => r[0] >= offset && r[1] <= offset + len).map(r => [r[0] - offset, r[1] - offset]);
+  let html = '', pos = 0;
+  rs.forEach(([s, e]) => { if (s < pos) return; html += esc(seg.slice(pos, s)) + `<mark>${esc(seg.slice(s, e))}</mark>`; pos = e; });
+  return html + esc(seg.slice(pos));
+}
+const WINDOW = 34;
+function snippet(line, win = WINDOW) {
+  const rs = ranges(line, false);
+  if (!rs.length) { const s = line.slice(0, win); return { html: esc(s) + (line.length > win ? '…' : ''), text: s + (line.length > win ? '…' : '') }; }
+  const first = rs[0];
+  if (first[1] - first[0] > win) { const s = line.slice(first[0], first[1]); return { html: `<mark>${esc(s)}</mark>`, text: s }; }
+  const cStop = Math.min(Math.max(...rs.filter(r => r[0] - first[0] <= win).map(r => r[1])), first[0] + win);
+  let a = Math.round((first[0] + cStop) / 2 - win / 2);
+  a = Math.max(0, Math.min(a, line.length - win));
+  let b = Math.min(line.length, a + win);
+  const sep = /[\s_\-.]/;
+  if (a > 0 && !sep.test(line[a - 1])) { let j = a; while (j < first[0] && !sep.test(line[j])) j++; a = j < first[0] ? j + 1 : first[0]; }
+  if (b < line.length && !sep.test(line[b])) { let j = b; while (j > cStop && !sep.test(line[j - 1])) j--; b = j > cStop ? j - 1 : cStop; }
+  const pre = a > 0 ? '…' : '', post = b < line.length ? '…' : '';
+  return { html: pre + markHTML(line, false, a, b - a) + post, text: pre + line.slice(a, b) + post };
+}
+
+/* ---------- Card ---------- */
+const plural = (n, one, many) => `${n} more ${n === 1 ? one : many}`;
+function evidence(a, src, top) {
+  const n = src[top].length, extra = n - 1;
+  const plus = extra > 0 ? `<span class="plus">+${extra}</span>` : '';
+  const line = (icon, inner) => `<div class="ev" aria-hidden="true">${ic(icon, 12)}${inner}${plus}</div>`;
+  switch (top) {
+    case 'attr': { const { k, v } = src.attr[0];
+      return { html: line('attributes', `<span class="lbl">${esc(k)}:</span><span class="st">${markHTML(v, true)}</span>`),
+               spoken: `Matched in ${k}: ${v}${extra ? `, and ${plural(extra, 'field', 'fields')}` : ''}` }; }
+    case 'description': { const sn = snippet(a.description);
+      return { html: line('text-align-start', `<span class="st">${sn.html}</span>`), spoken: `Matched in description: ${sn.text}` }; }
+    case 'custom': { const { k, v } = src.custom[0]; const sn = snippet(v, WINDOW - k.length);
+      return { html: line('attributes', `<span class="lbl">${esc(k)}:</span><span class="st">${sn.html}</span>`),
+               spoken: `Matched in ${k}: ${sn.text}${extra ? `, and ${plural(extra, 'field', 'fields')}` : ''}` }; }
+    case 'aitag': case 'tag': { const t = src[top][0];
+      return { html: line('tags', `<span class="st">${markHTML(t, true)}</span>`),
+               spoken: `Matched on tag: ${t}${extra ? `, and ${plural(extra, 'tag', 'tags')}` : ''}` }; }
+    case 'file': { const sn = snippet(a.file);
+      return { html: line('file', `<span class="st">${sn.html}</span>`), spoken: `Matched in file name: ${a.file}` }; }
+    default: { const sn = snippet(src.text[0]);
+      return { html: line('scan-search', `<span class="st">${sn.html}</span>`),
+               spoken: `Matched in ${a.textKind} text, ${n} ${n === 1 ? 'line' : 'lines'}: ${sn.text}` }; }
+  }
+}
+const SHORT = { title: 'title', attr: 'metadata', description: 'description', custom: 'metadata', aitag: 'tags', tag: 'tags', file: 'file name', text: 'file text' };
+function othersPhrase(src, top) {
+  const rest = [...new Set(SOURCE_ORDER.filter(k => k !== top && src[k].length).map(k => SHORT[k]))].filter(x => x !== SHORT[top] || false);
+  if (!rest.length) return '';
+  return ` Also matched in ${rest.length > 1 ? rest.slice(0, -1).join(', ') + ' and ' + rest.slice(-1) : rest[0]}.`;
+}
+const endPunct = s => /[.…!?]$/.test(s) ? s : s + '.';
+
+function card(a, i) {
+  const src = sourcesFor(a), top = topSource(src);
+  const thumb = `<div class="th">${a.art === 'photo' ? art.photo(...a.hues) : art[a.art]()}<span class="ftb">${a.type}</span></div>`;
+  if (!P()) {
+    const ocr = src.text.length > 0;
+    return `<button class="rc" data-i="${i}" aria-label="${esc(a.title)}. ${a.date}">${thumb}
+      <div class="tb"><div class="t2">${esc(a.title)}</div></div>
+      <div class="dt"><span>${a.date}</span>${ocr ? `<span class="ocr-chip">${ic('scan-search', 12)}Text in document</span>` : ''}</div></button>`;
+  }
+  let tb, spoken;
+  if (top === 'title') {
+    tb = `<div class="t2" title="${esc(a.title)}">${markHTML(a.title, false)}</div>`;
+    spoken = 'Matched in title.';
+  } else {
+    const ev = evidence(a, src, top);
+    const end = a.title.slice(-8), start = a.title.slice(0, -8);
+    tb = `<div class="t1" title="${esc(a.title)}"><span class="a">${esc(start)}</span><span class="b">${esc(end)}</span></div>${ev.html}`;
+    spoken = endPunct(ev.spoken);
+  }
+  const label = `${a.title}. ${spoken}${othersPhrase(src, top)} ${a.date}`;
+  return `<button class="rc${S.active === i ? ' active' : ''}" data-i="${i}" aria-label="${esc(label)}">${thumb}
+    <div class="tb">${tb}</div>
+    <div class="dt"><span>${a.date}</span></div></button>`;
+}
+
+/* ---------- Library ---------- */
+function renderLibrary() {
+  const ok = fold(S.q).trim().length >= MIN;
+  const hits = ok ? ASSETS.map((a, i) => ({ a, i })).filter(({ a }) => topSource(sourcesFor(a))) : [];
+  $('#app').innerHTML = `<div class="app-top">Home / DAM / <b>FIFA Club World Cup</b></div>
+    <div class="app-body"><div class="filters" aria-hidden="true"><div class="fh">Filters</div>${'<div class="bar"></div>'.repeat(4)}</div>
+    <div class="grid-wrap"><h2 id="lib-h" tabindex="-1">${ok ? `Results for "${esc(S.q)}"<span>${hits.length} ${hits.length === 1 ? 'result' : 'results'}</span>` : 'Library'}</h2>
+    ${!ok ? `<p class="empty-state">Search starts at ${MIN} characters. No highlighting under ${MIN} characters.</p>`
+      : hits.length ? `<div class="grid">${hits.map(({ a, i }) => card(a, i)).join('')}</div>` : `<p class="empty-state">No results.</p>`}
+    </div></div>`;
+  document.querySelectorAll('[data-q]').forEach(b => b.setAttribute('aria-pressed', b.dataset.q === S.q));
+  document.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === S.mode));
+  renderInspector();
+  renderNotes();
+}
+
+function renderInspector() {
+  const el = $('#insp');
+  if (S.active == null || !ASSETS[S.active] || !document.querySelector(`.rc[data-i="${S.active}"]`)) { el.innerHTML = '<p class="hint" style="margin:0">Nothing selected.</p>'; return; }
+  const a = ASSETS[S.active], src = sourcesFor(a), top = topSource(src);
+  const val = k => {
+    const v = src[k];
+    if (!v.length) return 'No match';
+    if (k === 'title' || k === 'file') return markHTML(v[0], false);
+    if (k === 'tag' || k === 'aitag') return v.map(t => markHTML(t, true)).join(', ');
+    if (k === 'attr') return v.map(({ k: kk, v: vv }) => `${esc(kk)}: ${markHTML(vv, true)}`).join('<br>');
+    if (k === 'custom') return v.map(({ k: kk, v: vv }) => `${esc(kk)}: ${snippet(vv).html}`).join('<br>');
+    if (k === 'description') return snippet(v[0]).html;
+    return `${v.length} ${v.length === 1 ? 'line' : 'lines'} of ${a.textKind} text`;
+  };
+  const cardEl = document.querySelector(`.rc[data-i="${S.active}"]`);
+  el.innerHTML = `<p class="fn">${esc(a.title)}<br><span style="font-weight:400;color:var(--text-muted)">${esc(a.file)}</span></p>
+    <ol class="srcs">${SOURCES.map(s => `<li class="${src[s.k].length ? (s.k === top && P() ? 'shown' : '') : 'no'}"><span class="n">${s.w}×</span><span class="k">${s.name}${s.k === top && P() ? '<span class="tagshown">Shown</span>' : ''}</span><span class="v">${val(s.k)}</span></li>`).join('')}</ol>
+    ${cardEl ? `<div class="aname"><b>Accessible name</b><br>${esc(cardEl.getAttribute('aria-label'))}</div>` : ''}`;
+}
+
+/* ---------- Notes ---------- */
+const NOTES_P = [
+  ['One evidence slot', 'Line 2 of the card. Every card keeps the same height and date baseline, whatever matched.'],
+  ['Precedence follows the SCR-31 weights', 'Title 5, structured attribute 4, description, free-text field and AI tag 3, manual tag and file name 2, text in file 1. Ties go controlled before free text, authored before machine-derived. The inspector shows the weight next to every source.'],
+  ['Every indexed source has a line', 'Title marks the title. Attributes and free-text fields show "Field: value". Tags and AI tags show the tag. File name shows the original file name. Text in file shows a snippet. EXIF/IPTC is not indexed, so it never appears.'],
+  ['Controlled values mark whole words', 'Tags, AI tags and structured attributes. Try "key": the Keynote tag still matches, but nothing is marked.'],
+  ['Free text marks substrings', 'Title, description, free-text fields, file name and text in file, in a 34-character window. Try "cafe": diacritics fold, so "Café" matches.'],
+  ['AI tags look like tags', 'Same icon, no sparkle. The inspector labels them AI tags; the card and accessible name say "tag". Try "tree": only the AI tags on the birdlife photo match.'],
+  ['File name only when nothing heavier matched', 'The steering group photo is renamed, so only its original file name matches. The evidence line shows the file name; the lightbox marks it in Details.'],
+  ['+N means more of the same source', 'More matching tags, fields or text lines. Other sources are listed in the accessible name, not on the card.'],
+  ['Nothing under 2 characters', 'Try "n": search does not fire and nothing is marked.'],
+  ['Lightbox lands on the evidence', 'Attributes, tags, AI tags, free-text fields and description open Attributes with the value marked. File name opens Details with it marked. Text in file opens with the banner. A title match marks the title.'],
+  ['Yellow on matched words only', 'Never a chip, badge or card background. Hue on cards stays reserved for state and rights.'],
+  ['Open: text on dark images', 'Open the fan zone poster. The yellow fill drops white text from 17:1 to 3.8:1. Dark imagery may need an outline-only mark, picked from the luminance underneath (Scale Annotation rule).'],
+];
+const NOTES_C = [
+  ['Only OCR explains itself', 'The "Text in document" chip is the only match evidence. Title, attribute, tag, AI tag, file name and description matches look like random results.'],
+  ['Chip wording is wrong for images', 'Images with OCR text also get "Text in document".'],
+  ['Chip is blue', 'Reads as Info, and adds hue to the card body.'],
+];
+function renderNotes() {
+  const list = P() ? NOTES_P : NOTES_C;
+  $('#notes-h').textContent = P() ? 'What changed' : "What's wrong in the build";
+  $('#notes-hint').textContent = P() ? 'Try the example queries, hover the cards, and open one.' : 'Switch to Proposed to compare.';
+  $('#notes').innerHTML = list.map(([h, p], n) => `<li><span class="num${P() ? '' : ' issue'}">${P() ? n + 1 : 'ABC'[n]}</span><div><b>${h}</b><p>${p}</p></div></li>`).join('');
+}
+
+/* ---------- Lightbox ---------- */
+function lightbox(i) {
+  const a = ASSETS[i], src = sourcesFor(a), top = P() ? topSource(src) : (src.text.length ? 'text' : null);
+  const n = src.text.length;
+  const showBand = n > 0 && !S.bandClosed;
+  const panelKind = ['attr', 'description', 'custom', 'aitag', 'tag'].includes(top) ? 'attributes' : 'details';
+  const matchedLines = a.text.map((l, k) => src.text.includes(l) ? k : -1).filter(k => k > -1);
+  const curLine = matchedLines[S.cur % Math.max(1, matchedLines.length)];
+  const markOn = P();
+
+  const title = markOn && top === 'title' ? markHTML(a.title, false) : esc(a.title);
+  const band = showBand && P() ? `<div class="band" role="region" aria-label="Text in ${a.textKind} matches">
+      <span class="bl">${ic('scan-search', 14)}Text in ${a.textKind}</span>
+      <span class="bq">Matches for "<mark>${esc(S.q)}</mark>"</span>
+      <span class="bn"><button class="ib" data-k="mprev" aria-label="Previous match">${ic('chevron-up', 14)}</button><button class="ib" data-k="mnext" aria-label="Next match">${ic('chevron-down', 14)}</button><span class="cnt">${(S.cur % n) + 1} of ${n} matches</span></span>
+      <button class="ib" data-k="close" aria-label="Clear matches">${ic('x', 14)}</button></div>` : '';
+
+  let preview;
+  if (a.text.length && a.textKind === 'document') {
+    preview = `<div class="docpage"><h3>${a.type === 'PDF' ? 'OCR TEST DOCUMENT' : esc(a.title)}</h3>${a.text.map((l, k) =>
+      `<span class="ln">${showBand && P() && matchedLines.includes(k) ? `<mark class="hl-line${k === curLine ? ' cur' : ''}">${esc(l)}</mark>` : esc(l)}</span>`).join('')}</div>`;
+  } else if (a.text.length && a.textKind === 'image') {
+    const land = a.art !== 'poster';
+    const pos = a.art === 'poster' ? [[8, 62], [8, 70], [8, 76]] : [[10, 36], [10, 46]];
+    const labels = a.text.map((l, k) => `<text data-line="${k}" x="${pos[k][0]}%" y="${pos[k][1] + 4.5}%" fill="#fff" font-family="Inter,sans-serif" font-weight="700" font-size="${k ? 11 : 16}">${esc(l)}</text>`).join('');
+    const svg = a.art === 'poster'
+      ? `<svg viewBox="0 0 300 400" preserveAspectRatio="none"><rect width="300" height="400" fill="#101a3a"/><circle cx="220" cy="120" r="90" fill="#6a5cff" opacity=".8"/>${labels}</svg>`
+      : `<svg viewBox="0 0 400 300" preserveAspectRatio="none"><rect width="400" height="300" fill="#2b3740"/><rect x="30" y="90" width="340" height="80" rx="4" fill="#1d3fb8"/>${labels}</svg>`;
+    preview = `<div class="imgbox${land ? ' land' : ''}">${svg}${showBand && P() ? matchedLines.map(k => `<span class="ocr-box${k === curLine ? ' cur' : ''}" data-box="${k}"></span>`).join('') : ''}</div>`;
+  } else {
+    const thumb = a.art === 'photo' ? art.photo(...a.hues) : art[a.art]();
+    preview = `<div class="imgbox land" style="background:var(--surface-muted)">${thumb}</div>`;
+  }
+
+  const tabs = [['details', 'info', 'Details'], ['attributes', 'attributes', 'Attributes'], ['similar', 'similar', 'Similar'], ['download', 'download', 'Download']];
+  const chips = (list, hits) => list.length ? `<div class="tagrow">${list.map(t => `<span class="tagchip">${markOn && hits.includes(t) ? markHTML(t, true) : esc(t)}</span>`).join('')}</div>` : '<p class="panel-msg">None</p>';
+  let panel;
+  if (panelKind === 'attributes') {
+    const rows = [
+      ...Object.entries(a.attrs).map(([k, v]) => ({ k, v, hit: src.attr.some(f => f.k === k), controlled: true })),
+      ...Object.entries(a.custom).map(([k, v]) => ({ k, v, hit: src.custom.some(f => f.k === k), controlled: false })),
+      { k: 'Description', v: a.description, hit: src.description.length > 0, controlled: false },
+    ];
+    panel = `<h4>Attributes</h4>
+      <div class="sec">Tags</div>${chips(a.tags, src.tag)}
+      <div class="sec">AI tags</div>${a.aiTags.length ? `<div class="tagrow">${a.aiTags.map(t => `<span class="tagchip">${markOn && src.aitag.includes(t) ? markHTML(t, true) : esc(t)}</span>`).join('')}</div>` : '<p class="panel-msg">None</p>'}
+      <div class="sec">Fields</div>
+      <dl>${rows.map(r => `<div class="frow${r.hit ? ' hit' : ''}"><dt>${esc(r.k)}</dt><dd style="word-break:normal">${markOn && r.hit ? markHTML(r.v, r.controlled) : esc(r.v)}</dd></div>`).join('')}</dl>`;
+  } else {
+    panel = `<h4>Details</h4><dl>
+      <div class="frow"><dt>Original filename</dt><dd>${markOn && src.file.length ? markHTML(a.file, false) : esc(a.file)}</dd></div>
+      <div class="frow"><dt>Asset type</dt><dd>${a.type.toLowerCase()}</dd></div>
+      <div class="frow"><dt>Uploaded by</dt><dd>SD Admin</dd></div>
+      <div class="frow"><dt>Upload date</dt><dd>${a.date}</dd></div></dl>`;
+  }
+  const rail = `<div class="rail"><button class="ib" aria-label="Hide panel">${ic('panel-right-close', 18)}</button>${tabs.map(([k, icn, l]) =>
+    `<button class="ib" role="tab" aria-selected="${k === panelKind}" aria-label="${l}" title="${l}">${ic(icn, 18)}</button>`).join('')}</div>`;
+  const landed = !P() ? 'Current build' : band ? 'banner (text in file)' : panelKind === 'attributes' ? 'Attributes, value marked' : top === 'file' ? 'Details, file name marked' : top === 'title' ? 'title marked' : 'Details';
+
+  return `<div class="scrim"><div class="lb${band ? ' has-band' : ''}" role="dialog" aria-modal="true" aria-labelledby="lb-fn" tabindex="-1">
+    <div class="lb-head"><div class="title"><div class="fn" id="lb-fn">${title}</div><div class="facts">${esc(a.file)}  ·  ${a.date}</div></div>
+      <div class="actions"><button class="btn btn-pri">${ic('download')}<span class="t">Download</span></button>
+      <button class="ib" data-k="closelb" aria-label="Close" title="Close (Esc)">${ic('x')}</button></div></div>
+    ${band}
+    <div class="lb-main"><div class="stage"><div class="preview${band ? ' with-band' : ''}">${preview}</div></div>${rail}<div class="panel" role="tabpanel">${panel}</div></div>
+    <div class="lb-foot"><span class="kg"><kbd>Esc</kbd><span class="l">${band ? 'Clear matches' : 'Close'}</span></span>${band ? `<span class="kg"><kbd>${MOD}</kbd><kbd>G</kbd><span class="l">Next match</span></span>` : ''}
+      <span class="hdr-note" style="margin-left:auto">Opened on: ${landed}</span></div>
+  </div></div>`;
+}
+// Size each OCR box to its rendered text line
+function placeBoxes() {
+  document.querySelectorAll('#app-lb [data-box]').forEach(bx => {
+    const svg = bx.parentElement.querySelector('svg');
+    const tx = svg.querySelector(`text[data-line="${bx.dataset.box}"]`);
+    const bb = tx.getBBox(), vb = svg.viewBox.baseVal;
+    Object.assign(bx.style, { left: (bb.x / vb.width * 100) + '%', top: (bb.y / vb.height * 100) + '%', width: (bb.width / vb.width * 100) + '%', height: (bb.height / vb.height * 100) + '%' });
+  });
+}
+function paint() { $('#app-lb').innerHTML = lightbox(S.open); $('#app-lb .lb').focus(); placeBoxes(); }
+function openLb(i) {
+  S.open = i; S.cur = 0; S.bandClosed = false; paint();
+  const hit = document.querySelector('#app-lb .frow.hit'); if (hit) hit.scrollIntoView({ block: 'nearest' });
+}
+function closeLb() {
+  const i = S.open; S.open = null; $('#app-lb').innerHTML = '';
+  const c = document.querySelector(`.rc[data-i="${i}"]`); if (c) c.focus();
+}
+function clearBand() { S.bandClosed = true; paint(); }
+function step(d) {
+  const n = sourcesFor(ASSETS[S.open]).text.length; if (!n || S.bandClosed || !P()) return;
+  S.cur = (S.cur + d + n) % n; paint();
+}
+
+/* ---------- Events ---------- */
+$('#q').addEventListener('input', e => { S.q = e.target.value; S.active = null; renderLibrary(); });
+document.querySelectorAll('[data-q]').forEach(b => b.addEventListener('click', () => { S.q = b.dataset.q; $('#q').value = S.q; S.active = null; renderLibrary(); }));
+document.querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => { S.mode = b.dataset.mode; renderLibrary(); }));
+$('#app').addEventListener('click', e => { const c = e.target.closest('.rc'); if (c) openLb(+c.dataset.i); });
+const setActive = e => { const c = e.target.closest && e.target.closest('.rc'); if (c && S.active !== +c.dataset.i) { S.active = +c.dataset.i; document.querySelectorAll('.rc').forEach(x => x.classList.toggle('active', x === c)); renderInspector(); } };
+$('#app').addEventListener('mouseover', setActive);
+$('#app').addEventListener('focusin', setActive);
+$('#app-lb').addEventListener('click', e => {
+  const b = e.target.closest('[data-k]'); if (!b) return;
+  if (b.dataset.k === 'closelb') closeLb();
+  if (b.dataset.k === 'close') clearBand();
+  if (b.dataset.k === 'mprev') step(-1);
+  if (b.dataset.k === 'mnext') step(1);
+});
+document.addEventListener('keydown', e => {
+  if (S.open == null) return;
+  if (e.key === 'Escape') { e.preventDefault(); if (P() && !S.bandClosed && sourcesFor(ASSETS[S.open]).text.length) clearBand(); else closeLb(); }
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'g') { e.preventDefault(); step(e.shiftKey ? -1 : 1); }
+});
+renderLibrary();
+S.active = 0; renderLibrary();
+</script>
+
+</body>
+</html>
