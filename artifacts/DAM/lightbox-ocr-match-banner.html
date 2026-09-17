@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lightbox: OCR match treatment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  /* Scale v1.9.0 (2026-09-15), light values */
+  --accent-3:#e3f5f8;--accent-5:#c1e6ec;--accent-8:#65b5c2;--accent-9:#0c818f;--accent-10:#007381;--accent-11:#006c78;--accent-12:#1b3c41;
+  --accent-alpha-4:#00a3ba2c;--accent-alpha-5:#0099b13e;--accent-alpha-6:#008ca552;--accent-alpha-7:#00869b6d;
+  --neutral-1:#fdfdfc;--neutral-2:#f9f9f8;--neutral-3:#f0f0ef;--neutral-4:#e9e9e6;--neutral-5:#e2e1de;--neutral-6:#dad9d6;--neutral-7:#cfcfca;--neutral-8:#bcbbb5;--neutral-9:#8e8d86;--neutral-10:#83827c;--neutral-11:#63635e;--neutral-12:#21201c;
+  --neutral-alpha-3:#10100010;--neutral-alpha-5:#1f180021;
+  --red-3:#feebe7;--red-9:#e54d2e;--red-11:#cf3716;
+  --indigo-3:#edf2fe;--indigo-9:#3e63dd;--indigo-11:#3a5bc7;
+  --surface-default:var(--neutral-1);--surface-subtle:var(--neutral-2);--surface-muted:var(--neutral-3);--surface-emphasis:var(--neutral-4);
+  --text-default:var(--neutral-12);--text-muted:var(--neutral-11);--text-subtle:var(--neutral-10);--text-on-primary:#ffffff;
+  --border-default:var(--neutral-6);--border-subtle:var(--neutral-3);--border-emphasis:var(--neutral-7);--border-strong:var(--neutral-9);
+  --primary-default:var(--accent-9);--primary-hover:var(--accent-10);--primary-subtle:var(--accent-3);--primary-muted:var(--accent-5);
+  --filetype-badge-bg:rgba(28,28,25,0.62);--filetype-badge-fg:#ffffff;
+  --spacing-1:4px;--spacing-2:8px;--spacing-3:12px;--spacing-4:16px;--spacing-5:20px;--spacing-6:24px;
+  --font-family-text:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --radius-1:3px;--radius-2:4px;--radius-3:6px;--radius-4:8px;--radius-full:9999px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:0 1px 3px rgba(0,0,0,0.1),0 1px 2px rgba(0,0,0,0.06);
+  --shadow-lg:0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.1);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font-family-text);font-size:14px;line-height:20px;color:var(--text-default);background:var(--surface-subtle);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--primary-default);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Tester bar */
+.tbar{position:sticky;top:0;z-index:60;background:var(--surface-default);border-bottom:1px solid var(--border-default);padding:10px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px}
+.tbar .ttl{margin-right:auto;min-width:240px}
+.tbar h1{font-size:16px;line-height:24px;font-weight:600;margin:0;letter-spacing:-0.01em}
+.tbar .sub{font-size:12px;line-height:16px;color:var(--text-muted)}
+.seg{display:inline-flex;background:var(--surface-emphasis);border-radius:var(--radius-3);padding:2px}
+.seg button{border:0;background:transparent;height:28px;padding:0 12px;border-radius:var(--radius-2);font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface-default);color:var(--text-default);box-shadow:var(--shadow-md)}
+.field{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted)}
+.field select{height:28px;border:1px solid var(--border-default);border-radius:var(--radius-2);background:var(--surface-default);font:inherit;font-size:13px;color:var(--text-default);padding:0 4px}
+.chk{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-default);cursor:pointer}
+.chk input{accent-color:var(--primary-default);width:16px;height:16px;margin:0}
+.tbtn{height:28px;padding:0 10px;border:1px solid var(--border-default);background:var(--surface-default);border-radius:var(--radius-2);font-size:13px;font-weight:500;cursor:pointer}
+.tbtn:disabled{color:var(--neutral-8);cursor:default}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;padding:24px;align-items:start}
+@media (max-width:1320px){.layout{grid-template-columns:1fr}}
+
+/* Library backdrop */
+.app{position:relative;height:780px;background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-4);overflow:hidden;display:flex;flex-direction:column}
+.app-top{height:44px;flex:none;display:flex;align-items:center;gap:6px;padding:0 16px;border-bottom:1px solid var(--border-default);font-size:13px;color:var(--text-muted)}
+.app-top b{color:var(--text-default);font-weight:500}
+.app-body{flex:1;display:flex;min-height:0}
+.filters{width:200px;flex:none;border-right:1px solid var(--border-default);padding:16px;display:flex;flex-direction:column;gap:10px}
+.filters .fh{font-size:13px;font-weight:600;margin-bottom:4px}
+.filters .bar{height:10px;border-radius:var(--radius-full);background:var(--surface-emphasis)}
+.grid-wrap{flex:1;overflow:auto;padding:16px}
+.grid-wrap h2{font-size:14px;line-height:20px;font-weight:600;margin:0 0 12px}
+.grid-wrap h2 span{font-weight:400;color:var(--text-muted);margin-left:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:12px}
+.tile{border:1px solid var(--border-default);border-radius:var(--radius-3);background:var(--surface-default);padding:0;cursor:pointer;text-align:left;overflow:hidden;display:block;width:100%}
+.tile:hover{border-color:var(--border-emphasis)}
+.tile:focus-visible{outline-offset:1px}
+.tile .th{aspect-ratio:4/3;background:var(--surface-muted);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.tile .th svg{width:100%;height:100%;display:block}
+.tile .nm{font-size:11px;line-height:16px;padding:6px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-muted)}
+.ftb{position:absolute;right:6px;bottom:6px;background:var(--filetype-badge-bg);color:var(--filetype-badge-fg);padding:1px 6px;border-radius:var(--radius-2);font-size:10px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase}
+.mini-page{width:46%;height:86%;background:#fff;box-shadow:var(--shadow-md);padding:10% 8%;display:flex;flex-direction:column;gap:5px}
+.mini-page i{display:block;height:3px;background:#d6d4cf;border-radius:2px}
+.mini-page i.h{height:5px;width:60%;background:#8f8d87}
+.mini-page i.t{height:14px;background:#e6e4df}
+.scrim{position:absolute;inset:0;background:rgba(33,32,28,.55);display:flex;align-items:center;justify-content:center;padding:28px;z-index:10}
+
+/* Lightbox */
+.lb{position:relative;width:100%;height:100%;max-width:1200px;background:var(--surface-default);border-radius:var(--radius-4);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;overflow:hidden}
+.lb:focus{outline:none}
+.lb-head{display:flex;align-items:center;gap:12px;padding:10px 12px;border-bottom:1px solid var(--border-default);min-height:64px;flex:none}
+.nav{display:flex;align-items:center;gap:2px;position:relative;flex:none}
+.ib{width:28px;height:28px;border:0;background:transparent;border-radius:var(--radius-2);display:inline-flex;align-items:center;justify-content:center;color:var(--text-muted);cursor:pointer;position:relative;flex:none;padding:0}
+.ib:hover{background:var(--neutral-alpha-3);color:var(--text-default)}
+.ib:active{background:var(--accent-alpha-4);color:var(--primary-default)}
+.ib[aria-disabled="true"],.ib:disabled{color:var(--neutral-8);background:transparent;cursor:default}
+.count{font-size:13px;font-weight:500;color:var(--text-muted);font-variant-numeric:tabular-nums;padding:0 4px;white-space:nowrap}
+.count b{color:var(--text-default);font-weight:600}
+.title{min-width:0;flex:1;position:relative}
+.facts .pin{position:relative;top:auto;left:auto;display:inline-flex;vertical-align:middle;margin-left:8px;width:18px;height:18px;box-shadow:none}
+.fn{font-size:16px;line-height:24px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.01em}
+.facts{font-size:12px;line-height:16px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.src-chip{position:relative;display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px 0 8px;border-radius:var(--radius-full);background:var(--primary-subtle);border:1px solid var(--primary-default);color:var(--accent-12);font-size:12px;font-weight:500;max-width:220px;cursor:pointer;flex:none}
+.src-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.actions{display:flex;align-items:center;gap:8px;flex:none;margin-left:auto}
+.btn{height:32px;padding:0 12px;border-radius:var(--radius-2);font-size:14px;font-weight:500;display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap}
+.btn-sec{background:transparent;border:1px solid var(--neutral-9);color:var(--neutral-12)}
+.btn-sec:hover{background:var(--neutral-3);border-color:var(--neutral-10)}
+.legacy .btn-sec{border-color:var(--primary-default);color:var(--primary-default)}
+.btn-pri{background:var(--primary-default);border:1px solid var(--primary-default);color:var(--text-on-primary)}
+.btn-pri:hover{background:var(--primary-hover)}
+.lb-main{flex:1;display:flex;min-height:0}
+.stage{flex:1;position:relative;background:var(--surface-muted);overflow:hidden;min-width:0}
+.art{position:absolute;inset:40px 72px 76px;display:flex;align-items:center;justify-content:center}
+.zoomer{width:100%;height:100%;transition:transform .15s ease}
+.zoomer svg{width:100%;height:100%;display:block}
+.fade{animation:fade .15s ease-in-out}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.doc{position:absolute;inset:0;overflow:auto;padding:24px 24px 60%}
+.doc:focus-visible{outline-offset:-3px}
+.pages{display:flex;flex-direction:column;align-items:center;gap:16px}
+.pagew{width:calc(612px * var(--z,1));height:calc(792px * var(--z,1));flex:none;box-shadow:var(--shadow-md);background:#fff;overflow:hidden}
+.page{width:612px;height:792px;transform:scale(var(--z,1));transform-origin:0 0;padding:72px 80px;color:#1c1c1a}
+.page h3{font-size:22px;line-height:28px;font-weight:700;margin:0 0 12px}
+.page .meta{font-size:15px;color:#5a5955;font-weight:500;margin-bottom:22px}
+.page table{border-collapse:collapse;width:100%;font-size:13px;margin-bottom:22px}
+.page th{background:#2b3740;color:#fff;text-align:left;padding:7px 10px;font-weight:600}
+.page td{border:1px solid #bdbbb6;padding:6px 10px}
+.page p{font-size:13px;line-height:20px;margin:0 0 12px}
+.page .swatches{display:flex;gap:10px;margin:8px 0 22px}
+.page .swatches i{flex:1;height:64px;border-radius:4px}
+.page .foot{position:relative;margin-top:28px;font-size:11px;color:#8b8a85}
+
+.ov{position:absolute;z-index:3}
+.pill{background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-full);box-shadow:var(--shadow-md);height:32px;display:inline-flex;align-items:center;padding:0 10px;font-size:13px;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+.zoomp{left:50%;bottom:16px;transform:translateX(-50%);padding:0 3px;gap:2px}
+.zoomp.teal{background:var(--primary-default);border-color:var(--primary-default)}
+.zoomp.teal .ib{color:#fff}
+.zoomp.teal .ib:hover{background:rgba(255,255,255,.15)}
+.stepper{right:16px;bottom:16px;padding:0 2px;gap:0}
+.stepper .lbl{padding:0 8px;min-width:118px;text-align:center}
+.pos-bl{left:16px;bottom:16px}
+.pos-br{right:16px;bottom:16px}
+.ovarrow{top:50%;margin-top:-20px;width:40px;height:40px;border-radius:50%;border:0;background:var(--accent-11);opacity:.8;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.ovarrow.l{left:16px}.ovarrow.r{right:16px}
+
+.rail{width:56px;flex:none;border-left:1px solid var(--border-default);display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:4px;background:var(--surface-default)}
+.rail .ib{width:40px;height:40px}
+.rail .ib[aria-selected="true"]{background:var(--primary-subtle);color:var(--primary-default)}
+.rail .ib[aria-selected="true"]::before{content:"";position:absolute;left:-8px;top:6px;bottom:6px;width:2px;border-radius:2px;background:var(--primary-default)}
+.panel{width:292px;flex:none;border-left:1px solid var(--border-default);padding:20px 16px;overflow:auto;position:relative}
+.panel h4{font-size:16px;line-height:24px;font-weight:600;margin:0 0 12px}
+.panel dl{margin:0}
+.frow{position:relative;display:grid;grid-template-columns:108px 1fr;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-subtle);font-size:13px;line-height:18px}
+.frow dt{color:var(--text-muted)}
+.frow dd{margin:0;word-break:break-all}
+.thumbs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.thumb{border:2px solid transparent;border-radius:var(--radius-3);padding:2px;background:none;cursor:pointer;position:relative;display:block}
+.thumb:hover{border-color:var(--border-emphasis)}
+.thumb[aria-current="true"]{border-color:var(--primary-default)}
+.thumb .tv{aspect-ratio:16/9;border-radius:var(--radius-2);overflow:hidden;background:var(--surface-muted);display:flex;align-items:center;justify-content:center}
+.thumb.pg .tv{aspect-ratio:3/4}
+.thumb .tv svg{width:100%;height:100%;display:block}
+.thumb .n{position:absolute;left:6px;bottom:6px;font-size:10px;font-weight:600;line-height:16px;background:var(--filetype-badge-bg);color:#fff;border-radius:var(--radius-1);padding:0 5px}
+.panel-msg{font-size:13px;color:var(--text-muted);margin:0}
+
+.lb-foot{position:relative;display:flex;align-items:center;gap:20px;padding:0 16px;height:52px;border-top:1px solid var(--border-default);font-size:13px;color:var(--text-muted);flex:none}
+.kg{display:flex;align-items:center;gap:4px;position:relative;white-space:nowrap}
+.kg .l{margin-left:6px;color:var(--text-default)}
+kbd{min-width:24px;height:22px;padding:0 6px;border:1px solid var(--border-default);border-bottom-width:2px;border-radius:var(--radius-2);background:var(--surface-default);font:inherit;font-size:11px;line-height:1;display:inline-flex;align-items:center;justify-content:center;color:var(--text-muted)}
+.lb-foot .kg > .pin,.foot-count > .pin{top:-16px;left:-12px}
+.lb-foot > .pin{left:6px}
+.foot-count{margin-left:auto;position:relative;font-variant-numeric:tabular-nums}
+.foot-count b{color:var(--text-default)}
+
+/* Annotation pins */
+.pin{position:absolute;top:-10px;left:-10px;width:20px;height:20px;border-radius:50%;background:var(--indigo-9);color:#fff;font-size:11px;font-weight:600;line-height:1;display:flex;align-items:center;justify-content:center;z-index:30;pointer-events:none;box-shadow:0 0 0 2px #fff}
+.pin.issue{background:var(--red-9)}
+.pin.in{top:10px;left:10px}
+.no-pins .pin{display:none}
+
+
+/* Side column */
+.side{display:flex;flex-direction:column;gap:16px}
+.card{background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-4);padding:16px}
+.card h2{font-size:14px;line-height:20px;font-weight:600;margin:0 0 4px}
+.card .hint{font-size:12px;line-height:16px;color:var(--text-muted);margin:0 0 12px}
+.notes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.notes li{display:grid;grid-template-columns:20px 1fr;gap:10px;font-size:13px;line-height:19px}
+.notes li.off{opacity:.45}
+.num{width:20px;height:20px;border-radius:50%;background:var(--indigo-9);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.num.issue{background:var(--red-9)}
+.notes b{font-weight:600;display:block}
+.notes p{margin:2px 0 0;color:var(--text-muted)}
+.notes .cond{display:block;font-size:11px;color:var(--text-subtle);margin-top:2px}
+.log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;min-height:40px}
+.log li{font-size:12px;line-height:17px;padding:6px 8px;background:var(--surface-muted);border-radius:var(--radius-2)}
+.log li:first-child{background:var(--indigo-3);color:var(--indigo-11)}
+.log li.warn:first-child{background:var(--red-3);color:var(--red-11)}
+.log li.empty{background:none;color:var(--text-subtle);padding-left:0}
+.keys{width:100%;border-collapse:collapse;font-size:12px;line-height:17px}
+.keys td{padding:6px 0;border-bottom:1px solid var(--border-subtle);vertical-align:top}
+.keys td:first-child{width:108px;white-space:nowrap}
+.keys kbd{margin-right:2px}
+.keys tr:last-child td{border-bottom:0}
+
+@media (prefers-reduced-motion:reduce){.fade{animation:none}.zoomer{transition:none}}
+
+
+/* Highlight role. Primitive: Radix Yellow (@radix-ui/colors 3.0.0), light only; pages are color-scheme: light.
+   Yellow is a new primitive ramp used only by the highlight role, excluded from badge colours. */
+:root{
+  --yellow-a4:#ffe3016b;   /* composite over white = yellow-4 #fff394 */
+  --yellow-a5:#ffd5008f;   /* composite over white = yellow-5 #ffe770 */
+  --yellow-a6:#ebbc0097;   /* composite over white = yellow-6 #f3d768 */
+  --yellow-11:#9e6c00;
+  --highlight-match-bg:var(--yellow-a5);
+  --highlight-current-bg:var(--yellow-a6);        /* never darker than step 6: ring fails at step 7 (2.75:1) */
+  --highlight-line-bg:var(--yellow-a4);
+  --highlight-line-current-bg:var(--yellow-a5);
+  --highlight-current-ring:var(--yellow-11);      /* 2px */
+}
+/* Existing library chip colours (unchanged in this pass) */
+:root{ --blue-6:#b2d6ff; --blue-11:#0073dd; }
+.pagew{color-scheme:light}
+.page mark{color:inherit}
+.page .ln{display:block;white-space:nowrap}
+/* Term-level (text layer) */
+mark.hl-term{background:var(--highlight-match-bg);border-radius:2px}
+mark.hl-term.cur{background:var(--highlight-current-bg);box-shadow:0 0 0 2px var(--highlight-current-ring)}
+/* Line-level (default; scanned pages). Band hugs the text box: no padding, no overhang. */
+mark.hl-line{background:var(--highlight-line-bg);border-radius:2px;padding:0}
+mark.hl-line.cur{background:var(--highlight-line-current-bg);box-shadow:0 0 0 2px var(--highlight-current-ring)}
+/* Current build replica colours (not tokens) */
+.ml{background:#ffe98a;padding:1px 3px;margin-left:-3px}
+.ml.cur{background:#ffb27a;outline:1px solid #f76707}
+
+.doc.has-band{padding-top:60px}
+
+/* Existing status banner component */
+.band{position:absolute;left:0;right:0;top:64px;height:36px;z-index:6;display:flex;align-items:center;gap:12px;padding:0 12px 0 0;background:var(--accent-3);border-bottom:1px solid var(--accent-5);font-size:12px;color:var(--text-default)}
+.band .bl{display:flex;align-items:center;gap:6px;font-weight:500;white-space:nowrap;padding:0 12px;border-left:2px solid var(--primary-default);border-right:1px solid var(--accent-5);height:20px;position:relative}
+.band .bs{flex:1;min-width:0;white-space:nowrap;color:var(--text-muted);position:relative}
+.band .bs > span{display:block;overflow:hidden;text-overflow:ellipsis}
+.band .bn{display:flex;align-items:center;gap:2px;position:relative;white-space:nowrap}
+.band .bn .ib{color:var(--primary-default);width:24px;height:24px}
+.band .bp{position:relative;color:var(--text-muted);white-space:nowrap}
+.band .pin{top:-8px}
+.band.ghost .bn .ib{color:var(--neutral-11)}
+.band.ghost .bn .ib:hover{background:var(--neutral-alpha-3);color:var(--neutral-12)}
+.band.ghost .bn .cnt{margin-left:6px;color:var(--text-default);font-variant-numeric:tabular-nums}
+.band .bq{color:var(--text-default)}
+.band .bq mark{background:var(--highlight-match-bg);color:inherit;border-radius:2px;padding:0 2px;font-weight:500}
+.band .bq .pin{left:-14px;top:-12px}
+.band .bp.gone{display:inline-block;width:14px}
+.band .bp .pin{left:0}
+
+/* Library */
+.app:has(.scrim) .app-body .pin{display:none}
+.app .grid{grid-template-columns:repeat(auto-fill,272px);align-items:start}
+.rc{display:flex;flex-direction:column;width:272px;padding:0;text-align:left;border:1px solid var(--border-default);border-radius:var(--radius-3);background:var(--surface-default);overflow:hidden;font:inherit;color:inherit}
+button.rc{cursor:pointer}
+button.rc:hover{border-color:var(--border-emphasis)}
+.rc .th{aspect-ratio:4/3;background:var(--surface-muted);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.rc .tb{position:relative;margin:10px 10px 0;font-size:12px;line-height:18px}
+.rc .t2{font-weight:600;color:var(--text-default);overflow-wrap:anywhere}
+.rc .dt{margin:6px 10px 10px;font-size:11px;line-height:16px;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;gap:6px;position:relative}
+.ocr-chip{display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 6px;border-radius:var(--radius-2);font-size:11px;font-weight:500;white-space:nowrap;position:relative}
+.ocr-chip.build{background:var(--surface-default);border:1px solid var(--blue-6);color:var(--blue-11)}
+.seg button:disabled{opacity:.5;cursor:default}
+</style>
+</head>
+<body>
+<header class="tbar">
+  <div class="ttl">
+    <h1>Lightbox: OCR match treatment</h1>
+    <div class="sub">Lightbox banner and page highlight. Existing status banner component. Builds on SCR-291. Library chip unchanged.</div>
+  </div>
+  <div class="seg" role="group" aria-label="Version">
+    <button data-mode="current" aria-pressed="false">Current build</button>
+    <button data-mode="proposed" aria-pressed="true">Proposed</button>
+  </div>
+  <div class="field">Highlight
+    <div class="seg" role="group" aria-label="Highlight">
+      <button data-hl="line" aria-pressed="true">Line (scanned page)</button>
+      <button data-hl="term" aria-pressed="false">Term (text layer)</button>
+    </div>
+  </div>
+  <label class="chk"><input type="checkbox" id="f-pins" checked> Annotations</label>
+  <button class="tbtn" id="f-reset">Reset</button>
+</header>
+
+<main class="layout">
+  <div id="app" class="app"></div>
+  <aside class="side">
+    <section class="card">
+      <h2 id="notes-h">What changed</h2>
+      <p class="hint" id="notes-hint"></p>
+      <ol class="notes" id="notes"></ol>
+    </section>
+    <section class="card">
+      <h2 id="log-h">Screen reader output</h2>
+      <p class="hint" id="log-hint"></p>
+      <ul class="log" id="log"></ul>
+    </section>
+    <section class="card">
+      <h2>Keyboard map</h2>
+      <p class="hint">Shortcuts only run while focus is inside the lightbox.</p>
+      <table class="keys"><tbody id="keys"></tbody></table>
+    </section>
+  </aside>
+</main>
+<div id="live" class="sr" aria-live="polite" aria-atomic="true"></div>
+
+<script>
+const ICONS = {"chevron-left": "<svg class=\"lucide lucide-chevron-left\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"m15 18-6-6 6-6\" /> </svg>", "chevron-right": "<svg class=\"lucide lucide-chevron-right\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"m9 18 6-6-6-6\" /> </svg>", "chevron-up": "<svg class=\"lucide lucide-chevron-up\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"m18 15-6-6-6 6\" /> </svg>", "chevron-down": "<svg class=\"lucide lucide-chevron-down\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"m6 9 6 6 6-6\" /> </svg>", "x": "<svg class=\"lucide lucide-x\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M18 6 6 18\" /> <path d=\"m6 6 12 12\" /> </svg>", "download": "<svg class=\"lucide lucide-download\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M12 15V3\" /> <path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\" /> <path d=\"m7 10 5 5 5-5\" /> </svg>", "inbox": "<svg class=\"lucide lucide-inbox\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\" /> <path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\" /> </svg>", "ellipsis": "<svg class=\"lucide lucide-ellipsis\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <circle cx=\"12\" cy=\"12\" r=\"1\" /> <circle cx=\"19\" cy=\"12\" r=\"1\" /> <circle cx=\"5\" cy=\"12\" r=\"1\" /> </svg>", "panel-right-close": "<svg class=\"lucide lucide-panel-right-close\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" /> <path d=\"M15 3v18\" /> <path d=\"m8 9 3 3-3 3\" /> </svg>", "info": "<svg class=\"lucide lucide-info\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <circle cx=\"12\" cy=\"12\" r=\"10\" /> <path d=\"M12 16v-4\" /> <path d=\"M12 8h.01\" /> </svg>", "layers": "<svg class=\"lucide lucide-layers\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z\" /> <path d=\"M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12\" /> <path d=\"M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17\" /> </svg>", "zoom-in": "<svg class=\"lucide lucide-zoom-in\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <circle cx=\"11\" cy=\"11\" r=\"8\" /> <line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\" /> <line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\" /> <line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\" /> </svg>", "zoom-out": "<svg class=\"lucide lucide-zoom-out\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <circle cx=\"11\" cy=\"11\" r=\"8\" /> <line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\" /> <line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\" /> </svg>", "shrink": "<svg class=\"lucide lucide-shrink\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"m15 15 6 6m-6-6v4.8m0-4.8h4.8\" /> <path d=\"M9 19.8V15m0 0H4.2M9 15l-6 6\" /> <path d=\"M15 4.2V9m0 0h4.8M15 9l6-6\" /> <path d=\"M9 4.2V9m0 0H4.2M9 9 3 3\" /> </svg>", "undo-2": "<svg class=\"lucide lucide-undo-2\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M9 14 4 9l5-5\" /> <path d=\"M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11\" /> </svg>", "attributes": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"currentColor\" stroke=\"none\"><g><path d=\"M7.1.1c1.8,0,3.3,1.5,3.3,3.3,0,1.5-1.1,2.8-2.5,3.2v3.8h5.1c.4-1.4,1.6-2.5,3.2-2.5,1.8,0,3.3,1.5,3.3,3.3,0,1.8-1.5,3.3-3.3,3.3-1.6,0-2.9-1.1-3.2-2.6h-5.1v5.3c0,1.2,1,2.2,2.2,2.2h2.8c.3-1.4,1.6-2.5,3.2-2.5s3.3,1.5,3.3,3.3c0,1.8-1.5,3.3-3.3,3.3-1.5,0-2.8-1.1-3.2-2.5h-2.8c-2.1,0-3.7-1.7-3.7-3.7V6.6c-1.4-.3-2.5-1.6-2.5-3.2,0-1.8,1.5-3.3,3.3-3.3ZM16.1,18.4c-1,0-1.8.8-1.8,1.8,0,1,.8,1.8,1.8,1.8,1,0,1.8-.8,1.8-1.8,0-1-.8-1.8-1.8-1.8ZM16.1,9.4c-1,0-1.8.8-1.8,1.8,0,1,.8,1.8,1.8,1.8,1,0,1.8-.8,1.8-1.8,0-1-.8-1.8-1.8-1.8ZM7.1,1.6c-1,0-1.8.8-1.8,1.8,0,1,.8,1.8,1.8,1.8,1,0,1.8-.8,1.8-1.8,0-1-.8-1.8-1.8-1.8Z\"></path><path d=\"M16.2,16.6c-1.6,0-2.9,1.1-3.3,2.5h-3c-1.1,0-2-.9-2-2v-5.1h5c.4,1.4,1.7,2.5,3.3,2.5s3.5-1.5,3.5-3.5-1.5-3.5-3.5-3.5-2.8,1-3.3,2.4h-5v-3c1.4-.4,2.4-1.7,2.4-3.3S8.8.3,6.9.3s-3.5,1.5-3.5,3.5,1.1,2.9,2.5,3.3v10.1c0,2.2,1.8,4,4,4h3c.4,1.4,1.7,2.4,3.3,2.4s3.5-1.5,3.5-3.5-1.5-3.5-3.5-3.5ZM16.2,9.6c.8,0,1.5.7,1.5,1.5s-.7,1.5-1.5,1.5-1.5-.7-1.5-1.5.7-1.5,1.5-1.5ZM5.4,3.8c0-.8.7-1.5,1.5-1.5s1.5.7,1.5,1.5-.7,1.5-1.5,1.5-1.5-.7-1.5-1.5ZM16.2,21.5c-.8,0-1.5-.7-1.5-1.5s.7-1.5,1.5-1.5,1.5.7,1.5,1.5-.7,1.5-1.5,1.5Z\"></path></g></svg>", "similar": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 9c2.8-3.4 6.2-3.4 9 0s6.2 3.4 9 0\"/><path d=\"M3 15c2.8-3.4 6.2-3.4 9 0s6.2 3.4 9 0\"/></svg>", "search": "<svg class=\"lucide lucide-search\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"m21 21-4.34-4.34\" /> <circle cx=\"11\" cy=\"11\" r=\"8\" /> </svg>", "scan-text": "<svg class=\"lucide lucide-scan-text\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M3 7V5a2 2 0 0 1 2-2h2\" /> <path d=\"M17 3h2a2 2 0 0 1 2 2v2\" /> <path d=\"M21 17v2a2 2 0 0 1-2 2h-2\" /> <path d=\"M7 21H5a2 2 0 0 1-2-2v-2\" /> <path d=\"M7 8h8\" /> <path d=\"M7 12h10\" /> <path d=\"M7 16h6\" /> </svg>", "scan-search": "<svg class=\"lucide lucide-scan-search\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M3 7V5a2 2 0 0 1 2-2h2\" /> <path d=\"M17 3h2a2 2 0 0 1 2 2v2\" /> <path d=\"M21 17v2a2 2 0 0 1-2 2h-2\" /> <path d=\"M7 21H5a2 2 0 0 1-2-2v-2\" /> <circle cx=\"12\" cy=\"12\" r=\"3\" /> <path d=\"m16 16-1.9-1.9\" /> </svg>"};
+const ic = (n, s = 16) => ICONS[n].replace(/width="24"/, `width="${s}"`).replace(/height="24"/, `height="${s}"`).replace('<svg', '<svg aria-hidden="true" focusable="false"');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const MAC = /Mac|iPhone|iPad/.test(navigator.platform);
+const MOD = MAC ? '⌘' : 'Ctrl';
+
+const FILE = { name: 'ocr_test_document.pdf', base: 'ocr_test_document', size: '8.0 KB', parts: 5 };
+const PAGES = [
+  { ref: 'DOC-REF-1001', date: '2024-01-14', amt: '$4,215.60', batch: 'AX-7734-Q1', paras: [
+    'This page belongs to the internal review known as PROJECT NIGHTINGALE. It checks that a single-page keyword search returns exactly one match for this term on this page.',
+    'Additional filler text gives the page a realistic amount of body copy. The reference above should not appear on any other page in this file.' ] },
+  { ref: 'DOC-REF-1002', date: '2024-02-22', amt: '$9,830.05', batch: 'BX-1190-Q1', paras: [
+    'PROJECT NIGHTINGALE is referenced twice within this page. This is the first mention, used to open the discussion of the review scope and timeline.',
+    'Later in the same document, PROJECT NIGHTINGALE is mentioned again in the closing summary. A multi-hit search on this page should return a count of two, not one.' ] },
+  { ref: 'DOC-REF-1003', date: '2024-03-11', amt: '$1,120.00', batch: 'CX-6912-Q2', paras: [
+    'The steering group approved the third-quarter budget line at its March meeting. Spend for PROJECT NIGHTINGALE is tracked separately from operating costs.',
+    'Filler text continues here so the page carries a realistic amount of copy for layout checks.' ] },
+  { ref: 'DOC-REF-1004', date: '2024-04-02', amt: '$3,480.75', batch: 'DX-2204-Q2', paras: [
+    'This page covers supplier onboarding and contains no project references. It confirms that pages without matches stay clean.',
+    'Filler text continues here so the page carries a realistic amount of copy for layout checks.' ] },
+  { ref: 'DOC-REF-1005', date: '2024-05-19', amt: '$7,006.40', batch: 'EX-5530-Q3', paras: [
+    'Closing summary for PROJECT NIGHTINGALE. The review is complete and all actions have owners.',
+    'Owners should archive PROJECT NIGHTINGALE materials once sign-off is recorded.' ] }
+];
+
+const S = { mode: 'proposed', hl: 'line', query: 'project nightingale', findOpen: true, cur: 1, part: 1, zoom: 1,
+            panel: 'details', pins: true, lbOpen: true, pdfScroll: 0, lockUntil: 0 };
+const P = () => S.mode === 'proposed';
+const LINE = () => !P() || S.hl === 'line';
+const UNIT = () => 'match';
+const $ = s => document.querySelector(s);
+const pin = x => `<span class="pin${typeof x === 'string' ? ' issue' : ''}" aria-hidden="true">${x}</span>`;
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/* ---------- Matching ---------- */
+// OCR lines: fixed breaks (~72 chars), never splitting the query phrase.
+const MAXLINE = 72;
+function splitLines(text) {
+  const q = S.query.trim();
+  const guarded = q ? text.replace(new RegExp(reEsc(q), 'gi'), m => m.replace(/ /g, '\u00a0')) : text;
+  const out = []; let line = '';
+  guarded.split(' ').forEach(w => {
+    if (line && (line + ' ' + w).length > MAXLINE) { out.push(line); line = w; }
+    else line = line ? line + ' ' + w : w;
+  });
+  if (line) out.push(line);
+  return out.map(l => l.replace(/\u00a0/g, ' '));
+}
+const phraseRe = () => new RegExp(reEsc(S.query.trim()), 'gi');
+// Returns [{page}] in document order. Line variant: one entry per matching line. Term variant: one per occurrence.
+function computeMatches() {
+  const out = [];
+  if (!S.findOpen || !S.query.trim()) return out;
+  PAGES.forEach((p, pi) => p.paras.forEach(t => {
+    if (LINE()) splitLines(t).forEach(l => { if (l.match(phraseRe())) out.push({ page: pi }); });
+    else (t.match(phraseRe()) || []).forEach(() => out.push({ page: pi }));
+  }));
+  return out;
+}
+let MATCHES = [];
+const curPin = () => P() ? pin(3).replace('class="pin', 'style="top:-22px;left:-8px" class="pin')
+  : pin('E') + pin('F').replace('class="pin', 'style="left:auto;right:-10px" class="pin');
+
+function paraHTML(t, counter) {
+  const on = S.findOpen && S.query.trim();
+  if (!LINE()) {
+    if (!on) return `<p>${esc(t)}</p>`;
+    return `<p>${esc(t).replace(new RegExp(reEsc(esc(S.query.trim())), 'gi'), m => {
+      const c = counter.k === S.cur;
+      return `<mark class="hl-term${c ? ' cur' : ''}" data-m="${counter.k++}"${c ? ' style="position:relative"' : ''}>${c ? curPin() : ''}${m}</mark>`;
+    })}</p>`;
+  }
+  return `<p>${splitLines(t).map(l => {
+    if (!on || !l.match(phraseRe())) return `<span class="ln">${esc(l)}</span>`;
+    const c = counter.k === S.cur;
+    return `<span class="ln"><mark class="${P() ? 'hl-line' : 'ml'}${c ? ' cur' : ''}" data-m="${counter.k++}"${c ? ' style="position:relative"' : ''}>${c ? curPin() : ''}${esc(l)}</mark></span>`;
+  }).join('')}</p>`;
+}
+
+function pagesHTML() {
+  const counter = { k: 0 };
+  return PAGES.map((p, i) => {
+    const n = i + 1;
+    const rows = [['Document ID', p.ref], ['Issue Date', p.date], ['Amount', p.amt], ['Batch Code', p.batch]];
+    return `<div class="pagew" role="group" aria-label="Page ${n} of ${PAGES.length}"><div class="page">
+      <h3>OCR TEST DOCUMENT</h3><div class="meta">Page ${n} of ${PAGES.length} &nbsp;|&nbsp; Reference: ${p.ref}</div>
+      <table><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</tbody></table>
+      ${p.paras.map(t => paraHTML(t, counter)).join('')}
+    </div></div>`;
+  }).join('');
+}
+
+const miniPage = () => `<div class="mini-page" style="width:70%;height:88%"><i class="h"></i><i></i><i class="t"></i><i></i><i></i><i style="width:70%"></i></div>`;
+const perPage = () => PAGES.map((_, i) => MATCHES.filter(m => m.page === i).length);
+
+/* ---------- Render ---------- */
+function lightbox() {
+  const n = MATCHES.length;
+  const curPage = n ? MATCHES[S.cur].page : null;
+
+  const title = `<div class="title"><div class="fn" id="lb-fn">${FILE.name}</div>${P() ? `<div class="facts">PDF  ·  5 pages  ·  ${FILE.size}</div>` : ''}</div>`;
+  const actions = `<div class="actions">
+    <button class="btn btn-sec">${ic('inbox')}<span class="t">Add to Queue</span></button>
+    <button class="btn btn-pri">${ic('download')}<span class="t">Download</span></button>
+    <button class="ib" aria-label="More actions">${ic('ellipsis')}</button>
+    <button class="ib" data-k="close" aria-label="Close" title="Close (Esc)">${ic('x')}</button></div>`;
+
+  let band = '';
+  if (S.findOpen && n) {
+    const p = PAGES[curPage];
+    const flat = `Amount ${p.amt} Batch Code ${p.batch} ` + p.paras.join(' ');
+    const re = phraseRe();
+    let idx = 0, hitsBefore = MATCHES.slice(0, S.cur).filter(m => m.page === curPage).length, mm;
+    while ((mm = re.exec(flat)) && hitsBefore-- >= 0) idx = mm.index;
+    const snip = flat.slice(Math.max(0, idx - 40), idx + 140);
+    const u = UNIT(), U = u[0].toUpperCase() + u.slice(1);
+    band = P()
+      ? `<div class="band ghost" role="region" aria-label="Text in document matches">
+          <span class="bl">${pin(8)}${ic('scan-search', 14)}Text in document</span>
+          <span class="bs bq" title="Matches for &quot;${esc(S.query)}&quot;">${pin(2)}<span>Matches for "<mark>${esc(S.query)}</mark>"</span></span>
+          <span class="bn">${pin(1)}<button class="ib" data-k="mprev" aria-label="Previous ${u}" title="Previous ${u} (Shift+${MOD}+G)">${ic('chevron-up', 14)}</button><button class="ib" data-k="mnext" aria-label="Next ${u}" title="Next ${u} (${MOD}+G)">${ic('chevron-down', 14)}</button><span class="cnt" id="bandc">${S.cur + 1} of ${n} matches</span></span>
+          <span class="bp gone">${pin(9)}</span>
+          <button class="ib" data-k="fclose" aria-label="Clear matches" title="Clear matches (Esc)" style="position:relative">${pin(6)}${ic('x', 14)}</button>
+        </div>`
+      : `<div class="band" role="region" aria-label="Text in document matches">
+          <span class="bl">${pin('A')}${ic('scan-search', 14)}Text in document</span>
+          <span class="bs"><span>${esc(snip)}</span>${pin('C')}</span>
+          <span class="bn">${pin('B')}<button class="ib" data-k="mprev" aria-label="Previous">${ic('chevron-left', 14)}</button><span>${S.cur + 1} of ${n}</span><button class="ib" data-k="mnext" aria-label="Next">${ic('chevron-right', 14)}</button></span>
+          <span class="bp">${pin('D')}Page ${curPage + 1}</span>
+          <button class="ib" data-k="fclose" aria-label="Close">${ic('x', 14)}</button>
+        </div>`;
+  }
+
+  /* Stage */
+  let stage = `<div class="doc${P() && S.findOpen && n ? ' has-band' : ''}" data-doc ${P() ? `tabindex="0" role="region" aria-label="Pages of ${FILE.name}"` : ''}>${P() && S.findOpen && n ? `<span style="position:absolute;left:24px;top:40px">${pin(4)}</span>` : ''}<div class="pages">${pagesHTML()}</div></div>`;
+  if (P()) {
+    stage += `<div class="ov pill zoomp" role="group" aria-label="Zoom">
+      <button class="ib" data-k="zin" aria-label="Zoom in">${ic('zoom-in')}</button>
+      <button class="ib" data-k="zout" aria-label="Zoom out">${ic('zoom-out')}</button>
+      <button class="ib" data-k="fit" aria-label="Fit to screen">${ic('shrink')}</button></div>
+      <div class="ov pill stepper" role="group" aria-label="Page navigation">
+      <button class="ib" data-k="pprev" aria-label="Previous page" aria-disabled="${S.part === 0}">${ic('chevron-up')}</button>
+      <span class="lbl" data-steplbl>Page ${S.part + 1} of 5</span>
+      <button class="ib" data-k="pnext" aria-label="Next page" aria-disabled="${S.part === 4}">${ic('chevron-down')}</button></div>`;
+  } else {
+    stage += `<div class="ov pill pos-br"><span data-steplbl>Page ${S.part + 1} / 5</span></div>`;
+  }
+
+  /* Rail + panel */
+  const tabs = [['details', 'info', 'Details'], ['attributes', 'attributes', 'Attributes'], ['similar', 'similar', 'Similar']];
+  if (P()) tabs.push(['parts', 'layers', 'Pages']);
+  tabs.push(['download', 'download', 'Download']);
+  if (!P() && S.panel === 'parts') S.panel = 'details';
+  const rail = `<div class="rail"><button class="ib" aria-label="Hide panel">${ic('panel-right-close', 18)}</button>
+    <div role="tablist" aria-orientation="vertical" style="display:contents">${tabs.map(([k, i, l]) =>
+      `<button class="ib" role="tab" data-k="tab" data-tab="${k}" aria-selected="${S.panel === k}" aria-label="${l}" title="${l}">${ic(i, 18)}</button>`).join('')}</div></div>`;
+
+  let panel;
+  if (S.panel === 'details') {
+    panel = `<h4>Details</h4><dl>
+      <div class="frow"><dt>Original filename</dt><dd>${FILE.name}</dd></div>
+      <div class="frow"><dt>Asset type</dt><dd>pdf</dd></div>
+      <div class="frow"><dt>${P() ? 'Pages' : 'Artboards'}</dt><dd>5</dd></div>
+      <div class="frow"><dt>File size</dt><dd>${FILE.size}</dd></div>
+      <div class="frow"><dt>Uploaded by</dt><dd>SD Admin</dd></div>
+      <div class="frow"><dt>Upload date</dt><dd>15 Sep 2026, 13:44</dd></div>
+      <div class="frow"><dt>File link</dt><dd>https://damdev.screendragondev.com?inode=108108</dd></div></dl>`;
+  } else if (S.panel === 'parts') {
+    panel = `<h4>Pages</h4><div class="thumbs">${PAGES.map((_, i) => {
+      return `<button class="thumb pg" data-k="thumb" data-p="${i}" aria-current="${i === S.part}" aria-label="Page ${i + 1}"><div class="tv">${miniPage()}</div><span class="n">${i + 1}</span></button>`;
+    }).join('')}</div>`;
+  } else {
+    const l = tabs.find(t => t[0] === S.panel)[2];
+    panel = `<h4>${l}</h4><p class="panel-msg">${l} is unchanged by this proposal.</p>`;
+  }
+
+  /* Footer */
+  const escLabel = P() && S.findOpen && n ? 'Clear matches' : 'Close';
+  const foot = P()
+    ? `<div class="lb-foot">${pin(5)}
+        <span class="kg"><kbd aria-label="Up arrow">↑</kbd><kbd aria-label="Down arrow">↓</kbd><span class="l">Pages</span></span>
+        ${S.findOpen && n ? `<span class="kg"><kbd>${MOD}</kbd><kbd>G</kbd><span class="l">Next ${UNIT()}</span></span>` : ''}
+        <span class="kg"><kbd>+</kbd><kbd>−</kbd><span class="l">Zoom</span></span>
+        <span class="kg"><kbd>0</kbd><span class="l">Fit</span></span>
+        <span class="kg"><kbd>Esc</kbd><span class="l">${escLabel}</span></span></div>`
+    : `<div class="lb-foot">
+        <span class="kg"><kbd>←</kbd><kbd>→</kbd><span class="l">Assets</span></span>
+        <span class="kg"><kbd>PgUp</kbd><kbd>PgDn</kbd><span class="l">Pages</span></span>
+        <span class="kg"><kbd>+</kbd><kbd>−</kbd><span class="l">Zoom</span></span>
+        <span class="kg"><kbd>0</kbd><span class="l">Fit</span></span>
+        <span class="kg"><kbd>Esc</kbd><span class="l">Close</span></span>
+        <span class="foot-count"><b>1</b> of 1</span></div>`;
+
+  return `<div class="lb" role="dialog" aria-modal="true" aria-labelledby="lb-fn" tabindex="-1">
+    <div class="lb-head">${title}${actions}</div>${band}
+    <div class="lb-main"><div class="stage">${stage}</div>${rail}<div class="panel" role="tabpanel">${panel}</div></div>
+    ${foot}</div>`;
+}
+
+function backdrop() {
+  const cards = `<button class="rc" data-k="reopen" aria-label="${FILE.base}. Text in document. Yesterday">
+      <div class="th">${miniPage()}<span class="ftb">PDF</span></div>
+      <div class="tb"><div class="t2">${FILE.base}</div></div>
+      <div class="dt"><span>Yesterday</span><span class="ocr-chip build">${P() ? pin(10) : pin('H')}${ic('scan-search', 12)}Text in document</span></div>
+    </button>`;
+  return `<div class="app-top">Home / DAM / <b>FIFA Club World Cup</b></div>
+    <div class="app-body"><div class="filters" aria-hidden="true"><div class="fh">Filters</div>${'<div class="bar"></div>'.repeat(4)}</div>
+    <div class="grid-wrap"><h2 id="lib-h" tabindex="-1">Results for "${esc(S.query)}"<span>1 result</span></h2>
+    <div class="grid">${cards}</div></div></div>`;
+}
+
+function render(opts = {}) {
+  const ae = document.activeElement;
+  const fk = ae && ae.dataset ? ae.dataset.k : null;
+  const ftab = ae && ae.dataset ? ae.dataset.tab : null;
+  const fp = ae && ae.dataset ? ae.dataset.p : null;
+  const inLb = ae && ae.closest && ae.closest('.lb');
+
+  MATCHES = computeMatches();
+  if (S.cur >= MATCHES.length) S.cur = Math.max(0, MATCHES.length - 1);
+
+  const app = $('#app');
+  app.className = 'app' + (S.pins ? '' : ' no-pins');
+  app.innerHTML = backdrop() + (S.lbOpen ? `<div class="scrim">${lightbox()}</div>` : '');
+
+  if (S.lbOpen) {
+    const doc = app.querySelector('[data-doc]');
+    setScale(doc);
+    doc.scrollTop = S.pdfScroll;
+    doc.addEventListener('scroll', onScroll, { passive: true });
+
+    if (opts.focus) { const el = app.querySelector(opts.focus); if (el) { el.focus(); if (el.select && opts.select) el.select(); } }
+    else if (inLb) {
+      let sel = fk ? `[data-k="${fk}"]` : null;
+      if (sel && ftab) sel += `[data-tab="${ftab}"]`;
+      if (sel && fp) sel += `[data-p="${fp}"]`;
+      const el = sel && app.querySelector(sel);
+      (el || app.querySelector('.lb')).focus();
+    }
+  }
+  document.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === S.mode));
+  document.querySelectorAll('[data-hl]').forEach(b => { b.setAttribute('aria-pressed', LINE() ? b.dataset.hl === 'line' : b.dataset.hl === 'term'); b.disabled = !P(); });
+  renderSide();
+}
+
+function setScale(doc) {
+  const base = Math.min(1, (doc.parentElement.clientWidth - 48) / 612);
+  doc.style.setProperty('--z', (base * S.zoom).toFixed(3));
+}
+
+function onScroll(e) {
+  const doc = e.currentTarget;
+  S.pdfScroll = doc.scrollTop;
+  if (Date.now() < S.lockUntil) return;
+  const y = doc.scrollTop + doc.clientHeight * 0.35;
+  let c = 0;
+  doc.querySelectorAll('.pagew').forEach((p, i) => { if (p.offsetTop <= y) c = i; });
+  if (c !== S.part) { S.part = c; updatePartUI(); }
+}
+
+function updatePartUI() {
+  const l = document.querySelector('[data-steplbl]');
+  if (l) l.textContent = P() ? `Page ${S.part + 1} of 5` : `Page ${S.part + 1} / 5`;
+  const pp = document.querySelector('[data-k="pprev"]'), pn = document.querySelector('[data-k="pnext"]');
+  if (pp) pp.setAttribute('aria-disabled', S.part === 0);
+  if (pn) pn.setAttribute('aria-disabled', S.part === 4);
+  document.querySelectorAll('[data-k="thumb"]').forEach(t => t.setAttribute('aria-current', +t.dataset.p === S.part));
+}
+
+function scrollToEl(el, smooth = true) {
+  const doc = document.querySelector('[data-doc]');
+  const dr = doc.getBoundingClientRect(), er = el.getBoundingClientRect();
+  const top = doc.scrollTop + (er.top - dr.top) - dr.height * 0.3;
+  S.lockUntil = Date.now() + 700;
+  doc.scrollTo({ top: Math.max(0, top), behavior: smooth && !reduce ? 'smooth' : 'auto' });
+  S.pdfScroll = Math.max(0, top);
+}
+
+/* ---------- Actions ---------- */
+function stepMatch(d) {
+  const n = MATCHES.length;
+  if (!n) return;
+  let next = S.cur + d, wrapped = '';
+  if (next >= n) { next = 0; wrapped = ' Wrapped to first match.'; }
+  if (next < 0) { next = n - 1; wrapped = ' Wrapped to last match.'; }
+  if (!P()) { if (next !== S.cur + d) return; } // build: no wrap assumed
+  S.cur = next;
+  S.part = MATCHES[next].page;
+  const keep = S.pdfScroll;
+  render();
+  const doc = document.querySelector('[data-doc]'); doc.scrollTop = keep;
+  scrollToEl(document.querySelector(`mark[data-m="${next}"]`));
+  updatePartUI();
+  if (P()) announce(`Match ${next + 1} of ${n}, page ${S.part + 1}.${wrapped}`);
+}
+
+function goPage(i, fromThumb) {
+  S.part = i;
+  const doc = document.querySelector('[data-doc]');
+  const pg = doc.querySelectorAll('.pagew')[i];
+  let msg = `Page ${i + 1} of 5.`;
+  S.lockUntil = Date.now() + 700;
+  document.querySelector('[data-doc]').scrollTo({ top: pg.offsetTop - (P() && S.findOpen && MATCHES.length ? 60 : 24), behavior: reduce ? 'auto' : 'smooth' });
+  updatePartUI();
+  if (P()) announce(msg);
+}
+function stepPage(d) {
+  const i = S.part + d;
+  if (i < 0 || i > 4) { if (P()) announce(d < 0 ? 'First page.' : 'Last page.'); return; }
+  goPage(i);
+}
+
+function closeFind() {
+  S.findOpen = false; S.pdfScroll = document.querySelector('[data-doc]').scrollTop;
+  render({ focus: '.lb' });
+  if (P()) announce('Matches cleared.');
+}
+function zoom(d) {
+  S.zoom = d === 0 ? 1 : Math.min(3, Math.max(0.5, S.zoom + d));
+  const doc = document.querySelector('[data-doc]');
+  const r = doc.scrollTop / Math.max(1, doc.scrollHeight);
+  setScale(doc); doc.scrollTop = r * doc.scrollHeight;
+}
+function closeLb() {
+  S.lbOpen = false; render();
+  const t = document.querySelector('[data-k="reopen"]'); t.focus();
+  if (P()) announce(`Lightbox closed. Focus on ${FILE.name}.`);
+}
+
+/* ---------- Live region ---------- */
+const logs = [];
+function announce(msg) {
+  const live = $('#live'); live.textContent = '';
+  setTimeout(() => { live.textContent = msg; }, 30);
+  logs.unshift(msg); logs.length = Math.min(logs.length, 7); drawLog();
+}
+function drawLog() {
+  $('#log').innerHTML = logs.length ? logs.map(l => `<li>${l}</li>`).join('')
+    : `<li class="empty">${P() ? 'Nothing yet. Use the banner chevrons or ' + MOD + '+G.' : 'No announcement spec in the build.'}</li>`;
+}
+
+/* ---------- Side column ---------- */
+const NOTES_P = [
+  [1, 'Vertical chevrons in the banner', 'Matches are inside the file, so they follow the SCR-291 axis rule. Both are neutral Ghost, the same colour, and never shown disabled, because stepping wraps.'],
+  [2, 'Query replaces the snippet', 'The snippet joined table text to body copy and cut mid-word. "Matches for" plus the query, marked in the highlight colour, keeps context and works as the legend for the page.'],
+  [3, 'Line or term highlight', 'Scanned pages mark the whole OCR line: other lines are lighter, and the current line is stronger with a 2px yellow-11 ring. A matching line counts as one match. PDFs with a text layer mark only the matched words. No accent, no focus ring, no state colour.'],
+  [4, 'Page clears the banner', 'The document is offset by the banner height, and matches scroll into the upper third of the stage, never under the banner.'],
+  [5, 'Footer follows the banner', `${MOD}+G steps matches from anywhere in the lightbox. Esc reads "Clear matches" while the banner shows.`],
+  [6, 'Esc clears matches first', 'Then closes the lightbox. Clearing removes the banner and all highlights, and focus returns to the lightbox.'],
+  [7, 'Announced, not just drawn', '"Match 2 of 6, page 2." Same wording for line and term highlights. Scrolling stays silent.'],
+  [8, 'One colour for one concept', 'Yellow means this text matched. It appears on the page and on the banner query, and never as a chip, banner or card background.'],
+  [9, 'Page label removed', 'The page stepper already shows it, and two page indicators would drift out of sync.'],
+  [10, 'Library chip unchanged', 'The "Text in document" chip stays as it is in this pass. Match evidence on result cards, for every match source, is a separate issue. Press Esc twice to see it.'],
+];
+const NOTES_C = [
+  ['A', 'Banner covers the page', 'It overlays the top of the document, so the page header sits underneath it.'],
+  ['B', 'Horizontal chevrons', 'Left and right now mean "between assets" (SCR-291). Stepping matches is within the file.'],
+  ['C', 'Snippet is now redundant', 'It stood in for highlighting and deep linking. It also joins table text to body copy and cuts mid-sentence.'],
+  ['D', 'Page label repeated', '"Page 2" in the band duplicates the page pill.'],
+  ['E', 'Whole lines highlighted', 'The match covers the full OCR line, not the term. Confirmed: the backend returns line-level matches, so the count is counting lines.'],
+  ['F', 'Current match is a colour swap', 'Orange versus yellow only. Orange is the in-progress status colour in Scale.'],
+  ['G', 'Hardcoded, off-system colours', 'Yellow is excluded from Scale (too close to Warning) and neither colour comes from a token.'],
+  ['H', 'Three colours, one concept', 'Library chip is blue (reads as Info), banner is accent, highlights are yellow and orange. The chip is handled in the separate result-card issue. Press Esc to see it.'],
+];
+function renderSide() {
+  const list = P() ? NOTES_P : NOTES_C;
+  $('#notes-h').textContent = P() ? 'What changed' : "What's wrong in the build";
+  $('#notes-hint').textContent = P()
+    ? `Switch Highlight between Line and Term. Use the banner chevrons or ${MOD}+G (Shift for previous), ↑ ↓ for pages, Esc twice to see the library card.`
+    : 'Click the chevrons in the band to step matches.';
+  $('#notes').innerHTML = list.map(([n, h, p]) => `<li><span class="num${P() ? '' : ' issue'}">${n}</span><div><b>${h}</b><p>${p}</p></div></li>`).join('');
+  $('#log-h').textContent = P() ? 'Screen reader output' : 'Screen reader output';
+  $('#log-hint').textContent = P() ? 'Polite live region. Scrolling stays silent.' : '';
+  const k = P()
+    ? [[`<kbd>${MOD}</kbd><kbd>G</kbd>`, `Next ${UNIT()}, add Shift for previous`],
+       ['<kbd>↑</kbd><kbd>↓</kbd>', 'Previous or next page'],
+       ['<kbd>+</kbd><kbd>−</kbd><kbd>0</kbd>', 'Zoom in, zoom out, fit'],
+       ['<kbd>Esc</kbd>', 'Clear matches, then close the lightbox']]
+    : [['Matches', 'No shortcut specified'], ['<kbd>PgUp</kbd><kbd>PgDn</kbd>', 'Pages'], ['<kbd>Esc</kbd>', 'Close']];
+  $('#keys').innerHTML = k.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+  drawLog();
+}
+
+/* ---------- Events ---------- */
+$('#app').addEventListener('click', e => {
+  const b = e.target.closest('[data-k]');
+  if (!b) return;
+  const dis = b.getAttribute('aria-disabled') === 'true';
+  switch (b.dataset.k) {
+    case 'mprev': stepMatch(-1); break;
+    case 'mnext': stepMatch(1); break;
+    case 'pprev': stepPage(-1); break;
+    case 'pnext': stepPage(1); break;
+    case 'fclose': closeFind(); break;
+    case 'zin': zoom(0.25); break;
+    case 'zout': zoom(-0.25); break;
+    case 'fit': zoom(0); break;
+    case 'tab': S.panel = b.dataset.tab; S.pdfScroll = document.querySelector('[data-doc]').scrollTop; render(); break;
+    case 'thumb': goPage(+b.dataset.p, true); break;
+    case 'close': closeLb(); break;
+    case 'reopen': S.lbOpen = true; render({ focus: '.lb' }); break;
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (!S.lbOpen) return;
+  const t = e.target;
+  if (t.closest && t.closest('.tbar, .side')) return;
+  const mod = e.metaKey || e.ctrlKey;
+  if (!P()) { if (e.key === 'Escape') { e.preventDefault(); closeLb(); } return; }
+
+  if (mod && e.key.toLowerCase() === 'g') { e.preventDefault(); if (S.findOpen) stepMatch(e.shiftKey ? -1 : 1); return; }
+
+  if (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || mod || e.altKey) return;
+  switch (e.key) {
+    case 'ArrowUp': case 'PageUp': e.preventDefault(); stepPage(-1); break;
+    case 'ArrowDown': case 'PageDown': e.preventDefault(); stepPage(1); break;
+    case '+': case '=': e.preventDefault(); zoom(0.25); break;
+    case '-': e.preventDefault(); zoom(-0.25); break;
+    case '0': e.preventDefault(); zoom(0); break;
+    case 'Escape': e.preventDefault(); (S.findOpen && MATCHES.length) ? closeFind() : closeLb(); break;
+  }
+});
+
+document.querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => {
+  S.mode = b.dataset.mode; logs.length = 0; reset(false);
+}));
+$('#f-pins').addEventListener('change', e => { S.pins = e.target.checked; render(); });
+document.querySelectorAll('[data-hl]').forEach(b => b.addEventListener('click', () => { if (!P()) return; S.hl = b.dataset.hl; logs.length = 0; reset(true); }));
+$('#f-reset').addEventListener('click', () => reset(false));
+function reset(keepQuery) {
+  Object.assign(S, { findOpen: true, cur: 1, part: 1, zoom: 1, panel: 'details', lbOpen: true, pdfScroll: 0 });
+  render();
+  if (MATCHES.length > 1) { scrollToEl(document.querySelector('mark[data-m="1"]'), false); S.part = MATCHES[1].page; updatePartUI(); }
+  else { S.cur = 0; S.part = 0; updatePartUI(); }
+}
+window.addEventListener('resize', () => { const d = document.querySelector('[data-doc]'); if (d) setScale(d); });
+reset(false);
+</script>
+</body>
+</html>
