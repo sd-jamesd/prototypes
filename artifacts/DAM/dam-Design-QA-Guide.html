@@ -1,0 +1,1271 @@
+<!doctype html><html data-theme="light"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>sdDam Design QA Guide (Copy)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ground: #f7f6f2; --surface: #ffffff; --surface-2: #efede7; --surface-3: #e6e3db;
+    --ink: #1f1e1b; --ink-2: #66655e; --ink-3: #8f8e86;
+    --line: #e1dfd8; --line-2: #cfcdc4;
+    --accent: #0c818f; --accent-ink: #0a6a76; --accent-soft: #e2f2f4; --accent-line: #9fd3da; --accent-contrast: #ffffff;
+    --raise: #b8362f; --raise-soft: #fbe9e7; --watch: #9a6308; --watch-soft: #fbf0d9; --ok: #2f7a4f; --ok-soft: #e3f2e8;
+    --amber: #f5c35a; --amber-strong: #e9a93a; --amber-ring: #a05b00;
+    --code-bg: #eeece6; --ring: #0c818f;
+    --shadow-sm: 0 1px 2px rgba(30,28,20,.10), 0 1px 3px rgba(30,28,20,.06);
+    --shadow-md: 0 4px 12px rgba(30,28,20,.12), 0 2px 4px rgba(30,28,20,.06);
+    --shadow-lg: 0 12px 32px rgba(30,28,20,.18), 0 4px 8px rgba(30,28,20,.06);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #191917; --surface: #222220; --surface-2: #2a2a27; --surface-3: #34332f;
+      --ink: #ecebe6; --ink-2: #a5a49b; --ink-3: #7f7e76;
+      --line: #34332f; --line-2: #45443f;
+      --accent: #6acad9; --accent-ink: #8fd9e4; --accent-soft: #11333a; --accent-line: #245961; --accent-contrast: #1c2024;
+      --raise: #f08c85; --raise-soft: #3a1f1d; --watch: #e6b25a; --watch-soft: #382c14; --ok: #7fcf9b; --ok-soft: #173325;
+      --amber: #8a6a1e; --amber-strong: #a8842a; --amber-ring: #f2c65c;
+      --code-bg: #2c2c29; --ring: #6acad9;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.4); --shadow-md: 0 4px 12px rgba(0,0,0,.5); --shadow-lg: 0 12px 32px rgba(0,0,0,.6);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #191917; --surface: #222220; --surface-2: #2a2a27; --surface-3: #34332f;
+    --ink: #ecebe6; --ink-2: #a5a49b; --ink-3: #7f7e76;
+    --line: #34332f; --line-2: #45443f;
+    --accent: #6acad9; --accent-ink: #8fd9e4; --accent-soft: #11333a; --accent-line: #245961; --accent-contrast: #1c2024;
+    --raise: #f08c85; --raise-soft: #3a1f1d; --watch: #e6b25a; --watch-soft: #382c14; --ok: #7fcf9b; --ok-soft: #173325;
+    --amber: #8a6a1e; --amber-strong: #a8842a; --amber-ring: #f2c65c;
+    --code-bg: #2c2c29; --ring: #6acad9;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.4); --shadow-md: 0 4px 12px rgba(0,0,0,.5); --shadow-lg: 0 12px 32px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--ink); font: 400 15px/1.5 "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+  code, .mono { font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; font-size: .86em; }
+  a { color: var(--accent-ink); }
+  :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+  svg { max-width: 100%; height: auto; display: block; }
+
+  .shell { padding-block: 40px 96px; padding-inline: 248px 24px; }
+  main { max-width: 1280px; margin: 0 auto; }
+  @media (max-width: 959px) { .shell { padding-inline: 16px; padding-block: 24px 80px; } }
+
+  .rail { position: fixed; left: 24px; top: calc(40px + env(safe-area-inset-top, 0px)); width: 200px; }
+  @media (max-width: 959px) { .rail { position: static; width: auto; margin-bottom: 24px; } }
+  .rail ol { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+  .rail a { display: flex; justify-content: space-between; gap: 8px; padding: 5px 8px; border-radius: 4px; color: var(--ink-2); text-decoration: none; font-size: 13px; }
+  .rail a:hover { background: var(--surface-2); color: var(--ink); }
+  .rail a.active { background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; box-shadow: inset 2px 0 0 var(--accent); }
+  .rail a.active .n { color: var(--accent-ink); }
+  html { scroll-behavior: smooth; }
+  main > section { scroll-margin-top: 16px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  .rail a .n { font-size: 11px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  @media (max-width: 959px) { .rail ol { flex-direction: row; flex-wrap: wrap; gap: 4px 6px; } .rail a { padding: 4px 8px; border: 1px solid var(--line); } .rail a .n { display: none; } }
+  .rail-tools { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 12px; color: var(--ink-2); }
+  .rail-tools label { display: flex; gap: 8px; align-items: center; cursor: pointer; }
+  .rail-tools button { align-self: flex-start; font: inherit; color: var(--ink-2); background: none; border: 1px solid var(--line-2); border-radius: 4px; padding: 3px 8px; cursor: pointer; }
+  .rail-tools button:hover { background: var(--surface-2); color: var(--ink); }
+  .progress { height: 4px; background: var(--surface-2); border-radius: 2px; overflow: hidden; }
+  .progress i { display: block; height: 100%; width: 0; background: var(--accent); transition: width 200ms ease; }
+
+  .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+  h1 { font-size: 30px; line-height: 1.15; font-weight: 700; letter-spacing: -.02em; margin: 6px 0 10px; text-wrap: balance; }
+  h2 { font-size: 20px; line-height: 1.3; font-weight: 600; letter-spacing: -.01em; margin: 0 0 4px; text-wrap: balance; }
+  h3 { font-size: 14px; line-height: 1.4; font-weight: 600; margin: 28px 0 8px; }
+  p { margin: 0 0 10px; max-width: 66ch; }
+  .lede { font-size: 16px; color: var(--ink-2); }
+  section { padding-top: 36px; margin-top: 36px; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: 0; margin-top: 0; padding-top: 0; }
+  .sec-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+  .sec-head .count { font-size: 12px; color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .sub { color: var(--ink-2); font-size: 14px; margin-bottom: 14px; }
+
+  .compass { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 18px 0 6px; }
+  @media (max-width: 760px) { .compass { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 420px) { .compass { grid-template-columns: minmax(0, 1fr); } }
+  .compass div { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; font-size: 13px; color: var(--ink-2); }
+  .compass b { display: block; color: var(--ink); font-weight: 600; margin-bottom: 4px; font-size: 14px; }
+
+  .links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 14px 0 0; }
+  @media (max-width: 700px) { .links { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 420px) { .links { grid-template-columns: minmax(0, 1fr); } }
+  .links a { display: block; padding: 10px 12px; border: 1px solid var(--accent-line); background: var(--accent-soft); border-radius: 6px; text-decoration: none; color: var(--ink); font-size: 13px; }
+  .links a:hover { border-color: var(--accent); }
+  .links a b { display: block; font-weight: 600; color: var(--accent-ink); margin-bottom: 2px; }
+  .links a span { color: var(--ink-2); }
+
+  .callout { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 14px 0; font-size: 14px; }
+  .callout.raise { border-color: var(--raise); background: var(--raise-soft); }
+  .callout p { margin: 0; max-width: none; }
+
+  figure { margin: 16px 0 6px; }
+  figure.card { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px; }
+  figcaption { font-size: 12.5px; color: var(--ink-2); margin-top: 10px; max-width: 70ch; }
+  .fig-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 640px) { .fig-row { grid-template-columns: minmax(0, 1fr); } }
+  .svg-ink { color: var(--ink-2); }
+  .svg-ink text { fill: var(--ink); font-family: "Inter", system-ui, sans-serif; }
+  .svg-ink .dim { fill: var(--accent-ink); font-family: "JetBrains Mono", ui-monospace, monospace; }
+  .svg-ink .muted { fill: var(--ink-3); }
+
+  /* timeline strip */
+  .strip { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; margin-top: 14px; }
+  @media (max-width: 640px) { .strip { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .strip div { border-radius: 4px; padding: 8px 10px; font-size: 12px; min-height: 96px; border: 1px solid var(--line); background: var(--surface); }
+  .strip b { display: block; font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+  .strip i { display: block; height: 4px; border-radius: 2px; margin-bottom: 8px; background: var(--line-2); }
+  .strip .r2 i { background: var(--ok); } .strip .r3 i { background: var(--watch); } .strip .r4 i { background: var(--raise); }
+  .strip span { color: var(--ink-2); }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--ink-2); margin-top: 8px; }
+  .legend i { display: inline-block; width: 12px; height: 4px; border-radius: 2px; vertical-align: 2px; margin-right: 6px; background: var(--line-2); }
+
+  /* specimens */
+  .swatches { display: flex; gap: 4px; }
+  .swatches div { flex: 1 1 0; height: 34px; border-radius: 4px; position: relative; }
+  .swatches div::after { content: attr(data-n); position: absolute; left: 6px; bottom: 4px; font-size: 10px; font-family: "JetBrains Mono", monospace; color: rgba(0,0,0,.55); }
+  .swatches div.d::after { color: rgba(255,255,255,.75); }
+  .spec-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 12px 0 6px; }
+  .spec-label:first-child { margin-top: 0; }
+  .vs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 520px) { .vs { grid-template-columns: minmax(0, 1fr); } }
+  .vs > div { border: 1px solid var(--line); border-radius: 6px; padding: 12px; background: var(--surface); }
+  .vs .tick, .vs .cross { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; display: block; }
+  .vs .tick { color: var(--ok); } .vs .cross { color: var(--raise); }
+  .type-row { display: grid; grid-template-columns: 56px minmax(0, 1fr) 120px; gap: 12px; align-items: baseline; padding: 6px 0; border-top: 1px solid var(--line); }
+  .type-row:first-of-type { border-top: 0; }
+  .type-row .mono { color: var(--ink-3); font-size: 11px; }
+  .type-row small { color: var(--ink-2); font-size: 12px; text-align: right; }
+  @media (max-width: 520px) { .type-row { grid-template-columns: 48px minmax(0, 1fr); } .type-row small { display: none; } }
+
+  .tiles { display: flex; flex-wrap: wrap; gap: 12px; }
+  .tile { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-2); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 0 14px; border-radius: 4px; background: var(--accent); color: var(--accent-contrast); font-size: 14px; font-weight: 500; border: 0; }
+  .btn.hover { filter: brightness(.92); } .btn.press { filter: brightness(.84); }
+  .btn.focus { outline: 2px solid var(--ring); outline-offset: 2px; }
+  .btn.disabled { background: var(--surface-3); color: var(--ink-3); }
+  .btn.disabled-wrong { opacity: .45; }
+  .mini-card { width: 96px; height: 72px; border-radius: 6px; border: 1px solid var(--line-2); background: var(--surface); position: relative; overflow: hidden; }
+  .mini-card::before { content: ""; position: absolute; inset: 0 0 22px 0; background: linear-gradient(135deg, var(--surface-3), var(--surface-2)); }
+  .mini-card.hover { box-shadow: var(--shadow-md); }
+  .mini-card.press { box-shadow: none; }
+  .mini-card.focus { outline: 2px solid var(--ring); outline-offset: 0; }
+  .mini-card.dbl { box-shadow: 0 0 0 1px var(--ink-3), var(--shadow-md); border-radius: 10px; }
+  .badge-strip { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--surface-3); color: var(--ink); }
+  .pill.ai { background: linear-gradient(90deg, #6d5bd0, #0c818f); color: #fff; }
+  .pill.draft { background: var(--watch-soft); color: var(--watch); }
+  .radii { display: flex; gap: 12px; flex-wrap: wrap; }
+  .radii div { width: 72px; height: 48px; border: 1px solid var(--line-2); background: var(--surface-2); display: grid; place-items: center; font-size: 11px; color: var(--ink-2); }
+  .shadows { display: flex; gap: 20px; flex-wrap: wrap; }
+  .shadows div { width: 96px; height: 60px; border-radius: 6px; background: var(--surface); display: grid; place-items: center; font-size: 11px; color: var(--ink-2); }
+  .icon-sizes { display: flex; align-items: flex-end; gap: 14px; }
+  .icon-sizes div { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; color: var(--ink-2); }
+  .icon-sizes i { display: block; border: 1.5px solid currentColor; border-radius: 3px; color: var(--ink); }
+  .glyphs { display: flex; gap: 20px; flex-wrap: wrap; }
+  .glyphs div { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-2); }
+  .glyphs svg { width: 20px; height: 20px; color: var(--ink); }
+  .highlight-demo { font-size: 13px; line-height: 1.7; }
+  .hl { background: var(--amber); padding: 0 2px; }
+  .hl.cur { background: var(--amber-strong); box-shadow: 0 0 0 1.5px var(--amber-ring); }
+
+  .dark-demo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 520px) { .dark-demo { grid-template-columns: minmax(0, 1fr); } }
+  .theme { border-radius: 6px; padding: 14px; display: flex; flex-direction: column; gap: 10px; font-size: 12px; }
+  .theme.light { background: #f7f6f2; color: #1f1e1b; border: 1px solid #e1dfd8; }
+  .theme.dark { background: #191917; color: #ecebe6; border: 1px solid #34332f; }
+  .theme .lbl { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; opacity: .7; }
+  .theme .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .theme .b { height: 28px; padding: 0 12px; border-radius: 4px; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; }
+  .theme .bar { height: 28px; border-radius: 4px; display: flex; align-items: center; padding: 0 10px; font-size: 12px; flex: 1 1 120px; }
+
+  /* checklist */
+  .checks { list-style: none; margin: 8px 0 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+  .checks li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; padding: 10px 12px; border-top: 1px solid var(--line); }
+  .checks li:first-child { border-top: 0; }
+  .checks li.done .t { color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--line-2); }
+  .checks li.done .r { opacity: .5; }
+  .checks input { width: 16px; height: 16px; margin: 2px 0 0 1px; accent-color: var(--accent); cursor: pointer; }
+  .checks label { display: block; cursor: pointer; font-size: 13.5px; }
+  .checks .t { font-weight: 500; }
+  .checks .r { color: var(--ink-2); margin-top: 1px; }
+  .checks .r b { color: var(--raise); font-weight: 600; }
+  .checks .ref { font-size: 11px; color: var(--ink-3); margin-left: 6px; white-space: nowrap; font-weight: 500; }
+  .hide-done .checks li.done { display: none; }
+  .tag { display: inline-block; font-size: 10.5px; font-weight: 600; padding: 1px 6px; border-radius: 999px; vertical-align: 1px; margin-left: 6px; background: var(--watch-soft); color: var(--watch); }
+
+  .pain { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  @media (max-width: 640px) { .pain { grid-template-columns: minmax(0, 1fr); } }
+  .pain li { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; font-size: 13px; }
+  .pain b { display: block; font-weight: 600; margin-bottom: 3px; font-size: 13.5px; }
+  .pain span { color: var(--ink-2); }
+  .pain em { font-style: normal; color: var(--ink); font-weight: 500; }
+
+  .accepted { list-style: none; margin: 12px 0 0; padding: 0; columns: 2; column-gap: 24px; }
+  @media (max-width: 640px) { .accepted { columns: 1; } }
+  .accepted li { break-inside: avoid; padding: 8px 0; border-top: 1px solid var(--line); font-size: 13px; }
+  .accepted li:first-child { border-top: 0; }
+  .accepted b { font-weight: 600; display: block; }
+  .accepted span { color: var(--ink-2); }
+
+  pre { background: var(--code-bg); border-radius: 6px; padding: 12px 14px; overflow-x: auto; font-size: 12.5px; line-height: 1.5; margin: 12px 0; }
+  .sev { display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 6px 14px; font-size: 13.5px; margin: 12px 0; }
+  .sev b { font-weight: 600; }
+  .sev .s1 { color: var(--raise); } .sev .s2 { color: var(--watch); } .sev .s3 { color: var(--ink-2); }
+  @media (max-width: 480px) { .sev { grid-template-columns: minmax(0, 1fr); gap: 2px 0; } .sev b { margin-top: 8px; } }
+
+  .gloss { list-style: none; margin: 10px 0 0; padding: 0; columns: 2; column-gap: 24px; font-size: 13px; }
+  .gloss li { break-inside: avoid; padding: 5px 0; border-top: 1px solid var(--line); }
+  .gloss li:first-child { border-top: 0; }
+  .gloss b { font-weight: 600; }
+  .gloss span { color: var(--ink-2); }
+  @media (min-width: 1100px) { .gloss { columns: 3; } }
+  @media (max-width: 560px) { .gloss { columns: 1; } }
+  /* colour section */
+  .ramp { border-radius: 6px; padding: 10px 12px 8px; margin-top: 8px; }
+  .ramp.lt { background: #fdfdfc; color: #21201c; border: 1px solid #e2e1de; }
+  .ramp.dk { background: #12110e; color: #f0efe3; border: 1px solid #3c3b31; }
+  .ramp .lbl { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; opacity: .75; margin-bottom: 6px; display: flex; justify-content: space-between; gap: 8px; }
+  .ramp .lbl span:last-child { font-weight: 500; letter-spacing: 0; text-transform: none; }
+  .steps { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 3px; }
+  .steps div { height: 40px; border-radius: 3px; position: relative; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 10px; }
+  .steps div::after { content: attr(data-n); position: absolute; left: 4px; top: 3px; }
+  .steps div.dk::after { color: rgba(255,255,255,.8); } .steps div.lt::after { color: rgba(0,0,0,.6); }
+  .roles { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 3px; margin-top: 4px; font-size: 10.5px; line-height: 1.25; }
+  .roles div { border-top: 2px solid currentColor; padding-top: 4px; opacity: .8; }
+  .roles .r1 { grid-column: 1 / span 2; } .roles .r2 { grid-column: 3 / span 3; } .roles .r3 { grid-column: 6 / span 3; } .roles .r4 { grid-column: 9 / span 2; } .roles .r5 { grid-column: 11 / span 2; }
+  @media (max-width: 600px) { .roles { font-size: 9px; } .steps div { height: 30px; } .steps div::after { font-size: 8px; left: 2px; } }
+  .lang { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 640px) { .lang { grid-template-columns: minmax(0, 1fr); } }
+  .mock { border-radius: 6px; padding: 14px; font-size: 12px; display: grid; gap: 8px; }
+  .mock .h { font-size: 14px; font-weight: 600; }
+  .mock .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .mock .card { border-radius: 6px; padding: 10px 12px; display: grid; gap: 6px; }
+  .mock .btn2 { height: 28px; padding: 0 12px; border-radius: 4px; display: inline-flex; align-items: center; font-weight: 500; font-size: 13px; }
+  .mock .navi { padding: 4px 10px; border-radius: 4px; font-weight: 600; font-size: 12px; }
+  .mock .line { height: 28px; border-radius: 4px; display: flex; align-items: center; padding: 0 10px; }
+  .mock .k { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 10px; opacity: .7; margin-left: auto; white-space: nowrap; }
+  .status-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .status-row span { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; border: 1px solid; }
+  .fixed-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  .fixed-row .item { display: flex; flex-direction: column; gap: 5px; align-items: flex-start; font-size: 11px; color: var(--ink-2); }
+  .ftbadge { background: rgba(28,28,25,.62); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px; }
+  .grad { height: 26px; width: 160px; border-radius: 4px; background: linear-gradient(90deg, #0B6E8A, #29A383, #00A2C7, #5B5BD6); border: 1px solid #0E96AD; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; padding: 0 8px; }
+  .hatch { width: 96px; height: 40px; border-radius: 4px; background: repeating-linear-gradient(135deg, rgba(16,16,0,.06) 0 6px, transparent 6px 12px), #cfcfca; }
+  .read { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+  @media (max-width: 700px) { .read { grid-template-columns: minmax(0, 1fr); } }
+  .read div { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; font-size: 13px; }
+  .read b { display: block; font-weight: 600; margin-bottom: 2px; }
+  .read span { color: var(--ink-2); }
+  .to-top { position: fixed; right: 24px; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); z-index: 5; width: 40px; height: 40px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink-2); box-shadow: var(--shadow-md); display: grid; place-items: center; cursor: pointer; opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity 200ms ease, transform 200ms ease, background 120ms ease; }
+  .to-top.show { opacity: 1; transform: none; pointer-events: auto; }
+  .to-top:hover { background: var(--accent-soft); color: var(--accent-ink); border-color: var(--accent-line); }
+  .to-top:active { background: var(--accent-line); }
+  .to-top svg { width: 18px; height: 18px; }
+  @media (max-width: 959px) { .to-top { right: 16px; } }
+  @media (prefers-reduced-motion: reduce) { .to-top { transition: none; transform: none; } }
+  .hues .hue { padding: 12px 0 4px; border-top: 1px solid var(--line); }
+  .hues .hue:first-child { border-top: 0; padding-top: 0; }
+  .hue-head { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; font-size: 13px; }
+  .hue-head b { font-weight: 600; font-size: 14px; }
+  .hue-head span { color: var(--ink-2); }
+  .grid2.tight { gap: 0 12px; }
+  .grid2.tight .ramp { margin-top: 8px; }
+  /* typography section */
+  .ladder { display: grid; gap: 0; }
+  .ladder .step { display: grid; grid-template-columns: 64px minmax(0, 1fr) 150px; gap: 14px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); }
+  .ladder .step:first-child { border-top: 0; }
+  .ladder .k { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 11px; color: var(--ink-3); }
+  .ladder .sample { background: repeating-linear-gradient(180deg, var(--accent-soft) 0 1px, transparent 1px var(--lh)); background-origin: content-box; }
+  .ladder .sample span { display: inline-block; background: var(--surface); padding: 0 2px; }
+  .ladder small { font-size: 12px; color: var(--ink-2); text-align: right; }
+  .ladder .step.out { opacity: .55; }
+  .ladder .cap { grid-column: 1 / -1; border-top: 2px dashed var(--raise); padding: 4px 0 0; font-size: 11px; color: var(--raise); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+  @media (max-width: 560px) { .ladder .step { grid-template-columns: 56px minmax(0, 1fr); } .ladder small { display: none; } }
+  .weights { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 640px) { .weights { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .weights div { border: 1px solid var(--line); border-radius: 6px; padding: 12px; }
+  .weights .w { font-size: 22px; line-height: 1.2; letter-spacing: -.01em; }
+  .weights .k { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 11px; color: var(--ink-3); display: block; margin-top: 6px; }
+  .weights p { font-size: 12px; color: var(--ink-2); margin: 4px 0 0; }
+  .rolelist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; }
+  @media (max-width: 760px) { .rolelist { grid-template-columns: minmax(0, 1fr); } }
+  .rolelist .r { display: grid; grid-template-columns: minmax(0, 1fr) 80px; gap: 10px; align-items: baseline; padding: 8px 0; border-top: 1px solid var(--line); }
+  .rolelist .r .k { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 11px; color: var(--ink-3); text-align: right; }
+  .rolelist .r .where { grid-column: 1 / -1; font-size: 12px; color: var(--ink-2); margin-top: -2px; }
+  .rolelist > div > .r:first-child { border-top: 0; }
+  .trunc { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 560px) { .trunc { grid-template-columns: minmax(0, 1fr); } }
+  .trunc > div { border: 1px solid var(--line); border-radius: 6px; padding: 12px; font-size: 13px; }
+  .trunc .box { width: 180px; border: 1px dashed var(--line-2); padding: 4px 6px; margin: 6px 0; font-size: 12px; }
+  .trunc .ok { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .trunc .bad { white-space: nowrap; overflow: hidden; }
+  .trunc .wrap { overflow-wrap: anywhere; }
+  .trunc .tick, .trunc .cross { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+  .trunc .tick { color: var(--ok); } .trunc .cross { color: var(--raise); }
+  /* wide-screen layouts */
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; align-items: start; }
+  .grid2 > div > h3:first-child { margin-top: 28px; }
+  .split { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 20px; align-items: start; }
+  .split > figure { margin-top: 12px; }
+  @media (min-width: 1100px) {
+    .split { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+    .split > .checks { margin-top: 12px; }
+    .checks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; background: none; border: 0; }
+    .checks li, .checks li:first-child { border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+    .split > .checks { grid-template-columns: minmax(0, 1fr); }
+    .pain { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .accepted { columns: 3; }
+    .dark-demo { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .links { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .lede { max-width: 80ch; }
+  }
+  @media (min-width: 1400px) { .checks { grid-template-columns: repeat(3, minmax(0, 1fr)); } .split > .checks { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 900px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
+  @media (prefers-reduced-motion: reduce) { .progress i { transition: none; } }
+</style>
+
+<div class="shell">
+  <nav class="rail" aria-label="Sections">
+    <div class="eyebrow">Sections</div>
+    <ol id="toc"></ol>
+    <div class="rail-tools">
+      <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+      <div id="total" style="color:var(--ink-3)">0 of 0 ticked</div>
+      <label><input type="checkbox" id="hideDone"> Hide ticked</label>
+      <button type="button" id="reset">Clear my ticks</button>
+      <div style="font-size:11px;color:var(--ink-3)">Ticks save in this browser only.</div>
+    </div>
+  </nav>
+
+  <main>
+    <section id="start">
+      <div class="eyebrow">sdDam frontend · April to September 2026</div>
+      <h1>sdDam Design QA Guide</h1>
+      <p class="lede">Six months of work moved the DAM onto the Scale design system. This is what "correct" looks like, where the risk sits, and what not to raise.</p>
+
+      <div class="compass">
+        <div><b>Compare to neighbours</b>If one chip, header or field differs from the ones beside it, that difference is the bug.</div>
+        <div><b>Short menus of values</b>Sizes, colours, radii, shadows and icons each come from a list of 4 to 6. "In between" is suspect.</div>
+        <div><b>Every state counts</b>Hover, pressed, Tab focus, disabled, loading, empty, dark, phone. Bugs hide in states.</div>
+        <div><b>Not every difference is a defect</b>Check <a href="#accepted">Accepted, don't raise</a> before logging.</div>
+      </div>
+
+      <h3>James's design references (the source of truth)</h3>
+      <div class="links">
+        <a href="https://sd-jamesd.github.io/prototypes/design-system/" target="_blank" rel="noopener"><b>Scale design system</b><span>Live tokens, type, colour, components</span></a>
+        <a href="https://sd-jamesd.github.io/prototypes/artifacts/DAM/dam-design-contracts.html" target="_blank" rel="noopener"><b>DAM design contracts</b><span>One kit, every surface</span></a>
+        <a href="https://sd-jamesd.github.io/prototypes/artifacts/DAM/dam-panel-width-contract.html" target="_blank" rel="noopener"><b>Panel width simulator</b><span>Lightbox and edit at any viewport</span></a>
+        <a href="https://sd-jamesd.github.io/prototypes/artifacts/DAM/dam-selection-model.html" target="_blank" rel="noopener"><b>Selection model</b><span>Click, tick, bulk bar</span></a>
+        <a href="https://sd-jamesd.github.io/prototypes/artifacts/DAM/dam-edit-panel-destinations.html" target="_blank" rel="noopener"><b>Edit panel destinations</b><span>The seven rail tabs</span></a>
+        <a href="https://sd-jamesd.github.io/prototypes/artifacts/DAM/dam-edit-tags-threshold.html" target="_blank" rel="noopener"><b>Tags threshold</b><span>Large tag groups</span></a>
+        <a href="https://sd-jamesd.github.io/prototypes/artifacts/DAM/header-search-ui.html" target="_blank" rel="noopener"><b>Header search</b><span>Six search states</span></a>
+        <a href="https://sd-jamesd.github.io/prototypes/artifacts/DAM/dam-dashboard-presets.html" target="_blank" rel="noopener"><b>Dashboard presets</b><span>Widget layouts</span></a>
+        <a href="https://sd-jamesd.github.io/prototypes/artifacts/DAM/lightbox-ocr-match-banner.html" target="_blank" rel="noopener"><b>OCR match banner</b><span>Banner and page highlight</span></a>
+      </div>
+      <p class="sub" style="margin-top:10px">When this guide and a prototype disagree, the prototype wins. Note the disagreement in the bug.</p>
+    </section>
+
+    <section id="words" data-title="Words used here">
+      <div class="sec-head"><h2>Words used here</h2></div>
+      <p class="sub">Design shorthand you'll meet in this guide and in tickets. Plain meanings only.</p>
+      <ul class="gloss">
+        <li><b>Accent / cerulean</b> <span>the one brand colour used for emphasis. Cerulean is the DS name; it reads as a teal-blue on screen. When a ticket says "accent", "cerulean" or "primary colour", it means this.</span></li>
+        <li><b>Backdrop / scrim</b> <span>the dimmed layer behind a panel or dialog.</span></li>
+        <li><b>Bento</b> <span>the collection tile on the dashboard that shows a small grid of thumbnails with a "+N" count cell.</span></li>
+        <li><b>Breakpoint</b> <span>a window width where the layout changes. Phone is 767px and below.</span></li>
+        <li><b>Bulk bar / selection tray</b> <span>the dark bar pinned to the bottom when you've selected several assets.</span></li>
+        <li><b>Chip</b> <span>a small rounded label, e.g. an active filter you can remove.</span></li>
+        <li><b>Chrome</b> <span>the frame around the content: nav, header, panels, toolbars. "Global chrome" is the part that stays on every page.</span></li>
+        <li><b>Contrast / AA</b> <span>how readable text is against its background. AA is the accessibility pass mark.</span></li>
+        <li><b>Design system (Scale)</b> <span>the shared rulebook of colours, sizes and components the app is built from. "DS" for short.</span></li>
+        <li><b>Disclosure</b> <span>the little triangle or chevron that opens and closes a group.</span></li>
+        <li><b>Empty state</b> <span>the message shown when a list has nothing in it: icon, title, hint, sometimes a button.</span></li>
+        <li><b>Eyebrow</b> <span>a small uppercase label above a heading or widget, e.g. RECENTLY ADDED.</span></li>
+        <li><b>Focus ring</b> <span>the outline that appears on a control when you reach it with the Tab key.</span></li>
+        <li><b>Gate badge</b> <span>the badge that says why an asset is held back: draft, restricted or expiring. Only one shows.</span></li>
+        <li><b>Gutter</b> <span>the empty margin between a thing and the edge of its container.</span></li>
+        <li><b>Hairline</b> <span>the thinnest divider line between rows.</span></li>
+        <li><b>Hatch overlay</b> <span>the diagonal-stripe wash drawn over draft thumbnails.</span></li>
+        <li><b>Host</b> <span>the legacy Screendragon app the DAM sits inside. It supplies login and the light/dark theme.</span></li>
+        <li><b>Kit / atom</b> <span>a small shared building block (button, field row, list item) reused everywhere. Two atoms of the same kind must look identical.</span></li>
+        <li><b>Lightbox</b> <span>the full-screen viewer that opens when you click an asset.</span></li>
+        <li><b>Mosaic</b> <span>the library view where images tile edge to edge at their own proportions.</span></li>
+        <li><b>Neutral</b> <span>the grey family used for text, lines and backgrounds. Ours is warm ("Sand").</span></li>
+        <li><b>Panel</b> <span>a side area that opens beside the content: Filters, Collections, the lightbox Details pane, the edit-mode tabs.</span></li>
+        <li><b>Pill / badge</b> <span>a tiny rounded tag on a card: JPG, AI, DRAFT.</span></li>
+        <li><b>Portaled</b> <span>dev term for menus, tooltips and popovers that render outside the page's main box, so they can miss the theme.</span></li>
+        <li><b>Pressed state</b> <span>how a control looks while the mouse button is held down on it.</span></li>
+        <li><b>Rail</b> <span>a narrow vertical strip of icons: the left nav when collapsed, the tab strip in the lightbox and edit modal.</span></li>
+        <li><b>Role (type)</b> <span>a size plus a weight with a job, e.g. panel header = 16 at 600. Text takes a role; it never picks its own size.</span></li>
+        <li><b>Scope link</b> <span>the text in the bulk bar that says what the selection covers ("3 of 120 in this folder").</span></li>
+        <li><b>Skeleton</b> <span>grey placeholder blocks shown while content loads, shaped like the content.</span></li>
+        <li><b>Stage</b> <span>the area inside the lightbox or editor where the image or document sits.</span></li>
+        <li><b>Step (1 to 12)</b> <span>a colour's position on its twelve-step ramp. The number tells you its job: 1–2 backgrounds, 3–5 fills, 6–8 lines, 9–10 solid, 11–12 text.</span></li>
+        <li><b>Surface</b> <span>any distinct screen or area: the dashboard, the library grid, a dialog, a panel.</span></li>
+        <li><b>Token</b> <span>a named value in that rulebook, e.g. "accent" or "card radius". You'll see them in dev replies; you never need to read them.</span></li>
+      </ul>
+    </section>
+
+    <section id="changed">
+      <div class="sec-head"><h2>What changed, when</h2></div>
+      <p class="sub">Spend time where the colour is warmest. September was the biggest month and the least verified.</p>
+      <div class="strip">
+        <div class="r1"><i></i><b>Mar to Apr</b><span>Selection tray, video thumbs, crop box</span></div>
+        <div class="r2"><i></i><b>May</b><span>Collections panel to the left, twin of Filters. Downloads, list view, sort, menus</span></div>
+        <div class="r2"><i></i><b>Jun</b><span>Library header and search. Rights regions. Dark-mode fixes</span></div>
+        <div class="r3"><i></i><b>Jul</b><span>Scale DS adopted: tokens, Inter, type ladder, kit atoms. Conformance passes on every panel. Focus states</span></div>
+        <div class="r3"><i></i><b>Aug</b><span>Dashboard rebuilt. States cycle: focus, pressed, disabled, empty, loading, motion, icons, radius</span></div>
+        <div class="r4"><i></i><b>Sep</b><span>Snag list. DS 0.14.3 then 0.16.0. Mobile phases 1 to 3. Lazy loading. Lightbox axis nav. 400px panels. OCR banner. Font-size fix. Dead CSS deleted</span></div>
+      </div>
+      <div class="legend"><span><i></i>Stable</span><span><i style="background:var(--ok)"></i>Low</span><span><i style="background:var(--watch)"></i>High</span><span><i style="background:var(--raise)"></i>Highest, not browser-verified</span></div>
+    </section>
+
+    <section id="contract">
+      <div class="sec-head"><h2>The contract</h2></div>
+      <p class="sub">The fixed values the app is built from. You never need to measure them; the pictures show what each looks like. The useful test: does everything of the same kind share the same value?</p>
+
+      <div class="grid2"><div>
+      <h3>Colour</h3>
+      <figure class="card">
+        <div class="spec-label">The one accent: cerulean (reads as teal-blue)</div>
+        <div class="swatches">
+          <div style="background:#e2f2f4" data-n="3"></div><div style="background:#c3e5ea" data-n="5"></div><div style="background:#8fcdd6" data-n="7"></div><div class="d" style="background:#0c818f" data-n="9"></div><div class="d" style="background:#0a6a76" data-n="11"></div>
+        </div>
+        <div class="spec-label">The one neutral: Sand (warm)</div>
+        <div class="swatches">
+          <div style="background:#f7f6f2" data-n="1"></div><div style="background:#e6e3db" data-n="4"></div><div style="background:#cfcdc4" data-n="6"></div><div style="background:#8f8e86" data-n="8"></div><div class="d" style="background:#66655e" data-n="11"></div><div class="d" style="background:#1f1e1b" data-n="12"></div>
+        </div>
+        <div class="spec-label">Wrong families. If you see these, raise it</div>
+        <div class="swatches">
+          <div class="d" style="background:#3e63dd" data-n="indigo"></div><div class="d" style="background:#0090ff" data-n="blue"></div><div style="background:#d3dae6" data-n="cool grey"></div><div style="background:#e5e7eb" data-n="tailwind grey"></div>
+        </div>
+        <figcaption>Cerulean is the only accent. Grey is always warm. Amber appears in exactly one place (OCR highlight, below). Any blue, indigo or cool grey next to these is a leftover from before the design system. Full ramps and every role: <a href="#colour">Colour in full</a>.</figcaption>
+      </figure>
+
+      </div><div>
+      <h3>Type</h3>
+      <figure class="card">
+        <div class="type-row"><span class="mono">16 / 600</span><span style="font-size:16px;font-weight:600">Panel header</span><small>largest text in chrome</small></div>
+        <div class="type-row"><span class="mono">14 / 600</span><span style="font-size:14px;font-weight:600">Section header</span><small>filter groups, widget sections</small></div>
+        <div class="type-row"><span class="mono">14 / 400</span><span style="font-size:14px">Body, search, options</span><small>most text</small></div>
+        <div class="type-row"><span class="mono">14 / 600</span><span style="font-size:14px;font-weight:600">Button label</span><small>every button</small></div>
+        <div class="type-row"><span class="mono">12 / 700</span><span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Eyebrow label</span><small>uppercase, tracked</small></div>
+        <div class="type-row"><span class="mono">12 / 400</span><span style="font-size:12px">Field labels, values, chips</span><small>secondary</small></div>
+        <div class="type-row"><span class="mono">11 / 500</span><span style="font-size:11px;font-weight:500">Counts, badges, kbd</span><small>smallest</small></div>
+        <figcaption>Inter only. Four sizes inside the app: 11, 12, 14, 16. Four weights, each with a job. Full ladder and every role: <a href="#type">Typography in full</a>. Raise 13, 15, 18 or bigger; raise Arial, Segoe or a serif (a font failed to load or a style was lost); raise bold panel headers and bold active tabs.</figcaption>
+      </figure>
+
+      </div></div>
+      <div class="grid2"><div>
+      <h3>Frame geometry</h3>
+      <figure class="card">
+        <svg viewBox="0 0 760 300" role="img" aria-label="Library frame: 56px nav rail, filters panel, 32px header fields, a grid of 256px cards that adds whole columns" class="svg-ink">
+          <defs><marker id="ar" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L8 4L0 8z" fill="currentColor"/></marker></defs>
+          <rect x="10" y="10" width="740" height="250" rx="4" fill="var(--surface-2)" stroke="currentColor" stroke-width="1"/>
+          <rect x="10" y="10" width="40" height="250" fill="var(--surface-3)"/>
+          <rect x="22" y="30" width="16" height="16" rx="3" fill="var(--accent)"/>
+          <rect x="22" y="58" width="16" height="16" rx="3" fill="currentColor" opacity=".35"/>
+          <rect x="22" y="86" width="16" height="16" rx="3" fill="currentColor" opacity=".35"/>
+          <rect x="50" y="10" width="200" height="250" fill="var(--surface)"/>
+          <rect x="66" y="26" width="168" height="22" rx="3" fill="none" stroke="currentColor" stroke-width="1"/>
+          <text x="76" y="41" font-size="10" class="muted">Find attributes…</text>
+          <rect x="50" y="66" width="2" height="18" fill="var(--accent)"/>
+          <text x="66" y="79" font-size="11" font-weight="600">Format</text><text x="234" y="79" font-size="10" text-anchor="end" class="dim">2 of 9</text>
+          <text x="66" y="105" font-size="11" font-weight="600">Rights</text>
+          <text x="66" y="131" font-size="11" font-weight="600">Date added</text>
+          <rect x="266" y="26" width="220" height="22" rx="3" fill="var(--surface)" stroke="currentColor" stroke-width="1"/>
+          <text x="276" y="41" font-size="10" class="muted">Search</text>
+          <rect x="580" y="26" width="74" height="22" rx="3" fill="var(--accent)"/><text x="617" y="41" font-size="10" text-anchor="middle" fill="var(--accent-contrast)">Upload</text>
+          <g fill="var(--surface)" stroke="currentColor" stroke-width="1">
+            <rect x="266" y="72" width="106" height="82" rx="4"/><rect x="384" y="72" width="106" height="82" rx="4"/><rect x="502" y="72" width="106" height="82" rx="4"/><rect x="620" y="72" width="106" height="82" rx="4"/>
+            <rect x="266" y="166" width="106" height="82" rx="4"/><rect x="384" y="166" width="106" height="82" rx="4"/><rect x="502" y="166" width="106" height="82" rx="4"/><rect x="620" y="166" width="106" height="82" rx="4"/>
+          </g>
+          <line x1="10" y1="276" x2="50" y2="276" stroke="currentColor" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="30" y="292" font-size="10" text-anchor="middle" class="dim">56</text>
+          <line x1="266" y1="60" x2="372" y2="60" stroke="currentColor" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="319" y="68" font-size="10" text-anchor="middle" class="dim">256</text>
+          <line x1="372" y1="60" x2="384" y2="60" stroke="currentColor"/><text x="378" y="68" font-size="9" text-anchor="middle" class="dim">16</text>
+          <line x1="498" y1="26" x2="498" y2="48" stroke="currentColor" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="506" y="40" font-size="10" class="dim">32</text>
+          <line x1="266" y1="276" x2="726" y2="276" stroke="currentColor" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="496" y="292" font-size="10" text-anchor="middle" class="dim">rows fill edge to edge, no right gutter</text>
+        </svg>
+        <figcaption>Nav rail 56 collapsed (256 open). Fields and header buttons 32 tall; chips 24. Cards target 256 wide with 16 gaps. Filter groups with selections get a 2px cerulean edge and an "n of total" count.</figcaption>
+      </figure>
+
+      </div><div>
+      <h3>Column reflow</h3>
+      <figure class="card">
+        <div class="fig-row">
+          <svg viewBox="0 0 360 220" role="img" aria-label="Panel open: five columns of 256px cards. Panel closed: six columns. Cards keep their width; the count changes." class="svg-ink">
+            <text x="0" y="12" font-size="11" font-weight="600">Right: panel toggles a column</text>
+            <rect x="0" y="22" width="60" height="80" fill="var(--surface)" stroke="currentColor"/>
+            <g fill="var(--surface-2)" stroke="currentColor"><rect x="68" y="30" width="52" height="30"/><rect x="126" y="30" width="52" height="30"/><rect x="184" y="30" width="52" height="30"/><rect x="242" y="30" width="52" height="30"/><rect x="300" y="30" width="52" height="30"/><rect x="68" y="66" width="52" height="30"/><rect x="126" y="66" width="52" height="30"/><rect x="184" y="66" width="52" height="30"/><rect x="242" y="66" width="52" height="30"/><rect x="300" y="66" width="52" height="30"/></g>
+            <text x="0" y="122" font-size="10" class="muted">panel open · 5 columns</text>
+            <g fill="var(--surface-2)" stroke="currentColor"><rect x="0" y="136" width="52" height="30"/><rect x="58" y="136" width="52" height="30"/><rect x="116" y="136" width="52" height="30"/><rect x="174" y="136" width="52" height="30"/><rect x="232" y="136" width="52" height="30"/><rect x="290" y="136" width="52" height="30"/><rect x="0" y="172" width="52" height="30"/><rect x="58" y="172" width="52" height="30"/><rect x="116" y="172" width="52" height="30"/><rect x="174" y="172" width="52" height="30"/><rect x="232" y="172" width="52" height="30"/><rect x="290" y="172" width="52" height="30"/></g>
+            <text x="0" y="216" font-size="10" class="muted">panel closed · 6 columns, same card width</text>
+          </svg>
+          <svg viewBox="0 0 360 220" role="img" aria-label="Wrong: panel closes and the same five cards stretch wider, or a gutter is left on the right" class="svg-ink">
+            <text x="0" y="12" font-size="11" font-weight="600" fill="var(--raise)">Wrong: cards stretch or a gutter appears</text>
+            <g fill="var(--surface-2)" stroke="currentColor"><rect x="0" y="30" width="66" height="30"/><rect x="72" y="30" width="66" height="30"/><rect x="144" y="30" width="66" height="30"/><rect x="216" y="30" width="66" height="30"/><rect x="288" y="30" width="66" height="30"/></g>
+            <text x="0" y="78" font-size="10" class="muted">still 5 columns, cards ~330 wide</text>
+            <g fill="var(--surface-2)" stroke="currentColor"><rect x="0" y="136" width="52" height="30"/><rect x="58" y="136" width="52" height="30"/><rect x="116" y="136" width="52" height="30"/><rect x="174" y="136" width="52" height="30"/><rect x="232" y="136" width="52" height="30"/></g>
+            <rect x="290" y="136" width="62" height="30" fill="none" stroke="var(--raise)" stroke-dasharray="3 3"/>
+            <text x="0" y="184" font-size="10" class="muted">5 columns with an empty strip on the right</text>
+          </svg>
+        </div>
+        <figcaption>Library, collections and dashboard widgets count columns from their own width. Opening or closing a side panel adds or removes a whole column. Cards stay within roughly 230 to 280px.</figcaption>
+      </figure>
+
+      </div></div>
+      <div class="grid2"><div>
+      <h3>Lightbox and edit geometry</h3>
+      <figure class="card">
+        <div class="fig-row">
+          <svg viewBox="0 0 380 240" role="img" aria-label="Lightbox: 48px side gutters, 32px top and bottom gutters, media, then a 56px rail and a 400px panel on the right" class="svg-ink">
+            <rect x="1" y="1" width="378" height="238" fill="var(--surface-3)" stroke="currentColor"/>
+            <rect x="34" y="26" width="312" height="188" fill="var(--surface)" stroke="currentColor"/>
+            <rect x="46" y="38" width="150" height="164" fill="var(--surface-2)" stroke="currentColor" stroke-dasharray="3 3"/>
+            <text x="121" y="124" font-size="10" text-anchor="middle" class="muted">media takes the height</text>
+            <rect x="206" y="26" width="24" height="188" fill="var(--surface-3)"/>
+            <rect x="230" y="26" width="116" height="188" fill="var(--surface-2)"/>
+            <text x="288" y="124" font-size="10" text-anchor="middle">panel</text>
+            <line x1="1" y1="222" x2="34" y2="222" stroke="currentColor" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="17" y="234" font-size="9" text-anchor="middle" class="dim">48</text>
+            <line x1="360" y1="1" x2="360" y2="26" stroke="currentColor" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="366" y="17" font-size="9" class="dim">32</text>
+            <line x1="206" y1="222" x2="230" y2="222" stroke="currentColor" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="218" y="234" font-size="9" text-anchor="middle" class="dim">56</text>
+            <line x1="230" y1="222" x2="346" y2="222" stroke="currentColor" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="288" y="234" font-size="9" text-anchor="middle" class="dim">400 flat</text>
+          </svg>
+          <svg viewBox="0 0 380 240" role="img" aria-label="Edit mode: above 1128px the 88px rail, canvas and 400px panel sit side by side; below 1128px the panel overlays the canvas with a dimmed backdrop" class="svg-ink">
+            <text x="0" y="11" font-size="10" font-weight="600">≥ 1128px wide</text>
+            <rect x="0" y="18" width="380" height="96" fill="var(--surface)" stroke="currentColor"/>
+            <rect x="0" y="18" width="40" height="96" fill="var(--surface-3)"/>
+            <rect x="52" y="30" width="150" height="72" fill="var(--surface-2)" stroke="currentColor" stroke-dasharray="3 3"/>
+            <rect x="230" y="18" width="150" height="96" fill="var(--surface-2)"/>
+            <text x="20" y="70" font-size="9" text-anchor="middle" class="dim">88</text>
+            <text x="127" y="70" font-size="10" text-anchor="middle" class="muted">canvas</text>
+            <text x="305" y="70" font-size="10" text-anchor="middle">panel 400</text>
+            <text x="0" y="137" font-size="10" font-weight="600">&lt; 1128px wide</text>
+            <rect x="0" y="144" width="260" height="96" fill="var(--surface)" stroke="currentColor"/>
+            <rect x="0" y="144" width="40" height="96" fill="var(--surface-3)"/>
+            <rect x="52" y="156" width="196" height="72" fill="var(--surface-2)" stroke="currentColor" stroke-dasharray="3 3"/>
+            <rect x="40" y="144" width="220" height="96" fill="currentColor" opacity=".25"/>
+            <rect x="110" y="144" width="150" height="96" fill="var(--surface-2)" stroke="currentColor"/>
+            <text x="185" y="196" font-size="10" text-anchor="middle">panel overlays</text>
+            <text x="75" y="196" font-size="9" text-anchor="middle" class="muted">dimmed</text>
+          </svg>
+        </div>
+        <figcaption>Both panels are a flat 400px at every window size. Lightbox: side gutter 48 (24 below 1400 wide), top and bottom 32, never wider than 2200. Edit: rail 88; under 1128 wide the panel overlays the canvas rather than crushing it. Try any width in the <a href="https://sd-jamesd.github.io/prototypes/artifacts/DAM/dam-panel-width-contract.html" target="_blank" rel="noopener">panel width simulator</a>.</figcaption>
+      </figure>
+
+      </div><div>
+      <h3>States</h3>
+      <figure class="card">
+        <div class="spec-label">Button</div>
+        <div class="tiles">
+          <div class="tile"><span class="btn">Save</span>rest</div>
+          <div class="tile"><span class="btn hover">Save</span>hover: one step</div>
+          <div class="tile"><span class="btn press">Save</span>pressed: one more</div>
+          <div class="tile"><span class="btn focus">Save</span>Tab: 2px cerulean ring</div>
+          <div class="tile"><span class="btn disabled">Save</span>disabled: grey</div>
+        </div>
+        <div class="spec-label">Card</div>
+        <div class="tiles">
+          <div class="tile"><div class="mini-card"></div>rest: one border</div>
+          <div class="tile"><div class="mini-card hover"></div>hover: lifts</div>
+          <div class="tile"><div class="mini-card press"></div>pressed: lift collapses</div>
+          <div class="tile"><div class="mini-card focus"></div>Tab: ring outside</div>
+        </div>
+        <div class="spec-label" style="margin-top:16px">Wrong</div>
+        <div class="tiles">
+          <div class="tile"><span class="btn disabled-wrong">Save</span><span style="color:var(--raise)">faded = "loading"</span></div>
+          <div class="tile"><div class="mini-card dbl"></div><span style="color:var(--raise)">double border, radius mismatch</span></div>
+          <div class="tile"><span class="btn" style="outline:2px solid #005fcc;outline-offset:2px">Save</span><span style="color:var(--raise)">browser-blue focus</span></div>
+        </div>
+        <figcaption>Disabled is a colour, never opacity: opacity also fades badges and reads as loading. Focus is always the 2px cerulean ring (white on the dark selection bar). Pressed is one step past hover on the same scale.</figcaption>
+      </figure>
+
+      </div></div>
+      <div class="grid2"><div>
+      <h3>Radius, shadow, icons</h3>
+      <figure class="card">
+        <div class="fig-row">
+          <div>
+            <div class="spec-label">Four radii</div>
+            <div class="radii"><div style="border-radius:4px">control 4</div><div style="border-radius:6px">card 6</div><div style="border-radius:8px">dialog 8</div><div style="border-radius:999px">pill</div></div>
+            <div class="spec-label">Three shadows</div>
+            <div class="shadows"><div style="box-shadow:var(--shadow-sm)">sm</div><div style="box-shadow:var(--shadow-md)">md · card hover</div><div style="box-shadow:var(--shadow-lg)">lg · toast</div></div>
+          </div>
+          <div>
+            <div class="spec-label">Five icon sizes</div>
+            <div class="icon-sizes"><div><i style="width:12px;height:12px"></i>12</div><div><i style="width:14px;height:14px"></i>14</div><div><i style="width:16px;height:16px"></i>16</div><div><i style="width:20px;height:20px"></i>20</div><div><i style="width:24px;height:24px"></i>24</div></div>
+            <div class="spec-label">Glyph meanings</div>
+            <div class="glyphs">
+              <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="20" y1="20" x2="16" y2="16"/></svg>global search only</div>
+              <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="17" x2="14" y2="17"/></svg>every "Find…" field</div>
+              <div><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 6l8 6-8 6z"/></svg>filter groups</div>
+              <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>accordions elsewhere</div>
+            </div>
+          </div>
+        </div>
+        <figcaption>Anything not on these lists is suspect: a 10px corner, a card with two shadows, an 18px icon beside a 20px one, a magnifier on a narrowing field.</figcaption>
+      </figure>
+
+      </div><div>
+      <h3>Badges and the one amber</h3>
+      <figure class="card">
+        <div class="fig-row">
+          <div>
+            <div class="spec-label">On cards</div>
+            <div class="badge-strip"><span class="pill">JPG</span><span class="pill ai">✦ AI</span><span class="pill draft">DRAFT</span></div>
+            <figcaption>Format badge, AI chip (white text on the gradient in both themes), one gate badge at a time.</figcaption>
+          </div>
+          <div>
+            <div class="spec-label">OCR highlight on a document page</div>
+            <div class="highlight-demo">…the <span class="hl">invoice</span> total is due on receipt of the <span class="hl cur">invoice</span> and the <span class="hl">invoice</span> number…</div>
+            <figcaption>Matches amber, current match stronger with a ring. Amber never appears anywhere else.</figcaption>
+          </div>
+        </div>
+      </figure>
+      </div></div>
+    </section>
+
+    <section id="colour" data-title="Colour in full">
+      <div class="sec-head"><h2>Colour in full: how the palette is made and what each step means</h2></div>
+      <p class="sub">The app uses two families, cerulean and Sand, each generated from one seed colour into twelve steps by the design system. Every hue in the system, including the status colours, uses the same twelve roles, so a step number means the same thing everywhere: 3 is always a resting fill, 7 always a border, 11 always secondary text. Light and dark are separate twelve-step ramps with the same roles.</p>
+
+      <h3>The twelve steps</h3>
+      <figure class="card">
+        <div class="ramp lt"><div class="lbl"><span>Cerulean accent · light</span><span>9 is the brand value #0c818f</span></div><div class="steps"><div class="lt" style="background:#fafdfd" data-n="1" title="step 1 · #fafdfd"></div><div class="lt" style="background:#f4fafb" data-n="2" title="step 2 · #f4fafb"></div><div class="lt" style="background:#e3f5f8" data-n="3" title="step 3 · #e3f5f8"></div><div class="lt" style="background:#d3eff3" data-n="4" title="step 4 · #d3eff3"></div><div class="lt" style="background:#c1e6ec" data-n="5" title="step 5 · #c1e6ec"></div><div class="lt" style="background:#addae2" data-n="6" title="step 6 · #addae2"></div><div class="lt" style="background:#92cbd4" data-n="7" title="step 7 · #92cbd4"></div><div class="lt" style="background:#65b5c2" data-n="8" title="step 8 · #65b5c2"></div><div class="dk" style="background:#0c818f" data-n="9" title="step 9 · #0c818f"></div><div class="dk" style="background:#007381" data-n="10" title="step 10 · #007381"></div><div class="dk" style="background:#006c78" data-n="11" title="step 11 · #006c78"></div><div class="dk" style="background:#1b3c41" data-n="12" title="step 12 · #1b3c41"></div></div><div class="roles"><div class="r1">1–2 page and panel backgrounds</div><div class="r2">3–5 fills: rest · hover · pressed</div><div class="r3">6–8 borders: subtle · default · strong (8 = disabled text, focus ring)</div><div class="r4">9–10 solid: button · button hover</div><div class="r5">11–12 text: secondary · primary</div></div></div>
+        <div class="ramp dk"><div class="lbl"><span>Cerulean accent · dark</span><span>9 stays #0c818f; buttons use 11 (#6acad9) instead</span></div><div class="steps"><div class="dk" style="background:#091315" data-n="1" title="step 1 · #091315"></div><div class="dk" style="background:#0f1b1d" data-n="2" title="step 2 · #0f1b1d"></div><div class="dk" style="background:#072c31" data-n="3" title="step 3 · #072c31"></div><div class="dk" style="background:#003941" data-n="4" title="step 4 · #003941"></div><div class="dk" style="background:#004750" data-n="5" title="step 5 · #004750"></div><div class="dk" style="background:#02565f" data-n="6" title="step 6 · #02565f"></div><div class="dk" style="background:#0e6874" data-n="7" title="step 7 · #0e6874"></div><div class="dk" style="background:#0c818f" data-n="8" title="step 8 · #0c818f"></div><div class="dk" style="background:#0c818f" data-n="9" title="step 9 · #0c818f"></div><div class="dk" style="background:#1d717d" data-n="10" title="step 10 · #1d717d"></div><div class="lt" style="background:#6acad9" data-n="11" title="step 11 · #6acad9"></div><div class="lt" style="background:#b3ecf6" data-n="12" title="step 12 · #b3ecf6"></div></div><div class="roles"><div class="r1">1–2 page and panel backgrounds</div><div class="r2">3–5 fills: rest · hover · pressed</div><div class="r3">6–8 borders: subtle · default · strong (8 = disabled text, focus ring)</div><div class="r4">9–10 solid: button · button hover</div><div class="r5">11–12 text: secondary · primary</div></div></div>
+        <div class="ramp lt"><div class="lbl"><span>Sand neutral · light</span><span>warm grey: text, lines, surfaces</span></div><div class="steps"><div class="lt" style="background:#fdfdfc" data-n="1" title="step 1 · #fdfdfc"></div><div class="lt" style="background:#f9f9f8" data-n="2" title="step 2 · #f9f9f8"></div><div class="lt" style="background:#f0f0ef" data-n="3" title="step 3 · #f0f0ef"></div><div class="lt" style="background:#e9e9e6" data-n="4" title="step 4 · #e9e9e6"></div><div class="lt" style="background:#e2e1de" data-n="5" title="step 5 · #e2e1de"></div><div class="lt" style="background:#dad9d6" data-n="6" title="step 6 · #dad9d6"></div><div class="lt" style="background:#cfcfca" data-n="7" title="step 7 · #cfcfca"></div><div class="lt" style="background:#bcbbb5" data-n="8" title="step 8 · #bcbbb5"></div><div class="lt" style="background:#8e8d86" data-n="9" title="step 9 · #8e8d86"></div><div class="dk" style="background:#83827c" data-n="10" title="step 10 · #83827c"></div><div class="dk" style="background:#63635e" data-n="11" title="step 11 · #63635e"></div><div class="dk" style="background:#21201c" data-n="12" title="step 12 · #21201c"></div></div><div class="roles"><div class="r1">1–2 page and panel backgrounds</div><div class="r2">3–5 fills: rest · hover · pressed</div><div class="r3">6–8 borders: subtle · default · strong (8 = disabled text, focus ring)</div><div class="r4">9–10 solid: button · button hover</div><div class="r5">11–12 text: secondary · primary</div></div></div>
+        <div class="ramp dk"><div class="lbl"><span>Sand neutral · dark</span><span>same roles, flipped</span></div><div class="steps"><div class="dk" style="background:#12110e" data-n="1" title="step 1 · #12110e"></div><div class="dk" style="background:#191918" data-n="2" title="step 2 · #191918"></div><div class="dk" style="background:#23231f" data-n="3" title="step 3 · #23231f"></div><div class="dk" style="background:#2b2a21" data-n="4" title="step 4 · #2b2a21"></div><div class="dk" style="background:#333128" data-n="5" title="step 5 · #333128"></div><div class="dk" style="background:#3c3b31" data-n="6" title="step 6 · #3c3b31"></div><div class="dk" style="background:#4a493f" data-n="7" title="step 7 · #4a493f"></div><div class="dk" style="background:#626056" data-n="8" title="step 8 · #626056"></div><div class="dk" style="background:#706e64" data-n="9" title="step 9 · #706e64"></div><div class="dk" style="background:#7d7c75" data-n="10" title="step 10 · #7d7c75"></div><div class="lt" style="background:#b6b5aa" data-n="11" title="step 11 · #b6b5aa"></div><div class="lt" style="background:#f0efe3" data-n="12" title="step 12 · #f0efe3"></div></div><div class="roles"><div class="r1">1–2 page and panel backgrounds</div><div class="r2">3–5 fills: rest · hover · pressed</div><div class="r3">6–8 borders: subtle · default · strong (8 = disabled text, focus ring)</div><div class="r4">9–10 solid: button · button hover</div><div class="r5">11–12 text: secondary · primary</div></div></div>
+        <figcaption>Hover a step for its hex. Steps 1 to 5 are backgrounds and fills, 6 to 8 lines, 9 and 10 solid buttons, 11 and 12 text. Each family also has a translucent "alpha" twin of every step, used for borders and hover fills so they read the same on any surface. Every colour in the app is one of these steps; the component never picks a hex.</figcaption>
+      </figure>
+
+
+      <h3>The supporting hues: same twelve roles, one job each</h3>
+      <p class="sub">Eight more ramps ship in the app. None of them is an accent; each carries one meaning, and every use follows the same recipe as the status pills: fill 3, border 7, text 11, with 9 for a solid mark. Step 9 is the same value in light and dark for all of them; the surrounding steps flip.</p>
+      <figure class="card hues">
+        <div class="hue">
+          <div class="hue-head"><b>Success green</b><span>Active status pill · "cleared" gate badge. Steps 3 / 7 / 11.</span></div>
+          <div class="grid2 tight">
+            <div class="ramp lt"><div class="lbl"><span>Light</span><span>9 = #29a383</span></div><div class="steps"><div class="lt" style="background:#fbfefd" data-n="1" title="step 1 · #fbfefd"></div><div class="lt" style="background:#f3fbf8" data-n="2" title="step 2 · #f3fbf8"></div><div class="lt" style="background:#e4f7f0" data-n="3" title="step 3 · #e4f7f0"></div><div class="lt" style="background:#d4f1e6" data-n="4" title="step 4 · #d4f1e6"></div><div class="lt" style="background:#c1e9da" data-n="5" title="step 5 · #c1e9da"></div><div class="lt" style="background:#aadecb" data-n="6" title="step 6 · #aadecb"></div><div class="lt" style="background:#8aceb7" data-n="7" title="step 7 · #8aceb7"></div><div class="lt" style="background:#59ba9c" data-n="8" title="step 8 · #59ba9c"></div><div class="dk" style="background:#29a383" data-n="9" title="step 9 · #29a383"></div><div class="dk" style="background:#209677" data-n="10" title="step 10 · #209677"></div><div class="dk" style="background:#008062" data-n="11" title="step 11 · #008062"></div><div class="dk" style="background:#1d3b31" data-n="12" title="step 12 · #1d3b31"></div></div><div class="roles"><div class="r1">1–2 backgrounds</div><div class="r2">3–5 fills</div><div class="r3">6–8 borders</div><div class="r4">9–10 solid</div><div class="r5">11–12 text</div></div></div>
+            <div class="ramp dk"><div class="lbl"><span>Dark</span><span>9 = #29a383 · 11 = #60d1af</span></div><div class="steps"><div class="dk" style="background:#0b1310" data-n="1" title="step 1 · #0b1310"></div><div class="dk" style="background:#111c18" data-n="2" title="step 2 · #111c18"></div><div class="dk" style="background:#0d2d24" data-n="3" title="step 3 · #0d2d24"></div><div class="dk" style="background:#073b2e" data-n="4" title="step 4 · #073b2e"></div><div class="dk" style="background:#0e4839" data-n="5" title="step 5 · #0e4839"></div><div class="dk" style="background:#1a5645" data-n="6" title="step 6 · #1a5645"></div><div class="dk" style="background:#246854" data-n="7" title="step 7 · #246854"></div><div class="dk" style="background:#2b7e67" data-n="8" title="step 8 · #2b7e67"></div><div class="dk" style="background:#29a383" data-n="9" title="step 9 · #29a383"></div><div class="dk" style="background:#119677" data-n="10" title="step 10 · #119677"></div><div class="lt" style="background:#60d1af" data-n="11" title="step 11 · #60d1af"></div><div class="lt" style="background:#aaf0d8" data-n="12" title="step 12 · #aaf0d8"></div></div><div class="roles"><div class="r1">1–2 backgrounds</div><div class="r2">3–5 fills</div><div class="r3">6–8 borders</div><div class="r4">9–10 solid</div><div class="r5">11–12 text</div></div></div>
+          </div>
+        </div>
+        <div class="hue">
+          <div class="hue-head"><b>Amber</b><span>Pending status · embargo and approval gate badges · rights warning banner · OCR highlight (alpha 4 to 6, ring 11). Never a chip or card fill outside these.</span></div>
+          <div class="grid2 tight">
+            <div class="ramp lt"><div class="lbl"><span>Light</span><span>9 = #f5a524</span></div><div class="steps"><div class="lt" style="background:#fefdfb" data-n="1" title="step 1 · #fefdfb"></div><div class="lt" style="background:#fff8e7" data-n="2" title="step 2 · #fff8e7"></div><div class="lt" style="background:#fff0cb" data-n="3" title="step 3 · #fff0cb"></div><div class="lt" style="background:#ffe6b6" data-n="4" title="step 4 · #ffe6b6"></div><div class="lt" style="background:#ffda9b" data-n="5" title="step 5 · #ffda9b"></div><div class="lt" style="background:#ffca73" data-n="6" title="step 6 · #ffca73"></div><div class="lt" style="background:#fdb757" data-n="7" title="step 7 · #fdb757"></div><div class="lt" style="background:#ed9d14" data-n="8" title="step 8 · #ed9d14"></div><div class="lt" style="background:#f5a524" data-n="9" title="step 9 · #f5a524"></div><div class="lt" style="background:#e99a08" data-n="10" title="step 10 · #e99a08"></div><div class="dk" style="background:#a96600" data-n="11" title="step 11 · #a96600"></div><div class="dk" style="background:#4d3618" data-n="12" title="step 12 · #4d3618"></div></div><div class="roles"><div class="r1">1–2 backgrounds</div><div class="r2">3–5 fills</div><div class="r3">6–8 borders</div><div class="r4">9–10 solid</div><div class="r5">11–12 text</div></div></div>
+            <div class="ramp dk"><div class="lbl"><span>Dark</span><span>9 = #f5a524 · 11 = #fbb554</span></div><div class="steps"><div class="dk" style="background:#14100c" data-n="1" title="step 1 · #14100c"></div><div class="dk" style="background:#1d1710" data-n="2" title="step 2 · #1d1710"></div><div class="dk" style="background:#2f200d" data-n="3" title="step 3 · #2f200d"></div><div class="dk" style="background:#402600" data-n="4" title="step 4 · #402600"></div><div class="dk" style="background:#4d2f00" data-n="5" title="step 5 · #4d2f00"></div><div class="dk" style="background:#5b3d11" data-n="6" title="step 6 · #5b3d11"></div><div class="dk" style="background:#704f20" data-n="7" title="step 7 · #704f20"></div><div class="dk" style="background:#8f652a" data-n="8" title="step 8 · #8f652a"></div><div class="lt" style="background:#f5a524" data-n="9" title="step 9 · #f5a524"></div><div class="lt" style="background:#e99a08" data-n="10" title="step 10 · #e99a08"></div><div class="lt" style="background:#fbb554" data-n="11" title="step 11 · #fbb554"></div><div class="lt" style="background:#fce3c4" data-n="12" title="step 12 · #fce3c4"></div></div><div class="roles"><div class="r1">1–2 backgrounds</div><div class="r2">3–5 fills</div><div class="r3">6–8 borders</div><div class="r4">9–10 solid</div><div class="r5">11–12 text</div></div></div>
+          </div>
+        </div>
+        <div class="hue">
+          <div class="hue-head"><b>Orange</b><span>In-progress status pill only. Steps 3 / 7 / 11.</span></div>
+          <div class="grid2 tight">
+            <div class="ramp lt"><div class="lbl"><span>Light</span><span>9 = #f76b15</span></div><div class="steps"><div class="lt" style="background:#fefcfb" data-n="1" title="step 1 · #fefcfb"></div><div class="lt" style="background:#fff7ed" data-n="2" title="step 2 · #fff7ed"></div><div class="lt" style="background:#ffefd6" data-n="3" title="step 3 · #ffefd6"></div><div class="lt" style="background:#ffdfb5" data-n="4" title="step 4 · #ffdfb5"></div><div class="lt" style="background:#ffd19a" data-n="5" title="step 5 · #ffd19a"></div><div class="lt" style="background:#ffc182" data-n="6" title="step 6 · #ffc182"></div><div class="lt" style="background:#f5ae73" data-n="7" title="step 7 · #f5ae73"></div><div class="lt" style="background:#ec9455" data-n="8" title="step 8 · #ec9455"></div><div class="dk" style="background:#f76b15" data-n="9" title="step 9 · #f76b15"></div><div class="dk" style="background:#ef5f00" data-n="10" title="step 10 · #ef5f00"></div><div class="dk" style="background:#cc4e00" data-n="11" title="step 11 · #cc4e00"></div><div class="dk" style="background:#582d1d" data-n="12" title="step 12 · #582d1d"></div></div><div class="roles"><div class="r1">1–2 backgrounds</div><div class="r2">3–5 fills</div><div class="r3">6–8 borders</div><div class="r4">9–10 solid</div><div class="r5">11–12 text</div></div></div>
+            <div class="ramp dk"><div class="lbl"><span>Dark</span><span>9 = #f76b15 · 11 = #ffa057</span></div><div class="steps"><div class="dk" style="background:#17120e" data-n="1" title="step 1 · #17120e"></div><div class="dk" style="background:#1e160f" data-n="2" title="step 2 · #1e160f"></div><div class="dk" style="background:#331e0b" data-n="3" title="step 3 · #331e0b"></div><div class="dk" style="background:#462100" data-n="4" title="step 4 · #462100"></div><div class="dk" style="background:#562800" data-n="5" title="step 5 · #562800"></div><div class="dk" style="background:#66350c" data-n="6" title="step 6 · #66350c"></div><div class="dk" style="background:#7e451d" data-n="7" title="step 7 · #7e451d"></div><div class="dk" style="background:#a35829" data-n="8" title="step 8 · #a35829"></div><div class="dk" style="background:#f76b15" data-n="9" title="step 9 · #f76b15"></div><div class="lt" style="background:#ff801f" data-n="10" title="step 10 · #ff801f"></div><div class="lt" style="background:#ffa057" data-n="11" title="step 11 · #ffa057"></div><div class="lt" style="background:#ffe0c2" data-n="12" title="step 12 · #ffe0c2"></div></div><div class="roles"><div class="r1">1–2 backgrounds</div><div class="r2">3–5 fills</div><div class="r3">6–8 borders</div><div class="r4">9–10 solid</div><div class="r5">11–12 text</div></div></div>
+          </div>
+        </div>
+        <div class="hue">
+          <div class="hue-head"><b>Red</b><span>Cancelled status · expired gate badge · rights blocked banner · error focus halo (3). Destructive buttons use 9.</span></div>
+          <div class="grid2 tight">
+            <div class="ramp lt"><div class="lbl"><span>Light</span><span>9 = #e5484d</span></div><div class="steps"><div class="lt" style="background:#fffcfc" data-n="1" title="step 1 · #fffcfc"></div><div class="lt" style="background:#fff7f7" data-n="2" title="step 2 · #fff7f7"></div><div class="lt" style="background:#ffebea" data-n="3" title="step 3 · #ffebea"></div><div class="lt" style="background:#ffdcd9" data-n="4" title="step 4 · #ffdcd9"></div><div class="lt" style="background:#ffcdca" data-n="5" title="step 5 · #ffcdca"></div><div class="lt" style="background:#febdb9" data-n="6" title="step 6 · #febdb9"></div><div class="lt" style="background:#f5a9a5" data-n="7" title="step 7 · #f5a9a5"></div><div class="lt" style="background:#eb8f8b" data-n="8" title="step 8 · #eb8f8b"></div><div class="dk" style="background:#e5484d" data-n="9" title="step 9 · #e5484d"></div><div class="dk" style="background:#d73840" data-n="10" title="step 10 · #d73840"></div><div class="dk" style="background:#cc2e39" data-n="11" title="step 11 · #cc2e39"></div><div class="dk" style="background:#64181b" data-n="12" title="step 12 · #64181b"></div></div><div class="roles"><div class="r1">1–2 backgrounds</div><div class="r2">3–5 fills</div><div class="r3">6–8 borders</div><div class="r4">9–10 solid</div><div class="r5">11–12 text</div></div></div>
+            <div class="ramp dk"><div class="lbl"><span>Dark</span><span>9 = #e5484d · 11 = #ff8f8b</span></div><div class="steps"><div class="dk" style="background:#170f0e" data-n="1" title="step 1 · #170f0e"></div><div class="dk" style="background:#201312" data-n="2" title="step 2 · #201312"></div><div class="dk" style="background:#3b1212" data-n="3" title="step 3 · #3b1212"></div><div class="dk" style="background:#500f13" data-n="4" title="step 4 · #500f13"></div><div class="dk" style="background:#61171a" data-n="5" title="step 5 · #61171a"></div><div class="dk" style="background:#732425" data-n="6" title="step 6 · #732425"></div><div class="dk" style="background:#8c3434" data-n="7" title="step 7 · #8c3434"></div><div class="dk" style="background:#b54546" data-n="8" title="step 8 · #b54546"></div><div class="dk" style="background:#e5484d" data-n="9" title="step 9 · #e5484d"></div><div class="dk" style="background:#d63941" data-n="10" title="step 10 · #d63941"></div><div class="lt" style="background:#ff8f8b" data-n="11" title="step 11 · #ff8f8b"></div><div class="lt" style="background:#ffd2ce" data-n="12" title="step 12 · #ffd2ce"></div></div><div class="roles"><div class="r1">1–2 backgrounds</div><div class="r2">3–5 fills</div><div class="r3">6–8 borders</div><div class="r4">9–10 solid</div><div class="r5">11–12 text</div></div></div>
+          </div>
+        </div>
+        <div class="hue">
+          <div class="hue-head"><b>Blue (information)</b><span>Geographic and channel-restricted gate badges · rights info banner · download-format notices · notification pip (9) · upload info rows (2 fill, 9 rule) · approval lifecycle dot (9). Not the accent: this is a true blue, the accent is cerulean.</span></div>
+          <div class="grid2 tight">
+            <div class="ramp lt"><div class="lbl"><span>Light</span><span>9 = #0090ff</span></div><div class="steps"><div class="lt" style="background:#fbfdff" data-n="1" title="step 1 · #fbfdff"></div><div class="lt" style="background:#f4faff" data-n="2" title="step 2 · #f4faff"></div><div class="lt" style="background:#e9f3ff" data-n="3" title="step 3 · #e9f3ff"></div><div class="lt" style="background:#d9edff" data-n="4" title="step 4 · #d9edff"></div><div class="lt" style="background:#c7e3ff" data-n="5" title="step 5 · #c7e3ff"></div><div class="lt" style="background:#b2d6ff" data-n="6" title="step 6 · #b2d6ff"></div><div class="lt" style="background:#97c5f9" data-n="7" title="step 7 · #97c5f9"></div><div class="lt" style="background:#6eadf3" data-n="8" title="step 8 · #6eadf3"></div><div class="dk" style="background:#0090ff" data-n="9" title="step 9 · #0090ff"></div><div class="dk" style="background:#0084ec" data-n="10" title="step 10 · #0084ec"></div><div class="dk" style="background:#0073dd" data-n="11" title="step 11 · #0073dd"></div><div class="dk" style="background:#003463" data-n="12" title="step 12 · #003463"></div></div><div class="roles"><div class="r1">1–2 backgrounds</div><div class="r2">3–5 fills</div><div class="r3">6–8 borders</div><div class="r4">9–10 solid</div><div class="r5">11–12 text</div></div></div>
+            <div class="ramp dk"><div class="lbl"><span>Dark</span><span>9 = #0090ff · 11 = #70b8ff</span></div><div class="steps"><div class="dk" style="background:#08121c" data-n="1" title="step 1 · #08121c"></div><div class="dk" style="background:#0e1926" data-n="2" title="step 2 · #0e1926"></div><div class="dk" style="background:#0a2847" data-n="3" title="step 3 · #0a2847"></div><div class="dk" style="background:#003262" data-n="4" title="step 4 · #003262"></div><div class="dk" style="background:#003f75" data-n="5" title="step 5 · #003f75"></div><div class="dk" style="background:#104d86" data-n="6" title="step 6 · #104d86"></div><div class="dk" style="background:#1d5e9d" data-n="7" title="step 7 · #1d5e9d"></div><div class="dk" style="background:#2371bd" data-n="8" title="step 8 · #2371bd"></div><div class="dk" style="background:#0090ff" data-n="9" title="step 9 · #0090ff"></div><div class="dk" style="background:#0083f1" data-n="10" title="step 10 · #0083f1"></div><div class="lt" style="background:#70b8ff" data-n="11" title="step 11 · #70b8ff"></div><div class="lt" style="background:#c8e3ff" data-n="12" title="step 12 · #c8e3ff"></div></div><div class="roles"><div class="r1">1–2 backgrounds</div><div class="r2">3–5 fills</div><div class="r3">6–8 borders</div><div class="r4">9–10 solid</div><div class="r5">11–12 text</div></div></div>
+          </div>
+        </div>
+        <div class="hue">
+          <div class="hue-head"><b>Purple (discovery)</b><span>In-review status · watermark and pre-release-preview gate badges · lightbox discovery banner. The DS calls this "discovery"; it is the same ramp as purple.</span></div>
+          <div class="grid2 tight">
+            <div class="ramp lt"><div class="lbl"><span>Light</span><span>9 = #8e4ec6</span></div><div class="steps"><div class="lt" style="background:#fdfcff" data-n="1" title="step 1 · #fdfcff"></div><div class="lt" style="background:#fbf8fe" data-n="2" title="step 2 · #fbf8fe"></div><div class="lt" style="background:#f5eeff" data-n="3" title="step 3 · #f5eeff"></div><div class="lt" style="background:#efe3fe" data-n="4" title="step 4 · #efe3fe"></div><div class="lt" style="background:#e7d6fb" data-n="5" title="step 5 · #e7d6fb"></div><div class="lt" style="background:#dcc6f6" data-n="6" title="step 6 · #dcc6f6"></div><div class="lt" style="background:#ceb0ef" data-n="7" title="step 7 · #ceb0ef"></div><div class="lt" style="background:#bc94e6" data-n="8" title="step 8 · #bc94e6"></div><div class="dk" style="background:#8e4ec6" data-n="9" title="step 9 · #8e4ec6"></div><div class="dk" style="background:#7f43b3" data-n="10" title="step 10 · #7f43b3"></div><div class="dk" style="background:#8145b5" data-n="11" title="step 11 · #8145b5"></div><div class="dk" style="background:#411f5f" data-n="12" title="step 12 · #411f5f"></div></div><div class="roles"><div class="r1">1–2 backgrounds</div><div class="r2">3–5 fills</div><div class="r3">6–8 borders</div><div class="r4">9–10 solid</div><div class="r5">11–12 text</div></div></div>
+            <div class="ramp dk"><div class="lbl"><span>Dark</span><span>9 = #8e4ec6 · 11 = #d29dff</span></div><div class="steps"><div class="dk" style="background:#130f19" data-n="1" title="step 1 · #130f19"></div><div class="dk" style="background:#1c1524" data-n="2" title="step 2 · #1c1524"></div><div class="dk" style="background:#2d1c3d" data-n="3" title="step 3 · #2d1c3d"></div><div class="dk" style="background:#3a2350" data-n="4" title="step 4 · #3a2350"></div><div class="dk" style="background:#452a5e" data-n="5" title="step 5 · #452a5e"></div><div class="dk" style="background:#51356d" data-n="6" title="step 6 · #51356d"></div><div class="dk" style="background:#644384" data-n="7" title="step 7 · #644384"></div><div class="dk" style="background:#8258ab" data-n="8" title="step 8 · #8258ab"></div><div class="dk" style="background:#8e4ec6" data-n="9" title="step 9 · #8e4ec6"></div><div class="dk" style="background:#8040b7" data-n="10" title="step 10 · #8040b7"></div><div class="lt" style="background:#d29dff" data-n="11" title="step 11 · #d29dff"></div><div class="lt" style="background:#e9dafc" data-n="12" title="step 12 · #e9dafc"></div></div><div class="roles"><div class="r1">1–2 backgrounds</div><div class="r2">3–5 fills</div><div class="r3">6–8 borders</div><div class="r4">9–10 solid</div><div class="r5">11–12 text</div></div></div>
+          </div>
+        </div>
+        <div class="hue">
+          <div class="hue-head"><b>Grass green</b><span>Upload queue only: finished rows (9 rule, 11 text, alpha 3 fill). A second green, distinct from Success. Ticketed as SCR-305.</span></div>
+          <div class="grid2 tight">
+            <div class="ramp lt"><div class="lbl"><span>Light</span><span>9 = #46a758</span></div><div class="steps"><div class="lt" style="background:#fbfefb" data-n="1" title="step 1 · #fbfefb"></div><div class="lt" style="background:#f5fbf5" data-n="2" title="step 2 · #f5fbf5"></div><div class="lt" style="background:#e9f6e9" data-n="3" title="step 3 · #e9f6e9"></div><div class="lt" style="background:#daf1db" data-n="4" title="step 4 · #daf1db"></div><div class="lt" style="background:#c9e8ca" data-n="5" title="step 5 · #c9e8ca"></div><div class="lt" style="background:#b2ddb5" data-n="6" title="step 6 · #b2ddb5"></div><div class="lt" style="background:#94ce9a" data-n="7" title="step 7 · #94ce9a"></div><div class="lt" style="background:#65ba74" data-n="8" title="step 8 · #65ba74"></div><div class="dk" style="background:#46a758" data-n="9" title="step 9 · #46a758"></div><div class="dk" style="background:#3e9b4f" data-n="10" title="step 10 · #3e9b4f"></div><div class="dk" style="background:#2a7e3b" data-n="11" title="step 11 · #2a7e3b"></div><div class="dk" style="background:#203c25" data-n="12" title="step 12 · #203c25"></div></div><div class="roles"><div class="r1">1–2 backgrounds</div><div class="r2">3–5 fills</div><div class="r3">6–8 borders</div><div class="r4">9–10 solid</div><div class="r5">11–12 text</div></div></div>
+            <div class="ramp dk"><div class="lbl"><span>Dark</span><span>9 = #46a758 · 11 = #71d083</span></div><div class="steps"><div class="dk" style="background:#0e1511" data-n="1" title="step 1 · #0e1511"></div><div class="dk" style="background:#141a15" data-n="2" title="step 2 · #141a15"></div><div class="dk" style="background:#1b2a1e" data-n="3" title="step 3 · #1b2a1e"></div><div class="dk" style="background:#1d3a24" data-n="4" title="step 4 · #1d3a24"></div><div class="dk" style="background:#25482d" data-n="5" title="step 5 · #25482d"></div><div class="dk" style="background:#2d5736" data-n="6" title="step 6 · #2d5736"></div><div class="dk" style="background:#366740" data-n="7" title="step 7 · #366740"></div><div class="dk" style="background:#3e7949" data-n="8" title="step 8 · #3e7949"></div><div class="dk" style="background:#46a758" data-n="9" title="step 9 · #46a758"></div><div class="lt" style="background:#53b365" data-n="10" title="step 10 · #53b365"></div><div class="lt" style="background:#71d083" data-n="11" title="step 11 · #71d083"></div><div class="lt" style="background:#c2f0c2" data-n="12" title="step 12 · #c2f0c2"></div></div><div class="roles"><div class="r1">1–2 backgrounds</div><div class="r2">3–5 fills</div><div class="r3">6–8 borders</div><div class="r4">9–10 solid</div><div class="r5">11–12 text</div></div></div>
+          </div>
+        </div>
+        <div class="hue">
+          <div class="hue-head"><b>Plum</b><span>One use: the "workflow" lifecycle dot on cards (9). A slightly different purple from Discovery. Ticketed as SCR-305.</span></div>
+          <div class="grid2 tight">
+            <div class="ramp lt"><div class="lbl"><span>Light</span><span>9 = #714ba9</span></div><div class="steps"><div class="lt" style="background:#fdfcff" data-n="1" title="step 1 · #fdfcff"></div><div class="lt" style="background:#faf7ff" data-n="2" title="step 2 · #faf7ff"></div><div class="lt" style="background:#f5eeff" data-n="3" title="step 3 · #f5eeff"></div><div class="lt" style="background:#eee4ff" data-n="4" title="step 4 · #eee4ff"></div><div class="lt" style="background:#e4d7ff" data-n="5" title="step 5 · #e4d7ff"></div><div class="lt" style="background:#d8c7fa" data-n="6" title="step 6 · #d8c7fa"></div><div class="lt" style="background:#c8b3f2" data-n="7" title="step 7 · #c8b3f2"></div><div class="lt" style="background:#b296e5" data-n="8" title="step 8 · #b296e5"></div><div class="dk" style="background:#714ba9" data-n="9" title="step 9 · #714ba9"></div><div class="dk" style="background:#633d98" data-n="10" title="step 10 · #633d98"></div><div class="dk" style="background:#7756aa" data-n="11" title="step 11 · #7756aa"></div><div class="dk" style="background:#403355" data-n="12" title="step 12 · #403355"></div></div><div class="roles"><div class="r1">1–2 backgrounds</div><div class="r2">3–5 fills</div><div class="r3">6–8 borders</div><div class="r4">9–10 solid</div><div class="r5">11–12 text</div></div></div>
+            <div class="ramp dk"><div class="lbl"><span>Dark</span><span>9 = #714ba9 · 11 = #c4abf1</span></div><div class="steps"><div class="dk" style="background:#120f18" data-n="1" title="step 1 · #120f18"></div><div class="dk" style="background:#1b1624" data-n="2" title="step 2 · #1b1624"></div><div class="dk" style="background:#2a213b" data-n="3" title="step 3 · #2a213b"></div><div class="dk" style="background:#382950" data-n="4" title="step 4 · #382950"></div><div class="dk" style="background:#463364" data-n="5" title="step 5 · #463364"></div><div class="dk" style="background:#553f78" data-n="6" title="step 6 · #553f78"></div><div class="dk" style="background:#674f90" data-n="7" title="step 7 · #674f90"></div><div class="dk" style="background:#7f62af" data-n="8" title="step 8 · #7f62af"></div><div class="dk" style="background:#714ba9" data-n="9" title="step 9 · #714ba9"></div><div class="dk" style="background:#633d98" data-n="10" title="step 10 · #633d98"></div><div class="lt" style="background:#c4abf1" data-n="11" title="step 11 · #c4abf1"></div><div class="lt" style="background:#e8ddfe" data-n="12" title="step 12 · #e8ddfe"></div></div><div class="roles"><div class="r1">1–2 backgrounds</div><div class="r2">3–5 fills</div><div class="r3">6–8 borders</div><div class="r4">9–10 solid</div><div class="r5">11–12 text</div></div></div>
+          </div>
+        </div>
+        <figcaption>What to raise: a meaning shown in two hues on two surfaces (an "in review" pill that is blue on one page and purple on another), a solid 9 used as a large fill, or one of these hues used decoratively. The two greens and the two purples are ticketed as SCR-305; don't raise them again, but do note where you see them.</figcaption>
+      </figure>
+
+      <h3>The language: the roles, drawn with the real values</h3>
+      <figure class="card">
+        <div class="lang">
+          <div class="mock" style="background:#f9f9f8;color:#21201c;border:1px solid #dad9d6">
+            <div class="h">Light <span class="k">page = sand 2</span></div>
+            <div class="card" style="background:#fdfdfc;border:1px solid rgba(25,19,0,.16)">
+              <div class="row"><span style="font-weight:600">Primary text</span><span class="k">sand 12</span></div>
+              <div class="row"><span style="color:#63635e">Secondary text, metadata</span><span class="k">sand 11</span></div>
+              <div class="row"><span style="color:#bcbbb5">Disabled text</span><span class="k">sand 8</span></div>
+              <div class="row"><span style="color:#006c78;text-decoration:underline">Link, active label</span><span class="k">accent 11</span></div>
+              <div class="row"><span class="k" style="margin-left:0">card = sand 1 · border = sand alpha 6</span></div>
+            </div>
+            <div class="row"><span class="btn2" style="background:#0c818f;color:#fff">Primary</span><span class="btn2" style="background:#007381;color:#fff">hover</span><span class="btn2" style="background:#e3f5f8;color:#006c78;border:1px solid #92cbd4">Soft</span><span class="k">accent 9 · 10 · 3/7/11</span></div>
+            <div class="row"><span class="navi" style="background:#e3f5f8;color:#006c78">Active nav</span><span class="btn2" style="background:#0c818f;color:#fff;outline:2px solid #65b5c2;outline-offset:2px">Focus</span><span class="k">accent 3 + 11 · ring = accent 8</span></div>
+            <div class="line" style="background:rgba(16,16,0,.06)">Row hover<span class="k">sand alpha 3</span></div>
+            <div class="line" style="background:rgba(31,31,0,.1)">Row pressed<span class="k">sand alpha 4</span></div>
+            <div class="row"><span class="line" style="background:#f0f0ef;flex:1">Toolbar, table header</span><span class="k">sand 3</span></div>
+          </div>
+          <div class="mock" style="background:#191918;color:#f0efe3;border:1px solid #3c3b31">
+            <div class="h">Dark <span class="k">page = sand dark 2</span></div>
+            <div class="card" style="background:#12110e;border:1px solid rgba(251,245,191,.18)">
+              <div class="row"><span style="font-weight:600">Primary text</span><span class="k">sand 12</span></div>
+              <div class="row"><span style="color:#b6b5aa">Secondary text, metadata</span><span class="k">sand 11</span></div>
+              <div class="row"><span style="color:#626056">Disabled text</span><span class="k">sand 8</span></div>
+              <div class="row"><span style="color:#6acad9;text-decoration:underline">Link, active label</span><span class="k">accent 11</span></div>
+              <div class="row"><span class="k" style="margin-left:0">card = sand 1 · border = sand alpha 6</span></div>
+            </div>
+            <div class="row"><span class="btn2" style="background:#6acad9;color:#1c2024">Primary</span><span class="btn2" style="background:#b3ecf6;color:#1c2024">hover</span><span class="btn2" style="background:#072c31;color:#6acad9;border:1px solid #0e6874">Soft</span><span class="k">accent 11 · 12 · 3/7/11</span></div>
+            <div class="row"><span class="navi" style="background:#072c31;color:#6acad9">Active nav</span><span class="btn2" style="background:#6acad9;color:#1c2024;outline:2px solid #0c818f;outline-offset:2px">Focus</span><span class="k">accent 3 + 11 · ring = accent 8</span></div>
+            <div class="line" style="background:rgba(247,247,196,.08)">Row hover<span class="k">sand alpha 3</span></div>
+            <div class="line" style="background:rgba(254,245,163,.11)">Row pressed<span class="k">sand alpha 4</span></div>
+            <div class="row"><span class="line" style="background:#23231f;flex:1">Toolbar, table header</span><span class="k">sand 3</span></div>
+          </div>
+        </div>
+        <figcaption>The same roles in both themes, painted with the shipped values. Note the one asymmetry: the solid primary button is accent 9 in light but accent 11 in dark, because 9 is pinned to the brand value and fails contrast on a dark ground. Everything else is the same step number in both themes.</figcaption>
+      </figure>
+
+      <h3>Status colours: seven states, one recipe</h3>
+      <figure class="card">
+        <div class="lang">
+          <div class="mock" style="background:#f9f9f8;border:1px solid #dad9d6">
+            <div class="status-row">
+              <span style="background:#e4f7f0;border-color:#8aceb7;color:#008062">Active</span>
+              <span style="background:#ffefd6;border-color:#f5ae73;color:#cc4e00">In progress</span>
+              <span style="background:#fff0cb;border-color:#fdb757;color:#a96600">Pending</span>
+              <span style="background:#f5eeff;border-color:#ceb0ef;color:#8145b5">In review</span>
+              <span style="background:#ffebea;border-color:#f5a9a5;color:#cc2e39">Cancelled</span>
+              <span style="background:#f0f0ef;border-color:#dad9d6;color:#63635e">On hold</span>
+              <span style="background:#f9f9f8;border-color:#bcbbb5;color:#63635e">Draft</span>
+            </div>
+          </div>
+          <div class="mock" style="background:#191918;border:1px solid #3c3b31">
+            <div class="status-row">
+              <span style="background:#0d2d24;border-color:#246854;color:#60d1af">Active</span>
+              <span style="background:#331e0b;border-color:#7e451d;color:#ffa057">In progress</span>
+              <span style="background:#2f200d;border-color:#704f20;color:#fbb554">Pending</span>
+              <span style="background:#2d1c3d;border-color:#644384;color:#d29dff">In review</span>
+              <span style="background:#3b1212;border-color:#8c3434;color:#ff8f8b">Cancelled</span>
+              <span style="background:#23231f;border-color:#3c3b31;color:#b6b5aa">On hold</span>
+              <span style="background:#191918;border-color:#626056;color:#b6b5aa">Draft</span>
+            </div>
+          </div>
+        </div>
+        <figcaption>Every status pill is fill 3, border 7, text 11 of its hue: green for active, orange for in progress, amber for pending, purple for in review, red for cancelled, Sand for on hold and draft. Raise a status that uses a different hue on two surfaces, or a pill whose text is a 9 (too pale to read).</figcaption>
+      </figure>
+
+      <h3>Fixed colours that never flip</h3>
+      <figure class="card">
+        <div class="fixed-row">
+          <div class="item"><span class="ftbadge">JPG</span>file-type badge: dark scrim + white, both themes</div>
+          <div class="item"><span class="grad">✦ AI suggested</span>AI gradient: four fixed stops, white label</div>
+          <div class="item"><span class="highlight-demo">the <span class="hl">term</span> and <span class="hl cur">term</span></span>OCR highlight: amber alpha 4 to 6, ring amber 11</div>
+          <div class="item"><span class="hatch"></span>draft hatch: Sand alpha 3 stripes over the artwork</div>
+          <div class="item"><span style="background:#21201c;color:#fdfdfc;padding:4px 10px;border-radius:4px;font-size:12px;outline:2px solid rgba(255,255,255,.5);outline-offset:2px">3 selected</span>selection bar: Sand 12 with a white focus ring</div>
+        </div>
+        <figcaption>These sit over imagery or carry brand meaning, so they keep one value in both themes. They are the exceptions; if anything else looks identical in light and dark, it has probably missed the theme.</figcaption>
+      </figure>
+
+      <h3>Reading a colour bug by its step</h3>
+      <div class="read">
+        <div><b>Text looks too pale</b><span>It is on step 8 or 9. Text is only ever 11 or 12 (8 is reserved for disabled).</span></div>
+        <div><b>A line is invisible or too heavy</b><span>Borders are 6 to 8 alpha. A 3 disappears; a 10 reads as a bar.</span></div>
+        <div><b>Hover jumps too far</b><span>Hover is one step (3 to 4, or alpha 3), pressed one more (4 to 5, or alpha 4). Two steps at once is wrong.</span></div>
+        <div><b>A colour is right in light, wrong in dark</b><span>Usually a fixed hex instead of a step, or a component rendered outside the theme.</span></div>
+        <div><b>Two teals, or a blue</b><span>Only one accent family exists. Indigo, blue and cool grey are pre-system leftovers.</span></div>
+        <div><b>Amber outside a document page</b><span>Amber is the highlight role only. Pending pills use amber too, but as fill 3 / text 11, never the bright 5 to 6.</span></div>
+      </div>
+    </section>
+
+    <section id="type" data-title="Typography in full">
+      <div class="sec-head"><h2>Typography in full: one face, seven sizes, four weights, thirteen roles</h2></div>
+      <p class="sub">Every piece of text in the app is one typeface (Inter) at one of seven ladder sizes, each with a fixed line height, in one of four weights. A "role" is a size plus a weight with a job, e.g. panel header = 16 at 600. Components take a role; they never choose a size or weight on their own. The pale stripes below show each size's line height.</p>
+
+      <h3>The ladder</h3>
+      <figure class="card">
+        <div class="ladder">
+        <div class="step"><span class="k">type-0<br>11 / 16</span><div class="sample" style="--lh:16px"><span style="font-size:11px;line-height:16px;font-weight:700">Counts, badges, keyboard hints</span></div><small>the smallest text</small></div>
+        <div class="step"><span class="k">type-1<br>12 / 16</span><div class="sample" style="--lh:16px"><span style="font-size:12px;line-height:16px;font-weight:400">Labels, values, options, chips, eyebrows</span></div><small>most secondary text</small></div>
+        <div class="step"><span class="k">type-2<br>14 / 20</span><div class="sample" style="--lh:20px"><span style="font-size:14px;line-height:20px;font-weight:400">Body, buttons, search, section headers</span></div><small>most text</small></div>
+        <div class="step"><span class="k">type-3<br>16 / 24</span><div class="sample" style="--lh:24px"><span style="font-size:16px;line-height:24px;font-weight:600">Panel header</span></div><small>largest text inside the chrome</small></div>
+          <div class="cap">In-product cap: nothing inside the app is larger than 16px</div>
+        <div class="step out"><span class="k">type-4<br>18 / 28</span><div class="sample" style="--lh:28px"><span style="font-size:18px;line-height:28px;font-weight:600">Page title</span></div><small>reserved, not used in the app</small></div>
+        <div class="step out"><span class="k">type-5<br>24 / 32</span><div class="sample" style="--lh:32px"><span style="font-size:24px;line-height:32px;font-weight:600">Major heading</span></div><small>reserved, not used in the app</small></div>
+        <div class="step out"><span class="k">type-6<br>32 / 40</span><div class="sample" style="--lh:40px"><span style="font-size:32px;line-height:40px;font-weight:600">Display</span></div><small>reserved, not used in the app</small></div>
+        </div>
+        <figcaption>Sizes and line heights: 11/16, 12/16, 14/20, 16/24, then 18/28, 24/32, 32/40. Steps 4 to 6 exist for future landing surfaces only; in September every in-product use of them was snapped down to 16. If you see 13, 15, 18 or bigger inside a panel, header, card or dialog, raise it.</figcaption>
+      </figure>
+
+      <h3>The four weights</h3>
+      <figure class="card">
+        <div class="weights">
+          <div><div class="w" style="font-weight:400">Regular</div><span class="k">400</span><p>Body, values, options, field labels. The default.</p></div>
+          <div><div class="w" style="font-weight:500">Medium</div><span class="k">500</span><p>Card titles, chips, field values, keyboard hints. Slight lift, not a heading.</p></div>
+          <div><div class="w" style="font-weight:600">Semibold</div><span class="k">600</span><p>Panel and section headers, buttons, counts, the active nav item.</p></div>
+          <div><div class="w" style="font-weight:700">Bold</div><span class="k">700</span><p>Eyebrows and the AI badge only, always uppercase and tracked. Never a heading.</p></div>
+        </div>
+        <figcaption>Headings are 600, not 700. Active tabs on the lightbox rail and the edit rail keep the same weight as inactive ones; only the left nav's active item goes to 600. A bold heading or a bold active tab is a bug.</figcaption>
+      </figure>
+
+      <h3>The thirteen roles, rendered</h3>
+      <figure class="card">
+        <div class="rolelist">
+          <div>
+            <div class="r"><span style="font-size:16px;line-height:24px;font-weight:600">Panel header</span><span class="k">16 / 600</span><span class="where">Filters, Collections, Details, Rights, Versions panel titles</span></div>
+            <div class="r"><span style="font-size:14px;line-height:20px;font-weight:600">Section header</span><span class="k">14 / 600</span><span class="where">Filter groups, widget sections, accordion titles</span></div>
+            <div class="r"><span style="font-size:14px;line-height:20px">Body text runs at fourteen over twenty</span><span class="k">14 / 400</span><span class="where">Descriptions, dialog copy, table cells</span></div>
+            <div class="r"><span style="font-size:14px;line-height:20px">Search: Find in library…</span><span class="k">14 / 400</span><span class="where">Global search and every "Find…" field</span></div>
+            <div class="r"><span style="font-size:14px;line-height:20px;font-weight:600">Button label</span><span class="k">14 / 600</span><span class="where">Every button, primary or soft</span></div>
+            <div class="r"><span style="font-size:12px;line-height:16px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)">Eyebrow</span><span class="k">12 / 700</span><span class="where">Widget titles (RECENTLY ADDED), small section labels. Uppercase, 0.08em tracking, secondary colour</span></div>
+            <div class="r"><span style="font-size:12px;line-height:16px">Field label</span><span class="k">12 / 400</span><span class="where">The left column of a label/value row</span></div>
+          </div>
+          <div>
+            <div class="r"><span style="font-size:12px;line-height:16px;font-weight:500">Field value</span><span class="k">12 / 500</span><span class="where">The right column of a label/value row; wraps</span></div>
+            <div class="r"><span style="font-size:12px;line-height:16px">Option row</span><span class="k">12 / 400</span><span class="where">Checkbox and radio rows in filters and attributes</span></div>
+            <div class="r"><span style="font-size:12px;line-height:16px;font-weight:500;background:var(--surface-2);padding:2px 8px;border-radius:999px">Chip</span><span class="k">12 / 500</span><span class="where">Active filters, tags, format chips</span></div>
+            <div class="r"><span style="font-size:11px;line-height:16px;font-weight:600;color:var(--accent-ink)">2 of 9</span><span class="k">11 / 600</span><span class="where">Count on group headers, notification numbers; accent colour</span></div>
+            <div class="r"><span style="font-size:11px;line-height:16px;font-weight:500;font-family:'JetBrains Mono',ui-monospace,monospace;color:var(--ink-2)">Esc · ↑ ↓</span><span class="k">11 / 500</span><span class="where">Keyboard hints in the lightbox footer. The only monospace text</span></div>
+            <div class="r"><span style="font-size:11px;line-height:16px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:linear-gradient(90deg,#0B6E8A,#29A383,#00A2C7,#5B5BD6);color:#fff;padding:1px 6px;border-radius:999px">✦ AI</span><span class="k">11 / 700</span><span class="where">The AI badge on cards and tags. Uppercase, white on the gradient</span></div>
+          </div>
+        </div>
+        <figcaption>Compare any text you're unsure about to the nearest role here. If it matches none of the thirteen, it is off-system.</figcaption>
+      </figure>
+
+      <h3>Truncation and wrapping</h3>
+      <figure class="card">
+        <div class="trunc">
+          <div><span class="tick">Right</span>
+            <div class="box ok" title="Quarterly_Campaign_Hero_Image_Final_v3_approved.jpg">Quarterly_Campaign_Hero_Image_Final_v3_approved.jpg</div>
+            Card titles: one line, ellipsis, full name in a tooltip.
+            <div class="box wrap">Quarterly_Campaign_Hero_Image_Final_v3_approved.jpg</div>
+            Search results, list view, field values: wrap onto more lines.
+          </div>
+          <div><span class="cross">Wrong</span>
+            <div class="box bad">Quarterly_Campaign_Hero_Image_Final_v3_approved.jpg</div>
+            Clipped mid-letter with no ellipsis and no tooltip.
+            <div class="box" style="white-space:nowrap">Quarterly_Campaign_Hero_Image_Final_v3_approved.jpg</div>
+            Overflowing its box and running under the next element.
+          </div>
+        </div>
+        <figcaption>Every text container decides once: ellipsis or wrap. Cut letters, text painting past its box, or a truncated name with no way to read it in full are all bugs.</figcaption>
+      </figure>
+
+      <h3>Reading a type bug</h3>
+      <div class="read">
+        <div><b>Wrong typeface</b><span>Arial, Segoe, Helvetica or a serif means Inter didn't load or the element rendered outside the app's frame (menus, tooltips). The design system's own default is the system font; the app pins Inter.</span></div>
+        <div><b>Size off the ladder</b><span>13, 15, 17, 18 or bigger inside the chrome. Often a leftover from the 12.5px era: something authored at "1.25rem" now renders 20 instead of 16.</span></div>
+        <div><b>Wrong weight</b><span>Bold headings, bold active tabs, or a regular-weight button label. Check the weights card above.</span></div>
+        <div><b>Uppercase with no tracking</b><span>An eyebrow or badge in caps with letters touching is missing its 0.08em spacing.</span></div>
+        <div><b>Line height crushed or loose</b><span>Two-line text whose lines overlap, or a 12px label with big gaps. Each size has one line height.</span></div>
+        <div><b>Two roles for one job</b><span>Two panel titles at different sizes, or a section header that matches body weight. The sibling is the spec.</span></div>
+      </div>
+    </section>
+
+    <section id="global" data-title="Global chrome">
+      <div class="sec-head"><h2>Global chrome</h2><span class="count"></span></div>
+      <p class="sub">The frame that stays on every page: left nav, header row, global search, menus, tooltips and toasts. Check it once, then trust it while you move around.</p>
+      <ul class="checks">
+        <li><input type="checkbox"><label><span class="t">Active nav item is semibold and cerulean; only one at a time<span class="ref">SCR-217</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Collapsing the nav shifts nothing by a pixel; toggle icon matches Filters and Collections<span class="ref">SCR-217, DAM-84</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Global search grows to 560px and stops<span class="ref">Sep</span></span><div class="r"><b>Raise</b> a much narrower cap (~440 was the old bug).</div></label></li>
+        <li><input type="checkbox"><label><span class="t">Magnifier only on global search; list-filter glyph on every "Find…" and "Filter by title"<span class="ref">SCR-213, DAM-127</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">No text bigger than 16px inside the app<span class="ref">SCR-281</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Tab through every page: every control shows the cerulean ring<span class="ref">SCR-214, DAM-138</span></span><div class="r"><b>Raise</b> a control with no ring, a blue browser ring, or a ring cut on one edge.</div></label></li>
+        <li><input type="checkbox"><label><span class="t">Menus, tooltips and popovers match the page's font size and theme (they render separately and can miss it)<span class="ref">SCR-283</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Toasts use the cerulean accent and go dark in dark mode<span class="ref">SCR-274</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">OS "reduce motion" on: nothing animates<span class="ref">SCR-250</span></span></label></li>
+      </ul>
+    </section>
+
+    <section id="dashboard" data-title="Dashboard">
+      <div class="sec-head"><h2>Dashboard</h2><span class="count"></span></div>
+      <p class="sub">The landing page: a title row, folder lanes, collection tiles, recent lists and the event banner. Rebuilt in August. Compare against <a href="https://sd-jamesd.github.io/prototypes/artifacts/DAM/dam-dashboard-presets.html" target="_blank" rel="noopener">dashboard presets</a>.</p>
+      <ul class="checks">
+        <li><input type="checkbox"><label><span class="t">Skeleton (grey placeholder) blocks sit exactly where the widgets land; no jump<span class="ref">SCR-272</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Scope header: 16px title, 32px "Filter by title" with list-filter glyph and focus ring<span class="ref">SCR-221</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Folder lanes (the horizontal rows of folder cards): one row; hover shadow not clipped at the edges; no second row peeking<span class="ref">SCR-224</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Folder card stack behind the front card; title never overlaps date or "Text in image"<span class="ref">DAM-157</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Collections tiles (the thumbnail grids): last cell is always the "+N" count slot, grey empties before it<span class="ref">SCR-226</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Recent lists: same row hover as library list; focus ring intact<span class="ref">SCR-242, SCR-244</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Event banner 6:1, no reload jump; pager buttons match the lightbox pager in both themes<span class="ref">SCR-228</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Widget grids add whole columns on resize; no right gutter<span class="ref">SCR-275</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Add to Collection search box readable in dark mode<span class="ref">DAM-101</span></span></label></li>
+      </ul>
+    </section>
+
+    <section id="library" data-title="Library">
+      <div class="sec-head"><h2>Library</h2><span class="count"></span></div>
+      <p class="sub">The asset browser, in grid, list or mosaic view, with cards you can select and open. Enter via a folder card; the Library nav item is disabled until a folder is chosen, by design. Selection behaviour: <a href="https://sd-jamesd.github.io/prototypes/artifacts/DAM/dam-selection-model.html" target="_blank" rel="noopener">selection model</a>.</p>
+      <ul class="checks">
+        <li><input type="checkbox"><label><span class="t">Card hover lifts with one border; press collapses the lift; Tab ring visible over the image<span class="ref">SCR-243, SCR-275</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Checkbox selects, image opens; checkbox hit area is generous; restricted assets can't be ticked<span class="ref">SCR-263</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Format badge, AI chip with white text, one gate badge (draft / restricted / expiring); drafts show diagonal stripes<span class="ref">SCR-257, DAM-103</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Video thumbs centred; mosaic autoplays; no crop box where cropping doesn't apply<span class="ref">SCR-24, 25, 50, 52</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">List view: 80×40 thumbs, readable name column, row hover matches every other list<span class="ref">SCR-104</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Mosaic shows skeletons, then content with no scroll jump<span class="ref">SCR-275</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">View-controls row: 24px chips, inline Save/Clear, sort shows what's applied<span class="ref">SCR-115, SCR-23</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Long names wrap in search results, never clip mid-word<span class="ref">SCR-106</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Empty folder, zero results and load error all use the same empty-state layout<span class="ref">SCR-248</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Bulk bar (dark bar after selecting several): bottom-pinned, max 600 wide, Download first, "n of N" scope text; white focus ring<span class="ref">SCR-266, SCR-27</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Card and collection menus: same icon per action, every item clickable<span class="ref">SCR-90, DAM-113</span></span></label></li>
+      </ul>
+    </section>
+
+    <section id="filters" data-title="Filters &amp; Collections">
+      <div class="sec-head"><h2>Filters and Collections panels</h2><span class="count"></span></div>
+      <p class="sub">The two side panels on the left: Filters (narrow the library) and Collections (browse saved sets). Collections was restyled to be the twin of Filters. Test them side by side.</p>
+      <ul class="checks">
+        <li><input type="checkbox"><label><span class="t">Twins: same header, "Find…" field, left padding and collapse toggle<span class="ref">SCR-69, DAM-84</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Panels snap open and closed; the grid re-flows a column<span class="ref">SCR-275</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Group headers 14/600, sticky, triangle glyph; with selections: "n of total" and a 2px cerulean edge<span class="ref">SCR-17, SCR-207</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Find field 32px, list-filter glyph, placeholder starts "Find"<span class="ref">SCR-105, SCR-282</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Saved filters: thin divider lines, hover tint, selected one marked<span class="ref">SCR-14</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Collection details sit on a raised surface; weights match Filters<span class="ref">SCR-17</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Collection tiles gain or lose a column on panel toggle<span class="ref">Sep</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Share is primary with the same share icon; people dropdown readable in both themes<span class="ref">DAM-82, DAM-137</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">No heart toggle: Favourites lives under Add to Collection</span><div class="r"><b>Raise</b> only if Favourites is missing from that flow.</div></label></li>
+      </ul>
+    </section>
+
+    <section id="lightbox" data-title="Lightbox">
+      <div class="sec-head"><h2>Lightbox</h2><span class="count"></span></div>
+      <p class="sub">The full-screen viewer that opens when you click an asset, with a tab rail and a side pane on the right. Reworked in September. The PDF path was never opened in a browser by the developer.</p>
+      <div class="split">
+      <figure class="card">
+        <svg viewBox="0 0 420 120" role="img" aria-label="Left and right arrow keys step between assets; up and down arrow keys step between pages of one asset" class="svg-ink">
+          <g fill="var(--surface-2)" stroke="currentColor"><rect x="20" y="30" width="70" height="60" rx="3"/><rect x="175" y="30" width="70" height="60" rx="3" stroke="var(--accent)" stroke-width="2"/><rect x="330" y="30" width="70" height="60" rx="3"/></g>
+          <line x1="96" y1="60" x2="169" y2="60" stroke="currentColor" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="132" y="52" font-size="10" text-anchor="middle">← → asset</text>
+          <line x1="251" y1="60" x2="324" y2="60" stroke="currentColor" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="287" y="52" font-size="10" text-anchor="middle">← → asset</text>
+          <rect x="185" y="22" width="50" height="8" fill="var(--surface-3)" stroke="currentColor"/><rect x="185" y="92" width="50" height="8" fill="var(--surface-3)" stroke="currentColor"/>
+          <line x1="262" y1="26" x2="262" y2="100" stroke="var(--accent)" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="268" y="66" font-size="10" fill="var(--accent-ink)" style="fill:var(--accent-ink)">↑ ↓ page</text>
+          <text x="210" y="112" font-size="9" text-anchor="middle" class="muted">"Page 2 of 6" in the footer</text>
+        </svg>
+        <figcaption>Sideways moves between assets. Up and down moves between pages or artboards of the current asset and snaps to them. With focus on the rail tabs, up and down move between tabs instead.</figcaption>
+      </figure>
+      <ul class="checks">
+        <li><input type="checkbox"><label><span class="t">Gutters 48 side (24 under 1400 wide), 32 top and bottom; stops at 2200; extra height goes to the image<span class="ref">SCR-295</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Every side pane (Details, Rights, Versions, Downloads) is the same flat 400 wide; the tab rail is 56 wide, icons only<span class="ref">SCR-292</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Arrow keys by axis as drawn; footer hint names the noun; rail tab keys still work<span class="ref">SCR-291</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Pages tab: thumbnails, click snaps to page, current page marked<span class="ref">SCR-291</span><span class="tag">not browser-verified</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">"Full document unavailable — showing page 1" appears as a small pill, not raw text<span class="ref">Sep</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Banners stack above the media (draft, rights, text match), never over it<span class="ref">SCR-299</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">OCR banner: cerulean-tinted fill, left rule, scan icon, "N of M matches"; count resets on the next asset; amber highlight as drawn above<span class="ref">SCR-299</span><span class="tag">not browser-verified</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Zoom pill centred under image and PDF stages<span class="ref">SCR-275</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Downloads pane and read-only Rights use the same field rows as the edit panel; no templates for video<span class="ref">SCR-255, SCR-61</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Escape returns focus to the card you opened from<span class="ref">SCR-291</span></span></label></li>
+      </ul>
+      </div>
+    </section>
+
+    <section id="edit" data-title="Edit, bulk, upload">
+      <div class="sec-head"><h2>Edit, bulk edit, upload</h2><span class="count"></span></div>
+      <p class="sub">The three editing screens: edit one asset, edit many at once, and the upload queue. Each has a left tab rail, a canvas and a side panel.</p>
+      <div class="callout"><p>These three modals are <b>always dark</b>, even in light mode. Judge them against each other. Tabs: <a href="https://sd-jamesd.github.io/prototypes/artifacts/DAM/dam-edit-panel-destinations.html" target="_blank" rel="noopener">edit panel destinations</a>.</p></div>
+      <ul class="checks">
+        <li><input type="checkbox"><label><span class="t">Same top bar in all three; edit canvas image centred<span class="ref">SCR-271, SCR-275</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Same 88px rail, same tab names and order; active tab not bold<span class="ref">SCR-191, SCR-216</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Panel flat 400; under 1128 wide it sits over the canvas on a dimmed layer and can be dismissed<span class="ref">SCR-293</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Details are label/value rows; "File metadata" appears once; read-only values don't look like inputs<span class="ref">SCR-193, SCR-211</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Attributes: "Find attributes…", every group shows "n of total" including 0, cerulean edge on groups with selections; big groups show a slice (<a href="https://sd-jamesd.github.io/prototypes/artifacts/DAM/dam-edit-tags-threshold.html" target="_blank" rel="noopener">threshold</a>)<span class="ref">SCR-207, SCR-297</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Rights: region/country/territory pickers, chips wrap inside 400, calendar icon visible on dark<span class="ref">SCR-126</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Save shows a spinner without changing button width<span class="ref">SCR-246</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">New version keeps attributes and numbers correctly<span class="ref">DAM-155, DAM-156</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Upload list: multi-select bulk edit; save-as-draft shows missing fields per row; duplicates offer two choices only<span class="ref">SCR-170, SCR-258, SCR-169</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">AI suggestions carry the sparkle; accepted tags lose it<span class="ref">DAM-103</span></span></label></li>
+      </ul>
+    </section>
+
+    <section id="downloads" data-title="Downloads">
+      <div class="sec-head"><h2>Downloads, queue, approvals</h2><span class="count"></span></div>
+      <p class="sub">The Downloads page and its history tab, the configure-download panel from a card menu, the download queue button, and the table-based Approvals and admin pages.</p>
+      <ul class="checks">
+        <li><input type="checkbox"><label><span class="t">Downloads page: library hover and focus; history tab loads with spinner + caption, same empty state<span class="ref">SCR-275</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Configure download panel: availability messages; single column when narrow; no templates for video<span class="ref">SCR-148, SCR-179</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Draft-only selection hides Download<span class="ref">SCR-259</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">"In Queue" cart button looks disabled but still shows its tooltip</span></label></li>
+        <li><input type="checkbox"><label><span class="t">Wide tables scroll sideways inside their own box; the page itself never scrolls sideways</span></label></li>
+        <li><input type="checkbox"><label><span class="t">Template rows that don't fit are truly disabled; the active one stays clickable to deselect<span class="ref">SCR-247</span></span></label></li>
+      </ul>
+    </section>
+
+    <section id="mobile" data-title="Phone &amp; tablet">
+      <div class="sec-head"><h2>Phone and tablet</h2><span class="count"></span></div>
+      <div class="callout raise"><p><b>Never tested on a real device.</b> Built against a browser at 390px. Test on real iOS and Android inside the host. Phone ≤767px; tablet 768 to 1023 gets the desktop layout on purpose.</p></div>
+      <div class="split">
+      <figure class="card">
+        <div class="fig-row">
+          <svg viewBox="0 0 200 360" role="img" aria-label="Phone layout: one-row header with title, magnifier and upload; card grid; 48px bottom tab bar above the home indicator" class="svg-ink">
+            <rect x="1" y="1" width="198" height="358" rx="18" fill="var(--surface)" stroke="currentColor"/>
+            <rect x="14" y="30" width="172" height="28" fill="var(--surface-2)"/>
+            <text x="22" y="48" font-size="10" font-weight="600">Folder name</text>
+            <circle cx="146" cy="44" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="150" y1="48" x2="154" y2="52" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="166" y="36" width="14" height="16" rx="2" fill="var(--accent)"/>
+            <g fill="var(--surface-2)" stroke="currentColor"><rect x="14" y="70" width="82" height="70" rx="3"/><rect x="104" y="70" width="82" height="70" rx="3"/><rect x="14" y="150" width="82" height="70" rx="3"/><rect x="104" y="150" width="82" height="70" rx="3"/><rect x="14" y="230" width="82" height="50" rx="3"/><rect x="104" y="230" width="82" height="50" rx="3"/></g>
+            <rect x="14" y="296" width="172" height="34" fill="var(--surface-3)"/>
+            <g fill="currentColor" opacity=".5"><rect x="42" y="307" width="12" height="12" rx="2"/><rect x="94" y="307" width="12" height="12" rx="2"/><rect x="146" y="307" width="12" height="12" rx="2"/></g>
+            <rect x="70" y="344" width="60" height="4" rx="2" fill="currentColor" opacity=".4"/>
+            <text x="100" y="292" font-size="8" text-anchor="middle" class="dim">tab bar 48 + safe area</text>
+            <text x="100" y="66" font-size="8" text-anchor="middle" class="dim">header: one row, 44px targets</text>
+          </svg>
+          <svg viewBox="0 0 200 360" role="img" aria-label="Phone with filters open: the overlay covers from below the header to above the tab bar; the tab bar paints on top" class="svg-ink">
+            <rect x="1" y="1" width="198" height="358" rx="18" fill="var(--surface)" stroke="currentColor"/>
+            <rect x="14" y="30" width="172" height="28" fill="var(--surface-2)"/>
+            <text x="22" y="48" font-size="10" font-weight="600">Filters</text>
+            <rect x="14" y="62" width="172" height="232" fill="var(--accent-soft)" stroke="var(--accent)" stroke-dasharray="3 3"/>
+            <text x="30" y="90" font-size="10" font-weight="600">Format</text><text x="30" y="116" font-size="10" font-weight="600">Rights</text><text x="30" y="142" font-size="10" font-weight="600">Date added</text>
+            <rect x="14" y="296" width="172" height="34" fill="var(--surface-3)"/>
+            <g fill="currentColor" opacity=".5"><rect x="42" y="307" width="12" height="12" rx="2"/><rect x="94" y="307" width="12" height="12" rx="2"/><rect x="146" y="307" width="12" height="12" rx="2"/></g>
+            <rect x="70" y="344" width="60" height="4" rx="2" fill="currentColor" opacity=".4"/>
+            <text x="100" y="200" font-size="8" text-anchor="middle" class="dim">overlay stops above the tab bar</text>
+          </svg>
+        </div>
+        <figcaption>Header is one row: title, magnifier (expands search over the row), icon-only Upload. No Queue button; the tab bar has Downloads. Fields and header buttons 44 tall on touch, chips 32. Card checkboxes and menus always visible.</figcaption>
+      </figure>
+      <ul class="checks">
+        <li><input type="checkbox"><label><span class="t">Header stays one row; magnifier expands search over it; Upload has no label<span class="tag">not browser-verified</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Tab bar sits above the home indicator; content has bottom padding so nothing hides behind it</span></label></li>
+        <li><input type="checkbox"><label><span class="t">Filters overlay fills from below the header to above the tab bar; page behind doesn't scroll</span></label></li>
+        <li><input type="checkbox"><label><span class="t">Every control at least 44px on touch; card actions need no hover</span></label></li>
+        <li><input type="checkbox"><label><span class="t">No sideways page scroll on any route at 390px</span></label></li>
+        <li><input type="checkbox"><label><span class="t">Lightbox and edit open and work; cramped is expected, broken is not</span></label></li>
+        <li><input type="checkbox"><label><span class="t">First visit to a page shows a brief loading row, then fully styled content</span></label></li>
+      </ul>
+      </div>
+    </section>
+
+    <section id="dark" data-title="Dark mode">
+      <div class="sec-head"><h2>Dark mode</h2><span class="count"></span></div>
+      <p class="sub">The host sets the theme; there is no in-app switch. If your host can toggle, the DAM changes without a reload.</p>
+      <div class="split">
+      <figure class="card">
+        <div class="dark-demo">
+          <div class="theme light">
+            <span class="lbl">Light</span>
+            <div class="row"><span class="b" style="background:#0c818f;color:#fff">Save</span><span class="b" style="background:#e2f2f4;color:#0a6a76">Cancel</span></div>
+            <div class="row"><span class="bar" style="background:#1f1e1b;color:#f7f6f2">3 selected · Download</span></div>
+            <div class="row"><span style="color:#66655e">Secondary text · 12 of 40</span></div>
+          </div>
+          <div class="theme dark">
+            <span class="lbl">Dark · right</span>
+            <div class="row"><span class="b" style="background:#6acad9;color:#1c2024">Save</span><span class="b" style="background:#11333a;color:#8fd9e4">Cancel</span></div>
+            <div class="row"><span class="bar" style="background:#2a2a27;color:#ecebe6;border:1px solid #45443f">3 selected · Download</span></div>
+            <div class="row"><span style="color:#a5a49b">Secondary text · 12 of 40</span></div>
+          </div>
+          <div class="theme dark" style="border-color:#7a3a35">
+            <span class="lbl" style="color:#f08c85;opacity:1">Dark · wrong</span>
+            <div class="row"><span class="b" style="background:#0c818f;color:#fff">Save</span><span style="font-size:11px;color:#f08c85">light-mode fill: fails contrast</span></div>
+            <div class="row"><span class="bar" style="background:#f7f6f2;color:#1f1e1b">3 selected · Download</span><span style="font-size:11px;color:#f08c85">bar went white</span></div>
+            <div class="row"><span style="color:#5a5952">Secondary text · 12 of 40</span><span style="font-size:11px;color:#f08c85">too dim</span></div>
+          </div>
+          <div class="theme dark" style="border-color:#7a3a35">
+            <span class="lbl" style="color:#f08c85;opacity:1">Dark · wrong</span>
+            <div class="row"><span class="b" style="background:#fff;color:#1f1e1b;border:1px solid #cfcdc4">Menu item</span><span style="font-size:11px;color:#f08c85">dropdown stayed light</span></div>
+            <div class="row"><span class="pill ai" style="color:#1c2024">✦ AI</span><span style="font-size:11px;color:#f08c85">AI label went dark</span></div>
+          </div>
+        </div>
+        <figcaption>Solid primary buttons switch to a light cerulean with dark text in dark mode (the light fill fails contrast on dark). Destructive, icon-only and the carousel/lightbox pager buttons keep their own look. Dark bars stay dark; secondary text stays mid-grey; menus and tooltips flip too.</figcaption>
+      </figure>
+      <ul class="checks">
+        <li><input type="checkbox"><label><span class="t">Nav, header, panels, cards, rows, dialogs, toasts, menus, tooltips all flip</span></label></li>
+        <li><input type="checkbox"><label><span class="t">Primary buttons are light cerulean with dark text; pagers unchanged<span class="ref">Sep DS update</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">No dark bar turns white (selection tray, count pills, inverse badges)</span></label></li>
+        <li><input type="checkbox"><label><span class="t">Secondary text readable, not dim<span class="ref">SCR-159</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">AI chip label stays white</span></label></li>
+        <li><input type="checkbox"><label><span class="t">Edit, bulk and upload modals stay dark in light mode (by design)</span></label></li>
+      </ul>
+      </div>
+    </section>
+
+    <section id="states" data-title="States sweep">
+      <div class="sec-head"><h2>States sweep, once per surface</h2><span class="count"></span></div>
+      <p class="sub">After the surface-specific checks, run these six on the same screen. A "state" is how something looks while you hover, press, Tab to it, or while it is disabled, loading or empty.</p>
+      <ul class="checks">
+        <li><input type="checkbox"><label><span class="t">Hover, then press and hold: one step, then one more</span></label></li>
+        <li><input type="checkbox"><label><span class="t">Disabled is grey text and a not-allowed cursor; nothing faded, no greyscale images<span class="ref">SCR-247</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Loading is a skeleton (dashboard, mosaic) or spinner + caption (lists, panels)<span class="ref">SCR-273</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Empty is one pattern: icon, title, hint, optional action<span class="ref">SCR-248</span></span></label></li>
+        <li><input type="checkbox"><label><span class="t">Tab: ring on everything reachable</span></label></li>
+        <li><input type="checkbox"><label><span class="t">Both themes at 1280, 1920 and 390 wide; screenshot each</span></label></li>
+      </ul>
+    </section>
+
+    <section id="pain" data-title="Where bugs hide">
+      <div class="sec-head"><h2>Where bugs hide after a design-system change</h2></div>
+      <p class="sub">You don't need the mechanics. Each card says what the failure looks like on screen.</p>
+      <ul class="pain">
+        <li><b>Design-system bumps (three since July)</b><span>The package ships its own spacing scale that clashes with the app's. <em>Looks like:</em> a field 24 or 40 tall instead of 32; gaps off the 8px rhythm; twin panels at different widths.</span></li>
+        <li><b>Root font size was 12.5px for a year</b><span>Fixed 17 Sep; every dependent size was frozen to px. <em>Looks like:</em> one thing 28% bigger than its siblings. Intended growths: search to 560, panel floors to 400, list thumbs to 80.</span></li>
+        <li><b>2,257 lines of "dead" CSS deleted on 21 Sep</b><span><em>Looks like:</em> browser defaults: blue underlined links, a serif, a grey square button, list bullets, no hover, a raw-text pill over an image.</span></li>
+        <li><b>Routes and modals load on demand</b><span>Each route's CSS arrives with its code. <em>Looks like:</em> something correct only after you've opened the lightbox or edit modal once. Test each route on a cold reload in a fresh tab.</span></li>
+        <li><b>Menus, tooltips, popovers render outside the theme</b><span><em>Looks like:</em> a dropdown with bigger text than the page, or a light menu on a dark app.</span></li>
+        <li><b>Grid columns come from the container</b><span><em>Looks like:</em> a panel toggle that doesn't change the column count, cards far under 230, a right gutter.</span></li>
+        <li><b>Dark panels inside a light app</b><span>Edit, bulk, upload are always dark. <em>Looks like:</em> invisible labels, near-white hairlines, a light input on the dark panel.</span></li>
+        <li><b>Copy comes from the database</b><span>Placeholders and labels are generated from a locale DB. Old wording ("Search for attributes…" vs "Find attributes…") is a content hand-off, not a frontend bug.</span></li>
+        <li><b>Environment, not code</b><span>The dev tenant's image vault is empty and the dev user may have no folders. <em>Looks like:</em> broken thumbnails, broken hero banners, a disabled Library nav item. Confirm on a populated tenant.</span></li>
+        <li><b>The DAM lives in the host's iframe</b><span>No URL routing: refresh returns to the dashboard. Theme comes from the host. Measure gutters from the DAM frame, not the host window.</span></li>
+        <li><b>PDF, OCR and mobile were never eyeballed</b><span>No local PDFs, no device. Spend extra time on multi-page documents, OCR results and phones.</span></li>
+        <li><b>Inter is the only font</b><span>Any other typeface means a load failure or lost style. Check on a machine that has never opened the app.</span></li>
+      </ul>
+    </section>
+
+    <section id="accepted" data-title="Accepted, don't raise">
+      <div class="sec-head"><h2>Accepted, don't raise</h2></div>
+      <p class="sub">Deliberate decisions. If you disagree, log a design question, not a bug.</p>
+      <ul class="accepted">
+        <li><b>Side panels snap, no slide</b><span>So the grid re-flows instantly.</span></li>
+        <li><b>Edit, bulk, upload are always dark</b><span>The panel skin needs a dark base.</span></li>
+        <li><b>No in-app dark-mode switch</b><span>The host supplies the theme.</span></li>
+        <li><b>Primary buttons differ in dark</b><span>Light cerulean, dark text. Contrast.</span></li>
+        <li><b>Scrollbar thumb grows on hover with no transition</b><span>Chrome can't animate it.</span></li>
+        <li><b>Edit Attributes show "0 of N"; library filters hide zero</b><span>Known; decision pending.</span></li>
+        <li><b>No heart toggle for Favourites</b><span>It's a collection.</span></li>
+        <li><b>Duplicate check has two options</b><span>"New version" removed by design.</span></li>
+        <li><b>No Queue in the phone header</b><span>Tab bar has Downloads.</span></li>
+        <li><b>Tablets get the desktop layout</b><span>Pending a device pass.</span></li>
+        <li><b>Refresh returns to the dashboard</b><span>No URL routing in the iframe.</span></li>
+        <li><b>Dark-panel text fields show focus as a border change; sort trigger ring fades</b><span>Design-system questions, left open.</span></li>
+        <li><b>Solid buttons show a faint press halo</b><span>From the design system.</span></li>
+        <li><b>Light primary contrast is just over AA (4.61:1)</b><span>Logged, not this cycle.</span></li>
+        <li><b>Broken imagery on the dev tenant</b><span>Empty vault.</span></li>
+        <li><b>Lightbox and edit not phone-designed</b><span>Raise breakages only.</span></li>
+      </ul>
+    </section>
+
+    <section id="report" data-title="Reporting">
+      <div class="sec-head"><h2>Reporting a design bug</h2></div>
+      <p class="sub">A design bug is a comparison. Name the sibling you compared to and the fix is usually one line.</p>
+<pre>Surface:     Library › list view › row hover
+Compared to: Dashboard › Recent downloads › row hover
+Difference:  Library hover is darker
+Expected:    Same hover tint everywhere (guide › Contract › States)
+Where:       Light, 1440 wide, Chrome 153, dev tenant, 21 Sep build
+Attach:      Two screenshots side by side (+ dark if relevant)
+Ref:         SCR-244</pre>
+      <div class="sev">
+        <b class="s1">Blocker</b><span>Unreadable text, invisible focus, unreachable controls, undismissable modal, sideways page scroll on phone.</span>
+        <b class="s2">Defect</b><span>Any contract value off-list, any sibling mismatch, any missing state, anything in Dark mode, any browser default.</span>
+        <b class="s3">Question</b><span>Anything in "Accepted" you disagree with; copy wording; anything not reproducible on a populated tenant.</span>
+      </div>
+    </section>
+  </main>
+</div>
+
+<button type="button" class="to-top" id="toTop" aria-label="Back to top" title="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 14 12 8 18 14"/></svg></button>
+
+<script>
+(function () {
+  var KEY = 'sddam-design-qa-ticks-v1';
+  var ticks = {};
+  try { ticks = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { ticks = {}; }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(ticks)); } catch (e) {} }
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main > section'));
+  var toc = document.getElementById('toc');
+  var boxes = [];
+  sections.forEach(function (sec) {
+    var id = sec.id;
+    var title = sec.getAttribute('data-title') || sec.querySelector('h2, h1').textContent;
+    var items = Array.prototype.slice.call(sec.querySelectorAll('.checks > li'));
+    items.forEach(function (li, i) {
+      var box = li.querySelector('input[type=checkbox]');
+      var key = id + '-' + i;
+      box.id = 'chk-' + key;
+      var label = li.querySelector('label');
+      if (label) label.setAttribute('for', box.id);
+      box.checked = !!ticks[key];
+      li.classList.toggle('done', box.checked);
+      box.addEventListener('change', function () {
+        if (box.checked) ticks[key] = 1; else delete ticks[key];
+        li.classList.toggle('done', box.checked);
+        save(); update();
+      });
+      boxes.push({ box: box, sec: id });
+    });
+    var a = document.createElement('a');
+    a.href = '#' + id;
+    a.innerHTML = '<span>' + title + '</span>' + (items.length ? '<span class="n" data-sec="' + id + '"></span>' : '');
+    var li = document.createElement('li');
+    li.appendChild(a);
+    toc.appendChild(li);
+  });
+  function update() {
+    var total = boxes.length, done = 0;
+    sections.forEach(function (sec) {
+      var all = boxes.filter(function (b) { return b.sec === sec.id; });
+      if (!all.length) return;
+      var d = all.filter(function (b) { return b.box.checked; }).length;
+      done += d;
+      var c = sec.querySelector('.count');
+      if (c) c.textContent = d + ' of ' + all.length;
+      var n = toc.querySelector('[data-sec="' + sec.id + '"]');
+      if (n) n.textContent = d + '/' + all.length;
+    });
+    document.getElementById('total').textContent = done + ' of ' + total + ' ticked';
+    document.getElementById('bar').style.width = (total ? (done / total * 100) : 0) + '%';
+  }
+  var hide = document.getElementById('hideDone');
+  try { hide.checked = localStorage.getItem(KEY + '-hide') === '1'; } catch (e) {}
+  document.body.classList.toggle('hide-done', hide.checked);
+  hide.addEventListener('change', function () {
+    document.body.classList.toggle('hide-done', hide.checked);
+    try { localStorage.setItem(KEY + '-hide', hide.checked ? '1' : '0'); } catch (e) {}
+  });
+  document.getElementById('reset').addEventListener('click', function () {
+    ticks = {}; save();
+    boxes.forEach(function (b) { b.box.checked = false; b.box.closest('li').classList.remove('done'); });
+    update();
+  });
+  update();
+
+  var links = Array.prototype.slice.call(toc.querySelectorAll('a'));
+  var current = null;
+  function setActive(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach(function (a) { a.classList.toggle('active', a.getAttribute('href') === '#' + id); });
+  }
+  function spy() {
+    var line = window.innerHeight * 0.25;
+    var best = sections[0].id;
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i].getBoundingClientRect().top <= line) best = sections[i].id;
+    }
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) best = sections[sections.length - 1].id;
+    setActive(best);
+  }
+  links.forEach(function (a) {
+    a.addEventListener('click', function () { setActive(a.getAttribute('href').slice(1)); });
+  });
+  var ticking = false;
+  window.addEventListener('scroll', function () {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () { spy(); ticking = false; });
+  }, { passive: true });
+  var toTop = document.getElementById('toTop');
+  function topBtn() { toTop.classList.toggle('show', window.scrollY > window.innerHeight * 0.8); }
+  toTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    var first = toc.querySelector('a'); if (first) first.focus({ preventScroll: true });
+  });
+  window.addEventListener('scroll', topBtn, { passive: true });
+  window.addEventListener('resize', function () { spy(); topBtn(); });
+  spy(); topBtn();
+})();
+</script>
+
+</body></html>
