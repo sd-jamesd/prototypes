@@ -1,0 +1,638 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Versions Panel Redesign</title>
+<style>
+/* Layout: dark edit-surface spec sheet. Each state is one 380px panel in a wrapping grid,
+   captioned above and annotated below. Single-theme dark by design: the DAM edit panel is dark. */
+:root{
+  color-scheme: dark;
+
+  /* Scale neutrals (dark ramp, sand base) */
+  --neutral-1:#12110e; --neutral-2:#191918; --neutral-3:#23231f; --neutral-4:#2b2a21;
+  --neutral-5:#333128; --neutral-6:#3c3b31; --neutral-7:#4a493f; --neutral-8:#626056;
+  --neutral-9:#706e64; --neutral-10:#7d7c75; --neutral-11:#b6b5aa; --neutral-12:#f0efe3;
+
+  /* Scale accent (cerulean, dark ramp) */
+  --accent-3:#072c31; --accent-4:#003941; --accent-5:#004750; --accent-7:#0e6874;
+  --accent-9:#0c818f; --accent-10:#1d717d; --accent-11:#6acad9; --accent-12:#b3ecf6;
+  --accent-a3:rgba(0,214,251,0.14);
+
+  /* Scale status (dark ramp) */
+  --green-3:#0d2d24;  --green-9:#29a383;  --green-11:#60d1af;
+  --amber-3:#2f200d;  --amber-9:#f5a524;  --amber-11:#fbb554;
+  --red-3:#381710;    --red-9:#e54d2e;    --red-11:#ff9277;
+
+  /* Semantic */
+  --surface-default:var(--neutral-1);
+  --surface-subtle:var(--neutral-2);
+  --surface-muted:var(--neutral-3);
+  --text-default:var(--neutral-12);
+  --text-muted:var(--neutral-11);
+  --text-subtle:var(--neutral-10);
+  --text-on-primary:#ffffff;
+  --border-subtle:var(--neutral-3);
+  --border-default:var(--neutral-6);
+  --border-emphasis:var(--neutral-7);
+  --primary-default:var(--accent-9);
+  --primary-hover:var(--accent-10);
+  --primary-text:var(--accent-11);
+  --primary-subtle:var(--accent-3);
+  --ed-error:#ec7a6e;
+
+  /* Filetype badge: solid fill = filetype (status badges are light-bg/border) */
+  --filetype-badge-bg:rgba(28,28,25,0.62);
+  --filetype-badge-fg:#ffffff;
+
+  /* Dark-surface control border, 3.3:1 per Scale */
+  --control-border:rgba(255,255,255,0.4);
+
+  /* Spacing */
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:24px;
+  --space-6:32px; --space-7:40px;
+
+  /* Type ladder: type-0 to type-3 only */
+  --type-0-size:11px; --type-0-line:16px;
+  --type-1-size:12px; --type-1-line:16px;
+  --type-2-size:14px; --type-2-line:20px;
+  --type-3-size:16px; --type-3-line:24px;
+  --weight-regular:400; --weight-medium:500; --weight-semibold:600; --weight-bold:700;
+
+  --radius-1:3px; --radius-2:4px; --radius-3:6px; --radius-full:9999px;
+  --font-text:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+
+body{
+  margin:0;
+  background:var(--surface-default);
+  color:var(--text-default);
+  font-family:var(--font-text);
+  font-size:var(--type-2-size);
+  line-height:var(--type-2-line);
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{padding-block:var(--space-6) var(--space-7);padding-left:var(--space-5);padding-right:var(--space-5);max-width:1340px;margin:0 auto;}
+
+/* ---- Page header ---- */
+.page-eyebrow{font-size:var(--type-1-size);line-height:var(--type-1-line);font-weight:var(--weight-bold);letter-spacing:.08em;text-transform:uppercase;color:var(--text-subtle);}
+h1{font-size:var(--type-3-size);line-height:var(--type-3-line);font-weight:var(--weight-semibold);margin:var(--space-2) 0 var(--space-3);text-wrap:balance;}
+.lede{font-size:var(--type-2-size);color:var(--text-muted);max-width:66ch;margin:0;}
+.meta-line{margin-top:var(--space-3);font-size:var(--type-1-size);line-height:var(--type-1-line);color:var(--text-subtle);display:flex;flex-wrap:wrap;gap:var(--space-1) var(--space-4);}
+.meta-line code{font-family:var(--font-text);color:var(--text-muted);}
+
+/* ---- Change list ---- */
+.changes{margin-top:var(--space-5);border-top:1px solid var(--border-default);padding-top:var(--space-4);display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--space-3) var(--space-5);}
+.change{min-width:0;}
+.change h3{font-size:var(--type-2-size);line-height:var(--type-2-line);font-weight:var(--weight-semibold);margin:0 0 2px;}
+.change p{margin:0;font-size:var(--type-1-size);line-height:var(--type-1-line);color:var(--text-subtle);}
+
+/* ---- States grid ---- */
+.states{margin-top:var(--space-7);display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:var(--space-6) var(--space-5);}
+.state{min-width:0;}
+.state-head{display:flex;align-items:baseline;gap:var(--space-2);margin-bottom:var(--space-2);flex-wrap:wrap;}
+.state-num{font-size:var(--type-0-size);line-height:var(--type-0-line);font-weight:var(--weight-semibold);color:var(--primary-text);font-variant-numeric:tabular-nums;}
+.state-name{font-size:var(--type-2-size);line-height:var(--type-2-line);font-weight:var(--weight-semibold);}
+.state-note{margin-top:var(--space-3);font-size:var(--type-1-size);line-height:var(--type-1-line);color:var(--text-subtle);}
+.state-note ul{margin:0;padding-left:var(--space-4);display:flex;flex-direction:column;gap:var(--space-1);}
+
+/* ---- The panel ---- */
+.panel{
+  background:var(--surface-subtle);
+  border:1px solid var(--border-default);
+  border-radius:var(--radius-2);
+  padding:var(--space-4) var(--space-4) var(--space-3);
+  display:flex;flex-direction:column;gap:var(--space-3);
+  min-width:0;
+}
+.panel-title{font-size:var(--type-3-size);line-height:var(--type-3-line);font-weight:var(--weight-semibold);}
+
+/* Public-link summary strip: one line, hairline under, no box */
+.linkbar{display:flex;align-items:flex-start;gap:var(--space-2);font-size:var(--type-1-size);line-height:var(--type-1-line);color:var(--text-muted);border-bottom:1px solid var(--border-subtle);padding-bottom:var(--space-3);}
+.linkbar svg{flex:none;margin-top:1px;color:var(--text-subtle);}
+.linkbar strong{font-weight:var(--weight-medium);color:var(--text-default);}
+.linkbar.is-warn{color:var(--amber-11);}
+.linkbar.is-warn svg{color:var(--amber-9);}
+.linkbar-body{min-width:0;display:flex;flex-direction:column;gap:var(--space-2);align-items:flex-start;}
+
+/* Version list: hairline-separated rows, never boxed */
+.vlist{display:flex;flex-direction:column;}
+.vrow{display:grid;grid-template-columns:40px 1fr auto;gap:var(--space-3);align-items:start;padding:var(--space-3) 0;border-bottom:1px solid var(--border-subtle);position:relative;}
+.vrow:last-child{border-bottom:0;}
+.vrow.is-current{border-left:2px solid var(--primary-default);margin-left:-11px;padding-left:9px;}
+.vrow.is-dim .vthumb,.vrow.is-dim .vtitle{opacity:.72;}
+
+.vthumb{width:40px;height:40px;border-radius:var(--radius-2);position:relative;overflow:hidden;background:var(--neutral-4);flex:none;}
+.vthumb i{position:absolute;inset:0;display:block;}
+.ft{position:absolute;left:0;bottom:0;background:var(--filetype-badge-bg);color:var(--filetype-badge-fg);font-size:9px;line-height:12px;font-weight:var(--weight-semibold);letter-spacing:.04em;padding:0 3px;border-radius:0 var(--radius-1) 0 var(--radius-1);}
+
+.vmain{min-width:0;display:flex;flex-direction:column;gap:2px;}
+.vtitle{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap;font-size:var(--type-2-size);line-height:var(--type-2-line);font-weight:var(--weight-semibold);}
+.vby{font-size:var(--type-1-size);line-height:var(--type-1-line);color:var(--text-subtle);word-break:break-word;}
+.vspec{font-size:var(--type-1-size);line-height:var(--type-1-line);color:var(--text-muted);font-variant-numeric:tabular-nums;}
+.vflags{display:flex;flex-wrap:wrap;gap:var(--space-1);margin-top:var(--space-1);}
+.vreason{display:flex;align-items:flex-start;gap:var(--space-1);margin-top:var(--space-1);font-size:var(--type-1-size);line-height:var(--type-1-line);color:var(--ed-error);}
+.vreason svg{flex:none;margin-top:2px;}
+
+/* Lifecycle badges only. Contextual restrictions ride the action, not the badge. */
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:var(--type-0-size);line-height:var(--type-0-line);font-weight:var(--weight-semibold);padding:0 6px;border-radius:var(--radius-full);border:1px solid;white-space:nowrap;}
+.badge-current{background:var(--accent-3);border-color:var(--accent-7);color:var(--accent-11);}
+.badge-expired{background:var(--red-3);border-color:var(--red-9);color:var(--red-11);}
+.badge-withdrawn{background:var(--neutral-3);border-color:var(--neutral-7);color:var(--neutral-11);}
+.badge-draft{background:var(--neutral-2);border-color:var(--neutral-6);color:var(--neutral-9);}
+.badge-serving{background:var(--green-3);border-color:var(--green-9);color:var(--green-11);}
+.badge-blocked{background:var(--amber-3);border-color:var(--amber-9);color:var(--amber-11);}
+
+/* Row action: ghost icon button */
+.iconbtn{height:24px;width:24px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:1px solid transparent;border-radius:var(--radius-2);color:var(--text-subtle);cursor:pointer;flex:none;}
+.iconbtn:hover{background:var(--neutral-4);color:var(--text-default);}
+.iconbtn.is-open{background:var(--neutral-4);color:var(--text-default);}
+.iconbtn:focus-visible{outline:2px solid var(--primary-text);outline-offset:1px;}
+
+/* Row menu */
+.menu{position:absolute;top:34px;right:0;z-index:5;min-width:214px;background:var(--neutral-3);border:1px solid var(--border-emphasis);border-radius:var(--radius-2);padding:var(--space-1);box-shadow:0 4px 6px -1px rgba(0,0,0,.4),0 2px 4px -2px rgba(0,0,0,.3);display:flex;flex-direction:column;}
+.mi{display:flex;align-items:center;gap:var(--space-2);padding:6px var(--space-2);border-radius:var(--radius-1);font-size:var(--type-2-size);line-height:var(--type-2-line);color:var(--text-default);background:transparent;border:0;cursor:pointer;text-align:left;width:100%;}
+.mi svg{flex:none;color:var(--text-subtle);}
+.mi:hover{background:var(--neutral-5);}
+.mi.is-destructive{color:var(--red-11);}
+.mi.is-destructive svg{color:var(--red-11);}
+.mi[aria-disabled="true"]{color:var(--text-subtle);cursor:not-allowed;}
+.mi[aria-disabled="true"]:hover{background:transparent;}
+.mi-reason{display:block;font-size:var(--type-0-size);line-height:var(--type-0-line);color:var(--text-subtle);}
+.mi-sep{height:1px;background:var(--border-default);margin:var(--space-1) 0;}
+
+/* Buttons, tiered by what the action does to system state */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);height:32px;padding:0 14px;border-radius:var(--radius-2);border:1px solid transparent;font-family:var(--font-text);font-size:var(--type-2-size);font-weight:var(--weight-semibold);cursor:pointer;}
+.btn:focus-visible{outline:2px solid var(--primary-text);outline-offset:2px;}
+.btn-primary{background:var(--primary-default);color:var(--text-on-primary);}
+.btn-primary:hover{background:var(--primary-hover);}
+.btn-secondary{background:transparent;color:var(--text-default);border-color:var(--control-border);}
+.btn-secondary:hover{background:var(--neutral-4);}
+.btn-tertiary{background:transparent;color:var(--primary-text);}
+.btn-tertiary:hover{background:var(--accent-3);}
+.btn-xs{height:24px;padding:0 8px;font-size:var(--type-1-size);}
+.btn[disabled]{opacity:.55;cursor:not-allowed;}
+.btn-full{width:100%;}
+.btn-foot{margin-top:var(--space-1);}
+
+/* Upload consequence notice (meta stage) */
+.notice{display:flex;gap:var(--space-2);padding:var(--space-3);border-radius:var(--radius-2);background:var(--neutral-3);border-left:2px solid var(--amber-9);font-size:var(--type-1-size);line-height:var(--type-1-line);color:var(--text-muted);}
+.notice svg{flex:none;color:var(--amber-9);margin-top:1px;}
+.notice strong{color:var(--text-default);font-weight:var(--weight-medium);}
+
+/* Read-only rights block in the upload meta stage */
+.fieldset{display:flex;flex-direction:column;gap:var(--space-2);}
+.flab{font-size:var(--type-1-size);line-height:var(--type-1-line);font-weight:var(--weight-medium);color:var(--text-subtle);display:flex;align-items:center;gap:var(--space-1);flex-wrap:wrap;}
+.carried{font-size:var(--type-0-size);line-height:var(--type-0-line);font-weight:var(--weight-semibold);color:var(--primary-text);background:var(--accent-3);border-radius:var(--radius-full);padding:0 6px;}
+.kit-field-list{display:flex;flex-direction:column;gap:var(--space-2);}
+.kit-field-row{display:grid;grid-template-columns:108px 1fr;gap:var(--space-1) var(--space-2);align-items:baseline;}
+.kit-field-row dt{font-size:var(--type-1-size);line-height:var(--type-1-line);color:var(--text-subtle);font-weight:var(--weight-regular);margin:0;}
+.kit-field-row dd{font-size:var(--type-1-size);line-height:var(--type-1-line);color:var(--text-default);font-weight:var(--weight-medium);margin:0;word-break:break-word;}
+.locknote{display:flex;align-items:flex-start;gap:var(--space-1);font-size:var(--type-0-size);line-height:var(--type-0-line);color:var(--text-subtle);}
+.locknote svg{flex:none;margin-top:1px;}
+.confirm{display:flex;align-items:flex-start;gap:var(--space-2);padding-top:var(--space-2);border-top:1px solid var(--border-subtle);}
+.cbox{width:16px;height:16px;border:1px solid var(--control-border);border-radius:var(--radius-1);flex:none;margin-top:1px;}
+.confirm span{font-size:var(--type-1-size);line-height:var(--type-1-line);color:var(--text-muted);}
+.confirm b{color:var(--text-default);font-weight:var(--weight-medium);}
+
+/* Empty and loading */
+.empty{display:flex;flex-direction:column;gap:var(--space-2);padding:var(--space-4) 0 var(--space-3);}
+.empty-t{font-size:var(--type-2-size);line-height:var(--type-2-line);font-weight:var(--weight-semibold);}
+.empty-b{font-size:var(--type-1-size);line-height:var(--type-1-line);color:var(--text-subtle);max-width:40ch;}
+.sk{background:var(--neutral-4);border-radius:var(--radius-1);}
+.sk-row{display:grid;grid-template-columns:40px 1fr;gap:var(--space-3);padding:var(--space-3) 0;border-bottom:1px solid var(--border-subtle);}
+.sk-thumb{width:40px;height:40px;border-radius:var(--radius-2);}
+.sk-lines{display:flex;flex-direction:column;gap:6px;padding-top:2px;}
+@media (prefers-reduced-motion:no-preference){
+  .sk{animation:pulse 1.4s ease-in-out infinite;}
+}
+@keyframes pulse{0%,100%{opacity:.5;}50%{opacity:.85;}}
+
+/* Appendix */
+.appendix{margin-top:var(--space-7);border-top:1px solid var(--border-default);padding-top:var(--space-4);}
+.appendix h2{font-size:var(--type-2-size);line-height:var(--type-2-line);font-weight:var(--weight-semibold);margin:0 0 var(--space-3);}
+.tablewrap{overflow-x:auto;}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:var(--type-1-size);line-height:var(--type-1-line);}
+th,td{text-align:left;padding:var(--space-2) var(--space-3) var(--space-2) 0;border-bottom:1px solid var(--border-subtle);vertical-align:top;}
+th{color:var(--text-subtle);font-weight:var(--weight-semibold);font-size:var(--type-0-size);letter-spacing:.04em;text-transform:uppercase;}
+td{color:var(--text-muted);}
+td:first-child{color:var(--text-default);font-weight:var(--weight-medium);white-space:nowrap;}
+.open-qs{margin-top:var(--space-5);}
+.open-qs ol{margin:0;padding-left:var(--space-4);display:flex;flex-direction:column;gap:var(--space-2);font-size:var(--type-1-size);line-height:var(--type-1-line);color:var(--text-muted);}
+.open-qs b{color:var(--text-default);font-weight:var(--weight-medium);}
+
+@media (max-width:420px){
+  .wrap{padding-left:var(--space-4);padding-right:var(--space-4);}
+  .panel{padding:var(--space-3);}
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="page-eyebrow">sdDam · Edit panel · Versions</div>
+    <h1>Versions Panel Redesign</h1>
+    <p class="lede">The current panel lists version number, uploader and date, and offers Download and Delete on every row. It cannot say which version is live, what changed between versions, whether a version is still usable, or that a public URL is serving one of them. This redesign adds those four things and removes the action that makes an asset disappear.</p>
+    <div class="meta-line">
+      <span>Build: <code>VersionCard</code> · <code>EditFile</code> versions tab</span>
+      <span>Depends on SCR-338, SCR-339, SCR-343, SCR-344, SCR-350</span>
+      <span>Target: Cycle 10</span>
+    </div>
+  </header>
+
+  <section class="changes" aria-label="What changes">
+    <div class="change">
+      <h3>Current is visible</h3>
+      <p>A 2px accent edge and a Current badge on the live version. Everything below it is history, dimmed but readable.</p>
+    </div>
+    <div class="change">
+      <h3>Rows carry a file</h3>
+      <p>Thumbnail, size, dimensions and format, so you can tell versions apart without downloading them.</p>
+    </div>
+    <div class="change">
+      <h3>Public links are in the panel</h3>
+      <p>One line at the top says how many links exist and which version they serve, with a retry when a refresh fails.</p>
+    </div>
+    <div class="change">
+      <h3>Actions match authority</h3>
+      <p>Delete leaves the current row. Make current appears for the roles allowed to publish. Download disables with a reason.</p>
+    </div>
+  </section>
+
+  <section class="states" aria-label="Panel states">
+
+    <!-- 1. Default -->
+    <article class="state">
+      <div class="state-head"><span class="state-num">01</span><span class="state-name">Default, full authority</span></div>
+      <div class="panel">
+        <div class="panel-title">Versions</div>
+
+        <div class="linkbar">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          <span><strong>3 public links</strong> serving version 4. Same URLs, refreshed 10 Sep.</span>
+        </div>
+
+        <div class="vlist">
+          <div class="vrow is-current">
+            <div class="vthumb"><i style="background:linear-gradient(140deg,#1f6f7d,#0c4450 60%,#2a2a22)"></i><span class="ft">JPG</span></div>
+            <div class="vmain">
+              <div class="vtitle">Version 4 <span class="badge badge-current">Current</span></div>
+              <div class="vby">SD Admin · 10 Sep 2026</div>
+              <div class="vspec">3.2 MB · 4096 × 2731 · JPG</div>
+              <div class="vflags"><span class="badge badge-serving">Serving 3 links</span></div>
+            </div>
+            <button class="iconbtn" aria-label="Actions for version 4"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+          </div>
+
+          <div class="vrow is-dim">
+            <div class="vthumb"><i style="background:linear-gradient(140deg,#4a493f,#2b2a21)"></i><span class="ft">JPG</span></div>
+            <div class="vmain">
+              <div class="vtitle">Version 1</div>
+              <div class="vby">SD Admin · 10 Sep 2026</div>
+              <div class="vspec">2.8 MB · 4096 × 2731 · JPG</div>
+            </div>
+            <button class="iconbtn" aria-label="Actions for version 1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+          </div>
+        </div>
+
+        <button class="btn btn-secondary btn-full btn-foot">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg>
+          Upload new version
+        </button>
+      </div>
+      <div class="state-note"><ul>
+        <li>Numbers are never reassigned, so a gap (4 then 1) is real history, not a rendering bug.</li>
+        <li>Upload is Secondary: it opens a flow, it does not itself create the version.</li>
+      </ul></div>
+    </article>
+
+    <!-- 2. Row menu -->
+    <article class="state">
+      <div class="state-head"><span class="state-num">02</span><span class="state-name">Row menu, earlier version</span></div>
+      <div class="panel">
+        <div class="panel-title">Versions</div>
+        <div class="linkbar">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          <span><strong>3 public links</strong> serving version 4. Same URLs, refreshed 10 Sep.</span>
+        </div>
+        <div class="vlist">
+          <div class="vrow is-current">
+            <div class="vthumb"><i style="background:linear-gradient(140deg,#1f6f7d,#0c4450 60%,#2a2a22)"></i><span class="ft">JPG</span></div>
+            <div class="vmain">
+              <div class="vtitle">Version 4 <span class="badge badge-current">Current</span></div>
+              <div class="vby">SD Admin · 10 Sep 2026</div>
+              <div class="vspec">3.2 MB · 4096 × 2731 · JPG</div>
+            </div>
+            <button class="iconbtn" aria-label="Actions for version 4"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+          </div>
+          <div class="vrow is-dim">
+            <div class="vthumb"><i style="background:linear-gradient(140deg,#4a493f,#2b2a21)"></i><span class="ft">JPG</span></div>
+            <div class="vmain">
+              <div class="vtitle">Version 1</div>
+              <div class="vby">SD Admin · 10 Sep 2026</div>
+              <div class="vspec">2.8 MB · 4096 × 2731 · JPG</div>
+            </div>
+            <button class="iconbtn is-open" aria-label="Actions for version 1" aria-expanded="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+            <div class="menu" role="menu" aria-label="Version 1 actions">
+              <button class="mi" role="menuitem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Make this the current version</button>
+              <button class="mi" role="menuitem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>Download</button>
+              <div class="mi-sep" role="separator"></div>
+              <button class="mi is-destructive" role="menuitem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Delete this version</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-full btn-foot">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg>
+          Upload new version
+        </button>
+      </div>
+      <div class="state-note"><ul>
+        <li>Make current sits first: it is the action people came for, and the reason rollback exists.</li>
+        <li>Delete is separated by a rule and only ever appears on a version that is not current.</li>
+      </ul></div>
+    </article>
+
+    <!-- 3. Contributor -->
+    <article class="state">
+      <div class="state-head"><span class="state-num">03</span><span class="state-name">Contributor, current row</span></div>
+      <div class="panel">
+        <div class="panel-title">Versions</div>
+        <div class="linkbar">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          <span><strong>3 public links</strong> serving version 4.</span>
+        </div>
+        <div class="vlist">
+          <div class="vrow is-current">
+            <div class="vthumb"><i style="background:linear-gradient(140deg,#1f6f7d,#0c4450 60%,#2a2a22)"></i><span class="ft">JPG</span></div>
+            <div class="vmain">
+              <div class="vtitle">Version 4 <span class="badge badge-current">Current</span></div>
+              <div class="vby">SD Admin · 10 Sep 2026</div>
+              <div class="vspec">3.2 MB · 4096 × 2731 · JPG</div>
+            </div>
+            <button class="iconbtn is-open" aria-label="Actions for version 4" aria-expanded="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+            <div class="menu" role="menu" aria-label="Version 4 actions">
+              <button class="mi" role="menuitem"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>Download</button>
+              <div class="mi" role="menuitem" aria-disabled="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <span>Make current<span class="mi-reason">Needs DAM Manager or Approver</span></span>
+              </div>
+            </div>
+          </div>
+          <div class="vrow is-dim">
+            <div class="vthumb"><i style="background:linear-gradient(140deg,#4a493f,#2b2a21)"></i><span class="ft">JPG</span></div>
+            <div class="vmain">
+              <div class="vtitle">Version 1</div>
+              <div class="vby">SD Admin · 10 Sep 2026</div>
+              <div class="vspec">2.8 MB · 4096 × 2731 · JPG</div>
+            </div>
+            <button class="iconbtn" aria-label="Actions for version 1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-full btn-foot">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg>
+          Upload new version
+        </button>
+      </div>
+      <div class="state-note"><ul>
+        <li>Make current stays visible and disabled with its reason. Structural controls disable, they do not hide.</li>
+        <li>Delete is absent, not disabled: a Contributor has no delete authority to explain.</li>
+      </ul></div>
+    </article>
+
+    <!-- 4. Rights restricted -->
+    <article class="state">
+      <div class="state-head"><span class="state-num">04</span><span class="state-name">Rights expired and withdrawn</span></div>
+      <div class="panel">
+        <div class="panel-title">Versions</div>
+        <div class="linkbar is-warn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.7 18-8-14a2 2 0 0 0-3.4 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+          <span><strong>3 public links taken down</strong> on 12 Sep. Rights no longer permit public sharing.</span>
+        </div>
+        <div class="vlist">
+          <div class="vrow is-current">
+            <div class="vthumb"><i style="background:linear-gradient(140deg,#5a4a2a,#2b2a21)"></i><span class="ft">JPG</span></div>
+            <div class="vmain">
+              <div class="vtitle">Version 5 <span class="badge badge-current">Current</span> <span class="badge badge-expired">Expired</span></div>
+              <div class="vby">R. Nolan · 12 Sep 2026</div>
+              <div class="vspec">3.4 MB · 4096 × 2731 · JPG</div>
+              <div class="vreason">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>
+                <span>Download unavailable. Licence expired 11 Sep 2026.</span>
+              </div>
+            </div>
+            <button class="iconbtn" aria-label="Actions for version 5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+          </div>
+          <div class="vrow is-dim">
+            <div class="vthumb"><i style="background:linear-gradient(140deg,#3c3b31,#23231f)"></i><span class="ft">JPG</span></div>
+            <div class="vmain">
+              <div class="vtitle">Version 4 <span class="badge badge-withdrawn">Withdrawn</span></div>
+              <div class="vby">SD Admin · 10 Sep 2026</div>
+              <div class="vspec">3.2 MB · 4096 × 2731 · JPG</div>
+              <div class="vreason">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>
+                <span>Withdrawn by M. Holmes, 12 Sep. Not downloadable.</span>
+              </div>
+            </div>
+            <button class="iconbtn" aria-label="Actions for version 4"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+          </div>
+          <div class="vrow is-dim">
+            <div class="vthumb"><i style="background:linear-gradient(140deg,#4a493f,#2b2a21)"></i><span class="ft">JPG</span></div>
+            <div class="vmain">
+              <div class="vtitle">Version 1</div>
+              <div class="vby">SD Admin · 10 Sep 2026</div>
+              <div class="vspec">2.8 MB · 4096 × 2731 · JPG</div>
+            </div>
+            <button class="iconbtn" aria-label="Actions for version 1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-full btn-foot">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg>
+          Upload new version
+        </button>
+      </div>
+      <div class="state-note"><ul>
+        <li>Badges carry lifecycle only (Current, Expired, Withdrawn, Draft). The restriction rides the Download action as a reason line, per the rights badging model.</li>
+        <li>Each version is judged on its own rights. Version 1 is still downloadable while version 5 is not.</li>
+      </ul></div>
+    </article>
+
+    <!-- 5. Refresh failed -->
+    <article class="state">
+      <div class="state-head"><span class="state-num">05</span><span class="state-name">Public link refresh failed</span></div>
+      <div class="panel">
+        <div class="panel-title">Versions</div>
+        <div class="linkbar is-warn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.7 18-8-14a2 2 0 0 0-3.4 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+          <span class="linkbar-body">
+            <span><strong>1 of 3 links still serving version 4.</strong> The refresh failed at 14:02. The URL has not changed.</span>
+            <button class="btn btn-tertiary btn-xs">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+              Retry refresh
+            </button>
+          </span>
+        </div>
+        <div class="vlist">
+          <div class="vrow is-current">
+            <div class="vthumb"><i style="background:linear-gradient(140deg,#1f6f7d,#0c4450 60%,#2a2a22)"></i><span class="ft">JPG</span></div>
+            <div class="vmain">
+              <div class="vtitle">Version 5 <span class="badge badge-current">Current</span></div>
+              <div class="vby">SD Admin · 14 Sep 2026</div>
+              <div class="vspec">3.4 MB · 4096 × 2731 · JPG</div>
+              <div class="vflags"><span class="badge badge-serving">Serving 2 links</span></div>
+            </div>
+            <button class="iconbtn" aria-label="Actions for version 5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+          </div>
+          <div class="vrow is-dim">
+            <div class="vthumb"><i style="background:linear-gradient(140deg,#4a493f,#2b2a21)"></i><span class="ft">JPG</span></div>
+            <div class="vmain">
+              <div class="vtitle">Version 4</div>
+              <div class="vby">SD Admin · 10 Sep 2026</div>
+              <div class="vspec">3.2 MB · 4096 × 2731 · JPG</div>
+              <div class="vflags"><span class="badge badge-blocked">1 link not refreshed</span></div>
+            </div>
+            <button class="iconbtn" aria-label="Actions for version 4"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-full btn-foot">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg>
+          Upload new version
+        </button>
+      </div>
+      <div class="state-note"><ul>
+        <li>The failure is attached to the version still being served, so the stale file is findable rather than only counted.</li>
+        <li>The panel says what is true: the URL is unchanged, the bytes behind one of them are old.</li>
+      </ul></div>
+    </article>
+
+    <!-- 6. Upload meta stage -->
+    <article class="state">
+      <div class="state-head"><span class="state-num">06</span><span class="state-name">Upload, rights and consequence</span></div>
+      <div class="panel">
+        <div class="panel-title">Upload new version</div>
+
+        <div class="notice">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.7 18-8-14a2 2 0 0 0-3.4 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+          <span>This asset has <strong>3 public links</strong>. They will switch to this version once it is processed, keeping the same URLs.</span>
+        </div>
+
+        <div class="fieldset">
+          <div class="flab">Rights <span class="carried">Carried over from v4</span></div>
+          <dl class="kit-field-list">
+            <div class="kit-field-row"><dt>Licence</dt><dd>Managed, rights holder agreement</dd></div>
+            <div class="kit-field-row"><dt>Territory</dt><dd>Global</dd></div>
+            <div class="kit-field-row"><dt>Channel</dt><dd>Open web, print, social</dd></div>
+            <div class="kit-field-row"><dt>Expires</dt><dd>31 Dec 2026</dd></div>
+          </dl>
+          <div class="locknote">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>Rights can only be changed by an Admin. Ask one if this file is covered by a different licence.</span>
+          </div>
+        </div>
+
+        <div class="confirm">
+          <span class="cbox" aria-hidden="true"></span>
+          <span><b>This is the same licensed content.</b> The rights above cover the file I am uploading.</span>
+        </div>
+
+        <button class="btn btn-primary btn-full btn-foot">Complete upload</button>
+      </div>
+      <div class="state-note"><ul>
+        <li>Rights inherit as values and display read-only, so the uploader never retypes them and never quietly widens them.</li>
+        <li>The confirmation is the step that catches a genuinely different file, which field copying cannot.</li>
+      </ul></div>
+    </article>
+
+    <!-- 7. Single version -->
+    <article class="state">
+      <div class="state-head"><span class="state-num">07</span><span class="state-name">No history yet</span></div>
+      <div class="panel">
+        <div class="panel-title">Versions</div>
+        <div class="vlist">
+          <div class="vrow is-current">
+            <div class="vthumb"><i style="background:linear-gradient(140deg,#1f6f7d,#0c4450 60%,#2a2a22)"></i><span class="ft">JPG</span></div>
+            <div class="vmain">
+              <div class="vtitle">Version 1 <span class="badge badge-current">Current</span></div>
+              <div class="vby">T. Byrne · 28 Sep 2026</div>
+              <div class="vspec">2.9 MB · 4096 × 2731 · JPG</div>
+            </div>
+            <button class="iconbtn" aria-label="Actions for version 1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+          </div>
+        </div>
+        <div class="empty">
+          <div class="empty-t">This is the original file</div>
+          <div class="empty-b">Upload a replacement to start a version history. The asset keeps its name, links and collections.</div>
+        </div>
+        <button class="btn btn-secondary btn-full">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg>
+          Upload new version
+        </button>
+      </div>
+      <div class="state-note"><ul>
+        <li>The single row still carries Current, so the badge means the same thing on every asset.</li>
+        <li>No public-link line, because the asset has none. The line appears only when there is something to report.</li>
+      </ul></div>
+    </article>
+
+    <!-- 8. Loading -->
+    <article class="state">
+      <div class="state-head"><span class="state-num">08</span><span class="state-name">Loading</span></div>
+      <div class="panel" aria-busy="true">
+        <div class="panel-title">Versions</div>
+        <div class="vlist">
+          <div class="sk-row">
+            <div class="sk sk-thumb"></div>
+            <div class="sk-lines">
+              <div class="sk" style="height:14px;width:58%"></div>
+              <div class="sk" style="height:11px;width:42%"></div>
+              <div class="sk" style="height:11px;width:66%"></div>
+            </div>
+          </div>
+          <div class="sk-row">
+            <div class="sk sk-thumb"></div>
+            <div class="sk-lines">
+              <div class="sk" style="height:14px;width:44%"></div>
+              <div class="sk" style="height:11px;width:50%"></div>
+              <div class="sk" style="height:11px;width:60%"></div>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-full btn-foot" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg>
+          Upload new version
+        </button>
+      </div>
+      <div class="state-note"><ul>
+        <li>Skeleton rows match the real row geometry, so nothing shifts when the data lands.</li>
+        <li>Upload disables while loading: it needs the chain to know what it is replacing.</li>
+      </ul></div>
+    </article>
+
+  </section>
+
+  <section class="appendix">
+    <h2>Action authority</h2>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Action</th><th>Current version</th><th>Earlier version</th><th>Who</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Download</td><td>Yes, minted per request</td><td>Yes, minted against that version's own rights</td><td>Anyone with download access, subject to rights</td></tr>
+          <tr><td>Make current</td><td>Not offered</td><td>Yes</td><td>Admin, DAM Manager, Approver</td></tr>
+          <tr><td>Delete version</td><td>Not offered at all</td><td>Yes</td><td>Soft-delete holders</td></tr>
+          <tr><td>Upload new version</td><td>Panel action</td><td>Panel action</td><td>Role plus ownership</td></tr>
+          <tr><td>Edit rights on upload</td><td>Read-only, inherited</td><td>Read-only, inherited</td><td>Admin only, phase one</td></tr>
+          <tr><td>Withdraw a version</td><td>Not offered</td><td>Yes</td><td>Admin, DAM Manager</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="open-qs">
+      <h2>Open on this design</h2>
+      <ol>
+        <li><b>Does the row need a change note?</b> A one-line "what changed" field would make the history readable a year later, but it is a new field on upload and nobody has asked for it. Left out for now.</li>
+        <li><b>Where does Withdraw live?</b> Shown here as a row action. It may belong in Rights instead, since it is a rights decision rather than a version one.</li>
+        <li><b>Thumbnail for non-image assets.</b> The filetype badge carries the format, but a PDF or PSD row needs a defined placeholder rather than a blank tile.</li>
+        <li><b>Does the public-link line belong here or in Rights?</b> It is shown in Versions because a version bump is what changes what the link serves, and this is where people will look after uploading.</li>
+      </ol>
+    </div>
+  </section>
+</div>
+
+</body></html>
