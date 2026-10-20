@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reporting — Home + Builder (Scale)</title>
+<title>Export Reports V2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -184,10 +184,6 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
 .pv-head .title{font-size:var(--font-size-4);font-weight:var(--font-weight-semibold);}
 .pv-head .sub{font-size:var(--font-size-1);color:var(--text-muted);}
 .pv-spacer{flex:1;}
-.pv-sf{display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-size:var(--font-size-1);font-weight:var(--font-weight-medium);color:var(--primary-default);background:var(--primary-subtle);border:1px solid transparent;border-radius:var(--radius-full);padding:5px 12px;cursor:pointer;}
-.pv-sf:hover{background:var(--surface-default);border-color:var(--primary-default);}
-.pv-sf svg{opacity:.85;flex:0 0 auto;}
-.pv-sf .sf-count{margin-left:1px;background:var(--primary-default);color:#fff;border-radius:var(--radius-full);font-size:10px;font-weight:var(--font-weight-semibold);padding:0 6px;line-height:16px;}
 
 .pv-note{display:flex;align-items:flex-start;gap:10px;margin:var(--spacing-4) var(--spacing-5) 0;padding:10px 12px;border-radius:var(--radius-3);
   background:var(--primary-subtle);border:1px solid var(--primary-muted);color:var(--primary-default);font-size:var(--font-size-1);line-height:16px;}
@@ -574,6 +570,293 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
   .main{padding:var(--spacing-4);}
 }
 
+/* ================= V2 review changes (19 Oct 2026) ================= */
+.r-setup{flex:0 0 280px;} .r-cols{flex:0 0 400px;}
+.preview{flex:1 1 auto;max-width:860px;}
+.btn-destructive{background:var(--color-red-600);color:#fff;}
+.btn-destructive:hover{background:#b02a10;}
+.select:disabled{background-color:var(--surface-muted);color:var(--text-muted);cursor:not-allowed;}
+
+/* nav: QA test-user switcher replaces the View As toggle */
+.nav-link{background:none;border:1px solid rgba(255,255,255,.25);color:#fff;font-family:inherit;font-size:var(--font-size-1);padding:5px 11px;border-radius:var(--radius-full);cursor:pointer;}
+.nav-link:hover{background:rgba(255,255,255,.12);}
+.user-btn{display:flex;align-items:center;gap:9px;background:none;border:none;color:#fff;cursor:pointer;font-family:inherit;padding:3px 6px;border-radius:var(--radius-3);}
+.user-btn:hover{background:rgba(255,255,255,.1);}
+.user-meta{display:flex;flex-direction:column;align-items:flex-start;line-height:1.2;}
+.user-name{font-size:var(--font-size-1);font-weight:600;}
+.user-role{font-size:10px;color:rgba(255,255,255,.65);}
+.user-btn .caret{font-size:10px;opacity:.7;}
+.um-cap{font-size:10px;text-transform:uppercase;letter-spacing:.05em;}
+
+/* home */
+.home-main{max-width:1480px;margin:0 auto;padding:var(--spacing-6);}
+.page-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:18px;}
+.page-title{font-size:22px;font-weight:600;line-height:1.2;}
+.page-sub{font-size:var(--font-size-2);color:var(--text-muted);margin-top:4px;max-width:720px;}
+.page-head .spacer,.cat-bar .spacer,.sec-row .spacer{flex:1;}
+.cat-bar{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--border-default);margin-bottom:22px;}
+.cat-bar .search input{width:280px;}
+.sec-block{margin-bottom:30px;}
+.sec-row{display:flex;align-items:flex-end;gap:12px;margin-bottom:12px;}
+.sec-title{font-size:var(--font-size-3);font-weight:600;display:flex;align-items:center;gap:8px;}
+.sec-count{font-size:var(--font-size-1);font-weight:500;color:var(--text-muted);background:var(--surface-emphasis);border-radius:var(--radius-full);padding:1px 8px;}
+.sec-desc{font-size:var(--font-size-1);color:var(--text-muted);margin:3px 0 12px;}
+.sec-row .sec-desc{margin-bottom:0;}
+.recent-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-top:10px;}
+.rc-card{display:flex;align-items:center;gap:10px;text-align:left;font-family:inherit;background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-3);padding:10px 12px;cursor:pointer;min-width:0;}
+.rc-card:hover{border-color:var(--border-emphasis);box-shadow:var(--shadow-sm);}
+.rc-ico,.tpl-ico{width:28px;height:28px;border-radius:var(--radius-2);background:var(--surface-muted);color:var(--text-muted);display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.rc-ico svg,.tpl-ico svg,.r-ico svg{width:15px;height:15px;}
+.rc-main{display:flex;flex-direction:column;min-width:0;}
+.rc-name{font-size:var(--font-size-2);font-weight:500;color:var(--text-default);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rc-sub{font-size:11px;color:var(--text-muted);}
+
+/* templates read as starting points: neutral identity chips, explicit action */
+.tpl-driver{color:var(--text-muted);background:var(--surface-muted);border:1px solid var(--border-default);}
+.tpl-use{font-size:var(--font-size-1);font-weight:500;color:var(--text-muted);margin-top:auto;padding-top:6px;}
+.tpl-card:hover .tpl-use,.tpl-card:focus-visible .tpl-use{color:var(--primary-default);}
+
+/* My reports table */
+.mr-head,.mr-row{display:grid;grid-template-columns:minmax(240px,1.8fr) 110px 170px 130px 110px 60px 100px 110px 40px;align-items:center;gap:8px;}
+.mr-head{padding:8px var(--spacing-5);border-bottom:1px solid var(--border-default);background:var(--surface-muted);}
+.mr-h{background:none;border:none;font-family:inherit;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-muted);cursor:pointer;padding:4px 0;display:inline-flex;gap:4px;align-items:center;white-space:nowrap;}
+.mr-h:hover,.mr-h.on{color:var(--text-default);}
+.mr-row{padding:11px var(--spacing-5);border-bottom:1px solid var(--border-subtle);cursor:pointer;}
+.mr-row:last-child{border-bottom:none;}
+.mr-row:hover{background:var(--surface-muted);}
+.mr-row .r-title{font-size:var(--font-size-2);}
+.r-ico{background:var(--surface-muted);color:var(--text-muted);}
+.r-cell.num{text-align:right;padding-right:12px;font-variant-numeric:tabular-nums;}
+.acc-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;color:var(--text-default);background:var(--surface-muted);border:1px solid var(--border-default);border-radius:var(--radius-full);padding:2px 9px;white-space:nowrap;}
+.acc-cap{font-size:10px;color:var(--text-muted);font-weight:400;}
+@media (max-width:1200px){
+  .mr-head,.mr-row{grid-template-columns:minmax(200px,1fr) 160px 120px 100px 90px 40px;}
+  .mr-head>:nth-child(2),.mr-head>:nth-child(6),.mr-head>:nth-child(8),
+  .mr-row>:nth-child(2),.mr-row>:nth-child(6),.mr-row>:nth-child(8){display:none;}
+}
+
+/* builder: Detail panel (lightbox pattern) */
+.dpanel{flex:0 0 380px;position:relative;z-index:20;display:flex;background:var(--surface-default);border-left:1px solid var(--border-default);height:100%;min-width:0;}
+.dpanel.collapsed{flex-basis:64px;}
+.dpanel.collapsed .dp-main{display:none;}
+.dp-rail{flex:0 0 64px;border-right:1px solid var(--border-subtle);display:flex;flex-direction:column;align-items:stretch;padding:10px 6px;gap:4px;}
+.dpanel.collapsed .dp-rail{border-right:none;}
+.dp-tab{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;border-radius:var(--radius-3);padding:8px 2px 7px;color:var(--text-muted);cursor:pointer;font-family:inherit;}
+.dp-tab svg{width:18px;height:18px;}
+.dp-tab:hover{background:var(--surface-muted);color:var(--text-default);}
+.dp-tab.on{background:var(--primary-subtle);color:var(--primary-default);}
+.dp-lbl{font-size:10px;font-weight:500;line-height:1.1;}
+.dp-ct{position:absolute;top:3px;right:5px;font-size:9px;font-weight:600;background:var(--surface-emphasis);color:var(--text-default);border-radius:var(--radius-full);padding:0 5px;line-height:15px;}
+.dp-tab.on .dp-ct{background:var(--primary-default);color:#fff;}
+.dp-main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.dp-head{display:flex;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border-subtle);flex:0 0 auto;}
+.dp-title{font-size:var(--font-size-3);font-weight:600;}
+.dp-body{flex:1;overflow-y:auto;padding:16px;min-height:0;}
+.dp-pane .def-row{padding:3px 0;}
+.dp-pane .def-k{flex:0 0 88px;}
+.dp-grp-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-subtle);margin:16px 0 6px;}
+.dp-grp-lbl:first-child{margin-top:0;}
+.pv-foot{flex-wrap:wrap;}
+.run-tpl{flex-basis:100%;display:flex;justify-content:flex-end;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);margin-top:-6px;}
+.run-tpl svg{width:13px;height:13px;}
+
+/* permissions panel + share */
+.pm-counts{display:flex;gap:16px;font-size:var(--font-size-1);color:var(--text-muted);padding:9px 12px;background:var(--surface-muted);border-radius:var(--radius-3);}
+.pm-counts b{color:var(--text-default);font-weight:600;}
+.pm-tools{display:flex;flex-direction:column;gap:8px;margin-bottom:6px;}
+.pm-search input{width:100%;}
+.pm-chips{display:flex;gap:6px;flex-wrap:wrap;}
+.pm-chips .f-chk{font-family:inherit;background:var(--surface-default);}
+.pm-chips .f-chk.on{background:var(--primary-subtle);}
+.pm-row.pm-none .pm-name{color:var(--text-muted);}
+.pm-capped{font-size:11px;color:var(--text-subtle);margin-top:2px;}
+.pm-lvl{flex:0 0 118px;width:118px;}
+.pm-opt.dis{opacity:.5;cursor:not-allowed;}
+.sh-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.sh-chips:empty{display:none;}
+.sh-chip{display:inline-flex;align-items:center;gap:4px;font-size:var(--font-size-1);background:var(--surface-muted);border:1px solid var(--border-default);border-radius:var(--radius-full);padding:3px 4px 3px 10px;}
+.sh-chip button{border:none;background:none;color:var(--text-subtle);cursor:pointer;font-size:11px;padding:1px 4px;}
+.sh-chip button:hover{color:var(--text-default);}
+
+/* template files */
+.tf-intro{font-size:var(--font-size-1);color:var(--text-muted);line-height:1.45;margin-bottom:12px;}
+.tf-up{width:100%;}
+.tf-up svg{width:15px;height:15px;}
+.tf-err{font-size:11px;color:var(--color-red-600);margin-top:6px;line-height:1.4;}
+.tf-err:empty{display:none;}
+.tf-list{margin-top:12px;display:flex;flex-direction:column;}
+.tf-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-subtle);}
+.filetype-badge{font-size:9px;font-weight:600;letter-spacing:.03em;background:rgba(28,28,25,.62);color:#fff;border-radius:var(--radius-1);padding:3px 5px;flex:0 0 auto;}
+.tf-meta{flex:1;min-width:0;}
+.tf-name{font-size:var(--font-size-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tf-sub{font-size:11px;color:var(--text-muted);}
+.tf-def{display:inline-block;font-size:10px;font-weight:500;color:var(--text-default);border:1px solid var(--border-emphasis);border-radius:var(--radius-full);padding:1px 8px;flex:0 0 auto;vertical-align:middle;}
+.tf-act{border:none;background:none;color:var(--text-subtle);cursor:pointer;padding:3px;display:flex;flex:0 0 auto;font-size:12px;}
+.tf-act svg{width:14px;height:14px;}
+.tf-act:hover{color:var(--text-default);} .tf-act.rm:hover{color:var(--color-red-600);}
+.tf-empty{font-size:var(--font-size-1);color:var(--text-muted);padding:12px;border:1px dashed var(--border-emphasis);border-radius:var(--radius-3);line-height:1.4;}
+.field .sw-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:0;}
+.sw{appearance:none;width:32px;height:18px;border-radius:9px;background:var(--color-stone-300);position:relative;cursor:pointer;transition:background .15s;flex:0 0 auto;}
+.sw::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+.sw:checked{background:var(--primary-default);} .sw:checked::after{left:16px;}
+.sw:disabled{opacity:.5;cursor:not-allowed;}
+.field .sw-row + .select{margin-top:8px;}
+
+/* legacy advanced options */
+#buildSurface:not(.adv) #f-legacy{display:none;}
+#f-legacy:empty{display:none;}
+.lg-list{display:flex;flex-direction:column;gap:9px;}
+.field .lg-opt{display:flex;gap:9px;align-items:flex-start;font-size:var(--font-size-1);font-weight:400;cursor:pointer;margin-bottom:0;}
+.lg-opt .checkbox-input{margin-top:1px;}
+.lg-txt{display:flex;flex-direction:column;}
+.lg-sub{font-size:10px;color:var(--text-subtle);}
+
+/* dialogs */
+.ch-body{gap:10px;}
+.ch-opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;font-family:inherit;background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-3);padding:14px 16px;cursor:pointer;transition:border-color .15s,background .15s;}
+.ch-opt:hover{border-color:var(--border-emphasis);background:var(--surface-muted);}
+/* recommended path carries the accent at rest; legacy stays neutral */
+.ch-opt.ch-rec{border:1.5px solid var(--primary-default);padding:13.5px 15.5px;}
+.ch-opt.ch-rec:hover{background:var(--primary-subtle);border-color:var(--primary-default);}
+.ch-opt.ch-rec .ch-chev{color:var(--primary-default);}
+.rec-pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--color-primary-700);background:var(--primary-subtle);border:1px solid var(--primary-default);border-radius:var(--radius-full);padding:1px 9px 1px 7px;}
+.rec-pill svg{width:11px;height:11px;flex:0 0 auto;}
+.ch-opt:focus-visible{outline:2px solid var(--primary-default);outline-offset:2px;}
+.ch-txt{flex:1;min-width:0;display:flex;flex-direction:column;}
+.ch-t{font-size:var(--font-size-2);font-weight:600;color:var(--text-default);display:flex;align-items:center;gap:8px;}
+.ch-d{font-size:var(--font-size-1);color:var(--text-muted);margin-top:3px;line-height:1.4;}
+.ch-chev{width:18px;height:18px;color:var(--text-subtle);flex:0 0 auto;transition:color .15s,transform .15s;}
+.ch-opt:hover .ch-chev{color:var(--text-muted);transform:translateX(2px);}
+.ch-opt.ch-rec:hover .ch-chev{color:var(--primary-default);}
+.ch-remember{margin-top:4px;}
+.ch-foot-note{flex:1;font-size:11px;color:var(--text-muted);align-self:center;}
+.blank-card{border-style:dashed;border-color:var(--border-emphasis);align-items:center;}
+.blank-card .fetag{margin-left:auto;}
+.scratch-back{margin-bottom:12px;}
+.rt-field .scope-note{margin-top:2px;}
+
+
+@media (max-width:1500px){ .r-setup{flex:0 0 260px;} .r-cols{flex:0 0 360px;} }
+
+/* Reports hub (existing global Reports page) */
+.hub-main{max-width:1480px;margin:0 auto;padding:var(--spacing-6);}
+.hub-head{display:flex;align-items:center;gap:16px;margin-bottom:18px;}
+.hub-head .spacer{flex:1;}
+.hub-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
+@media (max-width:1100px){.hub-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+.hub-card{display:flex;align-items:flex-start;gap:16px;text-align:left;font-family:inherit;background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-3);padding:22px 24px;min-height:112px;cursor:pointer;transition:border-color .15s,box-shadow .15s;}
+.hub-card:hover{border-color:var(--border-emphasis);box-shadow:var(--shadow-sm);}
+.hub-card:focus-visible{outline:2px solid var(--primary-default);outline-offset:2px;}
+.hub-ico{width:40px;height:40px;border-radius:var(--radius-3);background:var(--surface-muted);color:var(--text-muted);display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.hub-ico svg{width:22px;height:22px;}
+.hub-txt{display:flex;flex-direction:column;min-width:0;}
+.hub-t{font-size:var(--font-size-3);font-weight:600;color:var(--text-default);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.hub-d{font-size:var(--font-size-2);color:var(--text-muted);line-height:1.45;margin-top:4px;}
+
+/* Wide drawer for Permissions and Template files: overlays the preview at every width */
+.dpanel.wide .dp-body{padding:18px 24px;}
+.dpanel.wide .dp-head{padding:14px 24px;}
+.pv-area{position:relative;}
+.pv-area::after{content:'';position:absolute;inset:0;background:rgba(28,28,25,.06);opacity:0;pointer-events:none;transition:opacity .15s;}
+.pv-covered .pv-area::after{opacity:1;}
+/* compact permission rows */
+.pm-row{gap:12px;padding:7px 0;}
+.pm-sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pm-capped{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.select.pm-lvl{flex:0 0 132px;width:132px;height:32px;min-height:32px;padding-top:0;padding-bottom:0;font-size:var(--font-size-2);}
+.pm-fixed{flex:0 0 132px;padding-left:11px;}
+
+/* Scope edits inline under its field */
+.scope-inline{display:none;margin-top:8px;padding:12px;border:1px solid var(--border-default);border-radius:var(--radius-3);background:var(--surface-subtle);}
+#f-scope.open .scope-inline{display:block;}
+#f-scope.open .cov-btn{border-color:var(--primary-default);}
+.scope-inline .field{margin-bottom:12px;}
+.scope-inline .optlist{background:var(--surface-default);}
+.scope-inline #anchorBox{padding-top:10px;border-top:1px solid var(--border-subtle);}
+.field label.opt{display:flex;margin-bottom:0;font-weight:400;font-size:var(--font-size-2);}
+.scope-inline .opt{padding:9px 10px;}
+.scope-inline .opt span:not(.meta){min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.scope-inline .opt .meta{flex:0 0 auto;}
+.scope-inline .anchor-opt{display:flex;align-items:flex-start;gap:8px;font-size:var(--font-size-1);line-height:1.4;}
+.scope-inline .anchor-opt .checkbox-input{margin-top:1px;flex:0 0 auto;}
+/* Open scope = one card: neutral header + body, shared border, hairline divider */
+#f-scope.open .cov-btn{background:var(--surface-muted);border-color:var(--border-emphasis);border-radius:var(--radius-2) var(--radius-2) 0 0;}
+#f-scope.open .cov-btn:hover{background:var(--surface-emphasis);}
+#f-scope.open .scope-inline{margin-top:0;background:var(--surface-muted);border:1px solid var(--border-emphasis);border-top:1px solid var(--border-default);border-radius:0 0 var(--radius-2) var(--radius-2);padding:12px 11px 14px;}
+.scope-inline .select,.scope-inline .optlist{background-color:#fff;}
+.scope-inline #anchorBox{border-top-color:var(--border-default);}
+.cov-btn:focus-visible{outline:2px solid var(--primary-default);outline-offset:2px;}
+.dpanel .dp-rail{box-sizing:border-box;flex:0 0 64px;width:64px;}
+
+/* Detail panel, DAM lightbox order: rail on the left, content against the right edge.
+   The rail and content are always positioned from the right edge; --dw is the content width.
+   Docked (Details/Filters, 1700px and up): the layout reserves rail + content.
+   Overlay (Permissions/Templates, or any tab below 1700px): the layout reserves the rail only;
+   rail + content slide over the preview. Width changes animate so the panel visibly grows and moves.
+   Motion values are local until Scale has motion tokens. */
+.dpanel{--dp-dur:240ms;--dp-ease:cubic-bezier(.2,0,0,1);--dw:316px;flex-basis:380px;border-left:none;transition:flex-basis var(--dp-dur) var(--dp-ease);}
+.dpanel.collapsed{--dw:0px;flex-basis:64px;}
+.dpanel.ovl{--dw:360px;flex-basis:64px;}
+.dpanel.ovl.wide{--dw:min(560px,calc(100vw - 480px));}
+.dpanel .dp-rail{position:absolute;top:0;bottom:0;right:var(--dw);z-index:2;background:var(--surface-default);border-left:1px solid var(--border-default);box-shadow:none;transition:right var(--dp-dur) var(--dp-ease),box-shadow var(--dp-dur) var(--dp-ease);}
+.dpanel.ovl .dp-rail{box-shadow:-12px 0 32px rgba(0,0,0,.14);}
+.dpanel .dp-main{display:flex;position:absolute;top:0;bottom:0;right:0;width:var(--dw);background:var(--surface-default);overflow:hidden;transition:width var(--dp-dur) var(--dp-ease),opacity 160ms ease;}
+.dpanel .dp-head,.dpanel .dp-body{min-width:var(--dw);box-sizing:border-box;}
+.dpanel.collapsed .dp-main{display:flex;opacity:0;visibility:hidden;pointer-events:none;transition:width var(--dp-dur) var(--dp-ease),opacity 120ms ease,visibility 0s linear var(--dp-dur);}
+.dpanel.collapsed .dp-head,.dpanel.collapsed .dp-body{min-width:316px;}
+@keyframes dpPaneIn{from{opacity:0;transform:translateX(6px);}to{opacity:1;transform:none;}}
+.dpanel .dp-pane{animation:dpPaneIn 200ms var(--dp-ease) both;}
+.dp-tab{transition:background-color .15s,color .15s;}
+@media (prefers-reduced-motion:reduce){
+  .dpanel,.dpanel *{transition:none !important;animation:none !important;}
+}
+
+/* Author: compact export preview; the width goes to Report columns */
+#buildSurface[data-pers="admin"] .r-cols{flex:1 1 360px;max-width:620px;}
+.preview.compact{max-width:560px;flex:1 1 auto;}
+.preview.compact .pv-head{padding:12px 16px;}
+.preview.compact .pv-head .title{font-size:var(--font-size-3);}
+.preview.compact .pv-body{padding:12px 16px;}
+.preview.compact .col-manifest{border:none;background:none;}
+.preview.compact .cm-head{border-radius:var(--radius-2);margin-bottom:6px;}
+.cl-list{display:flex;flex-direction:column;}
+.cl-band{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-subtle);padding:12px 0 4px;}
+.cl-band:first-child{padding-top:4px;}
+.cl-row{display:flex;align-items:center;gap:8px;padding:5px 6px;border-bottom:1px solid var(--border-subtle);font-size:var(--font-size-1);min-width:0;}
+.cl-row.sorted{background:var(--primary-subtle);border-radius:var(--radius-1);}
+.cl-n{flex:0 0 34px;font-size:11px;color:var(--text-subtle);font-variant-numeric:tabular-nums;}
+.cl-name{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-default);}
+.cl-type{flex:0 0 auto;font-size:11px;color:var(--text-muted);display:inline-flex;gap:4px;align-items:center;}
+.preview.compact .pv-foot{gap:10px;padding:12px 16px;}
+.preview.compact .pv-foot .est{flex:1 1 100%;min-width:0;}
+.preview.compact .pv-foot .spacer{display:none;}
+.preview.compact .guard{flex-basis:100%;}
+.preview.compact .pv-foot .split{margin-left:auto;}
+.cl-row .ct-pre{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-subtle);flex:0 0 auto;}
+/* Author: builder shrinks when space is tight but never grows; spare width goes to the preview canvas */
+#buildSurface[data-pers="admin"]{flex:0 1 auto;}
+.builder:has(#buildSurface[data-pers="admin"]) .pv-area{flex:1 0 400px;min-width:400px;padding:var(--spacing-4);}
+.cl-n{flex:0 0 40px;white-space:nowrap;}
+.preview.compact .cm-head{display:block;line-height:1.5;}
+.preview.compact .cm-head svg{vertical-align:-1px;margin-right:4px;}
+#buildSurface[data-pers="admin"] .r-cols{min-width:0;}
+/* Long calc rows: the dependency note shortens before the name or the badge */
+.authrow{min-width:0;}
+.authrow .col-lbl{flex:0 1 auto;min-width:60px;max-width:none;}
+.authrow .col-needs{flex:0 1000 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.authrow > *:not(.col-lbl):not(.col-needs):not(.auth-sp){flex-shrink:0;}
+
+/* Custom metadata as a section of Report columns */
+.meta-sec.region{height:auto;min-height:0;display:block;border-right:none;border-top:1px solid var(--border-default);}
+.meta-sec .meta-sec-lbl{color:var(--text-default);}
+.meta-sec .meta-head{background:none;border-bottom:none;padding-top:0;}
+/* Guided: no column picker, but the standard metadata fields they may add stay visible */
+#buildSurface[data-pers="user"] #card-cols{display:flex;flex:0 0 300px;}
+#buildSurface[data-pers="user"] #colList > :not(#card-meta){display:none;}
+#buildSurface[data-pers="user"] #resetCols{display:none;}
+#buildSurface[data-pers="user"] .meta-sec.region{border-top:none;}
+.meta-sec .col-auth-hint{display:none;}
+
 </style>
 </head>
 <body>
@@ -582,42 +865,63 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
   <button class="nav-back" id="navBack" aria-label="Back to Reports" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
   <span class="crumb" id="crumb">/ Reports</span>
   <span class="spacer"></span>
-  <div class="persona" id="persona" title="Demo only — switch the user this UI is built for">
-    <span class="persona-lbl">View as</span>
-    <button class="persona-opt" data-persona="user" type="button" data-tip="Run a ready-made report — pick a couple of options and go.">Guided</button>
-    <button class="persona-opt" data-persona="pm" type="button" data-tip="Assemble a report from the columns the author has made available.">Build</button>
-    <button class="persona-opt" data-persona="admin" type="button" data-tip="Define the tile that builders and guided users consume.">Author</button>
-  </div>
+  <button class="nav-link" id="legacyLink" type="button">Legacy export reports</button>
   <span class="scope-chip">Creative Delivery</span>
-  <div class="avatar" id="navAvatar">JD</div>
+  <button class="user-btn" id="userBtn" type="button" title="QA test users: switch the signed-in user and their application role">
+    <span class="avatar" id="navAvatar">RC</span>
+    <span class="user-meta"><span class="user-name" id="navName">Rodger Corcoran</span><span class="user-role" id="navRole">Author role</span></span>
+    <span class="caret">▾</span>
+  </button>
 </div>
-<div id="view-home">
-<div class="shell">
-  <aside class="side">
-    <div class="side-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Reports</div>
-    <div class="side-item" onclick="toast('Opens the report queue — async runs and their status')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Report queue</div>
-    <div class="side-item" onclick="showView('schedules')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Schedules</div>
-    <div class="side-div"></div>
-    <div class="side-cap">Quick start</div>
-    <div class="side-item" onclick="toast('Opens the full report-type picker, grouped by subject')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> All report types</div>
-  </aside>
-
-  <main class="main">
-    <div class="sec-head">Start from a template</div>
-    <div class="list-bar">
-      <div class="tabs" id="tplTabs"></div>
+<div id="view-hub" style="display:none">
+  <main class="hub-main">
+    <div class="hub-head">
+      <div class="page-title">Reports</div>
       <span class="spacer"></span>
-      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="tplSearch" placeholder="Search templates"></div>
+      <button class="btn btn-md btn-secondary" id="hubAdmin" type="button">Administrator</button>
     </div>
-    <div class="tpl-grid" id="tplGrid"></div>
-
-    <div class="my-section" id="mySection" style="display:none">
-      <div class="sec-head sec-recent">My reports</div>
-      <div class="list" id="myList"></div>
-    </div>
+    <div class="hub-grid" id="hubGrid"></div>
   </main>
 </div>
+<div id="view-home">
+  <main class="home-main">
+    <div class="page-head">
+      <div>
+        <div class="page-title">Export reports</div>
+        <div class="page-sub">Start from a template, or open a report you have access to. Runs are emailed when ready and tracked in Reports › Report queue.</div>
+      </div>
+      <span class="spacer"></span>
+      <button class="btn btn-md btn-primary" id="buildBtn" type="button">Build a report</button>
+    </div>
+    <div class="cat-bar">
+      <div class="tabs" id="catTabs"></div>
+      <span class="spacer"></span>
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="homeSearch" placeholder="Search templates and reports"></div>
+    </div>
 
+    <section class="sec-block" id="recentSec">
+      <div class="sec-title">Recently run</div>
+      <div class="recent-row" id="recentRow"></div>
+    </section>
+
+    <section class="sec-block">
+      <div class="sec-title">Templates <span class="sec-count" id="tplCount"></span></div>
+      <div class="sec-desc">Pre-built starting points. Opening one creates your own copy; the template itself never changes.</div>
+      <div class="tpl-grid" id="tplGrid"></div>
+    </section>
+
+    <section class="sec-block">
+      <div class="sec-row">
+        <div>
+          <div class="sec-title">My reports <span class="sec-count" id="myCount"></span></div>
+          <div class="sec-desc">Every saved report you can access, at the level you can use it.</div>
+        </div>
+        <span class="spacer"></span>
+        <div class="tabs" id="ownTabs"></div>
+      </div>
+      <div class="list" id="myList"></div>
+    </section>
+  </main>
 </div>
 <div id="view-builder">
 <div class="builder">
@@ -640,11 +944,15 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
         </div>
         <div class="field lk" id="f-scope">
           <label>Scope</label>
-          <button class="cov-btn" id="scopeBtn" type="button">
+          <button class="cov-btn" id="scopeBtn" type="button" aria-expanded="false" aria-controls="scopeInline">
             <span class="cov-ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg></span>
             <span class="cov-main"><span class="cov-sub" id="scopeSub">All projects in your access</span></span>
             <span class="cov-edit">Edit</span>
           </button>
+          <div class="scope-inline" id="scopeInline"><div class="field lk" id="f-client"><label>Client</label><select class="select" id="clientSelect"></select></div>
+        <div class="field lk" id="f-ptype"><label>Project type <span class="gate">— constrained to client</span></label><div class="optlist" id="ptypeList"></div><div class="scope-note">Refine to individual projects in Filters.</div></div>
+        <div class="field lk" id="f-role"><label>Roles <span class="gate">— constrained to projects</span></label><div class="optlist" id="roleList"></div></div>
+        <div id="anchorBox"></div></div>
         </div>
         <div class="cov-lbl">Shape</div>
         <div class="field lk" id="f-breakdown">
@@ -664,16 +972,18 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
             <button class="dir-btn" id="dirBtn" type="button"></button>
           </div>
         </div>
+        <div class="field" id="f-legacy"></div>
       </div>
     </div>
     <div class="region r-cols lk" id="card-cols">
       <div class="region-head">Report columns <span class="linkbtn" id="resetCols">Reset</span></div>
-      <div class="region-body flush"><div class="optlist plain" id="colList"></div></div>
-    </div>
-    <div class="region r-meta lk" id="card-meta">
-      <div class="region-head">Custom metadata</div>
-      <div class="meta-head" id="metaScope"></div>
-      <div class="region-body flush"><div class="optlist plain" id="metaList"></div></div>
+      <div class="region-body flush"><div class="optlist plain" id="colList"></div>
+        <div class="region meta-sec lk" id="card-meta">
+          <div class="col-group-lbl meta-sec-lbl">Custom metadata</div>
+          <div class="meta-head" id="metaScope"></div>
+          <div class="optlist plain" id="metaList"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -687,6 +997,22 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
     </div>
   </div>
   </div>
+  <aside class="dpanel" id="dpanel" aria-label="Report panel">
+    <nav class="dp-rail" id="dpRail"></nav>
+    <div class="dp-main">
+      <div class="dp-head"><span class="dp-title" id="dpTitle">Details</span><button class="so-x" id="dpCollapse" type="button" title="Collapse panel">»</button></div>
+      <div class="dp-body">
+        <div class="dp-pane" data-pane="details" id="dpDetails"></div>
+        <div class="dp-pane" data-pane="filters">
+          <div class="so-sec-lbl">Narrow within the report’s scope</div>
+          <div id="filterList"></div>
+          <div class="f-add"><select class="select" id="addFilter"><option value="">+ Add filter…</option></select></div>
+        </div>
+        <div class="dp-pane" data-pane="perm" id="dpPerm"></div>
+        <div class="dp-pane" data-pane="tpl" id="dpTpl"></div>
+      </div>
+    </div>
+  </aside>
 </div>
 
 </div>
@@ -705,7 +1031,7 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
 <div class="rt-overlay" id="scratchOverlay">
   <div class="rt-dialog scratch-dialog" role="dialog" aria-modal="true" aria-labelledby="scratchHead">
     <div class="rt-head" id="scratchHead">Build a report</div>
-    <div class="rt-sub">Pick a report type to build from. The type sets the grain, columns and rules — and locks once you start.</div>
+    <div class="rt-sub" id="scratchSub">Pick a report type to build from. The type sets the grain, columns and rules, and locks once you start.</div>
     <div class="scratch-body" id="scratchGrid"></div>
     <div class="rt-foot"><button class="btn btn-md btn-ghost" id="scratchCancel" type="button">Cancel</button></div>
   </div>
@@ -723,34 +1049,6 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
 </div>
 <div class="ctx-menu" id="actionMenu"></div>
 <div class="toast" id="toast"></div>
-<div class="so-overlay" id="soOverlay">
-  <div class="so-panel" role="dialog" aria-modal="true" aria-label="Scope">
-    <div class="so-head"><span class="t">Scope</span><button class="so-x" id="soClose" type="button">✕</button></div>
-    <div class="so-body">
-      <div class="so-sec">
-        <div class="so-sec-lbl">What data this report covers</div>
-        <div class="field lk" id="f-client"><label>Client</label><select class="select" id="clientSelect"></select></div>
-        <div class="field lk" id="f-ptype"><label>Project type <span class="gate">— constrained to client</span></label><div class="optlist" id="ptypeList"></div><div class="scope-note">Refine to individual projects in Filters.</div></div>
-        <div class="field lk" id="f-role"><label>Roles <span class="gate">— constrained to projects</span></label><div class="optlist" id="roleList"></div></div>
-        <div id="anchorBox"></div>
-      </div>
-    </div>
-    <div class="so-foot"><button class="btn btn-md btn-primary" id="soDone" type="button">Done</button></div>
-  </div>
-</div>
-<div class="so-overlay" id="filtersOverlay">
-  <div class="so-panel" role="dialog" aria-modal="true" aria-label="Filters">
-    <div class="so-head"><span class="t">Filters</span><button class="so-x" id="filtersClose" type="button">✕</button></div>
-    <div class="so-body">
-      <div class="so-sec">
-        <div class="so-sec-lbl">Narrow within the report’s scope</div>
-        <div id="filterList"></div>
-        <div class="f-add"><select class="select" id="addFilter"><option value="">+ Add filter…</option></select></div>
-      </div>
-    </div>
-    <div class="so-foot"><button class="btn btn-md btn-primary" id="filtersDone" type="button">Done</button></div>
-  </div>
-</div>
 <div class="rt-overlay" id="rtOverlay">
   <div class="rt-dialog" role="dialog" aria-modal="true" aria-labelledby="rtHead">
     <div class="rt-head" id="rtHead">Run report</div>
@@ -762,9 +1060,9 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
 <div class="rt-overlay" id="permOverlay">
   <div class="rt-dialog wide" role="dialog" aria-modal="true" aria-labelledby="permHead">
     <div class="rt-head" id="permHead">Share report</div>
-    <div class="rt-sub">Who can open this report, and whose data it shows when it runs.</div>
+    <div class="rt-sub">Give people access. They are added to this report’s access list.</div>
     <div class="rt-body" id="permBody"></div>
-    <div class="rt-foot"><button class="btn btn-md btn-ghost" id="permCancel" type="button">Cancel</button><button class="btn btn-md btn-primary" id="permSave" type="button">Save access</button></div>
+    <div class="rt-foot"><button class="btn btn-md btn-ghost" id="permCancel" type="button">Cancel</button><button class="btn btn-md btn-primary" id="permSave" type="button" disabled>Send</button></div>
   </div>
 </div>
 <div class="rt-overlay" id="schOverlay">
@@ -773,6 +1071,40 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
     <div class="rt-sub">Runs the report on a recurring basis and emails the result.</div>
     <div class="rt-body" id="schBody"></div>
     <div class="rt-foot"><button class="btn btn-md btn-ghost" id="schCancel" type="button">Cancel</button><button class="btn btn-md btn-primary" id="schSave" type="button">Create schedule</button></div>
+  </div>
+</div>
+<div class="rt-overlay" id="chooserOverlay">
+  <div class="rt-dialog wide" role="dialog" aria-modal="true" aria-labelledby="chHead">
+    <div class="rt-head" id="chHead">Which export reports?</div>
+    <div class="rt-sub">Your workspace has both versions while reports move across.</div>
+    <div class="rt-body ch-body">
+      <button class="ch-opt ch-rec" id="chNew" type="button"><span class="ch-txt"><span class="ch-t">New export reports <span class="rec-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Recommended</span></span><span class="ch-d">Start from templates, see the exact columns before you run, and share with the right level of access.</span></span><svg class="ch-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
+      <button class="ch-opt" id="chLegacy" type="button"><span class="ch-txt"><span class="ch-t">Legacy export reports</span><span class="ch-d">For reports you haven’t rebuilt yet. They keep running as they do today.</span></span><svg class="ch-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
+      <label class="anchor-opt ch-remember"><input type="checkbox" id="chRemember"> Skip this step and always open new export reports</label>
+    </div>
+    <div class="rt-foot"><button class="btn btn-md btn-ghost" id="chCancel" type="button">Cancel</button></div>
+  </div>
+</div>
+<div class="rt-overlay" id="saveOverlay">
+  <div class="rt-dialog" role="dialog" aria-modal="true" aria-labelledby="saveHead">
+    <div class="rt-head" id="saveHead">Save report</div>
+    <div class="rt-body" id="saveBody"></div>
+    <div class="rt-foot"><button class="btn btn-md btn-ghost" id="saveCancel" type="button">Cancel</button><button class="btn btn-md btn-primary" id="saveGo" type="button">Save report</button></div>
+  </div>
+</div>
+<div class="rt-overlay" id="cfOverlay">
+  <div class="rt-dialog" role="alertdialog" aria-modal="true" aria-labelledby="cfHead">
+    <div class="rt-head" id="cfHead">Are you sure?</div>
+    <div class="rt-sub" id="cfBody" style="padding-bottom:16px"></div>
+    <div class="rt-foot"><button class="btn btn-md btn-ghost" id="cfCancel" type="button">Cancel</button><button class="btn btn-md btn-destructive" id="cfGo" type="button">Confirm</button></div>
+  </div>
+</div>
+<div class="rt-overlay" id="pickOverlay">
+  <div class="rt-dialog" role="dialog" aria-modal="true" aria-labelledby="pickHead">
+    <div class="rt-head" id="pickHead">Which template?</div>
+    <div class="rt-sub">This report has more than one template. Pick one for this run.</div>
+    <div class="rt-body" id="pickBody"></div>
+    <div class="rt-foot"><button class="btn btn-md btn-ghost" id="pickCancel" type="button">Cancel</button><button class="btn btn-md btn-primary" id="pickGo" type="button">Run report</button></div>
   </div>
 </div>
 <script>
@@ -1068,7 +1400,7 @@ function anchorMult(){return S.anchor==='entity'?1.35:1;}
 function colMult(bd,m){if(bd==='week')return 7;if(bd==='monthly')return Math.max(1,m);return 1;}
 function rowMult(bd){return bd==='day'?22:bd==='weekending'?4:1;}
 function activeMetricCount(){return activeCols().filter(c=>c.type==='num').length;}
-function activeDimMetaCount(){return activeCols().filter(c=>c.type!=='num').length+activeMeta().length;}
+function activeDimMetaCount(){return activeCols().filter(c=>c.type!=='num').length+activeMeta().length+legacyCols().length;}
 function projColsFor(bd){return activeDimMetaCount()+activeMetricCount()*colMult(bd,S.months);}
 function projRowsFor(bd){return Math.round(estimateRows()*rowMult(bd)*anchorMult());}
 const ENUM_VALUES={
@@ -1153,6 +1485,7 @@ function renderBreakdown(){
 let editCol=null;
 function renderColumns(){
   const list=$('colList'); const r=REPORTS[S.report];
+  const _ms=$('card-meta'); if(_ms&&_ms.parentNode===list) list.parentNode.appendChild(_ms); // park before redraw
   const author=S.persona==='admin';
   const avail=S.cols.filter(c=>colAvail(c)&&colVisible(c));
   const cols=avail.filter(c=>!c.insight);
@@ -1166,7 +1499,7 @@ function renderColumns(){
     if(author){
       const editing=editCol===c.id;
       const lvl=colLevel(c);
-      const lvlLabel={guided:'Guided',builder:'Builder',author:'Author only'}[lvl];
+      const lvlLabel={guided:'Guided',builder:'Build',author:'Author only'}[lvl];
       const pill=c.locked?'<span class="meta">required</span>':`<button type="button" class="avail-pill lvl-${lvl}" data-avail="${c.id}" title="Who can access this column — click to change">${lvlLabel}</button>`;
       const lbl=editing
         ? `<input class="alias-in" data-alias="${c.id}" value="${(c.alias||c.label).replace(/"/g,'&quot;')}" placeholder="${c.label}">`
@@ -1176,7 +1509,7 @@ function renderColumns(){
     const note=na?`<span class="meta">${c.applies==='fe'?'Fixed Estimate':'Traditional Budget'} only</span>`:c.locked?'<span class="meta">required</span>':'';
     return `<label class="opt ${na?'na':''}"><input type="checkbox" class="checkbox-input" data-col="${c.id}" ${c.on&&!na?'checked':''} ${(c.locked||na)?'disabled':''}><span>${colLabel(c)}</span>${tag(c)}${needNote(c)}${note}</label>`;
   };
-  const hint=author?'<div class="col-auth-hint">Tick = pre-selected in the tile · access cascades up (Guided → Builder → Author) · rename ✎ for the client’s language.</div>':(S.persona==='pm'?'<div class="col-auth-hint">These are the columns the author shipped for builders — tick the ones you need.</div>':'');
+  const hint=author?'<div class="col-auth-hint">Tick = pre-selected in the tile · access cascades up (Guided → Build → Author) · rename ✎ for the client’s language.</div>':(S.persona==='pm'?'<div class="col-auth-hint">These are the columns the author shipped for builders — tick the ones you need.</div>':'');
   list.innerHTML=hint+'<div class="col-group-lbl">Default columns</div>'+def.map(rowHtml).join('')+
     (opt.length?'<div class="col-group-lbl">Optional columns</div>'+opt.map(rowHtml).join(''):'')+
     (insights.length?`<div class="col-group-lbl calc-lbl">Insights &amp; calculations<span class="calc-sub">${author?'expose the ones relevant to this report':'derived metrics the author has enabled'}</span></div>`+insights.map(rowHtml).join(''):'');
@@ -1194,7 +1527,10 @@ function renderColumns(){
     inp.onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();commit();}else if(ev.key==='Escape'){editCol=null;renderColumns();}};
     inp.onblur=commit;
   });
+  placeMetaSection();
 }
+// Metadata sits after Optional columns, ahead of Insights & calculations; inserted after binding so column handlers never touch it.
+function placeMetaSection(){const list=$('colList'),ms=$('card-meta');if(!list||!ms)return;const cl=list.querySelector('.calc-lbl');cl?list.insertBefore(ms,cl):list.appendChild(ms);}
 function renderMeta(){
   const author=S.persona==='admin';
   const guided=S.persona==='user';
@@ -1204,11 +1540,11 @@ function renderMeta(){
   $('metaScope').textContent = guided
     ? `${vis.length} field${vis.length!==1?'s':''} available`
     : (S.client?`Reportable fields · scoped to ${clientNm} · ${vis.length} available`:`Standard fields · set a scope to load custom metadata`);
-  const pill=m=>{const lvl=metaLevel(m);const lbl={guided:'Guided',builder:'Builder',author:'Author only'}[lvl];return `<button type="button" class="avail-pill lvl-${lvl}" data-mavail="${m.id}" title="Who can pick this field — click to change">${lbl}</button>`;};
+  const pill=m=>{const lvl=metaLevel(m);const lbl={guided:'Guided',builder:'Build',author:'Author only'}[lvl];return `<button type="button" class="avail-pill lvl-${lvl}" data-mavail="${m.id}" title="Who can pick this field — click to change">${lbl}</button>`;};
   const row=m=>author
     ? `<div class="opt authrow"><input type="checkbox" class="checkbox-input" data-meta="${m.id}" ${m.on?'checked':''}><span class="col-lbl">${m.label}</span><span class="auth-sp"></span>${pill(m)}</div>`
     : `<label class="opt"><input type="checkbox" class="checkbox-input" data-meta="${m.id}" ${m.on?'checked':''}><span>${m.label}</span></label>`;
-  let html=author?'<div class="col-auth-hint">Tick = pre-selected · access cascades up (Guided → Builder → Author).</div>':'';
+  let html=author?'<div class="col-auth-hint">Tick = pre-selected · access cascades up (Guided → Build → Author).</div>':'';
   html+='<div class="col-group-lbl">Standard fields</div>'+coreRows.map(row).join('');
   if(customRows.length) html+=`<div class="meta-divider">${S.client?clientNm+' custom fields — scoped':'Custom fields'}</div>`+customRows.map(row).join('');
   else if(!S.client&&!guided) html+='<div class="scope-note">Set a scope to load a client’s custom metadata — you only ever see what exists for the selected client.</div>';
@@ -1397,19 +1733,19 @@ function renderAnchor(){
   if(!S.report){box.innerHTML='';return;}
   const a=REPORT_ANCHOR[S.report]; const noun=curNoun();
   const body = a.toggle
-    ? `<label class="anchor-opt"><input type="checkbox" id="anchorChk" ${S.anchor==='entity'?'checked':''}><span>Include ${noun} with no logged time</span></label>`
+    ? `<label class="anchor-opt"><input type="checkbox" class="checkbox-input" id="anchorChk" ${S.anchor==='entity'?'checked':''}><span>Include ${noun} with no logged time</span></label>`
     : `<div class="anchor-note">${a.def==='entity'?`Shows every one of the ${noun} in scope, including those with no activity in the period.`:`Shows only ${noun} with logged activity — none are invented.`}</div>`;
   box.innerHTML=`<div class="anchor-hd">Row coverage</div>${body}`;
   if(a.toggle)$('anchorChk').onchange=e=>{S.anchor=e.target.checked?'entity':'fact';renderPreview();};
 }
-function openScope(){$('soOverlay').classList.add('show');}
-function closeScope(){$('soOverlay').classList.remove('show');}
-function openFilters(){$('filtersOverlay').classList.add('show');}
-function closeFilters(){$('filtersOverlay').classList.remove('show');}
+function openScope(){S.scopeOpen=true;renderScopeOpen();const f=$('f-scope');if(f)f.scrollIntoView({block:'nearest',behavior:'smooth'});}
+function closeScope(){S.scopeOpen=false;renderScopeOpen();}
+function toggleScope(){S.scopeOpen?closeScope():openScope();}
+function renderScopeOpen(){const f=$('f-scope');if(!f)return;f.classList.toggle('open',!!S.scopeOpen);const e=f.querySelector('.cov-edit');if(e)e.textContent=S.scopeOpen?'Done':'Edit';$('scopeBtn').setAttribute('aria-expanded',S.scopeOpen?'true':'false');}
 function renderScopeBtn(){
   const sub=$('scopeSub'); if(!sub)return;
   if(!S.client){
-    sub.textContent=S.persona==='user'?'All projects in your access':'Choose scope — required';
+    sub.textContent=S.persona==='user'?'All projects in your access':'Choose scope';
     sub.classList.toggle('unset',S.persona!=='user');
     return;
   }
@@ -1450,7 +1786,8 @@ function barW(type,i){
 function renderPreview(){
   if(!S.report){$('preview').innerHTML=$('pvEmpty').outerHTML;return;}
   const r=REPORTS[S.report];
-  let cols=activeCols().map(c=>({...c})).concat(activeMeta().map(c=>({...c})));
+  const T=S.templates||[];
+  let cols=activeCols().map(c=>({...c})).concat(legacyCols()).concat(activeMeta().map(c=>({...c})));
   if(S.group){
     const gl=r.groupBy.find(g=>g[0]===S.group);
     const existing=cols.find(c=>c.id===S.group);
@@ -1460,36 +1797,12 @@ function renderPreview(){
   const mult=colMult(S.breakdown,S.months);
   const rawRows=estimateRows(), rows=Math.round(rawRows*rowMult(S.breakdown)*anchorMult()), over=rows>CEILING, warn=!over&&rows>CEILING*0.7;
 
-  const ps=PROJECTS[S.client]||[];
-  const projNames=[...S.projects].map(id=>{const p=ps.find(x=>x.id===id);return p?p.name:id;});
-  const funnel='<svg class="filt-ic" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>';
-  const filterChips=S.filters.map((f,i)=>({f,i})).filter(o=>filterActive(o.f)).map(({f,i})=>{
-    const s=filterSummary(f);
-    const soft=f.mode==='me'||f.mode==='prompt';
-    return `<span class="pill filt" data-fi="${i}" title="Edit filter">${funnel}${f.label} ${soft?`<em class="ask">${s}</em>`:s}</span>`;
-  }).join('');
-  const fcur=sortableFields().find(f=>f.id===S.sort.col);
-  const sortText=fcur?`${fcur.label}, ${dirLabel(fcur.type,S.sort.dir).toLowerCase()}`:'—';
-  const pills=(arr,cls)=>arr.map(v=>`<span class="pill ${cls||''}">${v}</span>`).join('');
-  const defRow=(k,v,unset,nav)=>`<div class="def-row${nav?' def-nav':''}"${nav?' data-openscope="1"':''}><span class="def-k">${k}</span><span class="def-v ${unset?'unset':''}">${v}</span></div>`;
-  const bdText=S.report?`${BREAKDOWNS[S.breakdown].label}${mult>1?` · ${mult} cols per metric`:rowMult(S.breakdown)>1?` · rows per ${S.breakdown==='day'?'day':'week'}`:' · single total column'}`:'—';
-  const def=`<div class="pv-def">
-    ${defRow('Period', S.periodLabel||'Not set', !S.periodLabel)}
-    ${defRow('Breakdown', bdText, !S.report)}
-    ${defRow('Client', S.client?clientName(S.client):(S.persona==='user'?'All projects in your access':'Choose scope — required'), !S.client&&S.persona!=='user', true)}
-    ${defRow('Project types', S.ptypes.size?pills([...S.ptypes]):(S.client?'All types in client':'—'), false, true)}
-    ${defRow('Roles', S.roles.size?pills([...S.roles]):'All roles', false, true)}
-    ${defRow('Includes', S.report?(S.anchor==='entity'?`All ${curNoun()} · incl. zero-activity`:`${curNoun().replace(/^./,c=>c.toUpperCase())} with activity`):'—', false, true)}
-    ${filterChips?defRow('Filters', filterChips, false):''}
-    ${defRow('Sort', sortText, !fcur)}
-  </div>`;
-
   const tagClass=c=>c.grp?'ct-grp':c.meta?'ct-meta':c.type==='num'?'ct-measure':'ct-dim';
   const tagFor=c=>{
     const sorted=c.id===S.sort.col;
     const unit=unitOf(c);
     const showUnit=!(unit==='%'&&c.label.includes('%'));
-    return `<span class="col-tag ${tagClass(c)}${sorted?' ct-sort':''}">${c.grp?'<span class="ct-pre">group</span>':''}${colLabel(c)}${showUnit?`<span class="ct-unit">${unit}</span>`:''}${sorted?`<span class="cm-arr">${S.sort.dir==='desc'?'↓':'↑'}</span>`:''}${c.meta?'<span class="ct-pre">meta</span>':''}</span>`;
+    return `<span class="col-tag ${tagClass(c)}${sorted?' ct-sort':''}">${c.grp?'<span class="ct-pre">group</span>':''}${colLabel(c)}${showUnit?`<span class="ct-unit">${unit}</span>`:''}${sorted?`<span class="cm-arr">${S.sort.dir==='desc'?'↓':'↑'}</span>`:''}${c.meta?'<span class="ct-pre">meta</span>':''}${c.legacy?'<span class="ct-pre">legacy</span>':''}</span>`;
   };
   const dimCols=cols.filter(c=>!c.meta&&c.type!=='num');
   const measCols=cols.filter(c=>!c.meta&&c.type==='num');
@@ -1501,22 +1814,43 @@ function renderPreview(){
   const showLabels=bands.length>1;
   const bandCount=(label,n)=>label==='Metrics'&&mult>1?`${n} × ${mult} ${BREAKDOWNS[S.breakdown].label.toLowerCase()}`:`${n}`;
   const body=bands.map(([label,arr])=>`<div class="cm-group">${showLabels?`<div class="cm-grp-lbl">${label} · ${bandCount(label,arr.length)}</div>`:''}<div class="cm-tags">${arr.map(tagFor).join('')}</div></div>`).join('');
+  // Author: dense list in export order. Same contract (every column, nothing hidden), less chrome.
+  const compact=S.persona==='admin';
+  let colN=0;
+  const listRow=(c,isMeas)=>{
+    const sorted=c.id===S.sort.col, unit=unitOf(c), span=isMeas&&mult>1?mult:1;
+    const start=colN+1; colN+=span;
+    const num=span>1?`${start}–${colN}`:`${start}`;
+    return `<div class="cl-row${sorted?' sorted':''}"><span class="cl-n">${num}</span><span class="cl-name" title="${esc(colLabel(c))}">${colLabel(c)}</span>${c.grp?'<span class="ct-pre">group</span>':''}${c.meta?'<span class="ct-pre">meta</span>':''}${c.legacy?'<span class="ct-pre">legacy</span>':''}${span>1?`<span class="ct-pre">× ${mult}</span>`:''}<span class="cl-type">${unit}${sorted?`<span class="cm-arr">${S.sort.dir==='desc'?'↓':'↑'}</span>`:''}</span></div>`;
+  };
+  const listBody=[['Dimensions',dimCols,false],['Custom metadata',metaCols,false],['Metrics',measCols,true]].filter(([,a])=>a.length)
+    .map(([label,arr,m])=>`<div class="cl-band">${label} · ${bandCount(label,arr.length)}</div>${arr.map(c=>listRow(c,m)).join('')}`).join('');
+  const outTxt=T.length?` · raw data tab + ${T.length===1?esc(T[0].name):T.length+' templates (pick at run)'}`:` · emailed as one .${S.output.format} ${S.output.format==='csv'?'file':'tab'}`;
   const manifest=`<div class="col-manifest">
-    <div class="cm-head ${cOver?'over':cWarn?'warn':''}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> <span class="cm-count">${pcols} columns</span>${mult>1?` (${measCols.length} metrics × ${mult})`:''}${groupNote} · emailed as one .xlsx tab${cOver?' · over limit':cWarn?' · large report':''}</div>
-    ${body}
+    <div class="cm-head ${cOver?'over':cWarn?'warn':''}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> <span class="cm-count">${pcols} columns</span>${mult>1?` (${measCols.length} metrics × ${mult})`:''}${groupNote}${outTxt}${cOver?' · over limit':cWarn?' · large report':''}</div>
+    ${compact?`<div class="cl-list">${listBody}</div>`:body}
   </div>`;
 
+  const eff=S.effective||'author';
+  const accTitle=S.capped?`Granted ${LVL_LABEL[S.grant]} on this report, capped at ${LVL_LABEL[eff]} by your application role`:'Your access to this report';
+  const accChip=`<span class="acc-chip" title="${accTitle}">${LVL_LABEL[eff]} access${S.capped?' <span class="acc-cap">· capped</span>':''}</span>`;
+  const saveBtn=eff==='author'
+    ?`<button class="btn btn-md btn-secondary" id="saveMenuBtn" ${isReady()?'':'disabled'}>Save ▾</button>`
+    :`<button class="btn btn-md btn-secondary" id="saveBtn" ${isReady()?'':'disabled'}>${eff==='guided'?'Save a copy':'Save report'}</button>`;
+  const nGrants=Object.keys((S.perm&&S.perm.grants)||{}).length;
+  const tplNote=T.length===1?`<span class="run-tpl" title="Applied to every run">${ICON_FILE} Template: ${esc(T[0].name)}</span>`:T.length>1?`<span class="run-tpl">${ICON_FILE} ${T.length} templates · you pick one at run</span>`:'';
+
+  $('preview').classList.toggle('compact',compact);
   $('preview').innerHTML=`
     <div class="pv-head">
-      <div><div class="title">${r.name}</div><div class="sub">Grain: ${curGrain()} · ${r.grainNote}</div></div>
+      <div style="min-width:0">${compact?'<div class="title">Export preview</div><div class="sub">Columns in file order</div>':`<div class="title">${esc(S.reportName||r.name)}</div><div class="sub">Grain: ${curGrain()} · ${r.grainNote}</div>`}</div>
       <span class="pv-spacer"></span>
-      <button class="pv-sf" id="sfBtn" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg> Filters${S.filters.length?`<span class="sf-count">${S.filters.length}</span>`:''}</button>
+      ${compact&&!S.capped?'':accChip}
     </div>
-    <div class="pv-note">
+    ${compact?'':`<div class="pv-note">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-      <span>This is the structure of your report — the columns you'll receive. Run to generate it; the file is emailed to you when ready.</span>
-    </div>
-    ${def}
+      <span>This is the structure of your report: the columns you'll receive. Run to generate it; the file is emailed to you when ready.</span>
+    </div>`}
     <div class="pv-body">
       ${manifest}
     </div>
@@ -1527,47 +1861,50 @@ function renderPreview(){
           <div class="meter ${over?'over':warn?'warn':''}"><span style="width:${Math.min(100,(rows/CEILING)*100)}%"></span></div>
         </div>
         <div class="mgrp">
-          <div class="row"><span class="k">Projected columns</span><span class="v">${S.report?pcols:'—'}</span></div>
+          <div class="row"><span class="k">Projected columns</span><span class="v">${pcols}</span></div>
           <div class="meter ${cOver?'over':cWarn?'warn':''}"><span style="width:${Math.min(100,(pcols/COL_CEILING)*100)}%"></span></div>
         </div>
         <span class="cap">Caps: ${CEILING.toLocaleString()} rows · ${COL_CEILING} columns${S.filters.some(filterActive)?' · filters may reduce':''}</span>
       </div>
-      ${over?`<span class="guard">Over the ${CEILING}-row cap — narrow the period, projects or roles.</span>`:cOver?`<span class="guard">Over the ${COL_CEILING}-column cap — choose a coarser breakdown or fewer metrics.</span>`:'<span class="spacer"></span>'}
+      ${over?`<span class="guard">Over the ${CEILING}-row cap. Narrow the period, projects or roles.</span>`:cOver?`<span class="guard">Over the ${COL_CEILING}-column cap. Choose a coarser breakdown or fewer metrics.</span>`:'<span class="spacer"></span>'}
       <span class="spacer"></span>
-      ${S.persona==='admin'?`<button class="btn btn-md btn-secondary" id="saveMenuBtn" ${isReady()?'':'disabled'}>Save ▾</button>`:S.persona==='pm'?`<button class="btn btn-md btn-secondary" id="saveBtn" ${isReady()?'':'disabled'}>Save report</button>`:''}
-      ${S.persona!=='user'?`<button class="btn btn-md btn-secondary" id="accessBtn">${accessLabel()}</button>`:''}
+      ${saveBtn}
+      <button class="btn btn-md btn-secondary" id="accessBtn" type="button">${ICON_PPL} Share${nGrants>1?` · ${nGrants}`:''}</button>
       <div class="split">
         <button class="btn btn-md btn-primary split-main" id="runBtn" ${isReady()?'':'disabled'}>Run report</button>
         <button class="btn btn-md btn-primary split-caret" id="runMore" ${isReady()?'':'disabled'} aria-label="More run options">▾</button>
       </div>
+      ${tplNote}
     </div>`;
   $('runBtn').onclick=()=>startRun('Run');
   $('runMore').onclick=()=>openActionMenu($('runMore'),[
-    {label:'Export as .xlsx', disabled:!isReady(), onClick:()=>startRun('Export')},
-    {label:'Schedule…', onClick:()=>toast('Sets this report to run on a schedule — opens schedule setup')}
+    {label:`Export as .${S.output.format}`, disabled:!isReady(), onClick:()=>startRun('Export')},
+    {label:'Schedule…', onClick:()=>toast('Opens Reports › Schedules with this report selected')}
   ]);
-  if($('accessBtn'))$('accessBtn').onclick=openPerm;
-  if($('saveBtn'))$('saveBtn').onclick=()=>toast('Saved to your reports — pinned to your own list');
+  $('accessBtn').onclick=openShare;
+  if($('saveBtn'))$('saveBtn').onclick=()=>openSave(eff==='guided'?'copy':'save');
   if($('saveMenuBtn'))$('saveMenuBtn').onclick=()=>openActionMenu($('saveMenuBtn'),[
-    {label:'Save report', onClick:()=>toast('Saved to your reports — pinned to your own list')},
-    {label:'Publish as template…', onClick:()=>openActionMenu($('saveMenuBtn'),[
-      {label:'Publish to Guided users', onClick:()=>toast('Published as a Guided template — canned, ready to run')},
-      {label:'Publish to Build users', onClick:()=>toast('Published as a Build template — builders can extend it')},
-      {label:'Publish to both', onClick:()=>toast('Published to Guided and Build users')}
-    ])}
+    {label:'Save report', onClick:()=>openSave('save')},
+    {label:'Publish as template…', onClick:()=>{
+      if(!S.category){toast('Save the report and choose a category before publishing it as a template');return;}
+      openActionMenu($('saveMenuBtn'),[
+        {label:'Publish to Guided users', onClick:()=>toast('Published as a Guided template: ready to run as it is')},
+        {label:'Publish to Build users', onClick:()=>toast('Published as a Build template: builders can add optional columns')},
+        {label:'Publish to both', onClick:()=>toast('Published to Guided and Build users')}
+      ]);}}
   ]);
   renderBreakdown();
   renderAnchor();
   renderReportId();
   renderScopeBtn();
-  $('sfBtn').onclick=openFilters;
-  const scb=$('scopeBtn'); if(scb)scb.onclick=openScope;
-  $('preview').querySelectorAll('.pill.filt[data-fi]').forEach(ch=>ch.onclick=ev=>{ev.stopPropagation();openFilterPop(+ch.dataset.fi,ch);});
-  $('preview').querySelectorAll('[data-openscope]').forEach(row=>row.onclick=openScope);
+  const scb=$('scopeBtn'); if(scb)scb.onclick=toggleScope;
+  renderScopeOpen();
+  renderRail();
+  if(S.panelTab==='details')renderDetails();
 }
 let rtKind='Run';
 function startRun(kind){ if(projColsFor(S.breakdown)>=COL_SOFT) openLargeConfirm(kind); else proceedRun(kind); }
-function proceedRun(kind){ if(S.filters.some(f=>f.mode==='prompt')) openRunPrompts(kind); else queue(kind); }
+function proceedRun(kind){ if(S.filters.some(f=>f.mode==='prompt')) openRunPrompts(kind); else finishRun(kind); }
 let lgKind='Run';
 function openLargeConfirm(kind){
   lgKind=kind;
@@ -1589,7 +1926,7 @@ function openRunPrompts(kind){
     else if(f.kind==='date') input=`<div class="rt-inline"><span class="fr-op">${f.op}</span><input data-rt="${i}" placeholder="DD Mon YYYY"></div>`;
     else input=`<input data-rt="${i}" placeholder="contains…">`;
     return `<div class="rt-field"><label>${f.label}${f.required?' <span class="rt-asterisk">*</span>':''}</label>${input}</div>`;
-  }).join('')+(me.length?`<div class="rt-note">${me.map(f=>f.label).join(', ')} scoped to you — James D\u2019Arcy.</div>`:'');
+  }).join('')+(me.length?`<div class="rt-note">${me.map(f=>f.label).join(', ')} scoped to you — ${CU.name}.</div>`:'');
   $('rtOverlay').classList.add('show');
 }
 function closeRt(){$('rtOverlay').classList.remove('show');}
@@ -1598,36 +1935,6 @@ const ICON_LOCK='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" str
 const ICON_PPL='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>';
 const ICON_WARN='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
 function initials(n){return n.split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();}
-function accessLabel(){const n=S.perm.grants.length;return n?`${ICON_PPL} Shared · ${n}`:`${ICON_LOCK} Share`;}
-let permSnap=null;
-function openPerm(){permSnap=JSON.stringify(S.perm);renderPerm();$('permOverlay').classList.add('show');}
-function closePerm(){$('permOverlay').classList.remove('show');}
-function renderPerm(){
-  const ownerRow=`<div class="pm-row"><span class="pm-av" style="background:${avatarBg('James D\u2019Arcy')}">${initials('James D\u2019Arcy')}</span><div class="pm-meta"><div class="pm-name">James D\u2019Arcy (you)</div><div class="pm-sub">Owner</div></div><span class="pm-fixed">Owner</span></div>`;
-  const grantRows=S.perm.grants.map((g,i)=>{
-    const av=g.kind==='group'?`<span class="pm-av grp">${ICON_PPL}</span>`:`<span class="pm-av" style="background:${avatarBg(g.name)}">${initials(g.name)}</span>`;
-    return `<div class="pm-row">${av}<div class="pm-meta"><div class="pm-name">${g.name}</div><div class="pm-sub">${g.kind==='group'?'Group':'Person'} · sees what they\u2019re entitled to</div></div><button class="pm-x" data-prm="${i}" type="button" aria-label="Remove">✕</button></div>`;
-  }).join('');
-  const used=new Set(S.perm.grants.map(g=>g.id));
-  const users=PEOPLE.filter(p=>p.kind==='user'&&!used.has(p.id));
-  const groups=PEOPLE.filter(p=>p.kind==='group'&&!used.has(p.id));
-  const picker=`<select class="select pm-add" id="permAdd"><option value="">+ Add people or groups…</option>${users.length?`<optgroup label="People">${users.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</optgroup>`:''}${groups.length?`<optgroup label="Groups">${groups.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</optgroup>`:''}</select>`;
-  const scope=`<div class="pm-scope">
-    <label class="pm-opt ${S.perm.scope==='viewer'?'sel':''}"><input type="radio" name="pmscope" value="viewer" ${S.perm.scope==='viewer'?'checked':''}><span class="pm-otext"><span class="pm-omain">Each viewer\u2019s own data</span><span class="pm-osub">They see only what they\u2019re entitled to. Recommended.</span></span></label>
-    <label class="pm-opt ${S.perm.scope==='author'?'sel':''}"><input type="radio" name="pmscope" value="author" ${S.perm.scope==='author'?'checked':''}><span class="pm-otext"><span class="pm-omain">Your data scope</span><span class="pm-osub">Everyone who runs it sees what you can see.</span></span></label>
-  </div>${S.perm.scope==='author'?`<div class="pm-warn">${ICON_WARN}<span>This can expose data a viewer couldn\u2019t otherwise access — client financials, resource rates, or projects outside their remit.</span></div>`:''}`;
-  $('permBody').innerHTML=`<div class="pm-section">People &amp; groups with access</div>${picker}<div class="pm-list">${ownerRow}${grantRows}</div><div class="pm-note">Each recipient opens it with their own access — a Build user can adjust what they\u2019re allowed to; a Guided user runs it as-is.</div><div class="pm-section">When this report runs, it shows</div>${scope}<div class="pm-note">Scheduled email recipients are set when you schedule the report.</div>`;
-  $('permAdd').onchange=e=>{if(!e.target.value)return;const p=PEOPLE.find(x=>x.id===e.target.value);S.perm.grants.push({id:p.id,name:p.name,kind:p.kind,level:'view'});renderPerm();};
-  $('permBody').querySelectorAll('[data-prm]').forEach(b=>b.onclick=()=>{S.perm.grants.splice(+b.dataset.prm,1);renderPerm();});
-  $('permBody').querySelectorAll('input[name="pmscope"]').forEach(r=>r.onchange=e=>{S.perm.scope=e.target.value;renderPerm();});
-}
-function queue(kind){
-  queueId++;
-  const t=$('toast');
-  t.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9FE1CB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> ${kind} queued · <span class="qid">#${queueId}</span> — we'll email it when ready.`;
-  t.classList.add('show'); clearTimeout(window._tt); window._tt=setTimeout(()=>t.classList.remove('show'),3600);
-}
-
 /* ---------------- Wiring ---------------- */
 function applyReport(){
   if(!S.report){['f-period','f-breakdown','f-client','f-ptype','f-role','f-group','f-sort','card-cols','card-meta'].forEach(i=>lock(i,true));renderPreview();return;}
@@ -1658,7 +1965,6 @@ $('addFilter').onchange=e=>{
   S.expandedFilter=f.id;
   renderFilters(); renderPreview();
 };
-$('soClose').onclick=closeScope;
 $('advToggle').onclick=()=>{
   const bs=$('buildSurface'), open=!bs.classList.contains('adv');
   bs.classList.toggle('adv',open);
@@ -1667,11 +1973,6 @@ $('advToggle').onclick=()=>{
 $('lgCancel').onclick=closeLg;
 $('lgGo').onclick=()=>{closeLg();proceedRun(lgKind);};
 $('lgOverlay').onclick=e=>{if(e.target===$('lgOverlay'))closeLg();};
-$('soDone').onclick=closeScope;
-$('soOverlay').onclick=e=>{if(e.target===$('soOverlay'))closeScope();};
-$('filtersClose').onclick=closeFilters;
-$('filtersDone').onclick=closeFilters;
-$('filtersOverlay').onclick=e=>{if(e.target===$('filtersOverlay'))closeFilters();};
 $('fpopX').onclick=closeFilterPop;
 document.addEventListener('mousedown',e=>{
   if(!$('filterPop').classList.contains('show'))return;
@@ -1685,13 +1986,11 @@ $('rtRun').onclick=()=>{
   const fs=S.filters.filter(f=>f.mode==='prompt');let bad=false;
   $('rtBody').querySelectorAll('[data-rt]').forEach(el=>{const f=fs[+el.dataset.rt];if(f&&f.required&&!el.value.trim()){bad=true;el.classList.add('rt-bad');}else el.classList.remove('rt-bad');});
   if(bad)return;
-  closeRt();queue(rtKind);
+  closeRt();finishRun(rtKind);
 };
 $('rtCancel').onclick=closeRt;
 $('rtOverlay').onclick=e=>{if(e.target===$('rtOverlay'))closeRt();};
-$('permCancel').onclick=()=>{if(permSnap)S.perm=JSON.parse(permSnap);closePerm();renderPreview();};
-$('permSave').onclick=()=>{closePerm();renderPreview();toast('Access updated');};
-$('permOverlay').onclick=e=>{if(e.target===$('permOverlay')){if(permSnap)S.perm=JSON.parse(permSnap);closePerm();renderPreview();}};
+
 
 /* ---- home ---- */
 
@@ -1735,14 +2034,27 @@ const STARTS=[
 ];
 const TYPE_ICON={r1:['cash','ico-amber'],r2:['bars','ico-teal'],r3:['users','ico-purple'],r4:['target','ico-green'],r5:['cash','ico-amber'],r6:['cash','ico-amber'],r7:['calendar','ico-blue'],r9:['target','ico-green'],r10:['target','ico-purple'],r11:['clock','ico-teal'],r12:['clock','ico-blue'],r13:['clock','ico-purple'],r14:['bars','ico-amber']};
 const TYPE_NAME={r1:'Project P&L Snapshot',r2:'Est vs Resourced vs Actual — by Role',r3:'Est vs Resourced vs Actual — by User',r4:'OOP Tracker',r5:'Retainer Performance',r6:'Client Portfolio Financials',r7:'Utilisation Report',r9:'Task Status',r10:'Task Delivery vs Baseline',r11:'Timesheet Detail',r12:'Timesheet Compliance',r13:'Timesheet Approval Status',r14:'Billable vs Non-billable Breakdown'};
+// Saved V2 reports. grants = the per-report access list (user/group id → guided | build | author).
+// Effective access = the lower of the viewer's application role and their grant.
 const SAVED=[
-  {name:'FIFA — Project P&L, Q2 2026',type:'r1',owner:'James D\u2019Arcy',oi:'JD',last:'2 hours ago',scope:'mine',sched:true,status:'completed'},
-  {name:'Creative Delivery — estimate vs actual by role',type:'r2',owner:'James D\u2019Arcy',oi:'JD',last:'Yesterday',scope:'mine',status:'completed'},
-  {name:'Client portfolio financials — YTD',type:'r6',owner:'Aisling O\u2019Connor',oi:'AO',last:'2 days ago',scope:'shared',status:'completed'},
-  {name:'Studio — utilisation by department',type:'r7',owner:'James D\u2019Arcy',oi:'JD',last:'3 days ago',scope:'mine',status:'failed'},
-  {name:'UEFA — OOP tracker',type:'r4',owner:'Marco Rossi',oi:'MR',last:'5 days ago',scope:'shared',status:'completed'},
-  {name:'FIFA Brand Retainer — performance',type:'r5',owner:'James D\u2019Arcy',oi:'JD',last:'1 week ago',scope:'mine',sched:true,status:'queued'},
-  {name:'Red Bull — estimate vs actual by user',type:'r3',owner:'Aisling O\u2019Connor',oi:'AO',last:'2 weeks ago',scope:'shared',status:'completed'},
+  {id:'s1',name:'FIFA — Project P&L, Q2 2026',type:'r1',owner:'u-jd',lastRun:'2 hours ago',lr:1,runs:42,sched:true,modified:'14 Oct 2026',mo:5,
+    grants:{'u-jd':'author','u-mr':'build','u-sk':'guided','g-fin':'guided'},rights:'',
+    templates:[{name:'Margin_Pivot_Q4.xlsx',uploaded:'12 Oct 2026',by:'Rodger Corcoran',def:true},{name:'FIFA_Board_Pack.xlsx',uploaded:'3 Sep 2026',by:'Aisling O’Connor'}]},
+  {id:'s2',name:'Creative Delivery — estimate vs actual by role',type:'r2',owner:'u-jd',lastRun:'Yesterday',lr:2,runs:18,modified:'9 Oct 2026',mo:10,
+    grants:{'u-jd':'author','u-mr':'author'}},
+  {id:'s3',name:'Client portfolio financials — YTD',type:'r6',owner:'u-ao',lastRun:'2 days ago',lr:3,runs:27,modified:'1 Oct 2026',mo:18,
+    grants:{'u-ao':'author','u-jd':'build','u-sk':'guided'},rights:'emea-fin',
+    templates:[{name:'Portfolio_Summary.xlsx',uploaded:'20 Sep 2026',by:'Aisling O’Connor',def:true}]},
+  {id:'s4',name:'Studio — utilisation by department',type:'r7',owner:'u-mr',lastRun:'3 days ago',lr:4,runs:11,modified:'28 Sep 2026',mo:21,
+    grants:{'u-mr':'author','u-jd':'author','u-sk':'build'}},
+  {id:'s5',name:'UEFA — OOP tracker',type:'r4',owner:'u-mr',lastRun:'5 days ago',lr:5,runs:6,modified:'22 Sep 2026',mo:27,
+    grants:{'u-mr':'author','u-jd':'guided'}},
+  {id:'s6',name:'FIFA Brand Retainer — performance',type:'r5',owner:'u-jd',lastRun:'1 week ago',lr:6,runs:9,sched:true,modified:'18 Sep 2026',mo:31,
+    grants:{'u-jd':'author'}},
+  {id:'s7',name:'Studio — timesheet compliance',type:'r12',owner:'u-ao',lastRun:'2 weeks ago',lr:7,runs:31,sched:true,modified:'2 Sep 2026',mo:47,
+    grants:{'u-ao':'author','u-sk':'guided','u-mr':'build','g-pmo':'guided'}},
+  {id:'s8',name:'Red Bull — estimate vs actual by user',type:'r3',owner:'u-ao',lastRun:'Never run',lr:999,runs:0,modified:'30 Aug 2026',mo:50,
+    grants:{'u-ao':'author','u-mr':'build'}},
 ];
 const TABS=[['all','All'],['mine','Owned by me'],['shared','Shared with me']];
 // Run status (Completed/Failed/Queued) belongs on the Schedules page, not the recent list — kept here for that surface.
@@ -1753,11 +2065,11 @@ const STATUS_BADGE={
 };
 const AVATAR_COLORS=['#0B6E8A','#208368','#0E7490','#5B5BD6','#7C3AED','#BE185D','#C2410C','#475569'];
 const SCHEDULES=[
-  {title:'FIFA — weekly P&L snapshot', type:'r1', cadence:'Weekly · Mondays', time:'09:00', next:'Mon 22 Jun, 09:00', last:'completed', lastWhen:'15 Jun', recipients:'FIFA Reporting (group)', owner:'James D\u2019Arcy'},
-  {title:'Creative Delivery — estimate vs actual by role', type:'r2', cadence:'Every weekday', time:'08:00', next:'Tomorrow, 08:00', last:'completed', lastWhen:'Today', recipients:'You', owner:'James D\u2019Arcy'},
+  {title:'FIFA — weekly P&L snapshot', type:'r1', cadence:'Weekly · Mondays', time:'09:00', next:'Mon 22 Jun, 09:00', last:'completed', lastWhen:'15 Jun', recipients:'FIFA Reporting (group)', owner:'Rodger Corcoran'},
+  {title:'Creative Delivery — estimate vs actual by role', type:'r2', cadence:'Every weekday', time:'08:00', next:'Tomorrow, 08:00', last:'completed', lastWhen:'Today', recipients:'You', owner:'Rodger Corcoran'},
   {title:'Client portfolio — month-end', type:'r6', cadence:'Monthly · last day', time:'18:00', next:'30 Jun, 18:00', last:'failed', lastWhen:'31 May', recipients:'Finance (group)', owner:'Aisling O\u2019Connor'},
-  {title:'Studio — timesheet compliance', type:'r12', cadence:'Weekly · Fridays', time:'17:30', next:'Fri 19 Jun, 17:30', last:'queued', lastWhen:'—', recipients:'PMO (group) +2', owner:'James D\u2019Arcy'},
-  {title:'APAC studio — utilisation', type:'r7', cadence:'Daily', time:'07:00', next:'Paused', last:'completed', lastWhen:'10 Jun', recipients:'You', owner:'James D\u2019Arcy', paused:true},
+  {title:'Studio — timesheet compliance', type:'r12', cadence:'Weekly · Fridays', time:'17:30', next:'Fri 19 Jun, 17:30', last:'queued', lastWhen:'—', recipients:'PMO (group) +2', owner:'Rodger Corcoran'},
+  {title:'APAC studio — utilisation', type:'r7', cadence:'Daily', time:'07:00', next:'Paused', last:'completed', lastWhen:'10 Jun', recipients:'You', owner:'Rodger Corcoran', paused:true},
 ];
 let sq='';
 let schForm={title:'',report:'',freq:'Weekly',day:'Monday',hh:'09',mm:'00',start:'18 Jun 2026',deliver:'You'};
@@ -1767,70 +2079,6 @@ let tplTab='all', tplQ='';
 
 function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window._t);window._t=setTimeout(()=>t.classList.remove('show'),3200);}
 
-function tplAnchor(t){return REPORTS[t.report].domain;}
-function tplTabDefs(){
-  const order=['Financial','Resourcing','Task','Timesheet'];
-  const present=order.filter(n=>TEMPLATES.some(t=>tplAnchor(t)===n));
-  return [['all','All']].concat(present.map(n=>[n,n]));
-}
-function tplCount(key){return TEMPLATES.filter(t=>key==='all'||tplAnchor(t)===key).length;}
-function renderTplTabs(){
-  $('tplTabs').innerHTML=tplTabDefs().map(([id,lbl])=>`<button class="tab ${tplTab===id?'active':''}" data-tpltab="${id}">${lbl}<span class="ct">${tplCount(id)}</span></button>`).join('');
-  $('tplTabs').querySelectorAll('[data-tpltab]').forEach(b=>b.onclick=()=>{tplTab=b.dataset.tpltab;renderTplTabs();renderGallery();});
-}
-function renderMyReports(){
-  const sec=$('mySection'); if(!sec)return;
-  if(S.persona==='user'){sec.style.display='none';return;}
-  sec.style.display='';
-  const rows=SAVED.filter(r=>r.scope==='mine');
-  if(!rows.length){$('myList').innerHTML=`<div class="empty"><h3>No saved reports yet</h3><p>Reports you save will appear here.</p></div>`;return;}
-  const head=`<div class="list-head"><span>Name</span><span>Report type</span><span>Owner</span><span>Last run</span><span></span></div>`;
-  const body=rows.map(r=>{
-    const [ic,tone]=TYPE_ICON[r.type];
-    return `<div class="list-row" onclick="openBuilder('${r.type}')">
-      <div class="r-name"><div class="r-ico ${tone}">${ICONS[ic]}</div>
-        <div style="min-width:0"><div class="r-title">${r.name}</div>
-          <div class="r-sub">${r.sched?'<span class="badge sched">Scheduled</span>':''}</div></div></div>
-      <div class="r-type">${TYPE_NAME[r.type]}</div>
-      <div class="r-owner"><span class="r-av" style="background:${avatarBg(r.owner)};color:#fff">${r.oi}</span><span class="r-cell">${r.owner}</span></div>
-      <div class="r-cell">${r.last}</div>
-      <button class="kebab" onclick="event.stopPropagation();toast('Run · Duplicate · Schedule · Share · Delete')"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
-    </div>`;}).join('');
-  $('myList').innerHTML=head+body;
-}
-function renderGallery(){
-  const rows=TEMPLATES.filter(t=>(tplTab==='all'||tplAnchor(t)===tplTab)&&(t.name+' '+t.desc).toLowerCase().includes(tplQ))
-    .slice().sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
-  const showBuild=S.persona!=='user'&&!tplQ;
-  if(!rows.length&&!showBuild){
-    $('tplGrid').innerHTML=`<div class="empty" style="grid-column:1/-1"><h3>No templates${tplQ?' for “'+tplQ+'”':' in this category yet'}</h3><p>${S.persona!=='user'?'Build one from a report type, or try another category.':'Try another category, or ask an author to publish one.'}</p></div>`;
-    return;
-  }
-  let html=rows.map(t=>{
-    const r=REPORTS[t.report];
-    return `<div class="tpl-card" onclick="openTemplate('${t.id}')">
-      <div class="tpl-top"><span class="tpl-driver">${r.grain}</span>${r.applies==='fe'?'<span class="fetag">FE only</span>':''}${r.pending?'<span class="fetag">Draft</span>':''}${t.pinned?`<span class="tpl-pin" title="Pinned by Screendragon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="16" x2="12" y2="22"/><path d="M9 3h6l-1 5 3 3v2H7v-2l3-3-1-5z"/></svg></span>`:''}</div>
-      <div class="tpl-name">${t.name}</div>
-      <div class="tpl-desc">${t.desc}</div>
-    </div>`;
-  }).join('');
-  if(showBuild) html+=`<div class="tpl-card build-tile" onclick="openScratch()"><div class="build-plus">+</div><div class="tpl-name">Build a report</div><div class="tpl-desc">Pick a report type and build it yourself.</div></div>`;
-  $('tplGrid').innerHTML=html;
-}
-function renderScratch(){
-  const order=['Financial','Resourcing','Task','Timesheet'];
-  const byDom={};
-  STARTS.forEach(s=>{const d=REPORTS[s.id].domain;(byDom[d]=byDom[d]||[]).push(s);});
-  $('scratchGrid').innerHTML=order.filter(d=>byDom[d]).map(d=>`
-    <div class="scratch-group">
-      <div class="scratch-group-lbl">${d}</div>
-      <div class="scratch-grid">${byDom[d].map(s=>`
-        <div class="scratch-card" onclick="openBuilder('${s.id}');closeScratch();">
-          <div class="start-ico ${s.tone}">${ICONS[s.ico]}</div>
-          <div><div class="t">${s.name}</div><div class="d">${s.d}</div></div>
-        </div>`).join('')}</div>
-    </div>`).join('');
-}
 function openScratch(){renderScratch();$('scratchOverlay').classList.add('show');}
 function closeScratch(){$('scratchOverlay').classList.remove('show');}
 function openActionMenu(anchor,items){
@@ -1870,18 +2118,19 @@ function renderList(){
     </div>`;}).join('');
   $('list').innerHTML=head+body;
 }
-$('tplSearch').oninput=e=>{tplQ=e.target.value.toLowerCase();renderGallery();};
-renderTplTabs();renderGallery();applyPersona('user');
-(()=>{const a=$('navAvatar');if(a){a.style.background=avatarBg('James D\u2019Arcy');a.style.color='#fff';}})();
+
 
 /* ---- router ---- */
 
+let CUR_VIEW='hub';
 function showView(v){
-  document.getElementById('view-home').style.display=v==='home'?'block':'none';
-  document.getElementById('view-builder').style.display=v==='builder'?'block':'none';
-  document.getElementById('view-schedules').style.display=v==='schedules'?'block':'none';
-  document.getElementById('navBack').style.display=(v==='builder'||v==='schedules')?'inline-flex':'none';
-  document.getElementById('crumb').textContent=v==='builder'?'/ Reports / New report':v==='schedules'?'/ Reports / Schedules':'/ Reports';
+  CUR_VIEW=v;
+  ['hub','home','builder','schedules'].forEach(x=>{const el=document.getElementById('view-'+x);if(el)el.style.display=x===v?'block':'none';});
+  document.getElementById('navBack').style.display=v==='hub'?'none':'inline-flex';
+  document.getElementById('crumb').textContent={hub:'/ Reports',home:'/ Reports / Export reports',schedules:'/ Reports / Scheduled reports',builder:'/ Reports / Export reports / '+(S.savedId?S.reportName:'New report')}[v];
+  const lg=document.getElementById('legacyLink'); if(lg)lg.style.display=(v==='home'||v==='builder')?'':'none';
+  if(v==='home'&&typeof renderHome==='function')renderHome();
+  if(v==='schedules'&&typeof renderSchedules==='function')renderSchedules();
   window.scrollTo(0,0);
 }
 const LOCK_ICON='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
@@ -1901,7 +2150,7 @@ function renderReportId(){
     <div class="rpt-top">
       <span class="rpt-lock" title="The report type is fixed while you build">${LOCK_ICON}</span>
       <div class="rpt-main">
-        <div class="rpt-name">${r.name}</div>
+        <div class="rpt-name">${esc(S.reportName||r.name)}</div>
         <div class="rpt-driver"><span class="rpt-grain">${curGrain()} report</span> · anchored on ${curNoun()}</div>
       </div>
     </div>
@@ -1916,40 +2165,13 @@ function renderReportId(){
     renderColumns(); renderSort(); renderFilters(); renderPreview();
   });
 }
-function openBuilder(typeId, opts={}){
-  $('clientSelect').value='';
-  S.client=''; S.ptypes.clear(); S.projects.clear(); S.roles.clear();
-  ['f-ptype','f-role'].forEach(i=>lock(i,true));
-  $('ptypeList').innerHTML=''; $('roleList').innerHTML='';
-  S.report=typeId; S.guided=!!opts.guided; S.template=opts.template||'';
-  applyReport();
-  if(opts.preset){ if(opts.preset.breakdown)S.breakdown=opts.preset.breakdown; if(opts.preset.anchor)S.anchor=opts.preset.anchor; }
-  $('periodSelect').value=String(S.months);
-  const bs=$('buildSurface');
-  bs.dataset.pers=S.persona; bs.classList.toggle('adv',S.persona==='admin');
-  $('advToggle').style.display=(S.persona==='user')?'none':''; $('advToggle').textContent=(S.persona==='admin'?'▾':'▸')+' Advanced options';
-  renderColumns(); renderMeta(); renderGroup(); renderSort(); renderFilters(); renderPreview();
-  showView('builder');
-}
 function openTemplate(tid){
   const t=TEMPLATES.find(x=>x.id===tid); if(!t)return;
   openBuilder(t.report,{guided:true,template:tid,preset:t.preset||{}});
 }
-function applyPersona(p){
-  S.persona=p;
-  document.querySelectorAll('#persona [data-persona]').forEach(b=>b.classList.toggle('on',b.dataset.persona===p));
-  renderGallery();
-  renderMyReports();
-  const bs=$('buildSurface');
-  if(bs){bs.dataset.pers=p; bs.classList.toggle('adv',p==='admin');}
-  if($('advToggle')){$('advToggle').style.display=(p==='user')?'none':''; $('advToggle').textContent=(p==='admin'?'▾':'▸')+' Advanced options';}
-  if(S.report){editCol=null;renderColumns();renderMeta();renderReportId();renderPreview();}
-}
-document.querySelectorAll('#persona [data-persona]').forEach(b=>b.onclick=()=>applyPersona(b.dataset.persona));
 $('scratchCancel').onclick=closeScratch;
 $('scratchOverlay').onclick=e=>{if(e.target===$('scratchOverlay'))closeScratch();};
 document.getElementById('navBack').onclick=()=>showView('home');
-showView('home');
 
 /* ---- schedules ---- */
 function renderSchedules(){
@@ -2005,7 +2227,7 @@ function saveSched(){
   $('sfReport').classList.toggle('rt-bad',!schForm.report);
   if(!schForm.title.trim()||!schForm.report)return;
   const cad=schForm.freq==='Weekly'?`Weekly · ${schForm.day}s`:schForm.freq==='Monthly'?'Monthly · last day':'Daily';
-  SCHEDULES.unshift({title:schForm.title,type:schForm.report,cadence:cad,time:`${schForm.hh}:${schForm.mm}`,next:`${schForm.start}, ${schForm.hh}:${schForm.mm}`,last:'queued',lastWhen:'—',recipients:schForm.deliver,owner:'James D\u2019Arcy'});
+  SCHEDULES.unshift({title:schForm.title,type:schForm.report,cadence:cad,time:`${schForm.hh}:${schForm.mm}`,next:`${schForm.start}, ${schForm.hh}:${schForm.mm}`,last:'queued',lastWhen:'—',recipients:schForm.deliver,owner:CU.name});
   closeSched();renderSchedules();toast('Schedule created · first run queued');
 }
 $('newSchedBtn').onclick=openSched;
@@ -2014,6 +2236,611 @@ $('schCancel').onclick=closeSched;
 $('schSave').onclick=saveSched;
 $('schOverlay').onclick=e=>{if(e.target===$('schOverlay'))closeSched();};
 renderSchedules();
+
+
+/* ================= V2 review changes (19 Oct 2026) =================
+   - View As toggle replaced by three QA test users (application role)
+   - Per-report access list (Guided / Build / Author); effective = min(role, grant)
+   - Share writes into the access list; level required, capped at sharer's own
+   - Right-hand Detail panel: Details · Filters · Permissions · Output
+   - Legacy "Other" options + Export rights (Data rights) carried over
+   - Output: format and dates, plus optional template files (upload, default, pick at run)
+   - Landing: no left rail, page-level category tabs, Recently run, My reports table
+   - Create blank report (Authors), required Report category on save
+   - Legacy / new chooser
+==================================================================== */
+const LEVELS=['guided','build','author'];
+const LVL_LABEL={guided:'Guided',build:'Build',author:'Author'};
+const LVL_CODE={guided:'user',build:'pm',author:'admin'};
+const LVL_DESC={guided:'Run it as it is, or save a copy',build:'Run it and add the optional columns',author:'Full control, including permissions and delete'};
+const accRank=l=>LEVELS.indexOf(l);
+const minLevel=(a,b)=>accRank(a)<=accRank(b)?a:b;
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+const TEST_USERS=[
+  {id:'u-jd',name:'Rodger Corcoran',role:'author'},
+  {id:'u-mr',name:'Marco Rossi',role:'build'},
+  {id:'u-sk',name:'Sarah Kim',role:'guided'},
+];
+const DIRECTORY=[
+  {id:'u-jd',name:'Rodger Corcoran',kind:'user',role:'author'},
+  {id:'u-mr',name:'Marco Rossi',kind:'user',role:'build'},
+  {id:'u-sk',name:'Sarah Kim',kind:'user',role:'guided'},
+  {id:'u-ao',name:'Aisling O’Connor',kind:'user',role:'author'},
+  {id:'u-tl',name:'Tom Lee',kind:'user',role:'build'},
+  {id:'u-nb',name:'Niamh Byrne',kind:'user',role:'guided'},
+  {id:'u-ph',name:'Priya Hegde',kind:'user',role:'build'},
+  {id:'x-lv',name:'Lena Vogt (FIFA)',kind:'guest',role:'guided'},
+  {id:'x-pm',name:'Paul Marchetti (UEFA)',kind:'guest',role:'guided'},
+  {id:'g-cd',name:'Creative Delivery',kind:'group',members:24},
+  {id:'g-fin',name:'Finance',kind:'group',members:9},
+  {id:'g-pmo',name:'PMO',kind:'group',members:6},
+];
+const dirName=id=>(DIRECTORY.find(p=>p.id===id)||{name:id}).name;
+const CATS=['Financial','Resourcing','Task','Timesheet'];
+const CAT_ICON={Financial:'doc',Resourcing:'users',Task:'check',Timesheet:'clock'};
+ICONS.doc='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>';
+ICONS.check='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 6 2 2 3-3"/><path d="m3 13 2 2 3-3"/><path d="M11 6h10M11 13h10M11 20h10"/></svg>';
+const ICON_INFO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>';
+const ICON_FUNNEL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>';
+const ICON_FILE='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M8 13h8M8 17h8M12 11v8"/></svg>';
+const ICON_UP='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg>';
+const ICON_DL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>';
+const ICON_PLUS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+const PIN='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="16" x2="12" y2="22"/><path d="M9 3h6l-1 5 3 3v2H7v-2l3-3-1-5z"/></svg>';
+const RIGHTS=[
+  ['','None: each person sees what their own access allows'],
+  ['emea-fin','EMEA Finance rights'],
+  ['fifa-only','Client-facing: FIFA only'],
+  ['no-rates','Hide cost and bill rates'],
+];
+// Legacy "Other" options, scoped by report type. Rod to audit; most are columns in disguise.
+const LEGACY=[
+  {id:'dyn',label:'Enable dynamic date filter',types:'*',note:'Relative period. May already be covered by Reporting period'},
+  {id:'tsid',label:'Include timesheet ID',types:['r11','r13'],col:'Timesheet ID'},
+  {id:'tsstatus',label:'Include timesheet status',types:['r11','r13'],col:'Timesheet status'},
+  {id:'tscom',label:'Include timesheet comments',types:['r11','r13'],col:'Timesheet comments'},
+  {id:'nullb',label:'Remove null bookings',types:['r7'],note:'Drops rows with no booked hours'},
+  {id:'tslast',label:'Include timesheet last actioned by',types:['r11','r13'],col:'Last actioned by'},
+  {id:'tsappr',label:'Include timesheet approval status',types:['r11','r13'],col:'Approval status'},
+  {id:'resid',label:'Include resource item ID',types:['r7'],col:'Resource item ID'},
+];
+const BLANK_GRAINS=[
+  {key:'project',label:'Project',d:'One row per project',bases:['r1','r4']},
+  {key:'client',label:'Client',d:'One row per client',bases:['r6']},
+  {key:'projrole',label:'Project × Role',d:'One row per role on each project',bases:['r2']},
+  {key:'projuser',label:'Project × User',d:'One row per person on each project',bases:['r3']},
+  {key:'task',label:'Task',d:'One row per task',bases:['r9','r10']},
+  {key:'tsentry',label:'Timesheet entry',d:'One row per logged entry',bases:['r11']},
+];
+
+let CU=TEST_USERS[0];
+const HS={cat:'all',q:'',own:'all',sort:{key:'lr',dir:'asc'}};
+let savedSeq=SAVED.length;
+S.templates=[]; S.output={format:'xlsx',dash:'',dateOverride:false,dateFmt:'DD/MM/YYYY',currency:''};
+S.legacy=new Set(); S.effective='author'; S.perm={grants:{},owner:'',rights:''}; S.panelTab='details';
+
+function catIcon(cat){return ICONS[CAT_ICON[cat]]||ICONS.bars;}
+function savedCat(s){return s.category||(REPORTS[s.type]||{}).domain||'';}
+function accessFor(s,u){u=u||CU;const g=s.grants[u.id];if(!g)return null;return {grant:g,eff:minLevel(u.role,g),capped:accRank(g)>accRank(u.role)};}
+function mySaved(){return SAVED.filter(s=>accessFor(s));}
+function matchQ(t){return !HS.q||t.toLowerCase().includes(HS.q);}
+function inCat(c){return HS.cat==='all'||c===HS.cat;}
+function tplAllowed(t){const r=REPORTS[t.report];return !(r.pending&&CU.role!=='author');}
+function visibleTemplates(){return TEMPLATES.filter(t=>tplAllowed(t)&&inCat(REPORTS[t.report].domain)&&matchQ(t.name+' '+t.desc)).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));}
+function visibleSaved(){return mySaved().filter(s=>inCat(savedCat(s))&&matchQ(s.name)&&(HS.own==='all'||(HS.own==='mine'?s.owner===CU.id:s.owner!==CU.id)));}
+
+/* ---------------- Home ---------------- */
+function renderHome(){
+  $('buildBtn').style.display=CU.role==='guided'?'none':'';
+  renderCatTabs();renderRecent();renderGallery();renderMyReports();
+}
+function renderCatTabs(){
+  const n=c=>TEMPLATES.filter(t=>tplAllowed(t)&&(c==='all'||REPORTS[t.report].domain===c)).length+mySaved().filter(s=>c==='all'||savedCat(s)===c).length;
+  $('catTabs').innerHTML=[['all','All']].concat(CATS.map(c=>[c,c])).map(([id,l])=>`<button class="tab ${HS.cat===id?'active':''}" data-cat="${id}">${l}<span class="ct">${n(id)}</span></button>`).join('');
+  $('catTabs').querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{HS.cat=b.dataset.cat;renderHome();});
+}
+function bindOpen(scope){scope.querySelectorAll('[data-open]').forEach(el=>el.addEventListener('click',()=>openSaved(el.dataset.open)));}
+function renderRecent(){
+  const rows=mySaved().filter(s=>s.runs>0&&inCat(savedCat(s))).sort((a,b)=>a.lr-b.lr).slice(0,4);
+  $('recentSec').style.display=rows.length&&!HS.q?'':'none';
+  $('recentRow').innerHTML=rows.map(s=>`<button class="rc-card" type="button" data-open="${s.id}"><span class="rc-ico">${catIcon(savedCat(s))}</span><span class="rc-main"><span class="rc-name">${esc(s.name)}</span><span class="rc-sub">Ran ${s.lastRun.toLowerCase()} · ${savedCat(s)}</span></span></button>`).join('');
+  bindOpen($('recentRow'));
+}
+function renderGallery(){
+  const rows=visibleTemplates();
+  $('tplCount').textContent=rows.length;
+  if(!rows.length){$('tplGrid').innerHTML=`<div class="empty" style="grid-column:1/-1"><h3>No templates match</h3><p>Try another category or search term.</p></div>`;return;}
+  $('tplGrid').innerHTML=rows.map(t=>{
+    const r=REPORTS[t.report];
+    return `<div class="tpl-card" tabindex="0" onclick="openTemplate('${t.id}')">
+      <div class="tpl-top"><span class="tpl-ico" title="${r.domain}">${catIcon(r.domain)}</span><span class="tpl-driver">${r.grain}</span>${r.applies==='fe'?'<span class="fetag">FE only</span>':''}${r.pending?'<span class="fetag" title="Visible to Authors only until the columns are signed off">Draft</span>':''}${t.pinned?`<span class="tpl-pin" title="Pinned by Screendragon">${PIN}</span>`:''}</div>
+      <div class="tpl-name">${t.name}</div>
+      <div class="tpl-desc">${t.desc}</div>
+      <div class="tpl-use">Use template →</div>
+    </div>`;
+  }).join('');
+}
+const MR_COLS=[['name','Name'],['cat','Category'],['owner','Owner'],['access','Your access'],['lr','Last run'],['runs','Runs'],['sched','Scheduled'],['mod','Modified']];
+function renderMyReports(){
+  const all=mySaved();
+  const cnt={all:all.length,mine:all.filter(s=>s.owner===CU.id).length,shared:all.filter(s=>s.owner!==CU.id).length};
+  $('ownTabs').innerHTML=[['all','All'],['mine','Owned by me'],['shared','Shared with me']].map(([id,l])=>`<button class="tab ${HS.own===id?'active':''}" data-own="${id}">${l}<span class="ct">${cnt[id]}</span></button>`).join('');
+  $('ownTabs').querySelectorAll('[data-own]').forEach(b=>b.onclick=()=>{HS.own=b.dataset.own;renderMyReports();});
+  let rows=visibleSaved();
+  $('myCount').textContent=rows.length;
+  const k=HS.sort.key, d=HS.sort.dir==='asc'?1:-1;
+  const val=s=>({name:s.name.toLowerCase(),cat:savedCat(s),owner:dirName(s.owner),access:accRank(accessFor(s).eff),lr:s.lr,runs:s.runs,sched:s.sched?0:1,mod:s.mo}[k]);
+  rows=rows.slice().sort((a,b)=>{const x=val(a),y=val(b);return (x>y?1:x<y?-1:0)*d;});
+  const head=`<div class="mr-head">${MR_COLS.map(([key,l])=>`<button type="button" class="mr-h ${k===key?'on':''}" data-sort="${key}">${l}${k===key?`<span class="sort-arr">${HS.sort.dir==='asc'?'↑':'↓'}</span>`:''}</button>`).join('')}<span></span></div>`;
+  if(!rows.length){
+    const msg=!all.length&&CU.role==='guided'
+      ?'<h3>Nothing shared with you yet</h3><p>Reports appear here when someone shares one with you, or when you save a copy of a template.</p>'
+      :'<h3>No reports match</h3><p>Try another category, filter or search term.</p>';
+    $('myList').innerHTML=head+`<div class="empty">${msg}</div>`;
+  } else {
+    $('myList').innerHTML=head+rows.map(s=>{
+      const a=accessFor(s), c=savedCat(s), on=dirName(s.owner);
+      const capT=a.capped?`Granted ${LVL_LABEL[a.grant]}, capped at ${LVL_LABEL[a.eff]} by your role`:'';
+      return `<div class="mr-row" data-open="${s.id}" tabindex="0">
+        <div class="r-name"><div class="r-ico">${catIcon(c)}</div><div style="min-width:0"><div class="r-title">${esc(s.name)}</div><div class="r-sub2">${(REPORTS[s.type]||{}).name||''}</div></div></div>
+        <div class="r-cell">${c||'—'}</div>
+        <div class="r-owner"><span class="r-av" style="background:${avatarBg(on)};color:#fff">${initials(on)}</span><span class="r-cell">${s.owner===CU.id?'You':on}</span></div>
+        <div><span class="acc-chip" title="${capT}">${LVL_LABEL[a.eff]}${a.capped?' <span class="acc-cap">· capped</span>':''}</span></div>
+        <div class="r-cell">${s.lastRun}</div>
+        <div class="r-cell num">${s.runs}</div>
+        <div class="r-cell">${s.sched?'<span class="badge sched">Scheduled</span>':'<span class="sch-muted">No</span>'}</div>
+        <div class="r-cell">${s.modified}</div>
+        <button class="kebab" data-kebab="${s.id}" type="button" aria-label="Report actions"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+      </div>`;
+    }).join('');
+  }
+  $('myList').querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{const key=b.dataset.sort;if(HS.sort.key===key)HS.sort.dir=HS.sort.dir==='asc'?'desc':'asc';else HS.sort={key,dir:'asc'};renderMyReports();});
+  $('myList').querySelectorAll('[data-kebab]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();reportMenu(b);}));
+  bindOpen($('myList'));
+}
+function reportMenu(btn){
+  const s=SAVED.find(x=>x.id===btn.dataset.kebab), a=accessFor(s);
+  const items=[
+    {label:'Open', onClick:()=>openSaved(s.id)},
+    {label:'Run now', onClick:()=>{s.runs++;s.lastRun='Just now';s.lr=0;queueId++;toast(`Run queued · #${queueId} · track it in Reports › Report queue`);renderHome();}},
+    {label:a.eff==='guided'?'Save a copy…':'Duplicate…', onClick:()=>{openSaved(s.id);openSave('copy');}},
+    {label:'Share…', onClick:()=>{openSaved(s.id);openShare();}},
+  ];
+  if(a.eff==='author')items.push({sep:true},{label:'Delete…', onClick:()=>openConfirm({
+    title:'Delete report?',
+    body:`“${esc(s.name)}” is removed for everyone on its access list (${Object.keys(s.grants).length} people and groups) and its schedules stop. This can’t be undone.`,
+    confirm:'Delete report',
+    onConfirm:()=>{SAVED.splice(SAVED.indexOf(s),1);renderHome();toast('Report deleted');}})});
+  openActionMenu(btn,items);
+}
+function openSaved(id){const s=SAVED.find(x=>x.id===id);if(!s||!accessFor(s))return;openBuilder(s.type,{saved:s});}
+
+/* ---------------- Builder entry ---------------- */
+function openBuilder(typeId, opts={}){
+  $('clientSelect').value='';
+  S.client=''; S.ptypes.clear(); S.projects.clear(); S.roles.clear();
+  ['f-ptype','f-role'].forEach(i=>lock(i,true));
+  $('ptypeList').innerHTML=''; $('roleList').innerHTML='';
+  S.report=typeId; S.guided=!!opts.guided; S.template=opts.template||'';
+  const s=opts.saved||null, acc=s?accessFor(s):null;
+  S.savedId=s?s.id:'';
+  S.effective=acc?acc.eff:CU.role; S.grant=acc?acc.grant:'author'; S.capped=acc?acc.capped:false;
+  S.persona=LVL_CODE[S.effective];
+  S.isBlank=!!opts.blank;
+  applyReport();
+  S.reportName=s?s.name:(S.isBlank?'Untitled report':REPORTS[typeId].name);
+  S.category=s?savedCat(s):(REPORTS[typeId].domain||'');
+  S.perm=s?{grants:s.grants,owner:s.owner,rights:s.rights||''}:{grants:{[CU.id]:'author'},owner:CU.id,rights:''};
+  if(s){if(!s.templates)s.templates=[];if(!s.output)s.output={format:'xlsx',dash:'',dateOverride:false,dateFmt:'DD/MM/YYYY',currency:''};}
+  S.templates=s?s.templates:[];
+  S.output=s?s.output:{format:'xlsx',dash:'',dateOverride:false,dateFmt:'DD/MM/YYYY',currency:''};
+  S.legacy=new Set();
+  S.panelTab='details';
+  if(S.panelOpen===undefined)S.panelOpen=false; // starts closed: Details repeats Report setup and the preview
+  if(opts.preset){ if(opts.preset.breakdown)S.breakdown=opts.preset.breakdown; if(opts.preset.anchor)S.anchor=opts.preset.anchor; }
+  $('periodSelect').value=String(S.months);
+  const bs=$('buildSurface');
+  bs.dataset.pers=S.persona; bs.classList.toggle('adv',S.persona==='admin');
+  $('advToggle').style.display=(S.persona==='user')?'none':''; $('advToggle').textContent=(S.persona==='admin'?'▾':'▸')+' Advanced options';
+  S.scopeOpen=S.persona!=='user'&&!S.client; // required and unset: open it, it's the next step
+  renderColumns(); renderMeta(); renderGroup(); renderSort(); renderFilters(); renderLegacy(); renderPreview(); renderPanel();
+  showView('builder');
+}
+
+/* ---------------- Create blank report (Authors) ---------------- */
+function makeBlank(key){
+  const g=BLANK_GRAINS.find(x=>x.key===key); if(!g)return;
+  const id='bk_'+g.key, b0=g.bases[0];
+  if(!REPORTS[id]){
+    const seen=new Set(), cols=[];
+    g.bases.forEach((b,bi)=>REPORTS[b].cols.forEach((c,ci)=>{
+      if(seen.has(c.id))return; seen.add(c.id);
+      const x={...c,on:false}; delete x.variants; delete x.locked;
+      if(bi===0&&ci===0){x.locked=true;x.on=true;}
+      cols.push(x);
+    }));
+    REPORTS[id]={name:'Untitled report',domain:'',grain:REPORTS[b0].grain,grainNote:'blank report · every column for this row type',applies:'both',groupBy:REPORTS[b0].groupBy,cols,base:b0,blank:true};
+    const cs=new Set(), calcs=[];
+    g.bases.forEach(b=>(CALCS[b]||[]).forEach(c=>{if(!cs.has(c.label)){cs.add(c.label);calcs.push({...c});}}));
+    if(calcs.length)CALCS[id]=calcs;
+    REPORT_BD[id]={valid:[...new Set(g.bases.flatMap(b=>REPORT_BD[b].valid))],def:'total'};
+    REPORT_ANCHOR[id]={...REPORT_ANCHOR[b0]};
+    REPORT_META[id]=REPORT_META[b0];
+    const firstNum=cols.find(c=>c.type==='num');
+    DEFAULT_SORT[id]={col:firstNum?firstNum.id:cols[0].id,dir:'desc'};
+  }
+  closeScratch();
+  openBuilder(id,{blank:true});
+}
+function renderScratch(){
+  $('scratchHead').textContent='Build a report';
+  $('scratchSub').textContent='Pick a report type to build from. The type sets the grain, columns and rules, and locks once you start.';
+  const byDom={};
+  STARTS.forEach(s=>{const d=REPORTS[s.id].domain;if(REPORTS[s.id].pending&&CU.role!=='author')return;(byDom[d]=byDom[d]||[]).push(s);});
+  const blank=CU.role==='author'?`<div class="scratch-group"><div class="scratch-card blank-card" onclick="renderGrainStep()"><div class="start-ico">${ICON_PLUS}</div><div><div class="t">Create blank report</div><div class="d">Choose a row type and pick from every column.</div></div><span class="fetag">Authors only</span></div></div>`:'';
+  $('scratchGrid').innerHTML=blank+CATS.filter(d=>byDom[d]).map(d=>`
+    <div class="scratch-group">
+      <div class="scratch-group-lbl">${d}</div>
+      <div class="scratch-grid">${byDom[d].map(s=>`
+        <div class="scratch-card" onclick="openBuilder('${s.id}');closeScratch();">
+          <div class="start-ico">${catIcon(d)}</div>
+          <div><div class="t">${s.name}</div><div class="d">${s.d}</div></div>
+        </div>`).join('')}</div>
+    </div>`).join('');
+}
+function renderGrainStep(){
+  $('scratchHead').textContent='Create blank report';
+  $('scratchSub').textContent='Pick what one row represents. The row type locks once you start, so the row and column caps still apply.';
+  $('scratchGrid').innerHTML=`<button class="linkbtn scratch-back" type="button" onclick="renderScratch()">‹ Back to report types</button>
+    <div class="scratch-grid">${BLANK_GRAINS.map(g=>`<div class="scratch-card" onclick="makeBlank('${g.key}')"><div class="start-ico">${ICONS.bars}</div><div><div class="t">${g.label}</div><div class="d">${g.d}</div></div></div>`).join('')}</div>`;
+}
+
+/* ---------------- Legacy options (Advanced) ---------------- */
+function legacyBase(){const r=REPORTS[S.report];return r&&r.base?r.base:S.report;}
+function legacyFor(){const b=legacyBase();return LEGACY.filter(o=>o.types==='*'||o.types.includes(b));}
+function legacyCols(){if(!S.report||!S.legacy||S.persona==='user')return[];return legacyFor().filter(o=>o.col&&S.legacy.has(o.id)).map(o=>({id:'lg_'+o.id,label:o.col,type:'text',legacy:true}));}
+function renderLegacy(){
+  const box=$('f-legacy'); if(!box)return;
+  if(!S.report||S.persona==='user'){box.innerHTML='';return;}
+  box.innerHTML=`<label>From legacy export reports <span class="gate">· pending Rod’s audit</span></label>
+    <div class="lg-list">${legacyFor().map(o=>`<label class="lg-opt"><input type="checkbox" class="checkbox-input" data-lg="${o.id}" ${S.legacy.has(o.id)?'checked':''}><span class="lg-txt"><span>${o.label}</span><span class="lg-sub">${o.col?'Adds a column':o.note}</span></span></label>`).join('')}</div>
+    <div class="scope-note">Only options that apply to a ${curGrain()} report are shown.${S.persona==='admin'?' Export rights now live in <button type="button" class="linkbtn" id="goRights">Permissions › Data rights</button>.':''}</div>`;
+  box.querySelectorAll('[data-lg]').forEach(cb=>cb.onchange=e=>{const id=e.target.dataset.lg;e.target.checked?S.legacy.add(id):S.legacy.delete(id);renderPreview();});
+  if($('goRights'))$('goRights').onclick=()=>setPanelTab('perm');
+}
+
+/* ---------------- Detail panel ---------------- */
+const ICON_OUT='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M8 15h7"/><path d="m12.5 12 3 3-3 3"/></svg>';
+const PANEL_TABS=[['details','Details',ICON_INFO],['filters','Filters',ICON_FUNNEL],['perm','Permissions',ICON_PPL],['tpl','Output',ICON_OUT]];
+function panelTabs(){return PANEL_TABS.filter(([k])=>k==='perm'?S.effective==='author':k==='tpl'?S.effective!=='guided':true);}
+function setPanelTab(k){S.panelTab=k;S.panelOpen=true;renderPanel();}
+function openFilters(){setPanelTab('filters');}
+function closeFilters(){}
+function renderRail(){
+  const tabs=panelTabs(); if(!tabs.find(t=>t[0]===S.panelTab))S.panelTab='details';
+  const cnt={filters:S.filters.length,perm:Object.keys(S.perm.grants||{}).length};
+  $('dpRail').innerHTML=tabs.map(([k,l,ic])=>`<button type="button" class="dp-tab ${S.panelTab===k&&S.panelOpen?'on':''}" data-dp="${k}" title="${l}">${ic}<span class="dp-lbl">${l}</span>${cnt[k]?`<span class="dp-ct">${cnt[k]}</span>`:''}</button>`).join('');
+  $('dpRail').querySelectorAll('[data-dp]').forEach(b=>b.onclick=()=>{if(S.panelOpen&&S.panelTab===b.dataset.dp){S.panelOpen=false;renderPanel();}else setPanelTab(b.dataset.dp);});
+  $('dpanel').classList.toggle('collapsed',!S.panelOpen);
+  const wide=S.panelOpen&&WIDE_TABS.includes(S.panelTab);
+  $('dpanel').classList.toggle('wide',wide);
+  $('dpanel').classList.toggle('ovl',S.panelOpen&&(wide||window.innerWidth<1700));
+  $('buildSurface').classList.toggle('pv-covered',S.panelOpen&&(wide||window.innerWidth<1700));
+}
+// Tabs that edit settings rather than shape the report open as a wide drawer over the preview.
+const WIDE_TABS=['perm','tpl'];
+function renderPanel(){
+  renderRail();
+  $('dpTitle').textContent={details:'Details',filters:'Filters',perm:'Permissions',tpl:'Output'}[S.panelTab];
+  document.querySelectorAll('#dpanel .dp-pane').forEach(p=>p.style.display=p.dataset.pane===S.panelTab?'':'none');
+  if(S.panelTab==='details')renderDetails();
+  else if(S.panelTab==='filters')renderFilters();
+  else if(S.panelTab==='perm')renderPermPanel();
+  else if(S.panelTab==='tpl')renderTplPanel();
+}
+function renderDetails(){
+  const box=$('dpDetails'); if(!box||!S.report)return;
+  const T=S.templates||[], eff=S.effective;
+  const mult=colMult(S.breakdown,S.months);
+  const funnel='<svg class="filt-ic" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>';
+  const chips=S.filters.map((f,i)=>({f,i})).filter(o=>filterActive(o.f)).map(({f,i})=>{const s=filterSummary(f);const soft=f.mode==='me'||f.mode==='prompt';return `<span class="pill filt" data-fi="${i}" title="Edit filter">${funnel}${f.label} ${soft?`<em class="ask">${s}</em>`:s}</span>`;}).join('');
+  const fcur=sortableFields().find(f=>f.id===S.sort.col);
+  const sortText=fcur?`${fcur.label}, ${dirLabel(fcur.type,S.sort.dir).toLowerCase()}`:'—';
+  const pills=arr=>arr.map(v=>`<span class="pill">${v}</span>`).join('');
+  const row=(k,v,unset,nav)=>`<div class="def-row${nav?' def-nav':''}"${nav?' data-openscope="1"':''}><span class="def-k">${k}</span><span class="def-v ${unset?'unset':''}">${v}</span></div>`;
+  const bdText=`${BREAKDOWNS[S.breakdown].label}${mult>1?` · ${mult} cols per metric`:rowMult(S.breakdown)>1?` · rows per ${S.breakdown==='day'?'day':'week'}`:' · single total column'}`;
+  const acc=`${LVL_LABEL[eff]}${S.capped?` <span class="acc-cap">· granted ${LVL_LABEL[S.grant]}, capped by your role</span>`:''}`;
+  const out=T.length?`Raw data tab + ${T.length===1?esc(T[0].name):T.length+' templates, picked at run'}`:`.${S.output.format}, ${S.output.format==='csv'?'one file':'one tab'}`;
+  const rl=RIGHTS.find(x=>x[0]===S.perm.rights);
+  box.innerHTML=`
+    <div class="dp-grp-lbl">Report</div>
+    ${row('Category',S.category||'Not set · required to save',!S.category)}
+    ${row('Your access',acc)}
+    <div class="dp-grp-lbl">Coverage</div>
+    ${row('Period',S.periodLabel||'Not set',!S.periodLabel)}
+    ${row('Breakdown',bdText)}
+    ${row('Client',S.client?clientName(S.client):(eff==='guided'?'All projects in your access':'Choose scope · required'),!S.client&&eff!=='guided',true)}
+    ${row('Project types',S.ptypes.size?pills([...S.ptypes]):(S.client?'All types in client':'—'),false,true)}
+    ${row('Roles',S.roles.size?pills([...S.roles]):'All roles',false,true)}
+    ${row('Includes',S.anchor==='entity'?`All ${curNoun()} · incl. zero-activity`:`${curNoun().replace(/^./,c=>c.toUpperCase())} with activity`,false,true)}
+    <div class="dp-grp-lbl">Shape</div>
+    ${row('Filters',chips||'None',!chips)}
+    ${row('Sort',sortText,!fcur)}
+    <div class="dp-grp-lbl">Output</div>
+    ${row('Delivers',out)}
+    ${row('Data rights',S.perm.rights&&rl?`Limited by ${rl[1]}`:'None',!S.perm.rights)}`;
+  box.querySelectorAll('[data-openscope]').forEach(x=>x.onclick=openScope);
+  box.querySelectorAll('.pill.filt[data-fi]').forEach(ch=>ch.onclick=()=>{S.expandedFilter=S.filters[+ch.dataset.fi].id;setPanelTab('filters');});
+}
+
+/* ---------------- Permissions panel (Author) ---------------- */
+const PM={q:'',kind:'all',sel:false};
+function renderPermPanel(){
+  const box=$('dpPerm'); if(!box)return;
+  box.innerHTML=`<div class="pm-counts" id="pmCounts"></div>
+    <div class="pm-section">Who can access this report</div>
+    <div class="pm-tools">
+      <div class="search pm-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="pmQ" placeholder="Search people and groups" value="${esc(PM.q)}"></div>
+      <div class="pm-chips">${[['all','All'],['user','Users'],['guest','Guests'],['group','Groups']].map(([k,l])=>`<button type="button" class="f-chk ${PM.kind===k?'on':''}" data-pk="${k}">${l}</button>`).join('')}</div>
+      <label class="anchor-opt"><input type="checkbox" id="pmSel" ${PM.sel?'checked':''}> Show selected only</label>
+    </div>
+    <div class="pm-list" id="pmList"></div>
+    <div class="pm-note">This is the most someone can do with this report. Their application role still caps it: an Author grant to a Build user acts as Build.</div>
+    <div class="pm-section">Data rights</div>
+    <div class="field"><label>Export rights configuration</label>
+      <select class="select" id="rightsSel">${RIGHTS.map(([v,l])=>`<option value="${v}" ${S.perm.rights===v?'selected':''}>${l}</option>`).join('')}</select>
+      <div class="scope-note">Configured in the Export Rights admin tool. Each run returns only the data that configuration allows. Anyone without a matching configuration is blocked with a message, never sent an empty file.</div>
+    </div>`;
+  $('pmQ').oninput=e=>{PM.q=e.target.value.toLowerCase();renderPmList();};
+  box.querySelectorAll('[data-pk]').forEach(b=>b.onclick=()=>{PM.kind=b.dataset.pk;renderPermPanel();});
+  $('pmSel').onchange=e=>{PM.sel=e.target.checked;renderPmList();};
+  $('rightsSel').onchange=e=>{S.perm.rights=e.target.value;const s=SAVED.find(x=>x.id===S.savedId);if(s)s.rights=S.perm.rights;toast(e.target.value?'Data rights set: runs return only what that configuration allows':'Data rights removed');};
+  renderPmList();
+}
+function renderPmList(){
+  const g=S.perm.grants, c={guided:0,build:0,author:0};
+  Object.values(g).forEach(l=>c[l]++);
+  $('pmCounts').innerHTML=LEVELS.map(l=>`<span><b>${c[l]}</b> ${LVL_LABEL[l]}</span>`).join('');
+  const rows=DIRECTORY.filter(p=>(PM.kind==='all'||p.kind===PM.kind)&&(!PM.q||p.name.toLowerCase().includes(PM.q))&&(!PM.sel||g[p.id]))
+    .sort((a,b)=>(a.id===S.perm.owner?-1:b.id===S.perm.owner?1:0)||((g[b.id]?1:0)-(g[a.id]?1:0)));
+  $('pmList').innerHTML=rows.length?rows.map(p=>{
+    const lvl=g[p.id]||'';
+    const av=p.kind==='group'?`<span class="pm-av grp">${ICON_PPL}</span>`:`<span class="pm-av" style="background:${avatarBg(p.name)}">${initials(p.name)}</span>`;
+    const sub=p.kind==='group'?`Group · ${p.members} people`:`${p.kind==='guest'?'Guest · ':''}${LVL_LABEL[p.role]} role`;
+    const capped=lvl&&p.role&&accRank(lvl)>accRank(p.role)?`<div class="pm-capped">${LVL_LABEL[lvl]} · capped at ${LVL_LABEL[p.role]} by role</div>`:'';
+    const ctl=p.id===S.perm.owner?`<span class="pm-fixed">Author · owner</span>`
+      :`<select class="select pm-lvl" data-lvl="${p.id}" aria-label="Access for ${esc(p.name)}"><option value="" ${!lvl?'selected':''}>No access</option>${LEVELS.map(l=>`<option value="${l}" ${lvl===l?'selected':''}>${LVL_LABEL[l]}</option>`).join('')}</select>`;
+    return `<div class="pm-row ${lvl?'':'pm-none'}">${av}<div class="pm-meta"><div class="pm-name">${esc(p.name)}${p.id===CU.id?' (you)':''}</div><div class="pm-sub">${sub}</div>${capped}</div>${ctl}</div>`;
+  }).join(''):'<div class="scope-note">No one matches.</div>';
+  $('pmList').querySelectorAll('[data-lvl]').forEach(sel=>sel.onchange=e=>{
+    const id=e.target.dataset.lvl, v=e.target.value, prev=g[id];
+    if(!v&&prev){
+      e.target.value=prev;
+      openConfirm({title:'Revoke access?',body:`${esc(dirName(id))} loses ${LVL_LABEL[prev]} access to “${esc(S.reportName)}”. Any schedule they own for it stops.`,confirm:'Revoke access',
+        onConfirm:()=>{delete g[id];renderPmList();renderRail();renderPreview();toast('Access revoked');}});
+      return;
+    }
+    if(v)g[id]=v;
+    renderPmList();renderRail();renderPreview();
+  });
+}
+
+/* ---------------- Share (writes to the access list) ---------------- */
+let SH={sel:[],lvl:''};
+function openShare(){SH={sel:[],lvl:''};renderShare();$('permOverlay').classList.add('show');}
+function closeShare(){$('permOverlay').classList.remove('show');}
+function renderShare(){
+  const g=S.perm.grants, eff=S.effective;
+  const avail=DIRECTORY.filter(p=>!SH.sel.includes(p.id)&&p.id!==CU.id);
+  const groups=[['user','People'],['guest','Guests'],['group','Groups']];
+  const picker=`<select class="select pm-add" id="shAdd"><option value="">+ Add people or groups…</option>${groups.map(([k,l])=>{const xs=avail.filter(p=>p.kind===k);return xs.length?`<optgroup label="${l}">${xs.map(p=>`<option value="${p.id}">${esc(p.name)}${g[p.id]?` (has ${LVL_LABEL[g[p.id]]})`:''}</option>`).join('')}</optgroup>`:'';}).join('')}</select>`;
+  const chips=SH.sel.map(id=>`<span class="sh-chip">${esc(dirName(id))}<button type="button" data-shrm="${id}" aria-label="Remove">✕</button></span>`).join('');
+  const levels=LEVELS.map(l=>{
+    const over=accRank(l)>accRank(eff);
+    return `<label class="pm-opt ${SH.lvl===l?'sel':''} ${over?'dis':''}" ${over?`title="You can only share up to your own access (${LVL_LABEL[eff]})"`:''}><input type="radio" name="shlvl" value="${l}" ${SH.lvl===l?'checked':''} ${over?'disabled':''}><span class="pm-otext"><span class="pm-omain">${LVL_LABEL[l]}</span><span class="pm-osub">${over?`Above your own access (${LVL_LABEL[eff]})`:LVL_DESC[l]}</span></span></label>`;
+  }).join('');
+  $('permBody').innerHTML=`<div class="pm-section" style="margin-top:0">Share with</div>${picker}<div class="sh-chips">${chips}</div>
+    <div class="pm-section">Access level <span class="rt-asterisk">*</span></div><div class="pm-scope">${levels}</div>
+    <div class="pm-note">Sending adds them to this report’s access list${eff==='author'?', which you manage in Permissions':''}. Their application role still caps what they can do.</div>`;
+  $('shAdd').onchange=e=>{if(!e.target.value)return;SH.sel.push(e.target.value);renderShare();};
+  $('permBody').querySelectorAll('[data-shrm]').forEach(b=>b.onclick=()=>{SH.sel=SH.sel.filter(x=>x!==b.dataset.shrm);renderShare();});
+  $('permBody').querySelectorAll('input[name="shlvl"]').forEach(r=>r.onchange=e=>{SH.lvl=e.target.value;renderShare();});
+  $('permSave').disabled=!(SH.sel.length&&SH.lvl);
+}
+function sendShare(){
+  if(!(SH.sel.length&&SH.lvl))return;
+  const g=S.perm.grants; let kept=0;
+  SH.sel.forEach(id=>{const prev=g[id];if(prev&&accRank(prev)>=accRank(SH.lvl)){kept++;return;}g[id]=SH.lvl;});
+  const n=SH.sel.length, lvl=SH.lvl;
+  closeShare(); renderPreview(); if(S.panelTab==='perm')renderPermPanel();
+  toast(`Shared with ${n} at ${LVL_LABEL[lvl]} · added to the access list${kept?` (${kept} already had higher access)`:''}`);
+}
+
+/* ---------------- Output: format and dates + template files ---------------- */
+function renderTplPanel(){
+  const box=$('dpTpl'); if(!box)return;
+  const author=S.effective==='author', T=S.templates, O=S.output, locked=T.length>0;
+  const list=T.length?T.map((t,i)=>`<div class="tf-row"><span class="filetype-badge">${t.name.split('.').pop().toUpperCase()}</span><div class="tf-meta"><div class="tf-name" title="${esc(t.name)}">${esc(t.name)}</div><div class="tf-sub">Uploaded ${t.uploaded} · ${esc(t.by)}</div></div>${t.def?'<span class="tf-def">Default</span>':author?`<button class="linkbtn" type="button" data-tfdef="${i}">Make default</button>`:''}<button class="tf-act" type="button" data-tfdl="${i}" title="Download">${ICON_DL}</button>${author?`<button class="tf-act rm" type="button" data-tfrm="${i}" title="Remove">✕</button>`:''}</div>`).join('')
+    :`<div class="tf-empty">No template attached. Runs deliver raw data ${O.format==='csv'?'as a .csv file':'in a single .xlsx tab'}.</div>`;
+  const dis=author?'':'disabled';
+  // Output: format and dates apply to every run; template files are optional on top.
+  box.innerHTML=`<div class="pm-section" style="margin-top:0">Format and dates</div>
+    <div class="field"><label>Export format</label><select class="select" id="ofFmt" ${locked||!author?'disabled':''}><option value="xlsx" ${O.format==='xlsx'?'selected':''}>Excel (.xlsx)</option><option value="csv" ${O.format==='csv'?'selected':''}>CSV (.csv)</option></select>${locked?'<div class="scope-note">Locked to .xlsx while a template is attached. A pivot template needs a workbook.</div>':''}</div>
+    <div class="field"><label>Dashboard type</label><select class="select" id="ofDash" ${dis}>${[['','None'],['summary','Summary'],['detailed','Detailed']].map(([v,l])=>`<option value="${v}" ${O.dash===v?'selected':''}>${l}</option>`).join('')}</select></div>
+    <div class="field"><label class="sw-row"><span>Override site date format</span><input type="checkbox" class="sw" id="ofDate" ${O.dateOverride?'checked':''} ${dis}></label>${O.dateOverride?`<select class="select" id="ofDateFmt" ${dis}>${['DD/MM/YYYY','MM/DD/YYYY','YYYY-MM-DD','DD MMM YYYY'].map(f=>`<option ${O.dateFmt===f?'selected':''}>${f}</option>`).join('')}</select>`:''}</div>
+    <div class="field"><label>Scheduler currency</label><select class="select" id="ofCur" ${dis}>${[['','Report default'],['EUR','EUR'],['GBP','GBP'],['USD','USD'],['CHF','CHF']].map(([v,l])=>`<option value="${v}" ${O.currency===v?'selected':''}>${l}</option>`).join('')}</select></div>
+    <div class="pm-note">Carried over from legacy export reports. Rod to confirm which of these stay.</div>
+    <div class="pm-section">Template files <span class="gate">· optional</span></div>
+    <div class="tf-intro">An Excel workbook with your own formatting or pivots. Each run writes raw data into its <b>Data</b> tab and the other tabs refresh.</div>
+    ${author?`<button class="btn btn-md btn-primary tf-up" id="tfUpload" type="button">${ICON_UP} Upload template</button><input type="file" id="tfFile" accept=".xlsx,.xlsm" hidden><div class="tf-err" id="tfErr"></div>`:''}
+    <div class="tf-list">${list}</div>
+    ${T.length>1?'<div class="scope-note">Whoever runs the report picks one, with the default pre-selected. Schedules use the default.</div>':''}
+    ${!author?'<div class="pm-note">Authors upload and manage templates. When there’s more than one, you pick at run.</div>':''}`;
+  if(author){
+    $('tfUpload').onclick=()=>$('tfFile').click();
+    $('tfFile').onchange=e=>{
+      const f=e.target.files&&e.target.files[0]; e.target.value=''; if(!f)return;
+      if(!/\.(xlsx|xlsm)$/i.test(f.name)){$('tfErr').textContent=`${f.name} wasn’t uploaded. Templates must be .xlsx or .xlsm, with a Data tab the run can write into.`;return;}
+      T.push({name:f.name,uploaded:'19 Oct 2026',by:CU.name,def:T.length===0});
+      O.format='xlsx';
+      renderTplPanel();renderPreview();toast(`${f.name} uploaded · Data tab found`);
+    };
+    box.querySelectorAll('[data-tfdef]').forEach(b=>b.onclick=()=>{T.forEach((t,i)=>t.def=i===+b.dataset.tfdef);renderTplPanel();toast('Default template updated · schedules use it from the next run');});
+    box.querySelectorAll('[data-tfrm]').forEach(b=>b.onclick=()=>{
+      const t=T[+b.dataset.tfrm];
+      openConfirm({title:'Remove template?',body:`${esc(t.name)} is removed from this report. ${T.length>1?(t.def?'The next file becomes the default.':'Runs can still use the other templates.'):'Runs go back to raw data in a single tab.'}`,confirm:'Remove template',
+        onConfirm:()=>{T.splice(T.indexOf(t),1);if(t.def&&T.length)T[0].def=true;renderTplPanel();renderPreview();toast('Template removed');}});
+    });
+    $('ofFmt').onchange=e=>{O.format=e.target.value;renderPreview();};
+    $('ofDash').onchange=e=>{O.dash=e.target.value;};
+    $('ofDate').onchange=e=>{O.dateOverride=e.target.checked;renderTplPanel();};
+    if($('ofDateFmt'))$('ofDateFmt').onchange=e=>{O.dateFmt=e.target.value;};
+    $('ofCur').onchange=e=>{O.currency=e.target.value;};
+  }
+  box.querySelectorAll('[data-tfdl]').forEach(b=>b.onclick=()=>toast(`Downloading ${T[+b.dataset.tfdl].name}`));
+}
+
+/* ---------------- Run: template picker + queue ---------------- */
+let pickKind='Run', pickSel=0;
+function finishRun(kind){
+  const T=S.templates||[];
+  if(T.length>1){pickKind=kind;pickSel=Math.max(0,T.findIndex(t=>t.def));renderPick();$('pickOverlay').classList.add('show');}
+  else queue(kind,T[0]?T[0].name:'');
+}
+function renderPick(){
+  const T=S.templates;
+  const opts=T.map((t,i)=>[i,t.name,t.def?'Default':'']).concat([[-1,'Raw data only','No template · a single data tab']]);
+  $('pickBody').innerHTML=`<div class="pm-scope">${opts.map(([i,n,sub])=>`<label class="pm-opt ${pickSel===i?'sel':''}"><input type="radio" name="pk" value="${i}" ${pickSel===i?'checked':''}><span class="pm-otext"><span class="pm-omain">${esc(n)}</span>${sub?`<span class="pm-osub">${sub}</span>`:''}</span></label>`).join('')}</div>`;
+  $('pickBody').querySelectorAll('input[name="pk"]').forEach(r=>r.onchange=e=>{pickSel=+e.target.value;renderPick();});
+  $('pickGo').textContent=pickKind==='Export'?'Export':'Run report';
+}
+function queue(kind,tpl){
+  queueId++;
+  const s=SAVED.find(x=>x.id===S.savedId); if(s){s.runs++;s.lastRun='Just now';s.lr=0;}
+  const t=$('toast');
+  t.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9FE1CB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>${kind} queued · <span class="qid">#${queueId}</span>${tpl?` with ${esc(tpl)}`:''}. Emailed when ready; track it in Reports › Report queue.</span>`;
+  t.classList.add('show'); clearTimeout(window._tt); window._tt=setTimeout(()=>t.classList.remove('show'),4200);
+}
+
+/* ---------------- Save (category required) ---------------- */
+let saveMode='save';
+function openSave(mode){
+  saveMode=(S.effective==='guided')?'copy':(mode||'save');
+  const copy=saveMode==='copy';
+  const fixed=!S.isBlank&&!!S.category;
+  $('saveHead').textContent=copy?'Save a copy':S.savedId?'Save changes':'Save report';
+  $('saveGo').textContent=copy?'Save copy':'Save report';
+  const name=copy&&S.savedId?S.reportName+' (copy)':S.reportName;
+  $('saveBody').innerHTML=`<div class="rt-field"><label>Report name <span class="rt-asterisk">*</span></label><input id="svName" value="${esc(name)}"></div>
+    <div class="rt-field"><label>Report category <span class="rt-asterisk">*</span></label>
+      <select id="svCat" ${fixed?'disabled':''}><option value="">Choose a category…</option>${CATS.map(c=>`<option ${S.category===c?'selected':''}>${c}</option>`).join('')}</select>
+      <div class="scope-note">${fixed?'Set by the report type. It decides which tab the report appears under.':'Required. It decides which tab the report appears under on Export reports.'}</div></div>
+    <div class="rt-note">${copy?`The copy is yours. ${CU.role==='guided'?'You can run it and share it at Guided level.':'You can change it within your role.'}`:'You get Author access to reports you save; your application role still caps what you can do.'}</div>`;
+  $('saveOverlay').classList.add('show');
+  setTimeout(()=>{const i=$('svName');if(i){i.focus();i.select();}},30);
+}
+function closeSave(){$('saveOverlay').classList.remove('show');}
+function doSave(){
+  const nm=$('svName').value.trim(), cat=$('svCat').value;
+  $('svName').classList.toggle('rt-bad',!nm); $('svCat').classList.toggle('rt-bad',!cat);
+  if(!nm||!cat)return;
+  const copy=saveMode==='copy';
+  if(S.savedId&&!copy){
+    const s=SAVED.find(x=>x.id===S.savedId); s.name=nm; s.category=cat; s.modified='Today'; s.mo=0;
+  } else {
+    const id='s'+(++savedSeq);
+    const grants=copy?{[CU.id]:'author'}:S.perm.grants; grants[CU.id]='author';
+    const rec={id,name:nm,type:S.report,category:cat,owner:CU.id,lastRun:'Never run',lr:999,runs:0,modified:'Today',mo:0,grants,rights:copy?'':S.perm.rights,
+      templates:copy?S.templates.map(t=>({...t})):S.templates,output:copy?{...S.output}:S.output};
+    SAVED.unshift(rec);
+    S.savedId=id; S.perm={grants:rec.grants,owner:CU.id,rights:rec.rights}; S.templates=rec.templates; S.output=rec.output;
+    S.grant='author'; S.effective=CU.role; S.capped=false;
+  }
+  S.reportName=nm; S.category=cat;
+  closeSave();
+  if(S.persona!==LVL_CODE[S.effective]){S.persona=LVL_CODE[S.effective];$('buildSurface').dataset.pers=S.persona;renderColumns();renderMeta();renderLegacy();}
+  renderPreview(); renderPanel(); showView('builder');
+  toast(`${copy?'Copy saved':'Saved'} to My reports · ${cat}`);
+}
+
+/* ---------------- Confirm (Tier 5) ---------------- */
+let cfFn=null;
+function openConfirm(o){$('cfHead').textContent=o.title;$('cfBody').innerHTML=o.body;$('cfGo').textContent=o.confirm;cfFn=o.onConfirm;$('cfOverlay').classList.add('show');}
+function closeConfirm(){$('cfOverlay').classList.remove('show');cfFn=null;}
+
+/* ---------------- Test users + chooser ---------------- */
+function setUser(id){
+  CU=TEST_USERS.find(u=>u.id===id)||TEST_USERS[0];
+  const a=$('navAvatar'); a.textContent=initials(CU.name); a.style.background=avatarBg(CU.name); a.style.color='#fff';
+  $('navName').textContent=CU.name; $('navRole').textContent=LVL_LABEL[CU.role]+' role';
+  HS.own='all';
+  showView(CUR_VIEW==='builder'?'home':CUR_VIEW);
+}
+const LEGACY_MSG='Opens legacy export reports in Horizon. Existing reports keep running there.';
+function openChooser(){$('chRemember').checked=false;$('chooserOverlay').classList.add('show');}
+// Lasts for this page session only; a reload brings the chooser back.
+let rememberNew=false;
+function openExportReports(){if(rememberNew){showView('home');return;}openChooser();}
+
+/* ---------------- Reports hub (existing global Reports page) ---------------- */
+const HI=p=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const HUB=[
+  {id:'my',t:'My Reports',d:'A list of my saved system reports.',ic:HI('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>')},
+  {id:'queue',t:'My Queued Reports',d:'A list of pre saved reports in a run queue.',ic:HI('<path d="M4 6h11M4 12h11M4 18h7"/><circle cx="18" cy="17" r="3.5"/><path d="M18 15.5V17l1 .8"/>')},
+  {id:'builder',t:'Reports Builder',d:'Create your own custom reports on various sections, save and export these reports.',ic:HI('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>')},
+  {id:'export',t:'Export Reports',d:'Export different automated section reports from different time periods, export also to a downloadable report.',tag:'New version available',ic:HI('<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 11v6M9.5 14.5 12 17l2.5-2.5"/>')},
+  {id:'resource',t:'Resource Reports',d:'Export Resource reports from different time periods, export also to a downloadable report.',ic:HI('<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 14a6.5 6.5 0 0 1 3 6"/>')},
+  {id:'timesheet',t:'Timesheets Reports',d:'Run and export different user timesheet reports from different time periods, export also to a downloadable report.',ic:HI('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>')},
+  {id:'system',t:'System Reports',d:'Run and export different System reports from different time periods, export also to a downloadable report.',ic:HI('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>')},
+  {id:'sched',t:'Scheduled Reports',d:'Create View and update Report Schedules.',ic:HI('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 14h3M8 17h6"/>')},
+];
+function renderHub(){
+  $('hubGrid').innerHTML=HUB.map(h=>`<button type="button" class="hub-card" data-hub="${h.id}"><span class="hub-ico">${h.ic}</span><span class="hub-txt"><span class="hub-t">${h.t}${h.tag?`<span class="tf-def">${h.tag}</span>`:''}</span><span class="hub-d">${h.d}</span></span></button>`).join('');
+  $('hubGrid').querySelectorAll('[data-hub]').forEach(b=>b.onclick=()=>{
+    const h=HUB.find(x=>x.id===b.dataset.hub);
+    if(h.id==='export')openExportReports();
+    else if(h.id==='sched')showView('schedules');
+    else toast(`${h.t} opens as it does today. Out of scope for this prototype.`);
+  });
+}
+$('hubAdmin').onclick=()=>toast('Opens Reports administration');
+$('navBack').onclick=()=>showView(CUR_VIEW==='builder'?'home':'hub');
+function closeChooser(){$('chooserOverlay').classList.remove('show');}
+
+/* ---------------- Wiring ---------------- */
+$('userBtn').onclick=()=>openActionMenu($('userBtn'),[{label:'<span class="um-cap">QA test users · application role</span>',disabled:true}].concat(TEST_USERS.map(u=>({label:`${u.id===CU.id?'✓ ':''}${esc(u.name)} · ${LVL_LABEL[u.role]}`,onClick:()=>{setUser(u.id);toast(`Signed in as ${u.name} (${LVL_LABEL[u.role]} role)`);}}))));
+$('legacyLink').onclick=()=>toast(LEGACY_MSG);
+$('buildBtn').onclick=openScratch;
+$('homeSearch').oninput=e=>{HS.q=e.target.value.toLowerCase().trim();renderHome();};
+$('dpCollapse').onclick=()=>{S.panelOpen=false;renderPanel();};
+$('permCancel').onclick=closeShare;
+$('permSave').onclick=sendShare;
+$('permOverlay').onclick=e=>{if(e.target===$('permOverlay'))closeShare();};
+$('saveCancel').onclick=closeSave;
+$('saveGo').onclick=doSave;
+$('saveOverlay').onclick=e=>{if(e.target===$('saveOverlay'))closeSave();};
+$('cfCancel').onclick=closeConfirm;
+$('cfGo').onclick=()=>{const f=cfFn;closeConfirm();if(f)f();};
+$('cfOverlay').onclick=e=>{if(e.target===$('cfOverlay'))closeConfirm();};
+$('pickCancel').onclick=()=>$('pickOverlay').classList.remove('show');
+$('pickGo').onclick=()=>{$('pickOverlay').classList.remove('show');queue(pickKind,pickSel>=0?S.templates[pickSel].name:'');};
+$('pickOverlay').onclick=e=>{if(e.target===$('pickOverlay'))$('pickOverlay').classList.remove('show');};
+$('chNew').onclick=()=>{if($('chRemember').checked)rememberNew=true;closeChooser();showView('home');};
+$('chCancel').onclick=closeChooser;
+$('chooserOverlay').onclick=e=>{if(e.target===$('chooserOverlay'))closeChooser();};
+$('chLegacy').onclick=()=>{closeChooser();toast(LEGACY_MSG);};
+
+/* ---------------- Init ---------------- */
+window.addEventListener('resize',()=>{if(S.report)renderRail();});
+setUser('u-jd');
+renderHub();
+// Drawer mode (<1700px, or a wide tab): clicking anywhere in the builder outside the panel closes it, like the lightbox drawer.
+document.addEventListener('mousedown',e=>{
+  if(!S.panelOpen||!S.report||!(window.innerWidth<1700||WIDE_TABS.includes(S.panelTab)))return;
+  if(e.target.closest('#dpanel')||!e.target.closest('#buildSurface'))return;
+  S.panelOpen=false;renderPanel();
+});
 
 </script>
 </body>
