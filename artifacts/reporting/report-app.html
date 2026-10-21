@@ -2829,10 +2829,10 @@ function makeBlank(key){
 }
 function renderScratch(){
   $('scratchHead').textContent='Build a report';
-  $('scratchSub').textContent='Pick a report type to build from. The type sets the grain, columns and rules, and locks once you start.';
+  $('scratchSub').textContent='Pick a report type to start from. It sets what each row is and which columns are available.';
   const byDom={};
   STARTS.forEach(s=>{const d=REPORTS[s.id].domain;if(REPORTS[s.id].pending&&CU.role!=='author')return;(byDom[d]=byDom[d]||[]).push(s);});
-  const blank=CU.role==='author'?`<div class="scratch-group"><div class="scratch-card blank-card" onclick="startBlank()"><div class="start-ico">${ICON_PLUS}</div><div><div class="t">Create blank report</div><div class="d">Pick the data you’re after and what one row is, then choose from every column.</div></div><span class="fetag">Authors only</span></div></div>`:'';
+  const blank=CU.role==='author'?`<div class="scratch-group"><div class="scratch-card blank-card" onclick="startBlank()"><div class="start-ico">${ICON_PLUS}</div><div><div class="t">Create blank report</div><div class="d">Tick the data you need and choose from every column. The rows follow your data. Authors only.</div></div><span class="fetag">Authors only</span></div></div>`:'';
   $('scratchGrid').innerHTML=blank+CATS.filter(d=>byDom[d]).map(d=>`
     <div class="scratch-group">
       <div class="scratch-group-lbl">${d}</div>
@@ -3087,7 +3087,7 @@ function openSave(mode){
     <div class="rt-field"><label>Report category <span class="rt-opt">optional</span></label>
       <select id="svCat"><option value="">None: show under All only</option>${CATS.map(c=>`<option ${S.category===c?'selected':''}>${c}</option>`).join('')}</select>
       <div class="scope-note">It decides which tab the report appears under on Export reports. Without one, it only shows under All.</div></div>
-    <div class="rt-note">${copy?`The copy is yours. ${CU.role==='guided'?'You can run it and share it at Guided level.':'You can change it within your role.'}`:'You get Author access to reports you save; your application role still caps what you can do.'}</div>`;
+    <div class="rt-note">${copy?`The copy is yours. ${CU.role==='guided'?'You can run it and share it with View access.':'You can change it within your role.'}`:'You get Admin access to reports you save. Your application role still caps what you can do.'}</div>`;
   $('saveOverlay').classList.add('show');
   setTimeout(()=>{const i=$('svName');if(i){i.focus();i.select();}},30);
 }
