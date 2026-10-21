@@ -1155,6 +1155,54 @@ body{padding-left:var(--shell-w);}
 .dr-card + .sh-add,.sh-add + .dr-card{margin-top:0;}
 #dpPerm > .dr-card:last-child{margin-top:22px;}
 
+/* ---- Rail on the far right of the panel (trial, 21 Oct). Remove this block to put it back at the seam. ---- */
+.dpanel .dp-rail{order:2;border-left:1px solid var(--border-default);background:var(--surface-muted);}
+.dpanel .dp-main{order:1;}
+.dpanel .dp-head{padding:13px 8px 11px 24px;}
+.dpanel .dp-body{padding:0 12px 20px 24px;}
+.dpanel>.dp-foot .pv-foot{padding-left:24px;padding-right:24px;}
+@media (max-width:1600px){.dpanel>.dp-foot .pv-foot{padding-left:20px;padding-right:20px;}}
+
+/* ================= 21 Oct (Phil call): preview as one floating card ================= */
+/* The right zone is a canvas; the preview is a single card with space around it, the rail appended to its
+   right edge (DAM lightbox language) and the meters pinned inside it. No tray, no separate sheet, no zone bar. */
+.dpanel{background:var(--surface-muted);border-left:1px solid var(--border-default);padding:20px 20px 20px 24px;box-sizing:border-box;flex-direction:column;}
+.dp-card{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-4);box-shadow:var(--shadow-md);overflow:hidden;}
+.dpanel .dp-row{flex:1 1 auto;min-height:0;}
+.dpanel .dp-rail{order:2;width:64px;flex:0 0 64px;border-left:1px solid var(--border-default);background:var(--surface-default);padding-top:12px;}
+.dpanel .dp-tab.on{background:var(--primary-subtle);color:var(--primary-default);box-shadow:none;}
+.dpanel .dp-tab:hover{background:var(--surface-muted);}
+.dpanel .dp-main{order:1;}
+.dpanel .dp-head{padding:16px 20px 6px 24px;}
+.dpanel .dp-body{padding:4px 20px 20px 24px;}
+.dpanel .dp-pane{background:none;border:none;border-radius:0;box-shadow:none;padding:0;max-width:none;}
+.dpanel .dp-card>.dp-foot{border-top:1px solid var(--border-default);background:var(--surface-default);}
+.dpanel .dp-card>.dp-foot .pv-foot{padding:12px 20px 12px 24px;max-width:none;}
+@media (max-width:1600px){.dpanel{padding:14px 14px 14px 16px;} .dpanel .dp-card>.dp-foot .pv-foot{padding:10px 16px;}}
+/* Access dots: three dots by reach, a quarter of the old chip width */
+.acc-dots{flex:0 0 auto;display:inline-flex;align-items:center;gap:3px;height:22px;padding:0 6px;border:1px solid transparent;border-radius:var(--radius-full);background:none;cursor:pointer;}
+.acc-dots:hover{border-color:var(--border-default);background:var(--surface-muted);}
+.acc-dots:focus-visible{outline:2px solid var(--primary-default);outline-offset:1px;}
+.acc-dots i,.acc-dots-k i{display:block;width:7px;height:7px;border-radius:50%;border:1.5px solid var(--text-muted);box-sizing:border-box;}
+.acc-dots i.on,.acc-dots-k i.on{background:var(--text-default);border-color:var(--text-default);}
+.acc-dots-k{display:inline-flex;gap:2px;vertical-align:-1px;margin-right:3px;}
+.acc-dots-k i{width:6px;height:6px;}
+.acc-key{white-space:nowrap;margin-right:8px;}
+/* Widths: give Custom metadata more room, Report columns less */
+#buildSurface .zone-cols .r-setup{flex:26 1 0;}
+#buildSurface .zone-cols .r-cols{flex:38 1 0;max-width:500px;}
+#buildSurface[data-pers="admin"] .zone-cols .r-cols{flex:40 1 0;max-width:520px;}
+#buildSurface .zone-cols .r-meta{flex:34 1 0;min-width:240px;}
+@media (max-width:1600px){#buildSurface:not([data-pers="user"]) .zone-cols .r-cols,#buildSurface:not([data-pers="user"]) .zone-cols .r-meta{max-width:none;}}
+/* Density: tighter list rows (type sizes stay on the Scale scale) */
+.optlist.plain .opt{padding-top:8px;padding-bottom:8px;}
+.zone-t{font-size:var(--font-size-3);}
+@media (max-width:1600px){
+  .dp-card>.dp-foot .pv-foot{flex-wrap:wrap;row-gap:10px;}
+  .dp-card>.dp-foot .pv-foot .est{flex:1 0 100%;display:grid;grid-template-columns:1fr 1fr;column-gap:20px;align-items:end;}
+  .dp-card>.dp-foot .pv-foot .est .cap{grid-column:1 / -1;}
+}
+
 </style>
 </head>
 <body>
@@ -1301,7 +1349,7 @@ body{padding-left:var(--shell-w);}
   </div>
 
   <aside class="dpanel" id="dpanel" aria-label="Refine and review">
-    <div class="zone-bar" id="zoneRefine"><span class="zone-n">2</span><span class="zone-t">Refine and review</span><span class="zone-d">Narrow the rows, set the output and share, checked against the preview</span></div>
+    <div class="dp-card">
     <div class="dp-row">
     <nav class="dp-rail" id="dpRail"></nav>
     <div class="dp-main">
@@ -1328,6 +1376,7 @@ body{padding-left:var(--shell-w);}
     </div>
     </div>
     <div class="dp-foot" id="dpFoot"></div>
+    </div>
   </aside>
 </div>
 
@@ -2136,7 +2185,7 @@ function renderPreview(){
   const bandCount=(label,n)=>label==='Metrics'&&mult>1?`${n} × ${mult} ${BREAKDOWNS[S.breakdown].label.toLowerCase()}`:`${n}`;
   const body=bands.map(([label,arr])=>`<div class="cm-group">${showLabels?`<div class="cm-grp-lbl">${label} · ${bandCount(label,arr.length)}</div>`:''}<div class="cm-tags">${arr.map(tagFor).join('')}</div></div>`).join('');
   // Author: dense list in export order. Same contract (every column, nothing hidden), less chrome.
-  const compact=S.persona==='admin';
+  const compact=false; // one preview for every role (Phil, 21 Oct)
   let colN=0;
   const listRow=(c,isMeas)=>{
     const sorted=c.id===S.sort.col, unit=unitOf(c), span=isMeas&&mult>1?mult:1;
@@ -2175,8 +2224,7 @@ function renderPreview(){
     <div class="pv-body">
       ${manifest}
     </div>
-    <div class="dp-grp-lbl pv-sum-lbl">Report settings</div>
-    <div class="pv-summary" id="dpDetails"></div>`;
+`;
   $('dpFoot').innerHTML=`
     <div class="pv-foot">
       <div class="est">
@@ -3347,8 +3395,7 @@ const _enhanceList=enhanceList; enhanceList=function(listId,boxId){
       const cb=row.querySelector('[data-col]'); if(!cb)return;
       const c=S.cols.find(x=>x.id===cb.dataset.col); if(!c)return;
       let t=row.querySelector('.area-tag');
-      if(author&&!c.insight){ if(!t){t=document.createElement('span');t.className='area-tag';const sp=row.querySelector('.auth-sp');sp?row.insertBefore(t,sp):row.appendChild(t);} t.textContent=AREA_LBL[colArea(c)]; }
-      else if(t)t.remove();
+      if(t)t.remove(); // data-area tags removed: data sets already filter the list (Phil, 21 Oct)
       row.dataset.areaHide=(author&&tags.size&&!cb.checked&&!tags.has(colArea(c)))?'1':'';
     });
   }
