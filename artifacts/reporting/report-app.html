@@ -571,7 +571,7 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
 }
 
 /* ================= V2 review changes (19 Oct 2026) ================= */
-.r-setup{flex:0 0 280px;} .r-cols{flex:0 0 400px;}
+.r-setup{flex:0 0 280px;} .r-cols{flex:0 0 380px;} .r-meta{flex:0 0 260px;}
 .preview{flex:1 1 auto;max-width:860px;}
 .btn-destructive{background:var(--color-red-600);color:#fff;}
 .btn-destructive:hover{background:#b02a10;}
@@ -736,7 +736,7 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
 .rt-field .scope-note{margin-top:2px;}
 
 
-@media (max-width:1500px){ .r-setup{flex:0 0 260px;} .r-cols{flex:0 0 360px;} }
+@media (max-width:1500px){ .r-setup{flex:0 0 250px;} .r-cols{flex:0 0 330px;} .r-meta{flex:0 0 230px;} }
 
 /* Reports hub (existing global Reports page) */
 .hub-main{max-width:1480px;margin:0 auto;padding:var(--spacing-6);}
@@ -753,12 +753,6 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
 .hub-t{font-size:var(--font-size-3);font-weight:600;color:var(--text-default);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .hub-d{font-size:var(--font-size-2);color:var(--text-muted);line-height:1.45;margin-top:4px;}
 
-/* Wide drawer for Permissions and Template files: overlays the preview at every width */
-.dpanel.wide .dp-body{padding:18px 24px;}
-.dpanel.wide .dp-head{padding:14px 24px;}
-.pv-area{position:relative;}
-.pv-area::after{content:'';position:absolute;inset:0;background:rgba(28,28,25,.06);opacity:0;pointer-events:none;transition:opacity .15s;}
-.pv-covered .pv-area::after{opacity:1;}
 /* compact permission rows */
 .pm-row{gap:12px;padding:7px 0;}
 .pm-sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -786,34 +780,8 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
 .scope-inline .select,.scope-inline .optlist{background-color:#fff;}
 .scope-inline #anchorBox{border-top-color:var(--border-default);}
 .cov-btn:focus-visible{outline:2px solid var(--primary-default);outline-offset:2px;}
-.dpanel .dp-rail{box-sizing:border-box;flex:0 0 64px;width:64px;}
-
-/* Detail panel, DAM lightbox order: rail on the left, content against the right edge.
-   The rail and content are always positioned from the right edge; --dw is the content width.
-   Docked (Details/Filters, 1700px and up): the layout reserves rail + content.
-   Overlay (Permissions/Templates, or any tab below 1700px): the layout reserves the rail only;
-   rail + content slide over the preview. Width changes animate so the panel visibly grows and moves.
-   Motion values are local until Scale has motion tokens. */
-.dpanel{--dp-dur:240ms;--dp-ease:cubic-bezier(.2,0,0,1);--dw:316px;flex-basis:380px;border-left:none;transition:flex-basis var(--dp-dur) var(--dp-ease);}
-.dpanel.collapsed{--dw:0px;flex-basis:64px;}
-.dpanel.ovl{--dw:360px;flex-basis:64px;}
-.dpanel.ovl.wide{--dw:min(560px,calc(100vw - 480px));}
-.dpanel .dp-rail{position:absolute;top:0;bottom:0;right:var(--dw);z-index:2;background:var(--surface-default);border-left:1px solid var(--border-default);box-shadow:none;transition:right var(--dp-dur) var(--dp-ease),box-shadow var(--dp-dur) var(--dp-ease);}
-.dpanel.ovl .dp-rail{box-shadow:-12px 0 32px rgba(0,0,0,.14);}
-.dpanel .dp-main{display:flex;position:absolute;top:0;bottom:0;right:0;width:var(--dw);background:var(--surface-default);overflow:hidden;transition:width var(--dp-dur) var(--dp-ease),opacity 160ms ease;}
-.dpanel .dp-head,.dpanel .dp-body{min-width:var(--dw);box-sizing:border-box;}
-.dpanel.collapsed .dp-main{display:flex;opacity:0;visibility:hidden;pointer-events:none;transition:width var(--dp-dur) var(--dp-ease),opacity 120ms ease,visibility 0s linear var(--dp-dur);}
-.dpanel.collapsed .dp-head,.dpanel.collapsed .dp-body{min-width:316px;}
-@keyframes dpPaneIn{from{opacity:0;transform:translateX(6px);}to{opacity:1;transform:none;}}
-.dpanel .dp-pane{animation:dpPaneIn 200ms var(--dp-ease) both;}
-.dp-tab{transition:background-color .15s,color .15s;}
-@media (prefers-reduced-motion:reduce){
-  .dpanel,.dpanel *{transition:none !important;animation:none !important;}
-}
 
 /* Author: compact export preview; the width goes to Report columns */
-#buildSurface[data-pers="admin"] .r-cols{flex:1 1 360px;max-width:620px;}
-.preview.compact{max-width:560px;flex:1 1 auto;}
 .preview.compact .pv-head{padding:12px 16px;}
 .preview.compact .pv-head .title{font-size:var(--font-size-3);}
 .preview.compact .pv-body{padding:12px 16px;}
@@ -827,52 +795,394 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
 .cl-n{flex:0 0 34px;font-size:11px;color:var(--text-subtle);font-variant-numeric:tabular-nums;}
 .cl-name{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-default);}
 .cl-type{flex:0 0 auto;font-size:11px;color:var(--text-muted);display:inline-flex;gap:4px;align-items:center;}
-.preview.compact .pv-foot{gap:10px;padding:12px 16px;}
-.preview.compact .pv-foot .est{flex:1 1 100%;min-width:0;}
-.preview.compact .pv-foot .spacer{display:none;}
-.preview.compact .guard{flex-basis:100%;}
-.preview.compact .pv-foot .split{margin-left:auto;}
 .cl-row .ct-pre{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-subtle);flex:0 0 auto;}
-/* Author: builder shrinks when space is tight but never grows; spare width goes to the preview canvas */
-#buildSurface[data-pers="admin"]{flex:0 1 auto;}
-.builder:has(#buildSurface[data-pers="admin"]) .pv-area{flex:1 0 400px;min-width:400px;padding:var(--spacing-4);}
 .cl-n{flex:0 0 40px;white-space:nowrap;}
 .preview.compact .cm-head{display:block;line-height:1.5;}
 .preview.compact .cm-head svg{vertical-align:-1px;margin-right:4px;}
-#buildSurface[data-pers="admin"] .r-cols{min-width:0;}
 /* Long calc rows: the dependency note shortens before the name or the badge */
 .authrow{min-width:0;}
 .authrow .col-lbl{flex:0 1 auto;min-width:60px;max-width:none;}
 .authrow .col-needs{flex:0 1000 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .authrow > *:not(.col-lbl):not(.col-needs):not(.auth-sp){flex-shrink:0;}
 
-/* Custom metadata as a section of Report columns */
-.meta-sec.region{height:auto;min-height:0;display:block;border-right:none;border-top:1px solid var(--border-default);}
-.meta-sec .meta-sec-lbl{color:var(--text-default);}
-.meta-sec .meta-head{background:none;border-bottom:none;padding-top:0;}
-/* Guided: no column picker, but the standard metadata fields they may add stay visible */
-#buildSurface[data-pers="user"] #card-cols{display:flex;flex:0 0 300px;}
-#buildSurface[data-pers="user"] #colList > :not(#card-meta){display:none;}
-#buildSurface[data-pers="user"] #resetCols{display:none;}
-#buildSurface[data-pers="user"] .meta-sec.region{border-top:none;}
-.meta-sec .col-auth-hint{display:none;}
+
+/* ===== Right panel (20 Oct review): docked, fills the right side; Preview is its home tab =====
+   Left = define the data. Right = preview, refine, output, access. Footer (meters + actions) stays put across tabs. */
+#buildSurface{flex:0 1 auto;min-width:0;}
+.dpanel{--dp-ease:cubic-bezier(.2,0,0,1);flex:1 1 auto;min-width:440px;display:flex;position:relative;background:var(--surface-default);border-left:1px solid var(--border-default);height:100%;}
+.dpanel .dp-rail{position:static;box-sizing:border-box;flex:0 0 64px;width:64px;border-right:1px solid var(--border-subtle);background:var(--surface-default);}
+.dpanel .dp-main{position:static;flex:1 1 auto;min-width:0;width:auto;display:flex;flex-direction:column;overflow:hidden;}
+.dpanel .dp-head{padding:14px 24px;}
+.dpanel .dp-body{flex:1 1 auto;min-height:0;overflow-y:auto;padding:18px 24px;}
+.dpanel .dp-pane{max-width:820px;}
+.dp-foot{flex:0 0 auto;border-top:1px solid var(--border-default);background:var(--surface-default);}
+.dp-foot:empty{display:none;}
+.dp-foot .pv-foot{border-top:none;padding:12px 24px;max-width:820px;}
+/* preview inside the pane: no card chrome */
+.dp-pane .preview{border:none;border-radius:0;box-shadow:none;background:none;max-width:none;display:block;min-height:0;height:auto;}
+.dp-pane .preview .pv-head{padding:0 0 12px;border-bottom:none;}
+.dp-pane .preview .pv-note{margin:0 0 14px;}
+.dp-pane .preview .pv-body{padding:0;overflow:visible;}
+.pv-sum-lbl{margin-top:22px !important;}
+.pv-summary .def-row{padding:3px 0;}
+.pv-summary .def-k{flex:0 0 110px;}
+.pv-summary{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:4px 32px;align-items:start;}
+.pv-grp .dp-grp-lbl{margin-top:12px;}
+/* Author: the panel title already says Preview */
+.dp-pane .preview.compact .pv-head{display:none;}
+@keyframes dpPaneIn{from{opacity:0;transform:translateX(6px);}to{opacity:1;transform:none;}}
+.dpanel .dp-pane{animation:dpPaneIn 200ms var(--dp-ease) both;}
+.dp-tab{transition:background-color .15s,color .15s;}
+@media (prefers-reduced-motion:reduce){.dpanel,.dpanel *{transition:none !important;animation:none !important;}}
+
+/* Search + Select all on the column lists */
+.col-search{display:flex;align-items:center;gap:8px;margin:10px 12px 8px;padding:0 10px;height:34px;border:1px solid var(--border-emphasis);border-radius:var(--radius-2);background:#fff;}
+.col-search svg{width:15px;height:15px;color:var(--text-subtle);flex:0 0 auto;}
+.col-search input{border:none;outline:none;background:none;font-family:inherit;font-size:var(--font-size-2);flex:1;min-width:0;color:var(--text-default);}
+.col-search:focus-within{border-color:var(--primary-default);box-shadow:0 0 0 2px var(--primary-subtle);}
+.col-group-lbl{display:flex;align-items:center;gap:8px;}
+.sel-all{margin-left:auto;background:none;border:none;padding:0 2px;font-family:inherit;font-size:11px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--primary-default);cursor:pointer;}
+.sel-all:hover{text-decoration:underline;}
+.ls-empty{padding:16px 12px;font-size:var(--font-size-1);color:var(--text-muted);}
+.meta-divider{display:flex;align-items:center;gap:8px;}
+
+/* Data rights: a distinct function at the top of Permissions */
+.dr-card{border:1px solid var(--border-default);border-radius:var(--radius-3);padding:14px 16px;background:var(--surface-muted);margin-bottom:22px;}
+.dr-card.on{background:var(--surface-default);border-color:var(--border-emphasis);}
+.dr-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;}
+.dr-ico{width:32px;height:32px;border-radius:var(--radius-2);background:var(--surface-default);border:1px solid var(--border-default);display:flex;align-items:center;justify-content:center;color:var(--text-muted);flex:0 0 auto;}
+.dr-ico svg{width:17px;height:17px;}
+.dr-txt{flex:1;min-width:0;}
+.dr-title{font-size:var(--font-size-2);font-weight:600;color:var(--text-default);}
+.dr-sub{font-size:var(--font-size-1);color:var(--text-muted);margin-top:2px;}
+.dr-state{font-size:11px;font-weight:500;color:var(--text-muted);border:1px solid var(--border-default);border-radius:var(--radius-full);padding:1px 9px;background:var(--surface-default);}
+.dr-card.on .dr-state{color:var(--text-default);border-color:var(--border-emphasis);}
+.dr-card .scope-note{margin-top:6px;}
+/* Quick filters */
+#presetFilters:not(:empty){margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--border-subtle);}
+.pf-opt{display:flex;align-items:flex-start;gap:9px;font-size:var(--font-size-2);cursor:pointer;}
+.pf-opt .checkbox-input{margin-top:2px;flex:0 0 auto;}
+.pf-opt > span{display:flex;flex-direction:column;gap:2px;}
+
+/* Author "View as": segmented control in Preview + read-only banner */
+.va-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.va-lbl{font-size:var(--font-size-1);color:var(--text-muted);}
+.va-seg{display:inline-flex;border:1px solid var(--border-emphasis);border-radius:var(--radius-2);overflow:hidden;background:var(--surface-default);}
+.va-seg button{border:none;background:none;font-family:inherit;font-size:var(--font-size-1);font-weight:500;color:var(--text-muted);padding:5px 12px;cursor:pointer;}
+.va-seg button+button{border-left:1px solid var(--border-default);}
+.va-seg button:hover{background:var(--surface-muted);color:var(--text-default);}
+.va-seg button.on{background:var(--primary-subtle);color:var(--primary-default);}
+.va-seg button:focus-visible{outline:2px solid var(--primary-default);outline-offset:-2px;}
+.viewas-bar{display:none;align-items:center;gap:10px;height:44px;padding:0 20px;background:var(--surface-muted);border-bottom:1px solid var(--border-emphasis);font-size:var(--font-size-2);color:var(--text-default);}
+.viewas-bar svg{width:16px;height:16px;color:var(--text-muted);flex:0 0 auto;}
+.viewas-bar .btn{margin-left:auto;}
+.viewing-as .viewas-bar{display:flex;}
+.viewing-as .builder{height:calc(100vh - 52px - 44px);}
+/* read-only: lists still scroll, nothing can be changed */
+.viewing-as #buildSurface input,.viewing-as #buildSurface select,.viewing-as #buildSurface button,.viewing-as #buildSurface .opt,.viewing-as #buildSurface .cov-btn,.viewing-as #buildSurface .linkbtn,
+.viewing-as .dp-pane:not([data-pane="preview"]) input,.viewing-as .dp-pane:not([data-pane="preview"]) select,.viewing-as .dp-pane:not([data-pane="preview"]) button{pointer-events:none;}
+.viewing-as #dpFoot{display:none;}
+
+/* Define the report (Authors) */
+.define-box:not(:empty){margin:4px 0 18px;padding:14px;border:1px solid var(--border-default);border-radius:var(--radius-3);background:var(--surface-muted);}
+.df-lbl{font-size:var(--font-size-1);font-weight:600;color:var(--text-default);margin:0 0 6px;}
+.df-lbl + .df-tags,.df-lbl + .select,.df-lbl + .df-fixed{margin-bottom:6px;}
+.df-note + .df-lbl,.df-tags + .df-lbl{margin-top:12px;}
+.df-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.df-tag{font-family:inherit;font-size:var(--font-size-1);font-weight:500;padding:4px 10px;border-radius:var(--radius-full);border:1px solid var(--border-emphasis);background:var(--surface-default);color:var(--text-muted);cursor:pointer;}
+.df-tag:hover{color:var(--text-default);border-color:var(--text-subtle);}
+.df-tag.on{background:var(--primary-subtle);border-color:var(--primary-default);color:var(--primary-default);}
+.df-tag:focus-visible{outline:2px solid var(--primary-default);outline-offset:2px;}
+.df-note{font-size:11px;color:var(--text-muted);line-height:1.4;margin-top:6px;}
+.df-warn{color:var(--text-default);}
+.select.df-need{border-color:var(--primary-default);box-shadow:0 0 0 2px var(--primary-subtle);}
+.df-fixed{font-size:var(--font-size-2);color:var(--text-default);}
+.df-sub{color:var(--text-subtle);font-size:11px;font-weight:400;}
+.df-cat{margin-top:12px;padding-top:10px;border-top:1px solid var(--border-default);font-size:var(--font-size-1);color:var(--text-muted);}
+.df-cat b{color:var(--text-default);font-weight:600;}
+/* area label on column rows (identity: neutral) */
+.area-tag{font-size:10px;font-weight:500;color:var(--text-subtle);border:1px solid var(--border-default);border-radius:var(--radius-1);padding:0 5px;line-height:16px;flex:0 0 auto;white-space:nowrap;}
+
+/* Landing: template access (Authors), two-row cap */
+.tpl-acc{margin-left:auto;font-family:inherit;font-size:10px;font-weight:500;color:var(--text-muted);background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-full);padding:1px 8px;cursor:pointer;white-space:nowrap;}
+.tpl-acc:hover{border-color:var(--border-emphasis);color:var(--text-default);}
+.tpl-more{display:block;margin:12px auto 0;font-family:inherit;font-size:var(--font-size-2);font-weight:500;color:var(--primary-default);background:none;border:1px solid var(--border-default);border-radius:var(--radius-2);padding:7px 16px;cursor:pointer;}
+.tpl-more:hover{border-color:var(--primary-default);}
+.ch-undo{font-size:11px;color:var(--text-muted);margin:-4px 0 0 24px;}
+.tpl-foot{display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:6px;}
+.tpl-foot .tpl-use{margin-top:0;padding-top:0;}
+.r-cols,.r-meta{min-width:0;} .col-search input{width:0;}
+#buildSurface[data-pers="admin"] .r-cols{flex-basis:460px;}
+@media (max-width:1500px){#buildSurface[data-pers="admin"] .r-cols{flex-basis:360px;}}
+
+/* ---- Two zones: Select data (left) / Refine and review (right) ---- */
+#buildSurface{flex-direction:column;}
+.zone-cols{display:flex;flex:1 1 auto;min-height:0;}
+.zone-cols .region{height:auto;}
+.zone-bar{flex:0 0 52px;box-sizing:border-box;height:52px;display:flex;align-items:center;gap:10px;padding:0 var(--spacing-4);border-bottom:1px solid var(--border-default);min-width:0;white-space:nowrap;overflow:hidden;}
+.zone-n{flex:0 0 22px;width:22px;height:22px;border-radius:var(--radius-full);border:1.5px solid var(--border-emphasis);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--text-default);background:var(--surface-default);box-sizing:border-box;}
+.zone-n svg{width:13px;height:13px;}
+.zone-bar.is-done .zone-n{background:var(--text-default);border-color:var(--text-default);color:var(--surface-default);}
+.zone-t{font-size:15px;font-weight:600;color:var(--text-default);letter-spacing:-0.005em;}
+.zone-d{font-size:var(--font-size-1);color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;min-width:0;}
+/* Refine zone is a tray; each pane is a sheet on it */
+.dpanel{flex-direction:column;background:var(--surface-muted);border-left:1px solid var(--border-emphasis);}
+.dpanel .zone-bar{padding:0 24px 0 20px;}
+.dp-row{display:flex;flex:1 1 auto;min-height:0;}
+.dpanel .dp-rail{background:transparent;border-right:none;padding-top:12px;}
+.dpanel .dp-tab:hover{background:var(--surface-emphasis);}
+.dpanel .dp-tab.on{background:var(--surface-default);color:var(--primary-default);box-shadow:0 0 0 1px var(--border-default);}
+.dpanel .dp-tab.on .dp-ct{background:var(--primary-default);}
+.dpanel .dp-head{padding:13px 24px 11px 8px;border-bottom:none;background:transparent;}
+.dpanel .dp-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);}
+.dpanel .dp-body{padding:0 24px 20px 8px;}
+.dpanel .dp-pane{background:var(--surface-default);border:1px solid var(--border-default);border-radius:var(--radius-4);padding:20px 24px;box-shadow:var(--shadow-sm);box-sizing:border-box;}
+.dp-foot .pv-foot{padding:12px 24px 12px 8px;}
+.dp-foot{background:var(--surface-default);}
+.zone-bar{contain:inline-size;}
+.dpanel>.dp-foot{flex:0 0 auto;}
+.dpanel>.dp-foot .pv-foot{padding:12px 24px 12px 72px;max-width:none;box-sizing:border-box;}
+/* The selection zone keeps its column widths; the refine zone takes what's left */
+#buildSurface{flex:0 0 auto;}
+.dpanel{flex:1 1 0;}
+@media (max-width:1500px){.dpanel>.dp-foot .pv-foot{padding-left:20px;gap:12px;}}
+/* Data sets: a concrete checkbox list, not tags */
+.df-lbl-row{display:flex;align-items:baseline;gap:6px;}
+.df-lbl-row .df-sub{margin-left:auto;}
+.df-lbl label{font:inherit;color:inherit;}
+.df-note + .df-lbl{margin-top:14px;}
+.df-sets{display:grid;grid-template-columns:1fr 1fr;gap:0 10px;border:1px solid var(--border-default);border-radius:var(--radius-3);background:var(--surface-default);padding:4px 10px;}
+.df-set{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:var(--font-size-1);color:var(--text-default);cursor:pointer;min-width:0;}
+.df-set-l{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.df-set-n{font-size:11px;color:var(--text-subtle);font-variant-numeric:tabular-nums;}
+.df-set.is-off{color:var(--text-subtle);cursor:not-allowed;}
+.df-set input:disabled{cursor:not-allowed;}
+.df-cat-lbl + .select{margin-bottom:0;}
+.rt-opt{font-weight:400;color:var(--text-subtle);font-size:11px;margin-left:4px;}
+.df-set.is-zero .df-set-n{color:var(--text-muted);}
+.df-sets{grid-template-columns:1fr;padding:2px 10px;}
+.df-set{padding:5px 0;}
+.df-set + .df-set{border-top:1px solid var(--border-subtle);}
+.df-warn + .df-note{margin-top:4px;}
+/* Access list: the existing View / Edit / Admin checkbox grid */
+.pm-grid{border:1px solid var(--border-default);border-radius:var(--radius-3);margin-top:10px;overflow:hidden;}
+.pm-ghead,.pm-grow{display:grid;grid-template-columns:minmax(0,1fr) repeat(3,72px);align-items:center;padding:0 12px;}
+.pm-ghead{background:var(--surface-muted);border-bottom:1px solid var(--border-default);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);height:34px;}
+.pm-gct{display:inline-block;min-width:18px;padding:0 5px;margin-left:2px;border-radius:var(--radius-full);background:var(--surface-default);border:1px solid var(--border-default);font-size:11px;text-transform:none;letter-spacing:0;color:var(--text-default);text-align:center;box-sizing:border-box;}
+.pm-gcol{display:flex;justify-content:center;align-items:center;}
+.pm-gname{display:flex;align-items:center;gap:10px;min-width:0;}
+.pm-grow{min-height:48px;border-bottom:1px solid var(--border-subtle);}
+.pm-grow:last-child{border-bottom:none;}
+.pm-grow:hover{background:var(--surface-muted);}
+.pm-grow .pm-meta{display:flex;flex-direction:column;min-width:0;}
+.pm-grow .pm-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pm-grow .pm-sub{font-size:11px;color:var(--text-muted);}
+.pm-grow.pm-none .pm-name{color:var(--text-muted);}
+.pm-empty{padding:16px 12px;font-size:var(--font-size-1);color:var(--text-muted);}
+.df-rows{margin-top:8px;font-size:var(--font-size-1);color:var(--text-default);}
+.df-rows-k{font-weight:600;margin-right:4px;}
+#f-breakdown .gate{font-weight:400;}
+.guard.guard-info{color:var(--text-muted);}
+.draft-badge{display:inline-block;margin-left:6px;padding:0 6px;border:1px solid var(--border-emphasis);border-radius:var(--radius-2);font-size:11px;font-weight:500;line-height:16px;color:var(--text-muted);vertical-align:1px;}
+/* Report categories (Authors) */
+.cat-manage{display:inline-flex;align-items:center;gap:6px;margin-left:10px;padding:6px 10px;border:none;background:none;font-family:inherit;font-size:var(--font-size-1);font-weight:500;color:var(--text-muted);cursor:pointer;border-radius:var(--radius-2);}
+.cat-manage svg{width:14px;height:14px;}
+.cat-manage:hover{color:var(--text-default);background:var(--surface-muted);}
+.cat-manage:focus-visible{outline:2px solid var(--primary-default);outline-offset:2px;}
+.cm-list{border:1px solid var(--border-default);border-radius:var(--radius-3);}
+.cm-row{display:flex;align-items:center;gap:10px;min-height:44px;padding:4px 12px;border-bottom:1px solid var(--border-subtle);}
+.cm-row:last-child{border-bottom:none;}
+.cm-name{flex:1;min-width:0;font-size:var(--font-size-2);color:var(--text-default);}
+.cm-meta{font-size:11px;color:var(--text-muted);white-space:nowrap;}
+.cm-lock{display:flex;color:var(--text-subtle);width:24px;justify-content:center;}
+.cm-gone .cm-name{color:var(--text-subtle);text-decoration:line-through;}
+.cm-in,.cm-add input{flex:1;min-width:0;height:32px;box-sizing:border-box;padding:0 10px;border:1px solid var(--border-emphasis);border-radius:var(--radius-2);font-family:inherit;font-size:var(--font-size-2);color:var(--text-default);background:var(--surface-default);}
+.cm-in:focus,.cm-add input:focus{outline:2px solid var(--primary-default);outline-offset:-1px;border-color:var(--primary-default);}
+.cm-add{display:flex;gap:8px;margin-top:12px;}
+
+/* ---- Site shell: Unity left nav + breadcrumb top bar (matches the live site) ---- */
+:root{--shell-nav:#006052;--shell-nav-2:#006c55;--shell-nav-hi:rgba(255,255,255,.14);--shell-mint:#78d0ac;--shell-w:56px;--shell-top:48px;}
+body{padding-left:var(--shell-w);}
+.sd-rail{position:fixed;left:0;top:0;bottom:0;width:var(--shell-w);background:linear-gradient(180deg,var(--shell-nav) 70%,var(--shell-nav-2));display:flex;flex-direction:column;align-items:center;padding:0 0 10px;gap:6px;z-index:120;box-sizing:border-box;}
+.sd-logo{width:var(--shell-w);height:48px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:20px;letter-spacing:-0.04em;border-bottom:1px solid rgba(255,255,255,.18);margin-bottom:12px;flex:0 0 auto;}
+.sd-ri{position:relative;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:none;border-radius:var(--radius-2);background:none;color:rgba(255,255,255,.85);cursor:pointer;padding:0;font-family:inherit;}
+.sd-ri svg{width:17px;height:17px;}
+.sd-ri:hover{background:var(--shell-nav-hi);color:#fff;}
+.sd-ri.on{background:rgba(255,255,255,.18);color:#fff;}
+.sd-ri:focus-visible{outline:2px solid #fff;outline-offset:1px;}
+.sd-q{font-weight:700;font-size:13px;}
+.sd-sp{flex:1;}
+.sd-rail .sd-sp+.sd-ri{margin-top:0;border-top:none;}
+.sd-av{width:36px;height:36px;margin-bottom:6px;}
+.sd-av .avatar{width:28px;height:28px;font-size:11px;border:2px solid rgba(255,255,255,.6);box-sizing:border-box;}
+.sd-dot{position:absolute;top:5px;right:6px;width:6px;height:6px;border-radius:50%;background:#e5484d;}
+.sd-top{position:sticky;top:0;z-index:60;height:var(--shell-top);box-sizing:border-box;display:flex;align-items:center;gap:12px;padding:0 16px;background:var(--surface-default);border-bottom:1px solid var(--border-default);}
+.sd-top .spacer{flex:1;}
+.sd-crumbs{display:flex;align-items:center;gap:6px;font-size:var(--font-size-1);min-width:0;}
+.sd-cl{border:none;background:none;padding:2px 2px;font-family:inherit;font-size:inherit;font-weight:600;color:var(--text-default);cursor:pointer;border-radius:var(--radius-1);}
+.sd-cl:hover{text-decoration:underline;}
+.sd-cl:focus-visible{outline:2px solid var(--primary-default);outline-offset:1px;}
+.sd-sep{color:var(--text-subtle);}
+.sd-cur{color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sd-legacy{white-space:nowrap;}
+.sd-drawer{position:fixed;left:var(--shell-w);top:0;bottom:0;width:300px;background:var(--shell-nav);color:#fff;z-index:119;display:flex;flex-direction:column;transform:translateX(calc(-100% - var(--shell-w)));transition:transform .2s cubic-bezier(.2,0,0,1);box-shadow:4px 0 16px rgba(0,0,0,.12);}
+.sd-open .sd-drawer{transform:none;}
+.sd-scrim{position:fixed;inset:0;z-index:118;background:rgba(0,0,0,.08);display:none;}
+.sd-open .sd-scrim{display:block;}
+.sd-dh{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 16px;border-bottom:1px solid rgba(255,255,255,.18);flex:0 0 auto;}
+.sd-dt{font-weight:600;font-size:15px;color:var(--shell-mint);}
+.sd-dx{width:30px;height:30px;border:none;border-radius:var(--radius-2);background:rgba(255,255,255,.12);color:#fff;cursor:pointer;}
+.sd-dl{flex:1;overflow-y:auto;padding:12px 10px;display:flex;flex-direction:column;gap:2px;}
+.sd-di{text-align:left;border:1px solid transparent;background:none;color:#fff;font-family:inherit;font-size:var(--font-size-1);padding:9px 12px;border-radius:var(--radius-2);cursor:pointer;}
+.sd-di:hover{background:var(--shell-nav-hi);}
+.sd-di.on{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);font-weight:600;}
+.sd-df{border-top:1px solid rgba(255,255,255,.18);padding:10px 16px 14px;display:flex;flex-direction:column;gap:14px;font-size:var(--font-size-1);}
+.sd-fi{display:flex;align-items:center;gap:8px;}
+.sd-fr{color:rgba(255,255,255,.65);font-size:11px;}
+.sd-badge{background:#e5484d;color:#fff;border-radius:var(--radius-full);font-size:10px;padding:0 5px;line-height:15px;}
+@media (prefers-reduced-motion:reduce){.sd-drawer{transition:none;}}
+/* heights now come from the 48px breadcrumb bar */
+.builder{height:calc(100vh - var(--shell-top));}
+.viewing-as .builder{height:calc(100vh - var(--shell-top));}
+.viewas-bar,.viewing-as .viewas-bar{display:none;}
+/* View as lives in the Select data bar */
+.zone-va{margin-left:auto;flex:0 0 auto;}
+.zone-va .va-row{margin:0;}
+.zone-bar .zone-d{flex:0 1 auto;}
+.viewing-as #zoneVA button{pointer-events:auto;}
+.zone-bar.is-viewas{background:var(--surface-muted);}
+.rt-overlay{z-index:200;} .ctx-menu{z-index:210;}
+.sd-legacy.btn{background:var(--surface-emphasis);color:var(--text-default);border:1px solid transparent;font-weight:500;}
+.sd-legacy.btn:hover{background:var(--border-emphasis);}
+/* Footer: run-block reason gets its own line so the actions never wrap */
+.dp-foot .pv-foot .guard{order:99;flex:1 0 100%;max-width:none;text-align:right;margin-top:-4px;}
+.sd-legacy.btn{height:32px;padding:0 12px;border-radius:var(--radius-2);font-size:var(--font-size-1);display:inline-flex;align-items:center;}
+#f-summ .gate{font-weight:400;}
+/* Column / field access: neutral menu button, equal weight for every value */
+.acc-sel{flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 6px 0 8px;border:1px solid var(--border-default);border-radius:var(--radius-2);background:var(--surface-default);font-family:inherit;font-size:11px;font-weight:500;color:var(--text-default);cursor:pointer;white-space:nowrap;}
+.acc-sel:hover{border-color:var(--border-emphasis);background:var(--surface-muted);}
+.acc-sel:focus-visible{outline:2px solid var(--primary-default);outline-offset:1px;}
+.acc-sel svg{width:11px;height:11px;color:var(--text-muted);}
+.acc-sel .acc-car{width:12px;height:12px;}
+.am-opt{display:flex;gap:8px;align-items:flex-start;}
+.am-tick{width:12px;flex:0 0 12px;color:var(--primary-default);font-weight:600;}
+.am-l{display:block;color:var(--text-default);}
+.am-d{display:block;font-size:11px;color:var(--text-muted);}
+/* names wrap rather than truncate: the name is what the Author is reading */
+.authrow .col-lbl{white-space:normal;overflow:visible;text-overflow:clip;min-width:0;line-height:1.3;}
+.authrow{align-items:center;}
+.acc-sel{padding:0 4px 0 7px;gap:3px;}
+.authrow .col-lbl{text-wrap:balance;}
+.authrow .col-needs{display:none;} /* ticking a calc still adds what it needs, with a toast */
+/* Access chips: role names, fixed width so they line up, a neutral fill ramp by reach.
+   Guided reaches everyone, so it carries the most weight; Author reaches the fewest. No hue: tiers are identity, not state. */
+.acc-sel{width:58px;height:22px;justify-content:center;padding:0;gap:0;border-radius:var(--radius-full);font-size:11px;font-weight:600;letter-spacing:.01em;}
+.acc-sel.lvl-guided{background:var(--text-default);border-color:var(--text-default);color:var(--surface-default);}
+.acc-sel.lvl-guided:hover{background:var(--color-stone-700);border-color:var(--color-stone-700);}
+.acc-sel.lvl-builder{background:var(--surface-emphasis);border-color:var(--border-emphasis);color:var(--text-default);}
+.acc-sel.lvl-builder:hover{background:var(--border-emphasis);}
+.acc-sel.lvl-author{background:var(--surface-default);border-color:var(--border-emphasis);color:var(--text-default);font-weight:500;}
+.col-auth-hint b{font-weight:600;color:var(--text-default);}
+/* rename pencil only on hover/focus, so names get the room */
+.authrow .col-edit{opacity:0;transition:opacity .12s;}
+.authrow:hover .col-edit,.authrow:focus-within .col-edit,.authrow .col-edit:focus-visible{opacity:1;}
+.rpt-name-btn{display:inline;border:none;background:none;padding:0 2px;margin:0 -2px;font:inherit;color:inherit;text-align:left;cursor:text;border-radius:var(--radius-1);}
+.rpt-name-btn:hover{background:var(--surface-muted);box-shadow:0 0 0 3px var(--surface-muted);}
+.rpt-name-btn:focus-visible{outline:2px solid var(--primary-default);outline-offset:2px;}
+.rpt-pen{margin-left:6px;font-size:12px;color:var(--text-subtle);opacity:0;transition:opacity .12s;}
+.rpt-name-btn:hover .rpt-pen,.rpt-name-btn:focus-visible .rpt-pen{opacity:1;}
+.rpt-name-in{width:100%;box-sizing:border-box;font:inherit;color:var(--text-default);padding:2px 6px;margin:-3px -7px;border:1px solid var(--primary-default);border-radius:var(--radius-2);background:var(--surface-default);outline:2px solid var(--primary-subtle);}
+.rpt-driver{color:var(--text-muted);font-weight:400;}
+.rpt-kind{font-weight:600;color:var(--text-default);}
+.rpt-status{color:var(--text-muted);}
+
+/* ---- Fold-down setup sections (trial). Remove this block to revert. ---- */
+.fold .fold-body{display:none;}
+.fold.open .fold-body{display:block;margin-top:0;background:var(--surface-muted);border:1px solid var(--border-emphasis);border-top:1px solid var(--border-default);border-radius:0 0 var(--radius-2) var(--radius-2);padding:12px 11px 14px;}
+.fold.open .fold-btn{background:var(--surface-muted);border-color:var(--border-emphasis);border-radius:var(--radius-2) var(--radius-2) 0 0;}
+.fold.open .fold-btn:hover{background:var(--surface-emphasis);}
+.fold .fold-sum{font-size:var(--font-size-2);}
+.fold-body .define-box:not(:empty){margin:0;padding:0;border:none;background:none;}
+.fold-body #f-period > label{display:none;}
+.fold-body .field{margin-bottom:14px;}
+.fold-body .field:last-child{margin-bottom:0;}
+.viewing-as #buildSurface .fold-btn{pointer-events:auto;}
+.fold{margin-bottom:var(--spacing-4);}
+.fold-lbl{font-size:var(--font-size-1);font-weight:var(--font-weight-medium);color:var(--text-default);margin-bottom:6px;}
+
+/* ---- Fluid widths: the panel always keeps a readable share; the selection columns flex ---- */
+#buildSurface{flex:1 1 auto;min-width:0;}
+.dpanel{flex:0 0 clamp(420px,42vw,920px);min-width:0;}
+#buildSurface .zone-cols .r-setup{flex:28 1 0;min-width:230px;max-width:340px;}
+#buildSurface .zone-cols .r-cols{flex:42 1 0;min-width:280px;}
+#buildSurface[data-pers="admin"] .zone-cols .r-cols{flex:50 1 0;min-width:300px;}
+#buildSurface .zone-cols .r-meta{flex:26 1 0;min-width:210px;}
+.list-tabs{display:none;}
+/* At laptop widths the two lists take turns in one slot */
+@media (max-width:1600px){
+  .dpanel{flex-basis:clamp(420px,40vw,620px);}
+  #buildSurface:not([data-pers="user"]) .list-tabs{display:flex;gap:2px;padding:8px 12px 0;border-bottom:1px solid var(--border-default);flex:0 0 auto;}
+  .list-tabs button{border:none;background:none;font-family:inherit;font-size:var(--font-size-1);font-weight:500;color:var(--text-muted);padding:7px 10px 9px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;}
+  .list-tabs button:hover{color:var(--text-default);}
+  .list-tabs button.on{color:var(--text-default);border-bottom-color:var(--primary-default);}
+  .list-tabs button:focus-visible{outline:2px solid var(--primary-default);outline-offset:-2px;}
+  #buildSurface:not([data-pers="user"]) .zone-cols .r-cols,#buildSurface:not([data-pers="user"]) .zone-cols .r-meta{flex:1 1 0;min-width:300px;}
+  #buildSurface:not([data-pers="user"])[data-lt="cols"] .r-meta{display:none;}
+  #buildSurface:not([data-pers="user"])[data-lt="meta"] .r-cols{display:none;}
+  #buildSurface .zone-cols .r-setup{max-width:290px;min-width:250px;}
+}
+@media (max-width:1600px){
+  #buildSurface:not([data-pers="user"]) .zone-cols .r-cols > .region-head,#buildSurface:not([data-pers="user"]) .zone-cols .r-meta > .region-head{display:none;}
+  .list-tabs{align-items:center;}
+  .lt-sp{flex:1;}
+  .list-tabs .lt-reset{padding:0 2px 4px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;}
+  .r-meta .list-tabs .lt-reset{display:none;}
+  /* footer: meters side by side on one row, actions on the next */
+  .dpanel>.dp-foot .pv-foot{flex-wrap:wrap;row-gap:10px;}
+  .dpanel>.dp-foot .pv-foot .est{flex:1 0 100%;display:grid;grid-template-columns:1fr 1fr;column-gap:20px;align-items:end;}
+  .dpanel>.dp-foot .pv-foot .est .cap{grid-column:1 / -1;}
+}
+.list-tabs .lt-reset{color:var(--primary-default);background:none;border:none;cursor:pointer;font-family:inherit;}
+/* Add people (in the Access tab) */
+.sh-add{padding:14px;border:1px solid var(--border-default);border-radius:var(--radius-3);background:var(--surface-muted);margin-bottom:18px;display:flex;flex-direction:column;gap:10px;}
+.sh-add .select{width:100%;}
+.sh-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.sh-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.sh-row-end{justify-content:space-between;}
+.sh-lbl{font-size:var(--font-size-1);font-weight:500;color:var(--text-default);}
+.sh-desc{font-size:11px;color:var(--text-muted);}
+.sh-seg button:disabled{color:var(--text-subtle);cursor:not-allowed;background:var(--surface-muted);}
+.dr-card + .sh-add,.sh-add + .dr-card{margin-top:0;}
+#dpPerm > .dr-card:last-child{margin-top:22px;}
 
 </style>
 </head>
 <body>
-<div class="nav">
-  <div class="brand"><span class="mark"></span>Screendragon</div>
-  <button class="nav-back" id="navBack" aria-label="Back to Reports" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-  <span class="crumb" id="crumb">/ Reports</span>
-  <span class="spacer"></span>
-  <button class="nav-link" id="legacyLink" type="button">Legacy export reports</button>
-  <span class="scope-chip">Creative Delivery</span>
-  <button class="user-btn" id="userBtn" type="button" title="QA test users: switch the signed-in user and their application role">
-    <span class="avatar" id="navAvatar">RC</span>
-    <span class="user-meta"><span class="user-name" id="navName">Rodger Corcoran</span><span class="user-role" id="navRole">Author role</span></span>
-    <span class="caret">▾</span>
-  </button>
+<aside class="sd-rail" aria-label="Main navigation">
+  <div class="sd-logo" aria-label="Screendragon">sd</div>
+  <button class="sd-ri" type="button" title="Home" data-sdtoast="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg></button>
+  <button class="sd-ri on" type="button" id="sdMenuBtn" title="Menu" aria-expanded="false" aria-controls="sdDrawer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 12h8M8 15h8"/></svg></button>
+  <span class="sd-sp"></span>
+  <button class="sd-ri sd-av" type="button" id="userBtn" title="QA test users: switch the signed-in user and their application role"><span class="avatar" id="navAvatar">RC</span></button>
+  <button class="sd-ri" type="button" title="Search" data-sdtoast="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button>
+  <button class="sd-ri" type="button" title="Notifications" data-sdtoast="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span class="sd-dot"></span></button>
+  <button class="sd-ri sd-q" type="button" title="Help &amp; Support" data-sdtoast="Help &amp; Support">?</button>
+  <button class="sd-ri" type="button" title="Settings" data-sdtoast="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+</aside>
+<div class="sd-drawer" id="sdDrawer" aria-label="Menu">
+  <div class="sd-dh"><span class="sd-dt">Screendragon Unity</span><button class="sd-dx" type="button" id="sdClose" aria-label="Close menu">✕</button></div>
+  <nav class="sd-dl"><button type="button" class="sd-di " data-sdtoast="Home">Home</button><button type="button" class="sd-di " data-sdtoast="Dashboard">Dashboard</button><button type="button" class="sd-di " data-sdtoast="All Requests">All Requests</button><button type="button" class="sd-di " data-sdtoast="Requests">Requests</button><button type="button" class="sd-di " data-sdtoast="All Sites">All Sites</button><button type="button" class="sd-di " data-sdtoast="Resource Planner">Resource Planner</button><button type="button" class="sd-di " data-sdtoast="Time Off Requests">Time Off Requests</button><button type="button" class="sd-di " data-sdtoast="Integrations">Integrations</button><button type="button" class="sd-di " data-sdtoast="Automation">Automation</button><button type="button" class="sd-di " data-sdtoast="Files">Files</button><button type="button" class="sd-di " data-sdtoast="Library">Library</button><button type="button" class="sd-di on" data-sdhub=1>Reports V2</button><button type="button" class="sd-di " data-sdtoast="People">People</button></nav>
+  <div class="sd-df">
+    <div class="sd-fi"><span id="navName">Rodger Corcoran</span><span class="sd-fr" id="navRole">Author role</span></div>
+    <div class="sd-fi">Search</div><div class="sd-fi">Notifications <span class="sd-badge">9</span></div><div class="sd-fi">Help &amp; Support</div><div class="sd-fi">Settings</div>
+  </div>
 </div>
+<div class="sd-scrim" id="sdScrim"></div>
+<header class="sd-top">
+  <nav class="sd-crumbs" id="crumb" aria-label="Breadcrumb"></nav>
+  <span class="spacer"></span>
+  <button class="btn btn-sm btn-secondary sd-legacy" id="legacyLink" type="button">Legacy export reports</button>
+</header>
 <div id="view-hub" style="display:none">
   <main class="hub-main">
     <div class="hub-head">
@@ -884,11 +1194,11 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
   </main>
 </div>
 <div id="view-home">
-  <main class="home-main">
+  <main class="home-main" id="homeMain">
     <div class="page-head">
       <div>
         <div class="page-title">Export reports</div>
-        <div class="page-sub">Start from a template, or open a report you have access to. Runs are emailed when ready and tracked in Reports › Report queue.</div>
+        <div class="page-sub">Open a report you have access to, or start a new one from a template. Runs are emailed when ready and tracked in Reports › Report queue.</div>
       </div>
       <span class="spacer"></span>
       <button class="btn btn-md btn-primary" id="buildBtn" type="button">Build a report</button>
@@ -899,38 +1209,37 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
       <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="homeSearch" placeholder="Search templates and reports"></div>
     </div>
 
-    <section class="sec-block" id="recentSec">
-      <div class="sec-title">Recently run</div>
-      <div class="recent-row" id="recentRow"></div>
-    </section>
-
-    <section class="sec-block">
-      <div class="sec-title">Templates <span class="sec-count" id="tplCount"></span></div>
-      <div class="sec-desc">Pre-built starting points. Opening one creates your own copy; the template itself never changes.</div>
-      <div class="tpl-grid" id="tplGrid"></div>
-    </section>
-
-    <section class="sec-block">
+    <section class="sec-block" id="mySec">
       <div class="sec-row">
         <div>
           <div class="sec-title">My reports <span class="sec-count" id="myCount"></span></div>
-          <div class="sec-desc">Every saved report you can access, at the level you can use it.</div>
+          <div class="sec-desc">Every saved report you can access, most recently run first.</div>
         </div>
         <span class="spacer"></span>
         <div class="tabs" id="ownTabs"></div>
       </div>
       <div class="list" id="myList"></div>
     </section>
+
+    <section class="sec-block" id="tplSec">
+      <div class="sec-title">Templates <span class="sec-count" id="tplCount"></span></div>
+      <div class="sec-desc">Pre-built starting points. Opening one creates your own copy; the template itself never changes.</div>
+      <div class="tpl-grid" id="tplGrid"></div>
+    </section>
   </main>
 </div>
 <div id="view-builder">
+<div class="viewas-bar" id="viewAsBar" role="status"></div>
 <div class="builder">
   <!-- ============ BUILD SURFACE ============ -->
   <div class="build-surface" id="buildSurface">
+    <div class="zone-bar" id="zoneSelect"><span class="zone-n">1</span><span class="zone-t">Select data</span><span class="zone-d" id="zoneSelectD">Which data, which records, which columns</span><span class="zone-va" id="zoneVA"></span></div>
+    <div class="zone-cols">
     <div class="region r-setup">
       <div class="region-head">Report setup</div>
       <div class="region-body">
         <div class="rpt-id" id="rptId"></div>
+        <div class="define-box" id="defineBox"></div>
         <div class="cov-lbl">Coverage</div>
         <div class="field lk" id="f-period">
           <label>Reporting period</label>
@@ -941,6 +1250,12 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
             <option value="12">This year</option>
             <option value="custom">Custom range…</option>
           </select>
+        </div>
+        <div class="field" id="f-summ"></div>
+        <div class="field lk" id="f-breakdown">
+          <label>Breakdown <span class="gate">· how the period splits into columns</span></label>
+          <div class="bd-opts" id="bdOpts"></div>
+          <div class="bd-hint" id="bdHint"></div>
         </div>
         <div class="field lk" id="f-scope">
           <label>Scope</label>
@@ -953,12 +1268,6 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
         <div class="field lk" id="f-ptype"><label>Project type <span class="gate">— constrained to client</span></label><div class="optlist" id="ptypeList"></div><div class="scope-note">Refine to individual projects in Filters.</div></div>
         <div class="field lk" id="f-role"><label>Roles <span class="gate">— constrained to projects</span></label><div class="optlist" id="roleList"></div></div>
         <div id="anchorBox"></div></div>
-        </div>
-        <div class="cov-lbl">Shape</div>
-        <div class="field lk" id="f-breakdown">
-          <label>Breakdown</label>
-          <div class="bd-opts" id="bdOpts"></div>
-          <div class="bd-hint" id="bdHint"></div>
         </div>
         <div class="adv-toggle" id="advToggle" style="display:none">▸ Advanced options</div>
         <div class="field lk" id="f-group">
@@ -976,34 +1285,39 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
       </div>
     </div>
     <div class="region r-cols lk" id="card-cols">
+      <div class="list-tabs" role="tablist" aria-label="Column lists"><button type="button" role="tab" data-lt="cols">Report columns</button><button type="button" role="tab" data-lt="meta">Custom metadata</button><span class="lt-sp"></span><button type="button" class="linkbtn lt-reset">Reset</button></div>
       <div class="region-head">Report columns <span class="linkbtn" id="resetCols">Reset</span></div>
-      <div class="region-body flush"><div class="optlist plain" id="colList"></div>
-        <div class="region meta-sec lk" id="card-meta">
-          <div class="col-group-lbl meta-sec-lbl">Custom metadata</div>
-          <div class="meta-head" id="metaScope"></div>
-          <div class="optlist plain" id="metaList"></div>
-        </div>
-      </div>
+      <div class="col-search" id="colSearchBox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="colSearch" placeholder="Search columns" aria-label="Search columns"></div>
+      <div class="region-body flush"><div class="optlist plain" id="colList"></div></div>
+    </div>
+    <div class="region r-meta lk" id="card-meta">
+      <div class="list-tabs" role="tablist" aria-label="Column lists"><button type="button" role="tab" data-lt="cols">Report columns</button><button type="button" role="tab" data-lt="meta">Custom metadata</button><span class="lt-sp"></span><button type="button" class="linkbtn lt-reset">Reset</button></div>
+      <div class="region-head">Custom metadata</div>
+      <div class="col-search" id="metaSearchBox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="metaSearch" placeholder="Search fields" aria-label="Search metadata fields"></div>
+      <div class="meta-head" id="metaScope"></div>
+      <div class="region-body flush"><div class="optlist plain" id="metaList"></div></div>
+    </div>
     </div>
   </div>
 
-  <!-- ============ LIVE WIREFRAME PREVIEW ============ -->
-  <div class="pv-area">
-  <div class="preview" id="preview">
-    <div class="pv-empty" id="pvEmpty">
-      <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
-      <h3>Pick a report to preview its structure</h3>
-      <p>As you make selections, this panel shows the exact columns you'll get back — before you run it.</p>
-    </div>
-  </div>
-  </div>
-  <aside class="dpanel" id="dpanel" aria-label="Report panel">
+  <aside class="dpanel" id="dpanel" aria-label="Refine and review">
+    <div class="zone-bar" id="zoneRefine"><span class="zone-n">2</span><span class="zone-t">Refine and review</span><span class="zone-d">Narrow the rows, set the output and share, checked against the preview</span></div>
+    <div class="dp-row">
     <nav class="dp-rail" id="dpRail"></nav>
     <div class="dp-main">
-      <div class="dp-head"><span class="dp-title" id="dpTitle">Details</span><button class="so-x" id="dpCollapse" type="button" title="Collapse panel">»</button></div>
+      <div class="dp-head"><span class="dp-title" id="dpTitle">Preview</span></div>
       <div class="dp-body">
-        <div class="dp-pane" data-pane="details" id="dpDetails"></div>
+        <div class="dp-pane" data-pane="preview">
+          <div class="preview" id="preview">
+            <div class="pv-empty" id="pvEmpty">
+              <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+              <h3>Pick a report to preview its structure</h3>
+              <p>As you make selections, this shows the exact columns you'll get back, before you run it.</p>
+            </div>
+          </div>
+        </div>
         <div class="dp-pane" data-pane="filters">
+          <div id="presetFilters"></div>
           <div class="so-sec-lbl">Narrow within the report’s scope</div>
           <div id="filterList"></div>
           <div class="f-add"><select class="select" id="addFilter"><option value="">+ Add filter…</option></select></div>
@@ -1012,6 +1326,8 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
         <div class="dp-pane" data-pane="tpl" id="dpTpl"></div>
       </div>
     </div>
+    </div>
+    <div class="dp-foot" id="dpFoot"></div>
   </aside>
 </div>
 
@@ -1081,8 +1397,17 @@ body{font-family:var(--font-family-text);font-size:var(--font-size-2);color:var(
       <button class="ch-opt ch-rec" id="chNew" type="button"><span class="ch-txt"><span class="ch-t">New export reports <span class="rec-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Recommended</span></span><span class="ch-d">Start from templates, see the exact columns before you run, and share with the right level of access.</span></span><svg class="ch-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
       <button class="ch-opt" id="chLegacy" type="button"><span class="ch-txt"><span class="ch-t">Legacy export reports</span><span class="ch-d">For reports you haven’t rebuilt yet. They keep running as they do today.</span></span><svg class="ch-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
       <label class="anchor-opt ch-remember"><input type="checkbox" id="chRemember"> Skip this step and always open new export reports</label>
+      <div class="ch-undo">You can turn this step back on in Settings › Preferences.</div>
     </div>
     <div class="rt-foot"><button class="btn btn-md btn-ghost" id="chCancel" type="button">Cancel</button></div>
+  </div>
+</div>
+<div class="rt-overlay" id="catOverlay">
+  <div class="rt-dialog" role="dialog" aria-modal="true" aria-labelledby="catHead">
+    <div class="rt-head" id="catHead">Report categories</div>
+    <div class="rt-sub">The tabs on Export reports. Only Authors can change them.</div>
+    <div class="rt-body" id="catBody"></div>
+    <div class="rt-foot"><button class="btn btn-md btn-ghost" id="catCancel" type="button">Cancel</button><button class="btn btn-md btn-primary" id="catSave" type="button">Save categories</button></div>
   </div>
 </div>
 <div class="rt-overlay" id="saveOverlay">
@@ -1485,7 +1810,6 @@ function renderBreakdown(){
 let editCol=null;
 function renderColumns(){
   const list=$('colList'); const r=REPORTS[S.report];
-  const _ms=$('card-meta'); if(_ms&&_ms.parentNode===list) list.parentNode.appendChild(_ms); // park before redraw
   const author=S.persona==='admin';
   const avail=S.cols.filter(c=>colAvail(c)&&colVisible(c));
   const cols=avail.filter(c=>!c.insight);
@@ -1509,7 +1833,7 @@ function renderColumns(){
     const note=na?`<span class="meta">${c.applies==='fe'?'Fixed Estimate':'Traditional Budget'} only</span>`:c.locked?'<span class="meta">required</span>':'';
     return `<label class="opt ${na?'na':''}"><input type="checkbox" class="checkbox-input" data-col="${c.id}" ${c.on&&!na?'checked':''} ${(c.locked||na)?'disabled':''}><span>${colLabel(c)}</span>${tag(c)}${needNote(c)}${note}</label>`;
   };
-  const hint=author?'<div class="col-auth-hint">Tick = pre-selected in the tile · access cascades up (Guided → Build → Author) · rename ✎ for the client’s language.</div>':(S.persona==='pm'?'<div class="col-auth-hint">These are the columns the author shipped for builders — tick the ones you need.</div>':'');
+  const hint=author?'<div class="col-auth-hint">Tick = included by default. Who can add each column: <b>Guided</b> everyone, <b>Build</b> Build and Author, <b>Author</b> Authors only. Rename ✎ to use the client’s language.</div>':(S.persona==='pm'?'<div class="col-auth-hint">These are the columns the author shipped for builders — tick the ones you need.</div>':'');
   list.innerHTML=hint+'<div class="col-group-lbl">Default columns</div>'+def.map(rowHtml).join('')+
     (opt.length?'<div class="col-group-lbl">Optional columns</div>'+opt.map(rowHtml).join(''):'')+
     (insights.length?`<div class="col-group-lbl calc-lbl">Insights &amp; calculations<span class="calc-sub">${author?'expose the ones relevant to this report':'derived metrics the author has enabled'}</span></div>`+insights.map(rowHtml).join(''):'');
@@ -1527,10 +1851,7 @@ function renderColumns(){
     inp.onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();commit();}else if(ev.key==='Escape'){editCol=null;renderColumns();}};
     inp.onblur=commit;
   });
-  placeMetaSection();
 }
-// Metadata sits after Optional columns, ahead of Insights & calculations; inserted after binding so column handlers never touch it.
-function placeMetaSection(){const list=$('colList'),ms=$('card-meta');if(!list||!ms)return;const cl=list.querySelector('.calc-lbl');cl?list.insertBefore(ms,cl):list.appendChild(ms);}
 function renderMeta(){
   const author=S.persona==='admin';
   const guided=S.persona==='user';
@@ -1544,7 +1865,7 @@ function renderMeta(){
   const row=m=>author
     ? `<div class="opt authrow"><input type="checkbox" class="checkbox-input" data-meta="${m.id}" ${m.on?'checked':''}><span class="col-lbl">${m.label}</span><span class="auth-sp"></span>${pill(m)}</div>`
     : `<label class="opt"><input type="checkbox" class="checkbox-input" data-meta="${m.id}" ${m.on?'checked':''}><span>${m.label}</span></label>`;
-  let html=author?'<div class="col-auth-hint">Tick = pre-selected · access cascades up (Guided → Build → Author).</div>':'';
+  let html=author?'<div class="col-auth-hint">Tick = included by default. Who can add each field: <b>Guided</b> everyone, <b>Build</b> Build and Author, <b>Author</b> Authors only.</div>':'';
   html+='<div class="col-group-lbl">Standard fields</div>'+coreRows.map(row).join('');
   if(customRows.length) html+=`<div class="meta-divider">${S.client?clientNm+' custom fields — scoped':'Custom fields'}</div>`+customRows.map(row).join('');
   else if(!S.client&&!guided) html+='<div class="scope-note">Set a scope to load a client’s custom metadata — you only ever see what exists for the selected client.</div>';
@@ -1784,7 +2105,7 @@ function barW(type,i){
   const v=base+((i*7)%14)-6; return Math.max(34,Math.min(82,v));
 }
 function renderPreview(){
-  if(!S.report){$('preview').innerHTML=$('pvEmpty').outerHTML;return;}
+  if(!S.report){$('preview').innerHTML=$('pvEmpty')?$('pvEmpty').outerHTML:'';$('dpFoot').innerHTML='';return;}
   const r=REPORTS[S.report];
   const T=S.templates||[];
   let cols=activeCols().map(c=>({...c})).concat(legacyCols()).concat(activeMeta().map(c=>({...c})));
@@ -1795,7 +2116,7 @@ function renderPreview(){
     else if(gl){cols.unshift({id:'__grp',label:gl[1],type:'name',grp:true});}
   }
   const mult=colMult(S.breakdown,S.months);
-  const rawRows=estimateRows(), rows=Math.round(rawRows*rowMult(S.breakdown)*anchorMult()), over=rows>CEILING, warn=!over&&rows>CEILING*0.7;
+  const rawRows=estimateRows(), rows=Math.round(rawRows*rowMult(S.breakdown)*anchorMult()*(S.nullBookings&&typeof presetsApply==='function'&&presetsApply()?0.85:1)), over=rows>CEILING, warn=!over&&rows>CEILING*0.7;
 
   const tagClass=c=>c.grp?'ct-grp':c.meta?'ct-meta':c.type==='num'?'ct-measure':'ct-dim';
   const tagFor=c=>{
@@ -1832,18 +2153,18 @@ function renderPreview(){
   </div>`;
 
   const eff=S.effective||'author';
-  const accTitle=S.capped?`Granted ${LVL_LABEL[S.grant]} on this report, capped at ${LVL_LABEL[eff]} by your application role`:'Your access to this report';
-  const accChip=`<span class="acc-chip" title="${accTitle}">${LVL_LABEL[eff]} access${S.capped?' <span class="acc-cap">· capped</span>':''}</span>`;
+  const accTitle=S.capped?`Granted ${GL[S.grant]} on this report, capped at ${GL[eff]} by your application role`:'Your access to this report';
+  const accChip=S.viewAs?`<span class="acc-chip">Viewing as ${LVL_LABEL[VIEWAS_LVL[S.viewAs]]}</span>`:`<span class="acc-chip" title="${accTitle}">${GL[eff]} access${S.capped?' <span class="acc-cap">· capped</span>':''}</span>`;
   const saveBtn=eff==='author'
-    ?`<button class="btn btn-md btn-secondary" id="saveMenuBtn" ${isReady()?'':'disabled'}>Save ▾</button>`
-    :`<button class="btn btn-md btn-secondary" id="saveBtn" ${isReady()?'':'disabled'}>${eff==='guided'?'Save a copy':'Save report'}</button>`;
+    ?`<button class="btn btn-md btn-secondary" id="saveMenuBtn" ${S.report?'':'disabled'}>Save ▾</button>`
+    :`<button class="btn btn-md btn-secondary" id="saveBtn" ${S.report?'':'disabled'}>${eff==='guided'?'Save a copy':'Save report'}</button>`;
   const nGrants=Object.keys((S.perm&&S.perm.grants)||{}).length;
   const tplNote=T.length===1?`<span class="run-tpl" title="Applied to every run">${ICON_FILE} Template: ${esc(T[0].name)}</span>`:T.length>1?`<span class="run-tpl">${ICON_FILE} ${T.length} templates · you pick one at run</span>`:'';
 
   $('preview').classList.toggle('compact',compact);
   $('preview').innerHTML=`
     <div class="pv-head">
-      <div style="min-width:0">${compact?'<div class="title">Export preview</div><div class="sub">Columns in file order</div>':`<div class="title">${esc(S.reportName||r.name)}</div><div class="sub">Grain: ${curGrain()} · ${r.grainNote}</div>`}</div>
+      <div style="min-width:0">${compact?'<div class="title">Export preview</div><div class="sub">Columns in file order</div>':`<div class="title">${esc(S.reportName||r.name)}</div><div class="sub">${curGrain()} report · ${r.grainNote}</div>`}</div>
       <span class="pv-spacer"></span>
       ${compact&&!S.capped?'':accChip}
     </div>
@@ -1854,6 +2175,9 @@ function renderPreview(){
     <div class="pv-body">
       ${manifest}
     </div>
+    <div class="dp-grp-lbl pv-sum-lbl">Report settings</div>
+    <div class="pv-summary" id="dpDetails"></div>`;
+  $('dpFoot').innerHTML=`
     <div class="pv-foot">
       <div class="est">
         <div class="mgrp">
@@ -1866,16 +2190,17 @@ function renderPreview(){
         </div>
         <span class="cap">Caps: ${CEILING.toLocaleString()} rows · ${COL_CEILING} columns${S.filters.some(filterActive)?' · filters may reduce':''}</span>
       </div>
-      ${over?`<span class="guard">Over the ${CEILING}-row cap. Narrow the period, projects or roles.</span>`:cOver?`<span class="guard">Over the ${COL_CEILING}-column cap. Choose a coarser breakdown or fewer metrics.</span>`:'<span class="spacer"></span>'}
+      ${over?`<span class="guard">Over the ${CEILING}-row cap. Narrow the period, projects or roles.</span>`:cOver?`<span class="guard">Over the ${COL_CEILING}-column cap. Choose a coarser breakdown or fewer metrics.</span>`:!isReady()&&runBlock()?`<span class="guard guard-info">${runBlock()}</span>`:'<span class="spacer"></span>'}
       <span class="spacer"></span>
       ${saveBtn}
-      <button class="btn btn-md btn-secondary" id="accessBtn" type="button">${ICON_PPL} Share${nGrants>1?` · ${nGrants}`:''}</button>
+      <button class="btn btn-md btn-secondary" id="accessBtn" type="button" ${isDraft()?'disabled title="Drafts can’t be shared. Choose a client in Scope and save first."':''}>${ICON_PPL} Share${nGrants>1?` · ${nGrants}`:''}</button>
       <div class="split">
         <button class="btn btn-md btn-primary split-main" id="runBtn" ${isReady()?'':'disabled'}>Run report</button>
         <button class="btn btn-md btn-primary split-caret" id="runMore" ${isReady()?'':'disabled'} aria-label="More run options">▾</button>
       </div>
       ${tplNote}
     </div>`;
+  bindViewAs();
   $('runBtn').onclick=()=>startRun('Run');
   $('runMore').onclick=()=>openActionMenu($('runMore'),[
     {label:`Export as .${S.output.format}`, disabled:!isReady(), onClick:()=>startRun('Export')},
@@ -1900,7 +2225,7 @@ function renderPreview(){
   const scb=$('scopeBtn'); if(scb)scb.onclick=toggleScope;
   renderScopeOpen();
   renderRail();
-  if(S.panelTab==='details')renderDetails();
+  renderDetails();
 }
 let rtKind='Run';
 function startRun(kind){ if(projColsFor(S.breakdown)>=COL_SOFT) openLargeConfirm(kind); else proceedRun(kind); }
@@ -2126,8 +2451,7 @@ let CUR_VIEW='hub';
 function showView(v){
   CUR_VIEW=v;
   ['hub','home','builder','schedules'].forEach(x=>{const el=document.getElementById('view-'+x);if(el)el.style.display=x===v?'block':'none';});
-  document.getElementById('navBack').style.display=v==='hub'?'none':'inline-flex';
-  document.getElementById('crumb').textContent={hub:'/ Reports',home:'/ Reports / Export reports',schedules:'/ Reports / Scheduled reports',builder:'/ Reports / Export reports / '+(S.savedId?S.reportName:'New report')}[v];
+  renderCrumb(v);
   const lg=document.getElementById('legacyLink'); if(lg)lg.style.display=(v==='home'||v==='builder')?'':'none';
   if(v==='home'&&typeof renderHome==='function')renderHome();
   if(v==='schedules'&&typeof renderSchedules==='function')renderSchedules();
@@ -2171,7 +2495,7 @@ function openTemplate(tid){
 }
 $('scratchCancel').onclick=closeScratch;
 $('scratchOverlay').onclick=e=>{if(e.target===$('scratchOverlay'))closeScratch();};
-document.getElementById('navBack').onclick=()=>showView('home');
+
 
 /* ---- schedules ---- */
 function renderSchedules(){
@@ -2251,8 +2575,9 @@ renderSchedules();
 ==================================================================== */
 const LEVELS=['guided','build','author'];
 const LVL_LABEL={guided:'Guided',build:'Build',author:'Author'};
+const GL={guided:'View',build:'Edit',author:'Admin'}; // per-report permission, as in the existing permissions model
 const LVL_CODE={guided:'user',build:'pm',author:'admin'};
-const LVL_DESC={guided:'Run it as it is, or save a copy',build:'Run it and add the optional columns',author:'Full control, including permissions and delete'};
+const LVL_DESC={guided:'Run it as it is, or save a copy',build:'Run it and change the optional columns',author:'Full control, including access and delete'};
 const accRank=l=>LEVELS.indexOf(l);
 const minLevel=(a,b)=>accRank(a)<=accRank(b)?a:b;
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
@@ -2288,6 +2613,7 @@ const ICON_UP='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 const ICON_DL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>';
 const ICON_PLUS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
 const PIN='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="16" x2="12" y2="22"/><path d="M9 3h6l-1 5 3 3v2H7v-2l3-3-1-5z"/></svg>';
+const ROLLING=[['','Off: use the Reporting period'],['7d','Last 7 days'],['30d','Last 30 days'],['pw','Previous calendar week'],['pm','Previous calendar month']];
 const RIGHTS=[
   ['','None: each person sees what their own access allows'],
   ['emea-fin','EMEA Finance rights'],
@@ -2312,33 +2638,45 @@ const BLANK_GRAINS=[
   {key:'projuser',label:'Project × User',d:'One row per person on each project',bases:['r3']},
   {key:'task',label:'Task',d:'One row per task',bases:['r9','r10']},
   {key:'tsentry',label:'Timesheet entry',d:'One row per logged entry',bases:['r11']},
+  {key:'user',label:'User',d:'One row per person',bases:['r7','r12','r14']},
 ];
 
 let CU=TEST_USERS[0];
 const HS={cat:'all',q:'',own:'all',sort:{key:'lr',dir:'asc'}};
 let savedSeq=SAVED.length;
 S.templates=[]; S.output={format:'xlsx',dash:'',dateOverride:false,dateFmt:'DD/MM/YYYY',currency:''};
-S.legacy=new Set(); S.effective='author'; S.perm={grants:{},owner:'',rights:''}; S.panelTab='details';
+S.legacy=new Set(); S.effective='author'; S.perm={grants:{},owner:'',rights:''}; S.panelTab='preview';
 
 function catIcon(cat){return ICONS[CAT_ICON[cat]]||ICONS.bars;}
-function savedCat(s){return s.category||(REPORTS[s.type]||{}).domain||'';}
+function savedCat(s){return 'category' in s?s.category:((REPORTS[s.type]||{}).domain||'');} // '' = no category: shows under All only
 function accessFor(s,u){u=u||CU;const g=s.grants[u.id];if(!g)return null;return {grant:g,eff:minLevel(u.role,g),capped:accRank(g)>accRank(u.role)};}
-function mySaved(){return SAVED.filter(s=>accessFor(s));}
+function mySaved(){return SAVED.filter(s=>accessFor(s)&&(!s.draft||s.owner===CU.id));} // drafts are the owner's only
 function matchQ(t){return !HS.q||t.toLowerCase().includes(HS.q);}
 function inCat(c){return HS.cat==='all'||c===HS.cat;}
-function tplAllowed(t){const r=REPORTS[t.report];return !(r.pending&&CU.role!=='author');}
+// Template access (Authors set it on the card): who can start from this template.
+const TPL_ACCESS={}; // id -> 'all' | 'build' | 'author'
+const TPL_ACC_LBL={all:'All users',build:'Build & Author',author:'Authors only'};
+function tplAccess(t){return TPL_ACCESS[t.id]||(REPORTS[t.report].pending?'author':'all');}
+function tplAllowed(t){const a=tplAccess(t);return CU.role==='author'||(CU.role==='build'?a!=='author':a==='all');}
 function visibleTemplates(){return TEMPLATES.filter(t=>tplAllowed(t)&&inCat(REPORTS[t.report].domain)&&matchQ(t.name+' '+t.desc)).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));}
 function visibleSaved(){return mySaved().filter(s=>inCat(savedCat(s))&&matchQ(s.name)&&(HS.own==='all'||(HS.own==='mine'?s.owner===CU.id:s.owner!==CU.id)));}
 
 /* ---------------- Home ---------------- */
 function renderHome(){
   $('buildBtn').style.display=CU.role==='guided'?'none':'';
-  renderCatTabs();renderRecent();renderGallery();renderMyReports();
+  // One layout for every role, ordered by what the person has: their reports first once they have any,
+  // templates first (and given more room) until then. Recently run is the My reports table's default sort.
+  const has=mySaved().length>0;
+  $('homeMain').insertBefore(has?$('mySec'):$('tplSec'), has?$('tplSec'):$('mySec'));
+  HS.tplRows=has?1:2;
+  renderCatTabs();renderGallery();renderMyReports();
 }
 function renderCatTabs(){
   const n=c=>TEMPLATES.filter(t=>tplAllowed(t)&&(c==='all'||REPORTS[t.report].domain===c)).length+mySaved().filter(s=>c==='all'||savedCat(s)===c).length;
   $('catTabs').innerHTML=[['all','All']].concat(CATS.map(c=>[c,c])).map(([id,l])=>`<button class="tab ${HS.cat===id?'active':''}" data-cat="${id}">${l}<span class="ct">${n(id)}</span></button>`).join('');
+  if(CU.role==='author')$('catTabs').insertAdjacentHTML('beforeend',`<button type="button" class="cat-manage" id="catManage" title="Add, rename or remove categories">${ICON_GEAR} Edit categories</button>`);
   $('catTabs').querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{HS.cat=b.dataset.cat;renderHome();});
+  if($('catManage'))$('catManage').onclick=openCats;
 }
 function bindOpen(scope){scope.querySelectorAll('[data-open]').forEach(el=>el.addEventListener('click',()=>openSaved(el.dataset.open)));}
 function renderRecent(){
@@ -2354,19 +2692,35 @@ function renderGallery(){
   $('tplGrid').innerHTML=rows.map(t=>{
     const r=REPORTS[t.report];
     return `<div class="tpl-card" tabindex="0" onclick="openTemplate('${t.id}')">
-      <div class="tpl-top"><span class="tpl-ico" title="${r.domain}">${catIcon(r.domain)}</span><span class="tpl-driver">${r.grain}</span>${r.applies==='fe'?'<span class="fetag">FE only</span>':''}${r.pending?'<span class="fetag" title="Visible to Authors only until the columns are signed off">Draft</span>':''}${t.pinned?`<span class="tpl-pin" title="Pinned by Screendragon">${PIN}</span>`:''}</div>
+      <div class="tpl-top"><span class="tpl-ico" title="${r.domain}">${catIcon(r.domain)}</span><span class="tpl-driver">${r.grain}</span>${r.applies==='fe'?'<span class="fetag">FE only</span>':''}${r.pending?'<span class="fetag" title="Visible to Authors only until the columns are signed off">Draft</span>':''}</div>
       <div class="tpl-name">${t.name}</div>
       <div class="tpl-desc">${t.desc}</div>
-      <div class="tpl-use">Use template →</div>
+      <div class="tpl-foot"><span class="tpl-use">Use template →</span>${CU.role==='author'?`<button type="button" class="tpl-acc" data-tacc="${t.id}" title="Who can start from this template">${TPL_ACC_LBL[tplAccess(t)]} ▾</button>`:''}</div>
     </div>`;
   }).join('');
+  $('tplGrid').querySelectorAll('[data-tacc]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const t=TEMPLATES.find(x=>x.id===b.dataset.tacc);
+    openActionMenu(b,[{label:'<span class="um-cap">Who can start from it</span>',disabled:true}].concat(Object.entries(TPL_ACC_LBL).map(([k,l])=>({label:(tplAccess(t)===k?'✓ ':'')+l,onClick:()=>{TPL_ACCESS[t.id]=k;renderGallery();toast(`${t.name}: ${l.toLowerCase()}`);}}))));}));
+  capTemplates();
 }
+// Two rows of templates by default so My reports stays in view
+function capTemplates(){
+  const g=$('tplGrid'); if(!g)return; const cards=[...g.querySelectorAll('.tpl-card')];
+  const perRow=Math.max(1,getComputedStyle(g).gridTemplateColumns.split(' ').length);
+  const cap=perRow*(HS.tplRows||2), over=cards.length>cap;
+  cards.forEach((c,i)=>c.style.display=(!HS.tplAll&&i>=cap)?'none':'');
+  let more=$('tplMore');
+  if(!more){more=document.createElement('button');more.id='tplMore';more.type='button';more.className='tpl-more';g.after(more);more.onclick=()=>{HS.tplAll=!HS.tplAll;capTemplates();};}
+  more.style.display=over?'':'none';
+  more.textContent=HS.tplAll?'Show fewer':`Show all ${cards.length} templates`;
+}
+window.addEventListener('resize',()=>{if(document.getElementById('view-home').style.display!=='none')capTemplates();});
 const MR_COLS=[['name','Name'],['cat','Category'],['owner','Owner'],['access','Your access'],['lr','Last run'],['runs','Runs'],['sched','Scheduled'],['mod','Modified']];
 function renderMyReports(){
   const all=mySaved();
   const cnt={all:all.length,mine:all.filter(s=>s.owner===CU.id).length,shared:all.filter(s=>s.owner!==CU.id).length};
   $('ownTabs').innerHTML=[['all','All'],['mine','Owned by me'],['shared','Shared with me']].map(([id,l])=>`<button class="tab ${HS.own===id?'active':''}" data-own="${id}">${l}<span class="ct">${cnt[id]}</span></button>`).join('');
   $('ownTabs').querySelectorAll('[data-own]').forEach(b=>b.onclick=()=>{HS.own=b.dataset.own;renderMyReports();});
+  $('ownTabs').style.display='';
   let rows=visibleSaved();
   $('myCount').textContent=rows.length;
   const k=HS.sort.key, d=HS.sort.dir==='asc'?1:-1;
@@ -2377,16 +2731,16 @@ function renderMyReports(){
     const msg=!all.length&&CU.role==='guided'
       ?'<h3>Nothing shared with you yet</h3><p>Reports appear here when someone shares one with you, or when you save a copy of a template.</p>'
       :'<h3>No reports match</h3><p>Try another category, filter or search term.</p>';
-    $('myList').innerHTML=head+`<div class="empty">${msg}</div>`;
+    $('myList').innerHTML=(all.length?head:'')+`<div class="empty">${msg}</div>`; $('ownTabs').style.display=all.length?'':'none';
   } else {
     $('myList').innerHTML=head+rows.map(s=>{
       const a=accessFor(s), c=savedCat(s), on=dirName(s.owner);
-      const capT=a.capped?`Granted ${LVL_LABEL[a.grant]}, capped at ${LVL_LABEL[a.eff]} by your role`:'';
+      const capT=a.capped?`Granted ${GL[a.grant]}, capped at ${GL[a.eff]} by your ${LVL_LABEL[a.eff]} role`:'';
       return `<div class="mr-row" data-open="${s.id}" tabindex="0">
-        <div class="r-name"><div class="r-ico">${catIcon(c)}</div><div style="min-width:0"><div class="r-title">${esc(s.name)}</div><div class="r-sub2">${(REPORTS[s.type]||{}).name||''}</div></div></div>
+        <div class="r-name"><div class="r-ico">${catIcon(c)}</div><div style="min-width:0"><div class="r-title">${esc(s.name)}${s.draft?' <span class="draft-badge" title="Only you can see it. It becomes visible to people with access once it can run and is saved.">Draft</span>':''}</div><div class="r-sub2">${(REPORTS[s.type]||{}).name||''}</div></div></div>
         <div class="r-cell">${c||'—'}</div>
         <div class="r-owner"><span class="r-av" style="background:${avatarBg(on)};color:#fff">${initials(on)}</span><span class="r-cell">${s.owner===CU.id?'You':on}</span></div>
-        <div><span class="acc-chip" title="${capT}">${LVL_LABEL[a.eff]}${a.capped?' <span class="acc-cap">· capped</span>':''}</span></div>
+        <div><span class="acc-chip" title="${capT}">${GL[a.eff]}${a.capped?' <span class="acc-cap">· capped</span>':''}</span></div>
         <div class="r-cell">${s.lastRun}</div>
         <div class="r-cell num">${s.runs}</div>
         <div class="r-cell">${s.sched?'<span class="badge sched">Scheduled</span>':'<span class="sch-muted">No</span>'}</div>
@@ -2435,9 +2789,9 @@ function openBuilder(typeId, opts={}){
   if(s){if(!s.templates)s.templates=[];if(!s.output)s.output={format:'xlsx',dash:'',dateOverride:false,dateFmt:'DD/MM/YYYY',currency:''};}
   S.templates=s?s.templates:[];
   S.output=s?s.output:{format:'xlsx',dash:'',dateOverride:false,dateFmt:'DD/MM/YYYY',currency:''};
-  S.legacy=new Set();
-  S.panelTab='details';
-  if(S.panelOpen===undefined)S.panelOpen=false; // starts closed: Details repeats Report setup and the preview
+  S.legacy=new Set(); S.nullBookings=false; S.viewAs=''; document.getElementById('view-builder').classList.remove('viewing-as');
+  S.panelTab='preview';
+  S.panelOpen=true; // the panel is the right-hand side: Preview is its home tab
   if(opts.preset){ if(opts.preset.breakdown)S.breakdown=opts.preset.breakdown; if(opts.preset.anchor)S.anchor=opts.preset.anchor; }
   $('periodSelect').value=String(S.months);
   const bs=$('buildSurface');
@@ -2460,7 +2814,7 @@ function makeBlank(key){
       if(bi===0&&ci===0){x.locked=true;x.on=true;}
       cols.push(x);
     }));
-    REPORTS[id]={name:'Untitled report',domain:'',grain:REPORTS[b0].grain,grainNote:'blank report · every column for this row type',applies:'both',groupBy:REPORTS[b0].groupBy,cols,base:b0,blank:true};
+    REPORTS[id]={name:'Untitled report',domain:'',grain:REPORTS[b0].grain,grainNote:'blank report',applies:'both',groupBy:REPORTS[b0].groupBy,cols,base:b0,blank:true};
     const cs=new Set(), calcs=[];
     g.bases.forEach(b=>(CALCS[b]||[]).forEach(c=>{if(!cs.has(c.label)){cs.add(c.label);calcs.push({...c});}}));
     if(calcs.length)CALCS[id]=calcs;
@@ -2478,7 +2832,7 @@ function renderScratch(){
   $('scratchSub').textContent='Pick a report type to build from. The type sets the grain, columns and rules, and locks once you start.';
   const byDom={};
   STARTS.forEach(s=>{const d=REPORTS[s.id].domain;if(REPORTS[s.id].pending&&CU.role!=='author')return;(byDom[d]=byDom[d]||[]).push(s);});
-  const blank=CU.role==='author'?`<div class="scratch-group"><div class="scratch-card blank-card" onclick="renderGrainStep()"><div class="start-ico">${ICON_PLUS}</div><div><div class="t">Create blank report</div><div class="d">Choose a row type and pick from every column.</div></div><span class="fetag">Authors only</span></div></div>`:'';
+  const blank=CU.role==='author'?`<div class="scratch-group"><div class="scratch-card blank-card" onclick="startBlank()"><div class="start-ico">${ICON_PLUS}</div><div><div class="t">Create blank report</div><div class="d">Pick the data you’re after and what one row is, then choose from every column.</div></div><span class="fetag">Authors only</span></div></div>`:'';
   $('scratchGrid').innerHTML=blank+CATS.filter(d=>byDom[d]).map(d=>`
     <div class="scratch-group">
       <div class="scratch-group-lbl">${d}</div>
@@ -2499,43 +2853,32 @@ function renderGrainStep(){
 /* ---------------- Legacy options (Advanced) ---------------- */
 function legacyBase(){const r=REPORTS[S.report];return r&&r.base?r.base:S.report;}
 function legacyFor(){const b=legacyBase();return LEGACY.filter(o=>o.types==='*'||o.types.includes(b));}
-function legacyCols(){if(!S.report||!S.legacy||S.persona==='user')return[];return legacyFor().filter(o=>o.col&&S.legacy.has(o.id)).map(o=>({id:'lg_'+o.id,label:o.col,type:'text',legacy:true}));}
-function renderLegacy(){
-  const box=$('f-legacy'); if(!box)return;
-  if(!S.report||S.persona==='user'){box.innerHTML='';return;}
-  box.innerHTML=`<label>From legacy export reports <span class="gate">· pending Rod’s audit</span></label>
-    <div class="lg-list">${legacyFor().map(o=>`<label class="lg-opt"><input type="checkbox" class="checkbox-input" data-lg="${o.id}" ${S.legacy.has(o.id)?'checked':''}><span class="lg-txt"><span>${o.label}</span><span class="lg-sub">${o.col?'Adds a column':o.note}</span></span></label>`).join('')}</div>
-    <div class="scope-note">Only options that apply to a ${curGrain()} report are shown.${S.persona==='admin'?' Export rights now live in <button type="button" class="linkbtn" id="goRights">Permissions › Data rights</button>.':''}</div>`;
-  box.querySelectorAll('[data-lg]').forEach(cb=>cb.onchange=e=>{const id=e.target.dataset.lg;e.target.checked?S.legacy.add(id):S.legacy.delete(id);renderPreview();});
-  if($('goRights'))$('goRights').onclick=()=>setPanelTab('perm');
-}
+function legacyCols(){return[];if(!S.report||!S.legacy||S.persona==='user')return[];return legacyFor().filter(o=>o.col&&S.legacy.has(o.id)).map(o=>({id:'lg_'+o.id,label:o.col,type:'text',legacy:true}));}
+// The legacy "Other" block is retired (20 Oct review): timesheet options are columns on timesheet reports,
+// resource item ID is a resourcing column, Remove null bookings is a quick filter, the dynamic date filter is in Output.
+function renderLegacy(){const box=$('f-legacy');if(box)box.innerHTML='';}
 
 /* ---------------- Detail panel ---------------- */
 const ICON_OUT='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M8 15h7"/><path d="m12.5 12 3 3-3 3"/></svg>';
-const PANEL_TABS=[['details','Details',ICON_INFO],['filters','Filters',ICON_FUNNEL],['perm','Permissions',ICON_PPL],['tpl','Output',ICON_OUT]];
-function panelTabs(){return PANEL_TABS.filter(([k])=>k==='perm'?S.effective==='author':k==='tpl'?S.effective!=='guided':true);}
-function setPanelTab(k){S.panelTab=k;S.panelOpen=true;renderPanel();}
+const ICON_SHIELD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>';
+const ICON_EYE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+// Left = define the data. Right = preview it, refine it, decide its output and who sees it.
+const PANEL_TABS=[['preview','Preview',ICON_EYE],['filters','Filters',ICON_FUNNEL],['tpl','Output',ICON_OUT],['perm','Access',ICON_PPL]];
+function panelTabs(){const lvl=S.viewAs?VIEWAS_LVL[S.viewAs]:S.effective;return PANEL_TABS.filter(([k])=>k==='tpl'?lvl!=='guided':true);}
+function setPanelTab(k){S.panelTab=k;S.panelOpen=true;renderPanel();if(k==='preview')renderPreview();}
 function openFilters(){setPanelTab('filters');}
 function closeFilters(){}
 function renderRail(){
-  const tabs=panelTabs(); if(!tabs.find(t=>t[0]===S.panelTab))S.panelTab='details';
-  const cnt={filters:S.filters.length,perm:Object.keys(S.perm.grants||{}).length};
+  const tabs=panelTabs(); if(!tabs.find(t=>t[0]===S.panelTab))S.panelTab='preview';
+  const cnt={filters:S.filters.length+(S.nullBookings&&presetsApply()?1:0),perm:Object.keys(S.perm.grants||{}).length};
   $('dpRail').innerHTML=tabs.map(([k,l,ic])=>`<button type="button" class="dp-tab ${S.panelTab===k&&S.panelOpen?'on':''}" data-dp="${k}" title="${l}">${ic}<span class="dp-lbl">${l}</span>${cnt[k]?`<span class="dp-ct">${cnt[k]}</span>`:''}</button>`).join('');
-  $('dpRail').querySelectorAll('[data-dp]').forEach(b=>b.onclick=()=>{if(S.panelOpen&&S.panelTab===b.dataset.dp){S.panelOpen=false;renderPanel();}else setPanelTab(b.dataset.dp);});
-  $('dpanel').classList.toggle('collapsed',!S.panelOpen);
-  const wide=S.panelOpen&&WIDE_TABS.includes(S.panelTab);
-  $('dpanel').classList.toggle('wide',wide);
-  $('dpanel').classList.toggle('ovl',S.panelOpen&&(wide||window.innerWidth<1700));
-  $('buildSurface').classList.toggle('pv-covered',S.panelOpen&&(wide||window.innerWidth<1700));
+  $('dpRail').querySelectorAll('[data-dp]').forEach(b=>b.onclick=()=>setPanelTab(b.dataset.dp));
 }
-// Tabs that edit settings rather than shape the report open as a wide drawer over the preview.
-const WIDE_TABS=['perm','tpl'];
 function renderPanel(){
   renderRail();
-  $('dpTitle').textContent={details:'Details',filters:'Filters',perm:'Permissions',tpl:'Output'}[S.panelTab];
+  $('dpTitle').textContent={filters:'Filters',perm:'Access',tpl:'Output',preview:'Preview'}[S.panelTab];
   document.querySelectorAll('#dpanel .dp-pane').forEach(p=>p.style.display=p.dataset.pane===S.panelTab?'':'none');
-  if(S.panelTab==='details')renderDetails();
-  else if(S.panelTab==='filters')renderFilters();
+  if(S.panelTab==='filters')renderFilters();
   else if(S.panelTab==='perm')renderPermPanel();
   else if(S.panelTab==='tpl')renderTplPanel();
 }
@@ -2550,12 +2893,12 @@ function renderDetails(){
   const pills=arr=>arr.map(v=>`<span class="pill">${v}</span>`).join('');
   const row=(k,v,unset,nav)=>`<div class="def-row${nav?' def-nav':''}"${nav?' data-openscope="1"':''}><span class="def-k">${k}</span><span class="def-v ${unset?'unset':''}">${v}</span></div>`;
   const bdText=`${BREAKDOWNS[S.breakdown].label}${mult>1?` · ${mult} cols per metric`:rowMult(S.breakdown)>1?` · rows per ${S.breakdown==='day'?'day':'week'}`:' · single total column'}`;
-  const acc=`${LVL_LABEL[eff]}${S.capped?` <span class="acc-cap">· granted ${LVL_LABEL[S.grant]}, capped by your role</span>`:''}`;
+  const acc=`${GL[eff]}${S.capped?` <span class="acc-cap">· granted ${GL[S.grant]}, capped by your role</span>`:''}`;
   const out=T.length?`Raw data tab + ${T.length===1?esc(T[0].name):T.length+' templates, picked at run'}`:`.${S.output.format}, ${S.output.format==='csv'?'one file':'one tab'}`;
   const rl=RIGHTS.find(x=>x[0]===S.perm.rights);
   box.innerHTML=`
     <div class="dp-grp-lbl">Report</div>
-    ${row('Category',S.category||'Not set · required to save',!S.category)}
+    ${row('Category',S.category||'None · shows under All',!S.category)}
     ${row('Your access',acc)}
     <div class="dp-grp-lbl">Coverage</div>
     ${row('Period',S.periodLabel||'Not set',!S.periodLabel)}
@@ -2565,11 +2908,14 @@ function renderDetails(){
     ${row('Roles',S.roles.size?pills([...S.roles]):'All roles',false,true)}
     ${row('Includes',S.anchor==='entity'?`All ${curNoun()} · incl. zero-activity`:`${curNoun().replace(/^./,c=>c.toUpperCase())} with activity`,false,true)}
     <div class="dp-grp-lbl">Shape</div>
-    ${row('Filters',chips||'None',!chips)}
+    ${row('Filters',(chips+(S.nullBookings&&presetsApply()?'<span class="pill">No null bookings</span>':''))||'None',!chips&&!(S.nullBookings&&presetsApply()))}
     ${row('Sort',sortText,!fcur)}
     <div class="dp-grp-lbl">Output</div>
     ${row('Delivers',out)}
+    ${O_ROLL()?row('Scheduled runs',O_ROLL()):''}
     ${row('Data rights',S.perm.rights&&rl?`Limited by ${rl[1]}`:'None',!S.perm.rights)}`;
+  // keep each group whole: wrap label + rows so the two-column summary never splits a group
+  box.innerHTML=box.innerHTML.split('<div class="dp-grp-lbl">').filter(x=>x.trim()).map(g=>`<div class="pv-grp"><div class="dp-grp-lbl">${g}</div>`).join('');
   box.querySelectorAll('[data-openscope]').forEach(x=>x.onclick=openScope);
   box.querySelectorAll('.pill.filt[data-fi]').forEach(ch=>ch.onclick=()=>{S.expandedFilter=S.filters[+ch.dataset.fi].id;setPanelTab('filters');});
 }
@@ -2578,51 +2924,55 @@ function renderDetails(){
 const PM={q:'',kind:'all',sel:false};
 function renderPermPanel(){
   const box=$('dpPerm'); if(!box)return;
-  box.innerHTML=`<div class="pm-counts" id="pmCounts"></div>
-    <div class="pm-section">Who can access this report</div>
+  const rOn=!!S.perm.rights, rl=RIGHTS.find(x=>x[0]===S.perm.rights);
+  box.innerHTML=`<section class="dr-card ${rOn?'on':''}" aria-labelledby="drHead">
+      <div class="dr-top"><span class="dr-ico">${ICON_SHIELD}</span><div class="dr-txt"><div class="dr-title" id="drHead">Data rights</div><div class="dr-sub">Limits the data every run returns, whoever runs it.</div></div><span class="dr-state">${rOn?'On':'Off'}</span></div>
+      <select class="select" id="rightsSel" aria-label="Export rights configuration">${RIGHTS.map(([v,l])=>`<option value="${v}" ${S.perm.rights===v?'selected':''}>${l}</option>`).join('')}</select>
+      <div class="scope-note">${rOn?`Runs return only what <b>${esc(rl[1])}</b> allows. Anyone without a matching configuration is blocked with a message, never sent an empty file.`:'Configured in the Export Rights admin tool.'}</div>
+    </section>
+    <div class="pm-section">Assign users</div>
     <div class="pm-tools">
-      <div class="search pm-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="pmQ" placeholder="Search people and groups" value="${esc(PM.q)}"></div>
+      <div class="search pm-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="pmQ" placeholder="Search users, guests and groups" value="${esc(PM.q)}"></div>
       <div class="pm-chips">${[['all','All'],['user','Users'],['guest','Guests'],['group','Groups']].map(([k,l])=>`<button type="button" class="f-chk ${PM.kind===k?'on':''}" data-pk="${k}">${l}</button>`).join('')}</div>
-      <label class="anchor-opt"><input type="checkbox" id="pmSel" ${PM.sel?'checked':''}> Show selected only</label>
+      <label class="anchor-opt"><input type="checkbox" class="checkbox-input" id="pmSel" ${PM.sel?'checked':''}> Show selected only</label>
     </div>
-    <div class="pm-list" id="pmList"></div>
-    <div class="pm-note">This is the most someone can do with this report. Their application role still caps it: an Author grant to a Build user acts as Build.</div>
-    <div class="pm-section">Data rights</div>
-    <div class="field"><label>Export rights configuration</label>
-      <select class="select" id="rightsSel">${RIGHTS.map(([v,l])=>`<option value="${v}" ${S.perm.rights===v?'selected':''}>${l}</option>`).join('')}</select>
-      <div class="scope-note">Configured in the Export Rights admin tool. Each run returns only the data that configuration allows. Anyone without a matching configuration is blocked with a message, never sent an empty file.</div>
-    </div>`;
+    <div class="pm-grid" role="table" aria-label="Report access">
+      <div class="pm-ghead" role="row" id="pmHead"></div>
+      <div id="pmList" role="rowgroup"></div>
+    </div>
+    <div class="pm-note">View can run the report. Edit can also change it. Admin can also manage access and delete it. Ticking one ticks the levels below it. A user's application role still caps this: Admin on this report for a Build user works as Edit.</div>
+`;
   $('pmQ').oninput=e=>{PM.q=e.target.value.toLowerCase();renderPmList();};
   box.querySelectorAll('[data-pk]').forEach(b=>b.onclick=()=>{PM.kind=b.dataset.pk;renderPermPanel();});
   $('pmSel').onchange=e=>{PM.sel=e.target.checked;renderPmList();};
-  $('rightsSel').onchange=e=>{S.perm.rights=e.target.value;const s=SAVED.find(x=>x.id===S.savedId);if(s)s.rights=S.perm.rights;toast(e.target.value?'Data rights set: runs return only what that configuration allows':'Data rights removed');};
+  $('rightsSel').onchange=e=>{S.perm.rights=e.target.value;setTimeout(renderPermPanel,0);const s=SAVED.find(x=>x.id===S.savedId);if(s)s.rights=S.perm.rights;toast(e.target.value?'Data rights set: runs return only what that configuration allows':'Data rights removed');};
   renderPmList();
 }
 function renderPmList(){
-  const g=S.perm.grants, c={guided:0,build:0,author:0};
-  Object.values(g).forEach(l=>c[l]++);
-  $('pmCounts').innerHTML=LEVELS.map(l=>`<span><b>${c[l]}</b> ${LVL_LABEL[l]}</span>`).join('');
+  const g=S.perm.grants, has=(id,l)=>!!g[id]&&accRank(g[id])>=accRank(l);
+  const cnt=l=>Object.keys(g).filter(id=>has(id,l)).length;
+  $('pmHead').innerHTML=`<span class="pm-gname" role="columnheader">Name</span>${LEVELS.map(l=>`<span class="pm-gcol" role="columnheader">${GL[l]} <span class="pm-gct">${cnt(l)}</span></span>`).join('')}`;
   const rows=DIRECTORY.filter(p=>(PM.kind==='all'||p.kind===PM.kind)&&(!PM.q||p.name.toLowerCase().includes(PM.q))&&(!PM.sel||g[p.id]))
     .sort((a,b)=>(a.id===S.perm.owner?-1:b.id===S.perm.owner?1:0)||((g[b.id]?1:0)-(g[a.id]?1:0)));
   $('pmList').innerHTML=rows.length?rows.map(p=>{
-    const lvl=g[p.id]||'';
+    const lvl=g[p.id]||'', owner=p.id===S.perm.owner;
     const av=p.kind==='group'?`<span class="pm-av grp">${ICON_PPL}</span>`:`<span class="pm-av" style="background:${avatarBg(p.name)}">${initials(p.name)}</span>`;
-    const sub=p.kind==='group'?`Group · ${p.members} people`:`${p.kind==='guest'?'Guest · ':''}${LVL_LABEL[p.role]} role`;
-    const capped=lvl&&p.role&&accRank(lvl)>accRank(p.role)?`<div class="pm-capped">${LVL_LABEL[lvl]} · capped at ${LVL_LABEL[p.role]} by role</div>`:'';
-    const ctl=p.id===S.perm.owner?`<span class="pm-fixed">Author · owner</span>`
-      :`<select class="select pm-lvl" data-lvl="${p.id}" aria-label="Access for ${esc(p.name)}"><option value="" ${!lvl?'selected':''}>No access</option>${LEVELS.map(l=>`<option value="${l}" ${lvl===l?'selected':''}>${LVL_LABEL[l]}</option>`).join('')}</select>`;
-    return `<div class="pm-row ${lvl?'':'pm-none'}">${av}<div class="pm-meta"><div class="pm-name">${esc(p.name)}${p.id===CU.id?' (you)':''}</div><div class="pm-sub">${sub}</div>${capped}</div>${ctl}</div>`;
-  }).join(''):'<div class="scope-note">No one matches.</div>';
-  $('pmList').querySelectorAll('[data-lvl]').forEach(sel=>sel.onchange=e=>{
-    const id=e.target.dataset.lvl, v=e.target.value, prev=g[id];
-    if(!v&&prev){
-      e.target.value=prev;
-      openConfirm({title:'Revoke access?',body:`${esc(dirName(id))} loses ${LVL_LABEL[prev]} access to “${esc(S.reportName)}”. Any schedule they own for it stops.`,confirm:'Revoke access',
-        onConfirm:()=>{delete g[id];renderPmList();renderRail();renderPreview();toast('Access revoked');}});
+    const sub=owner?'Owner':p.kind==='group'?`Group · ${p.members} people`:`${p.kind==='guest'?'Guest · ':''}${LVL_LABEL[p.role]} role`;
+    const capped=lvl&&p.role&&accRank(lvl)>accRank(p.role)?`<div class="pm-capped">Works as ${GL[p.role]} (${LVL_LABEL[p.role]} role)</div>`:'';
+    const boxes=LEVELS.map(l=>`<span class="pm-gcol" role="cell"><input type="checkbox" class="checkbox-input" data-pid="${p.id}" data-l="${l}" ${has(p.id,l)?'checked':''} ${owner?'disabled':''} aria-label="${GL[l]} for ${esc(p.name)}"></span>`).join('');
+    return `<div class="pm-grow ${lvl?'':'pm-none'}" role="row"><span class="pm-gname" role="cell">${av}<span class="pm-meta"><span class="pm-name">${esc(p.name)}${p.id===CU.id?' (you)':''}</span><span class="pm-sub">${sub}</span>${capped}</span></span>${boxes}</div>`;
+  }).join(''):'<div class="pm-empty">No one matches.</div>';
+  $('pmList').querySelectorAll('[data-pid]').forEach(cb=>cb.onchange=e=>{
+    const id=cb.dataset.pid, l=cb.dataset.l, prev=g[id];
+    // Cumulative: ticking a level grants it (and the ones below); unticking drops to the level below
+    const next=cb.checked?l:(accRank(l)>0?LEVELS[accRank(l)-1]:'');
+    if(!next){
+      cb.checked=true;
+      openConfirm({title:'Remove access?',body:`${esc(dirName(id))} loses ${GL[prev]} access to “${esc(S.reportName)}”. Any schedule they own for it stops.`,confirm:'Remove access',
+        onConfirm:()=>{delete g[id];renderPmList();renderRail();renderPreview();toast('Access removed');}});
       return;
     }
-    if(v)g[id]=v;
-    renderPmList();renderRail();renderPreview();
+    g[id]=next; renderPmList();renderRail();renderPreview();
   });
 }
 
@@ -2634,15 +2984,15 @@ function renderShare(){
   const g=S.perm.grants, eff=S.effective;
   const avail=DIRECTORY.filter(p=>!SH.sel.includes(p.id)&&p.id!==CU.id);
   const groups=[['user','People'],['guest','Guests'],['group','Groups']];
-  const picker=`<select class="select pm-add" id="shAdd"><option value="">+ Add people or groups…</option>${groups.map(([k,l])=>{const xs=avail.filter(p=>p.kind===k);return xs.length?`<optgroup label="${l}">${xs.map(p=>`<option value="${p.id}">${esc(p.name)}${g[p.id]?` (has ${LVL_LABEL[g[p.id]]})`:''}</option>`).join('')}</optgroup>`:'';}).join('')}</select>`;
+  const picker=`<select class="select pm-add" id="shAdd"><option value="">+ Add people or groups…</option>${groups.map(([k,l])=>{const xs=avail.filter(p=>p.kind===k);return xs.length?`<optgroup label="${l}">${xs.map(p=>`<option value="${p.id}">${esc(p.name)}${g[p.id]?` (has ${GL[g[p.id]]})`:''}</option>`).join('')}</optgroup>`:'';}).join('')}</select>`;
   const chips=SH.sel.map(id=>`<span class="sh-chip">${esc(dirName(id))}<button type="button" data-shrm="${id}" aria-label="Remove">✕</button></span>`).join('');
   const levels=LEVELS.map(l=>{
     const over=accRank(l)>accRank(eff);
-    return `<label class="pm-opt ${SH.lvl===l?'sel':''} ${over?'dis':''}" ${over?`title="You can only share up to your own access (${LVL_LABEL[eff]})"`:''}><input type="radio" name="shlvl" value="${l}" ${SH.lvl===l?'checked':''} ${over?'disabled':''}><span class="pm-otext"><span class="pm-omain">${LVL_LABEL[l]}</span><span class="pm-osub">${over?`Above your own access (${LVL_LABEL[eff]})`:LVL_DESC[l]}</span></span></label>`;
+    return `<label class="pm-opt ${SH.lvl===l?'sel':''} ${over?'dis':''}" ${over?`title="You can only share up to your own access (${GL[eff]})"`:''}><input type="radio" name="shlvl" value="${l}" ${SH.lvl===l?'checked':''} ${over?'disabled':''}><span class="pm-otext"><span class="pm-omain">${GL[l]}</span><span class="pm-osub">${over?`Above your own access (${GL[eff]})`:LVL_DESC[l]}</span></span></label>`;
   }).join('');
   $('permBody').innerHTML=`<div class="pm-section" style="margin-top:0">Share with</div>${picker}<div class="sh-chips">${chips}</div>
-    <div class="pm-section">Access level <span class="rt-asterisk">*</span></div><div class="pm-scope">${levels}</div>
-    <div class="pm-note">Sending adds them to this report’s access list${eff==='author'?', which you manage in Permissions':''}. Their application role still caps what they can do.</div>`;
+    <div class="pm-section">Permission <span class="rt-asterisk">*</span></div><div class="pm-scope">${levels}</div>
+    <div class="pm-note">Sending adds them to this report’s access list${eff==='author'?', which you manage in Access':''}. Their application role still caps what they can do.</div>`;
   $('shAdd').onchange=e=>{if(!e.target.value)return;SH.sel.push(e.target.value);renderShare();};
   $('permBody').querySelectorAll('[data-shrm]').forEach(b=>b.onclick=()=>{SH.sel=SH.sel.filter(x=>x!==b.dataset.shrm);renderShare();});
   $('permBody').querySelectorAll('input[name="shlvl"]').forEach(r=>r.onchange=e=>{SH.lvl=e.target.value;renderShare();});
@@ -2654,7 +3004,7 @@ function sendShare(){
   SH.sel.forEach(id=>{const prev=g[id];if(prev&&accRank(prev)>=accRank(SH.lvl)){kept++;return;}g[id]=SH.lvl;});
   const n=SH.sel.length, lvl=SH.lvl;
   closeShare(); renderPreview(); if(S.panelTab==='perm')renderPermPanel();
-  toast(`Shared with ${n} at ${LVL_LABEL[lvl]} · added to the access list${kept?` (${kept} already had higher access)`:''}`);
+  toast(`Shared with ${n} with ${GL[lvl]} access · added to the access list${kept?` (${kept} already had higher access)`:''}`);
 }
 
 /* ---------------- Output: format and dates + template files ---------------- */
@@ -2670,6 +3020,7 @@ function renderTplPanel(){
     <div class="field"><label>Dashboard type</label><select class="select" id="ofDash" ${dis}>${[['','None'],['summary','Summary'],['detailed','Detailed']].map(([v,l])=>`<option value="${v}" ${O.dash===v?'selected':''}>${l}</option>`).join('')}</select></div>
     <div class="field"><label class="sw-row"><span>Override site date format</span><input type="checkbox" class="sw" id="ofDate" ${O.dateOverride?'checked':''} ${dis}></label>${O.dateOverride?`<select class="select" id="ofDateFmt" ${dis}>${['DD/MM/YYYY','MM/DD/YYYY','YYYY-MM-DD','DD MMM YYYY'].map(f=>`<option ${O.dateFmt===f?'selected':''}>${f}</option>`).join('')}</select>`:''}</div>
     <div class="field"><label>Scheduler currency</label><select class="select" id="ofCur" ${dis}>${[['','Report default'],['EUR','EUR'],['GBP','GBP'],['USD','USD'],['CHF','CHF']].map(([v,l])=>`<option value="${v}" ${O.currency===v?'selected':''}>${l}</option>`).join('')}</select></div>
+    <div class="field"><label>Rolling period for scheduled runs</label><select class="select" id="ofRoll" ${dis}>${ROLLING.map(([v,l])=>`<option value="${v}" ${(O.rolling||'')===v?'selected':''}>${l}</option>`).join('')}</select><div class="scope-note">Was "Enable dynamic date filter". Each scheduled run works out its own period, so Monday's run always shows last week. Manual runs use the Reporting period.</div></div>
     <div class="pm-note">Carried over from legacy export reports. Rod to confirm which of these stay.</div>
     <div class="pm-section">Template files <span class="gate">· optional</span></div>
     <div class="tf-intro">An Excel workbook with your own formatting or pivots. Each run writes raw data into its <b>Data</b> tab and the other tabs refresh.</div>
@@ -2697,6 +3048,7 @@ function renderTplPanel(){
     $('ofDate').onchange=e=>{O.dateOverride=e.target.checked;renderTplPanel();};
     if($('ofDateFmt'))$('ofDateFmt').onchange=e=>{O.dateFmt=e.target.value;};
     $('ofCur').onchange=e=>{O.currency=e.target.value;};
+    $('ofRoll').onchange=e=>{O.rolling=e.target.value;renderPreview();};
   }
   box.querySelectorAll('[data-tfdl]').forEach(b=>b.onclick=()=>toast(`Downloading ${T[+b.dataset.tfdl].name}`));
 }
@@ -2728,14 +3080,13 @@ let saveMode='save';
 function openSave(mode){
   saveMode=(S.effective==='guided')?'copy':(mode||'save');
   const copy=saveMode==='copy';
-  const fixed=!S.isBlank&&!!S.category;
   $('saveHead').textContent=copy?'Save a copy':S.savedId?'Save changes':'Save report';
   $('saveGo').textContent=copy?'Save copy':'Save report';
   const name=copy&&S.savedId?S.reportName+' (copy)':S.reportName;
   $('saveBody').innerHTML=`<div class="rt-field"><label>Report name <span class="rt-asterisk">*</span></label><input id="svName" value="${esc(name)}"></div>
-    <div class="rt-field"><label>Report category <span class="rt-asterisk">*</span></label>
-      <select id="svCat" ${fixed?'disabled':''}><option value="">Choose a category…</option>${CATS.map(c=>`<option ${S.category===c?'selected':''}>${c}</option>`).join('')}</select>
-      <div class="scope-note">${fixed?'Set by the report type. It decides which tab the report appears under.':'Required. It decides which tab the report appears under on Export reports.'}</div></div>
+    <div class="rt-field"><label>Report category <span class="rt-opt">optional</span></label>
+      <select id="svCat"><option value="">None: show under All only</option>${CATS.map(c=>`<option ${S.category===c?'selected':''}>${c}</option>`).join('')}</select>
+      <div class="scope-note">It decides which tab the report appears under on Export reports. Without one, it only shows under All.</div></div>
     <div class="rt-note">${copy?`The copy is yours. ${CU.role==='guided'?'You can run it and share it at Guided level.':'You can change it within your role.'}`:'You get Author access to reports you save; your application role still caps what you can do.'}</div>`;
   $('saveOverlay').classList.add('show');
   setTimeout(()=>{const i=$('svName');if(i){i.focus();i.select();}},30);
@@ -2743,16 +3094,16 @@ function openSave(mode){
 function closeSave(){$('saveOverlay').classList.remove('show');}
 function doSave(){
   const nm=$('svName').value.trim(), cat=$('svCat').value;
-  $('svName').classList.toggle('rt-bad',!nm); $('svCat').classList.toggle('rt-bad',!cat);
-  if(!nm||!cat)return;
+  $('svName').classList.toggle('rt-bad',!nm); 
+  if(!nm)return;
   const copy=saveMode==='copy';
   if(S.savedId&&!copy){
-    const s=SAVED.find(x=>x.id===S.savedId); s.name=nm; s.category=cat; s.modified='Today'; s.mo=0;
+    const s=SAVED.find(x=>x.id===S.savedId); s.name=nm; s.category=cat; s.modified='Today'; s.mo=0; s.draft=!!runBlock();
   } else {
     const id='s'+(++savedSeq);
     const grants=copy?{[CU.id]:'author'}:S.perm.grants; grants[CU.id]='author';
     const rec={id,name:nm,type:S.report,category:cat,owner:CU.id,lastRun:'Never run',lr:999,runs:0,modified:'Today',mo:0,grants,rights:copy?'':S.perm.rights,
-      templates:copy?S.templates.map(t=>({...t})):S.templates,output:copy?{...S.output}:S.output};
+      templates:copy?S.templates.map(t=>({...t})):S.templates,output:copy?{...S.output}:S.output,draft:!!runBlock()};
     SAVED.unshift(rec);
     S.savedId=id; S.perm={grants:rec.grants,owner:CU.id,rights:rec.rights}; S.templates=rec.templates; S.output=rec.output;
     S.grant='author'; S.effective=CU.role; S.capped=false;
@@ -2761,7 +3112,7 @@ function doSave(){
   closeSave();
   if(S.persona!==LVL_CODE[S.effective]){S.persona=LVL_CODE[S.effective];$('buildSurface').dataset.pers=S.persona;renderColumns();renderMeta();renderLegacy();}
   renderPreview(); renderPanel(); showView('builder');
-  toast(`${copy?'Copy saved':'Saved'} to My reports · ${cat}`);
+  toast(runBlock()?'Saved as a draft · only you can see it until a client is chosen and it’s saved again':`${copy?'Copy saved':'Saved'} to My reports${cat?' · '+cat:''}`);
 }
 
 /* ---------------- Confirm (Tier 5) ---------------- */
@@ -2805,7 +3156,6 @@ function renderHub(){
   });
 }
 $('hubAdmin').onclick=()=>toast('Opens Reports administration');
-$('navBack').onclick=()=>showView(CUR_VIEW==='builder'?'home':'hub');
 function closeChooser(){$('chooserOverlay').classList.remove('show');}
 
 /* ---------------- Wiring ---------------- */
@@ -2813,7 +3163,6 @@ $('userBtn').onclick=()=>openActionMenu($('userBtn'),[{label:'<span class="um-ca
 $('legacyLink').onclick=()=>toast(LEGACY_MSG);
 $('buildBtn').onclick=openScratch;
 $('homeSearch').oninput=e=>{HS.q=e.target.value.toLowerCase().trim();renderHome();};
-$('dpCollapse').onclick=()=>{S.panelOpen=false;renderPanel();};
 $('permCancel').onclick=closeShare;
 $('permSave').onclick=sendShare;
 $('permOverlay').onclick=e=>{if(e.target===$('permOverlay'))closeShare();};
@@ -2835,12 +3184,468 @@ $('chLegacy').onclick=()=>{closeChooser();toast(LEGACY_MSG);};
 window.addEventListener('resize',()=>{if(S.report)renderRail();});
 setUser('u-jd');
 renderHub();
-// Drawer mode (<1700px, or a wide tab): clicking anywhere in the builder outside the panel closes it, like the lightbox drawer.
-document.addEventListener('mousedown',e=>{
-  if(!S.panelOpen||!S.report||!(window.innerWidth<1700||WIDE_TABS.includes(S.panelTab)))return;
-  if(e.target.closest('#dpanel')||!e.target.closest('#buildSurface'))return;
-  S.panelOpen=false;renderPanel();
-});
+
+
+/* ---------------- Search + Select all on column lists (20 Oct review) ----------------
+   Applied after each redraw so the existing render/bind code stays untouched. */
+const LS={colList:'',metaList:''};
+function enhanceList(listId,boxId){
+  const list=$(listId), box=$(boxId); if(!list)return;
+  const q=(LS[listId]||'').toLowerCase();
+  const rows=[...list.querySelectorAll('.opt')];
+  if(box)box.style.display=rows.length>8||q?'':'none';
+  // filter rows by their visible label
+  rows.forEach(r=>{const t=(r.querySelector('.col-lbl,span:not(.meta):not(.fetag):not(.col-needs)')||r).textContent.toLowerCase();r.style.display=!q||t.includes(q)?'':'none';});
+  // walk sections: label, then rows until the next label
+  const kids=[...list.children]; let lbl=null, sec=[];
+  const flush=()=>{ if(!lbl)return;
+    const vis=sec.filter(r=>r.style.display!=='none');
+    lbl.style.display=vis.length?'':'none';
+    const boxes=vis.map(r=>r.querySelector('input[type=checkbox]')).filter(c=>c&&!c.disabled);
+    let b=lbl.querySelector('.sel-all'); if(b)b.remove();
+    if(boxes.length>1){
+      const all=boxes.every(c=>c.checked);
+      b=document.createElement('button'); b.type='button'; b.className='sel-all'; b.textContent=all?'Clear':'Select all';
+      b.title=all?'Untick every column in this section':'Tick every column in this section'+(q?' that matches your search':'');
+      const ids=boxes.map(c=>c.dataset.col?['col',c.dataset.col]:['meta',c.dataset.meta]);
+      b.onclick=()=>{
+        const live=ids.map(([k,id])=>[k,id,$(listId).querySelector(`[data-${k}="${id}"]`)]).filter(x=>x[2]&&!x[2].disabled);
+        const target=!live.every(x=>x[2].checked); // tick all unless every one is already ticked
+        live.forEach(([k,id])=>{const el=$(listId).querySelector(`[data-${k}="${id}"]`);if(el&&el.checked!==target)el.click();});
+        enhanceList(listId,boxId);
+      };
+      lbl.appendChild(b);
+    }
+  };
+  kids.forEach(k=>{ if(k.classList.contains('col-group-lbl')||k.classList.contains('meta-divider')){flush();lbl=k;sec=[];} else if(k.classList.contains('opt'))sec.push(k); });
+  flush();
+  let empty=list.querySelector('.ls-empty'); if(empty)empty.remove();
+  if(q&&rows.length&&rows.every(r=>r.style.display==='none')){empty=document.createElement('div');empty.className='ls-empty';empty.textContent=`Nothing matches “${LS[listId]}”`;list.appendChild(empty);}
+}
+const _renderColumns=renderColumns; renderColumns=function(){_renderColumns();enhanceList('colList','colSearchBox');};
+const _renderMeta=renderMeta; renderMeta=function(){_renderMeta();enhanceList('metaList','metaSearchBox');};
+// any single tick refreshes the Select all / Clear labels
+['colList','metaList'].forEach(id=>$(id).addEventListener('change',()=>setTimeout(()=>enhanceList(id,id==='colList'?'colSearchBox':'metaSearchBox'),0)));
+$('colSearch').oninput=e=>{LS.colList=e.target.value.trim();enhanceList('colList','colSearchBox');};
+$('metaSearch').oninput=e=>{LS.metaList=e.target.value.trim();enhanceList('metaList','metaSearchBox');};
+
+/* ---------- Quick filters (preset) + rolling period helpers ---------- */
+function presetsApply(){const b=legacyBase(), r=REPORTS[b]||{};return r.domain==='Resourcing'||b==='r7'||(REPORTS[S.report]||{}).base==='r7';}
+function O_ROLL(){const v=(S.output||{}).rolling;const r=ROLLING.find(x=>x[0]===v);return v&&r?r[1]:'';}
+function renderPresets(){
+  const box=$('presetFilters'); if(!box)return;
+  if(!S.report||!presetsApply()){box.innerHTML='';return;}
+  box.innerHTML=`<div class="so-sec-lbl">Quick filters</div>
+    <label class="anchor-opt pf-opt"><input type="checkbox" class="checkbox-input" id="pfNull" ${S.nullBookings?'checked':''}><span><span>Remove null bookings</span><span class="lg-sub">Hides rows where resourced hours and resourced cost are both zero. Was an advanced option in legacy export reports.</span></span></label>`;
+  $('pfNull').onchange=e=>{S.nullBookings=e.target.checked;renderRail();renderPreview();};
+}
+const _renderFilters=renderFilters; renderFilters=function(){_renderFilters();renderPresets();};
+
+/* ---------- Legacy timesheet options and resource item ID become ordinary columns ---------- */
+(function(){
+  const TS=[{id:'tsId',label:'Timesheet ID',type:'text'},{id:'tsStatus',label:'Timesheet status',type:'status'},{id:'tsComments',label:'Timesheet comments',type:'text'},{id:'tsLastBy',label:'Last actioned by',type:'name'},{id:'tsApproval',label:'Timesheet approval status',type:'status'}];
+  const RI={id:'resItemId',label:'Resource item ID',type:'text'};
+  const add=(r,c)=>{if(!r.cols.some(x=>x.id===c.id||x.label.toLowerCase()===c.label.toLowerCase()))r.cols.push({...c,on:false});};
+  Object.entries(REPORTS).forEach(([id,r])=>{if(r.domain==='Timesheet')TS.forEach(c=>add(r,c));});
+  ['r7','r11'].forEach(id=>REPORTS[id]&&add(REPORTS[id],RI));
+})();
+
+/* ---------------- Author "View as" (20 Oct review) ----------------
+   A look, not a permission change: the Author sees the builder as a Build or Guided user would,
+   read-only, without logging out. Their own Author access is untouched. */
+const VIEWAS_LVL={pm:'build',user:'guided'};
+function viewAsCtl(){
+  const cur=S.viewAs||'admin';
+  const opts=[['admin','Author'],['pm','Build'],['user','Guided']];
+  return `<div class="va-row"><span class="va-lbl">View as</span><div class="va-seg" role="radiogroup" aria-label="View this report as">${opts.map(([v,l])=>`<button type="button" role="radio" aria-checked="${cur===v}" class="${cur===v?'on':''}" data-viewas="${v}">${l}</button>`).join('')}</div></div>`;
+}
+function bindViewAs(){document.querySelectorAll('#zoneVA [data-viewas]').forEach(b=>b.onclick=()=>setViewAs(b.dataset.viewas==='admin'?'':b.dataset.viewas));}
+function setViewAs(v){
+  S.viewAs=v; S.persona=v||LVL_CODE[S.effective];
+  const bs=$('buildSurface'); bs.dataset.pers=S.persona; bs.classList.toggle('adv',S.persona==='admin');
+  $('advToggle').style.display=S.persona==='user'?'none':''; $('advToggle').textContent=(S.persona==='admin'?'▾':'▸')+' Advanced options';
+  document.getElementById('view-builder').classList.toggle('viewing-as',!!v);
+  $('viewAsBar').innerHTML=v?`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span><b>Viewing as a ${LVL_LABEL[VIEWAS_LVL[v]]} user.</b> Read-only. Your Author access hasn’t changed.</span><button type="button" class="btn btn-sm btn-secondary" id="vaBack">Back to Author view</button>`:'';
+  if(v&&!panelTabs().find(t=>t[0]===S.panelTab))S.panelTab='preview';
+  renderColumns(); renderMeta(); renderGroup(); renderSort(); renderFilters(); renderPreview(); renderPanel();
+  if($('vaBack'))$('vaBack').onclick=()=>setViewAs('');
+}
+
+/* ---------------- Define the report (20 Oct review) ----------------
+   Data tags say what the report is after and narrow the column list (never hiding a ticked column).
+   "One row per" stays an explicit, required pick: the row type is declared, not inferred from the columns. */
+const AREAS=[['project','Project'],['task','Task'],['people','People'],['timesheet','Timesheet'],['resourcing','Resourcing'],['estimates','Estimates'],['financial','Financial']];
+const AREA_LBL=Object.fromEntries(AREAS);
+function colArea(c){
+  if(c.area)return c.area;
+  const l=(c.label||'').toLowerCase(), dom=(REPORTS[legacyBase()]||{}).domain;
+  if(/timesheet|submi|approv|logged|compliance|periods (late|missing)|non-billable|^billable$|expected hours|last actioned|^notes$/.test(l))return 'timesheet';
+  if(/resourc|utilis|fte|available|capacity|idle|resource item|booked|realisation|target/.test(l))return 'resourcing';
+  if(/estimat|forecast|baseline|variance|to completion|burn|effort|accuracy/.test(l))return 'estimates';
+  if(/task|phase|slippage|due|overdue|priority|milestone/.test(l))return 'task';
+  if(/^user$|^role$|department|discipline|seniority|person|owner|approver|approved by/.test(l))return 'people';
+  if(/fee|margin|cost|sell|oop|price|billable value|revenue|retainer|currency|adjust|deliverable|rate/.test(l))return 'financial';
+  if(dom==='Timesheet'&&/^hours$|^date$/.test(l))return 'timesheet';
+  return 'project';
+}
+function deriveCat(){const t=S.tags||new Set();return t.has('timesheet')?'Timesheet':t.has('resourcing')?'Resourcing':t.has('task')&&!t.has('financial')?'Task':t.size?'Financial':'';}
+function initialTags(){return new Set(S.cols.filter(c=>c.on).map(colArea));}
+function rtName(g){return {project:'Project report',client:'Client report',projrole:'Project / Role report',projuser:'Project / User report',task:'Task report',tsentry:'Timesheet entry report',user:'User report'}[g.key]||g.label+' report';}
+function blankKey(){return S.report&&S.report.startsWith('bk_')?S.report.slice(3):'';}
+function renderDefine(){
+  const box=$('defineBox'); if(!box)return;
+  const r=REPORTS[S.report];
+  if(!S.report||S.persona!=='admin'){box.innerHTML='';return;}
+  const tags=S.tags||new Set(), blank=!!r.blank, key=blankKey();
+  const shint=[];
+  if(blank){const nope=[...tags].filter(t=>!S.cols.some(c=>!c.insight&&colArea(c)===t));
+    if(nope.length)shint.push(`${grainOf(key).label} rows don’t carry ${nope.map(t=>AREA_LBL[t].toLowerCase()).join(' or ')} columns.`);}
+  const sets=AREAS.map(([k,l])=>{
+    const n=S.cols.filter(c=>!c.insight&&colArea(c)===k).length, on=tags.has(k), off=!blank&&!n&&!on, showN=!blank||on;
+    return `<label class="df-set ${off?'is-off':showN&&!n?'is-zero':''}" ${off?`title="This report doesn’t carry ${l.toLowerCase()} data"`:''}><input type="checkbox" class="checkbox-input" data-area="${k}" ${on?'checked':''} ${off?'disabled':''}><span class="df-set-l">${l}</span><span class="df-set-n">${showN?(n||'none'):''}</span></label>`;}).join('');
+  const sug=deriveCat()||S.typeCategory||'';
+  box.innerHTML=`<div class="df-lbl df-lbl-row">Data sets <span class="df-sub">columns available</span></div>
+    <div class="df-sets" role="group" aria-label="Data sets this report draws on">${sets}</div>
+    ${blank?`<div class="df-rows"><span class="df-rows-k">Rows</span> ${grainOf(key).d.replace('One row per ','one per ')}<span class="df-sub"> · follows your data sets</span></div>`:''}
+    ${shint.length?`<div class="df-note df-warn">${shint.join(' ')}</div>`:''}
+    <div class="df-note">${tags.size?'The column list only offers these data sets. Columns you’ve ticked always stay.':'Tick the data sets this report draws on. The column list then only offers those.'}</div>
+    <div class="df-lbl df-lbl-row df-cat-lbl"><label for="dfCat">Category</label> <span class="df-sub">optional</span></div>
+    <select class="select" id="dfCat"><option value="" ${S.category?'':'selected'}>None</option>${CATS.map(c=>`<option ${S.category===c?'selected':''}>${c}</option>`).join('')}</select>
+    <div class="df-note">${S.catAuto&&S.category?'Suggested from your data sets. It decides which tab the report appears under on Export reports.':!S.category&&sug?`Without one, it only shows under All. Suggested: ${sug}.`:'It decides which tab the report appears under on Export reports.'}</div>`;
+  box.querySelectorAll('[data-area]').forEach(b=>b.onchange=()=>{
+    const k=b.dataset.area; S.tags=new Set(S.tags||[]); b.checked?S.tags.add(k):S.tags.delete(k);
+    if(S.catAuto)S.category=deriveCat()||S.typeCategory||'';
+    if(REPORTS[S.report].blank&&grainFor(S.tags)!==blankKey()){setGrain(grainFor(S.tags));return;}
+    renderDefine(); enhanceList('colList','colSearchBox'); renderPreview();
+  });
+  $('dfCat').onchange=e=>{S.category=e.target.value;S.catAuto=false;renderDefine();renderPreview();};
+}
+function startBlank(){makeBlank('project');S.rowPicked=true;S.tags=new Set();S.category='';S.typeCategory='';S.catAuto=true;renderAllBuilder();}
+/* Blank reports: there's no report type to pick. Rows follow the data sets, as in the existing builder,
+   and are shown read-only so the grain is still explicit. */
+const grainOf=k=>BLANK_GRAINS.find(g=>g.key===k)||BLANK_GRAINS[0];
+function grainFor(t){const ppl=t.has('people')||t.has('resourcing');
+  return t.has('timesheet')?'tsentry':t.has('task')?'task':t.has('project')&&ppl?'projuser':ppl?'user':'project';}
+function setGrain(key){const on=new Set(S.cols.filter(c=>c.on).map(c=>c.id));pickRow(key);S.cols.forEach(c=>{if(on.has(c.id))c.on=true;});renderAllBuilder();}
+function pickRow(key){const keep=new Set(S.tags||[]),cat=S.category,auto=S.catAuto;makeBlank(key);S.tags=keep;S.rowPicked=true;S.catAuto=auto;S.category=auto?deriveCat():cat;renderAllBuilder();}
+function renderAllBuilder(){renderColumns();renderMeta();renderGroup();renderSort();renderFilters();renderPreview();renderPanel();}
+const _isReady=isReady; isReady=function(){return _isReady()&&!(REPORTS[S.report]&&REPORTS[S.report].blank&&!S.rowPicked);};
+const _openBuilder=openBuilder; openBuilder=function(t,o={}){S.tags=new Set();S.rowPicked=true;_openBuilder(t,o);S.typeCategory=S.category;S.catAuto=false;if(!o.blank){S.tags=initialTags();}renderDefine();enhanceList('colList','colSearchBox');};
+const _renderReportId=renderReportId; renderReportId=function(){
+  _renderReportId();
+  const r=REPORTS[S.report];
+  if(r&&r.blank){const d=document.querySelector('#rptId .rpt-driver');if(d)d.textContent=grainOf(blankKey()).d;const c=document.querySelector('#rptId .rpt-consq');if(c)c.style.display='none';}
+  renderDefine();
+};
+
+/* area label on each column row + tag filtering, layered onto the search pass */
+const _enhanceList=enhanceList; enhanceList=function(listId,boxId){
+  const list=$(listId);
+  if(list&&listId==='colList'&&S.report){
+    const author=S.persona==='admin', tags=S.tags||new Set();
+    list.querySelectorAll('.opt').forEach(row=>{
+      const cb=row.querySelector('[data-col]'); if(!cb)return;
+      const c=S.cols.find(x=>x.id===cb.dataset.col); if(!c)return;
+      let t=row.querySelector('.area-tag');
+      if(author&&!c.insight){ if(!t){t=document.createElement('span');t.className='area-tag';const sp=row.querySelector('.auth-sp');sp?row.insertBefore(t,sp):row.appendChild(t);} t.textContent=AREA_LBL[colArea(c)]; }
+      else if(t)t.remove();
+      row.dataset.areaHide=(author&&tags.size&&!cb.checked&&!tags.has(colArea(c)))?'1':'';
+    });
+  }
+  _enhanceList(listId,boxId);
+  if(list&&listId==='colList'){ // apply tag hiding after search, then tidy empty sections
+    list.querySelectorAll('.opt[data-area-hide="1"]').forEach(r=>r.style.display='none');
+    const kids=[...list.children]; let lbl=null,vis=0;
+    const done=()=>{if(lbl)lbl.style.display=vis?'':'none';};
+    kids.forEach(k=>{if(k.classList.contains('col-group-lbl')){done();lbl=k;vis=0;}else if(k.classList.contains('opt')&&k.style.display!=='none')vis++;});done();
+  }
+};
+
+/* Bill rate and cost rate: both selectable, wherever people and money meet */
+(function(){
+  const RATES=[{id:'billRate',label:'Bill rate',type:'num',area:'financial'},{id:'costRate',label:'Cost rate',type:'num',area:'financial'}];
+  ['r2','r3','r7'].forEach(id=>{const r=REPORTS[id];if(!r)return;RATES.forEach(c=>{if(!r.cols.some(x=>x.id===c.id))r.cols.push({...c,on:false});});});
+})();
+
+/* Zones: step 1 "Select data" shows a tick once the data is complete enough to run */
+function renderZones(){
+  const z=$('zoneSelect');if(!z)return;
+  const done=false; // readiness is shown by Run and the reason beside it, not by the step number
+  z.classList.toggle('is-done',done);
+  const n=z.querySelector('.zone-n');
+  n.innerHTML=done?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>':'1';
+  n.setAttribute('aria-label',done?'Step 1 complete':'Step 1');
+  const guided=(S.viewAs?VIEWAS_LVL[S.viewAs]:S.effective)==='guided';
+  $('zoneSelectD').textContent=S.viewAs?`What a ${LVL_LABEL[VIEWAS_LVL[S.viewAs]]} user sees. Read-only.`:guided?'Which records, and which fields to include':'Which data, which records, which columns';
+  const va=$('zoneVA'); if(va){va.innerHTML=S.effective==='author'?viewAsCtl():''; bindViewAs();}
+  z.classList.toggle('is-viewas',!!S.viewAs);
+}
+const _renderPreviewZ=renderPreview; renderPreview=function(){_renderPreviewZ.apply(this,arguments);renderZones();};
+
+/* Save only needs a report open: a draft can be saved before it's runnable. Run says why it's blocked. */
+function runBlock(){
+  if(!S.report)return '';
+  if(!(S.months>0))return 'Choose a reporting period to run.';
+  if(!scopeReady())return isDraft()?'Draft: only you can see it. Choose a client in Scope and save to share it.':'Choose a client in Scope to run. You can save it as a draft without one.';
+  return '';
+}
+
+function isDraft(){const r=S.savedId&&SAVED.find(x=>x.id===S.savedId);return !!(r&&r.draft);}
+
+/* ---------------- Report categories (Authors) ----------------
+   Categories are the tabs on Export reports. The four built-in ones come with the templates and can't be removed;
+   Authors add their own (e.g. Board packs) and rename or remove those. */
+const ICON_GEAR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>';
+const CAT_BUILTIN=['Financial','Resourcing','Task','Timesheet'];
+let CD=[];
+const catUse=name=>SAVED.filter(x=>savedCat(x)===name).length;
+function openCats(){CD=CATS.map(c=>({name:c,orig:c,builtin:CAT_BUILTIN.includes(c),gone:false}));renderCats();$('catOverlay').classList.add('show');}
+function closeCats(){$('catOverlay').classList.remove('show');}
+function renderCats(){
+  const rows=CD.map((c,i)=>{
+    const n=catUse(c.orig||'\u0000');
+    if(c.gone)return `<div class="cm-row cm-gone"><span class="cm-name">${esc(c.orig)}</span><span class="cm-meta">Removed${n?` · ${n===1?'1 report moves':n+' reports move'} to None`:''}</span><button type="button" class="linkbtn" data-cundo="${i}">Undo</button></div>`;
+    return `<div class="cm-row">${c.builtin?`<span class="cm-name">${esc(c.name)}</span>`:`<input class="input cm-in" data-cren="${i}" value="${esc(c.name)}" aria-label="Category name">`}
+      <span class="cm-meta">${c.builtin?'Built in · ':''}${c.orig?`${n} report${n===1?'':'s'}`:'New'}</span>
+      ${c.builtin?'<span class="cm-lock" title="Comes with the templates, so it can’t be removed">'+LOCK_ICON+'</span>':`<button type="button" class="tf-act rm" data-crm="${i}" aria-label="Remove ${esc(c.name)}">✕</button>`}</div>`;}).join('');
+  $('catBody').innerHTML=`<div class="cm-list">${rows}</div>
+    <div class="cm-add"><input class="input" id="cmNew" placeholder="New category, e.g. Board packs" aria-label="New category name"><button type="button" class="btn btn-md btn-secondary" id="cmAdd">Add</button></div>
+    <div class="tf-err" id="cmErr"></div>
+    <div class="pm-note">Everyone sees these tabs. Reports without a category show under All only.</div>`;
+  $('catBody').querySelectorAll('[data-cren]').forEach(inp=>inp.oninput=e=>{CD[+inp.dataset.cren].name=e.target.value;});
+  $('catBody').querySelectorAll('[data-crm]').forEach(b=>b.onclick=()=>{const c=CD[+b.dataset.crm];if(!c.orig)CD.splice(+b.dataset.crm,1);else c.gone=true;renderCats();});
+  $('catBody').querySelectorAll('[data-cundo]').forEach(b=>b.onclick=()=>{CD[+b.dataset.cundo].gone=false;renderCats();});
+  const add=()=>{const v=$('cmNew').value.trim();if(!v)return;
+    if(CD.some(c=>!c.gone&&c.name.trim().toLowerCase()===v.toLowerCase())){$('cmErr').textContent=`“${v}” already exists.`;return;}
+    CD.push({name:v,orig:'',builtin:false,gone:false});renderCats();$('cmNew').focus();};
+  $('cmAdd').onclick=add; $('cmNew').onkeydown=e=>{if(e.key==='Enter')add();};
+}
+function saveCats(){
+  const live=CD.filter(c=>!c.gone), names=live.map(c=>c.name.trim());
+  if(names.some(n=>!n)){$('cmErr').textContent='Categories need a name.';return;}
+  if(new Set(names.map(n=>n.toLowerCase())).size!==names.length){$('cmErr').textContent='Two categories have the same name.';return;}
+  let moved=0;
+  CD.forEach(c=>{if(!c.orig)return;
+    SAVED.forEach(x=>{if(savedCat(x)!==c.orig)return; if(c.gone){x.category='';moved++;} else if(c.name.trim()!==c.orig)x.category=c.name.trim();});});
+  CATS.splice(0,CATS.length,...names);
+  if(HS.cat!=='all'&&!CATS.includes(HS.cat))HS.cat='all';
+  if(S.category&&!CATS.includes(S.category)){const r=CD.find(c=>c.orig===S.category);S.category=r&&!r.gone?r.name.trim():'';}
+  closeCats(); renderHome(); toast(`Categories updated${moved?` · ${moved} report${moved>1?'s':''} moved to None`:''}`);
+}
+$('catCancel').onclick=closeCats; $('catSave').onclick=saveCats;
+$('catOverlay').onclick=e=>{if(e.target===$('catOverlay'))closeCats();};
+
+/* ---------------- Site shell: breadcrumb + left nav drawer ---------------- */
+function renderCrumb(v){
+  const parts=[['Home',null],['Reports V2','hub']];
+  if(v==='home'||v==='builder')parts.push(['Export reports','home']);
+  if(v==='schedules')parts.push(['Scheduled reports',null]);
+  if(v==='builder')parts.push([S.reportName||'New report',null]);
+  const last=parts.length-1;
+  $('crumb').innerHTML=parts.map(([l,to],i)=>i===last?`<span class="sd-cur" aria-current="page">${esc(l)}</span>`:`<button type="button" class="sd-cl" ${to?`data-crumb="${to}"`:'data-crumbhome="1"'}>${esc(l)}</button>`).join('<span class="sd-sep">/</span>');
+  $('crumb').querySelectorAll('[data-crumb]').forEach(b=>b.onclick=()=>leaveTo(b.dataset.crumb));
+  $('crumb').querySelectorAll('[data-crumbhome]').forEach(b=>b.onclick=()=>toast('Home opens as it does today. Out of scope for this prototype.'));
+}
+function sdDrawer(open){document.body.classList.toggle('sd-open',open);$('sdMenuBtn').setAttribute('aria-expanded',open?'true':'false');}
+$('sdMenuBtn').onclick=()=>sdDrawer(!document.body.classList.contains('sd-open'));
+$('sdClose').onclick=()=>sdDrawer(false); $('sdScrim').onclick=()=>sdDrawer(false);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')sdDrawer(false);});
+document.querySelectorAll('[data-sdtoast]').forEach(b=>b.onclick=()=>{sdDrawer(false);toast(`${b.dataset.sdtoast} opens as it does today. Out of scope for this prototype.`);});
+document.querySelectorAll('[data-sdhub]').forEach(b=>b.onclick=()=>{sdDrawer(false);showView('hub');});
+renderCrumb(CUR_VIEW);
+
+/* "Driver" was the row roll-up on User-level reports (Utilisation, Billable vs non-billable).
+   It's a refinement, so it sits with Breakdown as "Summarise by", in plain words, for every role. */
+function renderSumm(){
+  const f=$('f-summ'), r=REPORTS[S.report]; if(!f)return;
+  if(!r||!r.drivers){f.innerHTML='';f.style.display='none';return;}
+  f.style.display='';
+  const d=curDriver();
+  f.innerHTML=`<label>Summarise by <span class="gate">· what each row adds up</span></label>
+    <div class="bd-opts">${r.drivers.map(x=>`<button type="button" class="bd-opt ${S.driver===x[0]?'sel':''}" data-summ="${x[0]}">${x[1]}</button>`).join('')}</div>
+    <div class="bd-hint">${S.driver===r.drivers[0][0]?`One row per ${d[1].toLowerCase()}.`:`One row per ${d[1].toLowerCase()}, adding up its users, with a count of who’s in each.`}</div>`;
+  f.querySelectorAll('[data-summ]').forEach(b=>b.onclick=()=>{
+    S.driver=b.dataset.summ; S.cols[0].label=curGrain();
+    renderReportId(); renderColumns(); renderSort(); renderFilters(); renderPreview();
+  });
+}
+const _renderReportIdS=renderReportId; renderReportId=function(){_renderReportIdS();const p=document.querySelector('#rptId .rpt-driverpick');if(p)p.remove();renderSumm();};
+
+/* Who can add a column or field: one neutral menu button, same weight for every value.
+   Replaces the click-to-cycle pill, where "Guided" looked disabled and "Author only" looked selected. */
+const AV_OPTS=[['guided','Guided','Everyone: Guided, Build and Author users'],['builder','Build','Build and Author users'],['author','Author','Authors only']];
+const AV_LBL={guided:'Guided',builder:'Build',author:'Author'};
+function upgradeAvail(listId,attr,getArr,rerender){
+  const list=$(listId); if(!list)return;
+  list.querySelectorAll(`.avail-pill[${attr}]`).forEach(old=>{
+    const id=old.getAttribute(attr), lvl=(old.className.match(/lvl-(\w+)/)||[])[1]||'guided';
+    const b=document.createElement('button'); b.type='button'; b.className='acc-sel lvl-'+lvl;
+    b.title=`Who can add this: ${AV_OPTS.find(o=>o[0]===lvl)[2]}. Click to change.`; b.setAttribute('aria-haspopup','menu'); b.setAttribute('aria-label',`Who can add this: ${AV_LBL[lvl]}. Change`);
+    b.textContent=AV_LBL[lvl];
+    b.onclick=e=>{e.stopPropagation();e.preventDefault();
+      openActionMenu(b,[{label:'<span class="um-cap">Who can add this</span>',disabled:true}].concat(AV_OPTS.map(([k,l,d])=>({label:`<span class="am-opt"><span class="am-tick">${k===lvl?'✓':''}</span><span><span class="am-l">${l}</span><span class="am-d">${d}</span></span></span>`,
+        onClick:()=>{const it=getArr().find(x=>x.id===id); if(it){it.avail=k; rerender(); renderPreview();}}}))));};
+    old.replaceWith(b);
+  });
+}
+const _renderColumnsAv=renderColumns; renderColumns=function(){_renderColumnsAv.apply(this,arguments);upgradeAvail('colList','data-avail',()=>S.cols,renderColumns);};
+const _renderMetaAv=renderMeta; renderMeta=function(){_renderMetaAv.apply(this,arguments);upgradeAvail('metaList','data-mavail',()=>S.meta,renderMeta);};
+
+/* Report title: click to rename (anyone who can edit the report). The lock and "anchored on …" go:
+   the row note below already says what each row is. */
+function canRename(){return !S.viewAs&&S.effective!=='guided';}
+const _renderReportIdT=renderReportId; renderReportId=function(){
+  _renderReportIdT();
+  const box=$('rptId'); if(!box||!S.report)return;
+  const r=REPORTS[S.report];
+  const lock=box.querySelector('.rpt-lock'); if(lock)lock.remove();
+  const sub=box.querySelector('.rpt-driver');
+  if(sub){
+    const kind=r.blank?rtName(grainOf(blankKey())):`${curGrain()} report`;
+    const status=r.blank?(S.savedId?'':'not saved yet'):S.savedId?`based on ${r.name}`:((S.reportName||r.name)===r.name?'from a template, not saved yet':`from the ${r.name} template, not saved yet`);
+    sub.innerHTML=`<span class="rpt-kind">${esc(kind)}</span>${status?` <span class="rpt-status">· ${esc(status)}</span>`:''}`;
+  }
+  const nm=box.querySelector('.rpt-name'); if(!nm||!canRename())return;
+  nm.innerHTML=`<button type="button" class="rpt-name-btn" title="Rename">${esc(S.reportName||r.name)}<span class="rpt-pen" aria-hidden="true">✎</span></button>`;
+  nm.querySelector('button').onclick=()=>{
+    const prev=S.reportName||r.name;
+    nm.innerHTML=`<input class="rpt-name-in" value="${esc(prev)}" aria-label="Report name" maxlength="120">`;
+    const i=nm.querySelector('input'); i.focus(); i.select();
+    let done=false;
+    const commit=keep=>{ if(done)return; done=true;
+      const v=i.value.trim();
+      if(keep&&v&&v!==prev){
+        S.reportName=v;
+        const s=S.savedId&&SAVED.find(x=>x.id===S.savedId);
+        if(s){s.name=v;s.modified='Today';s.mo=0;toast('Renamed');}
+        renderCrumb(CUR_VIEW);
+      }
+      renderReportId(); renderPreview();
+    };
+    i.onkeydown=e=>{if(e.key==='Enter')commit(true);if(e.key==='Escape')commit(false);};
+    i.onblur=()=>commit(true);
+  };
+};
+
+/* The breadcrumb is the way back, so "Choose another report" goes. Leaving a report that was never saved asks first. */
+function leaveTo(v){
+  if(CUR_VIEW==='builder'&&S.report&&!S.savedId){
+    openConfirm({title:'Leave without saving?',body:`“${esc(S.reportName||'This report')}” hasn’t been saved, so your changes will be lost.`,confirm:'Leave without saving',onConfirm:()=>{closeConfirm();showView(v);}});
+    return;
+  }
+  showView(v);
+}
+const _renderReportIdC=renderReportId; renderReportId=function(){_renderReportIdC();const c=$('rptChange');if(c)c.remove();};
+
+/* ================= Fold-down setup sections (trial, 21 Oct) =================
+   Once set, Data and Reporting period fold to a one-line summary with Edit, the same pattern as Scope.
+   To revert: set FOLD_SETUP=false (or delete this block and the matching CSS block). */
+const FOLD_SETUP=true;
+const FS={data:false,period:false};
+const FOLD_ICON={
+  data:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>',
+  period:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>'};
+const BD_SUM={total:'totals',day:'by day',weekending:'by week ending',week:'by week',monthly:'by month'};
+function foldWrap(key,label,nodes){
+  const first=nodes[0]; if(!first)return;
+  const w=document.createElement('div'); w.className='fold'; w.dataset.fold=key;
+  w.innerHTML=`<div class="fold-lbl">${label}</div><button class="cov-btn fold-btn" type="button" aria-expanded="false"><span class="cov-ic">${FOLD_ICON[key]}</span><span class="cov-main"><span class="cov-sub fold-sum"></span></span><span class="cov-edit">Edit</span></button><div class="fold-body"></div>`;
+  first.parentNode.insertBefore(w,first);
+  const body=w.querySelector('.fold-body'); nodes.forEach(n=>n&&body.appendChild(n));
+  w.querySelector('.fold-btn').onclick=()=>{FS[key]=!FS[key];updateFolds();};
+}
+function foldSummary(key){
+  if(key==='data'){
+    const t=[...(S.tags||[])].map(k=>AREA_LBL[k]);
+    const sets=t.length?(t.length>3?`${t.slice(0,3).join(', ')} +${t.length-3}`:t.join(', ')):'All data sets';
+    return {text:sets+(S.category?` · ${S.category} category`:''),unset:!t.length&&!!(REPORTS[S.report]||{}).blank};
+  }
+  const r=REPORTS[S.report]||{}, d=r.drivers?curDriver():null;
+  const parts=[S.periodLabel||'Choose a period'];
+  if(d&&S.driver!==r.drivers[0][0])parts.push(`per ${d[1].toLowerCase()}`);
+  parts.push(BD_SUM[S.breakdown]||'totals');
+  return {text:parts.join(' · '),unset:!S.periodLabel};
+}
+function updateFolds(){
+  document.querySelectorAll('.fold').forEach(w=>{
+    const key=w.dataset.fold, open=!!FS[key];
+    if(key==='data'){const has=!!$('defineBox').innerHTML.trim();w.style.display=has?'':'none';}
+    w.classList.toggle('open',open);
+    w.querySelector('.fold-btn').setAttribute('aria-expanded',open?'true':'false');
+    w.querySelector('.cov-edit').textContent=open?'Done':'Edit';
+    const s=foldSummary(key), el=w.querySelector('.fold-sum'); el.textContent=s.text; el.classList.toggle('unset',s.unset);
+  });
+}
+if(FOLD_SETUP){
+  foldWrap('data','Data',[$('defineBox')]);
+  foldWrap('period','Reporting period',[$('f-period'),$('f-summ'),$('f-breakdown')]);
+  const _rp=renderPreview; renderPreview=function(){_rp.apply(this,arguments);updateFolds();};
+  const _rd=renderDefine; renderDefine=function(){_rd.apply(this,arguments);updateFolds();};
+  const _ob=openBuilder; openBuilder=function(t,o={}){_ob(t,o);const r=REPORTS[S.report]||{};FS.data=!!r.blank&&!(S.tags&&S.tags.size);FS.period=false;updateFolds();};
+  const _sb=startBlank; startBlank=function(){_sb();FS.data=true;updateFolds();};
+}
+
+/* Narrow screens: one column list at a time, switched by tabs (CSS decides when) */
+function setListTab(k){const bs=$('buildSurface');bs.dataset.lt=k;document.querySelectorAll('[data-lt]').forEach(b=>{const on=b.dataset.lt===k;b.classList.toggle('on',on);b.setAttribute('aria-selected',on?'true':'false');});}
+document.querySelectorAll('[data-lt]').forEach(b=>b.onclick=()=>setListTab(b.dataset.lt));
+setListTab('cols');
+document.querySelectorAll('.lt-reset').forEach(b=>b.onclick=()=>$('resetCols').click());
+
+/* ================= Share lives in the Access tab (no separate dialog) =================
+   Share opens Access with "Add people" focused. Everyone can add people up to their own level;
+   only Admins change or remove existing access, and only Admins see Data rights. */
+function openShare(){SH={sel:[],lvl:'',notify:true};setPanelTab('perm');setTimeout(()=>{const a=$('shAdd');if(a)a.focus();},60);}
+function addPeopleBlock(){
+  const g=S.perm.grants, eff=S.effective, draft=isDraft();
+  if(draft)return `<section class="sh-add"><div class="pm-section" style="margin-top:0">Add people</div><div class="pm-note" style="margin-top:0">Drafts can’t be shared. Choose a client in Scope and save first.</div></section>`;
+  const avail=DIRECTORY.filter(p=>!SH.sel.includes(p.id)&&p.id!==CU.id);
+  const groups=[['user','People'],['guest','Guests'],['group','Groups']];
+  const picker=`<select class="select" id="shAdd" aria-label="Add people or groups"><option value="">Add people, guests or groups…</option>${groups.map(([k,l])=>{const xs=avail.filter(p=>p.kind===k);return xs.length?`<optgroup label="${l}">${xs.map(p=>`<option value="${p.id}">${esc(p.name)}${g[p.id]?` (has ${GL[g[p.id]]})`:''}</option>`).join('')}</optgroup>`:'';}).join('')}</select>`;
+  const chips=SH.sel.map(id=>`<span class="sh-chip">${esc(dirName(id))}<button type="button" data-shrm="${id}" aria-label="Remove ${esc(dirName(id))}">✕</button></span>`).join('');
+  const seg=LEVELS.map(l=>{const over=accRank(l)>accRank(eff);return `<button type="button" class="${SH.lvl===l?'on':''}" data-shlvl="${l}" ${over?`disabled title="Above your own access (${GL[eff]})"`:`title="${LVL_DESC[l]}"`} aria-pressed="${SH.lvl===l}">${GL[l]}</button>`;}).join('');
+  const ready=SH.sel.length&&SH.lvl;
+  return `<section class="sh-add" aria-labelledby="shHead">
+    <div class="pm-section" id="shHead" style="margin-top:0">Add people</div>
+    ${picker}
+    ${chips?`<div class="sh-chips">${chips}</div>`:''}
+    <div class="sh-row"><span class="sh-lbl">Permission</span><div class="va-seg sh-seg" role="group" aria-label="Permission">${seg}</div>
+      <span class="sh-desc">${SH.lvl?LVL_DESC[SH.lvl]:'Choose View, Edit or Admin'}</span></div>
+    <div class="sh-row sh-row-end"><label class="anchor-opt"><input type="checkbox" class="checkbox-input" id="shNotify" ${SH.notify!==false?'checked':''}> Notify them by email</label>
+      <button type="button" class="btn btn-md btn-primary" id="shGo" ${ready?'':'disabled'}>Add ${SH.sel.length>1?SH.sel.length+' people':''}</button></div>
+  </section>`;
+}
+function bindAddPeople(){
+  const box=$('dpPerm'); if(!box||!$('shAdd'))return;
+  $('shAdd').onchange=e=>{if(!e.target.value)return;SH.sel.push(e.target.value);renderPermPanel();setTimeout(()=>{const a=$('shAdd');if(a)a.focus();},0);};
+  box.querySelectorAll('[data-shrm]').forEach(b=>b.onclick=()=>{SH.sel=SH.sel.filter(x=>x!==b.dataset.shrm);renderPermPanel();});
+  box.querySelectorAll('[data-shlvl]').forEach(b=>b.onclick=()=>{SH.lvl=b.dataset.shlvl;renderPermPanel();});
+  $('shNotify').onchange=e=>{SH.notify=e.target.checked;};
+  $('shGo').onclick=()=>{
+    const g=S.perm.grants; let kept=0;
+    SH.sel.forEach(id=>{const prev=g[id];if(prev&&accRank(prev)>=accRank(SH.lvl)){kept++;return;}g[id]=SH.lvl;});
+    const n=SH.sel.length, lvl=SH.lvl, notify=SH.notify!==false;
+    SH={sel:[],lvl:'',notify:true};
+    renderPermPanel(); renderRail(); renderPreview();
+    toast(`Added ${n===1?'1 person':n+' people'} with ${GL[lvl]} access${notify?' · notified by email':''}${kept?` (${kept} already had more)`:''}`);
+  };
+}
+if(typeof SH==='undefined'||!('notify' in SH))SH={sel:[],lvl:'',notify:true};
+const _renderPermPanelS=renderPermPanel; renderPermPanel=function(){
+  _renderPermPanelS();
+  const box=$('dpPerm'); if(!box)return;
+  const admin=S.effective==='author';
+  const dr=box.querySelector('.dr-card'); if(dr){ if(admin)box.appendChild(dr); else dr.remove(); }
+  box.insertAdjacentHTML('afterbegin',addPeopleBlock());
+  const sec=[...box.querySelectorAll('.pm-section')].find(e=>e.textContent==='Assign users'); if(sec)sec.textContent='Who has access';
+  bindAddPeople();
+};
+const _renderPmListS=renderPmList; renderPmList=function(){
+  _renderPmListS();
+  if(S.effective!=='author'){
+    $('pmList').querySelectorAll('[data-pid]').forEach(cb=>{cb.disabled=true;});
+    const n=$('dpPerm').querySelector('.pm-ro'); if(!n)$('pmList').closest('.pm-grid').insertAdjacentHTML('afterend','<div class="pm-note pm-ro">Only Admins on this report can change or remove access.</div>');
+  }
+};
 
 </script>
 </body>
