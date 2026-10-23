@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Single-folder dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* ============================================================
+     LIVE BUILD VOCABULARY
+     Read from index-1LAPLyxY.css on sd-feature-dam.screendragondev.com,
+     24 Jul 2026. Names match the running app. Do not rename.
+     ============================================================ */
+  --scaling:1;
+
+  /* Type ladder — pair every size with its line. type-0..3 ONLY in-product. */
+  --type-0-size:11px; --type-0-line:16px;
+  --type-1-size:12px; --type-1-line:16px;
+  --type-2-size:14px; --type-2-line:20px;
+  --type-3-size:16px; --type-3-line:24px;
+  --type-4-size:18px; --type-4-line:28px;   /* not for in-product */
+  --type-5-size:24px; --type-5-line:32px;   /* not for in-product */
+  --type-6-size:32px; --type-6-line:40px;   /* not for in-product */
+
+  --weight-regular:400; --weight-medium:500; --weight-semibold:600; --weight-bold:700;
+
+  /* Spacing — note there is NO 20px step */
+  --space-1:calc(4px * var(--scaling));  --space-2:calc(8px * var(--scaling));
+  --space-3:calc(12px * var(--scaling)); --space-4:calc(16px * var(--scaling));
+  --space-5:calc(24px * var(--scaling)); --space-6:calc(32px * var(--scaling));
+  --space-7:calc(40px * var(--scaling)); --space-8:calc(48px * var(--scaling));
+  --space-9:calc(64px * var(--scaling));
+
+  --radius-1:3px; --radius-2:4px; --radius-3:6px; --radius-4:8px; --radius-6:16px; --radius-full:9999px;
+  --ls-1:0.04em; --ls-tight:-0.01em; --ls-tighter:-0.02em;
+
+  /* Neutral ramp (aliases --gray-1..12 in Radix) */
+  --neutral-1:#fdfdfc; --neutral-2:#f9f9f8; --neutral-3:#f1f0ef; --neutral-4:#e9e8e6;
+  --neutral-5:#e2e1de; --neutral-6:#dad9d6; --neutral-7:#d0ceca; --neutral-8:#bcbbb6;
+  --neutral-9:#8e8d86; --neutral-10:#83827c; --neutral-11:#64635e; --neutral-12:#21201c;
+
+  /* Alpha greys — borders composite, they are not opaque */
+  --gray-a3:rgba(0,0,0,.06); --gray-a4:rgba(0,0,0,.09);
+  --gray-a5:rgba(0,0,0,.122); --gray-a6:rgba(0,0,0,.153);
+  --gray-a7:rgba(0,0,0,.192); --gray-a8:rgba(0,0,0,.267); --gray-a9:rgba(0,0,0,.44);
+
+  /* Accent ramp */
+  --accent-3:#E4F5FC; --accent-4:#D5EFF9; --accent-5:#C4E5F3; --accent-7:#95C9DD;
+  --accent-9:#0B6E8A; --accent-10:#005F7B; --accent-11:#197592; --accent-12:#1B404E;
+  --accent-contrast:#ffffff;
+  /* Alpha accent fill — survives dark where a fixed tint collapses (contract 2.1). */
+  --accent-a3:rgba(13,127,156,0.16);  /* dark-twin active fill only */
+
+  /* Semantic layer — never reach past this to a raw step */
+  --primary-default:var(--accent-9);
+  --primary-hover:var(--accent-10);
+  --primary-text:var(--accent-11);
+  --primary-subtle:var(--accent-3);
+  --primary-subtle-hover:var(--accent-4);
+  --primary-border:var(--accent-7);
+  --primary-contrast:var(--accent-contrast);
+
+  --text-default:var(--neutral-12);
+  --text-subtle:var(--neutral-10);
+  --text-disabled:var(--gray-a9);
+  --text-on-solid:var(--accent-contrast);
+  --text-on-media:#fff;
+
+  --border-subtle:var(--gray-a5);
+  --border-default:var(--gray-a6);
+  --border-emphasis:var(--gray-a7);
+  --border-strong:var(--gray-a8);
+
+  --surface-default:var(--neutral-1);
+  --surface-subtle:var(--neutral-2);
+  --surface-muted:var(--neutral-3);
+  --surface-hover:var(--gray-a3);
+  --surface-active:var(--gray-a4);
+  --surface-emphasis:var(--neutral-4);
+
+  /* Rail state tokens — live, themeable per surface */
+  --icon-nav-fg:var(--text-subtle);
+  --icon-nav-bg-hover:var(--surface-muted);
+  --icon-nav-fg-hover:var(--text-default);
+  --icon-nav-active-bg:var(--accent-3);   /* SOLID tint on light (contract canonical .ri.active) */
+  --icon-nav-active-fg:var(--accent-11);
+  --icon-nav-active-bar:var(--primary-default);
+
+  --text-field-height:var(--space-7);
+
+  /* Status */
+  --color-green-100:#e4f7f0; --color-green-500:#29a383; --color-green-600:#008062;
+  --color-amber-100:#fff0cb; --color-amber-500:#f5a524; --color-amber-600:#a96600;
+  --color-red-100:#feebe7;   --color-red-500:#e54d2e;   --color-red-600:#cf3716;
+  --color-purple-100:#f3f0ff;--color-purple-500:#7c3aed;--color-purple-600:#7139d6;
+  --color-orange-100:#ffeadd;--color-orange-500:#f76707;--color-orange-600:#d44a00;
+
+  --status-active-bg:var(--color-green-100);   --status-active-border:var(--color-green-500);   --status-active-fg:var(--color-green-600);
+  --status-pending-bg:var(--color-amber-100);  --status-pending-border:var(--color-amber-500);  --status-pending-fg:var(--color-amber-600);
+  --status-cancelled-bg:var(--color-red-100);  --status-cancelled-border:var(--color-red-500);  --status-cancelled-fg:var(--color-red-600);
+  --status-review-bg:var(--color-purple-100);  --status-review-border:var(--color-purple-500);  --status-review-fg:var(--color-purple-600);
+  --status-progress-bg:var(--color-orange-100);--status-progress-border:var(--color-orange-500);--status-progress-fg:var(--color-orange-600);
+  --status-draft-bg:var(--neutral-2);          --status-draft-border:var(--neutral-4);          --status-draft-fg:var(--neutral-9);
+  --status-onhold-bg:var(--neutral-2);         --status-onhold-border:var(--neutral-6);         --status-onhold-fg:var(--neutral-11);
+
+  --filetype-badge-bg:rgba(28,28,25,0.62);
+  --filetype-badge-fg:#ffffff;
+  --error-9:#e54d2e; --error-10:#cf3716;
+
+  /* ---- SHIM 3: approval-flow blue. asset-state-tester specs raw #3b82f6.
+         No Scale semantic exists for it. Its own rule says never invent a
+         colour without updating the spec — so this needs a Scale home. ---- */
+  --state-approval:#3b82f6;
+
+  /* Card grid track — ONE source of truth for browse-card width.
+     Width is a surface decision, not a per-widget one. */
+  --card-min:200px;
+
+  --font-family-text:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-lg:0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+
+  /* ---- SHIM 1: mid-tier text. Build ships only default/subtle/disabled.
+         Scale defines --text-muted; the build does not. Flagged, not hidden. ---- */
+  --text-muted:var(--neutral-11);
+
+  /* ---- SHIM 2: categorical data ramp. Present in scale-design-system.html,
+         ABSENT from the build. Charts have no live palette until this lands. ---- */
+  --data-1:#0B6E8A; --data-2:#29A383; --data-3:#00A2C7; --data-4:#5B5BD6;
+  --data-5:#F76B15; --data-6:#E54D2E; --data-9:#B0D9E9; --data-25:#D5EFF9;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-family-text); font-size:var(--type-2-size); line-height:var(--type-2-line);
+  color:var(--text-default); background:var(--surface-subtle); -webkit-font-smoothing:antialiased}
+
+/* harness */
+.harness{background:#201d1a; color:#fff; padding:10px 18px; display:flex; gap:28px; align-items:center; flex-wrap:wrap; position:sticky; top:0; z-index:100}
+.harness .grp{display:flex; align-items:center; gap:8px}
+.harness .lbl{font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.5); font-weight:600}
+.seg{display:flex; background:rgba(255,255,255,.08); border-radius:7px; padding:3px}
+.seg button{font-family:inherit; font-size:12px; font-weight:500; color:rgba(255,255,255,.65); background:transparent; border:0; padding:5px 11px; border-radius:5px; cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent-9); color:#fff}
+.harness .note{margin-left:auto; font-size:11px; color:rgba(255,255,255,.4); max-width:380px; text-align:right}
+
+/* unity shell */
+.stage{padding:24px; display:flex; justify-content:center}
+.unity{width:100%; max-width:1400px; background:var(--surface-default); border-radius:12px; overflow:hidden; box-shadow:var(--shadow-lg); display:flex}
+.unity-rail{width:56px; flex:0 0 56px; background:#0b3a5c; display:flex; flex-direction:column; align-items:center; padding:12px 0; gap:4px}
+.unity-logo{width:40px;height:40px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:20px}
+.ur{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.7)}
+.ur svg{width:20px;height:20px}
+.ur.on{background:rgba(255,255,255,.12);color:#fff}
+.ur-sp{flex:1}
+.unity-body{flex:1;min-width:0;display:flex;flex-direction:column}
+.crumb{height:46px;flex:0 0 46px;display:flex;align-items:center;padding:0 22px;border-bottom:1px solid var(--border-subtle);font-size:13px;color:var(--text-subtle)}
+.crumb b{color:var(--text-default);font-weight:600}
+.crumb .sep{margin:0 9px;opacity:.5}
+
+/* dam rail */
+.dam-area{display:flex;flex:1;min-width:0;background:var(--surface-subtle)}
+.dam-rail{width:52px;flex:0 0 52px;background:var(--surface-default);border-right:1px solid var(--border-default);display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:3px}
+.dr{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--text-subtle);position:relative;cursor:pointer}
+.dr svg{width:19px;height:19px}
+.dr.on{background:var(--accent-3);color:var(--accent-11)}
+.dr.on::before{content:'';position:absolute;left:0;top:7px;bottom:7px;width:3px;background:var(--accent-9);border-radius:0 2px 2px 0}
+.dr-sp{flex:1}
+
+.main{flex:1;min-width:0;overflow-y:auto}
+.wrap{padding:22px 26px 40px;max-width:1180px}
+
+/* ============ SCOPE HEADER (single folder = static title) ============ */
+.scope{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.scope h1{font-size:var(--type-4-size);line-height:var(--type-4-line);font-weight:700;letter-spacing:-.02em}
+.scope-picker{display:inline-flex;align-items:center;gap:6px;background:transparent;border:0;font-family:inherit;
+  font-size:var(--type-4-size);line-height:var(--type-4-line);font-weight:700;letter-spacing:-.02em;color:var(--text-default);
+  cursor:pointer;padding:4px 8px;margin-left:-8px;border-radius:8px}
+.scope-picker:hover{background:var(--surface-muted)}
+.scope-picker svg{width:20px;height:20px;color:var(--text-subtle)}
+/* picker dropdown */
+.pick-wrap{position:relative;display:inline-block}
+.pick-menu{position:absolute;top:calc(100% + 6px);left:0;z-index:50;min-width:260px;background:var(--surface-default);
+  border:1px solid var(--border-default);border-radius:10px;box-shadow:var(--shadow-lg);padding:6px;display:none}
+.pick-menu.open{display:block}
+.pick-item{display:block;width:100%;text-align:left;background:transparent;border:0;font-family:inherit;font-size:14px;
+  color:var(--text-default);padding:9px 11px;border-radius:7px;cursor:pointer}
+.pick-item:hover{background:var(--surface-subtle)}
+.pick-item.head{font-weight:600}
+.pick-sep{height:1px;background:var(--border-subtle);margin:5px 4px}
+/* carousel */
+.carousel{position:relative;border-radius:14px;overflow:hidden;margin-bottom:22px;height:200px}
+.car-slide{position:absolute;inset:0;display:flex;align-items:flex-end;padding:24px}
+.car-slide::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.45),transparent 55%)}
+.car-txt{position:relative;z-index:2}
+.car-tag{position:absolute;top:14px;right:14px;z-index:3;background:rgba(0,0,0,.4);color:#fff;font-size:10px;font-weight:600;
+  letter-spacing:.06em;padding:4px 9px;border-radius:5px}
+.car-title{font-size:26px;font-weight:700;color:#fff;letter-spacing:-.02em}
+.car-sub{font-size:14px;color:rgba(255,255,255,.85);margin-top:3px}
+.car-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:36px;height:36px;border-radius:50%;
+  border:0;background:rgba(255,255,255,.9);color:#201d1a;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.car-arrow svg{width:18px;height:18px}
+.car-arrow.left{left:12px}.car-arrow.right{right:12px}
+.car-dots{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:4;display:flex;gap:6px}
+.car-dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.45)}
+.car-dots i.on{background:#fff;width:18px;border-radius:4px}
+/* folder cards (swim-lane) */
+.fcard{border:1px solid var(--border-default);border-radius:11px;background:var(--surface-default);padding:8px;cursor:pointer}
+.fstack{position:relative}
+.fstack::before,.fstack::after{content:'';position:absolute;left:6px;right:6px;bottom:-4px;height:8px;border-radius:0 0 8px 8px;background:var(--neutral-3);z-index:0}
+.fstack::after{bottom:-7px;left:11px;right:11px;background:var(--neutral-2)}
+.fthumb{aspect-ratio:16/9;border-radius:8px;position:relative;z-index:1}
+.fname{font-size:14px;font-weight:600;margin-top:11px}
+.fsub{font-size:11px;color:var(--text-subtle);margin-top:4px;display:flex;align-items:center;gap:5px}
+.fsub svg{width:13px;height:13px}
+.ffoot{display:flex;align-items:center;justify-content:space-between;margin-top:5px}
+.fcount{font-size:12px;color:var(--text-muted)}
+.fbadge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:5px;background:var(--surface-muted);color:var(--text-subtle)}
+.scope .meta{display:flex;align-items:center;gap:16px;margin-left:auto;font-size:var(--type-2-size);color:var(--text-muted)}
+.scope .meta span{display:flex;align-items:center;gap:6px}
+.scope .meta svg{width:15px;height:15px}
+.badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px}
+.badge-active{background:var(--status-active-bg,#e6f4ea);color:var(--status-active-fg,#1a7f37);border:1px solid var(--status-active-border,#aadcb8)}
+
+/* ============ SEARCH HERO — the driving-off point ============ */
+.hero{background:var(--surface-default);border:1px solid var(--border-default);border-radius:14px;padding:26px 28px;margin-bottom:22px;position:relative;overflow:hidden}
+.hero.fifa{background:linear-gradient(115deg,#0d2e3a,#0d7f9c 60%,#38a9c4);border:0}
+.hero-inner{position:relative;z-index:2;max-width:760px}
+.hero h2{font-size:var(--type-3-size);line-height:var(--type-3-line);font-weight:700;margin-bottom:5px}
+.hero p{font-size:var(--type-2-size);margin-bottom:16px}
+.hero.plain h2{color:var(--text-default)} .hero.plain p{color:var(--text-subtle)}
+.hero.fifa h2{color:#fff} .hero.fifa p{color:rgba(255,255,255,.82)}
+.searchbar-wrap{position:relative;max-width:620px}
+.searchbar{display:flex;align-items:center;gap:10px;background:#fff;border-radius:10px;padding:0 14px;height:50px;box-shadow:var(--shadow-sm);position:relative;z-index:3}
+.typeahead{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:4;background:#fff;border:1px solid var(--border-default);border-radius:10px;box-shadow:var(--shadow-lg);padding:8px;display:none}
+.typeahead.open{display:block}
+.ta-lbl{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-subtle);padding:4px 8px}
+.ta-row{display:flex;align-items:center;gap:10px;padding:8px;border-radius:7px;text-decoration:none;cursor:pointer}
+.ta-row:hover{background:var(--surface-subtle)}
+.ta-th{width:28px;height:28px;flex:0 0 28px;border-radius:5px;background:var(--surface-muted);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--text-subtle)}
+.ta-nm{font-size:13px;color:var(--text-default)}
+.ta-all{display:flex;align-items:center;gap:8px;padding:9px 8px;margin-top:4px;border-top:1px solid var(--border-subtle);text-decoration:none;color:var(--accent-11);font-size:13px;font-weight:500;cursor:pointer}
+.ta-all svg{width:15px;height:15px}
+.ta-all b{font-weight:600}
+.searchbar svg{width:20px;height:20px;color:var(--text-subtle);flex:0 0 20px}
+.searchbar input{flex:1;border:0;outline:0;font-family:inherit;font-size:var(--type-2-size);color:var(--text-default);background:transparent}
+.searchbar input::placeholder{color:var(--text-subtle)}
+.searchbar .go{height:36px;padding:0 18px;border:0;border-radius:8px;background:var(--accent-9);color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.hero-quick{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;align-items:center}
+.hq-lbl{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-subtle);margin-right:2px}
+.hq-lbl.on-dark{color:rgba(255,255,255,.65)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;padding:6px 12px;border-radius:999px;cursor:pointer;border:1px solid}
+.chip svg{width:13px;height:13px;flex:0 0 13px}
+/* plain hero */
+.hero.plain .chip-filter{background:var(--surface-subtle);border-color:var(--border-default);color:var(--text-default)}
+.hero.plain .chip-more,.hero.plain .chip-ghost{background:transparent;border-color:var(--border-default);color:var(--text-subtle)}
+.hero.plain .chip-browse{background:var(--accent-3);border-color:var(--accent-7);color:var(--accent-11);font-weight:600}
+/* fifa dark hero */
+.hero.fifa .chip-filter{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.28);color:#fff}
+.hero.fifa .chip-more,.hero.fifa .chip-ghost{background:transparent;border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.85)}
+.hero.fifa .chip-browse{background:#fff;border-color:#fff;color:var(--accent-11);font-weight:600}
+.chip{font-size:12px;font-weight:500;padding:6px 12px;border-radius:999px;cursor:pointer;border:1px solid}
+.hero.plain .chip{background:var(--surface-subtle);border-color:var(--border-default);color:var(--text-default)}
+.hero.fifa .chip{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25);color:#fff}
+
+/* ============ WIDGETS ============ */
+.widget{background:var(--surface-default);border:1px solid var(--border-default);border-radius:12px;margin-bottom:18px;overflow:hidden}
+.fc-body{display:grid;grid-template-columns:1.1fr 1fr;gap:0;padding:0 18px 18px}
+.fc-cover{padding:4px 18px 4px 0}
+.fc-bento{aspect-ratio:16/10;display:grid;grid-template-columns:1.4fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:4px;border-radius:10px;overflow:hidden}
+.fc-bento i{background:linear-gradient(135deg,#b8d4dd,#5a93a8)}
+.fc-bento i:first-child{grid-row:1/3;grid-column:1}
+.fc-bento .more{background:var(--neutral-3);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:var(--text-subtle)}
+.fc-meta{display:flex;flex-direction:column;justify-content:center;padding:6px 0 6px 6px}
+.fc-vis{font-size:12px;color:var(--text-subtle);display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.fc-vis svg{width:14px;height:14px}
+.fc-name{font-size:22px;font-weight:700;letter-spacing:-.02em;line-height:1.15}
+.fc-desc{font-size:13.5px;line-height:1.5;color:var(--text-subtle);margin-top:8px;max-width:420px}
+.fc-stat{font-size:12px;color:var(--text-subtle);margin-top:12px}
+.fc-actions{display:flex;gap:10px;margin-top:16px}
+.fc-primary{display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 18px;border:0;border-radius:8px;background:var(--accent-9);color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.fc-primary svg{width:16px;height:16px}
+.fc-secondary{height:40px;padding:0 18px;border:1px solid var(--border-emphasis,#cfcac3);border-radius:8px;background:transparent;color:var(--text-default);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+/* useful links */
+.ul-list{display:flex;flex-direction:column}
+.ul-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border-subtle);text-decoration:none;cursor:pointer}
+.ul-item:last-child{border-bottom:0}
+.ul-ic{width:34px;height:34px;flex:0 0 34px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.ul-ic svg{width:17px;height:17px}
+.ul-ic.external{background:var(--surface-muted);color:var(--text-subtle)}
+.ul-ic.internal{background:var(--accent-3);color:var(--accent-11)}
+.ul-main{flex:1;min-width:0;display:flex;flex-direction:column}
+.ul-label{font-size:14px;font-weight:500;color:var(--text-default)}
+.ul-desc{font-size:12px;color:var(--text-subtle);margin-top:1px}
+.ul-ext{color:var(--text-subtle)}
+.ul-ext svg{width:15px;height:15px}
+.w-head{display:flex;align-items:center;gap:10px;padding:16px 18px 10px}
+.w-head h3{font-size:var(--type-3-size);line-height:var(--type-3-line);font-weight:700;letter-spacing:-.01em}
+.w-count{font-size:11px;font-weight:600;color:var(--text-subtle);background:var(--surface-muted);padding:3px 9px;border-radius:999px}
+.w-head .act{margin-left:auto}
+.w-link{font-size:13px;font-weight:600;color:var(--accent-11);text-decoration:none;cursor:pointer}
+.w-body{padding:4px 18px 18px}
+
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+
+/* asset/collection grids */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.acard{border:1px solid var(--border-default);border-radius:10px;overflow:hidden;background:var(--surface-default);cursor:pointer}
+.athumb{aspect-ratio:1/1;background:linear-gradient(135deg,#c9c4bd,#8a8178);position:relative}
+.athumb .ft{position:absolute;bottom:7px;right:7px;background:#201d1a;color:#fff;font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px}
+.athumb .st{position:absolute;bottom:7px;left:7px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;background:#fff;border:1px solid}
+.st-exp{color:#b3261e;border-color:#f3b9b4}
+.st-rst{color:#7a3db8;border-color:#d6b9f0}
+.aname{padding:8px 9px 3px;font-size:12px;font-weight:500;color:var(--text-default);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.asub{padding:0 9px 9px;font-size:11px;color:var(--text-subtle)}
+
+/* collection bento */
+.ccard{border:1px solid var(--border-default);border-radius:10px;background:var(--surface-default);padding:8px;cursor:pointer}
+.bento{aspect-ratio:16/9;display:grid;grid-template-columns:1.5fr 1fr;grid-template-rows:1fr 1fr;gap:3px;border-radius:7px;overflow:hidden}
+.bento i{display:block;background:linear-gradient(135deg,#b8d4dd,#6ba3b5)}
+.bento i:first-child{grid-row:1/3}
+.bento .more{background:var(--neutral-3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--text-subtle)}
+.cmeta{padding:9px 4px 3px;display:flex;align-items:center;justify-content:space-between}
+.cname{font-size:13px;font-weight:600}
+.cvis{font-size:11px;color:var(--text-subtle);display:flex;align-items:center;gap:4px}
+.cvis svg{width:13px;height:13px}
+.cvis.ext{color:var(--status-pending-fg,#bb6a00)}
+.csub{padding:0 4px;font-size:11px;color:var(--text-subtle)}
+
+/* downloads / recent list */
+.rows{display:flex;flex-direction:column}
+.row{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--border-subtle)}
+.row:last-child{border:0}
+.rthumb{width:34px;height:34px;border-radius:6px;background:var(--surface-muted);flex:0 0 34px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--text-subtle)}
+.rmain{flex:1;min-width:0}
+.rname{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rsub{font-size:11px;color:var(--text-subtle);margin-top:1px}
+.rend{flex:0 0 auto;color:var(--text-subtle)}
+.rend svg{width:17px;height:17px}
+
+/* empty-folder state */
+.empty{text-align:center;padding:50px 20px}
+.empty .ic{width:56px;height:56px;margin:0 auto 14px;border-radius:14px;background:var(--surface-muted);display:flex;align-items:center;justify-content:center;color:var(--neutral-8)}
+.empty .ic svg{width:28px;height:28px}
+.empty h3{font-size:var(--type-3-size);font-weight:700;margin-bottom:6px}
+.empty p{font-size:var(--type-2-size);color:var(--text-subtle);max-width:380px;margin:0 auto 16px}
+.btn{height:40px;padding:0 20px;border:0;border-radius:8px;background:var(--accent-9);color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+
+/* annotation */
+.anno{background:#fff8e6;border:1px solid #f0d98c;border-radius:9px;padding:12px 15px;margin-bottom:18px;font-size:12.5px;line-height:1.5;color:#6b5618}
+.anno b{color:#4a3b0d}
+
+.hidden{display:none}
+.icons{display:none}
+</style>
+</head>
+<body>
+
+<div class="harness">
+  <div class="grp"><span class="lbl">Scope</span>
+    <div class="seg" id="seg-scope">
+      <button data-v="all" aria-pressed="false">All folders</button>
+      <button data-v="single" aria-pressed="true">Single folder</button>
+    </div>
+  </div>
+  <div class="grp"><span class="lbl">Folder</span>
+    <div class="seg" id="seg-folder">
+      <button data-v="fifa" aria-pressed="true">FIFA event</button>
+      <button data-v="plain" aria-pressed="false">Plain folder</button>
+    </div>
+  </div>
+  <div class="grp"><span class="lbl">State</span>
+    <div class="seg" id="seg-state">
+      <button data-v="populated" aria-pressed="true">Populated</button>
+      <button data-v="empty" aria-pressed="false">Empty folder</button>
+    </div>
+  </div>
+  <div class="grp"><span class="lbl">Saved filters</span>
+    <div class="seg" id="seg-filters">
+      <button data-v="has" aria-pressed="true">Has filters</button>
+      <button data-v="none" aria-pressed="false">None yet</button>
+    </div>
+  </div>
+  <div class="note">One dashboard, one config. The <b style="color:#fff">scope</b> property resolves the composition — the search hero only renders at single-folder; the folder picker + swim-lanes only render at all-folders.</div>
+</div>
+
+<div class="stage">
+  <div class="unity">
+    <nav class="unity-rail">
+      <div class="unity-logo">sd</div>
+      <div class="ur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg></div>
+      <div class="ur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></div>
+      <div class="ur-sp"></div>
+      <div class="ur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
+    </nav>
+    <div class="unity-body">
+      <div class="crumb" id="crumbWrap"><b>Home</b><span class="sep">/</span><span>Digital Archive</span><span class="sep">/</span><b id="crumbLeaf">FIFA World Cup 2026</b></div>
+      <div class="dam-area">
+        <nav class="dam-rail">
+          <div class="dr on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></div>
+          <div class="dr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 6 4 14M12 6v14M8 8v12M4 4v16"/></svg></div>
+          <div class="dr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="dr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.7 8.9a1 1 0 0 1-.6 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.2-2.7a1 1 0 0 1 1.5 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></div>
+          <div class="dr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
+        </nav>
+        <div class="main">
+          <div class="wrap" id="wrap"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const S = {scope:'single', folder:'fifa', state:'populated', filters:'has'};
+const USEFUL_LINKS = [
+  {label:'Brand Guidelines 2026', type:'external', desc:'The master brand book (PDF)'},
+  {label:'Submit a request', type:'external', desc:'Need something made? Start here'},
+  {label:'Tournament Key Visuals', type:'internal', desc:'Jump to the collection'},
+  {label:'Rights & usage policy', type:'external', desc:null},
+  {label:'Media accreditation', type:'external', desc:null}
+];
+const SAVED_FILTERS = {
+  fifa: ['Cleared logos', 'Broadcast video', 'Press kit', 'Expiring < 30 days', 'Hero imagery', 'Social crops'],
+  plain:['Approved only', 'Partner logos']
+};
+const cal = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
+const search = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>';
+const dl = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>';
+const lock = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>';
+const globe = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18"/></svg>';
+const ppl = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>';
+const extLink = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/></svg>';
+const intLink = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
+const arrowOut = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg>';
+const shareIc = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>';
+const bookmark = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
+const plusIc = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>';
+const chevL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>';
+const chevR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m9 18 6-6-6-6"/></svg>';
+const chev = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m6 9 6 6 6-6"/></svg>';
+const FOLDERS_ALL = [
+  {n:'FIFA World Cup 2026', d:'11 Jun 2026 – 19 Jul 2026', c:'4,812', ph:'linear-gradient(135deg,#0d2e3a,#0d7f9c)', st:null},
+  {n:'FIFA Club World Cup 2025', d:'14 Jun 2025 – 13 Jul 2025', c:'2,140', ph:'linear-gradient(135deg,#2a2a2a,#555)', st:'Archived'},
+  {n:"FIFA Women's World Cup 2027", d:'24 Jun 2027 – 25 Jul 2027', c:'318', ph:'linear-gradient(135deg,#0d5e4a,#10b981)', st:'Draft'},
+  {n:'FIFA World Cup Qatar 2022', d:'20 Nov 2022 – 18 Dec 2022', c:'6,903', ph:'linear-gradient(135deg,#3a1a1a,#8a3b2a)', st:'Archived'},
+  {n:'Trophy Tour 2026', d:'12 Jan 2026 – 24 Apr 2026', c:'642', ph:'linear-gradient(135deg,#0d2e3a,#0d7f9c)', st:null}
+];
+const folderOpen = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v1"/><path d="M3.5 21h15.4a1 1 0 0 0 .97-.76l1.8-7.2A1 1 0 0 0 20.7 12H6.3a1 1 0 0 0-.97.76L3.5 20"/></svg>';
+
+const FOLDER = {
+  fifa: {name:'FIFA World Cup 2026', dates:'11 Jun 2026 – 19 Jul 2026', count:'4,812', active:true},
+  plain:{name:'Partner & Sponsor Toolkits', dates:null, count:'822', active:true}
+};
+
+const ASSETS = [
+  {n:'WC2026_Emblem_Mono_Black.ai', ft:'AI', sub:'1.1 MB', st:null},
+  {n:'WC2026_Opening_Reel_Master.mp4', ft:'MP4', sub:'842 MB', st:'rst'},
+  {n:'WC2026_Brand_Guidelines_v4.pdf', ft:'PDF', sub:'22 MB', st:null},
+  {n:'WC2026_Trophy_Hero_4000.jpg', ft:'JPG', sub:'8.4 MB', st:null},
+  {n:'WC2026_Typography_Spec.pdf', ft:'PDF', sub:'3.1 MB', st:'exp'},
+  {n:'WC2026_Host_Cities_Map.svg', ft:'SVG', sub:'412 KB', st:null}
+];
+const COLLS = [
+  {n:'Tournament Key Visuals', c:'48', vis:'internal'},
+  {n:'Broadcast-Ready Clips', c:'23', vis:'private'},
+  {n:'Sponsor Handover Pack', c:'6', vis:'external'}
+];
+const DLS = [
+  {n:'FIFA_WC2026_Logo_Primary_RGB.svg', when:'Today, 09:41', ft:'SVG'},
+  {n:'WC2026_Brand_Guidelines_v4.pdf', when:'Yesterday, 16:08', ft:'PDF'},
+  {n:'WC2026_Trophy_Hero_4000.jpg', when:'21 Jul, 11:22', ft:'JPG'}
+];
+const RECENT = [
+  {n:'car12.jpg', act:'Added', when:'12 Oct 2026'},
+  {n:'Image79.jpg', act:'Edited details', when:'12 Oct 2026'},
+  {n:'WC2026_Emblem_Mono.ai', act:'Public link updated', when:'08 Oct 2026'}
+];
+
+function heroBlock(){
+  const f = FOLDER[S.folder];
+  const isFifa = S.folder==='fifa';
+  return `<div class="hero ${isFifa?'fifa':'plain'}">
+    <div class="hero-inner">
+      <h2>${isFifa?'Find anything in this event':'Search this folder'}</h2>
+      <p>${f.count} assets in ${f.name}. Start typing to search, or jump to the full library.</p>
+      <div class="searchbar-wrap">
+        <div class="searchbar">
+          ${search}
+          <input placeholder="Search ${f.name}…" id="heroInput" autocomplete="off">
+          <button class="go">Search</button>
+        </div>
+        <div class="typeahead" id="typeahead">
+          <div class="ta-lbl">Top matches</div>
+          <a class="ta-row"><span class="ta-th">AI</span><span class="ta-nm">WC2026_Emblem_Mono_Black.ai</span></a>
+          <a class="ta-row"><span class="ta-th">SVG</span><span class="ta-nm">FIFA_WC2026_Logo_Primary_RGB.svg</span></a>
+          <a class="ta-row"><span class="ta-th">PDF</span><span class="ta-nm">WC2026_Brand_Guidelines_v4.pdf</span></a>
+          <a class="ta-all">${search}<span>See all results for "<b id="taq">logo</b>" in the library</span></a>
+        </div>
+      </div>
+      ${savedFilterRow(isFifa)}
+    </div>
+  </div>`;
+}
+
+function savedFilterRow(isFifa){
+  const all = (S.filters==='has') ? (SAVED_FILTERS[S.folder]||[]) : [];
+  if(!all.length){
+    // graceful empty state — one hint pill, not a wall of nothing
+    return `<div class="hero-quick"><span class="chip chip-ghost">${bookmark}Save a filter to pin it here</span>
+      <span class="chip chip-browse">Browse all →</span></div>`;
+  }
+  const CAP = 3;
+  const shown = all.slice(0, CAP);
+  const extra = all.length - shown.length;
+  let pills = shown.map(f=>`<span class="chip chip-filter">${bookmark}${f}</span>`).join('');
+  if(extra>0) pills += `<span class="chip chip-more">+${extra} more</span>`;
+  pills += `<span class="chip chip-browse">Browse all →</span>`;
+  return `<div class="hero-quick"><span class="hq-lbl ${isFifa?'on-dark':''}">Saved filters</span>${pills}</div>`;
+}
+
+function usefulLinksBody(){
+  return `<div class="ul-list">${USEFUL_LINKS.map(l=>{
+    const ic = l.type==='external' ? extLink : intLink;
+    return `<a class="ul-item">
+      <span class="ul-ic ${l.type}">${ic}</span>
+      <span class="ul-main"><span class="ul-label">${l.label}</span>${l.desc?`<span class="ul-desc">${l.desc}</span>`:''}</span>
+      ${l.type==='external'?`<span class="ul-ext">${arrowOut}</span>`:''}
+    </a>`;}).join('')}</div>`;
+}
+
+function featuredCollection(){
+  // Features ONE existing collection, large + decorative. Not new curation — reuses the collection.
+  // Share-primary per design contract (collections are curated to be shared).
+  return `<section class="widget fc">
+    <div class="w-head"><h3>Featured collection</h3></div>
+    <div class="fc-body">
+      <div class="fc-cover">
+        <div class="fc-bento"><i></i><i></i><i></i><i></i><i></i><i class="more">+1</i></div>
+      </div>
+      <div class="fc-meta">
+        <div class="fc-vis">${ppl} Internal</div>
+        <div class="fc-name">Sponsor Handover Pack</div>
+        <div class="fc-desc">Everything a partner needs for matchday — cleared logos, key visuals, usage guidelines. Ready to share as one set.</div>
+        <div class="fc-stat">6 assets · curated by S. Murphy</div>
+        <div class="fc-actions">
+          <button class="fc-primary">${shareIc} Share collection</button>
+          <button class="fc-secondary">Open</button>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+function widget(title, count, body, link){
+  return `<section class="widget">
+    <div class="w-head"><h3>${title}</h3>${count?`<span class="w-count">${count}</span>`:''}
+      ${link?`<span class="act"><a class="w-link">${link}</a></span>`:''}</div>
+    <div class="w-body">${body}</div>
+  </section>`;
+}
+
+function collBody(){
+  return `<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(230px,1fr))">${COLLS.map(c=>{
+    const vi = c.vis==='external'?globe : c.vis==='private'?lock : ppl;
+    const vt = c.vis==='external'?'External':c.vis==='private'?'Private':'Internal';
+    return `<div class="ccard">
+      <div class="bento"><i></i><i></i><i></i><i class="more">+${c.c}</i></div>
+      <div class="cmeta"><span class="cname">${c.n}</span>
+        <span class="cvis ${c.vis==='external'?'ext':''}">${vi}${c.vis==='external'?'<span>External</span>':''}</span></div>
+      <div class="csub">${c.c} assets</div>
+    </div>`;}).join('')}</div>`;
+}
+function recentBody(){
+  return `<div class="grid">${ASSETS.map(a=>`
+    <div class="acard"><div class="athumb">
+      ${a.st?`<span class="st st-${a.st}">${a.st==='exp'?'Expired':'Restricted'}</span>`:''}
+      <span class="ft">${a.ft}</span></div>
+      <div class="aname" title="${a.n}">${a.n}</div><div class="asub">${a.sub}</div></div>`).join('')}</div>`;
+}
+function dlBody(){
+  return `<div class="rows">${DLS.map(d=>`<div class="row">
+    <div class="rthumb">${d.ft}</div>
+    <div class="rmain"><div class="rname">${d.n}</div><div class="rsub">${d.when}</div></div>
+    <div class="rend">${dl}</div></div>`).join('')}</div>`;
+}
+function recentItemsBody(){
+  return `<div class="rows">${RECENT.map(r=>`<div class="row">
+    <div class="rmain"><div class="rname">${r.n}</div><div class="rsub">${r.act} · ${r.when}</div></div></div>`).join('')}</div>`;
+}
+
+function render(){
+  const multi = S.scope==='all';
+  const f = FOLDER[S.folder];
+  // breadcrumb: all-folders stops at Digital Archive; single deepens to the folder
+  const crumbWrap = document.getElementById('crumbWrap');
+  crumbWrap.innerHTML = multi
+    ? '<b>Home</b><span class="sep">/</span><b>Digital Archive</b>'
+    : '<b>Home</b><span class="sep">/</span><span>Digital Archive</span><span class="sep">/</span><b>'+f.name+'</b>';
+
+  let html = '';
+
+  // ---------- SCOPE HEADER ----------
+  if(multi){
+    // all-folders: switchable title (picker) + folder count only (no asset total — permission-partial)
+    const opts = FOLDERS_ALL.map(fo=>`<button class="pick-item" data-pick="${fo.n}">${fo.n}</button>`).join('');
+    html += `<div class="scope">
+      <div class="pick-wrap">
+        <button class="scope-picker" id="pickBtn"><span>All folders</span>${chev}</button>
+        <div class="pick-menu" id="pickMenu">
+          <button class="pick-item head" data-pick="__all">All folders</button>
+          <div class="pick-sep"></div>
+          ${opts}
+        </div>
+      </div>
+      <div class="meta"><span>12 folders</span></div>
+    </div>`;
+  } else {
+    // single: STATIC title, no chevron + event metadata (opt-in)
+    let meta = S.folder==='fifa'
+      ? `<span>${cal} ${f.dates}</span><span>${f.count} assets</span><span class="badge badge-active">Active</span>`
+      : `<span>${f.count} assets</span>`;
+    html += `<div class="scope"><h1>${f.name}</h1><div class="meta">${meta}</div></div>`;
+  }
+
+  // ---------- EMPTY (single only) ----------
+  if(!multi && S.state==='empty'){
+    html += heroBlockEmpty();
+    html += widget('Recently added', null, emptyInner('Nothing here yet','Upload assets to this folder and they\'ll appear here.','Upload assets'));
+    document.getElementById('wrap').innerHTML = html; wire(); return;
+  }
+
+  // ---------- SCOPE-RESOLVED WIDGETS ----------
+  if(multi){
+    // scope:multi — carousel banner (FIFA-flagged) + folder swim-lanes. NO search hero.
+    html += carouselBlock();
+    html += `<div class="anno"><b>scope: multi</b> — carousel + folder picker + swim-lanes render here. No search hero: a cross-folder search would resolve permissions across every folder at query time (clunky). You pick a folder first — that resolves the permission context — and search becomes available, and cheap, once you are in it.</div>`;
+    html += widget('Browse folders', '12', folderGridBody(), null);
+  } else {
+    // scope:single — search hero REPLACES the swim-lanes
+    html += heroBlock();
+    html += `<div class="anno"><b>scope: single</b> — one folder, permission already resolved, so a search here is a single clean query (not a cross-folder permission check). The <b>search hero</b> replaces the picker + swim-lanes as the way into the assets. Everything below is the same shared set, re-scoped.</div>`;
+  }
+
+  // scope:both — these render in every scope, re-scoped by context
+  if(!multi) html += featuredCollection();
+  html += widget(multi?'Shared collections':'Collections', COLLS.length, collBody(), 'View all');
+  html += widget('Recently added', null, recentBody(), 'View all');
+  html += `<div class="cols">
+    ${widget('Useful links', null, usefulLinksBody(), 'Manage')}
+    ${widget('My recent downloads', '86', dlBody(), 'View full history')}
+  </div>`;
+  html += widget('Recent items', null, recentItemsBody(), '');
+
+  document.getElementById('wrap').innerHTML = html; wire();
+}
+
+function carouselBlock(){
+  // config-flagged widget (FIFA template only). Pulls the event Visual Identity image.
+  return `<div class="carousel">
+    <button class="car-arrow left">${chevL}</button>
+    <div class="car-slide" style="background:linear-gradient(115deg,#0d2e3a,#0d7f9c 55%,#38a9c4)">
+      <span class="car-tag">BANNER · FIFA ONLY</span>
+      <div class="car-txt">
+        <span class="badge badge-active" style="margin-bottom:8px">Active</span>
+        <div class="car-title">FIFA World Cup 2026</div>
+        <div class="car-sub">11 Jun 2026 – 19 Jul 2026 · 4,812 assets</div>
+      </div>
+    </div>
+    <button class="car-arrow right">${chevR}</button>
+    <div class="car-dots"><i class="on"></i><i></i><i></i></div>
+  </div>`;
+}
+function folderGridBody(){
+  return `<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(210px,1fr))">${FOLDERS_ALL.map(f=>`
+    <div class="fcard">
+      <div class="fstack"><div class="fthumb" style="background:${f.ph}"></div></div>
+      <div class="fname">${f.n}</div>
+      <div class="fsub">${cal} ${f.d}</div>
+      <div class="ffoot"><span class="fcount">${f.c} assets</span>${f.st?`<span class="fbadge">${f.st}</span>`:''}</div>
+    </div>`).join('')}</div>`;
+}
+function heroBlockEmpty(){
+  const f = FOLDER[S.folder];
+  return `<div class="hero plain"><div class="hero-inner">
+    <h2>Search this folder</h2><p>${f.name} is empty for now. Once assets are added you can search them here.</p>
+    <div class="searchbar">${search}<input placeholder="Search ${f.name}…" disabled><button class="go" style="opacity:.5">Search</button></div>
+  </div></div>`;
+}
+function emptyInner(h,p,btn){
+  return `<div class="empty"><div class="ic">${folderOpen}</div><h3>${h}</h3><p>${p}</p><button class="btn">${btn}</button></div>`;
+}
+
+function wire(){
+  const hi=document.getElementById('heroInput'), ta=document.getElementById('typeahead'), taq=document.getElementById('taq');
+  if(hi&&ta){
+    hi.addEventListener('input',()=>{ const v=hi.value.trim(); ta.classList.toggle('open', v.length>0); if(taq&&v) taq.textContent=v; });
+    hi.addEventListener('focus',()=>{ if(hi.value.trim()) ta.classList.add('open'); });
+    hi.addEventListener('blur',()=>setTimeout(()=>ta.classList.remove('open'),150));
+  }
+
+  const pb=document.getElementById('pickBtn'), pm=document.getElementById('pickMenu');
+  if(pb&&pm){
+    pb.addEventListener('click',ev=>{ev.stopPropagation();pm.classList.toggle('open');});
+    document.addEventListener('click',()=>pm.classList.remove('open'),{once:true});
+    pm.querySelectorAll('[data-pick]').forEach(it=>it.addEventListener('click',ev=>{
+      const v=ev.currentTarget.dataset.pick;
+      if(v==='__all'){ S.scope='all'; }
+      else { S.scope='single'; S.folder = v.startsWith('FIFA')?'fifa':'plain'; if(v.startsWith('FIFA')) FOLDER.fifa.name=v; }
+      syncHarness(); render();
+    }));
+  }
+  // carousel click drills into the event
+  const cs=document.querySelector('.car-slide');
+  if(cs) cs.addEventListener('click',()=>{ S.scope='single'; S.folder='fifa'; FOLDER.fifa.name='FIFA World Cup 2026'; syncHarness(); render(); });
+
+  document.querySelectorAll('.w-link, .chip, .acard, .ccard').forEach(el=>el.style.cursor='pointer');
+}
+
+function syncHarness(){
+  document.querySelectorAll('#seg-scope button').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.v===S.scope)));
+  document.querySelectorAll('#seg-folder button').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.v===S.folder)));
+}
+document.getElementById('seg-scope').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  [...e.currentTarget.children].forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  S.scope=b.dataset.v; render();
+});
+document.getElementById('seg-folder').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  [...e.currentTarget.children].forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  S.folder=b.dataset.v; render();
+});
+document.getElementById('seg-filters').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  [...e.currentTarget.children].forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  S.filters=b.dataset.v; render();
+});
+document.getElementById('seg-state').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  [...e.currentTarget.children].forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  S.state=b.dataset.v; render();
+});
+render();
+</script>
+</body>
+</html>
