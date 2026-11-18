@@ -232,13 +232,13 @@ body{font-family:var(--font-family-text); font-size:var(--type-2-size); line-hei
    NO gradient: must work for any brand colour unseen; a derived 2nd stop can't be QA'd per tenant. */
 .hero.brand-dark{background:var(--brand-dark);border:0}
 .hero.brand-light{background:var(--brand-light);border:0}
-.hero-inner{position:relative;z-index:2;max-width:760px}
+.hero-inner{position:relative;z-index:2;max-width:none}
 .hero h2{font-size:var(--type-3-size);line-height:var(--type-3-line);font-weight:700;margin-bottom:5px}
 .hero p{font-size:var(--type-2-size);margin-bottom:16px}
 /* dark brand → white text; light brand → dark text (luminance-derived, one decision per tenant) */
 .hero.brand-dark h2{color:#fff} .hero.brand-dark p{color:rgba(255,255,255,.84)}
 .hero.brand-light h2{color:var(--neutral-12,#201d1a)} .hero.brand-light p{color:rgba(32,29,26,.68)}
-.searchbar-wrap{position:relative;max-width:620px}
+.searchbar-wrap{position:relative;max-width:900px}
 .searchbar{display:flex;align-items:center;gap:10px;background:#fff;border-radius:10px;padding:0 14px;height:50px;box-shadow:var(--shadow-sm);position:relative;z-index:3}
 .typeahead{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:4;background:#fff;border:1px solid var(--border-default);border-radius:10px;box-shadow:var(--shadow-lg);padding:8px;display:none}
 .typeahead.open{display:block}
