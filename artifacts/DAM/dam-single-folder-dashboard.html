@@ -7,6 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
+  --brand-dark:#0d5c6e;   /* a deep client teal */
+  --brand-light:#ffd23f;  /* a pale client amber — white text would fail, so text goes dark */
   /* ============================================================
      LIVE BUILD VOCABULARY
      Read from index-1LAPLyxY.css on sd-feature-dam.screendragondev.com,
@@ -226,12 +228,16 @@ body{font-family:var(--font-family-text); font-size:var(--type-2-size); line-hei
 
 /* ============ SEARCH HERO — the driving-off point ============ */
 .hero{background:var(--surface-default);border:1px solid var(--border-default);border-radius:14px;padding:26px 28px;margin-bottom:22px;position:relative;overflow:hidden}
-.hero.fifa{background:linear-gradient(115deg,#0d2e3a,#0d7f9c 60%,#38a9c4);border:0}
+/* Flat brand-colour fill (tenant-wide, every folder). Text flips by brand luminance.
+   NO gradient: must work for any brand colour unseen; a derived 2nd stop can't be QA'd per tenant. */
+.hero.brand-dark{background:var(--brand-dark);border:0}
+.hero.brand-light{background:var(--brand-light);border:0}
 .hero-inner{position:relative;z-index:2;max-width:760px}
 .hero h2{font-size:var(--type-3-size);line-height:var(--type-3-line);font-weight:700;margin-bottom:5px}
 .hero p{font-size:var(--type-2-size);margin-bottom:16px}
-.hero.plain h2{color:var(--text-default)} .hero.plain p{color:var(--text-subtle)}
-.hero.fifa h2{color:#fff} .hero.fifa p{color:rgba(255,255,255,.82)}
+/* dark brand → white text; light brand → dark text (luminance-derived, one decision per tenant) */
+.hero.brand-dark h2{color:#fff} .hero.brand-dark p{color:rgba(255,255,255,.84)}
+.hero.brand-light h2{color:var(--neutral-12,#201d1a)} .hero.brand-light p{color:rgba(32,29,26,.68)}
 .searchbar-wrap{position:relative;max-width:620px}
 .searchbar{display:flex;align-items:center;gap:10px;background:#fff;border-radius:10px;padding:0 14px;height:50px;box-shadow:var(--shadow-sm);position:relative;z-index:3}
 .typeahead{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:4;background:#fff;border:1px solid var(--border-default);border-radius:10px;box-shadow:var(--shadow-lg);padding:8px;display:none}
@@ -250,20 +256,20 @@ body{font-family:var(--font-family-text); font-size:var(--type-2-size); line-hei
 .searchbar .go{height:36px;padding:0 18px;border:0;border-radius:8px;background:var(--accent-9);color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
 .hero-quick{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;align-items:center}
 .hq-lbl{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-subtle);margin-right:2px}
-.hq-lbl.on-dark{color:rgba(255,255,255,.65)}
+.hero.brand-dark .hq-lbl{color:rgba(255,255,255,.65)}
+.hero.brand-light .hq-lbl{color:rgba(32,29,26,.6)}
 .chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;padding:6px 12px;border-radius:999px;cursor:pointer;border:1px solid}
 .chip svg{width:13px;height:13px;flex:0 0 13px}
 /* plain hero */
-.hero.plain .chip-filter{background:var(--surface-subtle);border-color:var(--border-default);color:var(--text-default)}
-.hero.plain .chip-more,.hero.plain .chip-ghost{background:transparent;border-color:var(--border-default);color:var(--text-subtle)}
-.hero.plain .chip-browse{background:var(--accent-3);border-color:var(--accent-7);color:var(--accent-11);font-weight:600}
+.hero.brand-light .chip-filter{background:rgba(0,0,0,.07);border-color:rgba(0,0,0,.22);color:var(--neutral-12,#201d1a)}
+.hero.brand-light .chip-more,.hero.brand-light .chip-ghost{background:transparent;border-color:rgba(0,0,0,.28);color:rgba(32,29,26,.8)}
+.hero.brand-light .chip-browse{background:var(--neutral-12,#201d1a);border-color:var(--neutral-12,#201d1a);color:#fff;font-weight:600}
 /* fifa dark hero */
-.hero.fifa .chip-filter{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.28);color:#fff}
-.hero.fifa .chip-more,.hero.fifa .chip-ghost{background:transparent;border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.85)}
-.hero.fifa .chip-browse{background:#fff;border-color:#fff;color:var(--accent-11);font-weight:600}
+.hero.brand-dark .chip-filter{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.42);color:#fff}
+.hero.brand-dark .chip-more,.hero.brand-dark .chip-ghost{background:transparent;border-color:rgba(255,255,255,.45);color:#fff}
+.hero.brand-dark .chip-browse{background:#fff;border-color:#fff;color:var(--neutral-12,#201d1a);font-weight:600}
 .chip{font-size:12px;font-weight:500;padding:6px 12px;border-radius:999px;cursor:pointer;border:1px solid}
-.hero.plain .chip{background:var(--surface-subtle);border-color:var(--border-default);color:var(--text-default)}
-.hero.fifa .chip{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25);color:#fff}
+
 
 /* ============ WIDGETS ============ */
 .widget{background:var(--surface-default);border:1px solid var(--border-default);border-radius:12px;margin-bottom:18px;overflow:hidden}
@@ -383,6 +389,12 @@ body{font-family:var(--font-family-text); font-size:var(--type-2-size); line-hei
       <button data-v="none" aria-pressed="false">None yet</button>
     </div>
   </div>
+  <div class="grp"><span class="lbl">Brand colour</span>
+    <div class="seg" id="seg-brand">
+      <button data-v="dark" aria-pressed="true">Dark brand</button>
+      <button data-v="light" aria-pressed="false">Light brand</button>
+    </div>
+  </div>
   <div class="note">One dashboard, one config. The <b style="color:#fff">scope</b> property resolves the composition — the search hero only renders at single-folder; the folder picker + swim-lanes only render at all-folders.</div>
 </div>
 
@@ -414,7 +426,7 @@ body{font-family:var(--font-family-text); font-size:var(--type-2-size); line-hei
 </div>
 
 <script>
-const S = {scope:'single', folder:'fifa', state:'populated', filters:'has'};
+const S = {scope:'single', folder:'fifa', state:'populated', filters:'has', brand:'dark'};
 const USEFUL_LINKS = [
   {label:'Brand Guidelines 2026', type:'external', desc:'The master brand book (PDF)'},
   {label:'Submit a request', type:'external', desc:'Need something made? Start here'},
@@ -482,7 +494,7 @@ const RECENT = [
 function heroBlock(){
   const f = FOLDER[S.folder];
   const isFifa = S.folder==='fifa';
-  return `<div class="hero ${isFifa?'fifa':'plain'}">
+  return `<div class="hero brand-${S.brand}">
     <div class="hero-inner">
       <h2>${isFifa?'Find anything in this event':'Search this folder'}</h2>
       <p>${f.count} assets in ${f.name}. Start typing to search, or jump to the full library.</p>
@@ -518,7 +530,7 @@ function savedFilterRow(isFifa){
   let pills = shown.map(f=>`<span class="chip chip-filter">${bookmark}${f}</span>`).join('');
   if(extra>0) pills += `<span class="chip chip-more">+${extra} more</span>`;
   pills += `<span class="chip chip-browse">Browse all →</span>`;
-  return `<div class="hero-quick"><span class="hq-lbl ${isFifa?'on-dark':''}">Saved filters</span>${pills}</div>`;
+  return `<div class="hero-quick"><span class="hq-lbl">Saved filters</span>${pills}</div>`;
 }
 
 function usefulLinksBody(){
@@ -732,6 +744,11 @@ document.getElementById('seg-folder').addEventListener('click',e=>{
   const b=e.target.closest('button'); if(!b)return;
   [...e.currentTarget.children].forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
   S.folder=b.dataset.v; render();
+});
+document.getElementById('seg-brand').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  [...e.currentTarget.children].forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  S.brand=b.dataset.v; render();
 });
 document.getElementById('seg-filters').addEventListener('click',e=>{
   const b=e.target.closest('button'); if(!b)return;
