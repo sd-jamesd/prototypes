@@ -1234,6 +1234,10 @@ body{padding-left:var(--shell-w);}
 #sqOverlay{z-index:205;}
 .sc-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .sc-head .sel-all{text-transform:none;letter-spacing:0;font-size:var(--font-size-1);}
+/* Scope = Project type dropdown (17 Nov) */
+#f-scope #scopeBtn,#f-scope #scopeInline{display:none!important;}
+#f-scope #anchorBox{margin-top:12px;}
+#ptypeSelect{width:100%;}
 
 </style>
 </head>
@@ -1963,7 +1967,7 @@ function renderMeta(){
   let html=author?'<div class="col-auth-hint">Tick = included by default. Who can add each field: <b>Guided</b> everyone, <b>Build</b> Build and Author, <b>Author</b> Authors only.</div>':'';
   html+='<div class="col-group-lbl">Standard fields</div>'+coreRows.map(row).join('');
   if(customRows.length) html+=`<div class="meta-divider">${S.client?clientNm+' custom fields — scoped':'Custom fields'}</div>`+customRows.map(row).join('');
-  else if(!S.client&&!guided) html+='<div class="scope-note">Set a scope to load a client’s custom metadata — you only ever see what exists for the selected client.</div>';
+  else if(!S.client&&!guided) html+='<div class="scope-note">Choose a project type to load its custom fields. You only see the fields that exist for that project type.</div>';
   const list=$('metaList');
   list.innerHTML=html;
   list.querySelectorAll('[data-meta]').forEach(cb=>cb.onchange=e=>{const c=S.meta.find(x=>x.id===e.target.dataset.meta);c.on=e.target.checked;renderSort();renderPreview();});
@@ -2287,7 +2291,7 @@ function renderPreview(){
       ${over?`<span class="guard">Over the ${CEILING}-row cap. Narrow the period, projects or roles.</span>`:cOver?`<span class="guard">Over the ${COL_CEILING}-column cap. Choose a coarser breakdown or fewer metrics.</span>`:!isReady()&&runBlock()?`<span class="guard guard-info">${runBlock()}</span>`:'<span class="spacer"></span>'}
       <span class="spacer"></span>
       ${saveBtn}
-      <button class="btn btn-md btn-secondary" id="accessBtn" type="button" ${isDraft()?'disabled title="Drafts can’t be shared. Choose a client in Scope and save first."':''}>${ICON_PPL} Share${nGrants>1?` · ${nGrants}`:''}</button>
+      <button class="btn btn-md btn-secondary" id="accessBtn" type="button" ${isDraft()?'disabled title="Drafts can’t be shared. Choose a project type and save first."':''}>${ICON_PPL} Share${nGrants>1?` · ${nGrants}`:''}</button>
       <div class="split">
         <button class="btn btn-md btn-primary split-main" id="runBtn" ${isReady()?'':'disabled'}>Run report</button>
         <button class="btn btn-md btn-primary split-caret" id="runMore" ${isReady()?'':'disabled'} aria-label="More run options">▾</button>
@@ -3192,12 +3196,12 @@ function doSave(){
   if(!nm)return;
   const copy=saveMode==='copy';
   if(S.savedId&&!copy){
-    const s=SAVED.find(x=>x.id===S.savedId); s.name=nm; s.category=cat; s.modified='Today'; s.mo=0; s.draft=!!runBlock();
+    const s=SAVED.find(x=>x.id===S.savedId); s.name=nm; s.category=cat; s.modified='Today'; s.mo=0; s.draft=!!runBlock(); s.ptype=curPtype();
   } else {
     const id='s'+(++savedSeq);
     const grants=copy?{[CU.id]:'author'}:S.perm.grants; grants[CU.id]='author';
     const rec={id,name:nm,type:S.report,category:cat,owner:CU.id,lastRun:'Never run',lr:999,runs:0,modified:'Today',mo:0,grants,rights:copy?'':S.perm.rights,
-      templates:copy?S.templates.map(t=>({...t})):S.templates,output:copy?{...S.output}:S.output,draft:!!runBlock()};
+      templates:copy?S.templates.map(t=>({...t})):S.templates,output:copy?{...S.output}:S.output,draft:!!runBlock(),ptype:curPtype()};
     SAVED.unshift(rec);
     S.savedId=id; S.perm={grants:rec.grants,owner:CU.id,rights:rec.rights}; S.templates=rec.templates; S.output=rec.output;
     S.grant='author'; S.effective=CU.role; S.capped=false;
@@ -3206,7 +3210,7 @@ function doSave(){
   closeSave();
   if(S.persona!==LVL_CODE[S.effective]){S.persona=LVL_CODE[S.effective];$('buildSurface').dataset.pers=S.persona;renderColumns();renderMeta();renderLegacy();}
   renderPreview(); renderPanel(); showView('builder');
-  toast(runBlock()?'Saved as a draft · only you can see it until a client is chosen and it’s saved again':`${copy?'Copy saved':'Saved'} to My reports${cat?' · '+cat:''}`);
+  toast(runBlock()?'Saved as a draft · only you can see it until a project type is chosen and it’s saved again':`${copy?'Copy saved':'Saved'} to My reports${cat?' · '+cat:''}`);
 }
 
 /* ---------------- Confirm (Tier 5) ---------------- */
@@ -3478,7 +3482,7 @@ const _renderPreviewZ=renderPreview; renderPreview=function(){_renderPreviewZ.ap
 function runBlock(){
   if(!S.report)return '';
   if(!(S.months>0))return 'Choose a reporting period to run.';
-  if(!scopeReady())return isDraft()?'Draft: only you can see it. Choose a client in Scope and save to share it.':'Choose a client in Scope to run. You can save it as a draft without one.';
+  if(!scopeReady())return isDraft()?'Draft: only you can see it. Choose a project type and save to share it.':'Choose a project type to run. You can save it as a draft without one.';
   return '';
 }
 
@@ -3689,7 +3693,7 @@ document.querySelectorAll('.lt-reset').forEach(b=>b.onclick=()=>$('resetCols').c
 function openShare(){SH={sel:[],lvl:'',notify:true};setPanelTab('perm');setTimeout(()=>{const a=$('shAdd');if(a)a.focus();},60);}
 function addPeopleBlock(){
   const g=S.perm.grants, eff=S.effective, draft=isDraft();
-  if(draft)return `<section class="sh-add"><div class="pm-section" style="margin-top:0">Add people</div><div class="pm-note" style="margin-top:0">Drafts can’t be shared. Choose a client in Scope and save first.</div></section>`;
+  if(draft)return `<section class="sh-add"><div class="pm-section" style="margin-top:0">Add people</div><div class="pm-note" style="margin-top:0">Drafts can’t be shared. Choose a project type and save first.</div></section>`;
   const avail=DIRECTORY.filter(p=>!SH.sel.includes(p.id)&&p.id!==CU.id);
   const groups=[['user','People'],['guest','Guests'],['group','Groups']];
   const picker=`<select class="select" id="shAdd" aria-label="Add people or groups"><option value="">Add people, guests or groups…</option>${groups.map(([k,l])=>{const xs=avail.filter(p=>p.kind===k);return xs.length?`<optgroup label="${l}">${xs.map(p=>`<option value="${p.id}">${esc(p.name)}${g[p.id]?` (has ${GL[g[p.id]]})`:''}</option>`).join('')}</optgroup>`:'';}).join('')}</select>`;
@@ -3947,6 +3951,58 @@ const _runBlockN=runBlock; runBlock=function(){
   if(S.report&&S.ptypesNone)return 'Choose at least one project type in Scope to run.';
   if(S.report&&S.rolesNone)return 'Choose at least one role in Scope to run.';
   return _runBlockN();
+};
+
+
+/* ================= 17 Nov call: Scope is just a Project type dropdown =================
+   Matches the existing builder, where project type is the only scope. Each site has its own list of project
+   types (project templates). Client, the project-type checklist and the Roles list are gone from the UI. */
+const SITE_PTYPES=[...new Set(Object.values(PROJECTS).flat().map(p=>p.type))].sort();
+(function initPtypeScope(){
+  const f=$('f-scope'); if(!f)return;
+  f.querySelector('label').textContent='Project type';
+  const sel=document.createElement('select'); sel.className='select'; sel.id='ptypeSelect'; sel.setAttribute('aria-label','Project type');
+  f.querySelector('label').after(sel);
+  const hint=document.createElement('div'); hint.className='bd-hint'; hint.id='ptypeHint'; sel.after(hint);
+  const ab=$('anchorBox'); if(ab){hint.after(ab);}
+  sel.onchange=e=>{
+    const v=e.target.value;
+    S.ptypesNone=false; S.rolesNone=false; S.roles=new Set();
+    if(v==='__all'){S.ptypeAll=true;S.client='';S.ptypes=new Set();S.projects.clear();}
+    else if(v){S.ptypeAll=false;S.client=Object.keys(PROJECTS).find(c=>PROJECTS[c].some(p=>p.type===v))||'';S.ptypes=new Set([v]);syncProjects();}
+    else {S.ptypeAll=false;S.client='';S.ptypes=new Set();S.projects.clear();}
+    renderMeta(); renderPtypeScope(); renderPreview();
+  };
+})();
+function curPtype(){return S.ptypes&&S.ptypes.size===1?[...S.ptypes][0]:(S.ptypeAll||S.client?'__all':'');}
+function renderPtypeScope(){
+  const sel=$('ptypeSelect'); if(!sel)return;
+  const guided=(S.viewAs?VIEWAS_LVL[S.viewAs]:S.effective)==='guided';
+  const v=guided&&!curPtype()?'__all':curPtype();
+  sel.innerHTML=(guided?'':`<option value="" ${v?'':'selected'}>Choose a project type…</option>`)+`<option value="__all" ${v==='__all'?'selected':''}>All project types</option>`+SITE_PTYPES.map(t=>`<option ${v===t?'selected':''}>${esc(t)}</option>`).join('');
+  sel.classList.toggle('df-need',!v);
+  $('ptypeHint').textContent=v&&v!=='__all'?`Only ${v} projects are included, and their custom fields are offered.`:v==='__all'?'Every project type on this site is included. Only standard fields are offered.':'Required to run. It decides which projects are included and which custom fields are offered.';
+}
+scopeReady=function(){return S.persona==='user'||S.client!==''||!!S.ptypeAll;};
+const SEED_PTYPE={s1:'Brand Campaign',s2:'__all',s3:'__all',s4:'Digital Production',s5:'__all',s6:'Retainer',s7:'__all',s8:'Event Activation'};
+function applyPtype(v){
+  S.ptypeAll=v==='__all'; S.roles=new Set();
+  if(v&&v!=='__all'){S.client=Object.keys(PROJECTS).find(c=>PROJECTS[c].some(p=>p.type===v))||'';S.ptypes=new Set([v]);syncProjects();}
+  else {S.client='';S.ptypes=new Set();S.projects.clear();}
+}
+const _openBuilderP=openBuilder; openBuilder=function(t,o={}){
+  S.ptypeAll=false; const r=_openBuilderP(t,o);
+  const s=o&&o.saved; const v=s?(s.ptype!==undefined?s.ptype:SEED_PTYPE[s.id]||'__all'):'';
+  if(v){applyPtype(v);renderMeta();renderPreview();}
+  renderPtypeScope(); return r;
+};
+const _renderPreviewP=renderPreview; renderPreview=function(){_renderPreviewP.apply(this,arguments);renderPtypeScope();};
+const _renderMetaP=renderMeta; renderMeta=function(){
+  _renderMetaP.apply(this,arguments);
+  const el=$('metaScope'); if(!el||S.persona==='user')return;
+  const t=S.ptypes&&S.ptypes.size===1?[...S.ptypes][0]:'';
+  const n=S.meta.filter(metaVisible).length;
+  el.textContent=t?`Reportable fields · for ${t} projects · ${n} available`:'Standard fields · choose a project type to load its custom fields';
 };
 
 </script>
