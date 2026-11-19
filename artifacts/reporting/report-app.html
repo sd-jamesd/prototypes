@@ -1239,6 +1239,95 @@ body{padding-left:var(--shell-w);}
 #f-scope #anchorBox{margin-top:12px;}
 #ptypeSelect{width:100%;}
 
+
+/* ================= 19 Nov call ================= */
+/* Date filter card (Filters tab) */
+.dtf{border:1px solid var(--border-default);border-radius:var(--radius-3);padding:12px 14px;margin-bottom:18px;background:var(--surface-default);}
+.dtf.on{border-color:var(--border-emphasis);}
+.dtf-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.dtf-t{font-size:var(--font-size-2);font-weight:var(--font-weight-semibold);color:var(--text-default);}
+.dtf-d{font-size:var(--font-size-1);color:var(--text-muted);margin-top:2px;line-height:1.4;}
+.dtf-mode{margin-top:12px;}
+.dtf-sub{font-weight:var(--font-weight-regular,400);opacity:.8;}
+.dtf-rule{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px;}
+.dtf-rule .select{width:auto;flex:1 1 124px;min-width:0;height:32px;font-size:var(--font-size-2);padding-right:30px;}
+.dtf-n{flex:0 0 64px;width:64px;height:32px;box-sizing:border-box;border:1px solid var(--border-emphasis);border-radius:var(--radius-2);padding:0 8px;font:inherit;font-size:var(--font-size-2);color:var(--text-default);background:var(--surface-default);}
+.dtf-n:focus{outline:none;border-color:var(--primary-default);box-shadow:0 0 0 3px var(--primary-subtle);}
+.dtf-n.bad{border-color:var(--color-red-500);box-shadow:0 0 0 3px var(--color-red-100);}
+.dtf-anchor{margin-top:10px;}
+.dtf-ahint{font-size:11px;color:var(--text-subtle);margin:3px 0 0 22px;line-height:1.4;}
+.dtf-say{margin-top:12px;padding:8px 10px;background:var(--surface-muted);border-radius:var(--radius-2);font-size:var(--font-size-1);color:var(--text-default);line-height:1.45;}
+.dtf-say.bad{background:var(--color-red-100);color:var(--color-red-600);}
+.dtf-ro{margin-top:8px;font-size:var(--font-size-1);color:var(--text-muted);}
+.dtf-pnote{margin-top:6px;}
+.dtf-pnote .linkbtn{margin-left:4px;}
+
+/* Preview: facts that change what the file contains */
+.pv-facts{display:flex;flex-direction:column;gap:6px;margin:0 0 14px;}
+.pv-fact{display:flex;gap:8px;font-size:var(--font-size-1);line-height:1.4;padding:7px 10px;border-radius:var(--radius-2);background:var(--surface-muted);color:var(--text-default);}
+.pv-fact.warn{background:var(--color-amber-100);border:1px solid var(--color-amber-500);color:var(--color-amber-700);}
+.pv-fk{font-weight:var(--font-weight-semibold);flex:0 0 auto;}
+
+/* Output */
+.of-warn{margin-top:8px;}
+.of-warn svg{width:14px;height:14px;flex:0 0 auto;margin-top:1px;}
+
+/* Version badge + History tab */
+.ver-badge,.vh-badge{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:var(--radius-full);border:1px solid var(--border-emphasis);background:var(--surface-muted);font:inherit;font-size:11px;font-weight:var(--font-weight-semibold);color:var(--text-default);line-height:1;vertical-align:middle;white-space:nowrap;}
+.ver-badge{margin-left:6px;cursor:pointer;position:relative;top:-1px;}
+.rpt-name-btn+.ver-badge{margin-left:4px;}
+.ver-badge:hover{border-color:var(--primary-default);color:var(--primary-default);}
+.ver-badge:focus-visible{outline:2px solid var(--primary-default);outline-offset:2px;}
+.vh-intro{font-size:var(--font-size-1);color:var(--text-muted);margin:0 0 12px;line-height:1.45;}
+.vh-list{display:flex;flex-direction:column;gap:8px;}
+.vh-item{border:1px solid var(--border-default);border-radius:var(--radius-3);padding:10px 12px;background:var(--surface-default);}
+.vh-item.cur{border-color:var(--border-emphasis);}
+.vh-item.pending{border-style:dashed;background:var(--surface-muted);}
+.vh-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.vh-badge.pend{background:var(--surface-default);border-style:dashed;}
+.vh-cur{font-size:11px;font-weight:var(--font-weight-medium);color:var(--text-muted);}
+.vh-kept{margin-left:auto;display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--text-muted);}
+.vh-kept svg{width:12px;height:12px;}
+.vh-meta{font-size:11px;color:var(--text-muted);margin-top:4px;}
+.vh-ch{margin:8px 0 0;padding-left:16px;font-size:var(--font-size-1);color:var(--text-default);line-height:1.55;}
+.vh-ch li{overflow-wrap:anywhere;}
+.vh-ch.long{max-height:220px;overflow-y:auto;}
+.vh-g{font-size:10px;font-weight:var(--font-weight-semibold);text-transform:uppercase;letter-spacing:.04em;color:var(--text-subtle);margin-top:10px;}
+.vh-act{display:flex;gap:14px;margin-top:6px;}
+.vh-empty{display:flex;flex-direction:column;gap:4px;padding:14px;border:1px dashed var(--border-emphasis);border-radius:var(--radius-3);font-size:var(--font-size-1);color:var(--text-muted);line-height:1.45;}
+.vh-empty b{color:var(--text-default);font-weight:var(--font-weight-semibold);font-size:var(--font-size-2);}
+
+/* Build a report: fixed header, filter + search, scrolling cards */
+.scratch-dialog .sc-top{display:flex;align-items:flex-start;gap:12px;flex:0 0 auto;padding-right:12px;}
+.scratch-dialog .sc-titles{flex:1 1 auto;min-width:0;}
+.sc-x{flex:0 0 auto;margin-top:12px;width:32px;height:32px;border:none;background:none;border-radius:var(--radius-2);color:var(--text-muted);font-size:15px;cursor:pointer;font-family:inherit;}
+.sc-x:hover{background:var(--surface-muted);color:var(--text-default);}
+.sc-x:focus-visible{outline:2px solid var(--primary-default);outline-offset:1px;}
+.sc-tools{flex:0 0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 20px;border-bottom:1px solid var(--border-subtle);}
+.sc-tabs{display:flex;gap:2px;flex-wrap:wrap;}
+.sc-tabs .tab{padding:5px 10px;font-size:var(--font-size-1);}
+.sc-tabs .tab.active{background:var(--surface-muted);color:var(--text-default);}
+.sc-search{margin-left:auto;}
+.sc-search input{width:200px;}
+.scratch-body{padding-top:16px;}
+button.scratch-card{width:100%;background:var(--surface-default);font:inherit;text-align:left;color:inherit;}
+button.scratch-card:focus-visible{outline:2px solid var(--primary-default);outline-offset:1px;}
+.sc-blank{display:flex;align-items:center;gap:14px;width:100%;box-sizing:border-box;border:1px dashed var(--border-emphasis);background:var(--surface-muted);border-radius:var(--radius-3);padding:14px 16px;cursor:pointer;text-align:left;font:inherit;color:inherit;margin-bottom:18px;}
+.sc-blank:hover{border-color:var(--primary-default);}
+.sc-blank:focus-visible{outline:2px solid var(--primary-default);outline-offset:1px;}
+.sc-blank .start-ico{background:var(--surface-default);}
+.sc-blank .t{font-size:var(--font-size-2);font-weight:var(--font-weight-semibold);color:var(--text-default);}
+.sc-blank .d{font-size:var(--font-size-1);color:var(--text-muted);margin-top:3px;line-height:1.35;}
+.sc-blank .sc-go{margin-left:auto;flex:0 0 auto;font-size:var(--font-size-1);font-weight:var(--font-weight-medium);color:var(--primary-default);}
+.sc-empty{padding:32px 12px;}
+@media (max-width:640px){.sc-search{margin-left:0;width:100%;}.sc-search input{width:100%;box-sizing:border-box;}.scratch-grid{grid-template-columns:1fr;}}
+
+/* Edit categories: inline validation */
+.cm-ferr{font-size:11px;color:var(--color-red-600);padding:0 12px 8px;line-height:1.4;}
+.cm-ferr:empty{display:none;}
+#cmNewErr{padding:6px 0 0;}
+.cm-in.rt-bad{border-color:var(--color-red-500);}
+
 </style>
 </head>
 <body>
@@ -1407,6 +1496,7 @@ body{padding-left:var(--shell-w);}
           </div>
         </div>
         <div class="dp-pane" data-pane="filters">
+          <div id="dtfBox"></div>
           <div id="presetFilters"></div>
           <div class="so-sec-lbl">Narrow within the report’s scope</div>
           <div id="filterList"></div>
@@ -1414,6 +1504,7 @@ body{padding-left:var(--shell-w);}
         </div>
         <div class="dp-pane" data-pane="perm" id="dpPerm"></div>
         <div class="dp-pane" data-pane="tpl" id="dpTpl"></div>
+        <div class="dp-pane" data-pane="hist" id="dpHist"></div>
       </div>
     </div>
     </div>
@@ -1437,10 +1528,13 @@ body{padding-left:var(--shell-w);}
 </div>
 <div class="rt-overlay" id="scratchOverlay">
   <div class="rt-dialog scratch-dialog" role="dialog" aria-modal="true" aria-labelledby="scratchHead">
-    <div class="rt-head" id="scratchHead">Build a report</div>
-    <div class="rt-sub" id="scratchSub">Pick a report type to build from. The type sets the grain, columns and rules, and locks once you start.</div>
+    <div class="sc-top">
+      <div class="sc-titles"><div class="rt-head" id="scratchHead">Build a report</div><div class="rt-sub" id="scratchSub"></div></div>
+      <button type="button" class="sc-x" id="scratchX" aria-label="Close">&#x2715;</button>
+    </div>
+    <div class="sc-tools" id="scratchTools"></div>
     <div class="scratch-body" id="scratchGrid"></div>
-    <div class="rt-foot"><button class="btn btn-md btn-ghost" id="scratchCancel" type="button">Cancel</button></div>
+    <button id="scratchCancel" type="button" hidden></button>
   </div>
 </div>
 <div class="rt-overlay" id="lgOverlay">
@@ -4004,6 +4098,530 @@ const _renderMetaP=renderMeta; renderMeta=function(){
   const n=S.meta.filter(metaVisible).length;
   el.textContent=t?`Reportable fields · for ${t} projects · ${n} available`:'Standard fields · choose a project type to load its custom fields';
 };
+
+
+/* =====================================================================================
+   19 Nov call: date filter, Output tidy-up, version history, Build a report, categories
+   ===================================================================================== */
+const ICON_CLOCK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function nowStr(d){d=d||new Date();return `${d.getDate()} ${MON[d.getMonth()]} ${d.getFullYear()}, ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;}
+
+/* ---------------- More varied example reports, so every My reports column has something to sort ---------------- */
+(function(){
+  const g=(id,lvl)=>{const s=SAVED.find(x=>x.id===id);if(s)s.grants[lvl[0]]=lvl[1];};
+  g('s7',['u-jd','build']); g('s8',['u-jd','guided']);
+  if(!CATS.includes('Board packs'))CATS.push('Board packs');
+  SAVED.push(
+    {id:'s9',name:'Creative Delivery — open tasks by assignee',type:'r9',owner:'u-tl',category:'',lastRun:'4 hours ago',lr:1.5,runs:64,modified:'16 Oct 2026',mo:3,
+      grants:{'u-tl':'author','u-jd':'author','u-mr':'guided'}},
+    {id:'s10',name:'EMEA — weekly hours by user',type:'r11',owner:'u-ph',lastRun:'Yesterday',lr:2.5,runs:112,sched:true,modified:'7 Oct 2026',mo:12,
+      grants:{'u-ph':'author','u-jd':'build','u-sk':'guided'}},
+    {id:'s11',name:'Board pack — retainer burn',type:'r5',owner:'u-jd',category:'Board packs',lastRun:'Never run',lr:999,runs:0,modified:'17 Oct 2026',mo:2,
+      grants:{'u-jd':'author','g-fin':'guided'}}
+  );
+  SEED_PTYPE.s9='__all'; SEED_PTYPE.s10='__all'; SEED_PTYPE.s11='Retainer';
+})();
+
+/* =====================================================================================
+   1. Date filter. One card at the top of Filters, with its own switch.
+   Replaces "Enable dynamic date filter" (Export Details) + its row in Filtering & Sorting,
+   the "Dynamic date window" special filter, the rolling-window option on date columns,
+   and Output's "Rolling period for scheduled runs".
+   ===================================================================================== */
+const DTF_DEF={on:false,mode:'rel',bound:'most',amount:7,unit:'days',dir:'before',anchor:true};
+const DTF_SEED={s5:{on:true,mode:'delta'},s7:{on:true,mode:'rel',bound:'most',amount:1,unit:'weeks',dir:'before',anchor:true},s10:{on:true,mode:'rel',bound:'most',amount:1,unit:'weeks',dir:'before',anchor:true}};
+const DTF_DAYS={days:1,weeks:7,months:30.4,years:365};
+const DTF_UNITS=['days','weeks','months','years'];
+S.dtf={...DTF_DEF}; S.dtfPrev=null;
+function dtfValid(d){return d.mode==='delta'||(String(d.amount).trim()!==''&&Number.isInteger(+d.amount)&&+d.amount>=1);}
+function dtfUnit(d){return +d.amount===1?d.unit.replace(/s$/,''):d.unit;}
+function dtfSpan(d){const n=+d.amount,u=dtfUnit(d);return n===1?u:`${n} ${u}`;}
+function dtfRule(d){
+  if(!d||!d.on)return 'Off';
+  if(d.mode==='delta')return 'Delta (since last run)';
+  if(!dtfValid(d))return 'Not set';
+  return `Dynamic date (is at ${d.bound} ${d.amount} ${dtfUnit(d)} ${d.dir} today${d.anchor?', anchored to today':''})`;
+}
+function dtfShort(d){
+  if(!dtfValid(d))return 'not set';
+  return d.bound==='most'?`${d.dir==='before'?'last':'next'} ${dtfSpan(d)}`:`${d.amount} ${dtfUnit(d)} or more ${d.dir==='before'?'ago':'ahead'}`;
+}
+function dtfSentence(d){
+  if(d.mode==='delta')return 'Includes only rows that changed since this report last ran, within the reporting period. The first run includes everything.';
+  if(!dtfValid(d))return `Enter how many ${d.unit} to count. Whole numbers from 1.`;
+  const span=d.bound==='most'?`in the ${d.dir==='before'?'last':'next'} ${dtfSpan(d)}`:`${d.amount} ${dtfUnit(d)} or more ${d.dir} today`;
+  return `Includes rows dated ${span}. ${d.anchor?'Counted from the day each run happens, so the window moves with today.':'Counted from the day the report was saved, so the window stays fixed.'}`;
+}
+function dtfLocksPeriod(){return !!(S.report&&S.dtf&&S.dtf.on&&S.dtf.mode==='rel');}
+function applyDtfPeriod(){
+  const sel=$('periodSelect'); if(!sel)return;
+  let note=$('dtfPeriodNote');
+  if(!note){note=document.createElement('div');note.id='dtfPeriodNote';note.className='scope-note dtf-pnote';sel.after(note);}
+  if(dtfLocksPeriod()){
+    if(!S.dtfPrev)S.dtfPrev={months:S.months,label:S.periodLabel,val:sel.value};
+    const d=S.dtf;
+    if(dtfValid(d))S.months=d.bound==='least'?12:Math.min(12,Math.max(1,Math.ceil(+d.amount*DTF_DAYS[d.unit]/30.4)));
+    S.periodLabel='Dynamic date: '+dtfShort(d);
+    sel.disabled=true;
+    note.innerHTML=`Set by the dynamic date filter: ${esc(dtfShort(d))}.<button type="button" class="linkbtn" id="dtfEdit">Edit in Filters</button>`;
+    note.style.display='';
+    $('dtfEdit').onclick=()=>setPanelTab('filters');
+  } else {
+    if(S.dtfPrev){S.months=S.dtfPrev.months;S.periodLabel=S.dtfPrev.label;sel.value=S.dtfPrev.val;S.dtfPrev=null;}
+    sel.disabled=false; note.style.display='none'; note.innerHTML='';
+  }
+}
+function dtfCanEdit(){const lvl=S.viewAs?VIEWAS_LVL[S.viewAs]:S.effective;return lvl!=='guided';}
+function renderDateFilter(){
+  const box=$('dtfBox'); if(!box)return;
+  if(!S.report){box.innerHTML='';return;}
+  const d=S.dtf, rel=d.mode==='rel', can=dtfCanEdit();
+  if(!can){
+    box.innerHTML=d.on?`<section class="dtf on"><div class="dtf-t">${d.mode==='delta'?'Delta filter':'Dynamic date filter'}</div><div class="dtf-say">${esc(dtfSentence(d))}</div><div class="dtf-ro">Set by people with Edit access.</div></section>`:'';
+    return;
+  }
+  const opt=(v,l,cur)=>`<option value="${v}" ${cur===v?'selected':''}>${l}</option>`;
+  box.innerHTML=`<section class="dtf ${d.on?'on':''}" aria-labelledby="dtfT">
+    <div class="dtf-head">
+      <div><div class="dtf-t" id="dtfT">Dynamic date filter</div><div class="dtf-d">${d.on?'Worked out again on every run.':'Limit rows to a window counted from today (dynamic date), or to rows that changed since the last run (delta).'}</div></div>
+      <input type="checkbox" class="sw" id="dtfOn" role="switch" aria-checked="${d.on}" aria-labelledby="dtfT" ${d.on?'checked':''}>
+    </div>
+    ${d.on?`
+    <div class="va-seg dtf-mode" role="radiogroup" aria-label="Dynamic date or delta">
+      <button type="button" role="radio" aria-checked="${rel}" class="${rel?'on':''}" data-dtfm="rel">Dynamic date <span class="dtf-sub">· relative to today</span></button><button type="button" role="radio" aria-checked="${!rel}" class="${rel?'':'on'}" data-dtfm="delta">Delta <span class="dtf-sub">· since last run</span></button>
+    </div>
+    ${rel?`<div class="dtf-rule">
+      <select class="select" data-dtf="bound" aria-label="At most or at least">${opt('most','Is at most',d.bound)}${opt('least','Is at least',d.bound)}</select>
+      <input class="dtf-n ${dtfValid(d)?'':'bad'}" type="number" min="1" step="1" inputmode="numeric" data-dtf="amount" value="${esc(d.amount)}" aria-label="Number" aria-invalid="${!dtfValid(d)}" aria-describedby="dtfSay">
+      <select class="select" data-dtf="unit" aria-label="Unit">${DTF_UNITS.map(u=>opt(u,u[0].toUpperCase()+u.slice(1),d.unit)).join('')}</select>
+      <select class="select" data-dtf="dir" aria-label="Before or after today">${opt('before','before today',d.dir)}${opt('after','after today',d.dir)}</select>
+    </div>
+    <label class="anchor-opt dtf-anchor"><input type="checkbox" class="checkbox-input" id="dtfAnchor" ${d.anchor?'checked':''}>Anchor to today</label>
+    <div class="dtf-ahint">On: the window moves with each run. Off: it stays where it was when the report was saved.</div>`:''}
+    <div class="dtf-say ${dtfValid(d)?'':'bad'}" id="dtfSay" aria-live="polite">${esc(dtfSentence(d))}</div>
+    ${rel?'<div class="scope-note">While this is on, it sets the reporting period.</div>':'<div class="scope-note">The reporting period still applies.</div>'}`:''}
+  </section>`;
+  const changed=()=>{applyDtfPeriod();renderRail();renderPreview();};
+  $('dtfOn').onchange=e=>{d.on=e.target.checked;renderDateFilter();changed();const t=$('dtfOn');if(t)t.focus();};
+  box.querySelectorAll('[data-dtfm]').forEach(b=>b.onclick=()=>{d.mode=b.dataset.dtfm;renderDateFilter();changed();const f=box.querySelector(`[data-dtfm="${d.mode}"]`);if(f)f.focus();});
+  box.querySelectorAll('[data-dtf]').forEach(el=>{
+    const h=e=>{const k=el.dataset.dtf;d[k]=k==='amount'?e.target.value:e.target.value;
+      const ok=dtfValid(d), n=box.querySelector('.dtf-n'); if(n){n.classList.toggle('bad',!ok);n.setAttribute('aria-invalid',String(!ok));}
+      const say=$('dtfSay'); say.textContent=dtfSentence(d); say.classList.toggle('bad',!ok); changed();};
+    el.oninput=h; el.onchange=h;
+  });
+  if($('dtfAnchor'))$('dtfAnchor').onchange=e=>{d.anchor=e.target.checked;$('dtfSay').textContent=dtfSentence(d);changed();};
+}
+// One way to build a relative date rule: the card. Columns keep after / before / between.
+(function(){const i=DATE_OPS.findIndex(o=>o[0]==='rolling');if(i>=0)DATE_OPS.splice(i,1);})();
+const _rfDtf=renderFilters; renderFilters=function(){
+  _rfDtf.apply(this,arguments);
+  const og=$('addFilter')&&$('addFilter').querySelector('optgroup[label="Special"]'); if(og)og.remove();
+  renderDateFilter();
+};
+renderRail=function(){
+  const tabs=panelTabs(); if(!tabs.find(t=>t[0]===S.panelTab))S.panelTab='preview';
+  const s=S.savedId&&SAVED.find(x=>x.id===S.savedId);
+  const cnt={filters:S.filters.length+(S.nullBookings&&presetsApply()?1:0)+(S.dtf&&S.dtf.on?1:0),perm:Object.keys(S.perm.grants||{}).length};
+  $('dpRail').innerHTML=tabs.map(([k,l,ic])=>`<button type="button" class="dp-tab ${S.panelTab===k&&S.panelOpen?'on':''}" data-dp="${k}" title="${l}">${ic}<span class="dp-lbl">${l}</span>${cnt[k]?`<span class="dp-ct">${cnt[k]}</span>`:''}</button>`).join('');
+  $('dpRail').querySelectorAll('[data-dp]').forEach(b=>b.onclick=()=>setPanelTab(b.dataset.dp));
+};
+const _runBlockDtf=runBlock; runBlock=function(){
+  if(S.report&&S.dtf&&S.dtf.on&&!dtfValid(S.dtf))return 'Enter a number for the dynamic date filter to run.';
+  return _runBlockDtf.apply(this,arguments);
+};
+const _isReadyDtf=isReady; isReady=function(){return _isReadyDtf.apply(this,arguments)&&!(S.dtf&&S.dtf.on&&!dtfValid(S.dtf));};
+
+/* =====================================================================================
+   2. Output: one date format dropdown (site default first, all 18 legacy formats with today's date),
+   real dashboard types, scheduler currency only where the site has currencies. Rolling period goes.
+   ===================================================================================== */
+const SITE={name:'Horizon',dateFmt:'DD/MM/YYYY',currencies:[]};
+const DATE_FMTS=[
+  ['Day first',['DD/MM/YY','DD/MM/YYYY','DD/MMM/YY','DD/MMM/YYYY','DD-MM-YY','DD-MMM-YYYY','DD MMM YY','DD M YY']],
+  ['Month first',['MM/DD/YY','MM/DD/YYYY','MMM/DD/YY','MMM/DD/YYYY','MM-DD-YYYY']],
+  ['Year first',['YY/MM/DD','YYYY/MM/DD','YY/MMM/DD','YYYY/MMM/DD','YYYY-MM-DD']]];
+function fmtDate(f,dt){
+  dt=dt||new Date(); const p=n=>String(n).padStart(2,'0');
+  return f.replace(/YYYY|YY|MMM|MM|M|DD/g,t=>({YYYY:dt.getFullYear(),YY:String(dt.getFullYear()).slice(2),MMM:MON[dt.getMonth()],MM:p(dt.getMonth()+1),M:dt.getMonth()+1,DD:p(dt.getDate())}[t]));
+}
+const DASH_TYPES=[['','None'],['homepage','Homepage'],['project','Project']];
+renderTplPanel=function(){
+  const box=$('dpTpl'); if(!box)return;
+  const author=S.effective==='author', T=S.templates, O=S.output, locked=T.length>0;
+  if(O.dash&&!DASH_TYPES.some(x=>x[0]===O.dash))O.dash='';
+  const list=T.length?T.map((t,i)=>`<div class="tf-row"><span class="filetype-badge">${t.name.split('.').pop().toUpperCase()}</span><div class="tf-meta"><div class="tf-name" title="${esc(t.name)}">${esc(t.name)}</div><div class="tf-sub">Uploaded ${t.uploaded} · ${esc(t.by)}</div></div>${t.def?'<span class="tf-def">Default</span>':author?`<button class="linkbtn" type="button" data-tfdef="${i}">Make default</button>`:''}<button class="tf-act" type="button" data-tfdl="${i}" title="Download">${ICON_DL}</button>${author?`<button class="tf-act rm" type="button" data-tfrm="${i}" title="Remove">✕</button>`:''}</div>`).join('')
+    :`<div class="tf-empty">No template attached. Runs deliver raw data ${O.format==='csv'?'as a .csv file':'in a single .xlsx tab'}.</div>`;
+  const dis=author?'':'disabled';
+  const over=!!O.dateOverride;
+  const cur=SITE.currencies.length?`<div class="field"><label for="ofCur">Scheduler currency</label><select class="select" id="ofCur" ${dis}><option value="">Report default</option>${SITE.currencies.map(c=>`<option ${O.currency===c?'selected':''}>${c}</option>`).join('')}</select></div>`:'';
+  box.innerHTML=`<div class="pm-section" style="margin-top:0">Format and dates</div>
+    <div class="field"><label for="ofFmt">Export format</label><select class="select" id="ofFmt" ${locked||!author?'disabled':''}><option value="xlsx" ${O.format==='xlsx'?'selected':''}>Excel (.xlsx)</option><option value="csv" ${O.format==='csv'?'selected':''}>CSV (.csv)</option></select>${locked?'<div class="scope-note">Locked to .xlsx while a template is attached. A pivot template needs a workbook.</div>':''}</div>
+    <div class="field"><label for="ofDateFmt">Date format</label>
+      <select class="select" id="ofDateFmt" ${dis} ${over?'aria-describedby="ofDateWarn"':''}>
+        <option value="" ${over?'':'selected'}>Site default · ${SITE.dateFmt} (${fmtDate(SITE.dateFmt)})</option>
+        ${DATE_FMTS.map(([g,fs])=>`<optgroup label="${g}">${fs.map(f=>`<option value="${f}" ${over&&O.dateFmt===f?'selected':''}>${f} · ${fmtDate(f)}</option>`).join('')}</optgroup>`).join('')}
+      </select>
+      ${over?`<div class="pm-warn of-warn" id="ofDateWarn" role="note">${ICON_WARN}<span>Every date column in this export uses ${esc(O.dateFmt)} instead of the site format. Reports that feed Power BI or other tools can break when the format changes.</span></div>`:'<div class="scope-note">Dates follow the site’s format unless you choose another.</div>'}
+    </div>
+    <div class="field"><label for="ofDash">Dashboard type <span class="gate">· pending PM confirmation</span></label><select class="select" id="ofDash" ${dis}>${DASH_TYPES.map(([v,l])=>`<option value="${v}" ${(O.dash||'')===v?'selected':''}>${l}</option>`).join('')}</select></div>
+    ${cur}
+    <div class="pm-section">Template files <span class="gate">· optional · pending PM confirmation</span></div>
+    <div class="tf-intro">An Excel workbook with your own formatting or pivots. Each run writes raw data into its <b>Data</b> tab and the other tabs refresh.</div>
+    ${author?`<button class="btn btn-md btn-primary tf-up" id="tfUpload" type="button">${ICON_UP} Upload template</button><input type="file" id="tfFile" accept=".xlsx,.xlsm" hidden><div class="tf-err" id="tfErr"></div>`:''}
+    <div class="tf-list">${list}</div>
+    ${T.length>1?'<div class="scope-note">Whoever runs the report picks one, with the default pre-selected. Schedules use the default.</div>':''}
+    ${!author?'<div class="pm-note">Authors upload and manage templates. When there’s more than one, you pick at run.</div>':''}
+    <div class="pm-note">Dashboard type and template files are waiting on PM confirmation and may be retired. Scheduler currency only shows on sites with currencies set up; ${SITE.name} has none.</div>`;
+  if(author){
+    $('tfUpload').onclick=()=>$('tfFile').click();
+    $('tfFile').onchange=e=>{
+      const f=e.target.files&&e.target.files[0]; e.target.value=''; if(!f)return;
+      if(!/\.(xlsx|xlsm)$/i.test(f.name)){$('tfErr').textContent=`${f.name} wasn’t uploaded. Templates must be .xlsx or .xlsm, with a Data tab the run can write into.`;return;}
+      T.push({name:f.name,uploaded:nowStr().split(',')[0],by:CU.name,def:T.length===0});
+      O.format='xlsx';
+      renderTplPanel();renderPreview();toast(`${f.name} uploaded · Data tab found`);
+    };
+    box.querySelectorAll('[data-tfdef]').forEach(b=>b.onclick=()=>{T.forEach((t,i)=>t.def=i===+b.dataset.tfdef);renderTplPanel();toast('Default template updated · schedules use it from the next run');});
+    box.querySelectorAll('[data-tfrm]').forEach(b=>b.onclick=()=>{
+      const t=T[+b.dataset.tfrm];
+      openConfirm({title:'Remove template?',body:`${esc(t.name)} is removed from this report. ${T.length>1?(t.def?'The next file becomes the default.':'Runs can still use the other templates.'):'Runs go back to raw data in a single tab.'}`,confirm:'Remove template',
+        onConfirm:()=>{T.splice(T.indexOf(t),1);if(t.def&&T.length)T[0].def=true;renderTplPanel();renderPreview();toast('Template removed');}});
+    });
+    $('ofFmt').onchange=e=>{O.format=e.target.value;renderPreview();};
+    $('ofDash').onchange=e=>{O.dash=e.target.value;renderPreview();};
+    $('ofDateFmt').onchange=e=>{const v=e.target.value;O.dateOverride=!!v;if(v)O.dateFmt=v;renderTplPanel();renderPreview();const s=$('ofDateFmt');if(s)s.focus();};
+    if($('ofCur'))$('ofCur').onchange=e=>{O.currency=e.target.value;};
+  }
+  box.querySelectorAll('[data-tfdl]').forEach(b=>b.onclick=()=>toast(`Downloading ${T[+b.dataset.tfdl].name}`));
+};
+
+/* Preview: say so when the file's dates are filtered or formatted differently */
+const _renderPreviewV3=renderPreview; renderPreview=function(){
+  if(S.report)applyDtfPeriod();
+  _renderPreviewV3.apply(this,arguments);
+  const body=document.querySelector('#preview .pv-body');
+  if(body&&S.report){
+    const out=[], O=S.output||{};
+    if(S.dtf&&S.dtf.on)out.push(`<div class="pv-fact"><span class="pv-fk">${S.dtf.mode==='delta'?'Delta filter':'Dynamic date filter'}</span><span>${esc(dtfSentence(S.dtf))}</span></div>`);
+    if(O.dateOverride&&O.dateFmt)out.push(`<div class="pv-fact warn"><span class="pv-fk">Dates</span><span>${fmtDate(O.dateFmt)} (${esc(O.dateFmt)}) · overrides the site format</span></div>`);
+    if(out.length)body.insertAdjacentHTML('afterbegin',`<div class="pv-facts">${out.join('')}</div>`);
+  }
+  if(S.panelTab==='hist'&&S.panelOpen!==false)renderHist();
+};
+
+/* =====================================================================================
+   3. Version history. Every save makes a version. Changes that apply immediately
+   (inline rename, access) make one straight away. Version number sits by the name;
+   History is a tab on the card for anyone with Edit access.
+   ===================================================================================== */
+PANEL_TABS.push(['hist','History',ICON_CLOCK]);
+const _panelTabsH=panelTabs; panelTabs=function(){const lvl=S.viewAs?VIEWAS_LVL[S.viewAs]:S.effective;return _panelTabsH().filter(([k])=>k!=='hist'||lvl!=='guided');};
+const G_ORDER=['Settings','Columns','Filters','Access','Output'];
+const HV={open:new Set()};
+const HIST_VER={s1:12,s2:4,s3:7,s4:3,s5:5,s6:2,s7:6,s8:1,s9:8,s10:15,s11:2};
+EXTRA_SCHED.s1&&EXTRA_SCHED.s1.forEach(x=>x.pinned=true);
+function parseDay(str){const t=Date.parse(str);return isNaN(t)?new Date():new Date(t);}
+function seedHist(s){
+  if(s.hist)return s.hist;
+  const n=HIST_VER[s.id]||1, r=REPORTS[s.type]||{cols:[]};
+  const people=Object.entries(s.grants).filter(([id,l])=>l!=='guided'&&id.startsWith('u-')).map(([id])=>dirName(id));
+  const owner=dirName(s.owner), by=i=>i%3===1&&people.length>1?people.find(p=>p!==owner)||owner:owner;
+  const labels=(r.cols||[]).filter(c=>!c.locked).map(c=>c.label);
+  const pool=[
+    i=>[{g:'Columns',t:`Added column ${labels[(i*3)%labels.length]||'Status'}`}],
+    i=>[{g:'Settings',t:'Breakdown: Total → Monthly'},{g:'Columns',t:`Removed column ${labels[(i*5+1)%labels.length]||'Owner'}`}],
+    i=>[{g:'Filters',t:'Added filter Status: is any of 2 values'}],
+    i=>[{g:'Settings',t:'Reporting period: This month → This quarter'}],
+    i=>[{g:'Output',t:'Export format: .csv → .xlsx'},{g:'Columns',t:`Added column ${labels[(i*7+2)%labels.length]||'Client'}`}],
+    i=>[{g:'Access',t:'Shared with PMO (View)'}],
+  ];
+  let day=parseDay(s.modified); day.setHours(16,20,0,0);
+  const hist=[];
+  for(let v=n;v>=1;v--){
+    let ch;
+    if(v===1)ch=[{g:'',t:'Initial version created'}];
+    else if(s.id==='s1'&&v===12){
+      ch=[{g:'Settings',t:'Breakdown: Total → Monthly'},{g:'Columns',t:'Added column Fee margin %'},{g:'Columns',t:'Removed column Project System ID'}];
+      const codes=['FIFA','FWC','UEFA','WWC'];
+      for(let k=0;k<97;k++)ch.push({g:'Filters',t:`Added ${codes[k%4]}-${2040+k} to the Project filter`});
+    }
+    else if(s.id==='s1'&&v===11)ch=[{g:'Access',t:'Shared with Finance (View)'},{g:'Output',t:'Added template FIFA_Board_Pack.xlsx'}];
+    else ch=pool[v%pool.length](v);
+    hist.push({v,by:v===12&&s.id==='s1'?'Rodger Corcoran':v===11&&s.id==='s1'?'Aisling O’Connor':by(v),when:nowStr(day),changes:ch,kept:s.id==='s1'&&v===11?(EXTRA_SCHED.s1||[]).map(x=>x.title):[]});
+    day=new Date(day.getTime()-((v*5)%9+4)*864e5); day.setHours(9+(v*7)%9,(v*13)%60,0,0);
+  }
+  s.hist=hist; s.ver=n; return hist;
+}
+function pinnedVer(s,title){const e=seedHist(s).find(h=>(h.kept||[]).includes(title));return e?e.v:0;}
+
+function ptLabel(v){return v==='__all'?'All project types':v||'None';}
+function snap(){
+  const r=REPORTS[S.report]||{}, O=S.output||{};
+  let sort='None'; try{const fc=sortableFields().find(f=>f.id===S.sort.col);if(fc)sort=`${fc.label} ${S.sort.dir==='desc'?'↓':'↑'}`;}catch(e){}
+  const fs={}; (S.filters||[]).forEach(f=>{fs[f.label]=filterActive(f)?filterSummary(f):'any value';});
+  const gl=S.group?(((r.groupBy||[]).find(g=>g[0]===S.group))||['',S.group])[1]:'None';
+  return {name:S.reportName||r.name||'',cat:S.category||'',period:S.dtfPrev?S.dtfPrev.label:S.periodLabel||'',bd:(BREAKDOWNS[S.breakdown]||{}).label||'',
+    pt:ptLabel(curPtype()),group:gl,sort,cols:activeCols().map(c=>c.label),meta:activeMeta().map(c=>c.label),filters:fs,
+    nullb:!!S.nullBookings,dtf:dtfRule(S.dtf),grants:{...((S.perm&&S.perm.grants)||{})},
+    fmt:'.'+(O.format||'xlsx'),date:O.dateOverride?O.dateFmt:'Site default',dash:(DASH_TYPES.find(x=>x[0]===(O.dash||''))||['','None'])[1],
+    tpls:(S.templates||[]).map(t=>t.name)};
+}
+function diffGrants(a,b){
+  const out=[];
+  Object.keys(b).forEach(id=>{if(!(id in a))out.push({g:'Access',t:`Shared with ${dirName(id)} (${GL[b[id]]})`});else if(a[id]!==b[id])out.push({g:'Access',t:`Access for ${dirName(id)}: ${GL[a[id]]} → ${GL[b[id]]}`});});
+  Object.keys(a).forEach(id=>{if(!(id in b))out.push({g:'Access',t:`Removed access for ${dirName(id)}`});});
+  return out;
+}
+function diffSnap(a,b,withAccess){
+  const out=[], add=(g,t)=>out.push({g,t});
+  if(!a||!b)return out;
+  if(a.name!==b.name)add('Settings',`Renamed: ${a.name} → ${b.name}`);
+  if(a.cat!==b.cat)add('Settings',`Category: ${a.cat||'None'} → ${b.cat||'None'}`);
+  [['period','Reporting period'],['bd','Breakdown'],['pt','Project type'],['group','Group by'],['sort','Sort']].forEach(([k,l])=>{if(a[k]!==b[k])add('Settings',`${l}: ${a[k]||'None'} → ${b[k]||'None'}`);});
+  b.cols.filter(x=>!a.cols.includes(x)).forEach(x=>add('Columns',`Added column ${x}`));
+  a.cols.filter(x=>!b.cols.includes(x)).forEach(x=>add('Columns',`Removed column ${x}`));
+  b.meta.filter(x=>!a.meta.includes(x)).forEach(x=>add('Columns',`Added custom field ${x}`));
+  a.meta.filter(x=>!b.meta.includes(x)).forEach(x=>add('Columns',`Removed custom field ${x}`));
+  if(a.dtf!==b.dtf)add('Filters',`Dynamic date filter: ${a.dtf} → ${b.dtf}`);
+  if(a.nullb!==b.nullb)add('Filters',`Remove null bookings: ${a.nullb?'on':'off'} → ${b.nullb?'on':'off'}`);
+  Object.keys(b.filters).forEach(k=>{if(!(k in a.filters))add('Filters',`Added filter ${k}: ${b.filters[k]}`);else if(a.filters[k]!==b.filters[k])add('Filters',`Changed filter ${k}: ${a.filters[k]} → ${b.filters[k]}`);});
+  Object.keys(a.filters).forEach(k=>{if(!(k in b.filters))add('Filters',`Removed filter ${k}`);});
+  if(withAccess)out.push(...diffGrants(a.grants,b.grants));
+  if(a.fmt!==b.fmt)add('Output',`Export format: ${a.fmt} → ${b.fmt}`);
+  if(a.date!==b.date)add('Output',`Date format: ${a.date} → ${b.date}`);
+  if(a.dash!==b.dash)add('Output',`Dashboard type: ${a.dash} → ${b.dash}`);
+  b.tpls.filter(x=>!a.tpls.includes(x)).forEach(x=>add('Output',`Added template ${x}`));
+  a.tpls.filter(x=>!b.tpls.includes(x)).forEach(x=>add('Output',`Removed template ${x}`));
+  return out;
+}
+function curSaved(){return S.savedId&&SAVED.find(x=>x.id===S.savedId);}
+function addVersion(s,changes){
+  seedHist(s); s.ver++; s.hist.unshift({v:s.ver,by:CU.name,when:nowStr(),changes,kept:[]});
+  s.modified=nowStr().split(',')[0]; s.mo=0;
+}
+function pendingChanges(){return S.snap?diffSnap(S.snap,snap(),false):[];}
+
+/* Access changes apply as soon as they're made, so they become a version straight away */
+function vhSyncAccess(){
+  const s=curSaved(); if(!s||!S.snap)return;
+  const ch=diffGrants(S.snap.grants,{...((S.perm&&S.perm.grants)||{})});
+  if(!ch.length)return;
+  addVersion(s,ch); S.snap.grants={...S.perm.grants}; renderReportId();
+}
+const _renderPermPanelH=renderPermPanel; renderPermPanel=function(){_renderPermPanelH.apply(this,arguments);vhSyncAccess();};
+
+function vhItem(e,cur,pending){
+  const key=pending?'p':String(e.v), open=HV.open.has(key), ch=e.changes||[], many=ch.length>3;
+  const s=curSaved();
+  const top=pending
+    ?`<span class="vh-badge pend">Not saved</span><span class="vh-cur">${ch.length} change${ch.length===1?'':'s'} since v${s?s.ver:1}</span>`
+    :`<span class="vh-badge">v${e.v}</span>${cur?'<span class="vh-cur">Current</span>':''}${e.kept&&e.kept.length?`<span class="vh-kept" title="${esc(e.kept.join(', '))} still sends this version">${ICON_CLOCK} Kept by ${e.kept.length} schedule${e.kept.length===1?'':'s'}</span>`:''}`;
+  let list;
+  if(open&&many){
+    const groups=[''].concat(G_ORDER).filter(g=>ch.some(c=>(c.g||'')===g));
+    list=groups.map(g=>{const xs=ch.filter(c=>(c.g||'')===g);return `${g?`<div class="vh-g">${g} · ${xs.length}</div>`:''}<ul class="vh-ch${xs.length>12?' long':''}">${xs.map(c=>`<li>${esc(c.t)}</li>`).join('')}</ul>`;}).join('');
+  } else list=`<ul class="vh-ch">${ch.slice(0,3).map(c=>`<li>${esc(c.t)}</li>`).join('')}</ul>`;
+  const acts=[];
+  if(many)acts.push(`<button type="button" class="linkbtn" data-vh="${key}" aria-expanded="${open}">${open?'Show less':`+ ${ch.length-3} more`}</button>`);
+  if(pending)acts.push(`<button type="button" class="linkbtn" data-vhsave="1">Save as v${(s?s.ver:0)+1}</button>`);
+  return `<div class="vh-item${cur?' cur':''}${pending?' pending':''}"><div class="vh-top">${top}</div>${pending?'':`<div class="vh-meta">${esc(e.by)} · ${esc(e.when)}</div>`}${list}${acts.length?`<div class="vh-act">${acts.join('')}</div>`:''}</div>`;
+}
+function renderHist(){
+  const box=$('dpHist'); if(!box||!S.report)return;
+  const s=curSaved();
+  if(!s){
+    box.innerHTML=`<div class="vh-empty"><b>Not saved yet</b><span>The first save creates v1. Every save after that adds a version here, with who made it, when, and what changed.</span></div>`;
+    return;
+  }
+  const hist=seedHist(s), pend=pendingChanges();
+  box.innerHTML=`<div class="vh-intro">Every save makes a new version. Renames and access changes count as soon as they’re made.</div>
+    <div class="vh-list">${pend.length?vhItem({changes:pend},false,true):''}${hist.map((e,i)=>vhItem(e,i===0,false)).join('')}</div>`;
+  box.querySelectorAll('[data-vh]').forEach(b=>b.onclick=()=>{const k=b.dataset.vh;HV.open.has(k)?HV.open.delete(k):HV.open.add(k);renderHist();const f=box.querySelector(`[data-vh="${k}"]`);if(f)f.focus();});
+  box.querySelectorAll('[data-vhsave]').forEach(b=>b.onclick=()=>openSave('save'));
+}
+const _renderPanelH=renderPanel; renderPanel=function(){
+  _renderPanelH.apply(this,arguments);
+  if(S.panelTab==='hist'){$('dpTitle').textContent='History';renderHist();}
+};
+
+/* Version number by the name; "Updated … by …" on the type line */
+const _renderReportIdH=renderReportId; renderReportId=function(){
+  _renderReportIdH.apply(this,arguments);
+  const box=$('rptId'), s=curSaved(); if(!box||!S.report||!s)return;
+  const hist=seedHist(s), last=hist[0];
+  const sub=box.querySelector('.rpt-driver');
+  if(sub&&!sub.querySelector('.rpt-upd'))sub.insertAdjacentHTML('beforeend',` <span class="rpt-status rpt-upd">· Updated ${esc(last.when.split(',')[0])} by ${esc(last.by)}</span>`);
+  const lvl=S.viewAs?VIEWAS_LVL[S.viewAs]:S.effective; if(lvl==='guided')return;
+  const nm=box.querySelector('.rpt-name');
+  if(nm&&!nm.querySelector('input')&&!nm.querySelector('.ver-badge')){
+    nm.insertAdjacentHTML('beforeend',`<button type="button" class="ver-badge" title="Version history" aria-label="Version ${s.ver}. Open version history">v${s.ver}</button>`);
+    nm.querySelector('.ver-badge').onclick=e=>{e.stopPropagation();setPanelTab('hist');};
+  }
+};
+
+/* Inline rename on a saved report applies at once, so it is a version */
+const _toastH=toast; toast=function(msg){
+  if(msg==='Renamed'){const s=curSaved();if(s&&S.snap&&S.snap.name!==S.reportName){addVersion(s,[{g:'Settings',t:`Renamed: ${S.snap.name} → ${S.reportName}`}]);S.snap.name=S.reportName;msg=`Renamed · saved as v${s.ver}`;}}
+  return _toastH.call(this,msg);
+};
+
+/* Save: work out what changed against the last version */
+let VH_SAVE=null;
+const _doSaveH=doSave; doSave=function(){
+  VH_SAVE={prevId:S.savedId||'',copy:saveMode==='copy'}; SCHQ=[];
+  return _doSaveH.apply(this,arguments);
+};
+$('saveGo').onclick=doSave;
+const _closeSaveH=closeSave; closeSave=function(){
+  _closeSaveH.apply(this,arguments);
+  if(!VH_SAVE)return; const ctx=VH_SAVE; VH_SAVE=null;
+  setTimeout(()=>postSave(ctx),0);
+};
+function postSave(ctx){
+  const s=curSaved(); if(!s)return;
+  s.dtf={...S.dtf};
+  if(ctx.copy||!ctx.prevId){
+    s.ver=1; s.hist=[{v:1,by:CU.name,when:nowStr(),changes:[{g:'',t:ctx.copy?'Initial version created, copied from '+(SAVED.find(x=>x.id===ctx.prevId)||{name:'a template'}).name:'Initial version created'}],kept:[]}];
+  } else {
+    seedHist(s);
+    const prev=s.hist[0], ch=diffSnap(S.snap,snap(),false);
+    SCHQ.forEach(q=>{const t=q.x.title,pv=pinnedVer(s,t);
+      if(q.keep){if(!pv)prev.kept=(prev.kept||[]).concat(t);}
+      else if(pv){const e=s.hist.find(h=>h.v===pv);e.kept=e.kept.filter(x=>x!==t);}});
+    if(ch.length)addVersion(s,ch);
+  }
+  S.snap=snap(); HV.open.clear();
+  renderReportId(); if(S.panelTab==='hist')renderHist();
+  setTimeout(()=>{const t=$('toast');const base=t&&t.classList.contains('show')?t.textContent.replace(/\.$/,''):'Saved';_toastH(`${base} · v${s.ver}`);},140);
+}
+
+/* Schedules prompt names the versions involved */
+const _renderSchedPromptH=renderSchedPrompt; renderSchedPrompt=function(){
+  _renderSchedPromptH.apply(this,arguments);
+  const s=curSaved(); if(!s)return; seedHist(s);
+  const next=s.ver+(pendingChanges().length?1:0);
+  $('sqBody').querySelectorAll('.sq-row').forEach((row,i)=>{
+    const q=SCHQ[i]; if(!q)return; const pv=pinnedVer(s,q.x.title);
+    const d=row.querySelector('.sq-d'); if(d&&!d.querySelector('.sq-ver'))d.insertAdjacentHTML('beforeend',`<span class="sq-ver"> · sends v${pv||s.ver}${pv?' (kept)':''}</span>`);
+    const kb=row.querySelector('[data-keep="1"]'), ub=row.querySelector('[data-keep="0"]');
+    if(kb)kb.textContent=`Keep v${pv||s.ver}`; if(ub)ub.textContent=`Update to v${next}`;
+  });
+};
+
+/* A schedule already kept on an older version stays kept unless someone chooses Update */
+const _openSchedPromptH=openSchedPrompt; openSchedPrompt=function(list,onDone){
+  _openSchedPromptH.apply(this,arguments);
+  const s=curSaved(); if(s){SCHQ.forEach(q=>q.keep=!!pinnedVer(s,q.x.title));renderSchedPrompt();}
+};
+
+/* Leaving a saved report with unsaved changes asks first */
+const _leaveToH=leaveTo; leaveTo=function(v){
+  if(CUR_VIEW==='builder'&&S.report&&S.savedId){
+    const n=pendingChanges().length;
+    if(n){openConfirm({title:'Leave without saving?',body:`${n} change${n===1?'':'s'} to “${esc(S.reportName)}” ${n===1?'hasn’t':'haven’t'} been saved and will be lost. History lists ${n===1?'it':'them'}.`,confirm:'Leave without saving',onConfirm:()=>{closeConfirm();showView(v);}});return;}
+  }
+  return _leaveToH.apply(this,arguments);
+};
+
+/* Opening a report: load its date filter, then remember where it started */
+const _openBuilderH=openBuilder; openBuilder=function(t,o){
+  o=o||{}; S.dtfPrev=null; S.snap=null;
+  const sv=o.saved;
+  S.dtf={...DTF_DEF,...(sv?(sv.dtf||DTF_SEED[sv.id]||{}):{})};
+  const r=_openBuilderH.call(this,t,o);
+  HV.open.clear();
+  applyDtfPeriod(); renderPreview(); renderReportId();
+  S.snap=snap();
+  return r;
+};
+
+/* =====================================================================================
+   4. Build a report: fixed header with close, category filter + search, blank report set apart
+   ===================================================================================== */
+const SC={cat:'all',q:''};
+function scratchTypes(){return STARTS.filter(s=>REPORTS[s.id]&&!(REPORTS[s.id].pending&&CU.role!=='author')).map(s=>({...s,dom:REPORTS[s.id].domain}));}
+function renderScratchTools(){
+  const all=scratchTypes(), cats=CATS.filter(c=>all.some(t=>t.dom===c));
+  if(SC.cat!=='all'&&!cats.includes(SC.cat))SC.cat='all';
+  const n=c=>c==='all'?all.length:all.filter(t=>t.dom===c).length;
+  $('scratchTools').innerHTML=`<div class="sc-tabs" role="tablist" aria-label="Report categories">${[['all','All']].concat(cats.map(c=>[c,c])).map(([id,l])=>`<button type="button" role="tab" class="tab ${SC.cat===id?'active':''}" aria-selected="${SC.cat===id}" data-sccat="${id}">${l}<span class="ct">${n(id)}</span></button>`).join('')}</div>
+    <div class="search sc-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="scQ" type="search" placeholder="Search report types" aria-label="Search report types" value="${esc(SC.q)}"></div>`;
+  $('scratchTools').querySelectorAll('[data-sccat]').forEach(b=>b.onclick=()=>{SC.cat=b.dataset.sccat;renderScratchTools();renderScratch();const f=$('scratchTools').querySelector(`[data-sccat="${SC.cat}"]`);if(f)f.focus();});
+  $('scQ').oninput=e=>{SC.q=e.target.value;renderScratch();};
+}
+renderScratch=function(){
+  $('scratchHead').textContent='Build a report';
+  $('scratchSub').textContent='Pick a report type to start from. It sets what each row is and which columns are available.';
+  $('scratchTools').style.display='';
+  const q=SC.q.trim().toLowerCase();
+  const list=scratchTypes().filter(t=>(SC.cat==='all'||t.dom===SC.cat)&&(!q||(t.name+' '+t.d+' '+t.dom).toLowerCase().includes(q)));
+  const showBlank=CU.role==='author'&&SC.cat==='all'&&(!q||'create blank report empty from scratch'.includes(q));
+  const blank=showBlank?`<button type="button" class="sc-blank" data-scblank="1"><span class="start-ico">${ICON_PLUS}</span><span><span class="t" style="display:block">Create blank report</span><span class="d" style="display:block">Tick the data you need and choose from every column. The rows follow your data.</span></span><span class="sc-go">Start blank →</span></button>`:'';
+  const card=s=>`<button type="button" class="scratch-card" data-scopen="${s.id}"><span class="start-ico">${catIcon(s.dom)}</span><span><span class="t" style="display:block">${esc(s.name)}</span><span class="d" style="display:block">${esc(s.d)}</span></span></button>`;
+  let body;
+  if(!list.length)body=blank?'':`<div class="empty sc-empty"><h3>No report types match “${esc(SC.q.trim())}”</h3><p>Try another word, or clear the search.</p></div>`;
+  else if(SC.cat==='all')body=CATS.filter(c=>list.some(t=>t.dom===c)).map(c=>`<div class="scratch-group"><div class="scratch-group-lbl">${c}</div><div class="scratch-grid">${list.filter(t=>t.dom===c).map(card).join('')}</div></div>`).join('');
+  else body=`<div class="scratch-grid">${list.map(card).join('')}</div>`;
+  $('scratchGrid').innerHTML=blank+body;
+  $('scratchGrid').querySelectorAll('[data-scopen]').forEach(b=>b.onclick=()=>{openBuilder(b.dataset.scopen);closeScratch();});
+  const bb=$('scratchGrid').querySelector('[data-scblank]'); if(bb)bb.onclick=()=>{closeScratch();startBlank();};
+};
+const _renderGrainStepH=renderGrainStep; renderGrainStep=function(){_renderGrainStepH.apply(this,arguments);$('scratchTools').style.display='none';};
+openScratch=function(){SC.cat='all';SC.q='';renderScratchTools();renderScratch();$('scratchOverlay').classList.add('show');$('scratchGrid').scrollTop=0;setTimeout(()=>{const i=$('scQ');if(i)i.focus();},30);};
+$('buildBtn').onclick=openScratch;
+$('scratchX').onclick=closeScratch;
+
+/* Escape closes the dialog on top */
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape')return;
+  const open=[...document.querySelectorAll('.rt-overlay.show')]; if(!open.length)return;
+  const top=open[open.length-1];
+  ({scratchOverlay:closeScratch,catOverlay:closeCats,saveOverlay:_closeSaveH,cfOverlay:closeConfirm,sqOverlay:closeSchedPrompt}[top.id]||(()=>top.classList.remove('show')))();
+});
+
+/* =====================================================================================
+   5. Edit categories: errors show as you type, Save and Add only work when the names are valid
+   ===================================================================================== */
+renderCats=function(){
+  const rows=CD.map((c,i)=>{
+    const n=catUse(c.orig||'\u0000');
+    if(c.gone)return `<div class="cm-row cm-gone"><span class="cm-name">${esc(c.orig)}</span><span class="cm-meta">Removed${n?` · ${n===1?'1 report moves':n+' reports move'} to None`:''}</span><button type="button" class="linkbtn" data-cundo="${i}">Undo</button></div>`;
+    return `<div class="cm-item"><div class="cm-row">${c.builtin?`<span class="cm-name">${esc(c.name)}</span>`:`<input class="input cm-in" data-cren="${i}" value="${esc(c.name)}" aria-label="Category name" aria-describedby="cmE${i}">`}
+      <span class="cm-meta">${c.builtin?'Built in · ':''}${c.orig?`${n} report${n===1?'':'s'}`:'New'}</span>
+      ${c.builtin?'<span class="cm-lock" title="Comes with the templates, so it can’t be removed">'+LOCK_ICON+'</span>':`<button type="button" class="tf-act rm" data-crm="${i}" aria-label="Remove ${esc(c.name)}">✕</button>`}</div>
+      ${c.builtin?'':`<div class="cm-ferr" id="cmE${i}" role="alert"></div>`}</div>`;}).join('');
+  $('catBody').innerHTML=`<div class="cm-list">${rows}</div>
+    <div class="cm-add"><input class="input" id="cmNew" placeholder="New category, e.g. Client packs" aria-label="New category name" aria-describedby="cmNewErr"><button type="button" class="btn btn-md btn-secondary" id="cmAdd" disabled>Add</button></div>
+    <div class="cm-ferr" id="cmNewErr" role="alert"></div>
+    <div class="tf-err" id="cmErr"></div>
+    <div class="pm-note">Everyone sees these tabs. Reports without a category show under All only.</div>`;
+  $('catBody').querySelectorAll('[data-cren]').forEach(inp=>inp.oninput=e=>{CD[+inp.dataset.cren].name=e.target.value;catValidate();});
+  $('catBody').querySelectorAll('[data-crm]').forEach(b=>b.onclick=()=>{const c=CD[+b.dataset.crm];if(!c.orig)CD.splice(+b.dataset.crm,1);else c.gone=true;renderCats();});
+  $('catBody').querySelectorAll('[data-cundo]').forEach(b=>b.onclick=()=>{CD[+b.dataset.cundo].gone=false;renderCats();});
+  const add=()=>{const v=$('cmNew').value.trim(); if(!v||catTaken(v,-1))return;
+    CD.push({name:v,orig:'',builtin:false,gone:false});renderCats();$('cmNew').focus();};
+  $('cmAdd').onclick=add; $('cmNew').onkeydown=e=>{if(e.key==='Enter')add();};
+  $('cmNew').oninput=catValidate;
+  catValidate();
+};
+function catTaken(name,skip){const v=name.trim().toLowerCase();return CD.some((c,i)=>i!==skip&&!c.gone&&c.name.trim().toLowerCase()===v);}
+function catValidate(){
+  let bad=false;
+  CD.forEach((c,i)=>{
+    if(c.gone||c.builtin)return;
+    const n=c.name.trim(), m=!n?'Categories need a name.':catTaken(n,i)?`“${n}” is already a category.`:'';
+    const el=$('cmE'+i), inp=$('catBody').querySelector(`[data-cren="${i}"]`);
+    if(el)el.textContent=m; if(inp){inp.classList.toggle('rt-bad',!!m);inp.setAttribute('aria-invalid',String(!!m));}
+    if(m)bad=true;
+  });
+  const v=$('cmNew').value.trim(), dup=!!v&&catTaken(v,-1);
+  $('cmNewErr').textContent=dup?`“${v}” is already a category.`:'';
+  $('cmNew').classList.toggle('rt-bad',dup);
+  $('cmAdd').disabled=!v||dup;
+  $('catSave').disabled=bad;
+}
 
 </script>
 </body>
