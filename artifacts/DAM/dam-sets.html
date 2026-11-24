@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>DAM Sets prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* VOICE work: a design proposal colleagues act on, then the product itself
+   IDEA the DAM as shipped, inside its Unity frame, with a spec page in front of it
+   PICTURE the live prototype: Sets list, set detail, lightbox Related tab, rule settings
+   COLOUR Scale tokens only: sand surfaces, cerulean for action, meaning colours for state
+   TYPE Inter, JetBrains Mono for IDs and URLs
+   LAYOUT tester bar on top; proposal reads as one column with a model diagram; prototype views fill the frame */
+
+:root{color-scheme:light dark;
+--surface-default:light-dark(#fdfdfc,#12110e);--surface-subtle:light-dark(#f9f9f8,#191918);--surface-muted:light-dark(#f0f0ef,#23231f);--surface-emphasis:light-dark(#e9e9e6,#2b2a21);--surface-hover:light-dark(rgba(16,16,0,.06),rgba(247,247,196,.08));--surface-raised:light-dark(#ffffff,#191918);
+--text-default:light-dark(#21201c,#f0efe3);--text-muted:light-dark(#63635e,#b6b5aa);--text-disabled:light-dark(#bcbbb5,#626056);--text-on-primary:light-dark(#ffffff,#12110e);--text-on-media:#ffffff;
+--border-subtle:light-dark(#f0f0ef,#23231f);--border-default:light-dark(#dad9d6,#3c3b31);--border-emphasis:light-dark(#cfcfca,#4a493f);
+--primary-default:light-dark(#0c818f,#6acad9);--primary-hover:light-dark(#007381,#b3ecf6);--primary-pressed:light-dark(#006c78,#b3ecf6);--primary-text:light-dark(#006c78,#6acad9);--primary-subtle:light-dark(#e3f5f8,#072c31);--primary-subtle-hover:light-dark(#d3eff3,#003941);--primary-muted:light-dark(#c1e6ec,#004750);
+--accent-9:#0c818f;
+--filetype-badge-bg:rgba(28,28,25,.62);--filetype-badge-fg:#ffffff;
+--success-3:light-dark(#e4f7f0,#0d2d24);--success-7:light-dark(#8aceb7,#246854);--success-11:light-dark(#008062,#60d1af);--success-12:light-dark(#1d3b31,#aaf0d8);
+--warning-3:light-dark(#fff0cb,#2f200d);--warning-7:light-dark(#fdb757,#704f20);--warning-11:light-dark(#a96600,#fbb554);--warning-12:light-dark(#4d3618,#fce3c4);
+--error-3:light-dark(#feebe7,#381710);--error-7:light-dark(#f5a997,#853b2b);--error-9:#e54d2e;--error-11:light-dark(#cf3716,#ff9277);--error-12:light-dark(#5c281c,#fbd3ca);
+--info-3:light-dark(#e9f3ff,#0a2847);--info-7:light-dark(#97c5f9,#1d5e9d);--info-11:light-dark(#0073dd,#70b8ff);--info-12:light-dark(#003463,#c8e3ff);
+--discovery-3:light-dark(#f5eeff,#2d1c3d);--discovery-7:light-dark(#ceb0ef,#644384);--discovery-11:light-dark(#8145b5,#d29dff);--discovery-12:light-dark(#411f5f,#e9dafc);
+--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:40px;--space-8:48px;--space-9:64px;
+--radius-1:3px;--radius-2:4px;--radius-control:4px;--radius-card:6px;--radius-modal:8px;--radius-pill:9999px;
+--font-family-text:"Inter",system-ui,-apple-system,sans-serif;--font-family-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+--font-size-0:11px;--font-size-1:12px;--font-size-2:14px;--font-size-3:16px;--font-size-4:18px;--font-size-5:22px;--font-size-6:24px;--font-size-7:28px;
+--line-height-1:16px;--line-height-2:20px;--line-height-3:24px;
+--duration-base:200ms;--duration-fast:120ms;--ease-out:cubic-bezier(.16,1,.3,1);
+/* Local tokens: not in the Scale token export */
+--local-shadow-raised:0 8px 24px light-dark(rgba(33,32,28,.14),rgba(0,0,0,.5));
+--local-host-rail:light-dark(#1b3c41,#0f1b1d);
+--local-tester:light-dark(#21201c,#3b3a33);
+--local-rail-w:56px;--local-dam-rail-w:56px;--local-filter-w:248px;--local-props-w:340px;--local-row-h:64px;--local-thumb:44px}
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;height:100%}
+body{background:var(--surface-default);color:var(--text-default);font:var(--font-size-2)/var(--line-height-2) var(--font-family-text);display:flex;flex-direction:column;overflow:hidden}
+#root{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent-9);outline-offset:2px}
+.mono{font-family:var(--font-family-mono);font-size:var(--font-size-1)}
+.muted{color:var(--text-muted)}
+.ic{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ic.lg{width:20px;height:20px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* Tester bar (Local, not product UI) */
+.tbar{position:relative;flex:none;z-index:50;background:var(--local-tester);color:var(--text-on-media);display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2) var(--space-4);padding:var(--space-2) max(var(--space-4),2vw)}
+.tbar b{font-weight:600;margin-right:var(--space-2)}
+.tgroup{display:flex;flex-wrap:wrap;gap:var(--space-1);align-items:center}
+.tgroup span{font-size:var(--font-size-1);opacity:.75;margin-right:var(--space-1)}
+.tbtn{background:transparent;border:1px solid rgba(255,255,255,.4);color:var(--text-on-media);border-radius:var(--radius-control);padding:var(--space-1) var(--space-2);font-size:var(--font-size-1);cursor:pointer;min-height:28px}
+.tbtn[aria-pressed=true]{background:var(--text-on-media);color:var(--local-tester);border-color:var(--text-on-media)}
+.tspacer{flex:1}
+
+/* Scale components */
+.sd-button,[data-scale=IconButton]{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);border-radius:var(--radius-control);border:1px solid transparent;cursor:pointer;font-weight:500;white-space:nowrap;transition:background var(--duration-fast)}
+.sd-button{height:32px;padding:0 var(--space-3);font-size:var(--font-size-2)}
+.sd-button[data-size="1"]{height:24px;padding:0 var(--space-2);font-size:var(--font-size-1)}
+[data-scale=IconButton]{width:32px;height:32px;padding:0;background:transparent;color:var(--text-muted)}
+[data-scale=IconButton][data-size="1"]{width:24px;height:24px}
+[data-tier=primary]{background:var(--primary-default);color:var(--text-on-primary)}
+[data-tier=primary]:hover{background:var(--primary-hover)}
+[data-tier=secondary]{background:var(--surface-raised);color:var(--primary-text);border-color:var(--primary-default)}
+[data-tier=secondary]:hover{background:var(--primary-subtle)}
+[data-tier=tertiary]{background:var(--surface-raised);color:var(--text-default);border-color:var(--border-default)}
+[data-tier=tertiary]:hover{background:var(--surface-emphasis)}
+[data-tier=ghost]{background:transparent;color:var(--text-muted)}
+[data-tier=ghost]:hover{background:var(--surface-emphasis);color:var(--text-default)}
+[data-tier=destructive]{background:var(--surface-raised);color:var(--error-11);border-color:var(--error-7)}
+[data-tier=destructive]:hover{background:var(--error-3)}
+.sd-button:disabled,[data-scale=IconButton]:disabled{opacity:.45;cursor:not-allowed}
+.sd-text-field{display:flex;align-items:center;gap:var(--space-2);height:32px;padding:0 var(--space-2);border:1px solid var(--border-emphasis);border-radius:var(--radius-control);background:var(--surface-raised);color:var(--text-muted)}
+.sd-text-field input{border:0;background:transparent;outline:0;flex:1;height:100%;color:var(--text-default);font-size:var(--font-size-2)}
+.sd-text-field[data-size="1"]{height:28px}
+.sd-text-field[data-size="1"] input{font-size:var(--font-size-1)}
+.sd-text-field:focus-within{outline:2px solid var(--accent-9);outline-offset:2px}
+.sd-text-field[data-readonly=true]{background:var(--surface-muted)}
+.sd-select{height:32px;padding:0 var(--space-6) 0 var(--space-2);border:1px solid var(--border-emphasis);border-radius:var(--radius-control);background:var(--surface-raised);appearance:none;background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);background-position:calc(100% - 15px) 50%,calc(100% - 10px) 50%;background-size:5px 5px;background-repeat:no-repeat;cursor:pointer}
+.sd-checkbox{display:flex;align-items:center;gap:var(--space-2);cursor:pointer;min-height:28px}
+.sd-checkbox input{width:16px;height:16px;accent-color:var(--accent-9);margin:0}
+.sd-badge{display:inline-flex;align-items:center;gap:var(--space-1);height:20px;padding:0 var(--space-2);border-radius:var(--radius-2);font-size:var(--font-size-1);font-weight:500;background:var(--surface-muted);color:var(--text-default);border:1px solid var(--border-default);white-space:nowrap}
+.sd-badge[data-status=success]{background:var(--success-3);color:var(--success-12);border-color:var(--success-7)}
+.sd-badge[data-status=warning]{background:var(--warning-3);color:var(--warning-12);border-color:var(--warning-7)}
+.sd-badge[data-status=error]{background:var(--error-3);color:var(--error-12);border-color:var(--error-7)}
+.sd-badge[data-status=info]{background:var(--info-3);color:var(--info-12);border-color:var(--info-7)}
+.sd-badge[data-color=primary]{background:var(--primary-subtle);color:var(--primary-text);border-color:var(--primary-muted)}
+.sd-badge .ic{width:12px;height:12px}
+.sd-callout{display:flex;gap:var(--space-3);align-items:flex-start;padding:var(--space-3) var(--space-4);border-radius:var(--radius-card);border:1px solid;font-size:var(--font-size-2)}
+.sd-callout[data-status=info]{background:var(--info-3);border-color:var(--info-7);color:var(--info-12)}
+.sd-callout[data-status=info] .ic{color:var(--info-11)}
+.sd-callout[data-status=warning]{background:var(--warning-3);border-color:var(--warning-7);color:var(--warning-12)}
+.sd-callout[data-status=warning] .ic{color:var(--warning-11)}
+.sd-callout[data-status=error]{background:var(--error-3);border-color:var(--error-7);color:var(--error-12)}
+.sd-callout[data-status=error] .ic{color:var(--error-11)}
+.sd-callout .body{flex:1}
+.sd-callout .act{margin-left:auto}
+.sd-switch{display:inline-flex;align-items:center;gap:var(--space-2);cursor:pointer}
+.sd-switch input{appearance:none;width:32px;height:18px;border-radius:var(--radius-pill);background:var(--border-emphasis);position:relative;margin:0;cursor:pointer;transition:background var(--duration-fast)}
+.sd-switch input::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:var(--radius-pill);background:var(--surface-raised);transition:transform var(--duration-fast)}
+.sd-switch input:checked{background:var(--primary-default)}
+.sd-switch input:checked::after{transform:translateX(14px)}
+.field-row{display:grid;gap:2px;font-size:var(--font-size-1);line-height:var(--line-height-1)}
+.field-row .label{color:var(--text-muted)}
+.field-row .value{font-weight:500;display:flex;align-items:center;gap:var(--space-1);overflow-wrap:anywhere}
+.field-list{display:grid;gap:var(--space-5)}
+.empty-state{display:grid;justify-items:center;text-align:center;gap:var(--space-2);padding:var(--space-8) var(--space-5);color:var(--text-muted)}
+.empty-state .icon{width:48px;height:48px;border-radius:var(--radius-pill);background:var(--surface-muted);display:grid;place-items:center;color:var(--text-muted)}
+.empty-state[data-tone=error] .icon{background:var(--error-3);color:var(--error-11)}
+.empty-state h3{margin:var(--space-2) 0 0;font-size:var(--font-size-3);color:var(--text-default);font-weight:600}
+.empty-state p{margin:0;max-width:40ch}
+.empty-state .actions{margin-top:var(--space-3);display:flex;gap:var(--space-2)}
+.empty-state[data-size=panel]{padding:var(--space-6) var(--space-3)}
+.toast-stack{position:fixed;right:var(--space-5);bottom:var(--space-5);display:grid;gap:var(--space-2);z-index:80}
+.toast{display:flex;gap:var(--space-2);align-items:center;padding:var(--space-3) var(--space-4);border-radius:var(--radius-card);border:1px solid;box-shadow:var(--local-shadow-raised);max-width:380px;animation:rise var(--duration-base) var(--ease-out)}
+.toast[data-status=success]{background:var(--success-3);border-color:var(--success-7);color:var(--success-12)}
+.toast[data-status=error]{background:var(--error-3);border-color:var(--error-7);color:var(--error-12)}
+.toast[data-status=info]{background:var(--info-3);border-color:var(--info-7);color:var(--info-12)}
+@keyframes rise{from{transform:translateY(8px);opacity:0}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.menu{position:absolute;right:0;top:calc(100% + var(--space-1));background:var(--surface-raised);border:1px solid var(--border-default);border-radius:var(--radius-2);box-shadow:var(--local-shadow-raised);padding:var(--space-1);min-width:200px;z-index:30;display:grid}
+.menu button{display:flex;gap:var(--space-2);align-items:center;background:none;border:0;text-align:left;padding:var(--space-2);border-radius:var(--radius-2);cursor:pointer}
+.menu button:hover{background:var(--surface-emphasis)}
+.menu hr{border:0;border-top:1px solid var(--border-subtle);margin:var(--space-1) 0;width:100%}
+.menu .danger{color:var(--error-11)}
+.scrim{position:fixed;inset:0;background:rgba(18,17,14,.45);display:grid;place-items:center;z-index:70;padding:var(--space-4)}
+.dialog{background:var(--surface-raised);border-radius:var(--radius-modal);box-shadow:var(--local-shadow-raised);width:min(560px,100%);max-height:85vh;display:flex;flex-direction:column}
+.dialog header{padding:var(--space-5) var(--space-5) var(--space-3)}
+.dialog h2{margin:0;font-size:var(--font-size-4);font-weight:600}
+.dialog .dbody{padding:0 var(--space-5);overflow:auto}
+.dialog footer{display:flex;justify-content:flex-end;gap:var(--space-2);padding:var(--space-4) var(--space-5) var(--space-5)}
+.dialog[data-scale=AlertDialog]{width:min(440px,100%)}
+
+/* Proposal */
+.doc{max-width:1080px;margin:0 auto;padding:var(--space-7) max(var(--space-4),4vw) var(--space-9)}
+.doc h1{font-size:clamp(28px,4vw,40px);line-height:1.1;letter-spacing:-.02em;margin:0 0 var(--space-3);font-weight:700;text-wrap:balance}
+.doc .lede{font-size:var(--font-size-4);line-height:1.5;color:var(--text-muted);max-width:68ch;margin:0 0 var(--space-6)}
+.doc h2{font-size:var(--font-size-5);line-height:1.3;margin:var(--space-8) 0 var(--space-3);font-weight:600;letter-spacing:-.01em}
+.doc p,.doc li{font-size:var(--font-size-3);line-height:1.6;max-width:72ch}
+.doc ul{padding-left:var(--space-5)}
+.doc li{margin-bottom:var(--space-2)}
+.jump{display:flex;flex-wrap:wrap;gap:var(--space-2);margin:var(--space-5) 0 0}
+.model{border:1px solid var(--border-default);border-radius:var(--radius-card);background:var(--surface-subtle);padding:var(--space-5);display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1.2fr) auto minmax(0,1.3fr);align-items:center;gap:var(--space-3)}
+.node{background:var(--surface-raised);border:1px solid var(--border-default);border-radius:var(--radius-card);padding:var(--space-3) var(--space-4)}
+.node h4{margin:0 0 var(--space-1);font-size:var(--font-size-2);font-weight:600;display:flex;gap:var(--space-2);align-items:center}
+.node p{margin:0;font-size:var(--font-size-1);line-height:1.5;color:var(--text-muted)}
+.node.key{border-color:var(--primary-default);background:var(--primary-subtle)}
+.node.key p{color:var(--text-default)}
+.arrow{color:var(--text-muted);display:grid;place-items:center}
+.readers{display:grid;gap:var(--space-2)}
+.sim{margin-top:var(--space-3);display:flex;gap:var(--space-3);align-items:center;padding:var(--space-3) var(--space-4);border:1px dashed var(--border-emphasis);border-radius:var(--radius-card);font-size:var(--font-size-2);color:var(--text-muted)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--space-5)}
+.panel{border:1px solid var(--border-default);border-radius:var(--radius-card);background:var(--surface-subtle);padding:var(--space-4) var(--space-5)}
+.panel h3{margin:0 0 var(--space-2);font-size:var(--font-size-3);font-weight:600}
+.panel ul{margin:0;padding-left:var(--space-4)}
+.panel li{font-size:var(--font-size-2)}
+.tablewrap{overflow-x:auto;border:1px solid var(--border-default);border-radius:var(--radius-card)}
+table{border-collapse:collapse;width:100%;font-size:var(--font-size-2)}
+th,td{text-align:left;padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--border-subtle);vertical-align:top}
+th{background:var(--surface-muted);font-weight:600;font-size:var(--font-size-1);color:var(--text-muted)}
+tr:last-child td{border-bottom:0}
+.q{counter-reset:q;list-style:none;padding:0}
+.q li{counter-increment:q;padding-left:var(--space-6);position:relative}
+.q li::before{content:counter(q);position:absolute;left:0;top:2px;width:22px;height:22px;border-radius:var(--radius-pill);background:var(--surface-muted);font-size:var(--font-size-1);display:grid;place-items:center;font-weight:600}
+.reco{font-size:var(--font-size-2);color:var(--text-muted)}
+@media(max-width:900px){.model{grid-template-columns:minmax(0,1fr)}.arrow{transform:rotate(90deg)}}
+
+/* App frame */
+.stagewrap{height:100%;overflow:auto}
+.app{display:grid;grid-template-columns:var(--local-rail-w) var(--local-dam-rail-w) minmax(0,1fr);grid-template-rows:48px minmax(0,1fr);height:100%;min-height:600px;min-width:1100px;position:relative}
+.host{grid-row:1/3;background:var(--local-host-rail);color:var(--text-on-media);display:flex;flex-direction:column;align-items:center;padding:var(--space-3) 0;gap:var(--space-4)}
+.host .logo{font-weight:700;font-size:var(--font-size-5);letter-spacing:-.04em}
+.host .ic{opacity:.8}
+.crumb{grid-column:2/4;display:flex;align-items:center;gap:var(--space-2);padding:0 var(--space-5);border-bottom:1px solid var(--border-default);font-size:var(--font-size-2);background:var(--surface-default)}
+.crumb b{font-weight:500}
+.damrail{border-right:1px solid var(--border-default);background:var(--surface-subtle);display:flex;flex-direction:column;align-items:center;gap:var(--space-2);padding-top:var(--space-3)}
+.damrail button{width:40px;height:40px;border-radius:var(--radius-2);border:0;background:transparent;color:var(--text-muted);display:grid;place-items:center;cursor:pointer;position:relative}
+.damrail button:hover{background:var(--surface-emphasis)}
+.damrail button[aria-current=page]{background:var(--primary-subtle);color:var(--primary-text)}
+.damrail button[aria-current=page]::before{content:"";position:absolute;left:-8px;top:8px;bottom:8px;width:3px;border-radius:var(--radius-pill);background:var(--primary-default)}
+.damrail hr{width:28px;border:0;border-top:1px solid var(--border-default);margin:var(--space-1) 0}
+.main{overflow:auto;background:var(--surface-default);position:relative}
+
+/* Sets list */
+.page{display:grid;grid-template-columns:var(--local-filter-w) minmax(0,1fr);height:100%}
+.filters{border-right:1px solid var(--border-default);background:var(--surface-subtle);overflow:auto;padding:var(--space-4)}
+.filters .fh{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3)}
+.filters .fh b{font-size:var(--font-size-2);font-weight:600}
+.fgroup{border-top:1px solid var(--border-default);padding:var(--space-3) 0}
+.fgroup>button{display:flex;align-items:center;gap:var(--space-2);width:100%;background:none;border:0;padding:var(--space-1) 0;font-weight:600;font-size:var(--font-size-1);cursor:pointer;color:var(--text-default)}
+.fgroup .tri{width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid currentColor;transition:transform var(--duration-fast)}
+.fgroup[data-open=false] .tri{transform:rotate(-90deg)}
+.fgroup[data-open=false] .opts{display:none}
+.opts{display:grid;gap:2px;margin-top:var(--space-1)}
+.opts .sd-checkbox{font-size:var(--font-size-1);justify-content:space-between}
+.opts .sd-checkbox span:first-of-type{display:flex;align-items:center;gap:var(--space-2)}
+.opts .count{color:var(--text-muted);font-size:var(--font-size-0)}
+.daterow{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-2);margin-top:var(--space-2)}
+.daterow input{height:28px;border:1px solid var(--border-emphasis);border-radius:var(--radius-control);background:var(--surface-raised);padding:0 var(--space-2);font-size:var(--font-size-1);width:100%}
+.content{overflow:auto;padding:var(--space-5) var(--space-6)}
+.phead{display:flex;align-items:flex-start;gap:var(--space-4);margin-bottom:var(--space-4)}
+.phead h1{margin:0;font-size:var(--font-size-6);line-height:32px;font-weight:600;display:flex;align-items:center;gap:var(--space-2)}
+.phead p{margin:var(--space-1) 0 0;color:var(--text-muted);max-width:70ch}
+.phead .right{margin-left:auto;display:flex;gap:var(--space-2);align-items:center}
+.toolbar{display:flex;flex-wrap:wrap;gap:var(--space-3);align-items:center;margin-bottom:var(--space-3)}
+.toolbar .sd-text-field{flex:1 1 360px;max-width:520px}
+.chips{display:flex;flex-wrap:wrap;gap:var(--space-2);align-items:center;margin-bottom:var(--space-4);min-height:24px}
+.chip{display:inline-flex;align-items:center;gap:var(--space-1);height:24px;padding:0 var(--space-1) 0 var(--space-2);border-radius:var(--radius-pill);background:var(--primary-subtle);color:var(--primary-text);font-size:var(--font-size-1);border:0;cursor:pointer}
+.chip .ic{width:12px;height:12px}
+.linkbtn{background:none;border:0;color:var(--primary-text);cursor:pointer;font-size:var(--font-size-1);padding:var(--space-1)}
+.viewtoggle{display:inline-flex;border:1px solid var(--border-default);border-radius:var(--radius-control);overflow:hidden;background:var(--surface-raised)}
+.viewtoggle button{width:36px;height:30px;border:0;background:transparent;color:var(--text-muted);display:grid;place-items:center;cursor:pointer}
+.viewtoggle button[aria-pressed=true]{background:var(--primary-subtle);color:var(--primary-text)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:var(--space-4)}
+.setcard{border:1px solid var(--border-default);border-radius:var(--radius-card);background:var(--surface-raised);overflow:hidden;cursor:pointer;text-align:left;padding:0;display:flex;flex-direction:column}
+.setcard:hover{border-color:var(--border-emphasis);background:var(--surface-subtle)}
+.cover{aspect-ratio:1;position:relative;background:var(--surface-muted)}
+.cover>svg{position:absolute;inset:0;width:100%;height:100%}
+.ftype{position:absolute;right:var(--space-2);bottom:var(--space-2);background:var(--filetype-badge-bg);color:var(--filetype-badge-fg);font-size:var(--font-size-0);font-weight:600;padding:0 var(--space-1);border-radius:var(--radius-1);line-height:18px}
+.countpill{position:absolute;left:var(--space-2);top:var(--space-2);background:var(--filetype-badge-bg);color:var(--filetype-badge-fg);font-size:var(--font-size-1);font-weight:600;padding:var(--space-1) var(--space-2);border-radius:var(--radius-pill);line-height:var(--line-height-1);display:flex;gap:var(--space-1);align-items:center}
+.countpill .ic{width:14px;height:14px}
+.cmeta{padding:var(--space-3);display:grid;gap:var(--space-1)}
+.cmeta .name{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmeta .sub{display:flex;justify-content:space-between;gap:var(--space-2);align-items:center;color:var(--text-muted)}
+.skel{background:linear-gradient(90deg,var(--surface-muted),var(--surface-emphasis),var(--surface-muted));background-size:200% 100%;animation:sh 1.2s linear infinite;border-radius:var(--radius-2)}
+@keyframes sh{to{background-position:-200% 0}}
+.grid{border:1px solid var(--border-default);border-radius:var(--radius-card);overflow:hidden;background:var(--surface-raised)}
+.grid table td{vertical-align:middle}
+.grid tbody tr{cursor:pointer}
+.grid tbody tr:hover{background:var(--surface-subtle)}
+.tthumb{width:40px;height:40px;border-radius:var(--radius-2);overflow:hidden;position:relative;background:var(--surface-muted)}
+.tthumb svg{width:100%;height:100%}
+.pager{display:flex;align-items:center;justify-content:space-between;margin-top:var(--space-5);color:var(--text-muted);font-size:var(--font-size-1)}
+.pager .pg{display:flex;gap:var(--space-1)}
+
+/* Set detail */
+.detail{display:grid;grid-template-columns:minmax(0,1fr) var(--local-props-w);height:100%}
+.dmain{overflow:auto;padding:var(--space-5) var(--space-6)}
+.dhead{display:flex;gap:var(--space-4);align-items:flex-start;margin-bottom:var(--space-4)}
+.dhead h1{margin:var(--space-3) 0 var(--space-1);font-size:var(--font-size-6);font-weight:600;line-height:32px}
+.dhead .meta{display:flex;flex-wrap:wrap;gap:var(--space-2);align-items:center;color:var(--text-muted)}
+.dhead .right{margin-left:auto;display:flex;gap:var(--space-2);align-items:center;position:relative;padding-top:var(--space-1)}
+.hint{color:var(--text-muted);font-size:var(--font-size-1);margin:var(--space-4) 0 var(--space-2)}
+.rows{display:grid;gap:var(--space-2)}
+.mrow{display:grid;grid-template-columns:28px 24px var(--local-thumb) minmax(0,1fr) 168px auto;align-items:center;gap:var(--space-3);min-height:var(--local-row-h);padding:var(--space-2) var(--space-3);border:1px solid var(--border-default);border-radius:var(--radius-card);background:var(--surface-raised)}
+.mrow.drag{opacity:.4}
+.mrow.over{border-color:var(--primary-default);background:var(--primary-subtle)}
+.grip{width:28px;height:32px;border:0;background:none;color:var(--text-muted);cursor:grab;border-radius:var(--radius-2);display:grid;place-items:center}
+.grip:hover{background:var(--surface-emphasis)}
+.pos{color:var(--text-muted);font-variant-numeric:tabular-nums;text-align:right}
+.thumb{width:var(--local-thumb);height:var(--local-thumb);border-radius:var(--radius-2);overflow:hidden;position:relative;border:0;padding:0;cursor:zoom-in;background:var(--surface-muted)}
+.thumb svg{width:100%;height:100%;display:block}
+.fname{display:grid;gap:2px}
+.fname .f{font-weight:500;overflow-wrap:anywhere}
+.fname .tags{display:flex;flex-wrap:wrap;gap:var(--space-1)}
+.racts{display:flex;gap:var(--space-1)}
+.excl{margin-top:var(--space-5);border-top:1px solid var(--border-default);padding-top:var(--space-4)}
+.excl h3{font-size:var(--font-size-2);font-weight:600;margin:0 0 var(--space-1)}
+.props{border-left:1px solid var(--border-default);background:var(--surface-subtle);overflow:auto;padding:var(--space-5)}
+.props h2{font-size:var(--font-size-4);font-weight:600;margin:0 0 var(--space-4)}
+.props h3{font-size:var(--font-size-2);font-weight:600;margin:var(--space-6) 0 var(--space-3);display:flex;align-items:center;gap:var(--space-2)}
+.urlrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:var(--space-2);align-items:center;padding:var(--space-2) 0;border-bottom:1px solid var(--border-default)}
+.urlrow:last-child{border-bottom:0}
+.urlrow .mono{overflow-wrap:anywhere;color:var(--text-default)}
+.urlrow .lab{font-size:var(--font-size-0);font-weight:600;color:var(--text-muted);min-width:36px}
+.note{font-size:var(--font-size-1);color:var(--text-muted);margin:var(--space-2) 0 0;line-height:1.5}
+
+/* Lightbox */
+.lb{position:absolute;inset:0;background:var(--surface-default);display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;z-index:20}
+.lbtop{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--border-default)}
+.lbtop .nav{display:flex;align-items:center;gap:var(--space-1)}
+.lbtop .counter{font-size:var(--font-size-1);color:var(--text-muted);font-variant-numeric:tabular-nums;margin-right:var(--space-2)}
+.lbtop .title{display:grid}
+.lbtop .title b{font-weight:600}
+.lbtop .title span{font-size:var(--font-size-1);color:var(--text-muted)}
+.lbtop .acts{margin-left:auto;display:flex;gap:var(--space-2);align-items:center}
+.banner{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) var(--space-4);border-bottom:1px solid var(--info-7);background:var(--info-3);color:var(--info-12);font-size:var(--font-size-2)}
+.banner .ic{color:var(--info-11)}
+.banner .sd-button{margin-left:auto}
+.lbbody{display:grid;grid-template-columns:minmax(0,1fr) 340px 52px;min-height:0}
+.lbstage{display:grid;place-items:center;background:var(--surface-muted);padding:var(--space-6);min-height:0}
+.lbstage .art{height:100%;max-height:560px;aspect-ratio:1;border-radius:var(--radius-2);overflow:hidden;box-shadow:var(--local-shadow-raised);background:var(--surface-raised)}
+.lbstage .art svg{width:100%;height:100%;display:block}
+.lbpanel{border-left:1px solid var(--border-default);overflow:auto;padding:var(--space-4);background:var(--surface-raised)}
+.lbpanel h2{font-size:var(--font-size-4);font-weight:600;margin:0}
+.lbpanel .ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-1)}
+.lbrail{border-left:1px solid var(--border-default);background:var(--surface-subtle);display:flex;flex-direction:column;align-items:center;gap:var(--space-1);padding-top:var(--space-2)}
+.lbrail button{width:40px;height:40px;border:0;border-radius:var(--radius-2);background:transparent;color:var(--text-muted);display:grid;place-items:center;cursor:pointer;position:relative}
+.lbrail button:hover{background:var(--surface-emphasis)}
+.lbrail button[aria-selected=true]{background:var(--primary-subtle);color:var(--primary-text)}
+.lbrail button[aria-selected=true]::after{content:"";position:absolute;right:-6px;top:8px;bottom:8px;width:3px;border-radius:var(--radius-pill);background:var(--primary-default)}
+.lbrail .new{position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:var(--radius-pill);background:var(--discovery-11)}
+.relgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-3);margin-top:var(--space-4)}
+.rel{border:1px solid var(--border-default);border-radius:var(--radius-card);overflow:hidden;background:var(--surface-raised);cursor:pointer;padding:0;text-align:left;display:flex;flex-direction:column}
+.rel:hover{border-color:var(--border-emphasis)}
+.rel[aria-current=true]{border-color:var(--primary-default);box-shadow:0 0 0 1px var(--primary-default)}
+.rel .cover{aspect-ratio:1}
+.rel .rm{padding:var(--space-2);display:flex;justify-content:space-between;align-items:center;gap:var(--space-1);font-size:var(--font-size-1)}
+.rel .rm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lbfoot{display:flex;flex-wrap:wrap;gap:var(--space-2);padding:var(--space-2) var(--space-4);border-top:1px solid var(--border-default);font-size:var(--font-size-1);color:var(--text-muted)}
+.kbd{display:inline-flex;align-items:center;gap:var(--space-1);padding:2px var(--space-2);border:1px solid var(--border-default);border-radius:var(--radius-2);background:var(--surface-subtle)}
+.tagchips{display:flex;flex-wrap:wrap;gap:var(--space-1)}
+
+/* Settings */
+.settings{display:grid;grid-template-columns:220px minmax(0,1fr);height:100%}
+.snav{border-right:1px solid var(--border-default);background:var(--surface-subtle);padding:var(--space-4) var(--space-3);display:grid;align-content:start;gap:2px}
+.snav b{font-size:var(--font-size-1);color:var(--text-muted);font-weight:500;padding:0 var(--space-2) var(--space-2)}
+.snav button{text-align:left;border:0;background:none;padding:var(--space-2);border-radius:var(--radius-2);cursor:pointer;color:var(--text-default)}
+.snav button:hover{background:var(--surface-emphasis)}
+.snav button[aria-current=page]{background:var(--primary-subtle);color:var(--primary-text);font-weight:500}
+.sbody{overflow:auto;padding:var(--space-5) var(--space-6);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--space-6);align-content:start}
+.sbody .phead{grid-column:1/-1;margin:0}
+.form{display:grid;gap:var(--space-5);align-content:start}
+.fe{display:grid;gap:var(--space-1)}
+.fe label,.fe .lbl{font-size:var(--font-size-1);font-weight:500}
+.fe .help{font-size:var(--font-size-1);color:var(--text-muted)}
+.radios{display:grid;gap:var(--space-2)}
+.radios label{display:flex;gap:var(--space-2);align-items:flex-start;cursor:pointer;font-size:var(--font-size-2)}
+.radios input{accent-color:var(--accent-9);margin-top:3px}
+.radios small{display:block;color:var(--text-muted);font-size:var(--font-size-1)}
+.sfoot{display:flex;gap:var(--space-2);padding-top:var(--space-2)}
+.preview{border:1px solid var(--border-default);border-radius:var(--radius-card);background:var(--surface-subtle);padding:var(--space-4);display:grid;gap:var(--space-3);align-content:start}
+.preview h3{margin:0;font-size:var(--font-size-3);font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-3)}
+.stat{background:var(--surface-raised);border:1px solid var(--border-default);border-radius:var(--radius-card);padding:var(--space-3)}
+.stat b{display:block;font-size:var(--font-size-5);line-height:1.2;font-variant-numeric:tabular-nums}
+.stat span{font-size:var(--font-size-1);color:var(--text-muted)}
+.bars{display:grid;gap:var(--space-2)}
+.bar{display:grid;grid-template-columns:96px minmax(0,1fr) 56px;gap:var(--space-2);align-items:center;font-size:var(--font-size-1)}
+.bar i{display:block;height:8px;border-radius:var(--radius-pill);background:var(--primary-default)}
+.bar .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--text-muted)}
+.ok{color:var(--success-11)}
+.no{color:var(--warning-11)}
+</style>
+</head>
+<body>
+<div class="tbar" id="tbar" role="toolbar" aria-label="Prototype controls (not product UI)">
+  <b>Sets</b>
+  <div class="tgroup" id="tviews"><span>View</span></div>
+  <div class="tgroup" id="trole"><span>Role</span></div>
+  <div class="tgroup" id="tstate"><span>List state</span></div>
+  <div class="tgroup" id="tpub"><span>Publish</span></div>
+  <div class="tspacer"></div>
+  <div class="tgroup" id="ttheme"><span>Theme</span></div>
+</div>
+<div id="root"></div>
+<div class="toast-stack" id="toasts" aria-live="polite"></div>
+<div id="modal"></div>
+<script>
+const IC={"layout-dashboard": "<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\" /> <rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\" /> <rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\" /> <rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\" />", "library": "<path d=\"m16 6 4 14\" /> <path d=\"M12 6v14\" /> <path d=\"M8 8v12\" /> <path d=\"M4 4v16\" />", "bookmark": "<path d=\"M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z\" />", "shield-check": "<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\" /> <path d=\"m9 12 2 2 4-4\" />", "download": "<path d=\"M12 15V3\" /> <path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\" /> <path d=\"m7 10 5 5 5-5\" />", "link": "<path d=\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\" /> <path d=\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\" />", "layers": "<path d=\"M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z\" /> <path d=\"M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12\" /> <path d=\"M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17\" />", "sliders-horizontal": "<path d=\"M10 5H3\" /> <path d=\"M12 19H3\" /> <path d=\"M14 3v4\" /> <path d=\"M16 17v4\" /> <path d=\"M21 12h-9\" /> <path d=\"M21 19h-5\" /> <path d=\"M21 5h-7\" /> <path d=\"M8 10v4\" /> <path d=\"M8 12H3\" />", "search": "<path d=\"m21 21-4.34-4.34\" /> <circle cx=\"11\" cy=\"11\" r=\"8\" />", "list": "<path d=\"M3 5h.01\" /> <path d=\"M3 12h.01\" /> <path d=\"M3 19h.01\" /> <path d=\"M8 5h13\" /> <path d=\"M8 12h13\" /> <path d=\"M8 19h13\" />", "layout-grid": "<rect width=\"7\" height=\"7\" x=\"3\" y=\"3\" rx=\"1\" /> <rect width=\"7\" height=\"7\" x=\"14\" y=\"3\" rx=\"1\" /> <rect width=\"7\" height=\"7\" x=\"14\" y=\"14\" rx=\"1\" /> <rect width=\"7\" height=\"7\" x=\"3\" y=\"14\" rx=\"1\" />", "chevron-left": "<path d=\"m15 18-6-6 6-6\" />", "chevron-right": "<path d=\"m9 18 6-6-6-6\" />", "arrow-left": "<path d=\"m12 19-7-7 7-7\" /> <path d=\"M19 12H5\" />", "x": "<path d=\"M18 6 6 18\" /> <path d=\"m6 6 12 12\" />", "grip-vertical": "<circle cx=\"9\" cy=\"12\" r=\"1\" /> <circle cx=\"9\" cy=\"5\" r=\"1\" /> <circle cx=\"9\" cy=\"19\" r=\"1\" /> <circle cx=\"15\" cy=\"12\" r=\"1\" /> <circle cx=\"15\" cy=\"5\" r=\"1\" /> <circle cx=\"15\" cy=\"19\" r=\"1\" />", "copy": "<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\" /> <path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\" />", "check": "<path d=\"M20 6 9 17l-5-5\" />", "lock": "<rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\" ry=\"2\" /> <path d=\"M7 11V7a5 5 0 0 1 10 0v4\" />", "trash-2": "<path d=\"M10 11v6\" /> <path d=\"M14 11v6\" /> <path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6\" /> <path d=\"M3 6h18\" /> <path d=\"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\" />", "ellipsis": "<circle cx=\"12\" cy=\"12\" r=\"1\" /> <circle cx=\"19\" cy=\"12\" r=\"1\" /> <circle cx=\"5\" cy=\"12\" r=\"1\" />", "plus": "<path d=\"M5 12h14\" /> <path d=\"M12 5v14\" />", "image": "<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" ry=\"2\" /> <circle cx=\"9\" cy=\"9\" r=\"2\" /> <path d=\"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21\" />", "film": "<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" /> <path d=\"M7 3v18\" /> <path d=\"M3 7.5h4\" /> <path d=\"M3 12h18\" /> <path d=\"M3 16.5h4\" /> <path d=\"M17 3v18\" /> <path d=\"M17 7.5h4\" /> <path d=\"M17 16.5h4\" />", "info": "<circle cx=\"12\" cy=\"12\" r=\"10\" /> <path d=\"M12 16v-4\" /> <path d=\"M12 8h.01\" />", "file-text": "<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\" /> <path d=\"M14 2v5a1 1 0 0 0 1 1h5\" /> <path d=\"M10 9H8\" /> <path d=\"M16 13H8\" /> <path d=\"M16 17H8\" />", "tags": "<path d=\"M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z\" /> <path d=\"M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193\" /> <circle cx=\"10.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\" />", "equal-approximately": "<path d=\"M5 15a6.5 6.5 0 0 1 7 0 6.5 6.5 0 0 0 7 0\" /> <path d=\"M5 9a6.5 6.5 0 0 1 7 0 6.5 6.5 0 0 0 7 0\" />", "external-link": "<path d=\"M15 3h6v6\" /> <path d=\"M10 14 21 3\" /> <path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\" />", "undo-2": "<path d=\"M9 14 4 9l5-5\" /> <path d=\"M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11\" />", "refresh-cw": "<path d=\"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8\" /> <path d=\"M21 3v5h-5\" /> <path d=\"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16\" /> <path d=\"M8 16H3v5\" />", "triangle-alert": "<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\" /> <path d=\"M12 9v4\" /> <path d=\"M12 17h.01\" />", "globe": "<circle cx=\"12\" cy=\"12\" r=\"10\" /> <path d=\"M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20\" /> <path d=\"M2 12h20\" />", "filter": "<path d=\"M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z\" />", "upload": "<path d=\"M12 3v12\" /> <path d=\"m17 8-5-5-5 5\" /> <path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\" />", "pencil": "<path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\" /> <path d=\"m15 5 4 4\" />", "circle-check": "<circle cx=\"12\" cy=\"12\" r=\"10\" /> <path d=\"m16 9-5.5 5.5L8 12\" />", "loader-circle": "<path d=\"M21 12a9 9 0 1 1-6.219-8.56\" />", "list-plus": "<path d=\"M16 5H3\" /> <path d=\"M11 12H3\" /> <path d=\"M16 19H3\" /> <path d=\"M18 9v6\" /> <path d=\"M21 12h-6\" />", "zoom-in": "<circle cx=\"11\" cy=\"11\" r=\"8\" /> <line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\" /> <line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\" /> <line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\" />", "zoom-out": "<circle cx=\"11\" cy=\"11\" r=\"8\" /> <line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\" /> <line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\" />", "cloud-check": "<path d=\"m17 15-5.5 5.5L9 18\" /> <path d=\"M5.516 16.07A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 3.501 7.327\" />", "cloud-alert": "<path d=\"M12 12v4\" /> <path d=\"M12 20h.01\" /> <path d=\"M8.128 16.949A7 7 0 1 1 15.71 8h1.79a1 1 0 0 1 0 9h-1.642\" />", "hash": "<line x1=\"4\" x2=\"20\" y1=\"9\" y2=\"9\" /> <line x1=\"4\" x2=\"20\" y1=\"15\" y2=\"15\" /> <line x1=\"10\" x2=\"8\" y1=\"3\" y2=\"21\" /> <line x1=\"16\" x2=\"14\" y1=\"3\" y2=\"21\" />", "settings-2": "<path d=\"M14 17H5\" /> <path d=\"M19 7h-9\" /> <circle cx=\"17\" cy=\"17\" r=\"3\" /> <circle cx=\"7\" cy=\"7\" r=\"3\" />", "rotate-ccw": "<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\" /> <path d=\"M3 3v5h5\" />", "gallery-horizontal-end": "<path d=\"M2 7v10\" /> <path d=\"M6 5v14\" /> <rect width=\"12\" height=\"18\" x=\"10\" y=\"3\" rx=\"2\" />"};
+{
+const ic=(n,c='')=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${IC[n]||''}</svg>`;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ean=b=>{let s=0;for(let i=0;i<12;i++)s+=(+b[i])*(i%2?3:1);return b+((10-s%10)%10)};
+
+/* Placeholder product imagery (sample content, drawn in code) */
+const art=(kind,c,v,word)=>{
+  const bg=v===2?c[2]:'#ffffff', shade=v===1?0.55:1;
+  let body='';
+  const sh=`<ellipse cx="100" cy="176" rx="${kind==='tee'?62:46}" ry="7" fill="#000" opacity=".12"/>`;
+  if(kind==='box'){
+    body=v===1?`<rect x="56" y="34" width="88" height="140" rx="3" fill="${c[0]}" opacity=".9"/><rect x="66" y="48" width="68" height="84" fill="#fff"/>${[0,1,2,3,4,5,6].map(i=>`<rect x="72" y="${56+i*10}" width="${i%3?56:40}" height="3" fill="#bbb"/>`).join('')}<rect x="72" y="140" width="56" height="20" fill="#fff"/>${[0,1,2,3,4,5,6,7,8,9].map(i=>`<rect x="${75+i*5}" y="143" width="${i%2?2:3}" height="14" fill="#222"/>`).join('')}`
+    :`<rect x="56" y="34" width="88" height="140" rx="3" fill="${c[0]}"/><rect x="56" y="34" width="88" height="34" fill="${c[1]}"/><text x="100" y="58" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="14" fill="#fff">${word}</text><circle cx="100" cy="120" r="30" fill="#fff" opacity=".92"/><circle cx="100" cy="122" r="22" fill="${c[1]}" opacity=".85"/><rect x="144" y="40" width="10" height="134" fill="#000" opacity=".12"/>`;
+  } else if(kind==='bottle'){
+    body=`<rect x="88" y="26" width="24" height="14" rx="3" fill="${c[1]}"/><path d="M90 40h20v14c18 8 22 18 22 34v74a10 10 0 0 1-10 10H78a10 10 0 0 1-10-10V88c0-16 4-26 22-34z" fill="${c[0]}" opacity="${v===1?.75:.95}"/><rect x="68" y="100" width="64" height="44" fill="${v===1?'#fff':c[1]}"/>${v===1?[0,1,2,3].map(i=>`<rect x="74" y="${106+i*9}" width="${i%2?40:52}" height="3" fill="#aaa"/>`).join(''):`<text x="100" y="127" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="12" fill="#fff">${word}</text>`}<rect x="76" y="58" width="6" height="104" rx="3" fill="#fff" opacity=".35"/>`;
+  } else if(kind==='tin'){
+    body=`<rect x="58" y="48" width="84" height="120" fill="${c[0]}"/><ellipse cx="100" cy="48" rx="42" ry="10" fill="#d9d9d9"/><ellipse cx="100" cy="48" rx="34" ry="7" fill="#c4c4c4"/><ellipse cx="100" cy="168" rx="42" ry="10" fill="${c[0]}"/><rect x="58" y="84" width="84" height="54" fill="${v===1?'#fff':c[1]}"/>${v===1?[0,1,2,3].map(i=>`<rect x="66" y="${92+i*10}" width="${i%2?48:64}" height="3" fill="#aaa"/>`).join(''):`<text x="100" y="116" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="13" fill="#fff">${word}</text>`}<rect x="64" y="52" width="8" height="112" fill="#fff" opacity=".25"/>`;
+  } else if(kind==='tee'){
+    const p='M70 40l-36 20 12 30 18-8v94h72V82l18 8 12-30-36-20c-4 10-16 16-30 16s-26-6-30-16z';
+    body=v===3?`<rect x="0" y="0" width="200" height="200" fill="${c[0]}"/>${[...Array(10)].map((_,i)=>`<rect x="0" y="${i*20}" width="200" height="${c[3]?10:3}" fill="${c[1]}" opacity=".5"/>`).join('')}<circle cx="100" cy="100" r="16" fill="#fff" opacity=".9"/><circle cx="100" cy="100" r="4" fill="${c[0]}"/>`
+    :`<path d="${p}" fill="${c[0]}"/>${c[3]?[...Array(7)].map((_,i)=>`<rect x="64" y="${88+i*13}" width="72" height="5" fill="${c[1]}"/>`).join(''):''}${v===1?`<path d="M70 40c4 6 16 9 30 9s26-3 30-9" stroke="#000" stroke-opacity=".2" fill="none" stroke-width="2"/>`:`<path d="M70 40c4 10 16 16 30 16s26-6 30-16" stroke="#000" stroke-opacity=".2" fill="none" stroke-width="3"/>`}`;
+  }
+  const play=v===4?`<rect width="200" height="200" fill="#000" opacity=".35"/><circle cx="100" cy="100" r="22" fill="#fff" opacity=".9"/><path d="M93 88l20 12-20 12z" fill="#21201c"/>`:'';
+  const scene=v===2?`<rect y="150" width="200" height="50" fill="#000" opacity=".08"/>`:'';
+  return `<svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(word)} placeholder"><rect width="200" height="200" fill="${bg}"/>${scene}${v===3&&kind==='tee'?'':sh}<g ${v===2?'transform="translate(100 104) rotate(-8) scale(.82) translate(-100 -100)"':''} opacity="${shade}">${body}</g>${play}</svg>`;
+};
+
+/* Sample data: a retail folder grouped by GTIN, apparel grouped by style code */
+const P=[
+ {id:'s1',name:'Corn Flakes 500g',code:ean('505123456789'),cat:'Grocery',kind:'box',c:['#e8a317','#c0392b','#f6e7c1'],w:'FLAKES',labels:['T1','T2','T3'],src:'rule',status:'published',changed:'Today, 14:02',by:'Rule'},
+ {id:'s2',name:'Porridge Oats 1kg',code:ean('505123400112'),cat:'Grocery',kind:'box',c:['#d9c7a3','#4a6b3a','#eef0e4'],w:'OATS',labels:['T1','T2'],src:'rule',status:'changes',changed:'Today, 11:40',by:'Rule'},
+ {id:'s3',name:'Chopped Tomatoes 400g',code:ean('505123400871'),cat:'Grocery',kind:'tin',c:['#b8261c','#2f7d32','#fde2dc'],w:'TOMATO',labels:['T1','T2','T3'],src:'rule',status:'published',changed:'Yesterday',by:'Rule'},
+ {id:'s4',name:'Semi-skimmed Milk 2L',code:ean('505123401004'),cat:'Grocery',kind:'bottle',c:['#eaf1f7','#2a7bd1','#dbe9f6'],w:'MILK',labels:['T1'],src:'rule',status:'published',changed:'18 Nov',by:'Rule'},
+ {id:'s5',name:'Sparkling Water 1L',code:ean('505123402278'),cat:'Grocery',kind:'bottle',c:['#9fd3e6','#0c6e8a','#e1f3f8'],w:'FIZZ',labels:['T1','T2','T3','T4'],src:'rule',status:'failed',changed:'18 Nov',by:'Rule'},
+ {id:'s6',name:'Baked Beans 415g',code:ean('505123400330'),cat:'Grocery',kind:'tin',c:['#1f5fa8','#e67e22','#e3ecf7'],w:'BEANS',labels:['T1','T2','T3'],src:'rule',status:'published',changed:'16 Nov',by:'Rule'},
+ {id:'s7',name:'Crew Neck Tee, Navy',code:'AP-114502-NVY',cat:'Apparel',kind:'tee',c:['#24345c','#3d5a99','#e6e9f2'],w:'TEE',labels:['A','B','C'],src:'rule',status:'published',changed:'15 Nov',by:'Rule',detail:true},
+ {id:'s8',name:'Breton Stripe Tee',code:'AP-114588-STR',cat:'Apparel',kind:'tee',c:['#f4f1ea','#1d2b4f','#ebe6dc',1],w:'STRIPE',labels:['A','B','C'],src:'rule',status:'changes',changed:'14 Nov',by:'Rule',detail:true},
+ {id:'s9',name:'Christmas hamper hero',code:'xmas-hamper-hero',cat:'Grocery',kind:'box',c:['#7a1f2b','#c9a227','#f3e3e5'],w:'HAMPER',labels:['','','',''],src:'manual',status:'published',changed:'12 Nov',by:'Priya Shah',video:true},
+ {id:'s10',name:'Spring range (placeholder)',code:'spring-range-27',cat:'Apparel',kind:'tee',c:['#9bc4a0','#4b7f52','#e7f1e8'],w:'SPRING',labels:[],src:'manual',status:'published',changed:'10 Nov',by:'Priya Shah'}
+];
+const A={};
+let SETS=[];
+const buildSets=()=>{SETS=P.map(p=>{
+  const members=p.labels.map((l,i)=>{
+    const isVid=p.video&&i===3;
+    const v=p.kind==='tee'?(i===2?3:i):(isVid?4:i===0?0:i===1?1:2);
+    const file=p.src==='manual'?(isVid?'hamper_hero_15s.mp4':`hamper_hero_${['flatlay','open','gift'][i]}.jpg`):(p.cat==='Apparel'?`${p.code}_${l}.jpg`:`${p.code}_${l}.jpg`);
+    const id=p.id+'-'+i;A[id]={id,file,label:l,v,set:p.id,type:isVid?'MP4':'JPG',dim:isVid?'1920 × 1080 · 0:15':'2000 × 2000',size:isVid?'18.4 MB':(1.1+i*.2).toFixed(1)+' MB',auto:p.src==='rule'};return id});
+  return {...p,members,excluded:[],dirty:p.status==='changes',published:p.status==='failed'?'18 Nov, 09:12':p.changed}})};
+buildSets();
+/* Loose library assets for the picker and for Similar */
+const LOOSE=[
+ {id:'x1',file:'cornflakes_breakfast_lifestyle.jpg',kind:'box',c:['#e8a317','#c0392b','#f6e7c1'],w:'FLAKES',v:2},
+ {id:'x2',file:'cornflakes_social_15s.mp4',kind:'box',c:['#e8a317','#c0392b','#f6e7c1'],w:'FLAKES',v:4,type:'MP4'},
+ {id:'x3',file:'cornflakes_shelf_strip.jpg',kind:'box',c:['#e8a317','#c0392b','#f6e7c1'],w:'FLAKES',v:1},
+ {id:'x4',file:'bran_flakes_750g_front.jpg',kind:'box',c:['#8a5a2b','#2f6e8a','#efe2d2'],w:'BRAN',v:0},
+ {id:'x5',file:'granola_honey_500g_front.jpg',kind:'box',c:['#c98b2b','#6b3e1f','#f3e6cf'],w:'GRANOLA',v:0}
+];
+LOOSE.forEach(x=>A[x.id]={...x,label:'',set:null,type:x.type||'JPG',dim:x.type?'1920 × 1080 · 0:15':'2000 × 2000',size:'1.3 MB',loose:true});
+const prodOf=a=>a.set?P.find(p=>p.id===a.set):a;
+const artOf=a=>{const p=prodOf(a);return art(p.kind,p.c,a.v,p.w)};
+const setById=id=>SETS.find(s=>s.id===id);
+
+/* State */
+const S={view:'proposal',role:'editor',list:'ok',pubFail:false,theme:'',layout:'grid',q:'',sort:'changed',f:{},open:{quick:1,source:1,cat:1,count:1,contains:0,status:1,date:0},set:'s1',menu:false,lb:null,dlg:null,rule:{on:true,by:'gtin',from:'file',label:'suffix',pattern:'{group}_{label}',allowed:'T1, T2, T3, T4',order:'label',publish:true,apply:'new'}};
+const canEdit=()=>S.role==='editor';
+
+/* Tester bar */
+const tb=(id,opts,key,after)=>{document.getElementById(id).insertAdjacentHTML('beforeend',opts.map(([v,l])=>`<button class="tbtn" data-tkey="${key}" data-tval="${v}">${l}</button>`).join(''))};
+tb('tviews',[['proposal','Proposal'],['sets','Sets list'],['detail','Set detail'],['lightbox','Lightbox'],['settings','Rule settings']],'view');
+tb('trole',[['editor','Editor'],['viewer','Viewer']],'role');
+tb('tstate',[['ok','Populated'],['loading','Loading'],['empty','No sets'],['error','Error']],'list');
+tb('tpub',[['ok','Succeeds'],['fail','Fails']],'pub');
+tb('ttheme',[['','System'],['light','Light'],['dark','Dark']],'theme');
+const syncTbar=()=>document.querySelectorAll('[data-tkey]').forEach(b=>{const k=b.dataset.tkey,v=b.dataset.tval;const cur=k==='pub'?(S.pubFail?'fail':'ok'):k==='view'&&S.view==='lightbox'?'lightbox':S[k];b.setAttribute('aria-pressed',String(cur===v))});
+
+/* Toasts */
+const toast=(msg,status='success')=>{const el=document.createElement('div');el.className='toast';el.dataset.scale='Toast';el.dataset.status=status;el.innerHTML=ic(status==='error'?'triangle-alert':status==='info'?'info':'circle-check')+`<span>${msg}</span>`;document.getElementById('toasts').append(el);setTimeout(()=>el.remove(),4200)};
+
+/* Shared bits */
+const btn=(tier,label,act,o={})=>`<button class="sd-button" data-scale="Button" data-tier="${tier}" data-size="${o.size||2}" ${act?`data-act="${act}"`:''} ${o.data||''} ${o.disabled?'disabled':''}>${o.icon?ic(o.icon):''}${label}</button>`;
+const ibtn=(icon,label,act,o={})=>`<button data-scale="IconButton" data-tier="${o.tier||'ghost'}" data-size="${o.size||2}" aria-label="${esc(label)}" title="${esc(label)}" data-act="${act}" ${o.data||''} ${o.disabled?'disabled':''}>${ic(icon)}</button>`;
+const badge=(txt,status,o={})=>`<span class="sd-badge" data-scale="Badge" ${status?`data-status="${status}"`:''} ${o.color?`data-color="${o.color}"`:''} data-size="1">${o.icon?ic(o.icon):''}${txt}</span>`;
+const statusBadge=s=>s.dirty||s.status==='changes'?badge('Unpublished changes','warning',{icon:'refresh-cw'}):s.status==='failed'?badge('Publish failed','error',{icon:'cloud-alert'}):badge('Published','success',{icon:'cloud-check'});
+const statusKey=s=>s.dirty||s.status==='changes'?'changes':s.status;
+
+const shell=(active,inner)=>`<div class="stagewrap"><div class="app">
+ <aside class="host" aria-label="Unity navigation (host chrome, out of scope)"><span class="logo">sd</span>${['layout-dashboard','list','search'].map(i=>ic(i,'lg')).join('')}</aside>
+ <div class="crumb"><b>Home</b><span class="muted">/</span><span>DAM</span><span class="muted">/</span><span>Retail Product Imagery</span></div>
+ <nav class="damrail" data-scale="Sidebar" aria-label="DAM">${[['layout-dashboard','Dashboard'],['library','Library'],['bookmark','Collections'],['shield-check','Rights'],['download','Downloads'],['link','Shared links'],['gallery-horizontal-end','Sets']].map(([i,l])=>`<button aria-label="${l}" title="${l}" data-act="rail" data-v="${l}" ${active===l?'aria-current="page"':''}>${ic(i,'lg')}</button>`).join('')}<hr>${`<button aria-label="DAM settings" title="DAM settings" data-act="rail" data-v="Settings" ${active==='Settings'?'aria-current="page"':''}>${ic('sliders-horizontal','lg')}</button>`}</nav>
+ <main class="main" id="main">${inner}</main>
+</div></div>`;
+
+/* ---------- Sets list ---------- */
+const FG=[
+ ['quick','Show',[['mine','Created by me'],['canedit','Sets I can change']]],
+ ['source','Source',[['rule','From a rule'],['manual','Made by hand']]],
+ ['cat','Category',[['Grocery','Grocery'],['Apparel','Apparel']]],
+ ['count','Assets in set',[['0','No assets'],['1','1'],['2-4','2 to 4'],['5+','5 or more']]],
+ ['contains','Contains',[['img','Images'],['vid','Video']]],
+ ['status','Live status',[['published','Published'],['changes','Unpublished changes'],['failed','Publish failed']]]
+];
+const bucket=n=>n===0?'0':n===1?'1':n<5?'2-4':'5+';
+const test=(s,g,v)=>({quick:v==='mine'?s.by==='Priya Shah':canEdit(),source:s.src===v,cat:s.cat===v,count:bucket(s.members.length)===v,contains:v==='vid'?!!s.video:s.members.length>0,status:statusKey(s)===v}[g]);
+const filtered=()=>{let r=SETS.filter(s=>FG.every(([g])=>{const on=Object.keys(S.f).filter(k=>k.startsWith(g+':')&&S.f[k]);return !on.length||on.some(k=>test(s,g,k.split(':')[1]))}));
+  const q=S.q.trim().toLowerCase();if(q)r=r.filter(s=>(s.name+' '+s.code+' '+s.id).toLowerCase().includes(q));
+  if(S.sort==='name')r=[...r].sort((a,b)=>a.name.localeCompare(b.name));if(S.sort==='size')r=[...r].sort((a,b)=>b.members.length-a.members.length);return r};
+const countFor=(g,v)=>SETS.filter(s=>test(s,g,v)).length;
+const FAKE_TOTAL={Grocery:183402,Apparel:64910};
+const cardHTML=s=>{const a=A[s.members[0]];return `<button class="setcard" data-scale="LocalSetCard" data-act="openset" data-id="${s.id}" aria-label="${esc(s.name)}, ${s.members.length} assets">
+ <div class="cover">${a?artOf(a)+`<span class="ftype">${a.type}</span>`:`<div class="empty-state" data-size="panel" style="position:absolute;inset:0;align-content:center"><div class="icon">${ic('image','lg')}</div><p>No assets yet</p></div>`}<span class="countpill">${ic('gallery-horizontal-end')}${s.members.length}</span></div>
+ <div class="cmeta"><span class="name">${esc(s.name)}</span><span class="sub"><span class="mono">${esc(s.code)}</span></span>${statusKey(s)!=='published'?`<div class="sub">${statusBadge(s)}</div>`:''}</div></button>`};
+const listRow=s=>{const a=A[s.members[0]];return `<tr data-act="openset" data-id="${s.id}" tabindex="0"><td><div class="tthumb">${a?artOf(a):''}</div></td><td><b>${esc(s.name)}</b></td><td class="mono">${esc(s.code)}</td><td style="text-align:right">${s.members.length}</td><td>${s.src==='rule'?'Rule':'By hand'}</td><td>${statusBadge(s)}</td><td class="muted" style="white-space:nowrap">${s.changed}</td></tr>`};
+const setsView=()=>{
+ const r=filtered();const activeF=Object.keys(S.f).filter(k=>S.f[k]);
+ const fpanel=`<aside class="filters" data-scale="PlannedFilterPanel" aria-label="Filters"><div class="fh"><b>Filters</b>${activeF.length?`<button class="linkbtn" data-act="clearf">Clear all</button>`:''}</div>
+ ${FG.filter(([g])=>g!=='quick'||canEdit()||true).map(([g,t,opts])=>`<div class="fgroup" data-open="${!!S.open[g]}"><button data-act="fold" data-g="${g}" aria-expanded="${!!S.open[g]}"><span class="tri" data-scale="DisclosureTriangle"></span>${t}</button><div class="opts">${opts.filter(([v])=>!(g==='quick'&&v==='canedit'&&!canEdit())).map(([v,l])=>`<label class="sd-checkbox" data-scale="Checkbox" data-size="1"><span><input type="checkbox" data-act="filt" data-k="${g}:${v}" ${S.f[g+':'+v]?'checked':''}>${l}</span><span class="count">${countFor(g,v)}</span></label>`).join('')}</div></div>`).join('')}
+ <div class="fgroup" data-open="${!!S.open.date}"><button data-act="fold" data-g="date" aria-expanded="${!!S.open.date}"><span class="tri"></span>Last changed</button><div class="opts"><div class="daterow"><input type="date" aria-label="From"><input type="date" aria-label="To"></div></div></div></aside>`;
+ let body='';
+ if(S.list==='loading')body=`<div class="cards">${[...Array(8)].map(()=>`<div class="setcard" aria-hidden="true"><div class="cover skel"></div><div class="cmeta"><div class="skel" style="height:14px;width:70%"></div><div class="skel" style="height:12px;width:50%"></div></div></div>`).join('')}</div>`;
+ else if(S.list==='error')body=`<div class="empty-state" data-scale="EmptyState" data-tone="error" data-size="page"><div class="icon">${ic('triangle-alert','lg')}</div><h3>Couldn't load sets</h3><p>Something went wrong on our side. Your sets haven't changed.</p><div class="actions">${btn('secondary','Try again','retry',{icon:'rotate-ccw'})}</div></div>`;
+ else if(S.list==='empty')body=`<div class="empty-state" data-scale="EmptyState" data-size="page"><div class="icon">${ic('gallery-horizontal-end','lg')}</div><h3>No sets in this folder yet</h3><p>Sets group related assets, such as every shot of one product. Set up a rule and they build themselves as assets are uploaded.</p><div class="actions">${canEdit()?btn('secondary','Set up a rule','gosettings',{icon:'settings-2'}):''}</div></div>`;
+ else if(!r.length)body=`<div class="empty-state" data-scale="EmptyState" data-size="page"><div class="icon">${ic('search','lg')}</div><h3>No sets match</h3><p>Check the GTIN or style code, or clear some filters.</p><div class="actions">${btn('tertiary','Clear search and filters','clearall')}</div></div>`;
+ else body=(S.layout==='grid'?`<div class="cards">${r.map(cardHTML).join('')}</div>`:`<div class="grid" data-scale="Grid"><div style="overflow-x:auto"><table><thead><tr><th></th><th>Name</th><th>GTIN or code</th><th style="text-align:right">Assets</th><th>Source</th><th>Live status</th><th>Last changed</th></tr></thead><tbody>${r.map(listRow).join('')}</tbody></table></div></div>`)+
+  `<div class="pager" data-scale="PlannedPagination"><span>Showing 1 to ${r.length} of ${S.q||activeF.length?r.length:'248,312'} sets</span><div class="pg">${ibtn('chevron-left','Previous page','noop',{tier:'tertiary',disabled:true})}${ibtn('chevron-right','Next page','noop',{tier:'tertiary',disabled:!!(S.q||activeF.length)})}</div></div>`;
+ const total=S.list==='ok'?'248,312':'0';
+ return `<div class="page">${fpanel}<section class="content">
+ <div class="phead"><div><h1>${ic('gallery-horizontal-end','lg')}Sets ${S.list==='ok'?badge(total):''}</h1><p>Groups of related assets, kept in order and published together. Built by the rule in ${canEdit()?'<button class="linkbtn" data-act="gosettings" style="font-size:inherit;padding:0">DAM settings</button>':'DAM settings'}, or by hand from the library.</p></div>
+ <div class="right"><div class="viewtoggle" data-scale="ViewToggle" role="group" aria-label="View"><button aria-pressed="${S.layout==='grid'}" aria-label="Grid" data-act="layout" data-v="grid">${ic('layout-grid')}</button><button aria-pressed="${S.layout==='list'}" aria-label="List" data-act="layout" data-v="list">${ic('list')}</button></div></div></div>
+ <div class="toolbar"><label class="sd-text-field" data-scale="TextField" data-size="2">${ic('search')}<span class="sr">Search sets</span><input id="q" type="search" placeholder="Search by GTIN, style code, set ID or name" value="${esc(S.q)}" data-act="search"></label>
+ <select class="sd-select" data-scale="Select" data-size="2" aria-label="Sort" id="sort" data-act="sort"><option value="changed" ${S.sort==='changed'?'selected':''}>Recently changed</option><option value="name" ${S.sort==='name'?'selected':''}>Name A to Z</option><option value="size" ${S.sort==='size'?'selected':''}>Most assets</option></select></div>
+ <div class="chips">${activeF.map(k=>{const [g,v]=k.split(':');const lab=FG.find(x=>x[0]===g)[2].find(x=>x[0]===v)[1];return `<button class="chip" data-act="unfilt" data-k="${k}" aria-label="Remove filter ${lab}">${lab}${ic('x')}</button>`}).join('')}</div>
+ ${body}</section></div>`};
+
+/* ---------- Set detail ---------- */
+const detailView=()=>{
+ const s=setById(S.set)||SETS[0];const ed=canEdit();const p=s;
+ const host='https://cdn.example-retail.com/sets/';
+ const rows=s.members.map((id,i)=>{const a=A[id];return `<div class="mrow" data-row="${i}" ${ed?'draggable="true"':''}>
+  ${ed?`<button class="grip" aria-label="Reorder ${esc(a.file)}. Use arrow keys to move." data-act="grip" data-i="${i}">${ic('grip-vertical')}</button>`:'<span></span>'}
+  <span class="pos">${i+1}</span>
+  <button class="thumb" data-act="openlb" data-id="${id}" aria-label="Open ${esc(a.file)} in lightbox">${artOf(a)}</button>
+  <div class="fname"><span class="f">${esc(a.file)}</span><span class="tags">${i===0?badge('Cover','',{color:'primary'}):''}${a.type==='MP4'?badge('Video','',{icon:'film'}):''}${a.pinned?badge('Added by hand','',{icon:'pencil'}):''}</span></div>
+  ${ed?`<label class="sd-text-field" data-scale="TextField" data-size="1"><span class="sr">Label for ${esc(a.file)}</span><input value="${esc(a.label)}" placeholder="Label" data-act="label" data-id="${id}">${a.auto&&!a.pinned?`<span title="Read from the filename by the rule" style="font-size:var(--font-size-0);white-space:nowrap">Auto</span>`:''}</label>`:`<span>${a.label?badge(a.label):'<span class="muted">No label</span>'}</span>`}
+  <div class="racts">${ibtn('external-link','Open in lightbox','openlb',{data:`data-id="${id}"`})}${ed?ibtn('x','Remove from set','remove',{data:`data-i="${i}"`}):''}</div></div>`}).join('');
+ const dirty=s.dirty;const failed=s.status==='failed'&&!dirty;
+ const callout=dirty?`<div class="sd-callout" data-scale="Callout" data-status="warning" style="margin-bottom:var(--space-4)">${ic('refresh-cw')}<div class="body"><b>Unpublished changes.</b> The live site still shows the last published order. Publishing updates it and clears the CDN cache for this set.</div></div>`
+  :failed?`<div class="sd-callout" data-scale="Callout" data-status="error" style="margin-bottom:var(--space-4)">${ic('cloud-alert')}<div class="body"><b>Publish failed on 18 Nov, 09:12.</b> The live site still shows the version before that. Nothing was lost.</div>${ed?`<div class="act">${btn('secondary','Try again','publish',{size:1})}</div>`:''}</div>`:'';
+ const urls=[['Set',host+s.code+'.json'],['Cover',host+s.code+'/cover.jpg'],...s.members.filter(id=>A[id].label).map(id=>[A[id].label,host+s.code+'/'+A[id].label+(A[id].type==='MP4'?'.mp4':'.jpg')])];
+ return `<div class="detail"><section class="dmain">
+ <div class="dhead"><div>${btn('tertiary','Sets','gosets',{icon:'arrow-left',size:1})}
+  <h1>${esc(s.name)}</h1><div class="meta"><span class="mono">${esc(s.code)}</span><span>·</span><span>${s.members.length} asset${s.members.length===1?'':'s'}</span><span>·</span><span>${s.src==='rule'?'Built by rule':'Made by hand'}</span><span>·</span>${statusBadge(s)}</div></div>
+  <div class="right">${ed?btn('secondary','Add assets','addassets',{icon:'plus'})+btn('primary',S.publishing?'Publishing…':'Publish changes','publish',{icon:S.publishing?'loader-circle':'upload',disabled:!dirty||S.publishing}):btn('tertiary','Copy set link','copy',{icon:'copy',data:`data-url="${host+s.code}.json"`})}
+  ${ibtn('ellipsis','More actions','menu',{tier:'tertiary'})}
+  ${S.menu?`<div class="menu" data-scale="DropdownMenu" role="menu"><button role="menuitem" data-act="copy" data-url="${esc(s.code)}">${ic('copy')}Copy set ID</button><button role="menuitem" data-act="openlb" data-id="${s.members[0]||''}">${ic('library')}Open cover in lightbox</button>${ed?`<hr><button role="menuitem" class="danger" data-act="askdelete">${ic('trash-2')}Delete set</button>`:''}</div>`:''}</div></div>
+ ${callout}
+ ${ed?'':`<div class="sd-callout" data-scale="Callout" data-status="info" style="margin-bottom:var(--space-4)">${ic('info')}<div class="body">You can view this set and copy its links. Ask a set editor to change it.</div></div>`}
+ ${s.members.length?`<p class="hint">${ed?'Drag to reorder, or focus a handle and use the arrow keys. Position 1 is the cover.':'Position 1 is the cover.'}</p><div class="rows" id="rows">${rows}</div>`
+  :`<div class="empty-state" data-scale="EmptyState" data-size="panel"><div class="icon">${ic('image','lg')}</div><h3>No assets in this set</h3><p>${ed?'Add assets here, or select them in the library and choose Add to set.':'Nothing has been added yet.'}</p>${ed?`<div class="actions">${btn('secondary','Add assets','addassets',{icon:'plus'})}</div>`:''}</div>`}
+ ${s.excluded.length?`<div class="excl"><h3>Removed by hand (${s.excluded.length})</h3><p class="note" style="margin-top:0">The rule won't add these back. Restore one to put it at the end of the set.</p>${s.excluded.map(id=>`<div class="urlrow"><div class="tthumb">${artOf(A[id])}</div><span>${esc(A[id].file)}</span>${ed?btn('ghost','Restore','restore',{size:1,data:`data-id="${id}"`}):''}</div>`).join('')}</div>`:''}
+ </section>
+ <aside class="props" aria-label="Set properties"><h2>Properties</h2>
+ <div class="field-list">
+  ${ed?`<div class="fe" data-scale="FormElement"><label for="sname">Name</label><label class="sd-text-field" data-scale="TextField" data-size="2"><input id="sname" value="${esc(s.name)}" data-act="rename"></label></div>`:`<div class="field-row" data-scale="FieldRow"><span class="label">Name</span><span class="value">${esc(s.name)}</span></div>`}
+  <div class="field-row" data-scale="FieldRow"><span class="label">Set ID</span><span class="value"><span class="mono">${esc(s.code)}</span>${ic('lock')}</span><span class="note" style="margin:0">Fixed once created. Live links use it.</span></div>
+  <div class="field-row" data-scale="FieldRow"><span class="label">${s.cat==='Apparel'?'Style code':'GTIN'}</span><span class="value mono">${s.src==='rule'?esc(s.code):'None'}</span></div>
+  <div class="field-row" data-scale="FieldRow"><span class="label">Category</span><span class="value">${s.cat}</span></div>
+  <div class="field-row" data-scale="FieldRow"><span class="label">Built by</span><span class="value">${s.src==='rule'?`Rule: group by ${s.cat==='Apparel'?'style code':'GTIN'}, label from filename`:'Hand, by '+s.by}</span></div>
+  <div class="field-row" data-scale="FieldRow"><span class="label">Last changed</span><span class="value">${s.changed}${s.byYou?' by you':s.src==='rule'?' by rule':' by '+s.by}</span></div>
+ </div>
+ <h3>${ic('globe')}Live delivery</h3>
+ <div class="field-list" style="gap:var(--space-3)"><div class="field-row" data-scale="FieldRow"><span class="label">Status</span><span class="value">${statusBadge(s)}</span></div>
+ <div class="field-row" data-scale="FieldRow"><span class="label">Last published</span><span class="value">${s.published}</span></div></div>
+ <div style="margin-top:var(--space-3)">${urls.map(([l,u])=>`<div class="urlrow"><span class="lab">${esc(l)}</span><span class="mono">${esc(u)}</span>${ibtn('copy','Copy '+l+' URL','copy',{size:1,data:`data-url="${esc(u)}"`})}</div>`).join('')}</div>
+ <p class="note">Asset URLs use the label, so reordering never changes which image a live URL serves. Only the cover URL follows position 1.</p>
+ </aside></div>`};
+
+/* ---------- Lightbox ---------- */
+const LB_TABS=[['details','file-text','Details'],['attributes','tags','Attributes'],['similar','equal-approximately','Similar'],['related','gallery-horizontal-end','Set'],['rights','shield-check','Rights'],['download','download','Download']];
+const similarFor=a=>{const pool=['x4','x5','x1','s2-0','s6-0','x3'].filter(id=>id!==a.id&&A[id]);return pool.slice(0,6).map((id,i)=>[id,[94,91,88,84,79,76][i]])};
+const lbView=()=>{
+ const L=S.lb;const a=A[L.id];const p=prodOf(a);const set=a.set?setById(a.set):null;
+ const origin=L.origin&&L.origin!==L.id?A[L.origin]:null;
+ const facts=`${a.type} · ${a.dim} · ${a.size}`;
+ let panel='';
+ if(L.tab==='related'){
+  if(!set||!set.members.length)panel=`<div class="ph"><h2>Set</h2></div><div class="empty-state" data-scale="EmptyState" data-size="panel"><div class="icon">${ic('gallery-horizontal-end','lg')}</div><h3>Not in a set</h3><p>This asset isn't grouped with any others. Its filename doesn't match the folder's rule.</p>${canEdit()?`<div class="actions">${btn('tertiary','Add to a set','noop',{icon:'list-plus',size:1})}</div>`:''}</div>`;
+  else panel=`<div class="ph"><h2>Set</h2>${btn('ghost','Open in Sets','gosetfromlb',{size:1,data:`data-id="${set.id}"`})}</div>
+  <p class="note" style="margin-top:0">In set <b style="color:var(--text-default)">${esc(set.name)}</b>, ${set.src==='rule'?`grouped by ${set.cat==='Apparel'?'style code':'GTIN'} <span class="mono">${esc(set.code)}</span>`:'made by hand'}.</p>
+  <div class="relgrid">${set.members.map((id,i)=>{const m=A[id];return `<button class="rel" data-act="lbgo" data-id="${id}" data-via="related" ${id===L.id?'aria-current="true"':''} aria-label="${id===L.id?'Viewing ':'Open '}${esc(m.file)}"><div class="cover">${artOf(m)}${m.type==='MP4'?'<span class="ftype">MP4</span>':''}</div><div class="rm"><span>${m.label?badge(m.label):'#'+(i+1)}</span><span class="muted">${id===L.id?'Viewing':i===0?'Cover':''}</span></div></button>`}).join('')}</div>`;
+ } else if(L.tab==='similar'){
+  panel=`<div class="ph"><h2>Similar</h2></div><p class="note" style="margin-top:0">Found by visual similarity. Opening one switches the lightbox to it.</p><div class="relgrid">${similarFor(a).map(([id,pc])=>`<button class="rel" data-act="lbgo" data-id="${id}" data-via="similar" aria-label="Open ${esc(A[id].file)}, ${pc}% match"><div class="cover">${artOf(A[id])}${A[id].type==='MP4'?'<span class="ftype">MP4</span>':''}</div><div class="rm"><span>${esc(A[id].file)}</span>${badge(pc+'%','',{icon:'equal-approximately'})}</div></button>`).join('')}</div>`;
+ } else if(L.tab==='details'){
+  panel=`<div class="ph"><h2>Details</h2></div><div class="field-list" style="margin-top:var(--space-4)">${[['Original filename',a.file],['Asset type',a.type==='MP4'?'Video':'Image'],['Dimensions',a.dim],['File size',a.size],['Uploaded by','Rule import'],['Upload date','14 Nov 2026'],[p.cat==='Apparel'?'Style code':'GTIN',set&&set.src==='rule'?set.code:'None'],['Set',set?set.name+(a.label?' ('+a.label+')':''):'Not in a set']].map(([l,v])=>`<div class="field-row" data-scale="FieldRow"><span class="label">${l}</span><span class="value">${esc(v)}</span></div>`).join('')}</div>`;
+ } else if(L.tab==='attributes'){
+  panel=`<div class="ph"><h2>Attributes</h2></div><div class="field-list" style="margin-top:var(--space-4)"><div class="field-row" data-scale="FieldRow"><span class="label">Category</span><span class="value">${p.cat||'Grocery'}</span></div><div class="field-row" data-scale="FieldRow"><span class="label">Tags</span><span class="value tagchips">${['Packshot','Front of pack','White background'].map(t=>badge(t)).join('')}</span></div></div>`;
+ } else if(L.tab==='rights'){
+  panel=`<div class="ph"><h2>Rights</h2></div><div class="field-list" style="margin-top:var(--space-4)"><div class="field-row" data-scale="FieldRow"><span class="label">Licence</span><span class="value">Owned</span></div><div class="field-row" data-scale="FieldRow"><span class="label">Territory</span><span class="value">Global</span></div><div class="field-row" data-scale="FieldRow"><span class="label">Expiry</span><span class="value">None</span></div></div>`;
+ } else panel=`<div class="ph"><h2>Download</h2></div><div class="fe" style="margin-top:var(--space-4)"><label for="dlfmt" class="lbl">Format</label><select id="dlfmt" class="sd-select" data-scale="Select" data-size="2"><option>Original ${a.type}</option><option>Web JPG, 1200 px</option></select></div><p class="note">Downloads ${esc(a.file)}.</p>`;
+ const viaWord=L.via==='similar'?'a similar asset':'another asset in this set';
+ return `<div class="lb" role="dialog" aria-label="Lightbox: ${esc(a.file)}">
+ <div class="lbtop"><div class="nav">${ibtn('chevron-left','Previous asset','noop')}${ibtn('chevron-right','Next asset','noop')}<span class="counter">12 of 48</span></div>
+ <div class="title"><b>${esc(a.file)}</b><span>${facts}</span></div>
+ <div class="acts">${btn('secondary','Add to queue','queue',{icon:'list-plus'})}${btn('primary','Download','download',{icon:'download'})}${ibtn('ellipsis','More actions','noop')}${ibtn('x','Close lightbox','closelb')}</div></div>
+ ${origin?`<div class="banner" role="status">${ic('info')}<span>Viewing ${viaWord}. Actions now apply to <b>${esc(a.file)}</b>.</span>${btn('tertiary','Back to '+esc(origin.file),'lbback',{icon:'undo-2',size:1})}</div>`:'<div></div>'}
+ <div class="lbbody"><div class="lbstage"><div class="art">${artOf(a)}</div></div>
+ <div class="lbpanel" role="tabpanel">${panel}</div>
+ <div class="lbrail" data-scale="TabbedPanel" data-orientation="vertical" data-rail-position="end" data-icon-only="true" role="tablist" aria-orientation="vertical">${LB_TABS.map(([k,i,l])=>`<button role="tab" aria-label="${l}" title="${l}" aria-selected="${L.tab===k}" data-act="lbtab" data-v="${k}">${ic(i,'lg')}${k==='related'?'<span class="new" aria-hidden="true"></span>':''}</button>`).join('')}</div></div>
+ <div class="lbfoot"><span class="kbd">← → Assets</span><span class="kbd">+ − Zoom</span><span class="kbd">0 Fit</span><span class="kbd">Esc Close</span></div></div>`};
+
+/* ---------- Settings ---------- */
+const SAMPLE=['5051234567892_T1.jpg','5051234567892_T2.jpg','5051234567892_T3.jpg','5051234001125_T1.jpg','5051234001125_T2.jpg','5051234022786_T4.jpg','AP-114502-NVY_A.jpg','cornflakes_breakfast_lifestyle.jpg','5051234008717-T2.jpg'];
+const GB={gtin:['GTIN',{n:'183,402',med:'3',max:'6',dist:[['1 asset',18],['2 to 4',71],['5 to 9',11],['10 or more',0]]},'Text, single value'],style:['Style code',{n:'64,910',med:'3',max:'5',dist:[['1 asset',9],['2 to 4',84],['5 to 9',7],['10 or more',0]]},'Text, single value'],shoot:['Shoot ID',{n:'2,140',med:'38',max:'412',dist:[['1 asset',2],['2 to 4',6],['5 to 9',14],['10 or more',78]]},'Text, single value'],campaign:['Campaign',{n:'61',med:'880',max:'12,406',dist:[['1 asset',0],['2 to 4',0],['5 to 9',2],['10 or more',98]]},'Single select'],brand:['Brand',{n:'14',med:'9,320',max:'61,002',dist:[['1 asset',0],['2 to 4',0],['5 to 9',0],['10 or more',100]]},'Single select']};
+const NOGROUP=[['Colour','Multi-select: one asset could land in many sets'],['Tags','Multi-value and free-form'],['Description','Free text: values never match exactly']];
+const ATTRV={shoot:['SH-2026-1104','SH-2026-1104','SH-2026-1104','SH-2026-1107','SH-2026-1107','SH-2026-1112','SH-2026-1120',null,'SH-2026-1104'],campaign:['Breakfast 2027','Breakfast 2027','Breakfast 2027','Breakfast 2027','Breakfast 2027','Summer drinks','Spring range',null,'Christmas 2026'],brand:['Own label','Own label','Own label','Own label','Own label','Own label','Apparel own label','Own label','Own label']};
+const parse=(f,i)=>{if(ATTRV[S.rule.by]){const g=ATTRV[S.rule.by][i];const m=f.match(/_([A-Za-z0-9]+)\.\w+$/);const allowed=S.rule.allowed.split(',').map(x=>x.trim()).filter(Boolean);const l=S.rule.label==='suffix'&&m&&(!allowed.length||allowed.includes(m[1]))?m[1]:'';return g?{ok:true,g,l}:{ok:false,why:'Attribute is empty on this asset'}}
+const allowed=S.rule.allowed.split(',').map(x=>x.trim()).filter(Boolean);const m=f.match(/^([A-Za-z0-9-]+)_([A-Za-z0-9]+)\.\w+$/);if(S.rule.label!=='suffix'){const g=f.match(/^([A-Za-z0-9-]+?)[_.]/);return g&&/^\d{13}$|^AP-/.test(g[1])?{g:g[1],l:'',ok:true}:{ok:false,why:'No group value found'}}
+ if(!m)return {ok:false,why:f.includes('-T')?'Separator is a hyphen, not an underscore':'Doesn\'t follow the pattern'};
+ if(S.rule.by==='gtin'&&!/^\d{13}$/.test(m[1]))return {ok:false,why:'Group value is not a 13-digit GTIN'};if(S.rule.by==='style'&&!/^AP-/.test(m[1]))return {ok:false,why:'Group value is not a style code'};
+ if(allowed.length&&!allowed.includes(m[2]))return {ok:false,why:`Label ${m[2]} isn't in the allowed list`};return {ok:true,g:m[1],l:m[2]}};
+const settingsView=()=>{
+ const R=S.rule;const g=GB[R.by][1];const big=['campaign','shoot','brand'].includes(R.by);
+ return `<div class="settings"><nav class="snav" aria-label="DAM settings"><b>Retail Product Imagery</b>${['General','Attributes','Tags','Sets','Rights','Downloads','Access'].map(x=>`<button ${x==='Sets'?'aria-current="page"':''} data-act="noop">${x}</button>`).join('')}</nav>
+ <section class="sbody"><div class="phead"><div><h1>Sets</h1><p>Decide which assets in this folder belong together. Assets that match are grouped into sets, shown together in the lightbox and, if you choose, published to your website.</p></div></div>
+ <div class="form">
+  <label class="sd-switch" data-scale="Switch" data-size="2"><input type="checkbox" data-act="rule" data-k="on" ${R.on?'checked':''}><span><b>Build sets automatically in this folder</b></span></label>
+  <div class="fe" data-scale="FormElement"><label for="gby">Group by attribute</label><select id="gby" class="sd-select" data-scale="Select" data-size="2" data-act="rule" data-k="by"><optgroup label="Identifies one product or shoot (recommended)">${['gtin','style','shoot'].map(k=>`<option value="${k}" ${R.by===k?'selected':''}>${GB[k][0]}</option>`).join('')}</optgroup><optgroup label="Broad groupings">${['campaign','brand'].map(k=>`<option value="${k}" ${R.by===k?'selected':''}>${GB[k][0]}</option>`).join('')}</optgroup><optgroup label="Can't group by these">${NOGROUP.map(([n,w])=>`<option disabled>${n}: ${w}</option>`).join('')}</optgroup></select><span class="help">Any single-value attribute in this folder. Assets with exactly the same value become one set. ${GB[R.by][0]} is ${GB[R.by][2].toLowerCase()}.</span></div>
+  ${['gtin','style','shoot'].includes(R.by)?'':'<!--'}<div class="fe" data-scale="FormElement"><span class="lbl">Where the ${GB[R.by][0]} comes from</span><div class="radios" data-scale="RadioGroup">
+   <label><input type="radio" name="src" value="attr" data-act="rule" data-k="from" ${R.from==='attr'?'checked':''}><span>The attribute, as already filled in</span></label>
+   <label><input type="radio" name="src" value="file" data-act="rule" data-k="from" ${R.from==='file'?'checked':''}><span>The filename, saved into the attribute on upload<small>For files named by barcode. The attribute stays the one source of truth.</small></span></label></div></div>${['gtin','style','shoot'].includes(R.by)?'':'-->'}
+  <div class="fe" data-scale="FormElement"><span class="lbl">Label each asset</span><div class="radios" data-scale="RadioGroup">
+   <label><input type="radio" name="lab" value="suffix" data-act="rule" data-k="label" ${R.label==='suffix'?'checked':''}><span>From the filename<small>For example T1, T2, T3 or A, B, C at the end of the name</small></span></label>
+   <label><input type="radio" name="lab" value="attr" data-act="rule" data-k="label" ${R.label==='attr'?'checked':''}><span>From an attribute<small>Shot type, angle or similar</small></span></label>
+   <label><input type="radio" name="lab" value="none" data-act="rule" data-k="label" ${R.label==='none'?'checked':''}><span>No labels<small>Order by upload date</small></span></label></div></div>
+  ${R.label==='suffix'?`<div class="fe" data-scale="FormElement"><label for="pat">Filename pattern</label><label class="sd-text-field" data-scale="TextField" data-size="2"><input id="pat" class="mono" value="${['gtin','style','shoot'].includes(R.by)&&R.from==='file'?'{group}_{label}':'{any name}_{label}'}" readonly></label><span class="help">${['gtin','style','shoot'].includes(R.by)&&R.from==='file'?`{group} is the ${GB[R.by][0]}, `:''}{label} is the shot.</span></div>
+  <div class="fe" data-scale="FormElement"><label for="allowed">Allowed labels, in display order</label><label class="sd-text-field" data-scale="TextField" data-size="2"><input id="allowed" value="${esc(R.allowed)}" data-act="rulein" data-k="allowed"></label><span class="help">Sets are ordered by this list. Leave empty to allow any label.</span></div>`:''}
+  <label class="sd-switch" data-scale="Switch" data-size="2"><input type="checkbox" data-act="rule" data-k="publish" ${R.publish?'checked':''}><span><b>Publish sets to the CDN</b><br><small class="muted">Each set gets fixed live URLs. Changes go live when an editor publishes.</small></span></label>
+  <div class="fe" data-scale="FormElement"><span class="lbl">Apply to</span><div class="radios" data-scale="RadioGroup">
+   <label><input type="radio" name="ap" value="new" data-act="rule" data-k="apply" ${R.apply==='new'?'checked':''}><span>New uploads and edits from now on</span></label>
+   <label><input type="radio" name="ap" value="all" data-act="rule" data-k="apply" ${R.apply==='all'?'checked':''}><span>Also group existing assets<small>Runs in the background. About ${g.n} sets for this folder.</small></span></label></div></div>
+  <div class="sfoot">${btn('primary','Save rule','saverule')}${btn('tertiary','Cancel','gosets')}</div>
+ </div>
+ <div class="preview"><h3>Preview against this folder</h3>
+  ${big?`<div class="sd-callout" data-scale="Callout" data-status="warning">${ic('triangle-alert')}<div class="body"><b>Most groups would be large.</b> ${GB[R.by][0]} puts a median of ${g.med} assets in a group, up to ${g.max}. Sets work best for one product or one shoot. For browsing a whole ${GB[R.by][0].toLowerCase()}, filters do the job better.</div></div>`:''}
+  <div class="stats"><div class="stat"><b>${g.n}</b><span>sets</span></div><div class="stat"><b>${g.med}</b><span>median assets</span></div><div class="stat"><b>${g.max}</b><span>largest set</span></div></div>
+  <div class="bars" aria-label="Set sizes">${g.dist.map(([l,v])=>`<div class="bar"><span>${l}</span><span><i style="width:${Math.max(v,1)}%"></i></span><span class="v">${v}%</span></div>`).join('')}</div>
+  <div class="tablewrap"><table><thead><tr><th>Sample filename</th><th>Set</th><th>Label</th></tr></thead><tbody>${SAMPLE.map((f,i)=>{const r=parse(f,i);return `<tr><td class="mono">${esc(f)}</td>${r.ok?`<td class="mono">${esc(r.g)}</td><td>${r.l?badge(r.l):'<span class="muted">None</span>'}</td>`:`<td colspan="2" class="no">${ic('triangle-alert')} ${esc(r.why)}</td>`}</tr>`}).join('')}</tbody></table></div>
+  <p class="note">Assets that don't match stay in the library, ungrouped. They can still be added to a set by hand.</p></div>
+ </section></div>`};
+
+/* ---------- Proposal ---------- */
+const proposal=()=>`<article class="doc">
+<h1>Sets</h1>
+<p class="lede">One mechanism and one name, built for every client. A rule in DAM settings decides which assets belong together and groups them into sets. A set is managed in Sets, shown on the Set tab in the lightbox, and published to the CDN when a client needs it. The retail client's image sets are the first use, not the reason it exists.</p>
+<div class="model" role="img" aria-label="Model: rule feeds membership engine, which writes set records, read by Sets manager, lightbox Related tab and CDN delivery">
+ <div class="node"><h4>${ic('sliders-horizontal')}Rule</h4><p>DAM settings, per folder. Group by a field, label from the filename or an attribute, order, publish on or off.</p></div>
+ <div class="arrow">${ic('chevron-right','lg')}</div>
+ <div class="node"><h4>${ic('refresh-cw')}Membership engine</h4><p>Runs on upload, metadata edit and delete. Manual edits are pinned, so a rule run never undoes them.</p></div>
+ <div class="arrow">${ic('chevron-right','lg')}</div>
+ <div class="node key"><h4>${ic('gallery-horizontal-end')}Set record</h4><p>Fixed ID. Group value. Rule or hand. Ordered members, each with a label. Position 1 is the cover. Publish status.</p></div>
+ <div class="arrow">${ic('chevron-right','lg')}</div>
+ <div class="readers"><div class="node"><h4>${ic('gallery-horizontal-end')}Sets manager</h4><p>Find by GTIN, reorder, label, publish</p></div><div class="node"><h4>${ic('library')}Lightbox, Set tab</h4><p>The other assets in this asset's set</p></div><div class="node"><h4>${ic('globe')}CDN delivery</h4><p>Optional. Live URLs by label</p></div></div>
+</div>
+<div class="sim">${ic('equal-approximately')}<span><b style="color:var(--text-default)">Similar stays separate.</b> It is worked out from visual similarity, stores nothing and has no settings. It shares only the lightbox behaviour with the Set tab: open the asset, actions apply to it, Back to original (SCR-446).</span></div>
+<div class="jump">${btn('primary','Open the prototype','go',{data:'data-v="sets"',icon:'gallery-horizontal-end'})}${btn('tertiary','Set detail','go',{data:'data-v="detail"'})}${btn('tertiary','Lightbox, Set tab','go',{data:'data-v="lightbox"'})}${btn('tertiary','Rule settings','go',{data:'data-v="settings"'})}</div>
+
+<h2>One name: Sets</h2>
+<p>The Set tab in the lightbox and the Sets screen are the same thing seen from two places: one asset, or all of them. They share one name and one icon. "Related" is left free on purpose. In Bynder, Frontify and AEM Assets, related assets means links made by hand between individual assets, such as a licence file attached to an image or a PSD marked as the source of a JPG. If Screendragon adds that later, it gets that name without clashing with Sets.</p>
+<div class="tablewrap"><table><thead><tr><th>Field</th><th>What it holds</th><th>Why</th></tr></thead><tbody>
+<tr><td>Set ID</td><td>Fixed once created</td><td>Live CDN links use it. Renaming would break them.</td></tr>
+<tr><td>Group value</td><td>GTIN, style code, shoot ID, or none for a hand-made set</td><td>Lets the engine find the set when a new asset arrives</td></tr>
+<tr><td>Source</td><td>Rule or hand</td><td>Tells people and the engine who owns the membership</td></tr>
+<tr><td>Members</td><td>Ordered list of asset, label and pinned flag</td><td>Order is the display order; pinned keeps hand edits safe from rule runs</td></tr>
+<tr><td>Excluded</td><td>Assets removed by hand</td><td>The rule won't add them back</td></tr>
+<tr><td>Publish status</td><td>Published, unpublished changes, failed, with time</td><td>Saving and going live are separate steps</td></tr>
+</tbody></table></div>
+
+<h2>How the rule decides</h2>
+<ul>
+<li><b>Group by any single-value attribute</b>, not a fixed list. GTIN, style code, shoot ID, campaign and brand are all attributes already, so a hardcoded list would only be a shorter version of the same thing. Three guardrails keep it simple: one attribute per rule (no AND or OR), exact match only, and multi-value or free-text attributes can't be picked, because one asset would land in many sets.</li>
+<li><b>Preview before saving.</b> The settings screen shows group sizes for the chosen attribute. GTIN gives sets of two to four. Brand gives sets of tens of thousands, and filters already cover that, so the screen warns rather than blocks.</li>
+<li><b>Filename as a source.</b> Where the value is only in the filename (barcode naming), the rule reads it on upload and saves it into the attribute. The attribute stays the one source of truth, so search, filters and the rule all agree.</li>
+<li><b>Labels</b> come from the filename (T1, T2, T3 or A, B, C, set per folder, so the apparel brand's lettering needs no special code) or from an attribute. The allowed list sets the order.</li>
+<li><b>Runs on events</b>: upload, metadata change, delete. Turning a rule on for an existing folder runs as a background job.</li>
+<li><b>Hand edits win.</b> Removing an asset excludes it; adding one pins it. A later rule run respects both.</li>
+</ul>
+
+<h2>What changes from the current build</h2>
+<div class="cols">
+<div class="panel"><h3>Keep</h3><ul><li>Sets in the DAM rail, list and detail screens</li><li>Create set and Add to set from library selection</li><li>Drag to reorder, per-asset label, copy set ID</li><li>Search by GTIN, set ID or name</li></ul></div>
+<div class="panel"><h3>Change</h3><ul><li>Filters move to a left panel, matching Library and Collections</li><li>Card shows the cover (position 1), not a 2 × 2 grid that breaks on one-asset sets</li><li>Set ID read-only after creation</li><li>Save becomes Publish changes, with clear unpublished and failed states</li><li>Properties panel with CDN URLs and copy</li><li>Add assets from inside the set</li><li>Delete moves into the More menu with a confirmation</li></ul></div>
+</div>
+
+<h2>Decisions to confirm before tickets</h2>
+<ol class="q">
+<li><b>Can an asset sit in more than one set?</b> <span class="reco">Recommend: one rule-built set per asset per folder, any number of hand-made sets. The Set tab shows the rule-built set first.</span></li>
+<li><b>Live URLs by label or by position?</b> <span class="reco">Recommend label. Reordering then can't change what a live URL serves. Only the cover URL follows position 1.</span></li>
+<li><b>What happens when an asset's GTIN changes?</b> <span class="reco">Recommend: it moves to the new set and leaves an entry in the old set's audit trail. If it was pinned, it stays and the set is flagged.</span></li>
+<li><b>Bulk edits inside a set.</b> <span class="reco">Hold until the retail client gives a use case. Removing many assets from a live set is the risk.</span></li>
+<li><b>Copy link permission.</b> <span class="reco">Follows the existing rule: Copy link follows Download.</span></li>
+<li><b>Name.</b> <span class="reco">Sets, everywhere: rail, lightbox tab, settings. Image sets is another vendor's term and sets can hold video; Related is kept for manual links between assets.</span></li>
+</ol>
+
+<h2>Tickets this becomes</h2>
+<div class="tablewrap"><table><thead><tr><th>Ticket</th><th>Scope</th></tr></thead><tbody>
+<tr><td class="mono">SCR-446</td><td>Similar assets: open in lightbox. Created, cycle 14.</td></tr>
+<tr><td>Relationship rules and membership engine</td><td>Settings screen, rule model, event handling, pinning, backfill job</td></tr>
+<tr><td>Sets manager</td><td>List with filter panel, detail with properties and CDN panel, add assets, publish</td></tr>
+<tr><td>Set tab in the lightbox</td><td>New rail destination, reuses the SCR-446 context switch</td></tr>
+</tbody></table></div>
+
+<h2>Scale notes for the build</h2>
+<ul>
+<li><b>Built:</b> Button, IconButton, TextField, FormElement, Select, Checkbox, RadioGroup, Switch, Badge, Callout, Toast, EmptyState, FieldRow, ViewToggle, TabbedPanel (lightbox rail), Sidebar (DAM rail), DropdownMenu, AlertDialog, Dialog, DisclosureTriangle, Grid.</li>
+<li><b>Planned:</b> PlannedFilterPanel (sets list), PlannedPagination, PlannedAssetCard pattern for the Related grid.</li>
+<li><b>Local:</b> LocalSetCard, because the Collection Card's mosaic is wrong for sets of one; a cover, a count pill, name and GTIN, and a badge only when the set needs attention (unpublished changes or a failed publish). The lightbox context banner reuses the lightbox status banner.</li>
+<li><b>Icon:</b> Lucide <span class="mono">gallery-horizontal-end</span> for Sets in the DAM rail and for the Set tab in the lightbox, so the two read as one thing. <span class="mono">layers</span> stays with artboards.</li>
+<li><b>Design contract change:</b> Set is a new lightbox rail destination after Similar. The lightbox contract lists the rail set, so the contract needs updating with this.</li>
+</ul>
+<p class="note">All product names, GTINs, people and URLs on this page are sample content.</p>
+</article>`;
+
+/* ---------- Modal ---------- */
+const modalHTML=()=>{
+ if(!S.dlg)return '';const s=setById(S.set);
+ if(S.dlg.kind==='delete')return `<div class="scrim"><div class="dialog" data-scale="AlertDialog" data-size="2" role="alertdialog" aria-modal="true" aria-labelledby="dt"><header><h2 id="dt">Delete ${esc(s.name)}?</h2></header><div class="dbody"><p>Its live links stop working. The assets stay in the library.${s.src==='rule'?' The rule won\'t recreate this set.':''}</p></div><footer>${btn('tertiary','Cancel','closedlg')}${btn('destructive','Delete set','dodelete',{icon:'trash-2'})}</footer></div></div>`;
+ const q=(S.dlg.q||'').toLowerCase();const pool=Object.values(A).filter(a=>!s.members.includes(a.id)&&(a.loose||a.set!==s.id)).filter(a=>!q||a.file.toLowerCase().includes(q)).slice(0,8);const sel=S.dlg.sel||[];
+ return `<div class="scrim"><div class="dialog" data-scale="Dialog" data-size="3" role="dialog" aria-modal="true" aria-labelledby="at"><header><h2 id="at">Add assets to ${esc(s.name)}</h2><p class="note">Assets added here are pinned: the rule won't remove them.</p></header>
+ <div class="dbody"><label class="sd-text-field" data-scale="TextField" data-size="2" style="margin-bottom:var(--space-3)">${ic('search')}<span class="sr">Search library</span><input id="dq" placeholder="Search the library" value="${esc(S.dlg.q||'')}" data-act="dq"></label>
+ ${pool.length?pool.map(a=>`<label class="urlrow sd-checkbox" data-scale="Checkbox" style="grid-template-columns:auto auto minmax(0,1fr)"><input type="checkbox" data-act="pick" data-id="${a.id}" ${sel.includes(a.id)?'checked':''}><div class="tthumb">${artOf(a)}</div><span>${esc(a.file)}${a.set?`<br><small class="muted">In ${esc(setById(a.set).name)}</small>`:''}</span></label>`).join(''):`<div class="empty-state" data-scale="EmptyState" data-size="panel"><p>No assets match.</p></div>`}</div>
+ <footer>${btn('tertiary','Cancel','closedlg')}${btn('primary',sel.length?`Add ${sel.length} asset${sel.length>1?'s':''}`:'Add assets','doadd',{disabled:!sel.length})}</footer></div></div>`};
+
+/* ---------- Render ---------- */
+const root=document.getElementById('root');
+const render=()=>{
+ document.documentElement.toggleAttribute('data-theme',!!S.theme);if(S.theme)document.documentElement.dataset.theme=S.theme;
+ syncTbar();
+ const th=document.getElementById('tbar').offsetHeight;document.documentElement.style.setProperty('--local-tbar-h',th+'px');
+ if(S.view==='proposal'){root.innerHTML=proposal();}
+ else{
+  const v=S.view==='lightbox'?S.under||'sets':S.view;
+  const inner=v==='sets'?setsView():v==='detail'?detailView():settingsView();
+  root.innerHTML=shell(v==='settings'?'Settings':'Sets',inner+(S.view==='lightbox'?lbView():''));}
+ document.getElementById('modal').innerHTML=modalHTML();
+};
+const go=v=>{S.menu=false;if(v==='lightbox'){if(!S.lb)S.lb={id:'s1-0',origin:null,via:null,tab:'related'};S.under=S.under||'detail'}S.view=v;render();root.scrollTop=0};
+const openLb=(id,under)=>{S.lb={id,origin:null,via:null,tab:'related'};S.under=under;S.view='lightbox';S.menu=false;render()};
+const markDirty=s=>{s.dirty=true;s.changed='Just now';s.byYou=true};
+
+document.addEventListener('click',e=>{
+ const t=e.target.closest('[data-tkey],[data-act]');if(!t){if(S.menu){S.menu=false;render()}return}
+ if(t.dataset.tkey){const k=t.dataset.tkey,v=t.dataset.tval;if(k==='view')go(v);else{if(k==='pub')S.pubFail=v==='fail';else S[k]=v;if(k==='list'&&S.view!=='sets')S.view='sets';render()}return}
+ const a=t.dataset.act,s=setById(S.set);
+ if(['filt','rule','pick'].includes(a)&&t.tagName==='INPUT')return;
+ switch(a){
+  case 'go':go(t.dataset.v);break;
+  case 'rail':if(t.dataset.v==='Sets')go('sets');else if(t.dataset.v==='Settings')go('settings');else toast(`${t.dataset.v} isn't part of this prototype`,'info');break;
+  case 'fold':S.open[t.dataset.g]=!S.open[t.dataset.g];render();break;
+  case 'unfilt':S.f[t.dataset.k]=false;render();break;
+  case 'clearf':S.f={};render();break;
+  case 'clearall':S.f={};S.q='';render();break;
+  case 'layout':S.layout=t.dataset.v;render();break;
+  case 'openset':S.set=t.dataset.id;go('detail');break;
+  case 'gosets':go('sets');break;
+  case 'gosettings':go('settings');break;
+  case 'retry':S.list='loading';render();setTimeout(()=>{S.list='ok';render()},900);break;
+  case 'menu':S.menu=!S.menu;render();break;
+  case 'openlb':if(t.dataset.id)openLb(t.dataset.id,'detail');break;
+  case 'closelb':S.view=S.under||'sets';S.lb=null;render();break;
+  case 'lbtab':S.lb.tab=t.dataset.v;render();break;
+  case 'lbgo':if(t.dataset.id===S.lb.id)break;S.lb.origin=S.lb.origin||S.lb.id;S.lb.via=t.dataset.via;S.lb.id=t.dataset.id;if(S.lb.id===S.lb.origin){S.lb.origin=null}render();break;
+  case 'lbback':S.lb.id=S.lb.origin;S.lb.origin=null;S.lb.via=null;render();break;
+  case 'gosetfromlb':S.set=t.dataset.id;S.lb=null;go('detail');break;
+  case 'download':toast(`Downloading ${A[S.lb.id].file}`,'info');break;
+  case 'queue':toast(`${A[S.lb.id].file} added to your download queue`);break;
+  case 'copy':(navigator.clipboard?navigator.clipboard.writeText(t.dataset.url).catch(()=>{}):0);S.menu=false;toast('Copied to clipboard');render();break;
+  case 'remove':{const id=s.members.splice(+t.dataset.i,1)[0];if(!A[id].pinned&&s.src==='rule')s.excluded.push(id);markDirty(s);render();break}
+  case 'restore':s.excluded=s.excluded.filter(x=>x!==t.dataset.id);s.members.push(t.dataset.id);markDirty(s);render();break;
+  case 'publish':S.publishing=true;render();setTimeout(()=>{S.publishing=false;if(S.pubFail){s.status='failed';s.dirty=false;toast('Publish failed. The live site still shows the previous version.','error')}else{s.status='published';s.dirty=false;s.published='Just now';toast(`Published. CDN cache cleared for ${s.members.length+2} URLs.`)}render()},1100);break;
+  case 'askdelete':S.menu=false;S.dlg={kind:'delete'};render();break;
+  case 'dodelete':SETS=SETS.filter(x=>x.id!==s.id);S.dlg=null;toast(`${s.name} deleted`);go('sets');break;
+  case 'addassets':S.dlg={kind:'add',sel:[],q:''};render();break;
+  case 'closedlg':S.dlg=null;render();break;
+  case 'doadd':S.dlg.sel.forEach(id=>{A[id].pinned=true;s.members.push(id)});markDirty(s);toast(`${S.dlg.sel.length} added to ${s.name}`);S.dlg=null;render();break;
+  case 'saverule':toast(S.rule.apply==='all'?`Rule saved. Grouping existing assets in the background, about ${GB[S.rule.by][1].n} sets.`:'Rule saved. New uploads will be grouped.');break;
+  case 'noop':break;
+ }
+});
+document.addEventListener('change',e=>{const t=e.target,a=t.dataset.act;if(!a)return;
+ if(a==='filt'){S.f[t.dataset.k]=t.checked;render()}
+ else if(a==='sort'){S.sort=t.value;render()}
+ else if(a==='rule'){S.rule[t.dataset.k]=t.type==='checkbox'?t.checked:t.value;render()}
+ else if(a==='pick'){const sel=S.dlg.sel;const i=sel.indexOf(t.dataset.id);i<0?sel.push(t.dataset.id):sel.splice(i,1);render()}
+ else if(a==='label'){A[t.dataset.id].label=t.value;A[t.dataset.id].auto=false;markDirty(setById(S.set));render()}
+ else if(a==='rename'){const s=setById(S.set);s.name=t.value;markDirty(s);render()}
+ else if(a==='rulein'){S.rule[t.dataset.k]=t.value;render()}});
+let qt;
+document.addEventListener('input',e=>{const t=e.target;if(t.dataset.act==='search'){clearTimeout(qt);qt=setTimeout(()=>{S.q=t.value;render();const q=document.getElementById('q');q.focus();q.setSelectionRange(q.value.length,q.value.length)},180)}
+ if(t.dataset.act==='dq'){S.dlg.q=t.value;render();const q=document.getElementById('dq');q.focus();q.setSelectionRange(q.value.length,q.value.length)}});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){if(S.dlg){S.dlg=null;render()}else if(S.menu){S.menu=false;render()}else if(S.view==='lightbox'){S.view=S.under||'sets';S.lb=null;render()}}
+ const g=e.target.closest&&e.target.closest('.grip');if(g&&(e.key==='ArrowUp'||e.key==='ArrowDown')){e.preventDefault();const s=setById(S.set),i=+g.dataset.i,j=i+(e.key==='ArrowUp'?-1:1);if(j<0||j>=s.members.length)return;[s.members[i],s.members[j]]=[s.members[j],s.members[i]];markDirty(s);render();document.querySelector(`.grip[data-i="${j}"]`)?.focus()}
+ if(e.key==='Enter'&&e.target.matches('tr[data-act=openset]')){S.set=e.target.dataset.id;go('detail')}});
+let dragI=null;
+document.addEventListener('dragstart',e=>{const r=e.target.closest('.mrow');if(!r)return;dragI=+r.dataset.row;r.classList.add('drag');e.dataTransfer.effectAllowed='move'});
+document.addEventListener('dragover',e=>{const r=e.target.closest('.mrow');if(!r||dragI===null)return;e.preventDefault();document.querySelectorAll('.mrow.over').forEach(x=>x.classList.remove('over'));r.classList.add('over')});
+document.addEventListener('drop',e=>{const r=e.target.closest('.mrow');if(!r||dragI===null)return;e.preventDefault();const s=setById(S.set),to=+r.dataset.row;const [m]=s.members.splice(dragI,1);s.members.splice(to,0,m);dragI=null;if(to!==dragI)markDirty(s);render()});
+document.addEventListener('dragend',()=>{dragI=null;document.querySelectorAll('.mrow').forEach(x=>x.classList.remove('drag','over'))});
+const hv=()=>{const h=location.hash.slice(1);if(['sets','detail','lightbox','settings','proposal'].includes(h))go(h)};
+window.addEventListener('hashchange',hv);
+new ResizeObserver(()=>document.documentElement.style.setProperty('--local-tbar-h',document.getElementById('tbar').offsetHeight+'px')).observe(document.getElementById('tbar'));
+render();hv();
+}
+</script>
+</body>
+</html>
