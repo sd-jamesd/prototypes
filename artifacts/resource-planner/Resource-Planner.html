@@ -2162,8 +2162,8 @@ const ICON_MORE = '<svg width="16" height="16" viewBox="0 0 24 24" fill="current
 const ICON_X16 = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
 const ORD = n => n + (n%100>=11 && n%100<=13 ? 'th' : ({1:'st',2:'nd',3:'rd'}[n%10] || 'th'));
 function repeatOpts(v){
-  const day = F(v.start,{weekday:'long'}), dom = +F(v.start,{day:'numeric'}), cur = v.repeat || 'none';
-  return [['none','Does not repeat'],['day','Every day'],['week',`Every week on ${day}`],['month',`Every month on the ${ORD(dom)}`],['year',`Every year on ${fDM(v.start)}`]].map(([k,l]) => opt(k,l,k===cur)).join('');
+  const cur = v.repeat || 'none';
+  return [['none','Once Only'],['day','Every Day'],['week','Same Day of Week'],['month','Same Date in Month'],['year','Same Date Every Year']].map(([k,l]) => opt(k,l,k===cur)).join('');
 }
 function perDayGrid(v, p){
   const days = []; for (let d=v.start; d<=v.end && days.length<5; d++) if (isWork(d) && (!p || works(p,d))) days.push(d);
@@ -2286,7 +2286,7 @@ function drawDrawer(){
       <div class="field"><label for="f-title">Title</label><div class="withlink"><input class="input" id="f-title" value="${esc(v.title||'')}" placeholder="Task title" maxlength="60"${dis}>${DR.isNew ? '' : `<button class="btn btn-icon" type="button" data-act="dr-link" aria-label="Open task in a new tab" title="Open task">${ICON_OPEN}</button>`}</div></div>
     </section>
     <section class="bsec"><h3>When</h3>${dates}
-      <div class="whenrow"><div class="field rep"><label for="f-repeat">Repeats</label><select class="input" id="f-repeat"${dis}>${repeatOpts(v)}</select></div><div class="tgrow inline"><span class="lbl2">Set booking times</span><button class="tg" type="button" role="switch" aria-checked="${!!DR.times}" aria-label="Set booking times" data-act="dr-times"${dis}></button></div></div>
+      <div class="whenrow"><div class="field rep"><label for="f-repeat">Recurrence</label><select class="input" id="f-repeat"${dis}>${repeatOpts(v)}</select></div><div class="tgrow inline"><span class="lbl2">Set booking times</span><button class="tg" type="button" role="switch" aria-checked="${!!DR.times}" aria-label="Set booking times" data-act="dr-times"${dis}></button></div></div>
     </section>`;
     const pct = p ? Math.round(v.hpd/p.hours*100) : Math.round(v.hpd/8*100), tot = v.hpd*wdays(p, v.start, v.end);
     const billable = pr ? pr.billable : true, roleName = p ? R(p.role).name : (v.roleId ? R(v.roleId).name : '');
@@ -2313,7 +2313,7 @@ function drawDrawer(){
   if (tabs) body += '</div>';
   if (DR.comments) side = `<aside class="bcom" aria-label="Comments"><div class="bcomh"><b>Comments</b><button class="btn btn-icon btn-xs" type="button" data-act="dr-comments" aria-label="Close comments">${ICON_X16}</button></div><textarea class="input" rows="3" placeholder="Write a comment. Use @ to mention someone."></textarea><div class="bcome">No comments yet. @mentions, replies, attachments and task attachments work as built.</div></aside>`;
   const status = isB && !busy ? `<div class="seg status" role="group" aria-label="Status"><button type="button" data-act="dr-status" data-v="confirmed" aria-pressed="${!v.tentative}"${dis}>Confirmed</button><button type="button" data-act="dr-status" data-v="pencil" aria-pressed="${!!v.tentative}"${dis}>Pencil</button></div>` : '';
-  const acts = DR.ro ? '' : `${isB && !DR.isNew ? `<button class="btn btn-ghost" type="button" data-act="dr-comments" aria-pressed="${!!DR.comments}">Comments<span class="ccount">2</span></button><button class="btn btn-icon" type="button" data-act="dr-more" aria-haspopup="true" aria-label="More actions" title="Duplicate, recurrence, split, delete">${ICON_MORE}</button>` : (!isB && !DR.isNew ? '<button class="btn btn-destructive btn-xs" type="button" data-act="dr-del">Delete</button>' : '')}<button class="btn btn-primary" type="button" data-act="dr-save">${DR.isNew ? (isB ? 'Add booking' : 'Add time off') : 'Save'}</button>`;
+  const acts = DR.ro ? '' : `${isB && !DR.isNew ? `<button class="btn btn-ghost" type="button" data-act="dr-comments" aria-pressed="${!!DR.comments}">Comments<span class="ccount">2</span></button><button class="btn btn-icon" type="button" data-act="dr-more" aria-haspopup="true" aria-label="More actions" title="Duplicate, split, delete">${ICON_MORE}</button>` : (!isB && !DR.isNew ? '<button class="btn btn-destructive btn-xs" type="button" data-act="dr-del">Delete</button>' : '')}<button class="btn btn-primary" type="button" data-act="dr-save">${DR.isNew ? (isB ? 'Add booking' : 'Add time off') : 'Save'}</button>`;
   const sub = isB && !busy ? `<span class="bsw f-${pr ? pr.fam : 'new'}${v.tentative ? ' tent' : ''}" id="f-bsw" aria-hidden="true" title="How this booking shows on the planner"></span>${pr ? esc(pr.name) : 'No project yet'}${p ? ` · ${esc(p.name)}` : v.roleId ? ` · Unassigned ${esc(R(v.roleId).name)}` : ''}` : '';
   let foot;
   if (DR.confirm==='discard') foot = `<div class="msg">${ICON_WARN}<span><b>Discard your changes?</b> They haven't been saved.</span></div><button class="btn btn-ghost" data-act="dr-nodel">Keep editing</button><button class="btn btn-destructive" data-act="dr-discard">Discard</button><button class="btn btn-primary" data-act="dr-save">Save and close</button>`;
