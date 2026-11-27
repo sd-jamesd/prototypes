@@ -447,6 +447,7 @@ span.chev{display:inline-block;width:24px;flex:none}
 .bk.ro{cursor:default}
 .bk.busy{background:var(--surface-muted);border:1px solid var(--border-default);box-shadow:none;color:var(--text-muted)}
 .bk.busy:hover{background:var(--surface-emphasis)}
+.bk .pq{flex:none;font-size:10px;line-height:14px;padding:0 5px;border-radius:var(--radius-1);border:1px dashed var(--f9);color:var(--f12);font-weight:600;font-variant-numeric:tabular-nums;margin-left:4px}
 .bk .bp{flex:none;font-size:10px;line-height:14px;padding:0 5px;border-radius:var(--radius-1);border:1px solid var(--f6);font-weight:600;font-variant-numeric:tabular-nums}
 .lane.ro{cursor:not-allowed}
 .hcell.lock{border-color:var(--border-emphasis);background:var(--surface-hover);color:var(--text-muted)}
@@ -483,10 +484,11 @@ span.chev{display:inline-block;width:24px;flex:none}
 .mi .help{font-weight:400}
 .mi:hover .help,.mi:focus-visible .help{color:var(--text-muted)}
 #viewerbtn b{font-weight:600}
-@media (max-width: 1440px){ #summary{display:none} #updatedtx{display:none} .search .input{width:170px} .tx-export{display:none} .daterange{min-width:0} }
+@media (max-width: 1440px){ #updatedtx{display:none} .search .input{width:170px} .tx-export{display:none} .daterange{min-width:0} }
 @media (max-width: 1280px){ .seg.frontsw svg{display:none} .search .input{width:150px} }
 @media (max-width: 1200px){ #updated,.toolbar .vsep{display:none} }
-@media (max-width: 1200px){ #capnote{display:none} }
+.fsum{font-size:var(--font-size-1);color:var(--text-muted);white-space:nowrap}
+.protog{display:flex;align-items:center;gap:4px;margin-left:var(--space-3);padding-left:var(--space-3);border-left:1px dashed var(--border-default)}
 .notes h3{margin:var(--space-2) 0 0;font-size:var(--font-size-2);line-height:20px;font-weight:600}
 .notes ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:var(--font-size-1);line-height:18px;color:var(--text-muted);max-width:60ch}
 @media (max-width: 760px){ .seg.frontsw svg{display:none} .dpanel{width:min(430px,calc(100vw - 48px))} .drow{flex-wrap:wrap} .crumbs{flex-wrap:wrap} .crumbs .tag{display:none} #viewerbtn{margin-left:auto} }
@@ -753,8 +755,8 @@ span.chev{display:inline-block;width:24px;flex:none}
 .bill .blr:hover{color:var(--text-default)}
 .bill .blr:hover span{text-decoration-style:solid}
 .bill .blr:focus-visible{outline:2px solid var(--primary-default);outline-offset:1px;border-radius:2px}
-.bill .blr:disabled{cursor:default}
-.bill .blr:disabled span{text-decoration:none}
+.bill .blr.fixed{cursor:default}
+.bill .blr.fixed span{text-decoration:none}
 .bill.zr .blr{color:var(--warning-11);font-weight:500}
 .arow .ratew{grid-column:1/-1;display:flex;align-items:center;gap:6px;margin:6px 0 0 34px;padding:4px var(--space-2);border-radius:var(--radius-card);background:var(--warning-3);color:var(--warning-12);font-size:var(--font-size-1);line-height:16px}
 .arow .ratew svg{flex:none;width:14px;height:14px;color:var(--warning-11)}
@@ -831,7 +833,7 @@ span.chev{display:inline-block;width:24px;flex:none}
 .uv{color:var(--warning-11);font-weight:500}
 .dp .tag{height:16px;font-size:10px;padding:0 5px;margin-left:var(--space-1);vertical-align:1px}
 /* v18: Breakdown rows act, sections show totals only */
-@media (max-width:1600px){ #capnote{display:none} }
+
 .tlink{border:0;background:none;padding:0;font:inherit;color:inherit;text-align:left;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
 .tlink:hover{color:var(--primary-text);text-decoration:underline;text-underline-offset:2px}
 .wrow.sec .wc .v{font-weight:600}
@@ -881,7 +883,9 @@ span.chev{display:inline-block;width:24px;flex:none}
 .cap.big.rg-under{background:var(--warning-3);color:var(--warning-12);box-shadow:none;font-weight:500}
 .cap.big.rg-on{background:var(--success-3);color:var(--success-12);box-shadow:inset 0 0 0 1px var(--success-7);font-weight:600}
 .cap.big.rg-over{background:var(--error-3);color:var(--error-12);box-shadow:inset 0 0 0 1px var(--error-7),inset 0 3px 0 var(--error-9);font-weight:700}
-.cap.big.empty{background:none;box-shadow:inset 0 0 0 1px var(--border-subtle)}
+.cap.big.nb{background:none;box-shadow:inset 0 0 0 1px var(--border-subtle);color:var(--text-muted);font-weight:400}
+.cap.big b{font-weight:inherit}
+.cap.big i{font-style:normal;font-weight:400;font-size:var(--font-size-0)}
 .cap.sum{background:none!important;box-shadow:none!important;font-size:var(--font-size-0);font-weight:600;line-height:20px;top:9px;height:24px;color:var(--text-muted)}
 .cap.sum span{display:block;line-height:16px}
 .cap.sum::after{content:"";position:absolute;left:3px;right:3px;bottom:2px;height:4px;border-radius:2px;background:linear-gradient(90deg,var(--s9) var(--u),var(--border-subtle) var(--u))}
@@ -910,13 +914,21 @@ span.chev{display:inline-block;width:24px;flex:none}
 .bk .h.hb::after{left:50%;top:auto;bottom:3px;width:24px;height:2px;margin-left:-12px}
 .bk.vr-drag{z-index:7;box-shadow:var(--shadow-lg),inset 3px 0 0 var(--f9);transition:none}
 body.vresizing,body.vresizing *{cursor:ns-resize!important}
-.chip .cop{border:0;background:var(--primary-subtle);margin:4px 2px;padding:0 6px;font-size:var(--font-size-0);font-weight:600;letter-spacing:.03em;color:var(--primary-text);cursor:pointer;font:inherit;border-radius:var(--radius-1)}
-.chip .cop:hover{background:var(--surface-muted);color:var(--text-default)}
+.chip .cop{display:inline-flex;align-items:center;height:18px;background:var(--primary-subtle);padding:0 5px;font-size:var(--font-size-0);font-weight:600;letter-spacing:.03em;color:var(--primary-text);border-radius:var(--radius-1)}
 .chip .cop.neg{background:var(--error-3);color:var(--error-11)}
 .chip .k{display:flex;align-items:center;padding-left:10px}
 .chip .cb{padding-left:2px}
-.cjoin{height:22px;align-self:center;padding:0 6px;border:1px solid var(--border-default);border-radius:var(--radius-full);background:var(--surface-default);color:var(--text-muted);font-size:var(--font-size-0);font-weight:600;letter-spacing:.04em;cursor:pointer}
-.cjoin:hover{border-color:var(--border-emphasis);color:var(--text-default)}
+.cjoin{display:inline-flex;align-items:center;height:22px;padding:0 6px;border:1px solid var(--border-default);border-radius:var(--radius-full);background:var(--surface-default);color:var(--text-muted);font-size:var(--font-size-0);font-weight:600;letter-spacing:.04em}
+.brow.filterbar{flex-wrap:nowrap}
+#chips{display:flex;align-items:center;gap:var(--space-2);flex:0 1 auto;min-width:0;overflow:hidden}
+#chips.all{flex-wrap:wrap;overflow:visible;padding:2px 0}
+.cgrp{display:inline-flex;align-items:center;gap:var(--space-2);flex:none}
+.cgrp[hidden]{display:none}
+.cmore{flex:none;height:28px;padding:0 10px;border:1px solid var(--border-default);border-radius:var(--radius-control);background:var(--surface-default);color:var(--primary-text);font:inherit;font-size:var(--font-size-1);font-weight:600;cursor:pointer}
+.cmore:hover{border-color:var(--border-emphasis)}
+.chip .cb{display:inline-flex;align-items:center;gap:6px}
+.ed .edrow{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);margin-bottom:var(--space-2)}
+.ed .edl{font-size:var(--font-size-1);color:var(--text-muted)}
 /* Hover card: project colour carries the header; dates and allocation lead; custom fields sit in an even two-column grid */
 .float.cardx{pointer-events:auto;width:288px;max-width:288px;padding:0;overflow:hidden}
 .cardx .hch{background:var(--f3);box-shadow:inset 0 3px 0 var(--f9);padding:10px var(--space-3) var(--space-2);color:var(--f12)}
@@ -1000,7 +1012,7 @@ body.vresizing,body.vresizing *{cursor:ns-resize!important}
     <div class="brow filterbar" aria-label="View and filters">
       <button class="btn btn-secondary" data-act="view" aria-haspopup="true" aria-expanded="false" id="viewbtn"></button>
       <span class="vsep" aria-hidden="true"></span>
-      <div id="chips" style="display:contents"></div>
+      <div id="chips"></div>
       <button class="btn btn-tertiary" data-act="addfilter" aria-haspopup="true" aria-expanded="false"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Filter</button>
       <button class="btn btn-tertiary" data-act="clearfilters" id="clearbtn" hidden>Clear all</button>
       <button class="btn btn-secondary btn-xs" data-act="applyfilters" title="Re-runs the filters, as built">Apply</button>
@@ -1022,9 +1034,9 @@ body.vresizing,body.vresizing *{cursor:ns-resize!important}
       <span class="lg"><span class="sw lv"></span>Leave and other events</span>
       </span>
       <span class="spacer"></span>
-      <span id="capnote" class="hide-sm"></span><span id="summary" class="hide-sm"></span>
-      <span class="tag">Prototype · this pass</span><button class="btn btn-ghost btn-xs" data-act="viewer" id="viewerbtn" aria-haspopup="true" aria-expanded="false"></button><button class="btn btn-ghost btn-xs btn-icon" data-act="theme" id="themebtn" style="width:28px" aria-label="Switch to dark mode" title="Switch to dark mode"></button>
-      <button class="btn btn-tertiary btn-xs" data-act="notes">Design notes</button>
+      <span id="summary" class="fsum" aria-label="On screen"></span>
+      <span class="protog" aria-label="Prototype controls, not part of the build"><span class="tag">Prototype · this pass</span><button class="btn btn-ghost btn-xs" data-act="viewer" id="viewerbtn" aria-haspopup="true" aria-expanded="false"></button><button class="btn btn-ghost btn-xs btn-icon" data-act="theme" id="themebtn" style="width:28px" aria-label="Switch to dark mode" title="Switch to dark mode"></button>
+      <button class="btn btn-tertiary btn-xs" data-act="notes">Design notes</button></span>
     </div>
   </div>
 </div>
@@ -1039,8 +1051,9 @@ body.vresizing,body.vresizing *{cursor:ns-resize!important}
     <ol>
       <li><div><h4>Four modes, as built</h4><p>Resource, Capacity, Project and Breakdown (working title for the Workload Balancer) as an always-visible switch. The range is its own control.</p></div></li>
       <li><div><h4>Two toolbar rows</h4><p>Row 1 is where and when, plus the actions. Row 2 is the view: everything a saved view keeps.</p></div></li>
-      <li><div><h4>Filter chips as built</h4><p>Click “is” on a chip to switch it to “is not”. Click AND between chips to switch it to OR.</p></div></li>
-      <li><div><h4>RAG as built</h4><p>A thin bar under every person row, one segment per working day: green on target, amber under, red over. RAG Indicator decides FTE or Target Billable.</p></div></li>
+      <li><div><h4>Filter chips as built</h4><p>Set Is / Is not and And / Or in the filter picker. Chips show them as labels. When the bar fills, a count shows the rest; click it to see them all.</p></div></li>
+      <li><div><h4>RAG as built</h4><p>A thin bar on the top edge of every person row, on each booked day: green on target, amber under, red over. The site sets where green starts (100% by default). RAG Indicator decides FTE or Target Billable.</p></div></li>
+      <li><div><h4>Pencils queue</h4><p>Overlapping pencils on one person are numbered in the order they were made. Róisín Doyle has two in the week of 26 Oct.</p></div></li>
       <li><div><h4>Leave is a booking</h4><p>Annual Leave, Training and Travel are bookings on event projects. They sit beside other bookings, count as booked hours and have every booking action. Hatched as a style.</p></div></li>
       <li><div><h4>Holidays are per person</h4><p>Each person’s holiday calendar greys their own day, like a weekend. Hover for its name. Lucía Romero is on the Spanish calendar.</p></div></li>
       <li><div><h4>One booking window, no window on top</h4><p>Hours per day, Distribute and Smart resourcing open as panels under their row. Confirms sit in the footer.</p></div></li>
@@ -1086,6 +1099,8 @@ const roles = [
   {id:'cr', name:'Creative'}, {id:'st', name:'Studio'}, {id:'sp', name:'Strategy'}
 ];
 /* Project rate card, per role. Account Executive is left at zero so the Role Rate Check can be shown. Amounts are never shown in the planner: rates are permission-gated. */
+/* Prototype site settings. Ad hoc rates: planners can bill a person as a different role. */
+const SITE = {adhoc:true};
 const RATECARD = {ad:185, am:140, ae:0, cr:120, st:95, sp:160};
 const W5=[1,1,1,1,1], W4=[1,1,1,1,0];
 const people = [
@@ -1132,6 +1147,13 @@ const holOf = (p, dn) => p ? (CALS[p.cal || 'IE'].get(dn) || null) : null;
 /* Leave, training and travel are bookings on event projects. They sit beside other bookings and count as booked hours. */
 let timeOff = [];
 const MILESTONES = ['Phase 1 · Discovery','Phase 2 · Production','Phase 3 · Delivery'];
+/* Pencils queue, as built: overlapping pencils on one person are numbered in the order they were made */
+function pencilNo(b){
+  if (!b || !b.tentative || !b.personId) return null;
+  const q = bookings.filter(x => x.tentative && x.personId===b.personId && x.start<=b.end && x.end>=b.start);
+  return q.length < 2 ? null : {n: q.indexOf(b)+1, of: q.length};
+}
+const pencilTag = b => { const q = pencilNo(b); return `<span class="tag tent">Pencil${q ? ' '+q.n+(q.of ? ' of '+q.of : '') : ''}</span>`; };
 const mk = (o) => Object.assign({personId:null, roleId:null, projectId:null, tentative:false, notes:'', title:'', milestone:'', kind:'project'}, o);
 let bookings = [
   ['p1','pr1','2026-10-12','2026-12-18',4],['p1','pr5','2026-10-12','2026-10-30',3],['p1','pr9','2026-10-12','2026-12-18',1],['p1','pr6','2026-10-21','2026-10-23',3],
@@ -1155,7 +1177,8 @@ let bookings = [
   ['p13','pr2','2026-10-13','2026-10-14',1],['p13','pr4','2026-10-14','2026-10-16',1],['p13','pr8','2026-10-15','2026-10-15',2],['p13','pr7','2026-10-19','2026-10-21',1],
   ['p13','pr2','2026-10-20','2026-10-23',1],['p13','pr4','2026-10-22','2026-10-22',2],['p13','pr8','2026-10-27','2026-10-29',1],['p13','pr7','2026-11-02','2026-11-04',1],
   ['p13','pr3','2026-10-28','2026-10-28',2],['p13','pr6','2026-11-03','2026-11-03',2],
-  ['p18','pr2','2026-10-12','2026-10-30',6],['p18','pr8','2026-11-02','2026-11-27',5]
+  ['p18','pr2','2026-10-12','2026-10-30',6],['p18','pr8','2026-11-02','2026-11-27',5],
+  ['p5','pr3','2026-10-28','2026-10-30',3,1] /* second pencil on Róisín, queued behind the first */
 ].map((r,i) => mk({id:'b'+(i+1), personId:r[0], projectId:r[1], start:D(r[2]), end:D(r[3]), hpd:r[4], tentative:!!r[5], milestone: r[1]==='pr9' ? '' : MILESTONES[i%3]}))
 .concat([
   ['p3','ev1','2026-10-19','2026-10-23',8,''],['p6','ev1','2026-10-13','2026-10-14',8,''],['p10','ev1','2026-11-02','2026-11-06',8,''],
@@ -1273,7 +1296,9 @@ const effO = () => S.previewOff ? timeOff.filter(o => o.id!==S.previewOff.id).co
 const isWork = dn => { const w = wd(dn); return w>=1 && w<=5; };
 const works = (p,dn) => isWork(dn) && !!p.days[wd(dn)-1] && !holOf(p,dn);
 /* RAG keeps the build's meaning: green on target, amber under, red over (bands from the site's Capacity Settings) */
-const ragOf = (c,b) => c===0 ? (b>0 ? 'over' : 'none') : b > c + 1e-9 ? 'over' : b >= c*0.85 ? 'on' : 'under';
+/* Site setting: where the green band starts. 100% on a default site. */
+const RAG_GREEN = 1;
+const ragOf = (c,b) => c===0 ? (b>0 ? 'over' : 'none') : b > c + 1e-9 ? 'over' : b >= c*RAG_GREEN - 1e-9 ? 'on' : 'under';
 const RAGW = {on:'On target', under:'Under', over:'Over', none:'No capacity'};
 function ctx(){
   const bl = new Map(), ol = new Map(), rl = new Map();
@@ -1540,8 +1565,10 @@ function capCell(st, k, c, b, tip, key, extraCls){
     const u = Math.min(100, pct);
     return `<div class="cap sum${extraCls||''} rg-${st}" data-k="${key}" data-i="${k}" style="left:${k*cw+2}px;width:${cw-4}px;--u:${u}%" title="${esc(tip)}"><span>${c ? pct+'%' : (b>0 ? 'Over' : '')}</span></div>`;
   }
-  if (!(b>0)) return c ? `<div class="cap big empty" data-k="${key}" data-i="${k}" style="left:${k*cw+2}px;width:${cw-4}px" title="${esc(tip)}"></div>` : '';
-  const lab = S.capMode==='pct' ? (c===0 ? fN(b)+'h' : pct+'%') : fN(b);
+  /* Person cells, as built: booked/capacity ("6/8"), or % with the toggle. Summary rows above stay as % bars. */
+  const frac = (x, y) => `<b>${fN(x)||'0'}</b><i>/${fN(y)||'0'}</i>`;
+  if (!(b>0)) return c ? `<div class="cap big nb" data-k="${key}" data-i="${k}" style="left:${k*cw+2}px;width:${cw-4}px" title="${esc(tip)}">${S.capMode==='pct' ? '0%' : frac(0, c)}</div>` : '';
+  const lab = S.capMode==='pct' ? (c===0 ? fN(b)+'h' : pct+'%') : frac(b, c);
   return `<div class="cap big${extraCls||''} rg-${st}" data-k="${key}" data-i="${k}" style="left:${k*cw+2}px;width:${cw-4}px" title="${esc(tip)}">${lab}</div>`;
 }
 /* Resource view: the build's thin RAG bar under each person row, one segment per working day */
@@ -1627,9 +1654,10 @@ function barHtml(b, p, top){
   /* Weighted Bookings, as built: 48px at 8h a day or more, scaled down, never under 24px */
   if (S.weighted && !xp){ const hh = Math.max(24, Math.round(Math.min(Math.max(b.hpd||0,0),8)/8*48)); hgt = `;height:${hh}px`; cls.push('wt', hh<30 ? 'dh-sm' : hh<42 ? 'dh-md' : 'dh-lg'); }
   const icon = !b.personId ? `<span class="ic" title="Unassigned">${ICON_UA}</span>` : busy ? `<span class="ic">${ICON_LOCK}</span>` : ro ? `<span class="ic" title="View only">${ICON_LOCK}</span>` : '';
-  const pipe = pr && pr.stage==='pipeline' && w>=150 ? `<span class="bp" title="Pipeline, ${Math.round(pr.prob*100)}% likely">${w>=230?'Pipeline ':''}${Math.round(pr.prob*100)}%</span>` : '';
+  const pq = pencilNo(b), pqh = pq ? `<span class="pq" title="Pencil ${pq.n} of ${pq.of}: ${pq.n===1 ? 'first in the queue' : 'queued behind '+(pq.n-1)+' earlier pencil'+(pq.n>2?'s':'')}">${w>=180 ? 'Pencil ' : ''}${pq.n}</span>` : '';
+  const pipe = pr && pr.stage==='pipeline' && w>=150 ? `<span class="bp" title="Pipeline project">Pipeline</span>` : '';
   const who = b.personId ? p.name : 'unassigned '+R(b.roleId).name;
-  return `<div class="${cls.join(' ')}" data-id="${b.id}" tabindex="0" role="button" aria-label="${esc(label+', '+who+', '+fDM(b.start)+' to '+fDM(b.end)+', '+b.hpd+' hours a day'+(ro?', view only':''))}" style="left:${X(s)+2}px;width:${w}px;top:${top}px${hgt}">${ro?'':'<span class="h l" data-h="l"></span>'}${icon}${xp ? (() => { const nd = wdays(p, b.start, b.end), fd = x => F(x,{day:'2-digit',month:'short',year:'numeric'}); return `<span class="xpw"><span class="bn">${esc(b.title || label)}</span>${busy ? '' : `<span class="xr">Project: <b>${esc(label)}</b></span><span class="xr">Title: <b>${esc(b.title || '–')}</b></span>`}<span class="xr">Dates: <b>${fd(b.start)} To ${fd(b.end)}</b></span><span class="xr">${Math.round(b.hpd/(p ? p.hours : 8)*100)}% for ${nd} day(s)</span><span class="xr">${fN(b.hpd)} hrs/day for ${nd} day(s)</span><span class="xr">${fN(b.hpd*nd)} Total Hours for ${nd} day(s)</span></span>`; })() : `<span class="bn">${esc(label)}</span>`}${pipe}<span class="bh">${barRight(b,p,w)}</span>${ro?'':'<span class="h r" data-h="r"></span>'}${S.weighted && !ro && !xp ? '<span class="h hb" data-vr="1" title="Drag up or down to change hours a day"></span>' : ''}</div>`;
+  return `<div class="${cls.join(' ')}" data-id="${b.id}" tabindex="0" role="button" aria-label="${esc(label+', '+who+', '+fDM(b.start)+' to '+fDM(b.end)+', '+b.hpd+' hours a day'+(ro?', view only':''))}" style="left:${X(s)+2}px;width:${w}px;top:${top}px${hgt}">${ro?'':'<span class="h l" data-h="l"></span>'}${icon}${xp ? (() => { const nd = wdays(p, b.start, b.end), fd = x => F(x,{day:'2-digit',month:'short',year:'numeric'}); return `<span class="xpw"><span class="bn">${esc(b.title || label)}</span>${busy ? '' : `<span class="xr">Project: <b>${esc(label)}</b></span><span class="xr">Title: <b>${esc(b.title || '–')}</b></span>`}<span class="xr">Dates: <b>${fd(b.start)} To ${fd(b.end)}</b></span><span class="xr">${Math.round(b.hpd/(p ? p.hours : 8)*100)}% for ${nd} day(s)</span><span class="xr">${fN(b.hpd)} hrs/day for ${nd} day(s)</span><span class="xr">${fN(b.hpd*nd)} Total Hours for ${nd} day(s)</span></span>`; })() : `<span class="bn">${esc(label)}</span>`}${pqh}${pipe}<span class="bh">${barRight(b,p,w)}</span>${ro?'':'<span class="h r" data-h="r"></span>'}${S.weighted && !ro && !xp ? '<span class="h hb" data-vr="1" title="Drag up or down to change hours a day"></span>' : ''}</div>`;
 }
 /* Busy rows roll up past four lanes: three lanes of bookings, then a stack showing how many more each day */
 const LANE_LIMIT = 999;
@@ -1757,7 +1785,7 @@ function projectBlock(pr, C, W, vis){
     if ((!a && !u) || !capMode()) return;
     cells += `<div class="cap pj${capMode()?' big':''} f-${pr.fam}" data-k="j:${pr.id}" data-i="${k}" style="left:${k*cw+2}px;width:${cw-4}px" title="${esc(colLabel(col))}: ${fH(a)} assigned${u?`, ${fH(u)} unassigned`:''}">${fH(a+u)}</div>`;
   });
-  const stage = pr.stage==='pipeline' ? ` · pipeline ${Math.round(pr.prob*100)}%` : '';
+  const stage = pr.stage==='pipeline' ? ' · Pipeline' : '';
   const sub = `${plural(ppl.length,'person','people')} · ${fH(tot)} planned${totU ? ` · <b class="una">${fH(totU)} unassigned</b>` : ''}${stage}`;
   const PH = phasesOf(pr);
   const ms = SP.unit==='day' ? PH.phases.filter(f => f.e>=SP.start && f.s<=SP.end).map((f,k) => { const s0 = Math.max(f.s, SP.start), e0 = Math.min(f.e, SP.end); return `<div class="phb" style="left:${X(s0)+2}px;width:${(e0-s0+1)*cw-4}px;top:8px" title="${esc('Phase: '+f.name+' · '+fDM(f.s)+' – '+fDM(f.e))}">${esc(f.name)}</div>`; }).join('') + PH.ms.filter(m => m.d>=SP.start && m.d<=SP.end).map(m => `<span class="ms" style="left:${X(m.d)+cw/2}px;top:34px" title="${esc('Milestone: '+m.name+' · '+fDay(m.d))}"></span>`).join('') : '';
@@ -1807,24 +1835,32 @@ function updateChrome(){
   $('#viewerbtn').innerHTML = `${S.ctx==='planner' ? 'Project planner' : 'Resource Manager'} · <b>${VIEWERS[S.viewer]}</b>${CHEV.replace('width="14" height="14"','width="12" height="12"')}`;
   { const pj = $('#modeseg [data-v=project]'); if (pj) pj.hidden = S.ctx==='planner'; $('#teambtn').hidden = S.ctx!=='planner';
     $('#crumbs').innerHTML = S.ctx==='planner' ? `<b>Home</b><span aria-hidden="true">/</span><span>Projects</span><span aria-hidden="true">/</span><span>${esc(PR(S.planProj).name)}</span><span aria-hidden="true">/</span><span>Resource Planner</span>` : `<b>Home</b><span aria-hidden="true">/</span><span>#11 Resource Manager</span><span aria-hidden="true">-</span><span>#11.1 Resource Planner</span>`; }
-  const notes = [];
-  if (S.plan==='workload') notes.push('Breakdown: type hours into a task row');
-  else if (!isDayUnit()) notes.push('Long range: capacity only');
-  else if (capMode()) notes.push('Capacity: bookings hidden, click a day to see its bookings');
-  else if (S.weighted) notes.push('Weighted Bookings');
-  if (S.measure==='billable') notes.push('Billable target');
-  if (S.pipeline!=='full') notes.push('Projects only');
-  if (!S.countTent) notes.push('Pencils not counted');
-  $('#capnote').textContent = notes.join(' · ');
-  $('#summary').textContent = `${people.length} people · ${roles.length} roles · ${projects.filter(x => !x.event).length} projects`;
+  /* Footer counts, as built: people, roles and projects on screen */
+  { const C = ctx(), vis = people.filter(p => personVisible(p,C)), rs = new Set(vis.map(p => p.role)), ps = new Set();
+    bookings.forEach(b => { const pr = PR(b.projectId); if (pr && !pr.event && b.end >= SP.start && b.start <= SP.end && (!b.personId || vis.some(p => p.id===b.personId))) ps.add(b.projectId); });
+    $('#summary').textContent = `${plural(vis.length,'person','people')} · ${plural(rs.size,'role','roles')} · ${plural(ps.size,'project','projects')}`; }
   renderChips();
 }
 function renderChips(){
-  $('#chips').innerHTML = S.filters.map((f,i) => {
+  /* As built: IS / IS NOT and AND / OR are set in the filter picker; chips show them as labels */
+  const box = $('#chips');
+  box.classList.toggle('all', !!S.chipsAll);
+  box.innerHTML = S.filters.map((f,i) => {
     const vals = f.values.map(id => optLabel(f.field,id));
-    const join = i ? `<button class="cjoin" data-act="chip-join" data-i="${i}" data-scale="LocalChipJoin" data-why="AND / OR between chips, as built; no Scale component" title="Click to switch to ${f.join==='or'?'AND':'OR'}" aria-label="Joined by ${f.join==='or'?'OR':'AND'}. Click to switch.">${f.join==='or'?'OR':'AND'}</button>` : '';
-    return `${join}<span class="chip"><span class="k">${FIELDS[f.field].label}</span><button class="cop${f.op==='isnot'?' neg':''}" data-act="chip-op" data-i="${i}" title="Click to switch to ${f.op==='is'?'IS NOT':'IS'}" aria-label="${f.op==='is'?'is':'is not'}. Click to switch.">${f.op==='is'?'IS':'IS NOT'}</button><button class="cb" data-act="chip" data-i="${i}" aria-haspopup="true" aria-label="Edit values: ${esc(vals.join(', '))}"><span class="v">${esc(vals.length>2 ? vals.slice(0,2).join(', ')+' +'+(vals.length-2) : vals.join(', '))}</span></button><button class="cx" data-act="chipx" data-i="${i}" aria-label="Remove filter"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></span>`;
-  }).join('');
+    const join = i ? `<span class="cjoin" data-scale="LocalChipJoin" data-why="AND / OR between chips, as built. Set in the filter picker.">${f.join==='or'?'OR':'AND'}</span>` : '';
+    return `<span class="cgrp">${join}<span class="chip"><button class="cb" data-act="chip" data-i="${i}" aria-haspopup="true" aria-label="Edit filter: ${esc(FIELDS[f.field].label)} ${f.op==='is'?'is':'is not'} ${esc(vals.join(', '))}"><span class="k">${FIELDS[f.field].label}</span><span class="cop${f.op==='isnot'?' neg':''}">${f.op==='is'?'IS':'IS NOT'}</span><span class="v">${esc(vals.length>2 ? vals.slice(0,2).join(', ')+' +'+(vals.length-2) : vals.join(', '))}</span></button><button class="cx" data-act="chipx" data-i="${i}" aria-label="Remove filter"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></span></span>`;
+  }).join('') + `<button class="cmore" type="button" data-act="chips-more" hidden></button>`;
+  const more = box.querySelector('.cmore'), groups = [...box.querySelectorAll('.cgrp')];
+  if (S.chipsAll){
+    more.hidden = groups.length < 2; more.textContent = 'Show less'; more.setAttribute('aria-label', 'Show fewer filters');
+  } else if (groups.length > 1){
+    /* Show as many chips as fit, then a count. Clicking the count shows them all. */
+    more.hidden = false; more.textContent = '+' + groups.length;
+    let hidden = 0;
+    for (let k = groups.length-1; k >= 1 && box.scrollWidth > box.clientWidth + 1; k--){ groups[k].hidden = true; hidden++; more.textContent = '+' + hidden; }
+    more.hidden = !hidden;
+    if (hidden){ more.textContent = '+' + hidden; more.setAttribute('aria-label', `${hidden} more filter${hidden>1?'s':''}. Show all`); more.title = 'Show all filters'; }
+  }
   $('#clearbtn').hidden = S.filters.length < 2;
 }
 function stamp(){ const t = new Date(); $('#updatedtx').textContent = 'Updated ' + t.toLocaleTimeString('en-IE',{hour:'2-digit',minute:'2-digit'}); }
@@ -1956,7 +1992,9 @@ function viewerMenu(anchor){
     mi('ctx-set', 'Project planner<span class="help" style="display:block">Resource Planner tab in Lighthouse Retail Q4</span>', {v:'planner', check:S.ctx==='planner'}) +
     `<div class="msep"></div><div class="mlabel">Prototype: see the grid as</div>` +
     mi('viewer-set', 'Dublin office manager<span class="help" style="display:block">Edits Dublin people only. Cork is view only.</span>', {v:'dublin', check:S.viewer==='dublin'}) +
-    mi('viewer-set', 'Admin<span class="help" style="display:block">Edits everyone</span>', {v:'admin', check:S.viewer==='admin'}), {alignRight:true});
+    mi('viewer-set', 'Admin<span class="help" style="display:block">Edits everyone</span>', {v:'admin', check:S.viewer==='admin'}) +
+    `<div class="msep"></div><div class="mlabel">Prototype: site settings</div>` +
+    mi('site-adhoc', 'Ad hoc rates<span class="help" style="display:block">Bill a person as a different role</span>', {check:SITE.adhoc}), {alignRight:true});
 }
 function addMenu(anchor){ openPop(anchor, mi('add-booking','Booking',{kb:'Drag on a row'}) + `<div class="msep"></div><div class="mlabel">Booking types</div>` + projects.filter(x => x.event).map(x => mi('add-ev', `<span class="dot f-leave"></span> ${esc(x.name)}`, {v:x.id})).join(''), {alignRight:true}); }
 function fieldMenu(anchor){
@@ -1966,13 +2004,14 @@ function fieldMenu(anchor){
 let ED = null;
 function chipEditor(anchor, idx, field){
   const f = idx!=null ? S.filters[idx] : null;
-  ED = {idx, field, op: f ? f.op : 'is', values: new Set(f ? f.values : []), q:''};
+  ED = {idx, field, op: f ? f.op : 'is', join: f ? (f.join||'and') : 'and', values: new Set(f ? f.values : []), q:''};
   drawEditor(anchor);
 }
 function drawEditor(anchor){
   const opts = FIELDS[ED.field].opts().filter(o => !ED.q || o.label.toLowerCase().includes(ED.q.toLowerCase()));
   const html = `<div class="ed"><div class="eh">${FIELDS[ED.field].label}</div>
-    <div class="seg" role="group" aria-label="Match"><button data-act="ed-op" data-v="is" aria-pressed="${ED.op==='is'}">Is</button><button data-act="ed-op" data-v="isnot" aria-pressed="${ED.op==='isnot'}">Is not</button></div>
+    <div class="edrow"><span class="edl">Match</span><div class="seg" role="group" aria-label="Match"><button data-act="ed-op" data-v="is" aria-pressed="${ED.op==='is'}">Is</button><button data-act="ed-op" data-v="isnot" aria-pressed="${ED.op==='isnot'}">Is not</button></div></div>
+    ${(ED.idx==null ? S.filters.length > 0 : ED.idx > 0) ? `<div class="edrow"><span class="edl">With the filter before</span><div class="seg" role="group" aria-label="Combine with the filter before"><button data-act="ed-join" data-v="and" aria-pressed="${ED.join!=='or'}">And</button><button data-act="ed-join" data-v="or" aria-pressed="${ED.join==='or'}">Or</button></div></div>` : ''}
     ${FIELDS[ED.field].opts().length>6?`<input class="input" type="search" id="edq" placeholder="Search ${FIELDS[ED.field].label.toLowerCase()}s" value="${esc(ED.q)}" autocomplete="off">`:''}
     <div class="list">${opts.map(o => `<label class="opt"><input type="checkbox" data-ed="${o.id}" ${ED.values.has(o.id)?'checked':''}>${o.fam?`<span class="dot f-${o.fam}"></span>`:''}<span>${esc(o.label)}</span></label>`).join('') || '<div class="help" style="padding:6px 10px">No matches</div>'}</div>
     <div class="ef"><button class="btn btn-ghost" data-act="pop-close">Cancel</button><button class="btn btn-primary" data-act="ed-apply" ${ED.values.size?'':'disabled'}>Apply${ED.values.size?` (${ED.values.size})`:''}</button></div></div>`;
@@ -2031,7 +2070,7 @@ function dayPop(key, i, rect, unit, d){
       : `<span class="hrs">${fN(h)||0}h</span>`;
     const who = p ? '' : '';
     const sub = [b.title || b.milestone, `${fDM(b.start)} – ${fDM(b.end)}`].filter(Boolean).join(' · ');
-    return `<div class="it${b.tentative ? ' tent' : ''}"><span class="dot f-${bFam(b)}"></span><div class="tx"><div class="t">${esc(bLabel(b))}${b.tentative ? ' <span class="tag tent">Pencil</span>' : ''}</div><div class="s">${esc(sub)}${uneven ? ' · <span class="uv" title="A new total spreads evenly over the working days">uneven days</span>' : ''}</div></div><div class="hc">${ctl}</div>${b.kind==='busy' ? '<span></span>' : `<button class="btn btn-icon btn-xs" data-act="dp-open" data-bid="${b.id}" aria-label="Open ${esc(bLabel(b))}" title="Open booking">${ICON_OPEN}</button>`}${who}</div>`;
+    return `<div class="it${b.tentative ? ' tent' : ''}"><span class="dot f-${bFam(b)}"></span><div class="tx"><div class="t">${esc(bLabel(b))}${b.tentative ? ' '+pencilTag(b) : ''}</div><div class="s">${esc(sub)}${uneven ? ' · <span class="uv" title="A new total spreads evenly over the working days">uneven days</span>' : ''}</div></div><div class="hc">${ctl}</div>${b.kind==='busy' ? '<span></span>' : `<button class="btn btn-icon btn-xs" data-act="dp-open" data-bid="${b.id}" aria-label="Open ${esc(bLabel(b))}" title="Open booking">${ICON_OPEN}</button>`}${who}</div>`;
   };
   let head = '', sum = '', items = '', foot = '', note = '';
   if (kind==='p'){
@@ -2106,7 +2145,7 @@ function showCard(el){
   const lk = (t, cls) => `<a href="#" class="${cls||''}" data-act="card-link" tabindex="0">${esc(t)}</a>`;
   const datesRow = `<div class="hcd">${ICON_CAL12}<span>${dates}</span><span class="hcn">${plural(n,'working day','working days')}</span></div>`;
   const statRow = `<div class="hcs"><span><b>${fN(b.hpd)}h</b> per day</span><span><b>${pct}%</b></span><span><b>${fN(b.hpd*n)}h</b> total</span></div>`;
-  const tags = [b.tentative ? '<span class="tag tent">Pencil</span>' : '', pr && pr.stage==='pipeline' ? `<span class="tag">Pipeline ${Math.round(pr.prob*100)}%</span>` : ''].join('');
+  const tags = [b.tentative ? pencilTag(b) : '', pr && pr.stage==='pipeline' ? '<span class="tag">Pipeline</span>' : ''].join('');
   const layout = pr && CARD_LAYOUTS[pr.id];
   let body;
   if (layout){
@@ -2450,17 +2489,22 @@ function smartPanel(v, key){
     <div class="sgtab" role="table" aria-label="Suggested people, best fit first">${head}${list.length ? shown.map(row).join('') : '<div class="help" style="padding:8px">No one matches. Change the weighting below or use Browse all people.</div>'}</div>
     <div class="pdh sgfoot">${list.length > 5 ? `<button class="btn btn-ghost btn-xs" type="button" data-act="sg-all">${DR.sall ? 'Show top 5' : `Show all ${list.length}`}</button>` : ''}<span class="spacer"></span><button type="button" class="srtog" data-act="sg-weight" aria-expanded="${SR.open}">Weighting<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transform:rotate(${SR.open?180:0}deg)"><path d="m6 9 6 6 6-6"/></svg></button></div>${wt}</div>`;
 }
-const sugTag = key => `<span class="sugtag"><button type="button" class="sugo" data-act="sug-open" data-k="${key}" title="See who else was suggested">${ICON_SPARK}Suggested</button><button type="button" data-act="mr-undo" data-k="${key}" aria-label="Undo suggestion">Undo</button></span>`;
+const sugTag = key => `<span class="sugtag"><button type="button" class="sugo" data-act="sug-open" data-k="${key}" title="See who else was suggested">${ICON_SPARK}Suggested</button></span>`;
 const smartBtn = (act, key, open) => `<button class="btn btn-xs drasg ai-btn" type="button" data-act="${act}" ${act==='mo-assign' ? `data-i="${key}"` : ''} aria-expanded="${open}" title="Smart resourcing: suggested people for this role">${ICON_SPARK}Smart resourcing</button>`;
 const rowMenuBtn = key => `<button class="btn btn-icon btn-xs" type="button" data-act="dr-rowmenu" data-k="${key}" aria-haspopup="true" aria-label="More for this row" title="Hours per day, assign, smart resourcing, distribute, billable role, remove">${ICON_MORE}</button>`;
 /* Billable as: switch plus the Billable Role picker. The role defaults to the person's role (or the row's role). */
 const defBillRole = (r, p) => p ? p.role : r.roleId;
-const billRoleOf = (r, p) => r.billRole || defBillRole(r, p);
+const billRoleOf = (r, p) => (SITE.adhoc && p && r.billRole) || defBillRole(r, p);
+/* As built: a dropdown only on person rows with Ad hoc rates on. Role rows bill as their role. */
+const billPick = (r, p) => SITE.adhoc && !!p;
 const billOn = (r, pr) => r.bill!=null ? r.bill : (pr ? pr.billable : true);
 const zeroRate = id => !!id && RATECARD[id]===0;
 function billCell(r, key, pr, p){
   const on = billOn(r, pr), rid = billRoleOf(r, p), rn = rid ? R(rid).name : 'No role', z = on && zeroRate(rid), dis = DR.ro ? ' disabled' : '';
-  return `<span class="bill${z ? ' zr' : ''}"><button class="tg sm" type="button" role="switch" aria-checked="${on}" aria-label="Billable" data-act="dr-bill" data-k="${key}"${dis}></button><span class="bl"><span>${on ? 'Billable' : 'Not billable'}</span><button type="button" class="blr" data-act="dr-billrole" data-k="${key}" aria-haspopup="true" aria-label="Billable Role: ${esc(rn)}" title="${on ? 'Change billable role' : 'Turn billable on to set a role'}"${dis || (on ? '' : ' disabled')}><span>${esc(rn)}</span>${DR.ro || !on ? '' : ICON_CHEV}</button></span></span>`;
+  const role = !on ? '' : billPick(r, p) && !DR.ro
+    ? `<button type="button" class="blr" data-act="dr-billrole" data-k="${key}" aria-haspopup="true" aria-label="Billable Role: ${esc(rn)}" title="Change billable role"><span>${esc(rn)}</span>${ICON_CHEV}</button>`
+    : `<span class="blr fixed" title="${p ? 'Billed as their role' : 'Billed as this role'}"><span>${esc(rn)}</span></span>`;
+  return `<span class="bill${z ? ' zr' : ''}"><button class="tg sm" type="button" role="switch" aria-checked="${on}" aria-label="Billable" data-act="dr-bill" data-k="${key}"${dis}></button><span class="bl"><span>${on ? 'Billable' : 'Not billable'}</span>${role}</span></span>`;
 }
 /* Role Rate Check, same message as the build, shown on the row instead of in a window */
 function rateWarn(r, pr, p){
@@ -2518,7 +2562,7 @@ function rowMenu(anchor, key){
   key = String(key);
   const isRole = !rowOf(key).personId;
   const I = CTX_ICONS;
-  openPop(anchor, mi('rm-perday', panelOn('perday', key) ? 'Close hours per day' : 'Set hours per day', {v:key, icon:I.alloc}) + mi('rm-assign', 'Assign…', {v:key, icon:MI('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/>')}) + mi('rm-smart', 'Smart resourcing…', {v:key, icon:ICON_SPARK}) + (isRole ? mi('rm-dist', 'Distribute…', {v:key, icon:MI('<path d="M16 3h5v5M8 3H3v5M12 22v-8.3a4 4 0 0 0-1.17-2.83L3 3M21 3l-7.83 7.83"/>')}) : '') + mi('rm-bill', 'Change billable role', {v:key, icon:MI('<path d="M12 2H2v10l9.29 9.29a1 1 0 0 0 1.41 0l8.59-8.59a1 1 0 0 0 0-1.41Z"/><circle cx="7" cy="7" r="1.5"/>')}) + '<div class="msep"></div>' + mi('rm-remove', 'Remove from booking', {danger:true, v:key, icon:MI('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11h-6"/>')}), {alignRight:true});
+  openPop(anchor, mi('rm-perday', panelOn('perday', key) ? 'Close hours per day' : 'Set hours per day', {v:key, icon:I.alloc}) + mi('rm-assign', 'Assign…', {v:key, icon:MI('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/>')}) + mi('rm-smart', 'Smart resourcing…', {v:key, icon:ICON_SPARK}) + (isRole ? mi('rm-dist', 'Distribute…', {v:key, icon:MI('<path d="M16 3h5v5M8 3H3v5M12 22v-8.3a4 4 0 0 0-1.17-2.83L3 3M21 3l-7.83 7.83"/>')}) : '') + (billPick(rowOf(key), rowOf(key).personId ? P(rowOf(key).personId) : null) && billOn(rowOf(key), DR.v.projectId ? PR(DR.v.projectId) : null) ? mi('rm-bill', 'Change billable role', {v:key, icon:MI('<path d="M12 2H2v10l9.29 9.29a1 1 0 0 0 1.41 0l8.59-8.59a1 1 0 0 0 0-1.41Z"/><circle cx="7" cy="7" r="1.5"/>')}) : '') + '<div class="msep"></div>' + mi('rm-remove', 'Remove from booking', {danger:true, v:key, icon:MI('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11h-6"/>')}), {alignRight:true});
 }
 const recLabel = r => ({day:'Every Day', week:'Same Day of Week', month:'Same Date in Month', year:'Same Date Every Year'}[r] || 'Once Only');
 function recDates(v){
@@ -2622,45 +2666,8 @@ function readDrawer(){
     { const pp = v.personId ? P(v.personId) : null; const pc = g('f-pct'), tt = g('f-tot'); const ae = document.activeElement; if (pc && pc!==ae) pc.value = NF((v.hpd||0)/(pp ? pp.hours : 8)*100, 0); if (tt && tt!==ae) tt.value = NF((v.hpd||0)*wdays(pp, v.start, v.end), 1); const hh = g('f-hpd'); if (hh && hh!==ae && hh.type!=='hidden' && (ae===pc || ae===tt)) hh.value = NF(v.hpd, 2); const du = g('f-dur'); if (du) du.value = DR.times ? spanText(v) : wdays(pp, v.start, v.end)+'d'; const wdl = g('f-wd'); if (wdl) wdl.textContent = DR.times ? 'Start to end' : plural(wdays(pp, v.start, v.end),'working day','working days'); }
   } else v.reason = g('f-reason').value;
 }
-function drawImpact(){
-  const el = $('#impact'); if (!el || !DR) return;
-  el.innerHTML = ''; return;
-  if (DR.ro){ el.innerHTML = ''; return; }
-  const v = DR.v, C = ctx();
-  if (v.end < v.start){ el.innerHTML = ''; return; }
-  if (DR.mode==='booking' && !v.personId){
-    const r = R(v.roleId), team = people.filter(p => p.role===v.roleId);
-    if (!team.length){ el.innerHTML = `<div class="banner warn">${ICON_WARN}<div><b>No one holds the ${esc(r.name)} role.</b> This work will need someone from another team or a freelancer.</div></div>`; return; }
-    let free = 0, dem = 0;
-    for (let d=v.start; d<=v.end; d++){ for (const p of team){ const x = day(p,d,C); free += Math.max(0, x.c-x.b); } dem += roleDay(v.roleId,d,C); }
-    const left = free - dem;
-    el.innerHTML = left >= 0
-      ? `<div class="banner neutral">${ICON_OK}<div><b>Unassigned.</b> It shows as demand on ${esc(r.name)}. The team has ${fH(free)} free over these dates, ${fH(left)} after all unassigned ${esc(r.name)} work.</div></div>`
-      : `<div class="banner bad">${ICON_WARN}<div><b>${esc(r.name)} can’t absorb this.</b> The team has ${fH(free)} free over these dates but ${fH(dem)} of unassigned work, ${fH(-left)} short.</div></div>`;
-    return;
-  }
-  const p = P(v.personId); if (!p){ el.innerHTML = ''; return; }
-  if (DR.mode==='booking'){
-    const im = impact(v.personId, v.start, v.end, C);
-    let html;
-    if (im.over.length){
-      const days = im.over.slice(0,3).map(d => F(d,{weekday:'short',day:'numeric',month:'short'}));
-      html = `<div class="banner bad">${ICON_WARN}<div><b>${first(p)} would be over capacity on ${plural(im.over.length,'day','days')}</b>: ${listJoin(days)}${im.over.length>3?` and ${im.over.length-3} more`:''}. Up to ${fH(im.maxOver)} over.${im.offs.length?` Overlaps ${im.offs.map(o => `${o.reason.toLowerCase()} (${fDM(o.start)} – ${fDM(o.end)})`).join(', ')}.`:''}</div></div>`;
-    } else if (wdays(p,v.start,v.end)===0){
-      html = `<div class="banner warn">${ICON_WARN}<div>No working days in this range for ${first(p)}.</div></div>`;
-    } else {
-      html = `<div class="banner ok">${ICON_OK}<div><b>Fits within ${first(p)}’s capacity.</b>${im.tight?` Tightest day is ${fDay(im.tight.d)} with ${fH(im.tight.free)} free.`:''}</div></div>`;
-    }
-    el.innerHTML = html;
-  } else {
-    let lost = 0; const hit = new Set();
-    for (let d=v.start; d<=v.end; d++) if (works(p,d)) lost += p.hours;
-    C.bl.get(p.id).forEach(b => { if (b.start<=v.end && b.end>=v.start) hit.add(bLabel(b)); });
-    el.innerHTML = hit.size
-      ? `<div class="banner warn">${ICON_WARN}<div><b>${hit.size} ${hit.size===1?'booking overlaps':'bookings overlap'} these dates</b>: ${esc([...hit].join(', '))}. They’ll show as over capacity until moved.</div></div>`
-      : `<div class="banner neutral">${ICON_OK}<div>Removes ${fH(lost)} of capacity. No bookings overlap.</div></div>`;
-  }
-}
+/* No live capacity banner in this pass. After save, an overbooking shows the build's message. */
+function drawImpact(){ const el = $('#impact'); if (el) el.innerHTML = ''; }
 function validate(){
   const v = DR.v, errs = {};
   if (DR.mode==='booking' && !v.projectId) errs.project = 'Choose a project for this booking.';
@@ -3119,7 +3126,7 @@ function setMode(m){
 let DPM = null;
 function datePick(anchor, m){
   DPM = m!=null ? m : monthStart(SP.start);
-  const [y, mo] = ymd(DPM), first = monday(DPM), last = addMonths(DPM,1) - 1, rows = [];
+  const [y, mo] = ymd(DPM), first = monday(DPM+1) - 1 /* weeks start Sunday in the date picker, as built */, last = addMonths(DPM,1) - 1, rows = [];
   for (let w = first; w <= last; w += 7) rows.push(w);
   const yrs = []; for (let k = y-2; k <= y+2; k++) yrs.push(k);
   const months = Array.from({length:12}, (_,i) => F(DN(2026,i,1),{month:'short'}));
@@ -3131,8 +3138,8 @@ function datePick(anchor, m){
       <select class="input dpks" id="dpk-m" aria-label="Month">${months.map((n,i) => `<option value="${i}"${i===mo?' selected':''}>${n}</option>`).join('')}</select>
       <select class="input dpks" id="dpk-y" aria-label="Year">${yrs.map(k => `<option${k===y?' selected':''}>${k}</option>`).join('')}</select>
       <button class="btn btn-icon btn-xs" type="button" data-act="dpk-nav" data-v="1" aria-label="Next month"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button></div>
-    <div class="dpkg"><span class="wkh">Wk</span>${['M','T','W','T','F','S','S'].map(x => `<span class="dh">${x}</span>`).join('')}
-      ${rows.map(w => `<button type="button" class="wkn" data-act="dpk-day" data-v="${w}" title="Go to week ${isoWeek(w)}">${isoWeek(w)}</button>${[0,1,2,3,4,5,6].map(i => cell(w+i)).join('')}`).join('')}</div>
+    <div class="dpkg"><span class="wkh">Wk</span>${['S','M','T','W','T','F','S'].map(x => `<span class="dh">${x}</span>`).join('')}
+      ${rows.map(w => `<button type="button" class="wkn" data-act="dpk-day" data-v="${w+1}" title="Go to week ${isoWeek(w+1)}">${isoWeek(w+1)}</button>${[0,1,2,3,4,5,6].map(i => cell(w+i)).join('')}`).join('')}</div>
     <div class="dpkf"><span class="help"><i class="sw inr"></i>In view</span><span class="spacer"></span><button class="btn btn-tertiary btn-xs" type="button" data-act="dpk-day" data-v="${TODAY}">Today</button></div>
   </div>`);
 }
@@ -3175,8 +3182,7 @@ document.addEventListener('click', e => {
     case 'add-off': closePop(); newEntry('booking', null, null, 'ev1'); break;
     case 'add-ev': closePop(); newEntry('booking', null, null, v); break;
     case 'applyfilters': render(); stamp(); break;
-    case 'chip-op': { const f = S.filters[+t.dataset.i]; f.op = f.op==='is' ? 'isnot' : 'is'; render(); break; }
-    case 'chip-join': { const f = S.filters[+t.dataset.i]; f.join = f.join==='or' ? 'and' : 'or'; render(); break; }
+    case 'chips-more': S.chipsAll = !S.chipsAll; renderChips(); break;
     case 'ctx-comments': { closePop(); openBooking(bookings.find(b => b.id===CTXB), false); if (DR){ DR.comments = true; redrawKeep(); } break; }
     case 'ctx-details': { closePop(); openBooking(bookings.find(b => b.id===CTXB), false); break; }
     case 'ctx-alloc': case 'ctx-dates': case 'ctx-rec': { closePop(); openBooking(bookings.find(b => b.id===CTXB), false); const f = $(a==='ctx-alloc' ? '#f-hpd' : a==='ctx-dates' ? '#f-start' : '#f-repeat'); if (f) setTimeout(() => f.focus(), 100); break; }
@@ -3198,8 +3204,9 @@ document.addEventListener('click', e => {
     case 'chipx': { S.filters.splice(+t.dataset.i, 1); render(); break; }
     case 'clearfilters': case 'clearall': S.filters = []; S.search = ''; render(); break;
     case 'ed-op': ED.op = v; drawEditor(); break;
+    case 'ed-join': ED.join = v; drawEditor(); break;
     case 'ed-apply': {
-      const f = {field:ED.field, op:ED.op, values:[...ED.values]};
+      const f = {field:ED.field, op:ED.op, join:ED.join, values:[...ED.values]};
       if (ED.idx!=null) S.filters[ED.idx] = f; else S.filters.push(f);
       closePop(); render(); break;
     }
@@ -3209,7 +3216,10 @@ document.addEventListener('click', e => {
       t.parentElement.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x===t)));
       break;
     }
-    case 'tgl': { if (t.classList.contains('dis')) break; S[v] = !S[v]; t.querySelector('.tg').setAttribute('aria-checked', String(S[v])); syncPipeline(); render(); break; }
+    case 'tgl': { if (t.classList.contains('dis')) break; S[v] = !S[v]; t.querySelector('.tg').setAttribute('aria-checked', String(S[v]));
+      /* Weighted Bookings and Expand Booking Information can't both be on, as built */
+      const ex = v==='weighted' && S[v] ? 'expand' : v==='expand' && S[v] ? 'weighted' : null;
+      if (ex && S[ex]){ S[ex] = false; const o = document.querySelector(`.swrow[data-v="${ex}"] .tg`); if (o) o.setAttribute('aria-checked','false'); toast(ex==='expand' ? 'Expand Booking Information turned off' : 'Weighted Bookings turned off', 'info', {sub:'Weighted Bookings and Expand Booking Information can’t be on together.'}); } syncPipeline(); render(); break; }
     case 'tgl-rows': { if (t.classList.contains('dis')) break; let ro = S.rows==='both' || S.rows==='roles', rs = S.rows==='both' || S.rows==='people'; if (v==='roles') ro = !ro; else rs = !rs; S.rows = ro && rs ? 'both' : rs ? 'people' : ro ? 'roles' : 'none'; t.querySelector('.tg').setAttribute('aria-checked', String(v==='roles' ? ro : rs)); render(); break; }
     case 'projteam': toast('Project Team', 'info', {sub:'Opens the project team editor, as built.'}); break;
     case 'ctx-set': { S.ctx = v; if (v==='planner' && S.plan==='projects') S.plan = 'people'; closePop(); S.filters = []; render(); toast(v==='planner' ? 'Project planner: Lighthouse Retail Q4' : 'Resource Manager', 'info', {sub: v==='planner' ? 'Rows are the project team. Other projects show greyed. Display has a This project group.' : ''}); break; }
@@ -3250,6 +3260,7 @@ document.addEventListener('click', e => {
     case 'rm-smart': closePop(); if (DR){ readDrawer(); setPanel('smart', v); redrawKeep(); } break;
     case 'rm-dist': closePop(); if (DR){ readDrawer(); setPanel('split', v); redrawKeep(); } break;
     case 'rm-assign': { closePop(); if (!DR) break; const el = v==='main' ? $('#drawer [data-act=dr-rolepick]') : $(`#drawer [data-act=mo-rolepick][data-i="${v}"]`); if (el) drRolePick(el, v); break; }
+    case 'site-adhoc': { closePop(); SITE.adhoc = !SITE.adhoc; if (DR) redrawKeep(); toast(SITE.adhoc ? 'Ad hoc rates on' : 'Ad hoc rates off', 'info', {sub: SITE.adhoc ? 'Billable Role is a dropdown on person rows.' : 'Every row bills as its own role.'}); break; }
     case 'rm-bill': { closePop(); if (!DR) break; const el = $(`#drawer [data-act=dr-billrole][data-k="${v}"]`); if (el && !el.disabled) billRolePick(el, v); else toast('Not billable', 'info', {sub:'Turn Billable on for this row to choose a billable role.'}); break; }
     case 'br-set': { const [k, id] = v.split('|'); closePop(); if (!DR) break; const r = rowOf(k), p = r.personId ? P(r.personId) : null; r.billRole = id===defBillRole(r, p) ? undefined : id; DR.rateOk = false; redrawKeep(); markDirty(); const n = $(`#drawer [data-act=dr-billrole][data-k="${k}"]`); if (n) n.focus(); break; }
     case 'rm-remove': closePop(); if (DR){ readDrawer(); if (v==='main'){ DR.removed = true; } else DR.o[+v].removed = true; DR.pkind = null; redrawKeep(); markDirty(); } break;
